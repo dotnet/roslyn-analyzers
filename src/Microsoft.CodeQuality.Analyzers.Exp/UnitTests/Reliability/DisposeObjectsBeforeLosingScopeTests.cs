@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.Exp.Reliability;
 using Test.Utilities;
@@ -8,24 +8,24 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Reliability
 {
+    using Verify = CSharpCodeFixVerifier<DisposeObjectsBeforeLosingScope, EmptyCodeFixProvider>;
+    using VerifyVB = VisualBasicCodeFixVerifier<DisposeObjectsBeforeLosingScope, EmptyCodeFixProvider>;
+
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.DisposeAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
-    public partial class DisposeObjectsBeforeLosingScopeTests : DiagnosticAnalyzerTestBase
+    public partial class DisposeObjectsBeforeLosingScopeTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new DisposeObjectsBeforeLosingScope();
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new DisposeObjectsBeforeLosingScope();
+        private DiagnosticResult GetCSharpResultAt(int line, int column, string containingMethod, string allocationText) =>
+            Verify.Diagnostic(DisposeObjectsBeforeLosingScope.Rule).WithLocation(line, column).WithArguments(containingMethod, allocationText);
 
-        private new DiagnosticResult GetCSharpResultAt(int line, int column, string containingMethod, string allocationText) =>
-            GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.Rule, containingMethod, allocationText);
-
-        private new DiagnosticResult GetBasicResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
-            GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.Rule, invokedSymbol, containingMethod);
+        private DiagnosticResult GetBasicResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
+            VerifyVB.Diagnostic(DisposeObjectsBeforeLosingScope.Rule).WithLocation(line, column).WithArguments(invokedSymbol, containingMethod);
 
         [Fact]
-        public void LocalWithDisposableInitializer_DisposeCall_NoDiagnostic()
+        public async Task LocalWithDisposableInitializer_DisposeCall_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -46,7 +46,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -65,9 +65,9 @@ End Class");
         }
 
         [Fact]
-        public void LocalWithDisposableInitializer_NoDisposeCall_Diagnostic()
+        public async Task LocalWithDisposableInitializer_NoDisposeCall_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -89,7 +89,7 @@ class Test
             // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -109,9 +109,9 @@ End Class",
         }
 
         [Fact]
-        public void LocalWithDisposableAssignment_DisposeCall_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_DisposeCall_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -137,7 +137,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -161,9 +161,9 @@ End Class");
         }
 
         [Fact]
-        public void LocalWithDisposableAssignment_NoDisposeCall_Diagnostic()
+        public async Task LocalWithDisposableAssignment_NoDisposeCall_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -186,7 +186,7 @@ class Test
             // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -207,9 +207,9 @@ End Class",
         }
 
         [Fact]
-        public void ParameterWithDisposableAssignment_DisposeCall_NoDiagnostic()
+        public async Task ParameterWithDisposableAssignment_DisposeCall_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -230,7 +230,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -249,9 +249,9 @@ End Class");
         }
 
         [Fact]
-        public void ParameterWithDisposableAssignment_NoDisposeCall_Diagnostic()
+        public async Task ParameterWithDisposableAssignment_NoDisposeCall_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -273,7 +273,7 @@ class Test
             // Test0.cs(16,13): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(16, 13, "void Test.M1(A a)", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -293,9 +293,9 @@ End Class",
         }
 
         [Fact]
-        public void OutAndRefParametersWithDisposableAssignment_NoDisposeCall_NoDiagnostic()
+        public async Task OutAndRefParametersWithDisposableAssignment_NoDisposeCall_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -316,7 +316,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -334,9 +334,9 @@ End Class");
         }
 
         [Fact]
-        public void OutDisposableArgument_NoDisposeCall_Diagnostic()
+        public async Task OutDisposableArgument_NoDisposeCall_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -378,20 +378,23 @@ class Test
     }
 }
 ",
-            // Test0.cs(32,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
-            GetCSharpResultAt(32, 12, "void Test.Method()", "out a"),
-            // Test0.cs(34,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
-            GetCSharpResultAt(34, 12, "void Test.Method()", "out a"),
-            // Test0.cs(36,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out var a2' before all references to it are out of scope.
-            GetCSharpResultAt(36, 12, "void Test.Method()", "out var a2"),
-            // Test0.cs(39,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a3' before all references to it are out of scope.
-            GetCSharpResultAt(39, 12, "void Test.Method()", "out a3"));
+            new[]
+            {
+                // Test0.cs(32,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+                GetCSharpResultAt(32, 12, "void Test.Method()", "out a"),
+                // Test0.cs(34,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+                GetCSharpResultAt(34, 12, "void Test.Method()", "out a"),
+                // Test0.cs(36,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out var a2' before all references to it are out of scope.
+                GetCSharpResultAt(36, 12, "void Test.Method()", "out var a2"),
+                // Test0.cs(39,12): warning CA2000: In method 'void Test.Method()', call System.IDisposable.Dispose on object created by 'out a3' before all references to it are out of scope.
+                GetCSharpResultAt(39, 12, "void Test.Method()", "out a3"),
+            });
         }
 
         [Fact]
-        public void OutDisposableArgument_DisposeCall_NoDiagnostic()
+        public async Task OutDisposableArgument_DisposeCall_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -441,9 +444,9 @@ class Test
         }
 
         [Fact]
-        public void TryGetSpecialCase_OutDisposableArgument_NoDisposeCall_NoDiagnostic()
+        public async Task TryGetSpecialCase_OutDisposableArgument_NoDisposeCall_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -472,9 +475,9 @@ class MyCollection
         }
 
         [Fact]
-        public void LocalWithMultipleDisposableAssignment_DisposeCallOnSome_Diagnostic()
+        public async Task LocalWithMultipleDisposableAssignment_DisposeCallOnSome_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -497,12 +500,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"),
-            // Test0.cs(20,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(20, 13, "void Test.M1()", "new A()"));
+            new[]
+            {
+                // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"),
+                // Test0.cs(20,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(20, 13, "void Test.M1()", "new A()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -521,16 +527,19 @@ Class Test
         a = New A()
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"),
-            // Test0.vb(17,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(17, 13, "Sub Test.M1()", "New A()"));
+            new[]
+            {
+                // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"),
+                // Test0.vb(17,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(17, 13, "Sub Test.M1()", "New A()"),
+            });
         }
 
         [Fact]
-        public void FieldWithDisposableAssignment_NoDiagnostic()
+        public async Task FieldWithDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -556,7 +565,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -580,9 +589,9 @@ End Class");
         }
 
         [Fact]
-        public void PropertyWithDisposableAssignment_NoDiagnostic()
+        public async Task PropertyWithDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -608,7 +617,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -632,9 +641,9 @@ End Class");
         }
 
         [Fact]
-        public void LocalWithDisposableAssignment_DisposeBoolCall_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_DisposeBoolCall_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -664,7 +673,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -691,9 +700,9 @@ End Class");
         }
 
         [Fact]
-        public void LocalWithDisposableAssignment_CloseCall_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_CloseCall_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -723,7 +732,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -750,9 +759,9 @@ End Class");
         }
 
         [Fact]
-        public void ArrayElementWithDisposableAssignment_NoDiagnostic()
+        public async Task ArrayElementWithDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -772,7 +781,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -791,9 +800,9 @@ End Class");
         }
 
         [Fact]
-        public void ArrayElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
+        public async Task ArrayElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -814,7 +823,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -834,9 +843,9 @@ End Class");
         }
 
         [Fact]
-        public void ArrayElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
+        public async Task ArrayElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -857,7 +866,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -877,9 +886,9 @@ End Class");
         }
 
         [Fact]
-        public void ArrayElementWithDisposableAssignment_NonConstantIndex_02_NoDiagnostic()
+        public async Task ArrayElementWithDisposableAssignment_NonConstantIndex_02_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -901,7 +910,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -922,9 +931,9 @@ End Class");
         }
 
         [Fact]
-        public void ArrayInitializer_ElementWithDisposableAssignment_NoDiagnostic()
+        public async Task ArrayInitializer_ElementWithDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -944,7 +953,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -962,9 +971,9 @@ End Class");
         }
 
         [Fact]
-        public void ArrayInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
+        public async Task ArrayInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -985,7 +994,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1004,9 +1013,9 @@ End Class");
         }
 
         [Fact]
-        public void ArrayInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
+        public async Task ArrayInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1027,7 +1036,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1046,9 +1055,9 @@ End Class");
         }
 
         [Fact]
-        public void CollectionInitializer_ElementWithDisposableAssignment_NoDiagnostic()
+        public async Task CollectionInitializer_ElementWithDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -1069,7 +1078,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections.Generic
 
@@ -1088,9 +1097,9 @@ End Class");
         }
 
         [Fact]
-        public void CollectionInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
+        public async Task CollectionInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -1112,7 +1121,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections.Generic
 
@@ -1132,9 +1141,9 @@ End Class");
         }
 
         [Fact]
-        public void CollectionInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
+        public async Task CollectionInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -1156,7 +1165,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections.Generic
 
@@ -1176,9 +1185,9 @@ End Class");
         }
 
         [Fact]
-        public void CollectionAdd_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic()
+        public async Task CollectionAdd_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1233,7 +1242,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -1296,9 +1305,9 @@ End Class");
         }
 
         [Fact]
-        public void CollectionAdd_IReadOnlyCollection_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic()
+        public async Task CollectionAdd_IReadOnlyCollection_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -1354,7 +1363,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Concurrent
@@ -1410,9 +1419,9 @@ End Class");
         }
 
         [Fact]
-        public void MemberInitializerWithDisposableAssignment_NoDiagnostic()
+        public async Task MemberInitializerWithDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -1435,7 +1444,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections.Generic
 
@@ -1456,9 +1465,9 @@ End Class");
         }
 
         [Fact]
-        public void StructImplementingIDisposable_NoDiagnostic()
+        public async Task StructImplementingIDisposable_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 struct A : IDisposable
@@ -1478,7 +1487,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Structure A
@@ -1496,9 +1505,9 @@ End Class");
         }
 
         [Fact]
-        public void NonUserDefinedConversions_NoDiagnostic()
+        public async Task NonUserDefinedConversions_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1526,7 +1535,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1552,9 +1561,9 @@ End Class");
         }
 
         [Fact]
-        public void NonUserDefinedConversions_Diagnostic()
+        public async Task NonUserDefinedConversions_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1578,12 +1587,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(20, 22, "void Test.M1()", "new A()"),
-            // Test0.cs(21,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
-            GetCSharpResultAt(21, 18, "void Test.M1()", "new B()"));
+            new[]
+            {
+                // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(20, 22, "void Test.M1()", "new A()"),
+                // Test0.cs(21,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+                GetCSharpResultAt(21, 18, "void Test.M1()", "new B()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1603,16 +1615,19 @@ Class Test
         Dim a As A = DirectCast(New B(), A)     ' Explicit conversion from B to A
     End Sub
 End Class",
-            // Test0.vb(17,29): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(17, 29, "Sub Test.M1()", "New A()"),
-            // Test0.vb(18,33): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
-            GetBasicResultAt(18, 33, "Sub Test.M1()", "New B()"));
+            new[]
+            {
+                // Test0.vb(17,29): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(17, 29, "Sub Test.M1()", "New A()"),
+                // Test0.vb(18,33): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
+                GetBasicResultAt(18, 33, "Sub Test.M1()", "New B()"),
+            });
         }
 
         [Fact]
-        public void UserDefinedConversions_NoDiagnostic()
+        public async Task UserDefinedConversions_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 
 using System;
 
@@ -1658,7 +1673,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1694,10 +1709,10 @@ End Class");
         }
 
         [Fact]
-        public void LocalWithDisposableAssignment_ByRefEscape_NoDiagnostic()
+        public async Task LocalWithDisposableAssignment_ByRefEscape_NoDiagnostic()
         {
             // Local/parameter passed by ref is escaped.
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1724,7 +1739,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1748,10 +1763,10 @@ End Class");
         }
 
         [Fact]
-        public void LocalWithDisposableAssignment_OutRefKind_NotDisposed_Diagnostic()
+        public async Task LocalWithDisposableAssignment_OutRefKind_NotDisposed_Diagnostic()
         {
             // Local/parameter passed as out is not considered escaped.
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1776,16 +1791,19 @@ class Test
     }
 }
 ",
-            // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
-            // Test0.cs(17,12): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
-            GetCSharpResultAt(17, 12, "void Test.M1()", "out a"));
+            new[]
+            {
+                // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
+                // Test0.cs(17,12): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out a' before all references to it are out of scope.
+                GetCSharpResultAt(17, 12, "void Test.M1()", "out a"),
+            });
         }
 
         [Fact]
-        public void LocalWithDefaultOfDisposableAssignment_NoDiagnostic()
+        public async Task LocalWithDefaultOfDisposableAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1805,7 +1823,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1823,9 +1841,9 @@ End Module");
         }
 
         [Fact]
-        public void NullCoalesce_NoDiagnostic()
+        public async Task NullCoalesce_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1850,7 +1868,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1873,9 +1891,9 @@ End Class");
         }
 
         [Fact]
-        public void NullCoalesce_Diagnostic()
+        public async Task NullCoalesce_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1899,12 +1917,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(16,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 20, "void Test.M1(A a)", "new A()"),
-            // Test0.cs(20,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(20, 20, "void Test.M1(A a)", "new A()"));
+            new[]
+            {
+                // Test0.cs(16,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(16, 20, "void Test.M1(A a)", "new A()"),
+                // Test0.cs(20,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(20, 20, "void Test.M1(A a)", "new A()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1924,17 +1945,20 @@ Class Test
         c.Dispose()
     End Sub
 End Class",
-            // Test0.vb(13,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(13, 28, "Sub Test.M1(a As A)", "New A()"),
-            // Test0.vb(17,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(17, 28, "Sub Test.M1(a As A)", "New A()"));
+            new[]
+            {
+                // Test0.vb(13,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(13, 28, "Sub Test.M1(a As A)", "New A()"),
+                // Test0.vb(17,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(17, 28, "Sub Test.M1(a As A)", "New A()"),
+            });
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
-        public void WhileLoop_DisposeOnBackEdge_NoDiagnostic()
+        public async Task WhileLoop_DisposeOnBackEdge_NoDiagnostic()
         {
             // Need precise CFG to avoid false reports.
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -1963,7 +1987,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -1988,9 +2012,9 @@ End Module");
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
-        public void WhileLoop_MissingDisposeOnExit_Diagnostic()
+        public async Task WhileLoop_MissingDisposeOnExit_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2017,7 +2041,7 @@ class Test
             // Test0.cs(20,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(20, 17, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2041,9 +2065,9 @@ End Module",
         }
 
         [Fact]
-        public void WhileLoop_MissingDisposeOnEntry_Diagnostic()
+        public async Task WhileLoop_MissingDisposeOnEntry_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2070,7 +2094,7 @@ class Test
             // Test0.cs(17,21): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(17, 21, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2094,10 +2118,10 @@ End Module",
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
-        public void DoWhileLoop_DisposeOnBackEdge_NoDiagnostic()
+        public async Task DoWhileLoop_DisposeOnBackEdge_NoDiagnostic()
         {
             // Need precise CFG to avoid false reports.
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2126,7 +2150,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2151,9 +2175,9 @@ End Module");
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
-        public void DoWhileLoop_MissingDisposeOnExit_Diagnostic()
+        public async Task DoWhileLoop_MissingDisposeOnExit_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2180,7 +2204,7 @@ class Test
             // Test0.cs(20,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(20, 17, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2204,9 +2228,9 @@ End Module",
         }
 
         [Fact]
-        public void DoWhileLoop_MissingDisposeOnEntry_Diagnostic()
+        public async Task DoWhileLoop_MissingDisposeOnEntry_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2233,7 +2257,7 @@ class Test
             // Test0.cs(21,23): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(21, 23, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2257,10 +2281,10 @@ End Module",
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
-        public void ForLoop_DisposeOnBackEdge_NoDiagnostic()
+        public async Task ForLoop_DisposeOnBackEdge_NoDiagnostic()
         {
             // Need precise CFG to avoid false reports.
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2290,7 +2314,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2315,9 +2339,9 @@ End Module");
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
-        public void ForLoop_MissingDisposeOnExit_Diagnostic()
+        public async Task ForLoop_MissingDisposeOnExit_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2344,7 +2368,7 @@ class Test
             // Test0.cs(20,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(20, 17, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2368,9 +2392,9 @@ End Module",
         }
 
         [Fact]
-        public void ForLoop_MissingDisposeOnEntry_Diagnostic()
+        public async Task ForLoop_MissingDisposeOnEntry_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2398,7 +2422,7 @@ class Test
             // Test0.cs(18,25): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(18, 25, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2422,9 +2446,9 @@ End Module",
         }
 
         [Fact]
-        public void IfStatement_NoDiagnostic()
+        public async Task IfStatement_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2463,7 +2487,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2497,9 +2521,9 @@ End Class");
         }
 
         [Fact]
-        public void IfStatement_02_NoDiagnostic()
+        public async Task IfStatement_02_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2554,7 +2578,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2597,9 +2621,9 @@ End Class");
         }
 
         [Fact]
-        public void IfStatement_Diagnostic()
+        public async Task IfStatement_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2665,14 +2689,17 @@ class Test
     }
 }
 ",
-            // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
-            GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
-            // Test0.cs(38,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
-            GetCSharpResultAt(38, 17, "void Test.M1(A a, string param, string param2)", "new C()"),
-            // Test0.cs(43,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
-            GetCSharpResultAt(43, 17, "void Test.M1(A a, string param, string param2)", "new D()"));
+            new[]
+            {
+                // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+                GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
+                // Test0.cs(38,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+                GetCSharpResultAt(38, 17, "void Test.M1(A a, string param, string param2)", "new C()"),
+                // Test0.cs(43,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
+                GetCSharpResultAt(43, 17, "void Test.M1(A a, string param, string param2)", "new D()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2729,18 +2756,21 @@ Class Test
         b.Dispose()         ' b points to either a1 or d.
     End Sub
 End Class",
-            // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
-            GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
-            // Test0.vb(35,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
-            GetBasicResultAt(35, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
-            // Test0.vb(38,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New D()' before all references to it are out of scope.
-            GetBasicResultAt(38, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"));
+            new[]
+            {
+                // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
+                GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
+                // Test0.vb(35,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
+                GetBasicResultAt(35, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
+                // Test0.vb(38,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New D()' before all references to it are out of scope.
+                GetBasicResultAt(38, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"),
+            });
         }
 
         [Fact]
-        public void IfStatement_02_Diagnostic()
+        public async Task IfStatement_02_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2826,14 +2856,17 @@ class Test
     }
 }
 ",
-            // Test0.cs(32,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
-            GetCSharpResultAt(32, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
-            // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
-            GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new C()"),
-            // Test0.cs(42,21): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
-            GetCSharpResultAt(42, 21, "void Test.M1(A a, string param, string param2)", "new D()"));
+            new[]
+            {
+                // Test0.cs(32,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+                GetCSharpResultAt(32, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
+                // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+                GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new C()"),
+                // Test0.cs(42,21): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
+                GetCSharpResultAt(42, 21, "void Test.M1(A a, string param, string param2)", "new D()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2901,18 +2934,21 @@ Class Test
         b.Dispose()
     End Sub
 End Class",
+            new[]
+            {
                 // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
                 GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
                 // Test0.vb(31,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
                 GetBasicResultAt(31, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
                 // Test0.vb(37,21): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New E()' before all references to it are out of scope.
-                GetBasicResultAt(37, 21, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"));
+                GetBasicResultAt(37, 21, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"),
+            });
         }
 
         [Fact]
-        public void UsingStatement_NoDiagnostic()
+        public async Task UsingStatement_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -2952,7 +2988,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -2981,9 +3017,9 @@ End Class");
         }
 
         [Fact]
-        public void ReturnStatement_NoDiagnostic()
+        public async Task ReturnStatement_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -3024,7 +3060,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections.Generic
 
@@ -3058,9 +3094,9 @@ End Class");
         }
 
         [Fact]
-        public void ReturnStatement_02_NoDiagnostic()
+        public async Task ReturnStatement_02_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : I, IDisposable
@@ -3089,7 +3125,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections.Generic
 
@@ -3117,10 +3153,10 @@ End Class");
         }
 
         [Fact]
-        public void LocalFunctionInvocation_EmptyBody_Diagnostic()
+        public async Task LocalFunctionInvocation_EmptyBody_Diagnostic()
         {
             // Currently we do not generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3151,9 +3187,9 @@ class Test
         }
 
         [Fact]
-        public void LocalFunctionInvocation_DisposesCapturedValue_NoDiagnostic()
+        public async Task LocalFunctionInvocation_DisposesCapturedValue_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3184,9 +3220,9 @@ class Test
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public void LocalFunctionInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
+        public async Task LocalFunctionInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3217,9 +3253,9 @@ class Test
         }
 
         [Fact]
-        public void LocalFunctionInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
+        public async Task LocalFunctionInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3250,10 +3286,10 @@ class Test
         }
 
         [Fact]
-        public void LambdaInvocation_EmptyBody_Diagnostic()
+        public async Task LambdaInvocation_EmptyBody_Diagnostic()
         {
             // Currently we do not generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3281,7 +3317,7 @@ class Test
 ");
 
             // Currently we do not generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3305,9 +3341,9 @@ End Module");
         }
 
         [Fact]
-        public void LambdaInvocation_DisposesCapturedValue_NoDiagnostic()
+        public async Task LambdaInvocation_DisposesCapturedValue_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3335,7 +3371,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3359,9 +3395,9 @@ End Module");
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public void LambdaInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
+        public async Task LambdaInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3389,7 +3425,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3413,9 +3449,9 @@ End Module");
         }
 
         [Fact]
-        public void LambdaInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
+        public async Task LambdaInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3442,7 +3478,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3466,9 +3502,9 @@ End Module");
         }
 
         [Fact]
-        public void PointsTo_ReferenceTypeCopyDisposed_NoDiagnostic()
+        public async Task PointsTo_ReferenceTypeCopyDisposed_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3491,7 +3527,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3511,9 +3547,9 @@ End Class");
         }
 
         [Fact]
-        public void DynamicObjectCreation_Diagnostic()
+        public async Task DynamicObjectCreation_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3544,9 +3580,9 @@ class Test
         }
 
         [Fact]
-        public void DynamicObjectCreation_NoDiagnostic()
+        public async Task DynamicObjectCreation_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3576,9 +3612,9 @@ class Test
         }
 
         [Fact]
-        public void SpecialDisposableObjectCreationApis_Diagnostic()
+        public async Task SpecialDisposableObjectCreationApis_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 
@@ -3591,12 +3627,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(9,20): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.Open(filePath, fileMode)' before all references to it are out of scope.
-            GetCSharpResultAt(9, 20, "void Test.M1(string filePath, FileMode fileMode)", "File.Open(filePath, fileMode)"),
-            // Test0.cs(10,21): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-            GetCSharpResultAt(10, 21, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"));
+            new[]
+            {
+                // Test0.cs(9,20): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.Open(filePath, fileMode)' before all references to it are out of scope.
+                GetCSharpResultAt(9, 20, "void Test.M1(string filePath, FileMode fileMode)", "File.Open(filePath, fileMode)"),
+                // Test0.cs(10,21): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
+                GetCSharpResultAt(10, 21, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 
@@ -3607,16 +3646,19 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(7,17): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.Open(filePath, fileMode)' before all references to it are out of scope.
-            GetBasicResultAt(7, 17, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.Open(filePath, fileMode)"),
-            // Test0.vb(8,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-            GetBasicResultAt(8, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"));
+            new[]
+            {
+                // Test0.vb(7,17): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.Open(filePath, fileMode)' before all references to it are out of scope.
+                GetBasicResultAt(7, 17, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.Open(filePath, fileMode)"),
+                // Test0.vb(8,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
+                GetBasicResultAt(8, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"),
+            });
         }
 
         [Fact]
-        public void SpecialDisposableObjectCreationApis_NoDiagnostic()
+        public async Task SpecialDisposableObjectCreationApis_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 
@@ -3634,7 +3676,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 
@@ -3651,9 +3693,9 @@ End Class
         }
 
         [Fact]
-        public void InvocationInstanceReceiverOrArgument_Diagnostic()
+        public async Task InvocationInstanceReceiverOrArgument_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3687,7 +3729,7 @@ class Test
             // Test0.cs(20,15): warning CA2000: In method 'void Test.M1(string param)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(20, 15, "void Test.M1(string param)", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3716,9 +3758,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableCreationInArgument_Diagnostic()
+        public async Task DisposableCreationInArgument_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3745,7 +3787,7 @@ class Test
             // Test0.cs(16,12): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(16, 12, "void Test.M1()", "new A()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3768,9 +3810,9 @@ End Class",
         }
 
         [Fact]
-        public void DisposableCreationNotAssignedToAVariable_Diagnostic()
+        public async Task DisposableCreationNotAssignedToAVariable_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3796,14 +3838,17 @@ class Test
     }
 }
 ",
-            // Test0.cs(21,9): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(21, 9, "void Test.M1()", "new A()"),
-            // Test0.cs(22,9): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(22, 9, "void Test.M1()", "new A()"),
-            // Test0.cs(23,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(23, 17, "void Test.M1()", "new A()"));
+            new[]
+            {
+                // Test0.cs(21,9): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(21, 9, "void Test.M1()", "new A()"),
+                // Test0.cs(22,9): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(22, 9, "void Test.M1()", "new A()"),
+                // Test0.cs(23,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(23, 17, "void Test.M1()", "new A()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3813,25 +3858,33 @@ Class A
         Throw New NotImplementedException()
     End Sub
 
-    Public Sub M()
-    End Sub
+    Public Function M() As Integer
+        Return 0
+    End Function
 End Class
 
 Class Test
     Private Sub M1()
-        New A()
-        New A().M()
+        Dim a = New A()
+        Dim m = New A().M()
         Dim x = New A().X
     End Sub
-End Class", TestValidationMode.AllowCompileErrors,
-            // Test0.vb(19,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(19, 17, "Sub Test.M1()", "New A()"));
+End Class",
+            new[]
+            {
+                // Test0.vb(18,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(18, 17, "Sub Test.M1()", "New A()"),
+                // Test0.vb(19,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(19, 17, "Sub Test.M1()", "New A()"),
+                // Test0.vb(20,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(20, 17, "Sub Test.M1()", "New A()"),
+            });
         }
 
         [Fact]
-        public void DisposableCreationPassedToDisposableConstructor_Diagnostic()
+        public async Task DisposableCreationPassedToDisposableConstructor_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -3893,14 +3946,17 @@ class Test
     }
 }
 ",
-            // Test0.cs(30,23): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(30, 23, "void Test.M1()", "new A()"),
-            // Test0.cs(33,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(33, 17, "void Test.M1()", "new A()"),
-            // Test0.cs(47,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(47, 18, "void Test.M1()", "new A()"));
+            new[]
+            {
+                // Test0.cs(30,23): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(30, 23, "void Test.M1()", "new A()"),
+                // Test0.cs(33,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(33, 17, "void Test.M1()", "new A()"),
+                // Test0.cs(47,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(47, 18, "void Test.M1()", "new A()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -3951,18 +4007,21 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(28,23): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(28, 23, "Sub Test.M1()", "New A()"),
-            // Test0.vb(30,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(30, 17, "Sub Test.M1()", "New A()"),
-            // Test0.vb(40,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(40, 18, "Sub Test.M1()", "New A()"));
+            new[]
+            {
+                // Test0.vb(28,23): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(28, 23, "Sub Test.M1()", "New A()"),
+                // Test0.vb(30,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(30, 17, "Sub Test.M1()", "New A()"),
+                // Test0.vb(40,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(40, 18, "Sub Test.M1()", "New A()"),
+            });
         }
 
         [Fact]
-        public void DisposableCreationPassedToDisposableConstructor_SpecialCases_NoDiagnostic()
+        public async Task DisposableCreationPassedToDisposableConstructor_SpecialCases_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Resources;
@@ -4079,7 +4138,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 
 Imports System
 Imports System.IO
@@ -4168,9 +4227,9 @@ End Class
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
-        public void DisposableCreationPassedToDisposableConstructor_SpecialCases_ExceptionPath_Diagnostic()
+        public async Task DisposableCreationPassedToDisposableConstructor_SpecialCases_ExceptionPath_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Resources;
@@ -4286,16 +4345,19 @@ class Test
     }
 }
 ",
-            // Test0.cs(34,25): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
-            GetCSharpResultAt(34, 25, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"),
-            // Test0.cs(52,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
-            GetCSharpResultAt(52, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.OpenText(filePath)"),
-            // Test0.cs(70,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-            GetCSharpResultAt(70, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"),
-            // Test0.cs(88,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
-            GetCSharpResultAt(88, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"));
+            new[]
+            {
+                // Test0.cs(34,25): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
+                GetCSharpResultAt(34, 25, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"),
+                // Test0.cs(52,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
+                GetCSharpResultAt(52, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.OpenText(filePath)"),
+                // Test0.cs(70,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
+                GetCSharpResultAt(70, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"),
+                // Test0.cs(88,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
+                GetCSharpResultAt(88, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 
 Imports System
 Imports System.IO
@@ -4381,20 +4443,23 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(30,32): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
-            GetBasicResultAt(30, 32, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"),
-            // Test0.vb(42,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
-            GetBasicResultAt(42, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.OpenText(filePath)"),
-            // Test0.vb(54,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-            GetBasicResultAt(54, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"),
-            // Test0.vb(66,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
-            GetBasicResultAt(66, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"));
+            new[]
+            {
+                // Test0.vb(30,32): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
+                GetBasicResultAt(30, 32, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"),
+                // Test0.vb(42,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
+                GetBasicResultAt(42, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.OpenText(filePath)"),
+                // Test0.vb(54,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
+                GetBasicResultAt(54, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"),
+                // Test0.vb(66,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
+                GetBasicResultAt(66, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"),
+            });
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
-        public void DisposableObjectNotDisposed_ExceptionPath_Diagnostic()
+        public async Task DisposableObjectNotDisposed_ExceptionPath_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -4448,14 +4513,17 @@ class Test
         throw new NotImplementedException();
     }
 }",
-            // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
-            // Test0.cs(23,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(23, 17, "void Test.M2()", "new A()"),
-            // Test0.cs(37,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(37, 17, "void Test.M3()", "new A()"));
+            new[]
+            {
+                // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
+                // Test0.cs(23,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(23, 17, "void Test.M2()", "new A()"),
+                // Test0.cs(37,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(37, 17, "void Test.M3()", "new A()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -4500,18 +4568,21 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
-            // Test0.vb(21,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(21, 17, "Sub Test.M2()", "New A()"),
-            // Test0.vb(31,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(31, 17, "Sub Test.M3()", "New A()"));
+            new[]
+            {
+                // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
+                // Test0.vb(21,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(21, 17, "Sub Test.M2()", "New A()"),
+                // Test0.vb(31,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(31, 17, "Sub Test.M3()", "New A()"),
+            });
         }
 
         [Fact]
-        public void DisposableObjectOnlyDisposedOnExceptionPath_Diagnostic()
+        public async Task DisposableObjectOnlyDisposedOnExceptionPath_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -4588,16 +4659,19 @@ class Test
         throw new NotImplementedException();
     }
 }",
-            // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
-            // Test0.cs(29,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(29, 17, "void Test.M2()", "new A()"),
-            // Test0.cs(42,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(42, 17, "void Test.M3()", "new A()"),
-            // Test0.cs(59,17): warning CA2000: In method 'void Test.M4(bool flag)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(59, 17, "void Test.M4(bool flag)", "new A()"));
+            new[]
+            {
+                // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
+                // Test0.cs(29,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(29, 17, "void Test.M2()", "new A()"),
+                // Test0.cs(42,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(42, 17, "void Test.M3()", "new A()"),
+                // Test0.cs(59,17): warning CA2000: In method 'void Test.M4(bool flag)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(59, 17, "void Test.M4(bool flag)", "new A()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -4655,20 +4729,23 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
-            // Test0.vb(24,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(24, 17, "Sub Test.M2()", "New A()"),
-            // Test0.vb(33,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(33, 17, "Sub Test.M3()", "New A()"),
-            // Test0.vb(44,17): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(44, 17, "Sub Test.M4(flag As Boolean)", "New A()"));
+            new[]
+            {
+                // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
+                // Test0.vb(24,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(24, 17, "Sub Test.M2()", "New A()"),
+                // Test0.vb(33,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(33, 17, "Sub Test.M3()", "New A()"),
+                // Test0.vb(44,17): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(44, 17, "Sub Test.M4(flag As Boolean)", "New A()"),
+            });
         }
 
         [Fact]
-        public void DisposableObjectDisposed_FinallyPath_NoDiagnostic()
+        public async Task DisposableObjectDisposed_FinallyPath_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -4737,7 +4814,7 @@ class Test
     }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -4791,9 +4868,9 @@ End Class
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public void DisposableObjectInErrorCode_NotDisposed_Diagnostic()
+        public async Task DisposableObjectInErrorCode_NotDisposed_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -4812,15 +4889,22 @@ class B : IDisposable
         = x
     }
 }
-", TestValidationMode.AllowCompileErrors,
-            // Test0.cs(16,15): warning CA2000: In method 'void B.Dispose()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 15, "void B.Dispose()", "new A()"));
+",
+            new[]
+            {
+                // Test0.cs(16,15): warning CA2000: In method 'void B.Dispose()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(16, 15, "void B.Dispose()", "new A()"),
+                // Test0.cs(16,23): error CS1525: Invalid expression term '='
+                DiagnosticResult.CompilerError("CS1525").WithLocation(16, 23).WithMessage("Invalid expression term '='"),
+                // Test0.cs(17,12): error CS1002: ; expected
+                DiagnosticResult.CompilerError("CS1002").WithLocation(17, 12).WithMessage("; expected"),
+            });
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public void DisposableObjectInErrorCode_02_NotDisposed_Diagnostic()
+        public async Task DisposableObjectInErrorCode_02_NotDisposed_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Text;
@@ -4847,15 +4931,20 @@ class Test
     {
     }
 }
-", TestValidationMode.AllowCompileErrors,
-            // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
-            GetCSharpResultAt(20, 22, "void Test.M1()", "new StringWriter(builder)"));
+",
+            new[]
+            {
+                // Test0.cs(19,16): error CS1525: Invalid expression term ')'
+                DiagnosticResult.CompilerError("CS1525").WithLocation(19, 16).WithMessage("Invalid expression term ')'"),
+                // Test0.cs(20,22): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
+                GetCSharpResultAt(20, 22, "void Test.M1()", "new StringWriter(builder)"),
+            });
         }
 
         [Fact]
-        public void DelegateCreation_Disposed_NoDiagnostic()
+        public async Task DelegateCreation_Disposed_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -4882,7 +4971,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Class A
@@ -4906,9 +4995,9 @@ End Class");
         }
 
         [Fact, WorkItem(1602, "https://github.com/dotnet/roslyn-analyzers/issues/1602")]
-        public void MemberReferenceInQueryFromClause_Disposed_NoDiagnostic()
+        public async Task MemberReferenceInQueryFromClause_Disposed_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -4950,9 +5039,9 @@ class Test
         }
 
         [Fact]
-        public void SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnostic()
+        public async Task SystemThreadingTask_SpecialCase_NotDisposed_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 
 public class A
@@ -4970,7 +5059,7 @@ public class A
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 Imports System.Runtime.InteropServices
@@ -4990,9 +5079,9 @@ End Class");
         }
 
         [Fact]
-        public void MultipleReturnStatements_AllInstancesReturned_NoDiagnostic()
+        public async Task MultipleReturnStatements_AllInstancesReturned_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -5022,7 +5111,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 Imports System.Runtime.InteropServices
@@ -5052,9 +5141,9 @@ End Class
         }
 
         [Fact]
-        public void MultipleReturnStatements_AllInstancesEscapedWithOutParameter_NoDiagnostic()
+        public async Task MultipleReturnStatements_AllInstancesEscapedWithOutParameter_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -5083,7 +5172,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 Imports System.Runtime.InteropServices
@@ -5112,9 +5201,9 @@ End Class
         }
 
         [Fact]
-        public void MultipleReturnStatements_AllButOneInstanceReturned_Diagnostic()
+        public async Task MultipleReturnStatements_AllButOneInstanceReturned_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -5180,7 +5269,7 @@ public class Test
             // Test0.cs(39,21): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
             GetCSharpResultAt(39, 21, "A Test.M1(int flag, bool flag2, bool flag3)", "new B()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 Imports System.Runtime.InteropServices
@@ -5234,9 +5323,9 @@ End Class
         }
 
         [Fact]
-        public void MultipleReturnStatements_AllButOneInstanceEscapedWithOutParameter_Diagnostic()
+        public async Task MultipleReturnStatements_AllButOneInstanceEscapedWithOutParameter_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -5302,7 +5391,7 @@ public class Test
             // Test0.cs(39,21): warning CA2000: In method 'void Test.M1(int flag, bool flag2, bool flag3, out A a)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
             GetCSharpResultAt(39, 21, "void Test.M1(int flag, bool flag2, bool flag3, out A a)", "new B()"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 Imports System.Runtime.InteropServices
@@ -5356,9 +5445,9 @@ End Class
         }
 
         [Fact]
-        public void DisposableAllocation_AssignedToTuple_Escaped_NoDiagnostic()
+        public async Task DisposableAllocation_AssignedToTuple_Escaped_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -5386,7 +5475,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 Imports System.Runtime.InteropServices
@@ -5414,9 +5503,9 @@ End Class
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571"), WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public void DisposableAllocation_AssignedToTuple_NotDisposed_Diagnostic()
+        public async Task DisposableAllocation_AssignedToTuple_NotDisposed_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable
@@ -5441,12 +5530,15 @@ public class Test
         (A, int) b = (a, 0);
     }
 }",
-            // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
-            // Test0.cs(22,15): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(22, 15, "void Test.M2()", "new A()"));
+            new[]
+            {
+                // Test0.cs(16,15): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(16, 15, "void Test.M1()", "new A()"),
+                // Test0.cs(22,15): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                GetCSharpResultAt(22, 15, "void Test.M2()", "new A()"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading.Tasks
 Imports System.Runtime.InteropServices
@@ -5470,16 +5562,19 @@ Public Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(15,22): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(15, 22, "Sub Test.M1()", "New A()"),
-            // Test0.vb(20,22): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(20, 22, "Sub Test.M2()", "New A()"));
+            new[]
+            {
+                // Test0.vb(15,22): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(15, 22, "Sub Test.M1()", "New A()"),
+                // Test0.vb(20,22): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                GetBasicResultAt(20, 22, "Sub Test.M2()", "New A()"),
+            });
         }
 
         [Fact]
-        public void DisposableAllocation_IncrementOperator_RegressionTest()
+        public async Task DisposableAllocation_IncrementOperator_RegressionTest()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 class A : IDisposable

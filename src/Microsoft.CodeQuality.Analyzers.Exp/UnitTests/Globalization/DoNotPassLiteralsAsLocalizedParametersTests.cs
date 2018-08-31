@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.Exp.Globalization;
 using Test.Utilities;
@@ -8,25 +8,25 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Globalization
 {
+    using Verify = CSharpCodeFixVerifier<DoNotPassLiteralsAsLocalizedParameters, EmptyCodeFixProvider>;
+    using VerifyVB = VisualBasicCodeFixVerifier<DoNotPassLiteralsAsLocalizedParameters, EmptyCodeFixProvider>;
+
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
-    public partial class DoNotPassLiteralsAsLocalizedParametersTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotPassLiteralsAsLocalizedParametersTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new DoNotPassLiteralsAsLocalizedParameters();
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new DoNotPassLiteralsAsLocalizedParameters();
-
         private DiagnosticResult GetCSharpResultAt(int line, int column, string containingMethod, string parameterName, string invokedMethod, string literals) =>
-            GetCSharpResultAt(line, column, DoNotPassLiteralsAsLocalizedParameters.Rule, containingMethod, parameterName, invokedMethod, literals);
+            Verify.Diagnostic(DoNotPassLiteralsAsLocalizedParameters.Rule).WithLocation(line, column).WithArguments(containingMethod, parameterName, invokedMethod, literals);
 
         private DiagnosticResult GetBasicResultAt(int line, int column, string containingMethod, string parameterName, string invokedMethod, string literals) =>
-            GetBasicResultAt(line, column, DoNotPassLiteralsAsLocalizedParameters.Rule, containingMethod, parameterName, invokedMethod, literals);
+            VerifyVB.Diagnostic(DoNotPassLiteralsAsLocalizedParameters.Rule).WithLocation(line, column).WithArguments(containingMethod, parameterName, invokedMethod, literals);
 
         [Fact]
-        public void NonLocalizableParameter_NoDiagnostic()
+        public async Task NonLocalizableParameter_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 public class C
 {
     public void M(string param)
@@ -48,7 +48,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public Sub M(param As String)
     End Sub
@@ -68,9 +68,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_NonLiteralArgument_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_NonLiteralArgument_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -89,7 +89,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -106,9 +106,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_EmptyStringLiteralArgument_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_EmptyStringLiteralArgument_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -128,7 +128,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -146,9 +146,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_NonEmptyStringLiteralArgument_AllControlChars_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_NonEmptyStringLiteralArgument_AllControlChars_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -168,7 +168,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 Imports Microsoft.VisualBasic
 
@@ -187,9 +187,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_StringLiteralArgument_Method_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_Method_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -211,7 +211,7 @@ public class Test
             // Test0.cs(16,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(16, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -231,9 +231,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_StringLiteralArgument_Constructor_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_Constructor_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -255,7 +255,7 @@ public class Test
             // Test0.cs(16,19): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'C.C(string param)'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(16, 19, "void Test.M1(C c)", "param", "C.C(string param)", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -275,9 +275,9 @@ End Class
         }
 
         [Fact]
-        public void PropertyWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
+        public async Task PropertyWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -298,7 +298,7 @@ public class Test
             // Test0.cs(15,9): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'value' of a call to 'void C.P.set'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(15, 9, "void Test.M1(C c)", "value", "void C.P.set", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -318,9 +318,9 @@ End Class
         }
 
         [Fact]
-        public void PropertySetterWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
+        public async Task PropertySetterWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -340,7 +340,7 @@ public class Test
             // Test0.cs(14,9): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'value' of a call to 'void C.P.set'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(14, 9, "void Test.M1(C c)", "value", "void C.P.set", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -369,9 +369,9 @@ End Class
         }
 
         [Fact]
-        public void PropertySetterParameterWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
+        public async Task PropertySetterParameterWithLocalizableAttribute_StringLiteralArgument_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -392,7 +392,7 @@ public class Test
             // Test0.cs(15,9): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'value' of a call to 'void C.P.set'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(15, 9, "void Test.M1(C c)", "value", "void C.P.set", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -421,9 +421,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_MultipleStringLiteralArguments_Method_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_MultipleStringLiteralArguments_Method_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -443,12 +443,15 @@ public class Test
     }
 }
 ",
-            // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param, string message)", "a"),
-            // Test0.cs(17,18): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'message' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "m".
-            GetCSharpResultAt(17, 18, "void Test.M1(C c)", "message", "void C.M(string param, string message)", "m"));
+            new[]
+            {
+                // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param, string message)", "a"),
+                // Test0.cs(17,18): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'message' of a call to 'void C.M(string param, string message)'. Retrieve the following string(s) from a resource table instead: "m".
+                GetCSharpResultAt(17, 18, "void Test.M1(C c)", "message", "void C.M(string param, string message)", "m"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -464,16 +467,19 @@ Public Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(13,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetBasicResultAt(13, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String, message As String)", "a"),
-            // Test0.vb(13,18): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'message' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "m".
-            GetBasicResultAt(13, 18, "Sub Test.M1(c As C)", "message", "Sub C.M(param As String, message As String)", "m"));
+            new[]
+            {
+                // Test0.vb(13,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetBasicResultAt(13, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String, message As String)", "a"),
+                // Test0.vb(13,18): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'message' of a call to 'Sub C.M(param As String, message As String)'. Retrieve the following string(s) from a resource table instead: "m".
+                GetBasicResultAt(13, 18, "Sub Test.M1(c As C)", "message", "Sub C.M(param As String, message As String)", "m"),
+            });
         }
 
         [Fact]
-        public void ParameterWithLocalizableFalseAttribute_StringLiteralArgument_NoDiagnostic()
+        public async Task ParameterWithLocalizableFalseAttribute_StringLiteralArgument_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -493,7 +499,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -511,9 +517,9 @@ End Class
         }
 
         [Fact]
-        public void ContainingSymbolWithLocalizableTrueAttribute_Diagnostic()
+        public async Task ContainingSymbolWithLocalizableTrueAttribute_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 [LocalizableAttribute(true)]
@@ -536,7 +542,7 @@ public class Test
             // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 <LocalizableAttribute(True)> _
@@ -557,9 +563,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableFalseAttribute_ContainingSymbolWithLocalizableTrueAttribute_NoDiagnostic()
+        public async Task ParameterWithLocalizableFalseAttribute_ContainingSymbolWithLocalizableTrueAttribute_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 [LocalizableAttribute(true)]
@@ -580,7 +586,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 <LocalizableAttribute(True)>
@@ -599,9 +605,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableTrueAttribute_ContainingSymbolWithLocalizableFalseAttribute_Diagnostic()
+        public async Task ParameterWithLocalizableTrueAttribute_ContainingSymbolWithLocalizableFalseAttribute_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 [LocalizableAttribute(false)]
@@ -624,7 +630,7 @@ public class Test
             // Test0.cs(17,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(17, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 <LocalizableAttribute(False)> _
@@ -645,9 +651,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_OverriddenMethod_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_OverriddenMethod_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class B
@@ -685,7 +691,7 @@ public class Test
             // Test0.cs(32,29): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.LocalizableMethod(string param)'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(32, 29, "void Test.M1(C c)", "param", "void C.LocalizableMethod(string param)", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class B
@@ -718,9 +724,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_StringLiteralArgument_MultiplePossibleLiterals_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_MultiplePossibleLiterals_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -742,7 +748,7 @@ public class Test
             // Test0.cs(16,13): warning CA1303: Method 'void Test.M1(C c, bool flag)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a, b".
             GetCSharpResultAt(16, 13, "void Test.M1(C c, bool flag)", "param", "void C.M(string param)", "a, b"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -762,9 +768,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_StringLiteralArgument_MultiplePossibleLiterals_Ordering_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_MultiplePossibleLiterals_Ordering_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -786,7 +792,7 @@ public class Test
             // Test0.cs(16,13): warning CA1303: Method 'void Test.M1(C c, bool flag)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a, b".
             GetCSharpResultAt(16, 13, "void Test.M1(C c, bool flag)", "param", "void C.M(string param)", "a, b"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -806,9 +812,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_StringLiteralArgument_DefaultValue_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_StringLiteralArgument_DefaultValue_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -827,7 +833,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -844,9 +850,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_ConstantField_StringLiteralArgument_Method_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_ConstantField_StringLiteralArgument_Method_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -868,7 +874,7 @@ public class Test
             // Test0.cs(16,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(16, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -889,9 +895,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_XmlStringLiteralArgument_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_XmlStringLiteralArgument_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -911,7 +917,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -929,9 +935,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_XmlStringLiteralArgument_Filtering_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_XmlStringLiteralArgument_Filtering_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 
 public class C
@@ -953,7 +959,7 @@ public class Test
             // Test0.cs(16,13): warning CA1303: Method 'void Test.M1(C c, bool flag)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "b".
             GetCSharpResultAt(16, 13, "void Test.M1(C c, bool flag)", "param", "void C.M(string param)", "b"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 
 Public Class C
@@ -973,9 +979,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_SpecialCases_ConditionalMethod_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_ConditionalMethod_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.Diagnostics;
 
 public class C
@@ -996,7 +1002,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Diagnostics
 
 Public Class C
@@ -1015,9 +1021,9 @@ End Class
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_SpecialCases_XmlWriterMethod_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_XmlWriterMethod_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 using System.Xml;
 
@@ -1036,9 +1042,9 @@ public class Test
         writer.WriteString(str);
     }
 }
-");
+", DiagnosticResult.CompilerError("CS0246").WithLocation(14, 20).WithMessage("The type or namespace name 'XmlWriter' could not be found (are you missing a using directive or an assembly reference?)"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 Imports System.Xml
 
@@ -1053,13 +1059,13 @@ Public Class Test
         writer.WriteString(str)
     End Sub
 End Class
-");
+", DiagnosticResult.CompilerError("BC30002").WithLocation(11, 29).WithMessage("Type 'XmlWriter' is not defined."));
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_SpecialCases_SystemConsoleWriteMethods_Diagnostic()
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_SystemConsoleWriteMethods_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 public class Test
@@ -1074,16 +1080,19 @@ public class Test
     }
 }
 ",
-            // Test0.cs(9,23): warning CA1303: Method 'void Test.M1(string param)' passes a literal string as parameter 'value' of a call to 'void Console.Write(string value)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetCSharpResultAt(9, 23, "void Test.M1(string param)", "value", "void Console.Write(string value)", "a"),
-            // Test0.cs(10,27): warning CA1303: Method 'void Test.M1(string param)' passes a literal string as parameter 'value' of a call to 'void Console.WriteLine(string value)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetCSharpResultAt(10, 27, "void Test.M1(string param)", "value", "void Console.WriteLine(string value)", "a"),
-            // Test0.cs(11,23): warning CA1303: Method 'void Test.M1(string param)' passes a literal string as parameter 'format' of a call to 'void Console.Write(string format, object arg0)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetCSharpResultAt(11, 23, "void Test.M1(string param)", "format", "void Console.Write(string format, object arg0)", "a"),
-            // Test0.cs(12,27): warning CA1303: Method 'void Test.M1(string param)' passes a literal string as parameter 'format' of a call to 'void Console.WriteLine(string format, object arg0)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetCSharpResultAt(12, 27, "void Test.M1(string param)", "format", "void Console.WriteLine(string format, object arg0)", "a"));
+            new[]
+            {
+                // Test0.cs(9,23): warning CA1303: Method 'void Test.M1(string param)' passes a literal string as parameter 'value' of a call to 'void Console.Write(string value)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetCSharpResultAt(9, 23, "void Test.M1(string param)", "value", "void Console.Write(string value)", "a"),
+                // Test0.cs(10,27): warning CA1303: Method 'void Test.M1(string param)' passes a literal string as parameter 'value' of a call to 'void Console.WriteLine(string value)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetCSharpResultAt(10, 27, "void Test.M1(string param)", "value", "void Console.WriteLine(string value)", "a"),
+                // Test0.cs(11,23): warning CA1303: Method 'void Test.M1(string param)' passes a literal string as parameter 'format' of a call to 'void Console.Write(string format, object arg0)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetCSharpResultAt(11, 23, "void Test.M1(string param)", "format", "void Console.Write(string format, object arg0)", "a"),
+                // Test0.cs(12,27): warning CA1303: Method 'void Test.M1(string param)' passes a literal string as parameter 'format' of a call to 'void Console.WriteLine(string format, object arg0)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetCSharpResultAt(12, 27, "void Test.M1(string param)", "format", "void Console.WriteLine(string format, object arg0)", "a"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class Test
@@ -1096,20 +1105,23 @@ Public Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(7,23): warning CA1303: Method 'Sub Test.M1(param As String)' passes a literal string as parameter 'value' of a call to 'Sub Console.Write(value As String)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetBasicResultAt(7, 23, "Sub Test.M1(param As String)", "value", "Sub Console.Write(value As String)", "a"),
-            // Test0.vb(8,27): warning CA1303: Method 'Sub Test.M1(param As String)' passes a literal string as parameter 'value' of a call to 'Sub Console.WriteLine(value As String)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetBasicResultAt(8, 27, "Sub Test.M1(param As String)", "value", "Sub Console.WriteLine(value As String)", "a"),
-            // Test0.vb(9,23): warning CA1303: Method 'Sub Test.M1(param As String)' passes a literal string as parameter 'format' of a call to 'Sub Console.Write(format As String, arg0 As Object)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetBasicResultAt(9, 23, "Sub Test.M1(param As String)", "format", "Sub Console.Write(format As String, arg0 As Object)", "a"),
-            // Test0.vb(10,27): warning CA1303: Method 'Sub Test.M1(param As String)' passes a literal string as parameter 'format' of a call to 'Sub Console.WriteLine(format As String, arg0 As Object)'. Retrieve the following string(s) from a resource table instead: "a".
-            GetBasicResultAt(10, 27, "Sub Test.M1(param As String)", "format", "Sub Console.WriteLine(format As String, arg0 As Object)", "a"));
+            new[]
+            {
+                // Test0.vb(7,23): warning CA1303: Method 'Sub Test.M1(param As String)' passes a literal string as parameter 'value' of a call to 'Sub Console.Write(value As String)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetBasicResultAt(7, 23, "Sub Test.M1(param As String)", "value", "Sub Console.Write(value As String)", "a"),
+                // Test0.vb(8,27): warning CA1303: Method 'Sub Test.M1(param As String)' passes a literal string as parameter 'value' of a call to 'Sub Console.WriteLine(value As String)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetBasicResultAt(8, 27, "Sub Test.M1(param As String)", "value", "Sub Console.WriteLine(value As String)", "a"),
+                // Test0.vb(9,23): warning CA1303: Method 'Sub Test.M1(param As String)' passes a literal string as parameter 'format' of a call to 'Sub Console.Write(format As String, arg0 As Object)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetBasicResultAt(9, 23, "Sub Test.M1(param As String)", "format", "Sub Console.Write(format As String, arg0 As Object)", "a"),
+                // Test0.vb(10,27): warning CA1303: Method 'Sub Test.M1(param As String)' passes a literal string as parameter 'format' of a call to 'Sub Console.WriteLine(format As String, arg0 As Object)'. Retrieve the following string(s) from a resource table instead: "a".
+                GetBasicResultAt(10, 27, "Sub Test.M1(param As String)", "format", "Sub Console.WriteLine(format As String, arg0 As Object)", "a"),
+            });
         }
 
         [Fact]
-        public void ParameterWithLocalizableAttribute_SpecialCases_SystemWebUILiteralControl_NoDiagnostic()
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_SystemWebUILiteralControl_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.ComponentModel;
 using System.Web.UI;
 
@@ -1140,7 +1152,7 @@ public class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.ComponentModel
 Imports System.Web.UI
 
@@ -1169,9 +1181,9 @@ End Class
         [InlineData("CollectionAssert")]
         [InlineData("StringAssert")]
         [Theory]
-        public void ParameterWithLocalizableAttribute_SpecialCases_UnitTestApis_NoDiagnostic(string assertClassName)
+        public async Task ParameterWithLocalizableAttribute_SpecialCases_UnitTestApis_NoDiagnostic(string assertClassName)
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 using System.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -1193,7 +1205,7 @@ public class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 Imports System.ComponentModel
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
@@ -1221,9 +1233,9 @@ End Class
         [InlineData("Text")]
         [InlineData("Caption")]
         [Theory]
-        public void ParameterWithLocalizableName_StringLiteralArgument_Method_Diagnostic(string parameterName)
+        public async Task ParameterWithLocalizableName_StringLiteralArgument_Method_Diagnostic(string parameterName)
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 public class C
 {{
     public void M(string {parameterName})
@@ -1243,7 +1255,7 @@ public class Test
             // Test0.cs(14,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(14, 13, "void Test.M1(C c)", parameterName, $"void C.M(string {parameterName})", "a"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 Public Class C
     Public Sub M({parameterName} As String)
     End Sub
@@ -1267,9 +1279,9 @@ End Class
         [InlineData("Text")]
         [InlineData("Caption")]
         [Theory]
-        public void PropertyWithLocalizableName_StringLiteralArgument_Diagnostic(string propertyName)
+        public async Task PropertyWithLocalizableName_StringLiteralArgument_Diagnostic(string propertyName)
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 public class C
 {{
     public string {propertyName} {{ get; set; }}
@@ -1288,7 +1300,7 @@ public class Test
             // Test0.cs(12,9): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'value' of a call to 'void C.caption.set'. Retrieve the following string(s) from a resource table instead: "a".
             GetCSharpResultAt(12, 9, "void Test.M1(C c)", "value", $"void C.{propertyName}.set", "a"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 Public Class C
     Public Property {propertyName} As String
 End Class

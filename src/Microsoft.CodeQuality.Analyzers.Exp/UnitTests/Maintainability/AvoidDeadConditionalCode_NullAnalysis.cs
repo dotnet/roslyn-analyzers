@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.Exp.Maintainability;
 using Test.Utilities;
@@ -8,29 +8,29 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Maintainability
 {
+    using Verify = CSharpCodeFixVerifier<AvoidDeadConditionalCode, EmptyCodeFixProvider>;
+    using VerifyVB = VisualBasicCodeFixVerifier<AvoidDeadConditionalCode, EmptyCodeFixProvider>;
+
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
-    public partial class AvoidDeadConditionalCodeTests : DiagnosticAnalyzerTestBase
+    public partial class AvoidDeadConditionalCodeTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() => new AvoidDeadConditionalCode();
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new AvoidDeadConditionalCode();
+        protected DiagnosticResult GetCSharpResultAt(int line, int column, string condition, string reason) =>
+            Verify.Diagnostic(AvoidDeadConditionalCode.AlwaysTrueFalseOrNullRule).WithLocation(line, column).WithArguments(condition, reason);
 
-        protected new DiagnosticResult GetCSharpResultAt(int line, int column, string condition, string reason) =>
-            GetCSharpResultAt(line, column, AvoidDeadConditionalCode.AlwaysTrueFalseOrNullRule, condition, reason);
-
-        protected new DiagnosticResult GetBasicResultAt(int line, int column, string condition, string reason) =>
-            GetBasicResultAt(line, column, AvoidDeadConditionalCode.AlwaysTrueFalseOrNullRule, condition, reason);
+        protected DiagnosticResult GetBasicResultAt(int line, int column, string condition, string reason) =>
+            VerifyVB.Diagnostic(AvoidDeadConditionalCode.AlwaysTrueFalseOrNullRule).WithLocation(line, column).WithArguments(condition, reason);
 
         protected DiagnosticResult GetCSharpNeverNullResultAt(int line, int column, string condition, string reason) =>
-            GetCSharpResultAt(line, column, AvoidDeadConditionalCode.NeverNullRule, condition, reason);
+            Verify.Diagnostic(AvoidDeadConditionalCode.NeverNullRule).WithLocation(line, column).WithArguments(condition, reason);
 
         protected DiagnosticResult GetBasicNeverNullResultAt(int line, int column, string condition, string reason) =>
-            GetBasicResultAt(line, column, AvoidDeadConditionalCode.NeverNullRule, condition, reason);
+            VerifyVB.Diagnostic(AvoidDeadConditionalCode.NeverNullRule).WithLocation(line, column).WithArguments(condition, reason);
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void SimpleNullCompare_NoDiagnostic()
+        public async Task SimpleNullCompare_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(string param)
@@ -46,7 +46,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(param As String)
         If param Is Nothing Then
@@ -60,9 +60,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void SimpleNullCompare_AfterAssignment_Diagnostic()
+        public async Task SimpleNullCompare_AfterAssignment_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(string param)
@@ -78,12 +78,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(7,13): warning CA1508: 'param == null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(7, 13, @"param == null", "true"),
-            // Test0.cs(11,13): warning CA1508: 'null != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(11, 13, @"null != param", "false"));
+            new[]
+            {
+                // Test0.cs(7,13): warning CA1508: 'param == null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(7, 13, @"param == null", "true"),
+                // Test0.cs(11,13): warning CA1508: 'null != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(11, 13, @"null != param", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(param As String)
         param = Nothing
@@ -94,17 +97,20 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(5,12): warning CA1508: 'param Is Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(5, 12, "param Is Nothing", "True"),
-            // Test0.vb(8,12): warning CA1508: 'Nothing IsNot param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(8, 12, "Nothing IsNot param", "False"));
+            new[]
+            {
+                // Test0.vb(5,12): warning CA1508: 'param Is Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(5, 12, "param Is Nothing", "True"),
+                // Test0.vb(8,12): warning CA1508: 'Nothing IsNot param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(8, 12, "Nothing IsNot param", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ElseIf_NestedIf_NullCompare_IsNullValue_Diagnostic()
+        public async Task ElseIf_NestedIf_NullCompare_IsNullValue_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -159,20 +165,23 @@ class Test
     }
 }
 ",
-            // Test0.cs(17,18): warning CA1508: 'param == cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(17, 18, "param == cNotNull", "false"),
-            // Test0.cs(22,17): warning CA1508: 'param != cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(22, 17, "param != cNotNull", "true"),
-            // Test0.cs(29,17): warning CA1508: 'param != cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(29, 17, "param != cNull", "false"),
-            // Test0.cs(33,17): warning CA1508: 'param != cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(33, 17, "param != cNotNull", "true"),
-            // Test0.cs(41,17): warning CA1508: 'param == cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(41, 17, "param == cNull", "true"),
-            // Test0.cs(45,17): warning CA1508: 'param == cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(45, 17, "param == cNotNull", "false"));
+            new[]
+            {
+                // Test0.cs(17,18): warning CA1508: 'param == cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(17, 18, "param == cNotNull", "false"),
+                // Test0.cs(22,17): warning CA1508: 'param != cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(22, 17, "param != cNotNull", "true"),
+                // Test0.cs(29,17): warning CA1508: 'param != cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(29, 17, "param != cNull", "false"),
+                // Test0.cs(33,17): warning CA1508: 'param != cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(33, 17, "param != cNotNull", "true"),
+                // Test0.cs(41,17): warning CA1508: 'param == cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(41, 17, "param == cNull", "true"),
+                // Test0.cs(45,17): warning CA1508: 'param == cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(45, 17, "param == cNotNull", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -210,25 +219,28 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(12,16): warning CA1508: 'param Is cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(12, 16, "param Is cNotNull", "False"),
-            // Test0.vb(14,16): warning CA1508: 'param IsNot cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(14, 16, "param IsNot cNotNull", "True"),
-            // Test0.vb(19,16): warning CA1508: 'param IsNot cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(19, 16, "param IsNot cNull", "False"),
-            // Test0.vb(22,16): warning CA1508: 'param IsNot cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(22, 16, "param IsNot cNotNull", "True"),
-            // Test0.vb(28,16): warning CA1508: 'param Is cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(28, 16, "param Is cNull", "True"),
-            // Test0.vb(31,16): warning CA1508: 'param Is cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(31, 16, "param Is cNotNull", "False"));
+            new[]
+            {
+                // Test0.vb(12,16): warning CA1508: 'param Is cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(12, 16, "param Is cNotNull", "False"),
+                // Test0.vb(14,16): warning CA1508: 'param IsNot cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(14, 16, "param IsNot cNotNull", "True"),
+                // Test0.vb(19,16): warning CA1508: 'param IsNot cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(19, 16, "param IsNot cNull", "False"),
+                // Test0.vb(22,16): warning CA1508: 'param IsNot cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(22, 16, "param IsNot cNotNull", "True"),
+                // Test0.vb(28,16): warning CA1508: 'param Is cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(28, 16, "param Is cNull", "True"),
+                // Test0.vb(31,16): warning CA1508: 'param Is cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(31, 16, "param Is cNotNull", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ElseIf_NestedIf_NullCompare_IsNotNullValue_Diagnostic()
+        public async Task ElseIf_NestedIf_NullCompare_IsNotNullValue_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -283,20 +295,23 @@ class Test
     }
 }
 ",
-            // Test0.cs(17,18): warning CA1508: 'param == cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(17, 18, "param == cNull", "false"),
-            // Test0.cs(22,17): warning CA1508: 'param != cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(22, 17, "param != cNull", "true"),
-            // Test0.cs(29,17): warning CA1508: 'param != cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(29, 17, "param != cNull", "true"),
-            // Test0.cs(33,17): warning CA1508: 'param != cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(33, 17, "param != cNotNull", "false"),
-            // Test0.cs(41,17): warning CA1508: 'param == cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(41, 17, "param == cNull", "false"),
-            // Test0.cs(45,17): warning CA1508: 'param == cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(45, 17, "param == cNotNull", "true"));
+            new[]
+            {
+                // Test0.cs(17,18): warning CA1508: 'param == cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(17, 18, "param == cNull", "false"),
+                // Test0.cs(22,17): warning CA1508: 'param != cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(22, 17, "param != cNull", "true"),
+                // Test0.cs(29,17): warning CA1508: 'param != cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(29, 17, "param != cNull", "true"),
+                // Test0.cs(33,17): warning CA1508: 'param != cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(33, 17, "param != cNotNull", "false"),
+                // Test0.cs(41,17): warning CA1508: 'param == cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(41, 17, "param == cNull", "false"),
+                // Test0.cs(45,17): warning CA1508: 'param == cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(45, 17, "param == cNotNull", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -334,25 +349,28 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(12,16): warning CA1508: 'param Is cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(12, 16, "param Is cNotNull", "True"),
-            // Test0.vb(14,16): warning CA1508: 'param IsNot cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(14, 16, "param IsNot cNotNull", "False"),
-            // Test0.vb(19,16): warning CA1508: 'param IsNot cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(19, 16, "param IsNot cNull", "True"),
-            // Test0.vb(22,16): warning CA1508: 'param IsNot cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(22, 16, "param IsNot cNotNull", "False"),
-            // Test0.vb(28,16): warning CA1508: 'param Is cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(28, 16, "param Is cNull", "False"),
-            // Test0.vb(31,16): warning CA1508: 'param Is cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(31, 16, "param Is cNotNull", "True"));
+            new[]
+            {
+                // Test0.vb(12,16): warning CA1508: 'param Is cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(12, 16, "param Is cNotNull", "True"),
+                // Test0.vb(14,16): warning CA1508: 'param IsNot cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(14, 16, "param IsNot cNotNull", "False"),
+                // Test0.vb(19,16): warning CA1508: 'param IsNot cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(19, 16, "param IsNot cNull", "True"),
+                // Test0.vb(22,16): warning CA1508: 'param IsNot cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(22, 16, "param IsNot cNotNull", "False"),
+                // Test0.vb(28,16): warning CA1508: 'param Is cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(28, 16, "param Is cNull", "False"),
+                // Test0.vb(31,16): warning CA1508: 'param Is cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(31, 16, "param Is cNotNull", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ElseIf_NestedIf_NullCompare_IsNotNotNullValue_NoDiagnostic()
+        public async Task ElseIf_NestedIf_NullCompare_IsNotNotNullValue_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -408,7 +426,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -450,9 +468,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ElseIf_NestedIf_NullCompare_IsMayBeNullValue_NoDiagnostic()
+        public async Task ElseIf_NestedIf_NullCompare_IsMayBeNullValue_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -508,7 +526,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -550,9 +568,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_WhileLoop()
+        public async Task NullCompare_WhileLoop()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string param)
@@ -579,16 +597,19 @@ class Test
     }
 }
 ",
-            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(10, 17, "param == str", "true"),
-            // Test0.cs(13,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(13, 17, "param != str", "false"),
-            // Test0.cs(19, 13): warning CA1508: 'str == param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(19, 13, "str == param", "false"),
-            // Test0.cs(22,13): warning CA1508: 'str != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(22, 13, "str != param", "true"));
+            new[]
+            {
+                // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(10, 17, "param == str", "true"),
+                // Test0.cs(13,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(13, 17, "param != str", "false"),
+                // Test0.cs(19, 13): warning CA1508: 'str == param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(19, 13, "str == param", "false"),
+                // Test0.cs(22,13): warning CA1508: 'str != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(22, 13, "str != param", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     ' While loop
     Private Sub M1(ByVal param As String)
@@ -608,21 +629,24 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(8, 16, "param = str", "True"),
-            // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(10, 16, "param <> str", "False"),
-            // Test0.vb(15,12): warning CA1508: 'str = param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(15, 12, "str = param", "False"),
-            // Test0.vb(17,12): warning CA1508: 'str <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(17, 12, "str <> param", "True"));
+            new[]
+            {
+                // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(8, 16, "param = str", "True"),
+                // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(10, 16, "param <> str", "False"),
+                // Test0.vb(15,12): warning CA1508: 'str = param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(15, 12, "str = param", "False"),
+                // Test0.vb(17,12): warning CA1508: 'str <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(17, 12, "str <> param", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_WhileLoop_02()
+        public async Task NullCompare_WhileLoop_02()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string param, string param2)
@@ -638,7 +662,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     ' While loop
     Private Sub M1(param As String, param2 As String)
@@ -653,9 +677,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_WhileLoop_03()
+        public async Task NullCompare_WhileLoop_03()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public C ContainingC => new C();
@@ -678,7 +702,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public ReadOnly Property ContainingC As C
 End Class
@@ -698,9 +722,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_WhileLoop_04()
+        public async Task NullCompare_WhileLoop_04()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -723,7 +747,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -747,9 +771,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_WhileLoop_05()
+        public async Task NullCompare_WhileLoop_05()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C[] args)
@@ -779,7 +803,7 @@ class C
 {
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(args As C())
         Dim local As C = Nothing
@@ -806,9 +830,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_WhileLoop_WithBreak()
+        public async Task NullCompare_WhileLoop_WithBreak()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string param, string param2, bool flag)
@@ -843,12 +867,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(10, 17, "param == str", "true"),
-            // Test0.cs(21,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(21, 17, "param != str", "false"));
+            new[]
+            {
+                // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(10, 17, "param == str", "true"),
+                // Test0.cs(21,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(21, 17, "param != str", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     ' While loop
     Private Sub M1(param As String, param2 As String, flag As Boolean)
@@ -873,17 +900,20 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(8, 16, "param = str", "True"),
-            // Test0.vb(15,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(15, 16, "param <> str", "False"));
+            new[]
+            {
+                // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(8, 16, "param = str", "True"),
+                // Test0.vb(15,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(15, 16, "param <> str", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_WhileLoop_WithContinue()
+        public async Task NullCompare_WhileLoop_WithContinue()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string param, string param2, string param3, bool flag)
@@ -929,16 +959,19 @@ class Test
     }
 }
 ",
-            // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(11, 17, "param == str", "true"),
-            // Test0.cs(27,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(27, 17, "param != str", "false"),
-            // Test0.cs(38,13): warning CA1508: 'str == param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(38, 13, "str == param", "false"),
-            // Test0.cs(41,13): warning CA1508: 'str != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(41, 13, "str != param", "true"));
+            new[]
+            {
+                // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(11, 17, "param == str", "true"),
+                // Test0.cs(27,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(27, 17, "param != str", "false"),
+                // Test0.cs(38,13): warning CA1508: 'str == param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(38, 13, "str == param", "false"),
+                // Test0.cs(41,13): warning CA1508: 'str != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(41, 13, "str != param", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     ' While loop
     Private Sub M1(param As String, param2 As String, param3 As String, flag As Boolean)
@@ -970,21 +1003,24 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(9, 16, "param = str", "True"),
-            // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(19, 16, "param <> str", "False"),
-            // Test0.vb(27,12): warning CA1508: 'str = param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(27, 12, "str = param", "False"),
-            // Test0.vb(29,12): warning CA1508: 'str <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(29, 12, "str <> param", "True"));
+            new[]
+            {
+                // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(9, 16, "param = str", "True"),
+                // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(19, 16, "param <> str", "False"),
+                // Test0.vb(27,12): warning CA1508: 'str = param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(27, 12, "str = param", "False"),
+                // Test0.vb(29,12): warning CA1508: 'str <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(29, 12, "str <> param", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_DoWhileLoop()
+        public async Task NullCompare_DoWhileLoop()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -1016,12 +1052,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(24,13): warning CA1508: 'param == cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(24, 13, "param == cNotNull", "true"),
-            // Test0.cs(27,13): warning CA1508: 'param != cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(27, 13, "param != cNotNull", "false"));
+            new[]
+            {
+                // Test0.cs(24,13): warning CA1508: 'param == cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(24, 13, "param == cNotNull", "true"),
+                // Test0.cs(27,13): warning CA1508: 'param != cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(27, 13, "param != cNotNull", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -1062,21 +1101,24 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(18,12): warning CA1508: 'param Is cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(18, 12, "param Is cNotNull", "True"),
-            // Test0.vb(20,12): warning CA1508: 'param IsNot str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(20, 12, "param IsNot cNotNull", "False"),
-            // Test0.vb(36,12): warning CA1508: 'param2 Is str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(36, 12, "param2 Is cNotNull", "True"),
-            // Test0.vb(38,12): warning CA1508: 'param2 IsNot str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(38, 12, "param2 IsNot cNotNull", "False"));
+            new[]
+            {
+                // Test0.vb(18,12): warning CA1508: 'param Is cNotNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(18, 12, "param Is cNotNull", "True"),
+                // Test0.vb(20,12): warning CA1508: 'param IsNot str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(20, 12, "param IsNot cNotNull", "False"),
+                // Test0.vb(36,12): warning CA1508: 'param2 Is str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(36, 12, "param2 Is cNotNull", "True"),
+                // Test0.vb(38,12): warning CA1508: 'param2 IsNot str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(38, 12, "param2 IsNot cNotNull", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_DoWhileLoop_02()
+        public async Task NullCompare_DoWhileLoop_02()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public C ContainingC => new C();
@@ -1100,7 +1142,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public ReadOnly Property ContainingC As C
 End Class
@@ -1120,9 +1162,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_DoWhileLoop_WithBreak()
+        public async Task NullCompare_DoWhileLoop_WithBreak()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -1160,7 +1202,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -1213,9 +1255,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_DoWhileLoop_WithContinue()
+        public async Task NullCompare_DoWhileLoop_WithContinue()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -1270,12 +1312,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(39,13): warning CA1508: 'param == cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(39, 13, "param == cNull", "true"),
-            // Test0.cs(42,13): warning CA1508: 'param != cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(42, 13, "param != cNull", "false"));
+            new[]
+            {
+                // Test0.cs(39,13): warning CA1508: 'param == cNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(39, 13, "param == cNull", "true"),
+                // Test0.cs(42,13): warning CA1508: 'param != cNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(42, 13, "param != cNull", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -1352,25 +1397,28 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(12,16): warning CA1508: 'cNull Is param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(12, 16, "cNull Is param", "False"),
-            // Test0.vb(22,16): warning CA1508: 'cNull IsNot param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(22, 16, "cNull IsNot param", "True"),
-            // Test0.vb(30,12): warning CA1508: 'param Is cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(30, 12, "param Is cNull", "True"),
-            // Test0.vb(32,12): warning CA1508: 'param IsNot cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(32, 12, "param IsNot cNull", "False"),
-            // Test0.vb(66,12): warning CA1508: 'param2 Is cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(66, 12, "param2 Is cNull", "True"),
-            // Test0.vb(68,12): warning CA1508: 'param2 IsNot cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(68, 12, "param2 IsNot cNull", "False"));
+            new[]
+            {
+                // Test0.vb(12,16): warning CA1508: 'cNull Is param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(12, 16, "cNull Is param", "False"),
+                // Test0.vb(22,16): warning CA1508: 'cNull IsNot param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(22, 16, "cNull IsNot param", "True"),
+                // Test0.vb(30,12): warning CA1508: 'param Is cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(30, 12, "param Is cNull", "True"),
+                // Test0.vb(32,12): warning CA1508: 'param IsNot cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(32, 12, "param IsNot cNull", "False"),
+                // Test0.vb(66,12): warning CA1508: 'param2 Is cNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(66, 12, "param2 Is cNull", "True"),
+                // Test0.vb(68,12): warning CA1508: 'param2 IsNot cNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(68, 12, "param2 IsNot cNull", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_DoUntilLoop()
+        public async Task NullCompare_DoUntilLoop()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     ' Do-Until top loop
     Private Sub M(ByVal param As String)
@@ -1408,25 +1456,28 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(8, 16, "param = str", "True"),
-            // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(10, 16, "param <> str", "False"),
-            // Test0.vb(15,12): warning CA1508: 'str = param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(15, 12, "str = param", "False"),
-            // Test0.vb(17,12): warning CA1508: 'str <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(17, 12, "str <> param", "True"),
-            // Test0.vb(33,12): warning CA1508: 'param2 = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(33, 12, "param2 = str", "True"),
-            // Test0.vb(35,12): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(35, 12, "param2 <> str", "False"));
+            new[]
+            {
+                // Test0.vb(8,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(8, 16, "param = str", "True"),
+                // Test0.vb(10,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(10, 16, "param <> str", "False"),
+                // Test0.vb(15,12): warning CA1508: 'str = param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(15, 12, "str = param", "False"),
+                // Test0.vb(17,12): warning CA1508: 'str <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(17, 12, "str <> param", "True"),
+                // Test0.vb(33,12): warning CA1508: 'param2 = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(33, 12, "param2 = str", "True"),
+                // Test0.vb(35,12): warning CA1508: 'param2 <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(35, 12, "param2 <> str", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ForLoop()
+        public async Task NullCompare_ForLoop()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C param, C param2)
@@ -1473,25 +1524,28 @@ class C
 {
 }
 ",
-            // Test0.cs(10,17): warning CA1508: 'param == cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(10, 17, "param == cNotNull", "true"),
-            // Test0.cs(13,17): warning CA1508: 'param != cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(13, 17, "param != cNotNull", "false"),
-            // Test0.cs(27,13): warning CA1508: 'cNotNull == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(27, 13, "cNotNull == param2", "true"),
-            // Test0.cs(30,13): warning CA1508: 'cNotNull != param2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(30, 13, "cNotNull != param2", "false"),
-            // Test0.cs(35,13): warning CA1508: 'cNotNull == param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(35, 13, "cNotNull == param", "true"),
-            // Test0.cs(38,13): warning CA1508: 'cNotNull != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(38, 13, "cNotNull != param", "false"));
+            new[]
+            {
+                // Test0.cs(10,17): warning CA1508: 'param == cNotNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(10, 17, "param == cNotNull", "true"),
+                // Test0.cs(13,17): warning CA1508: 'param != cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(13, 17, "param != cNotNull", "false"),
+                // Test0.cs(27,13): warning CA1508: 'cNotNull == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(27, 13, "cNotNull == param2", "true"),
+                // Test0.cs(30,13): warning CA1508: 'cNotNull != param2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(30, 13, "cNotNull != param2", "false"),
+                // Test0.cs(35,13): warning CA1508: 'cNotNull == param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(35, 13, "cNotNull == param", "true"),
+                // Test0.cs(38,13): warning CA1508: 'cNotNull != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(38, 13, "cNotNull != param", "false"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ForLoop_02()
+        public async Task NullCompare_ForLoop_02()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C[] args)
@@ -1514,9 +1568,9 @@ class C
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ForLoop_03()
+        public async Task NullCompare_ForLoop_03()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C[] args)
@@ -1543,7 +1597,7 @@ class C
 {
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(args As C())
         Dim local As C = Nothing
@@ -1568,9 +1622,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ForLoop_WithBreak()
+        public async Task NullCompare_ForLoop_WithBreak()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string param, string param2, bool flag)
@@ -1605,12 +1659,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(10, 17, "param == str", "true"),
-            // Test0.cs(21,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(21, 17, "param != str", "false"));
+            new[]
+            {
+                // Test0.cs(10,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(10, 17, "param == str", "true"),
+                // Test0.cs(21,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(21, 17, "param != str", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     ' While loop
     Private Sub M1(param As String, param2 As String, flag As Boolean)
@@ -1636,17 +1693,20 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(9, 16, "param = str", "True"),
-            // Test0.vb(16,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(16, 16, "param <> str", "False"));
+            new[]
+            {
+                // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(9, 16, "param = str", "True"),
+                // Test0.vb(16,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(16, 16, "param <> str", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ForLoop_WithContinue()
+        public async Task NullCompare_ForLoop_WithContinue()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string param, string param2, string param3, bool flag)
@@ -1692,16 +1752,19 @@ class Test
     }
 }
 ",
-            // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(11, 17, "param == str", "true"),
-            // Test0.cs(27,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(27, 17, "param != str", "false"),
-            // Test0.cs(38,13): warning CA1508: 'str == param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(38, 13, "str == param", "false"),
-            // Test0.cs(41,13): warning CA1508: 'str != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(41, 13, "str != param", "true"));
+            new[]
+            {
+                // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(11, 17, "param == str", "true"),
+                // Test0.cs(27,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(27, 17, "param != str", "false"),
+                // Test0.cs(38,13): warning CA1508: 'str == param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(38, 13, "str == param", "false"),
+                // Test0.cs(41,13): warning CA1508: 'str != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(41, 13, "str != param", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Private Sub M1(param As String, param2 As String, param3 As String, flag As Boolean)
         Dim str As String = Nothing
@@ -1733,17 +1796,20 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(9, 16, "param = str", "True"),
-            // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(19, 16, "param <> str", "False"));
+            new[]
+            {
+                // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(9, 16, "param = str", "True"),
+                // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(19, 16, "param <> str", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ValueCompare_ForLoop()
+        public async Task ValueCompare_ForLoop()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string[] args, int j)
@@ -1760,7 +1826,7 @@ class Test
     }
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(args As C(), j As Integer)
         Dim i As Integer
@@ -1780,9 +1846,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ForEachLoop()
+        public async Task NullCompare_ForEachLoop()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C[] args)
@@ -1809,7 +1875,7 @@ class C
 {
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(args As C())
         Dim local As C = Nothing
@@ -1833,9 +1899,9 @@ End Class
         }
 
         [Fact]
-        public void NullCompare_ForEachLoop_WithBreak()
+        public async Task NullCompare_ForEachLoop_WithBreak()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string param, string param2, bool flag)
@@ -1871,12 +1937,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(11, 17, "param == str", "true"),
-            // Test0.cs(22,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(22, 17, "param != str", "false"));
+            new[]
+            {
+                // Test0.cs(11,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(11, 17, "param == str", "true"),
+                // Test0.cs(22,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(22, 17, "param != str", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     ' While loop
     Private Sub M1(param As String, param2 As String, flag As Boolean)
@@ -1902,17 +1971,20 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(9, 16, "param = str", "True"),
-            // Test0.vb(16,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(16, 16, "param <> str", "False"));
+            new[]
+            {
+                // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(9, 16, "param = str", "True"),
+                // Test0.vb(16,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(16, 16, "param <> str", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ForEachLoop_WithContinue()
+        public async Task NullCompare_ForEachLoop_WithContinue()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(string param, string param2, string param3, bool flag)
@@ -1967,16 +2039,19 @@ class Test
     }
 }
 ",
-            // Test0.cs(12,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(12, 17, "param == str", "true"),
-            // Test0.cs(28,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(28, 17, "param != str", "false"),
-            // Test0.cs(39,13): warning CA1508: 'str == param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(39, 13, "str == param", "true"),
-            // Test0.cs(42,13): warning CA1508: 'str != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(42, 13, "str != param", "false"));
+            new[]
+            {
+                // Test0.cs(12,17): warning CA1508: 'param == str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(12, 17, "param == str", "true"),
+                // Test0.cs(28,17): warning CA1508: 'param != str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(28, 17, "param != str", "false"),
+                // Test0.cs(39,13): warning CA1508: 'str == param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(39, 13, "str == param", "true"),
+                // Test0.cs(42,13): warning CA1508: 'str != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(42, 13, "str != param", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Private Sub M1(param As String, param2 As String, param3 As String, flag As Boolean)
         Dim str As String = Nothing
@@ -2014,21 +2089,24 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(9, 16, "param = str", "True"),
-            // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(19, 16, "param <> str", "False"),
-            // Test0.vb(27,12): warning CA1508: 'str = param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(27, 12, "str = param", "True"),
-            // Test0.vb(29,12): warning CA1508: 'str <> param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(29, 12, "str <> param", "False"));
+            new[]
+            {
+                // Test0.vb(9,16): warning CA1508: 'param = str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(9, 16, "param = str", "True"),
+                // Test0.vb(19,16): warning CA1508: 'param <> str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(19, 16, "param <> str", "False"),
+                // Test0.vb(27,12): warning CA1508: 'str = param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(27, 12, "str = param", "True"),
+                // Test0.vb(29,12): warning CA1508: 'str <> param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(29, 12, "str <> param", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_SwitchStatement_01_NoDiagnostic()
+        public async Task NullCompare_SwitchStatement_01_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(C param, int i)
@@ -2057,7 +2135,7 @@ class C
 {
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class Test
     Private Sub M(param As C, i As Integer)
         Select Case i
@@ -2081,9 +2159,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_SwitchStatement_02_NoDiagnostic()
+        public async Task NullCompare_SwitchStatement_02_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C param, int i)
@@ -2112,7 +2190,7 @@ class C
 {
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class Test
     Private Sub M(param As C, i As Integer)
         Select Case i
@@ -2136,9 +2214,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_SwitchStatement_03_NoDiagnostic()
+        public async Task NullCompare_SwitchStatement_03_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C param, int i)
@@ -2167,7 +2245,7 @@ class C
 {
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class Test
     Private Sub M(param As C, i As Integer)
         Select Case i
@@ -2193,9 +2271,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_SwitchStatement_01_Diagnostic()
+        public async Task NullCompare_SwitchStatement_01_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C param, int i)
@@ -2227,7 +2305,7 @@ class C
             // Test0.cs(20,13): warning CA1508: 'param != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(20, 13, "param != null", "true"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class Test
     Private Sub M(param As C, i As Integer)
         Select Case i
@@ -2253,9 +2331,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_SwitchStatement_02_Diagnostic()
+        public async Task NullCompare_SwitchStatement_02_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(C param, int i)
@@ -2287,7 +2365,7 @@ class C
             // Test0.cs(20,13): warning CA1508: 'param != null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(20, 13, "param != null", "false"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class Test
     Private Sub M(param As C, i As Integer)
         Select Case i
@@ -2314,9 +2392,9 @@ End Class
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCompare_CopyAnalysis()
+        public async Task NullCompare_CopyAnalysis()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(C param, C param2)
@@ -2337,12 +2415,15 @@ class C
 {
 }
 ",
-            // Test0.cs(7,56): warning CA1508: 'param == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(7, 56, "param == param2", "true"),
-            // Test0.cs(12,34): warning CA1508: 'param2 != cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(12, 34, "param2 != cNotNull", "false"));
+            new[]
+            {
+                // Test0.cs(7,56): warning CA1508: 'param == param2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(7, 56, "param == param2", "true"),
+                // Test0.cs(12,34): warning CA1508: 'param2 != cNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(12, 34, "param2 != cNotNull", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(param As C, param2 As C)
         Dim cNotNull As New C()
@@ -2358,17 +2439,20 @@ End Module
 Class C
 End Class
 ",
-            // Test0.vb(5,65): warning CA1508: 'param Is param2' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(5, 65, "param Is param2", "True"),
-            // Test0.vb(9,40): warning CA1508: 'param2 IsNot cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(9, 40, "param2 IsNot cNotNull", "False"));
+            new[]
+            {
+                // Test0.vb(5,65): warning CA1508: 'param Is param2' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(5, 65, "param Is param2", "True"),
+                // Test0.vb(9,40): warning CA1508: 'param2 IsNot cNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(9, 40, "param2 IsNot cNotNull", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ConditionalOr_NoDiagnostic()
+        public async Task NullCompare_ConditionalOr_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(string param, string param2)
@@ -2392,7 +2476,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(param As String, param2 As String)
         Dim strNotNull = """"
@@ -2413,9 +2497,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ConditionalOr_Diagnostic()
+        public async Task NullCompare_ConditionalOr_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(string param, string param2)
@@ -2434,12 +2518,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(10,33): warning CA1508: 'param == strNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(10, 33, "param == strNotNull", "false"),
-            // Test0.cs(14,36): warning CA1508: 'strNull != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(14, 36, "strNull != param", "true"));
+            new[]
+            {
+                // Test0.cs(10,33): warning CA1508: 'param == strNotNull' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(10, 33, "param == strNotNull", "false"),
+                // Test0.cs(14,36): warning CA1508: 'strNull != param' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(14, 36, "strNull != param", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(param As String, param2 As String)
         Dim strNotNull = """"
@@ -2453,17 +2540,20 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(8,36): warning CA1508: 'param = strNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(8, 36, "param = strNotNull", "False"),
-            // Test0.vb(11,39): warning CA1508: 'strNull <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(11, 39, "strNull <> param", "True"));
+            new[]
+            {
+                // Test0.vb(8,36): warning CA1508: 'param = strNotNull' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(8, 36, "param = strNotNull", "False"),
+                // Test0.vb(11,39): warning CA1508: 'strNull <> param' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(11, 39, "strNull <> param", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ConditionalAnd_NoDiagnostic()
+        public async Task NullCompare_ConditionalAnd_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(string param, string param2)
@@ -2503,7 +2593,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(param As String, param2 As String, flag As Boolean)
         Dim strNotNull = """"
@@ -2536,9 +2626,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ConditionalAnd_Diagnostic()
+        public async Task NullCompare_ConditionalAnd_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(string param, string param2)
@@ -2557,12 +2647,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(10,36): warning CA1508: 'param != strNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(10, 36, "param != strNull", "true"),
-            // Test0.cs(14,59): warning CA1508: 'strNull != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(14, 59, "strNull != param", "false"));
+            new[]
+            {
+                // Test0.cs(10,36): warning CA1508: 'param != strNull' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(10, 36, "param != strNull", "true"),
+                // Test0.cs(14,59): warning CA1508: 'strNull != param' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(14, 59, "strNull != param", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(param As String, param2 As String)
         Dim strNotNull = """"
@@ -2576,17 +2669,20 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(8,39): warning CA1508: 'param <> strNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(8, 39, "param <> strNull", "True"),
-            // Test0.vb(11,66): warning CA1508: 'strNull <> param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(11, 66, "strNull <> param", "False"));
+            new[]
+            {
+                // Test0.vb(8,39): warning CA1508: 'param <> strNull' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(8, 39, "param <> strNull", "True"),
+                // Test0.vb(11,66): warning CA1508: 'strNull <> param' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(11, 66, "strNull <> param", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ConditionaAndOrNullCompare_Diagnostic()
+        public async Task ConditionaAndOrNullCompare_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(string param)
@@ -2602,12 +2698,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(7,30): warning CA1508: 'param == str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(7, 30, "param == str", "false"),
-            // Test0.cs(11,30): warning CA1508: 'param != str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(11, 30, "param != str", "true"));
+            new[]
+            {
+                // Test0.cs(7,30): warning CA1508: 'param == str' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(7, 30, "param == str", "false"),
+                // Test0.cs(11,30): warning CA1508: 'param != str' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(11, 30, "param != str", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Sub M1(param As String)
         Dim str = """"
@@ -2618,17 +2717,20 @@ Module Test
         End If
     End Sub
 End Module",
-            // Test0.vb(5,36): warning CA1508: 'param = str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(5, 36, "param = str", "False"),
-            // Test0.vb(8,36): warning CA1508: 'param <> str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(8, 36, "param <> str", "True"));
+            new[]
+            {
+                // Test0.vb(5,36): warning CA1508: 'param = str' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(5, 36, "param = str", "False"),
+                // Test0.vb(8,36): warning CA1508: 'param <> str' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(8, 36, "param <> str", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ContractCheck_NoDiagnostic()
+        public async Task NullCompare_ContractCheck_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -2647,7 +2749,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -2664,9 +2766,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_ContractCheck_Diagnostic()
+        public async Task NullCompare_ContractCheck_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -2702,16 +2804,19 @@ class Test
     }
 }
 ",
-            // Test0.cs(12,56): warning CA1508: 'param == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(12, 56, "param == c", "true"),
-            // Test0.cs(19,56): warning CA1508: 'param != c' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(19, 56, "param != c", "false"),
-            // Test0.cs(26,56): warning CA1508: 'param == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(26, 56, "param == null", "false"),
-            // Test0.cs(33,56): warning CA1508: 'param != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(33, 56, "param != null", "true"));
+            new[]
+            {
+                // Test0.cs(12,56): warning CA1508: 'param == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(12, 56, "param == c", "true"),
+                // Test0.cs(19,56): warning CA1508: 'param != c' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(19, 56, "param != c", "false"),
+                // Test0.cs(26,56): warning CA1508: 'param == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(26, 56, "param == null", "false"),
+                // Test0.cs(33,56): warning CA1508: 'param != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(33, 56, "param != null", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -2740,21 +2845,24 @@ Module Test
         System.Diagnostics.Contracts.Contract.Requires(param IsNot Nothing)
     End Sub
 End Module",
-            // Test0.vb(9,56): warning CA1508: 'param Is c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(9, 56, "param Is c", "True"),
-            // Test0.vb(15,56): warning CA1508: 'param IsNot c' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(15, 56, "param IsNot c", "False"),
-            // Test0.vb(21,56): warning CA1508: 'param Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(21, 56, "param Is Nothing", "False"),
-            // Test0.vb(27,56): warning CA1508: 'param IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(27, 56, "param IsNot Nothing", "True"));
+            new[]
+            {
+                // Test0.vb(9,56): warning CA1508: 'param Is c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(9, 56, "param Is c", "True"),
+                // Test0.vb(15,56): warning CA1508: 'param IsNot c' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(15, 56, "param IsNot c", "False"),
+                // Test0.vb(21,56): warning CA1508: 'param Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(21, 56, "param Is Nothing", "False"),
+                // Test0.vb(27,56): warning CA1508: 'param IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(27, 56, "param IsNot Nothing", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_InAssignment_Diagnostic()
+        public async Task NullCompare_InAssignment_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -2772,7 +2880,7 @@ class Test
             // Test0.cs(12,21): warning CA1508: 'param == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(12, 21, "param == c", "true"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -2789,9 +2897,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCompare_Nested_NoDiagnostic()
+        public async Task NullCompare_Nested_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -2813,7 +2921,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -2834,9 +2942,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCoalesce_NoDiagnostic()
+        public async Task NullCoalesce_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -2853,7 +2961,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -2869,9 +2977,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCoalesce_Diagnostic()
+        public async Task NullCoalesce_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -2897,14 +3005,17 @@ class Test
     }
 }
 ",
-            // Test0.cs(11,17): warning CA1508: 'c' is always 'null'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(11, 17, "c", "null"),
-            // Test0.cs(17,17): warning CA1508: 'c' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpNeverNullResultAt(17, 17, "c", "null"),
-            // Test0.cs(23,17): warning CA1508: 'local' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpNeverNullResultAt(23, 17, "local", "null"));
+            new[]
+            {
+                // Test0.cs(11,17): warning CA1508: 'c' is always 'null'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(11, 17, "c", "null"),
+                // Test0.cs(17,17): warning CA1508: 'c' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpNeverNullResultAt(17, 17, "c", "null"),
+                // Test0.cs(23,17): warning CA1508: 'local' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpNeverNullResultAt(23, 17, "local", "null"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -2919,17 +3030,20 @@ Module Test
         param = If (c, New C())
     End Sub
 End Module",
-            // Test0.vb(8,21): warning CA1508: 'c' is always 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(8, 21, "c", "Nothing"),
-            // Test0.vb(13,21): warning CA1508: 'c' is never 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicNeverNullResultAt(13, 21, "c", "Nothing"));
+            new[]
+            {
+                // Test0.vb(8,21): warning CA1508: 'c' is always 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(8, 21, "c", "Nothing"),
+                // Test0.vb(13,21): warning CA1508: 'c' is never 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicNeverNullResultAt(13, 21, "c", "Nothing"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCoalesce_NullableValueType_NoDiagnostic()
+        public async Task NullCoalesce_NullableValueType_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public int X;
@@ -2944,7 +3058,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public X As Integer
 End Class
@@ -2958,9 +3072,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCoalesce_NullableValueType_Diagnostic()
+        public async Task NullCoalesce_NullableValueType_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(int? x)
@@ -2976,7 +3090,7 @@ class Test
             // Test0.cs(7,13): warning CA1508: 'x == null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(7, 13, "x == null", "true"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Module Test
     Private Sub M1(x As Integer?)
         x = Nothing
@@ -2990,9 +3104,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ConditionalAccess_NoDiagnostic()
+        public async Task ConditionalAccess_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public int X;
@@ -3010,7 +3124,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public X As Integer
 End Class
@@ -3027,9 +3141,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ConditionalAccess_Diagnostic()
+        public async Task ConditionalAccess_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public int X;
@@ -3056,14 +3170,17 @@ class Test
     }
 }
 ",
-            // Test0.cs(12,17): warning CA1508: 'param' is always 'null'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(12, 17, "param", "null"),
-            // Test0.cs(18,17): warning CA1508: 'param' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpNeverNullResultAt(18, 17, "param", "null"),
-            // Test0.cs(24,17): warning CA1508: 'local' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpNeverNullResultAt(24, 17, "local", "null"));
+            new[]
+            {
+                // Test0.cs(12,17): warning CA1508: 'param' is always 'null'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(12, 17, "param", "null"),
+                // Test0.cs(18,17): warning CA1508: 'param' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpNeverNullResultAt(18, 17, "param", "null"),
+                // Test0.cs(24,17): warning CA1508: 'local' is never 'null'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpNeverNullResultAt(24, 17, "local", "null"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public X As Integer
 End Class
@@ -3079,17 +3196,20 @@ Module Test
         Dim x = param?.X
     End Sub
 End Module",
-            // Test0.vb(9,17): warning CA1508: 'param' is always 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(9, 17, "param", "Nothing"),
-            // Test0.vb(14,17): warning CA1508: 'param' is never 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicNeverNullResultAt(14, 17, "param", "Nothing"));
+            new[]
+            {
+                // Test0.vb(9,17): warning CA1508: 'param' is always 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(9, 17, "param", "Nothing"),
+                // Test0.vb(14,17): warning CA1508: 'param' is never 'Nothing'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicNeverNullResultAt(14, 17, "param", "Nothing"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ConditionalAccessNullCoalesce_Field_NoDiagnostic()
+        public async Task ConditionalAccessNullCoalesce_Field_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public int X;
@@ -3106,7 +3226,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public X As Integer
 End Class
@@ -3123,9 +3243,9 @@ End Class");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterTryCast_NoDiagnostic()
+        public async Task NullCheck_AfterTryCast_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -3157,7 +3277,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -3186,9 +3306,9 @@ End Class");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterTryCast_02_NoDiagnostic()
+        public async Task NullCheck_AfterTryCast_02_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -3247,7 +3367,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -3295,9 +3415,9 @@ End Class");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterTryCast_Diagnostic()
+        public async Task NullCheck_AfterTryCast_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -3329,12 +3449,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(16,13): warning CA1508: 'd == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(16, 13, "d == null", "false"),
-            // Test0.cs(26,13): warning CA1508: 'd == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(26, 13, "d == c", "true"));
+            new[]
+            {
+                // Test0.cs(16,13): warning CA1508: 'd == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(16, 13, "d == null", "false"),
+                // Test0.cs(26,13): warning CA1508: 'd == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(26, 13, "d == c", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -3359,18 +3482,21 @@ Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(13,12): warning CA1508: 'd Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(13, 12, "d Is Nothing", "False"),
-            // Test0.vb(21,12): warning CA1508: 'd Is c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(21, 12, "d Is c", "True"));
+            new[]
+            {
+                // Test0.vb(13,12): warning CA1508: 'd Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(13, 12, "d Is Nothing", "False"),
+                // Test0.vb(21,12): warning CA1508: 'd Is c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(21, 12, "d Is c", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterTryCast_02_Diagnostic()
+        public async Task NullCheck_AfterTryCast_02_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -3466,16 +3592,19 @@ class Test
     }
 }
 ",
-            // Test0.cs(36,13): warning CA1508: 'd == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(36, 13, "d == null", "false"),
-            // Test0.cs(54,13): warning CA1508: 'd != c' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(54, 13, "d != c", "false"),
-            // Test0.cs(72,13): warning CA1508: 'd == null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(72, 13, "d == null", "true"),
-            // Test0.cs(90,13): warning CA1508: 'd != c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(90, 13, "d != c", "true"));
+            new[]
+            {
+                // Test0.cs(36,13): warning CA1508: 'd == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(36, 13, "d == null", "false"),
+                // Test0.cs(54,13): warning CA1508: 'd != c' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(54, 13, "d != c", "false"),
+                // Test0.cs(72,13): warning CA1508: 'd == null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(72, 13, "d == null", "true"),
+                // Test0.cs(90,13): warning CA1508: 'd != c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(90, 13, "d != c", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -3553,22 +3682,25 @@ Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(35,12): warning CA1508: 'd Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(35, 12, "d Is Nothing", "False"),
-            // Test0.vb(48,12): warning CA1508: 'd IsNot c' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(48, 12, "d IsNot c", "False"),
-            // Test0.vb(61,12): warning CA1508: 'd Is Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(61, 12, "d Is Nothing", "True"),
-            // Test0.vb(74,12): warning CA1508: 'd IsNot c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(74, 12, "d IsNot c", "True"));
+            new[]
+            {
+                // Test0.vb(35,12): warning CA1508: 'd Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(35, 12, "d Is Nothing", "False"),
+                // Test0.vb(48,12): warning CA1508: 'd IsNot c' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(48, 12, "d IsNot c", "False"),
+                // Test0.vb(61,12): warning CA1508: 'd Is Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(61, 12, "d Is Nothing", "True"),
+                // Test0.vb(74,12): warning CA1508: 'd IsNot c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(74, 12, "d IsNot c", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterTryCast_Interfaces_NoDiagnostic()
+        public async Task NullCheck_AfterTryCast_Interfaces_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 interface I
 {
 }
@@ -3611,7 +3743,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Interface I
 End Interface
 
@@ -3650,9 +3782,9 @@ End Class");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterTryCast_Interfaces_Diagnostic()
+        public async Task NullCheck_AfterTryCast_Interfaces_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 interface I
 {
 }
@@ -3688,12 +3820,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(24,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(24, 13, "i == null", "false"),
-            // Test0.cs(30,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(30, 13, "i == null", "false"));
+            new[]
+            {
+                // Test0.cs(24,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(24, 13, "i == null", "false"),
+                // Test0.cs(30,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(30, 13, "i == null", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Interface I
 End Interface
 
@@ -3722,18 +3857,21 @@ Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(20,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(20, 12, "i Is Nothing", "False"),
-            // Test0.vb(25,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(25, 12, "i Is Nothing", "False"));
+            new[]
+            {
+                // Test0.vb(20,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(20, 12, "i Is Nothing", "False"),
+                // Test0.vb(25,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(25, 12, "i Is Nothing", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterTryCast_TypeParameter_NoDiagnostic()
+        public async Task NullCheck_AfterTryCast_TypeParameter_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -3775,7 +3913,7 @@ class Test<T>
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -3811,9 +3949,9 @@ End Class");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterTryCast_TypeParameter_Diagnostic()
+        public async Task NullCheck_AfterTryCast_TypeParameter_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -3843,7 +3981,7 @@ class Test<T>
             // Test0.cs(21,13): warning CA1508: 'c == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(21, 13, "c == null", "false"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -3870,9 +4008,9 @@ End Class",
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_NoDiagnostic()
+        public async Task NullCheck_AfterDirectCast_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -3903,7 +4041,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -3930,9 +4068,9 @@ End Class");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_NarrowingConversion_NoDiagnostic()
+        public async Task NullCheck_AfterDirectCast_NarrowingConversion_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(int value)
@@ -3948,9 +4086,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_Diagnostic()
+        public async Task NullCheck_AfterDirectCast_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -3979,7 +4117,7 @@ class Test
             // Test0.cs(20,13): warning CA1508: 'd == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(20, 13, "d == null", "false"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -4006,9 +4144,9 @@ End Class",
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_02_Diagnostic()
+        public async Task NullCheck_AfterDirectCast_02_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4037,7 +4175,7 @@ class Test
             // Test0.cs(20,13): warning CA1508: 'd == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(20, 13, "d == c", "true"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -4064,9 +4202,9 @@ End Class",
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_03_Diagnostic()
+        public async Task NullCheck_AfterDirectCast_03_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4124,14 +4262,17 @@ class Test
     }
 }
 ",
-            // Test0.cs(24,13): warning CA1508: 'd == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(24, 13, "d == null", "false"),
-            // Test0.cs(29,13): warning CA1508: 'd == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(29, 13, "d == c", "true"),
-            // Test0.cs(52,13): warning CA1508: 'd == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(52, 13, "d == c", "true"));
+            new[]
+            {
+                // Test0.cs(24,13): warning CA1508: 'd == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(24, 13, "d == null", "false"),
+                // Test0.cs(29,13): warning CA1508: 'd == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(29, 13, "d == c", "true"),
+                // Test0.cs(52,13): warning CA1508: 'd == c' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(52, 13, "d == c", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -4174,20 +4315,23 @@ Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(18,12): warning CA1508: 'd Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(18, 12, "d Is Nothing", "False"),
-            // Test0.vb(22,12): warning CA1508: 'd Is c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(22, 12, "d Is c", "True"),
-            // Test0.vb(39,12): warning CA1508: 'd Is c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(39, 12, "d Is c", "True"));
+            new[]
+            {
+                // Test0.vb(18,12): warning CA1508: 'd Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(18, 12, "d Is Nothing", "False"),
+                // Test0.vb(22,12): warning CA1508: 'd Is c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(22, 12, "d Is c", "True"),
+                // Test0.vb(39,12): warning CA1508: 'd Is c' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(39, 12, "d Is c", "True"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_04_Diagnostic()
+        public async Task NullCheck_AfterDirectCast_04_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4213,7 +4357,7 @@ class Test
             // Test0.cs(17,13): warning CA1508: 'd == local' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(17, 13, "d == local", "true"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -4238,9 +4382,9 @@ End Class",
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_05_Diagnostic()
+        public async Task NullCheck_AfterDirectCast_05_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4270,7 +4414,7 @@ class Test
             // Test0.cs(21,13): warning CA1508: 'd == local' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(21, 13, "d == local", "true"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -4299,9 +4443,9 @@ End Class",
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_Interfaces_NoDiagnostic()
+        public async Task NullCheck_AfterDirectCast_Interfaces_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 interface I
 {
 }
@@ -4345,7 +4489,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Interface I
 End Interface
 
@@ -4384,9 +4528,9 @@ End Class");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_Interfaces_Diagnostic()
+        public async Task NullCheck_AfterDirectCast_Interfaces_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 interface I
 {
 }
@@ -4422,12 +4566,15 @@ class Test
     }
 }
 ",
-            // Test0.cs(24,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(24, 13, "i == null", "false"),
-            // Test0.cs(30,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(30, 13, "i == null", "false"));
+            new[]
+            {
+                // Test0.cs(24,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(24, 13, "i == null", "false"),
+                // Test0.cs(30,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(30, 13, "i == null", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Interface I
 End Interface
 
@@ -4456,18 +4603,21 @@ Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(20,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(20, 12, "i Is Nothing", "False"),
-            // Test0.vb(25,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(25, 12, "i Is Nothing", "False"));
+            new[]
+            {
+                // Test0.vb(20,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(20, 12, "i Is Nothing", "False"),
+                // Test0.vb(25,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(25, 12, "i Is Nothing", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_Interfaces_02_Diagnostic()
+        public async Task NullCheck_AfterDirectCast_Interfaces_02_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 interface I
 {
 }
@@ -4509,14 +4659,17 @@ class Test
     }
 }
 ",
-            // Test0.cs(24,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(24, 13, "i == null", "false"),
-            // Test0.cs(30,13): warning CA1508: 'i2 == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(30, 13, "i2 == null", "false"),
-            // Test0.cs(36,13): warning CA1508: 'c == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(36, 13, "c == null", "false"));
+            new[]
+            {
+                // Test0.cs(24,13): warning CA1508: 'i == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(24, 13, "i == null", "false"),
+                // Test0.cs(30,13): warning CA1508: 'i2 == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(30, 13, "i2 == null", "false"),
+                // Test0.cs(36,13): warning CA1508: 'c == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(36, 13, "c == null", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Interface I
 End Interface
 
@@ -4550,20 +4703,23 @@ Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(20,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(20, 12, "i Is Nothing", "False"),
-            // Test0.vb(25,12): warning CA1508: 'i2 Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(25, 12, "i2 Is Nothing", "False"),
-            // Test0.vb(30,12): warning CA1508: 'c Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(30, 12, "c Is Nothing", "False"));
+            new[]
+            {
+                // Test0.vb(20,12): warning CA1508: 'i Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(20, 12, "i Is Nothing", "False"),
+                // Test0.vb(25,12): warning CA1508: 'i2 Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(25, 12, "i2 Is Nothing", "False"),
+                // Test0.vb(30,12): warning CA1508: 'c Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(30, 12, "c Is Nothing", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_TypeParameter_NoDiagnostic()
+        public async Task NullCheck_AfterDirectCast_TypeParameter_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4589,9 +4745,14 @@ class Test<T>
         }
     }
 }
-", TestValidationMode.AllowCompileErrors);
+",
+            new DiagnosticResult[]
+            {
+                // Test0.cs(20,17): error CS0030: Cannot convert type 'T' to 'D'
+                DiagnosticResult.CompilerError("CS0030").WithLocation(20, 17).WithMessage("Cannot convert type 'T' to 'D'"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -4610,15 +4771,20 @@ Class Test(Of T As C)
             Return
         End If
     End Sub
-End Class", TestValidationMode.AllowCompileErrors);
+End Class",
+            new DiagnosticResult[]
+            {
+                // Test0.vb(15) : error BC30311: Value of type 'T' cannot be converted to 'D'.
+                DiagnosticResult.CompilerError("BC30311").WithLocation(15, 28).WithMessage("Value of type 'T' cannot be converted to 'D'."),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AfterDirectCast_TypeParameter_Diagnostic()
+        public async Task NullCheck_AfterDirectCast_TypeParameter_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4659,12 +4825,15 @@ class Test<T>
     }
 }
 ",
-            // Test0.cs(21,13): warning CA1508: 't == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(21, 13, "t == null", "false"),
-            // Test0.cs(35,13): warning CA1508: 'c == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(35, 13, "c == null", "false"));
+            new[]
+            {
+                // Test0.cs(21,13): warning CA1508: 't == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(21, 13, "t == null", "false"),
+                // Test0.cs(35,13): warning CA1508: 'c == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(35, 13, "c == null", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -4695,18 +4864,21 @@ Class Test(Of T As C)
         End If
     End Sub
 End Class",
-            // Test0.vb(16,12): warning CA1508: 't Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(16, 12, "t Is Nothing", "False"),
-            // Test0.vb(27,12): warning CA1508: 'c Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(27, 12, "c Is Nothing", "False"));
+            new[]
+            {
+                // Test0.vb(16,12): warning CA1508: 't Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(16, 12, "t Is Nothing", "False"),
+                // Test0.vb(27,12): warning CA1508: 'c Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(27, 12, "c Is Nothing", "False"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_ThrowExpressionWithoutArgument_NoDiagnostic()
+        public async Task NullCheck_ThrowExpressionWithoutArgument_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4733,9 +4905,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AssignedInCatch_NoDiagnostic()
+        public async Task NullCheck_AssignedInCatch_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4769,9 +4941,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_OutArgument_NoDiagnostic()
+        public async Task NullCheck_OutArgument_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public void Cleanup() { }
@@ -4809,9 +4981,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_RefArgument_NoDiagnostic()
+        public async Task NullCheck_RefArgument_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(int count)
@@ -4835,9 +5007,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_LogicalOr_NoDiagnostic()
+        public async Task NullCheck_LogicalOr_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M1(int x, int y)
@@ -4855,9 +5027,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_DeconstructionAssignment_NoDiagnostic()
+        public async Task NullCheck_DeconstructionAssignment_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4881,9 +5053,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_DeconstructionAssignment_InLambda_NoDiagnostic()
+        public async Task NullCheck_DeconstructionAssignment_InLambda_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4908,9 +5080,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1647")]
-        public void NullCheck_DeconstructionAssignment_InLambdaPassedAsArgument_NoDiagnostic()
+        public async Task NullCheck_DeconstructionAssignment_InLambdaPassedAsArgument_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -4936,9 +5108,9 @@ class Test
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_AwaitExpression_NoDiagnostic()
+        public async Task NullCheck_AwaitExpression_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 
 class Test
@@ -4955,7 +5127,7 @@ class Test
     }
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 
 Class Test
@@ -4976,9 +5148,9 @@ End Class
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void NullCheck_CollectionAddAndCount_NoDiagnostic()
+        public async Task NullCheck_CollectionAddAndCount_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System.Collections.Generic;
 
 class Test
@@ -5001,7 +5173,7 @@ class C
 {
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Collections.Immutable
 
 Class Test
@@ -5024,9 +5196,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void NullCheck_BothSidesOfEquals_NoDiagnostic()
+        public async Task NullCheck_BothSidesOfEquals_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M(Test a, Test b)
@@ -5044,7 +5216,7 @@ class Test
     }
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class Test
     Private Sub M(a As Test, b As Test)
         ' If a is not-null, ensure b is not null.
@@ -5062,9 +5234,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ConditionalAccessCheck_InsideLocalFunction_NoDiagnostic()
+        public async Task ConditionalAccessCheck_InsideLocalFunction_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     public bool Flag;
@@ -5080,9 +5252,9 @@ class Test
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ConditionalAccessCheck_InsideLocalFunction_02_NoDiagnostic()
+        public async Task ConditionalAccessCheck_InsideLocalFunction_02_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     public bool Flag;
@@ -5098,9 +5270,9 @@ class Test
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void ConditionalAccessCheck_InsideInitializer_NoDiagnostic()
+        public async Task ConditionalAccessCheck_InsideInitializer_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public bool Flag;
@@ -5124,9 +5296,9 @@ class Test : Base
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1650")]
-        public void ConditionalAccessCheck_InsideInitializer_Diagnostic()
+        public async Task ConditionalAccessCheck_InsideInitializer_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
     public bool Flag;
@@ -5152,9 +5324,9 @@ class Test : Base
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void InsideLockStatement_FieldCheck_NoDiagnostic()
+        public async Task InsideLockStatement_FieldCheck_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class C
 {
 }
@@ -5179,7 +5351,7 @@ class Test
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
 End Class
 
@@ -5200,9 +5372,9 @@ End Class");
         }
 
         [Fact]
-        public void StaticObjectReferenceEquals_Diagnostic()
+        public async Task StaticObjectReferenceEquals_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 public class C
 {
     public int X;
@@ -5247,12 +5419,15 @@ public class Test
         }
     }
 }",
-            // Test0.cs(16,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(16, 13, "c != null", "true"),
-            // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(28, 13, "c != c2", "false"));
+            new[]
+            {
+                // Test0.cs(16,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(16, 13, "c != null", "true"),
+                // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(28, 13, "c != c2", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public X As Integer
 End Class
@@ -5286,16 +5461,19 @@ Public Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(12,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(12, 12, "c IsNot Nothing", "True"),
-            // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(21, 12, "c IsNot c2", "False"));
+            new[]
+            {
+                // Test0.vb(12,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(12, 12, "c IsNot Nothing", "True"),
+                // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(21, 12, "c IsNot c2", "False"),
+            });
         }
 
         [Fact]
-        public void StaticObjectEquals_NoObjectEqualsOverride_Diagnostic()
+        public async Task StaticObjectEquals_NoObjectEqualsOverride_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 public class C
 {
     public int X;
@@ -5340,12 +5518,15 @@ public class Test
         }
     }
 }",
-            // Test0.cs(16,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(16, 13, "c != null", "true"),
-            // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(28, 13, "c != c2", "false"));
+            new[]
+            {
+                // Test0.cs(16,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(16, 13, "c != null", "true"),
+                // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(28, 13, "c != c2", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public X As Integer
 End Class
@@ -5379,16 +5560,19 @@ Public Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(12,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(12, 12, "c IsNot Nothing", "True"),
-            // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(21, 12, "c IsNot c2", "False"));
+            new[]
+            {
+                // Test0.vb(12,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(12, 12, "c IsNot Nothing", "True"),
+                // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(21, 12, "c IsNot c2", "False"),
+            });
         }
 
         [Fact]
-        public void StaticObjectEquals_ObjectEqualsOverride_Diagnostic()
+        public async Task StaticObjectEquals_ObjectEqualsOverride_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 public class C
 {
     public int X;
@@ -5434,14 +5618,17 @@ public class Test
         }
     }
 }",
-            // Test0.cs(18,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(18, 13, "c != null", "true"),
-            // Test0.cs(30,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(30, 13, "c != c2", "false"),
-            // Test0.cs(42,14): warning CA1508: 'object.Equals(c, c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(42, 14, "object.Equals(c, c2)", "true"));
+            new[]
+            {
+                // Test0.cs(18,13): warning CA1508: 'c != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(18, 13, "c != null", "true"),
+                // Test0.cs(30,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(30, 13, "c != c2", "false"),
+                // Test0.cs(42,14): warning CA1508: 'object.Equals(c, c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(42, 14, "object.Equals(c, c2)", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public X As Integer
 
@@ -5478,18 +5665,21 @@ Public Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(16,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(16, 12, "c IsNot Nothing", "True"),
-            // Test0.vb(25,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(25, 12, "c IsNot c2", "False"),
-            // Test0.vb(34,16): warning CA1508: 'object.Equals(c, c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(34, 16, "object.Equals(c, c2)", "True"));
+            new[]
+            {
+                // Test0.vb(16,12): warning CA1508: 'c IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(16, 12, "c IsNot Nothing", "True"),
+                // Test0.vb(25,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(25, 12, "c IsNot c2", "False"),
+                // Test0.vb(34,16): warning CA1508: 'object.Equals(c, c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(34, 16, "object.Equals(c, c2)", "True"),
+            });
         }
 
         [Fact]
-        public void ObjectEquals_NoObjectEqualsOverride_Diagnostic()
+        public async Task ObjectEquals_NoObjectEqualsOverride_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 public class C
 {
     public int X;
@@ -5534,12 +5724,15 @@ public class Test
         }
     }
 }",
-            // Test0.cs(16,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(16, 13, "c2 != null", "true"),
-            // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(28, 13, "c != c2", "false"));
+            new[]
+            {
+                // Test0.cs(16,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(16, 13, "c2 != null", "true"),
+                // Test0.cs(28,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(28, 13, "c != c2", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public X As Integer
 End Class
@@ -5573,16 +5766,19 @@ Public Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(12,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(12, 12, "c2 IsNot Nothing", "True"),
-            // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(21, 12, "c IsNot c2", "False"));
+            new[]
+            {
+                // Test0.vb(12,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(12, 12, "c2 IsNot Nothing", "True"),
+                // Test0.vb(21,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(21, 12, "c IsNot c2", "False"),
+            });
         }
 
         [Fact]
-        public void ObjectEquals_ObjectEqualsOverride_Diagnostic()
+        public async Task ObjectEquals_ObjectEqualsOverride_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 public class C
 {
     public int X;
@@ -5628,14 +5824,17 @@ public class Test
         }
     }
 }",
-            // Test0.cs(18,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(18, 13, "c2 != null", "true"),
-            // Test0.cs(30,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(30, 13, "c != c2", "false"),
-            // Test0.cs(42,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(42, 14, "c.Equals(c2)", "true"));
+            new[]
+            {
+                // Test0.cs(18,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(18, 13, "c2 != null", "true"),
+                // Test0.cs(30,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(30, 13, "c != c2", "false"),
+                // Test0.cs(42,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(42, 14, "c.Equals(c2)", "true"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C
     Public X As Integer
 
@@ -5672,18 +5871,21 @@ Public Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(16,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(16, 12, "c2 IsNot Nothing", "True"),
-            // Test0.vb(25,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(25, 12, "c IsNot c2", "False"),
-            // Test0.vb(34,16): warning CA1508: 'c.Equals(c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(34, 16, "c.Equals(c2)", "True"));
+            new[]
+            {
+                // Test0.vb(16,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(16, 12, "c2 IsNot Nothing", "True"),
+                // Test0.vb(25,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(25, 12, "c IsNot c2", "False"),
+                // Test0.vb(34,16): warning CA1508: 'c.Equals(c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(34, 16, "c.Equals(c2)", "True"),
+            });
         }
 
         [Fact]
-        public void IEquatableEquals_ExplicitImplementation_Diagnostic()
+        public async Task IEquatableEquals_ExplicitImplementation_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 public class C : IEquatable<C>
@@ -5732,12 +5934,15 @@ public class Test
     }
 }
 ",
-            // Test0.cs(20,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(20, 13, "c2 != null", "true"),
-            // Test0.cs(32,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(32, 13, "c != c2", "false"));
+            new[]
+            {
+                // Test0.cs(20,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(20, 13, "c2 != null", "true"),
+                // Test0.cs(32,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(32, 13, "c != c2", "false"),
+            });
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class C
@@ -5777,18 +5982,21 @@ Public Class Test
         End If
     End Sub
 End Class",
-            // Test0.vb(19,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(19, 12, "c2 IsNot Nothing", "True"),
-            // Test0.vb(28,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(28, 12, "c IsNot c2", "False"),
-            // Test0.vb(37,16): warning CA1508: 'c.Equals(c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
-            GetBasicResultAt(37, 16, "c.Equals(c2)", "True"));
+            new[]
+            {
+                // Test0.vb(19,12): warning CA1508: 'c2 IsNot Nothing' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(19, 12, "c2 IsNot Nothing", "True"),
+                // Test0.vb(28,12): warning CA1508: 'c IsNot c2' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(28, 12, "c IsNot c2", "False"),
+                // Test0.vb(37,16): warning CA1508: 'c.Equals(c2)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+                GetBasicResultAt(37, 16, "c.Equals(c2)", "True"),
+            });
         }
 
         [Fact]
-        public void IEquatableEquals_ImplicitImplementation_Diagnostic()
+        public async Task IEquatableEquals_ImplicitImplementation_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 public class C : IEquatable<C>
@@ -5837,18 +6045,21 @@ public class Test
     }
 }
 ",
-            // Test0.cs(20,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(20, 13, "c2 != null", "true"),
-            // Test0.cs(32,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(32, 13, "c != c2", "false"),
-            // Test0.cs(44,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(44, 14, "c.Equals(c2)", "true"));
+            new[]
+            {
+                // Test0.cs(20,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(20, 13, "c2 != null", "true"),
+                // Test0.cs(32,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(32, 13, "c != c2", "false"),
+                // Test0.cs(44,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(44, 14, "c.Equals(c2)", "true"),
+            });
         }
 
         [Fact]
-        public void IEquatableEquals_Override_Diagnostic()
+        public async Task IEquatableEquals_Override_Diagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 using System;
 
 public abstract class MyEquatable<T> : IEquatable<T>
@@ -5901,19 +6112,22 @@ public class Test
     }
 }
 ",
-            // Test0.cs(24,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(24, 13, "c2 != null", "true"),
-            // Test0.cs(36,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(36, 13, "c != c2", "false"),
-            // Test0.cs(48,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
-            GetCSharpResultAt(48, 14, "c.Equals(c2)", "true"));
+            new[]
+            {
+                // Test0.cs(24,13): warning CA1508: 'c2 != null' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(24, 13, "c2 != null", "true"),
+                // Test0.cs(36,13): warning CA1508: 'c != c2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(36, 13, "c != c2", "false"),
+                // Test0.cs(48,14): warning CA1508: 'c.Equals(c2)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+                GetCSharpResultAt(48, 14, "c.Equals(c2)", "true"),
+            });
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-        public void MultidimensionalArray_NoDiagnostic()
+        public async Task MultidimensionalArray_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await Verify.VerifyAnalyzerAsync(@"
 class Test
 {
     void M()
@@ -5928,7 +6142,7 @@ class Test
             // Test0.cs(7,13): warning CA1508: 'x == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(7, 13, "x == null", "false"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class Test
     Private Sub M()
         Dim x = New Integer(,) { { 1, 2 }, { 2, 3 } }

@@ -12,4 +12,9 @@
     <!-- Mark member as static rule has many violations in non-shipping projects -->
     <Rule Id="CA1822" Action="None" />
   </Rules>
+
+  <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines">
+    <!-- Do not directly await a Task without calling ConfigureAwait -->
+    <Rule Id="CA2007" Action="None" />
+  </Rules>
 </RuleSet>

@@ -1,17 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeQuality.Analyzers.Exp.Security;
 using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Exp.UnitTests.Security
 {
+    using Verify = CSharpCodeFixVerifier<ReviewSqlQueriesForSecurityVulnerabilities, EmptyCodeFixProvider>;
+    using VerifyVB = VisualBasicCodeFixVerifier<ReviewSqlQueriesForSecurityVulnerabilities, EmptyCodeFixProvider>;
+
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.StringContentAnalysis)]
     public class ReviewSQLQueriesForSecurityVulnerabilitiesTests_FlowAnalysis : ReviewSQLQueriesForSecurityVulnerabilitiesTests
     {
         [Fact]
-        public void FlowAnalysis_LocalWithConstantInitializer_NoDiagnostic()
+        public async Task FlowAnalysis_LocalWithConstantInitializer_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -31,7 +37,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -50,9 +56,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_LocalWithConstantAssignment_NoDiagnostic()
+        public async Task FlowAnalysis_LocalWithConstantAssignment_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -73,7 +79,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -93,9 +99,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_ParameterWithConstantAssignment_NoDiagnostic()
+        public async Task FlowAnalysis_ParameterWithConstantAssignment_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -115,7 +121,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -134,9 +140,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_LocalWithAllConstantAssignments_NoDiagnostic()
+        public async Task FlowAnalysis_LocalWithAllConstantAssignments_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -159,7 +165,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -184,9 +190,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_ParameterWithAllConstantAssignments_NoDiagnostic()
+        public async Task FlowAnalysis_ParameterWithAllConstantAssignments_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -210,7 +216,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -236,9 +242,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_ConstantFieldInitializer_NoDiagnostic()
+        public async Task FlowAnalysis_ConstantFieldInitializer_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -259,7 +265,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -279,9 +285,9 @@ End Class");
         }
 
         [Fact]
-        public void FlowAnalysis_ConversionsInInitializer_NoDiagnostic()
+        public async Task FlowAnalysis_ConversionsInInitializer_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -302,7 +308,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -322,9 +328,9 @@ End Class");
         }
 
         [Fact]
-        public void FlowAnalysis_ImplicitUserDefinedConversionsInInitializer_Diagnostic()
+        public async Task FlowAnalysis_ImplicitUserDefinedConversionsInInitializer_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -360,7 +366,7 @@ class Test
 ",
             GetCSharpResultAt(103, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -394,9 +400,9 @@ End Class",
         }
 
         [Fact]
-        public void FlowAnalysis_ExplicitUserDefinedConversionsInInitializer_Diagnostic()
+        public async Task FlowAnalysis_ExplicitUserDefinedConversionsInInitializer_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -432,7 +438,7 @@ class Test
 ",
             GetCSharpResultAt(103, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 Option Strict On
 
 {SetupCodeBasic}
@@ -468,11 +474,11 @@ End Class",
         }
 
         [Fact]
-        public void FlowAnalysis_LocalInitializerWithInvocation_Diagnostic()
+        public async Task FlowAnalysis_LocalInitializerWithInvocation_Diagnostic()
         {
             // Currently, we do not do any interprocedural or context sensitive flow analysis.
             // So method calls are assumed to always return a MayBe result.
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -495,7 +501,7 @@ class Test
 ",
             GetCSharpResultAt(98, 21, "Adapter1.Adapter1(string cmd, string command)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -519,10 +525,10 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_LocalWithByRefEscape_Diagnostic()
+        public async Task FlowAnalysis_LocalWithByRefEscape_Diagnostic()
         {
             // Local/parameter passed by ref/out are assumed to be non-constant after the usage.
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -554,7 +560,7 @@ class Test
             GetCSharpResultAt(99, 21, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"),
             GetCSharpResultAt(103, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -584,9 +590,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_StringEmptyInitializer_NoDiagnostic()
+        public async Task FlowAnalysis_StringEmptyInitializer_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -606,7 +612,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -625,9 +631,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_NameOfExpression_NoDiagnostic()
+        public async Task FlowAnalysis_NameOfExpression_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -647,7 +653,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -666,9 +672,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_NullOrDefaultValue_NoDiagnostic()
+        public async Task FlowAnalysis_NullOrDefaultValue_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -691,7 +697,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -710,9 +716,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_InterpolatedString_Constant_NoDiagnostic()
+        public async Task FlowAnalysis_InterpolatedString_Constant_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -736,7 +742,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -759,9 +765,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_InterpolatedString_NonConstant_Diagnostic()
+        public async Task FlowAnalysis_InterpolatedString_NonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -783,7 +789,7 @@ class Test
 ",
             GetCSharpResultAt(99, 21, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -804,9 +810,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_BinaryAdd_Constant_NoDiagnostic()
+        public async Task FlowAnalysis_BinaryAdd_Constant_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -830,7 +836,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -853,9 +859,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_BinaryAdd_NonConstant_Diagnostic()
+        public async Task FlowAnalysis_BinaryAdd_NonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -882,7 +888,7 @@ class Test
             GetCSharpResultAt(99, 21, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"),
             GetCSharpResultAt(103, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -908,9 +914,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_NullCoalesce_Constant_NoDiagnostic()
+        public async Task FlowAnalysis_NullCoalesce_Constant_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -935,7 +941,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -959,9 +965,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_NullCoalesce_NonConstant_Diagnostic()
+        public async Task FlowAnalysis_NullCoalesce_NonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -992,7 +998,7 @@ class Test
             GetCSharpResultAt(102, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"),
             GetCSharpResultAt(106, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -1022,9 +1028,9 @@ End Module",
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1569")]
-        public void FlowAnalysis_ConditionalAccess_Constant_NoDiagnostic()
+        public async Task FlowAnalysis_ConditionalAccess_Constant_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -1057,7 +1063,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -1088,9 +1094,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_ConditionalAccess_NonConstant_Diagnostic()
+        public async Task FlowAnalysis_ConditionalAccess_NonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -1134,7 +1140,7 @@ class Test
         GetCSharpResultAt(107, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"),
         GetCSharpResultAt(115, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -1176,9 +1182,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_WhileLoop_NonConstant_Diagnostic()
+        public async Task FlowAnalysis_WhileLoop_NonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -1203,7 +1209,7 @@ class Test
 ",
             GetCSharpResultAt(100, 25, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -1226,9 +1232,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_ForLoop_NonConstant_Diagnostic()
+        public async Task FlowAnalysis_ForLoop_NonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -1253,7 +1259,7 @@ class Test
 ",
             GetCSharpResultAt(100, 25, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -1276,9 +1282,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_ForEachLoop_NonConstant_Diagnostic()
+        public async Task FlowAnalysis_ForEachLoop_NonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -1303,7 +1309,7 @@ class Test
 ",
             GetCSharpResultAt(100, 25, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -1326,9 +1332,9 @@ End Module",
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1567")]
-        public void FlowAnalysis_Conditional_Constant_NoDiagnostic()
+        public async Task FlowAnalysis_Conditional_Constant_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -1352,7 +1358,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -1374,9 +1380,9 @@ End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_LocalFunctionInvocation_EmptyBody_NoDiagnostic()
+        public async Task FlowAnalysis_LocalFunctionInvocation_EmptyBody_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1409,9 +1415,9 @@ class Test
         }
 
         [Fact]
-        public void FlowAnalysis_LocalFunctionInvocation_ChangesCapturedValueToConstant_NoDiagnostic()
+        public async Task FlowAnalysis_LocalFunctionInvocation_ChangesCapturedValueToConstant_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1445,9 +1451,9 @@ class Test
         }
 
         [Fact]
-        public void FlowAnalysis_LocalFunctionInvocation_ChangesCapturedValueToNonConstant_Diagnostic()
+        public async Task FlowAnalysis_LocalFunctionInvocation_ChangesCapturedValueToNonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1480,9 +1486,9 @@ class Test
         }
 
         [Fact]
-        public void FlowAnalysis_LocalFunctionInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
+        public async Task FlowAnalysis_LocalFunctionInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1516,9 +1522,9 @@ class Test
         }
 
         [Fact]
-        public void FlowAnalysis_LocalFunctionInvocation_ReturnValueContextSensitive_Diagnostic()
+        public async Task FlowAnalysis_LocalFunctionInvocation_ReturnValueContextSensitive_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1552,9 +1558,9 @@ class Test
         }
 
         [Fact]
-        public void FlowAnalysis_LambdaInvocation_EmptyBody_NoDiagnostic()
+        public async Task FlowAnalysis_LambdaInvocation_EmptyBody_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1583,7 +1589,7 @@ class Test
             // Currently we generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
             GetCSharpResultAt(105, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -1610,9 +1616,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_LambdaInvocation_ChangesCapturedValueToConstant_NoDiagnostic()
+        public async Task FlowAnalysis_LambdaInvocation_ChangesCapturedValueToConstant_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1642,7 +1648,7 @@ class Test
             // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
             GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -1670,9 +1676,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_LambdaInvocation_ChangesCapturedValueToNonConstant_Diagnostic()
+        public async Task FlowAnalysis_LambdaInvocation_ChangesCapturedValueToNonConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1701,7 +1707,7 @@ class Test
 ",
             GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -1728,9 +1734,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_LambdaInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
+        public async Task FlowAnalysis_LambdaInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1760,7 +1766,7 @@ class Test
             // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
             GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -1788,9 +1794,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_LambdaInvocation_ReturnValueContextSensitive_Diagnostic()
+        public async Task FlowAnalysis_LambdaInvocation_ReturnValueContextSensitive_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1820,7 +1826,7 @@ class Test
             // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
             GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -1849,9 +1855,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsToAnalysis_CopySemanticsForString_NoDiagnostic()
+        public async Task FlowAnalysis_PointsToAnalysis_CopySemanticsForString_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1874,7 +1880,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -1897,9 +1903,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceTypeCopy_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceTypeCopy_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1922,7 +1928,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -1945,9 +1951,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueTypeCopy_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueTypeCopy_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -1970,7 +1976,7 @@ struct Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -1993,9 +1999,9 @@ End Structure");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceTypeNestingCopy_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceTypeNestingCopy_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2036,7 +2042,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2075,9 +2081,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueTypeNestingCopy_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueTypeNestingCopy_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2119,7 +2125,7 @@ class Test
         // Test0.cs(118,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
         GetCSharpResultAt(118, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2161,9 +2167,9 @@ End Class",
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
 
-        public void FlowAnalysis_PointsTo_ValueTypeNestingCopy_02_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueTypeNestingCopy_02_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2203,7 +2209,7 @@ class Test
         // Test0.cs(114,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
         GetCSharpResultAt(114, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2242,9 +2248,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceTypeAllocationAndInitializer_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceTypeAllocationAndInitializer_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2273,7 +2279,7 @@ class Test
             // Test0.cs(105,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(105, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2304,9 +2310,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceTypeAllocationAndInitializer_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceTypeAllocationAndInitializer_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2340,7 +2346,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2376,9 +2382,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueTypeAllocationAndInitializer_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueTypeAllocationAndInitializer_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2407,7 +2413,7 @@ class Test
             // Test0.cs(105,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(105, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2438,9 +2444,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueTypeAllocationAndInitializer_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueTypeAllocationAndInitializer_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2475,7 +2481,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2511,9 +2517,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueTypeAllocationAndInitializer_02_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueTypeAllocationAndInitializer_02_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2550,7 +2556,7 @@ struct Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2588,9 +2594,9 @@ End Structure");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceTypeCollectionInitializer_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceTypeCollectionInitializer_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2628,7 +2634,7 @@ class Test
             // Test0.cs(112,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(112, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2669,9 +2675,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1570")]
-        public void FlowAnalysis_PointsTo_ReferenceTypeCollectionInitializer_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceTypeCollectionInitializer_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2705,7 +2711,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2742,9 +2748,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_DynamicObjectCreation_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_DynamicObjectCreation_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2783,9 +2789,9 @@ class Test
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_DynamicObjectCreation_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_DynamicObjectCreation_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2829,9 +2835,9 @@ class Test
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_AnonymousObjectCreation_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_AnonymousObjectCreation_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2854,7 +2860,7 @@ class Test
             // Test0.cs(99,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(99, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2877,9 +2883,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1568")]
-        public void FlowAnalysis_PointsTo_AnonymousObjectCreation_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_AnonymousObjectCreation_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2907,7 +2913,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -2935,9 +2941,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_BaseDerived__Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_BaseDerived__Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -2974,7 +2980,7 @@ class Test
             // Test0.cs(113,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(113, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3012,9 +3018,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_BaseDerived_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_BaseDerived_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3049,7 +3055,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3085,9 +3091,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_BaseDerived_IfStatement_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_BaseDerived_IfStatement_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3134,7 +3140,7 @@ class Test
             // Test0.cs(123,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(123, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3178,9 +3184,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_BaseDerived_IfStatement_02_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_BaseDerived_IfStatement_02_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3231,7 +3237,7 @@ class Test
             // Test0.cs(127,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(127, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3278,9 +3284,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_BaseDerived_IfStatement_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_BaseDerived_IfStatement_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3325,7 +3331,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3367,9 +3373,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_ThisInstanceReference_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_ThisInstanceReference_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3404,7 +3410,7 @@ class Test
             // Test0.cs(109,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(109, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3440,9 +3446,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_ThisInstanceReference_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_ThisInstanceReference_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3483,7 +3489,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3527,9 +3533,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueType_ThisInstanceReference_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueType_ThisInstanceReference_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3564,7 +3570,7 @@ struct Test
             // Test0.cs(109,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(109, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3600,9 +3606,9 @@ End Structure",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueType_ThisInstanceReference_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueType_ThisInstanceReference_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3643,7 +3649,7 @@ struct Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3687,9 +3693,9 @@ End Structure");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_InvocationInstanceReceiver_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_InvocationInstanceReceiver_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3733,7 +3739,7 @@ class Test
             // Test0.cs(114,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(114, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3776,9 +3782,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueType_InvocationInstanceReceiver_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueType_InvocationInstanceReceiver_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3822,7 +3828,7 @@ struct Test
             // Test0.cs(114,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(114, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3865,9 +3871,9 @@ End Structure",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_Argument_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_Argument_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -3922,7 +3928,7 @@ class Test
             // Test0.cs(119,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(119, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -3975,9 +3981,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceType_ThisArgument_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceType_ThisArgument_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -4021,7 +4027,7 @@ class Test
             // Test0.cs(114,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(114, 13, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -4064,9 +4070,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueType_Argument_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueType_Argument_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -4106,7 +4112,7 @@ struct Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -4148,9 +4154,9 @@ End Structure");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueType_Argument_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueType_Argument_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -4187,7 +4193,7 @@ struct Test
             // Test0.cs(109,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(109, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -4223,9 +4229,9 @@ End Structure",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ValueType_ThisArgument_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ValueType_ThisArgument_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -4265,7 +4271,7 @@ struct Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -4304,9 +4310,9 @@ End Structure");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ConstantArrayElement_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ConstantArrayElement_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4327,7 +4333,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4348,9 +4354,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_NonConstantArrayElement_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_NonConstantArrayElement_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4373,7 +4379,7 @@ class Test
             // Test0.cs(99,21): warning CA2100: Review if the query string passed to 'Adapter1.Adapter1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(99, 21, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4396,9 +4402,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1577")]
-        public void FlowAnalysis_PointsTo_ConstantArrayElement_NonConstantIndex_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ConstantArrayElement_NonConstantIndex_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4419,7 +4425,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4440,9 +4446,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_NonConstantArrayElement_NonConstantIndex_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_NonConstantArrayElement_NonConstantIndex_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4466,7 +4472,7 @@ class Test
             // Test0.cs(100,21): warning CA2100: Review if the query string passed to 'Adapter1.Adapter1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(100, 21, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4490,9 +4496,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ArrayInitializer_ConstantArrayElement_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ArrayInitializer_ConstantArrayElement_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4513,7 +4519,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4534,9 +4540,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ArrayInitializer_NonConstantArrayElement_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ArrayInitializer_NonConstantArrayElement_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4558,7 +4564,7 @@ class Test
 ",
             GetCSharpResultAt(99, 21, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4580,9 +4586,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ConstantArrayElement_ArrayFieldInReferenceType_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ConstantArrayElement_ArrayFieldInReferenceType_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4623,7 +4629,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4663,9 +4669,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_NonConstantArrayElement_ArrayFieldInReferenceType_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_NonConstantArrayElement_ArrayFieldInReferenceType_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4714,7 +4720,7 @@ class Test
             // Test0.cs(121,13): warning CA2100: Review if the query string passed to 'Adapter1.Adapter1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(121, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4762,9 +4768,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ConstantArrayElement_ArrayFieldInValueType_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ConstantArrayElement_ArrayFieldInValueType_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4805,7 +4811,7 @@ struct Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4845,9 +4851,9 @@ End Structure");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_NonConstantArrayElement_ArrayFieldInValueType_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_NonConstantArrayElement_ArrayFieldInValueType_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4896,7 +4902,7 @@ struct Test
             // Test0.cs(121,13): warning CA2100: Review if the query string passed to 'Adapter1.Adapter1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(121, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -4944,9 +4950,9 @@ End Structure",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ConstantArrayElement_IndexerFieldInReferenceType_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ConstantArrayElement_IndexerFieldInReferenceType_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -4995,7 +5001,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -5048,9 +5054,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_NonConstantArrayElement_IndexerFieldInReferenceType_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_NonConstantArrayElement_IndexerFieldInReferenceType_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Adapter1 : Adapter
@@ -5102,7 +5108,7 @@ class Test
             // Test0.cs(126,13): warning CA2100: Review if the query string passed to 'Adapter1.Adapter1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(126, 13, "Adapter1.Adapter1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Adapter1
@@ -5157,9 +5163,9 @@ End Class",
         }
 
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceTypeArray_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceTypeArray_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5197,7 +5203,7 @@ class Test
             // Test0.cs(112,15): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(112, 15, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5236,9 +5242,9 @@ End Class
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_ReferenceTypeArray_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_ReferenceTypeArray_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5272,7 +5278,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5306,9 +5312,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_AutoGeneratedProperty_NoDiagnostic()
+        public async Task FlowAnalysis_PointsTo_AutoGeneratedProperty_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5331,7 +5337,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5353,9 +5359,9 @@ End Class");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
         [Fact]
-        public void FlowAnalysis_PointsTo_CustomProperty_Diagnostic()
+        public async Task FlowAnalysis_PointsTo_CustomProperty_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5383,7 +5389,7 @@ class Test
             // Test0.cs(104,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(104, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5417,9 +5423,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ParameterComparedWithConstant_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ParameterComparedWithConstant_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5462,7 +5468,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5497,9 +5503,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ParameterComparedWithConstant_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ParameterComparedWithConstant_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5530,7 +5536,7 @@ class Test
             // Test0.cs(104,26): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(104, 26, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5559,9 +5565,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ParameterComparedWithConstant_WithNegation_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ParameterComparedWithConstant_WithNegation_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5604,7 +5610,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5639,9 +5645,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ParameterComparedWithConstant_WithNegation_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ParameterComparedWithConstant_WithNegation_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5682,7 +5688,7 @@ class Test
             // Test0.cs(112,26): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(112, 26, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5718,9 +5724,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ParameterComparedWithLocal_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ParameterComparedWithLocal_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5764,7 +5770,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5800,9 +5806,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ParameterComparedWithLocal_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ParameterComparedWithLocal_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5855,7 +5861,7 @@ class Test
             // Test0.cs(122,26): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(122, 26, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5899,9 +5905,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_NestedIfElse_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_NestedIfElse_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -5946,7 +5952,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -5981,9 +5987,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_NestedIfElse_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_NestedIfElse_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -6056,7 +6062,7 @@ class Test
             // Test0.cs(142,26): warning CA2100: Review if the query string passed to 'Command4.Command4(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(142, 26, "Command4.Command4(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -6117,9 +6123,9 @@ End Class",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_Loops()
+        public async Task FlowAnalysis_PredicateAnalysis_Loops()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -6185,7 +6191,7 @@ class Test
             // Test0.cs(134,17): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M3', accepts any user input.
             GetCSharpResultAt(134, 17, "Command2.Command2(string cmd, string parameter2)", "M3"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -6271,9 +6277,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_SwitchStatement()
+        public async Task FlowAnalysis_SwitchStatement()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -6391,7 +6397,7 @@ class Test
             // Test0.cs(176,21): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M4', accepts any user input.
             GetCSharpResultAt(176, 21, "Command2.Command2(string cmd, string parameter2)", "M4"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -6489,9 +6495,9 @@ End Module",
         }
 
         [Fact]
-        public void FlowAnalysis_TryCatch()
+        public async Task FlowAnalysis_TryCatch()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -6619,7 +6625,7 @@ class Test
             // Test0.cs(200,21): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M6', accepts any user input.
             GetCSharpResultAt(200, 21, "Command2.Command2(string cmd, string parameter2)", "M6"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -6720,9 +6726,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_CatchFilter()
+        public async Task FlowAnalysis_PredicateAnalysis_CatchFilter()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -6762,7 +6768,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -6796,9 +6802,9 @@ End Module");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_CopyAnalysis_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_CopyAnalysis_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -6843,7 +6849,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -6883,9 +6889,9 @@ End Module");
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_CopyAnalysis_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_CopyAnalysis_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -6995,7 +7001,7 @@ class Test
             // Test0.cs(177,25): warning CA2100: Review if the query string passed to 'Command7.Command7(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(177, 25, "Command7.Command7(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7096,9 +7102,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ConditionalOr_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ConditionalOr_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -7143,7 +7149,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7181,9 +7187,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ConditionalOr_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ConditionalOr_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -7241,7 +7247,7 @@ class Test
             // Test0.cs(127,25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(127, 25, "Command2.Command2(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7292,9 +7298,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ConditionalOr_02_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ConditionalOr_02_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -7367,7 +7373,7 @@ class Test
             // Test0.cs(138,25): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(138, 25, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7428,9 +7434,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ConditionalAnd_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ConditionalAnd_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -7472,7 +7478,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7509,9 +7515,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ConditionalAnd_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ConditionalAnd_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -7595,7 +7601,7 @@ class Test
             // Test0.cs(149,25): warning CA2100: Review if the query string passed to 'Command2.Command2(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(149, 25, "Command2.Command2(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7666,9 +7672,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ConditionalAnd_02_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ConditionalAnd_02_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -7744,7 +7750,7 @@ class Test
             // Test0.cs(141,25): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(141, 25, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7807,9 +7813,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_Conditional_WithNegation_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_Conditional_WithNegation_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -7854,7 +7860,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7891,9 +7897,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ConditionalAndOrNegation_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ConditionalAndOrNegation_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -7932,7 +7938,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -7966,9 +7972,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ConditionalAndOrNegation_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ConditionalAndOrNegation_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -8057,7 +8063,7 @@ class Test
             // Test0.cs(160,25): warning CA2100: Review if the query string passed to 'Command6.Command6(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(160, 25, "Command6.Command6(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -8137,9 +8143,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ComparisonInNonCondition_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ComparisonInNonCondition_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -8161,7 +8167,7 @@ class Test
             // Test0.cs(98,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
             GetCSharpResultAt(98, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -8183,9 +8189,9 @@ End Module",
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ComparisonInNonCondition_02_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ComparisonInNonCondition_02_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -8218,9 +8224,9 @@ class Test
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ContractCheck_NoDiagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ContractCheck_NoDiagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -8266,7 +8272,7 @@ class Test
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1
@@ -8308,9 +8314,9 @@ End Module");
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
         [Fact]
-        public void FlowAnalysis_PredicateAnalysis_ContractCheck_Diagnostic()
+        public async Task FlowAnalysis_PredicateAnalysis_ContractCheck_Diagnostic()
         {
-            VerifyCSharp($@"
+            await Verify.VerifyAnalyzerAsync($@"
 {SetupCodeCSharp}
 
 class Command1 : Command
@@ -8360,7 +8366,7 @@ class Test
             // Test0.cs(120,13): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M3', accepts any user input.
             GetCSharpResultAt(120, 13, "Command1.Command1(string cmd, string parameter2)", "M3"));
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 {SetupCodeBasic}
 
 Class Command1

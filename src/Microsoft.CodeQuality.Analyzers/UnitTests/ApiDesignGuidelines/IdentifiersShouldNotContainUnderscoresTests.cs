@@ -3,6 +3,7 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -870,7 +871,7 @@ End Class
         {
             var sources = new[] { source };
             var diagnostics = GetSortedDiagnostics(sources.ToFileAndSource(), language, analyzer, compilationOptions: null, parseOptions: null, referenceFlags: ReferenceFlags.None, projectName: testProjectName);
-            diagnostics.Verify(analyzer, expected);
+            diagnostics.Verify(analyzer, GetDefaultPath(language), expected);
         }
 
         private static string GetApproriateMessage(SymbolKind symbolKind)

@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;

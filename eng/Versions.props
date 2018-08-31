@@ -24,6 +24,9 @@
     <MicrosoftCodeAnalysisAnalyersVersion>2.6.1</MicrosoftCodeAnalysisAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
+    <!-- Roslyn Testing -->
+    <MicrosoftCodeAnalysisTestingVersion>1.0.0-beta1-63230-04</MicrosoftCodeAnalysisTestingVersion>
+
     <!-- CoreFX -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>

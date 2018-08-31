@@ -2,6 +2,7 @@
 
 using System;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -164,13 +165,7 @@ End Namespace
 
         private DiagnosticResult GetResultNoLocation(DiagnosticDescriptor rule, params object[] messageArguments)
         {
-            return new DiagnosticResult
-            {
-                Locations = Array.Empty<DiagnosticResultLocation>(),
-                Id = rule.Id,
-                Severity = rule.DefaultSeverity,
-                Message = string.Format(rule.MessageFormat.ToString(), messageArguments)
-            };
+            return new DiagnosticResult(rule).WithArguments(messageArguments);
         }
     }
 }

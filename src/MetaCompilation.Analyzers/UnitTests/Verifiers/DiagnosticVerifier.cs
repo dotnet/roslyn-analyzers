@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -122,7 +123,7 @@ namespace MetaCompilation.Analyzers.UnitTests
                 Diagnostic actual = actualResults.ElementAt(i);
                 DiagnosticResult expected = expectedResults[i];
 
-                if (expected.Line == -1 && expected.Column == -1)
+                if (expected.HasLocation)
                 {
                     if (actual.Location != Location.None)
                     {
@@ -133,20 +134,20 @@ namespace MetaCompilation.Analyzers.UnitTests
                 }
                 else
                 {
-                    VerifyDiagnosticLocation(analyzer, actual, actual.Location, expected.Locations.First());
+                    VerifyDiagnosticLocation(analyzer, actual, actual.Location, expected.Spans[0]);
                     Location[] additionalLocations = actual.AdditionalLocations.ToArray();
 
-                    if (additionalLocations.Length != expected.Locations.Length - 1)
+                    if (additionalLocations.Length != expected.Spans.Length - 1)
                     {
                         Assert.True(false,
                             string.Format("Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
-                                expected.Locations.Length - 1, additionalLocations.Length,
+                                expected.Spans.Length - 1, additionalLocations.Length,
                                 FormatDiagnostics(analyzer, actual)));
                     }
 
                     for (int j = 0; j < additionalLocations.Length; ++j)
                     {
-                        VerifyDiagnosticLocation(analyzer, actual, additionalLocations[j], expected.Locations[j + 1]);
+                        VerifyDiagnosticLocation(analyzer, actual, additionalLocations[j], expected.Spans[j + 1]);
                     }
                 }
 
@@ -180,7 +181,7 @@ namespace MetaCompilation.Analyzers.UnitTests
         /// <param name="diagnostic">The diagnostic that was found in the code</param>
         /// <param name="actual">The Location of the Diagnostic found in the code</param>
         /// <param name="expected">The DiagnosticResultLocation that should have been found</param>
-        private static void VerifyDiagnosticLocation(DiagnosticAnalyzer analyzer, Diagnostic diagnostic, Location actual, DiagnosticResultLocation expected)
+        private static void VerifyDiagnosticLocation(DiagnosticAnalyzer analyzer, Diagnostic diagnostic, Location actual, FileLinePositionSpan expected)
         {
             FileLinePositionSpan actualSpan = actual.GetLineSpan();
 
@@ -191,24 +192,24 @@ namespace MetaCompilation.Analyzers.UnitTests
             Microsoft.CodeAnalysis.Text.LinePosition actualLinePosition = actualSpan.StartLinePosition;
 
             // Only check line position if there is an actual line in the real diagnostic
-            if (actualLinePosition.Line > 0)
+            if (expected.StartLinePosition.Line > 0)
             {
-                if (actualLinePosition.Line + 1 != expected.Line)
+                if (actualLinePosition.Line + 1 != expected.StartLinePosition.Line)
                 {
                     Assert.True(false,
                         string.Format("Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzer, diagnostic)));
+                            expected.StartLinePosition.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzer, diagnostic)));
                 }
             }
 
             // Only check column position if there is an actual column position in the real diagnostic
             if (actualLinePosition.Character > 0)
             {
-                if (actualLinePosition.Character + 1 != expected.Column)
+                if (actualLinePosition.Character + 1 != expected.StartLinePosition.Character)
                 {
                     Assert.True(false,
                         string.Format("Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Column, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
+                            expected.StartLinePosition.Character, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
                 }
             }
         }

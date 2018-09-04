@@ -11,6 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
     using Microsoft.CodeAnalysis.Operations;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
@@ -53,8 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
-                    // Perform analysis of all direct/indirect parameter usages in the method to get all non-validated usages that can cause a null dereference.
-                    TaintedDataCfgAnalysisResult cfgAnalysisResult = null;
+                    DataFlowAnalysisResult<TaintedDataBlockAnalysisResult, TaintedDataAbstractValue> cfgAnalysisResult = null;
                     foreach (IOperation operationBlock in operationBlockContext.OperationBlocks)
                     {
                         if (operationBlock is IBlockOperation topmostBlock)

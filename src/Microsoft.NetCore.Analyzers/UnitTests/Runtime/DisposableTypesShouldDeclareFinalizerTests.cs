@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -500,27 +501,17 @@ End Class
 
         private static DiagnosticResult GetCSharpDiagnostic(int line, int column)
         {
-            return GetExpectedDiagnostic(LanguageNames.CSharp, line, column);
+            return GetExpectedDiagnostic(line, column);
         }
 
         private static DiagnosticResult GetBasicDiagnostic(int line, int column)
         {
-            return GetExpectedDiagnostic(LanguageNames.VisualBasic, line, column);
+            return GetExpectedDiagnostic(line, column);
         }
 
-        private static DiagnosticResult GetExpectedDiagnostic(string language, int line, int column)
+        private static DiagnosticResult GetExpectedDiagnostic(int line, int column)
         {
-            string fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
-            return new DiagnosticResult
-            {
-                Id = DisposableTypesShouldDeclareFinalizerAnalyzer.RuleId,
-                Message = SystemRuntimeAnalyzersResources.DisposableTypesShouldDeclareFinalizerMessage,
-                Severity = DisposableTypesShouldDeclareFinalizerAnalyzer.Rule.DefaultSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation(fileName, line, column)
-                }
-            };
+            return new DiagnosticResult(DisposableTypesShouldDeclareFinalizerAnalyzer.Rule).WithLocation(line, column);
         }
     }
 }

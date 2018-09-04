@@ -3,6 +3,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -95,8 +96,7 @@ public class Sdk
             Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(Xunit.Sdk.AllException).Assembly.Location));
             DiagnosticAnalyzer analyzer = GetCSharpDiagnosticAnalyzer();
             GetSortedDiagnostics(analyzer, project.Documents.Single())
-                .Verify(analyzer,
-                        CSharpDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
+                .Verify(analyzer, GetDefaultPath(LanguageNames.CSharp), CSharpDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
         }
 
         [Fact, WorkItem(1673,"https://github.com/dotnet/roslyn-analyzers/issues/1673")]
@@ -284,8 +284,7 @@ End Class";
             Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(Xunit.Sdk.AllException).Assembly.Location));
             DiagnosticAnalyzer analyzer = GetCSharpDiagnosticAnalyzer();
             GetSortedDiagnostics(analyzer, project.Documents.Single())
-                .Verify(analyzer,
-                        BasicDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
+                .Verify(analyzer, GetDefaultPath(LanguageNames.VisualBasic), BasicDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
         }
     }
 }

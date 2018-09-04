@@ -79,11 +79,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                             var cfg = operationBlockContext.GetControlFlowGraph(operationRoot);
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
-                            var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider);
-                            var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
-                            // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                            pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, copyAnalysisResult);
-                            var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                            var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, out var copyAnalysisResult, out var pointsToAnalysisResult);
+                            Debug.Assert(copyAnalysisResult != null);
+                            Debug.Assert(pointsToAnalysisResult != null);
 
                             foreach (var operation in cfg.DescendantOperations())
                             {

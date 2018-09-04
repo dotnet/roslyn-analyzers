@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.Analyzers.Maintainability;
 using Test.Utilities;
 using Xunit;
 
@@ -5982,6 +5981,43 @@ End Class
 ",
             // Test0.vb(5,12): warning CA1508: 'x Is Nothing' is always 'False'. Remove or refactor the condition(s) to avoid dead code.
             GetBasicResultAt(5, 12, "x Is Nothing", "False"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void NullCheck_LambdaResult_Diagnostic()
+        {
+            // TODO: File a bug for interprocedural predicate analysis.
+            // Below code should flag "isNonNull" invocation as dead code
+            // if we did predicated analysis of return values.
+            VerifyCSharp(@"
+class Test
+{
+    void M1()
+    {
+        string x = null;
+        System.Func<string, bool> isNonNull = s => s != null;
+
+        if (isNonNull(x))
+        {
+            return;
+        }
+    }
+}
+");
+            VerifyBasic(@"
+Class Test
+    Private Sub M1()
+        Dim x As String = Nothing
+        Dim isNonNull As System.Func(Of String, Boolean) = Function(s) s IsNot Nothing
+
+        If isNonNull(x) Then
+            Return
+        End If
+    End Sub
+End Class
+");
         }
     }
 }

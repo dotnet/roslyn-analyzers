@@ -84,9 +84,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockStartContext.OperationBlocks, containingMethod))
                     {
-                        DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult;
-                        DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult;
-                        if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, out disposeAnalysisResult, out pointsToAnalysisResult))
+                        if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks,
+                            containingMethod, out var disposeAnalysisResult, out var pointsToAnalysisResult))
                         {
                             Debug.Assert(disposeAnalysisResult != null);
                             Debug.Assert(pointsToAnalysisResult != null);
@@ -135,14 +134,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         var disposableFields = disposeAnalysisHelper.GetDisposableFields(containingMethod.ContainingType);
                         if (!disposableFields.IsEmpty)
                         {
-                            DataFlowAnalysisResult<DisposeBlockAnalysisResult, DisposeAbstractValue> disposeAnalysisResult;
-                            DataFlowAnalysisResult<PointsToBlockAnalysisResult, PointsToAbstractValue> pointsToAnalysisResult;
-                            ImmutableDictionary<IFieldSymbol, PointsToAbstractValue> trackedInstanceFieldPointsToMap;
                             if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, trackInstanceFields: true,
-                                disposeAnalysisResult: out disposeAnalysisResult, pointsToAnalysisResult: out pointsToAnalysisResult, trackedInstanceFieldPointsToMap: out trackedInstanceFieldPointsToMap))
+                                disposeAnalysisResult: out var disposeAnalysisResult, pointsToAnalysisResult: out var pointsToAnalysisResult))
                             {
                                 BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
-                                foreach (var fieldWithPointsToValue in trackedInstanceFieldPointsToMap)
+                                foreach (var fieldWithPointsToValue in disposeAnalysisResult.TrackedInstanceFieldPointsToMap)
                                 {
                                     IFieldSymbol field = fieldWithPointsToValue.Key;
                                     PointsToAbstractValue pointsToValue = fieldWithPointsToValue.Value;

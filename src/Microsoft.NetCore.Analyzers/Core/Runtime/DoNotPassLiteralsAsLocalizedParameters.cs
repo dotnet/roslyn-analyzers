@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -66,8 +66,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var lazyStringContentResult = new Lazy<DataFlowAnalysisResult<StringContentBlockAnalysisResult, StringContentAbstractValue>>(
-                        valueFactory: ComputeStringContentAnalysisResult, isThreadSafe: false);
+                    var lazyValueContentResult = new Lazy<DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>>(
+                        valueFactory: ComputeValueContentAnalysisResult, isThreadSafe: false);
 
                     operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
@@ -98,28 +98,35 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore))
                         {
-                            StringContentAbstractValue stringContentValue = lazyStringContentResult.Value[operation.Kind, operation.Syntax];
+                            ValueContentAbstractValue stringContentValue = lazyValueContentResult.Value[operation.Kind, operation.Syntax];
                             if (stringContentValue.IsLiteralState)
                             {
                                 Debug.Assert(stringContentValue.LiteralValues.Count > 0);
+
+                                if (stringContentValue.LiteralValues.Any(l => !(l is string)))
+                                {
+                                    return;
+                                }
+
+                                var stringLiteralValues = stringContentValue.LiteralValues.Select(l => (string)l);
 
                                 // FxCop compat: Do not fire if the literal value came from a default parameter value
                                 if (stringContentValue.LiteralValues.Count == 1 &&
                                     parameter.IsOptional &&
                                     parameter.ExplicitDefaultValue is string defaultValue &&
-                                    defaultValue == stringContentValue.LiteralValues.Single())
+                                    defaultValue == stringLiteralValues.Single())
                                 {
                                     return;
                                 }
 
                                 // FxCop compat: Do not fire if none of the string literals have any non-control character.
-                                if (!LiteralValuesHaveNonControlCharacters(stringContentValue.LiteralValues))
+                                if (!LiteralValuesHaveNonControlCharacters(stringLiteralValues))
                                 {
                                     return;
                                 }
 
                                 // FxCop compat: Filter out xml string literals.
-                                var filteredStrings = stringContentValue.LiteralValues.Where(literal => !LooksLikeXmlTag(literal));
+                                var filteredStrings = stringLiteralValues.Where(literal => !LooksLikeXmlTag(literal));
                                 if (filteredStrings.Any())
                                 {
                                     // Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".
@@ -134,7 +141,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
 
-                    DataFlowAnalysisResult<StringContentBlockAnalysisResult, StringContentAbstractValue> ComputeStringContentAnalysisResult()
+                    DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue> ComputeValueContentAnalysisResult()
                     {
                         foreach (var operationRoot in operationBlockStartContext.OperationBlocks)
                         {
@@ -147,7 +154,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
                                 // Do another analysis pass to improve the results from PointsTo and Copy analysis.
                                 pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
-                                return StringContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                                return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
                             }
                         }
 

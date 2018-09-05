@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.StringContentAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability
@@ -83,7 +83,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
                             // Do another analysis pass to improve the results from PointsTo and Copy analysis.
                             pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, copyAnalysisResult);
-                            var stringContentAnalysisResult = StringContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                            var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
 
                             foreach (var operation in cfg.DescendantOperations())
                             {
@@ -156,7 +156,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                         return predicateKind;
                                     }
 
-                                    predicateKind = stringContentAnalysisResult.GetPredicateKind(operation);
+                                    predicateKind = valueContentAnalysisResult.GetPredicateKind(operation);
                                     if (predicateKind != PredicateValueKind.Unknown)
                                     {
                                         return predicateKind;

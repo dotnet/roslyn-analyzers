@@ -30,7 +30,7 @@
     <None Remove="$(NuGetPackageRoot)xunit.runner.visualstudio\$(XUnitRunnerVisualStudioVersion)\build\net20\..\_common\xunit.abstractions.dll" />
   </ItemGroup>
 
-  <Import Project="Sdk.targets" Sdk="RoslynTools.RepoToolset" />
+  <Import Project="..\Directory.Build.targets" />
 
   <!-- Using Inputs/Outputs just to loop over test architectures -->
   <Target Name="InnerTest" Inputs="*%(_TestArchitectureItems.Identity)" Outputs="*%(_TestArchitectureItems.Identity)" Returns="@(_FailedTestRuns)">

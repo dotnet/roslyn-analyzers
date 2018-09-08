@@ -1,12 +1,6 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
   <Import Project="..\Directory.Build.props"/>
-
-  <PropertyGroup>
-    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
-  </PropertyGroup>
-
-  <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
   
   <PropertyGroup>
     <!-- TODO: Remove suppressions of Xunit warnings: https://github.com/dotnet/roslyn-analyzers/issues/1257 -->

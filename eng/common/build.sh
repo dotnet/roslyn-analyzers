@@ -12,17 +12,21 @@ while [[ -h "$source" ]]; do
 done
 scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
-build=false
-ci=false
-configuration='Debug'
 help=false
-pack=false
-prepare_machine=false
-rebuild=false
 restore=false
-sign=false
-projects=''
+build=false
+rebuild=false
 test=false
+pack=false
+integration_test=false
+performance_test=false
+sign=false
+public=false
+ci=false
+
+projects=''
+configuration='Debug'
+prepare_machine=false
 verbosity='minimal'
 properties=''
 
@@ -103,6 +107,18 @@ while (($# > 0)); do
       ;;
     --test)
       test=true
+      shift 1
+      ;;
+    --integrationtest)
+      integration_test=true
+      shift 1
+      ;;
+    --performancetest)
+      performance_test=true
+      shift 1
+      ;;
+    --publish)
+      publish=true
       shift 1
       ;;
     --verbosity)
@@ -249,9 +265,24 @@ function InitializeCustomToolset {
 }
 
 function Build {
-  "$build_driver" msbuild $toolset_build_proj /m /nologo /clp:Summary /warnaserror \
-    /v:$verbosity /bl:$build_log /p:Configuration=$configuration /p:Projects=$projects /p:RepoRoot="$repo_root" \
-    /p:Restore=$restore /p:Build=$build /p:Rebuild=$rebuild /p:Deploy=$deploy /p:Test=$test /p:Sign=$sign /p:Pack=$pack /p:CIBuild=$ci \
+  "$build_driver" msbuild $toolset_build_proj \
+    /m /nologo /clp:Summary /warnaserror \
+    /v:$verbosity \
+    /bl:$build_log \
+    /p:Configuration=$configuration \
+    /p:Projects=$projects \
+    /p:RepoRoot="$repo_root" \
+    /p:Restore=$restore \
+    /p:Build=$build \
+    /p:Rebuild=$rebuild \
+    /p:Deploy=$deploy \
+    /p:Test=$test \
+    /p:Pack=$pack \
+    /p:IntegrationTest=$integration_test \
+    /p:PerformanceTest=$performance_test \
+    /p:Sign=$sign \
+    /p:Publish=$publish \
+    /p:CIBuild=$ci \
     $properties
   local lastexitcode=$?
 

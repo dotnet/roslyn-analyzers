@@ -8,6 +8,7 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
     using Test.Utilities;
     using Xunit;
     using Microsoft.NetCore.Analyzers.Security;
+    using System.Linq;
 
     public class ReviewCodeForSqlInjectionVulnerabilitiesTests : DiagnosticAnalyzerTestBase
     {
@@ -20,6 +21,10 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
         {
             return new ReviewCodeForSqlInjectionVulnerabilities();
         }
+
+        protected new DiagnosticResult GetCSharpResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
+            GetCSharpResultAt(SystemWebNamespacesCSharpLineCount + line, column, ReviewCodeForSqlInjectionVulnerabilities.Rule, invokedSymbol, containingMethod);
+
 
         private const string SystemWebNamespacesCSharp = @"
 namespace System.Collections.Specialized
@@ -49,8 +54,11 @@ namespace System.Web.UI
     }
 }";
 
+        private static readonly int SystemWebNamespacesCSharpLineCount = SystemWebNamespacesCSharp.Where(ch => ch == '\n').Count();
+
         [Fact]
-        public void BadInput()
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void BadInputLocalString_Diagnostic()
         {
             VerifyCSharp(
                 SystemWebNamespacesCSharp + @"
@@ -77,6 +85,234 @@ namespace VulnerableWebApp
                     CommandType = CommandType.Text,
                 };
             }
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(21, 21, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void BadInputLocalStringMoreBlocks_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string input;
+            if (Request.Form != null)
+            {
+                input = Request.Form[""in""];
+            }
+            else
+            {
+                input = ""SELECT 1"";
+            }
+
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = input,
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(28, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void BadInputDirect_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = Request.Form[""in""],
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void BadInputLocalNameValueCollectionString_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            System.Collections.Specialized.NameValueCollection nvc = Request.Form;
+            string input = nvc[""in""];
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = input,
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(20, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void BadInputLocalStructNameValueCollectionString_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Collections.Specialized;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        public struct MyStruct
+        {
+            public NameValueCollection nvc;
+            public string s;
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            MyStruct myStruct = new MyStruct();
+            myStruct.nvc = this.Request.Form;
+            myStruct.s = myStruct.nvc[""in""];
+            string input = myStruct.s;
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = input,
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(29, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void OkayInputLocalStructNameValueCollectionString_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Collections.Specialized;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        public struct MyStruct
+        {
+            public NameValueCollection nvc;
+            public string s;
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            MyStruct myStruct = new MyStruct();
+            myStruct.nvc = this.Request.Form;
+            myStruct.s = myStruct.nvc[""in""];
+            string input = myStruct.s;
+            myStruct.s = ""SELECT 1"";
+            input = myStruct.s;
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = input,
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void OkayInputConst_NoDiagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE username = 'foo'"",
+                CommandType = CommandType.Text,
+            };
         }
      }
 }

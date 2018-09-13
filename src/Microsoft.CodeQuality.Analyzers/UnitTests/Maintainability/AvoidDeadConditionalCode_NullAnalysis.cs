@@ -5988,9 +5988,6 @@ End Class
         [Fact]
         public void NullCheck_LambdaResult_Diagnostic()
         {
-            // TODO: File a bug for interprocedural predicate analysis.
-            // Below code should flag "isNonNull" invocation as dead code
-            // if we did predicated analysis of return values.
             VerifyCSharp(@"
 class Test
 {
@@ -6005,7 +6002,10 @@ class Test
         }
     }
 }
-");
+",
+            // Test0.cs(9,13): warning CA1508: 'isNonNull(x)' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(9, 13, "isNonNull(x)", "true"));
+
             VerifyBasic(@"
 Class Test
     Private Sub M1()
@@ -6017,7 +6017,135 @@ Class Test
         End If
     End Sub
 End Class
+",
+            // Test0.vb(7,12): warning CA1508: 'isNonNull(x)' is always 'True'. Remove or refactor the condition(s) to avoid dead code.
+            GetBasicResultAt(7, 12, "isNonNull(x)", "True"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void NullCheck_LambdaResult_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1()
+    {
+        System.Action<string> myLambda = (string x) =>
+        {
+            System.Func<string, bool> isNonNull = s => s != null;
+
+            if (isNonNull(x))
+            {
+                return;
+            }
+        };
+
+        myLambda(null);
+    }
+}
 ");
+
+            VerifyBasic(@"
+Class Test
+    Private Sub M1()
+        Dim myLambda As System.Action(Of String) = Sub(x As String)
+                                                       Dim isNonNull As System.Func(Of String, Boolean) = Function(s) s IsNot Nothing
+
+                                                       If isNonNull(x) Then
+                                                           Return
+                                                       End If
+                                                   End Sub
+
+        myLambda(Nothing)
+    End Sub
+End Class");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void NullCheck_LambdaResult_NoDiagnostic_02()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M1()
+    {
+        System.Action<string> myLambda = (string x) =>
+        {
+            System.Func<string, bool> isNonNull = s => s != null;
+
+            if (isNonNull(x))
+            {
+                return;
+            }
+        };
+
+        myLambda(null);
+        myLambda("""");
+    }
+}
+");
+
+            VerifyBasic(@"
+Class Test
+    Private Sub M1()
+        Dim myLambda As System.Action(Of String) = Sub(x As String)
+                                                       Dim isNonNull As System.Func(Of String, Boolean) = Function(s) s IsNot Nothing
+
+                                                       If isNonNull(x) Then
+                                                           Return
+                                                       End If
+                                                   End Sub
+
+        myLambda(Nothing)
+        myLambda("""")
+    End Sub
+End Class");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void NullCheck_LambdaResult_NoDiagnostic_03()
+        {
+            // We do not analyze lambdas/local functions independent of the calling context
+            // Hence no diagnostic reported for dead code in lambda here.
+            VerifyCSharp(@"
+class Test
+{
+    void M1()
+    {
+        System.Action myLambda = () =>
+        {
+            System.Func<string, bool> isNonNull = s => s != null;
+
+            if (isNonNull(null))
+            {
+                return;
+            }
+        };
+
+        myLambda();
+    }
+}
+");
+
+            VerifyBasic(@"
+Class Test
+    Private Sub M1()
+        Dim myLambda As System.Action = Sub()
+                                            Dim isNonNull As System.Func(Of String, Boolean) = Function(s) s IsNot Nothing
+
+                                            If isNonNull(Nothing) Then
+                                                Return
+                                            End If
+                                        End Sub
+        myLambda()
+    End Sub
+End Class");
         }
     }
 }

@@ -2529,7 +2529,7 @@ public class Test
         }
 
         [Fact]
-        public void LocalFunctionInvocation_EmptyBody_NoDiagnostic()
+        public void LocalFunctionInvocation_EmptyBody_Diagnostic()
         {
             VerifyCSharp(@"
 public class C
@@ -2547,48 +2547,57 @@ public class Test
         {
         };
 
-        MyLocalFunction();    // This should not change state of parameters if we analyzed the local function.
+        MyLocalFunction();    // This should not change state of parameters.
         var y = x.ToString();
         var z = c.X;
     }
 }
-");
-
-            // VB has no local functions.
-        }
-
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1676")]
-        public void LocalFunction_HazardousUsagesInBody_NoDiagnostic()
-        {
-            VerifyCSharp(@"
-public class C
-{
-    public int X;
-}
-
-public class Test
-{
-    public void M1(string str, C c)
-    {
-        var x = str;
-
-        void MyLocalFunction()
-        {
-            // Below should fire diagnostics if we analyzed the local function invocation.
-            var y = x.ToString();
-            var z = c.X;
-        };
-
-        MyLocalFunction();
-    }
-}
-");
+",
+            // Test0.cs(18,17): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(18, 17, "void Test.M1(string str, C c)", "str"),
+            // Test0.cs(19,17): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(19, 17, "void Test.M1(string str, C c)", "c"));
 
             // VB has no local functions.
         }
 
         [Fact]
-        public void LambdaInvocation_EmptyBody_NoDiagnostic()
+        public void LocalFunction_HazardousUsagesInBody_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(string str, C c)
+    {
+        var x = str;
+
+        void MyLocalFunction()
+        {
+            // Below should fire diagnostics.
+            var y = x.ToString();
+            var z = c.X;
+        };
+
+        MyLocalFunction();
+        MyLocalFunction(); // Do not fire duplicate diagnostics
+    }
+}
+",
+            // Test0.cs(16,21): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(16, 21, "void Test.M1(string str, C c)", "str"),
+            // Test0.cs(17,21): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(17, 21, "void Test.M1(string str, C c)", "c"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LambdaInvocation_EmptyBody_Diagnostic()
         {
             VerifyCSharp(@"
 public class C
@@ -2606,12 +2615,16 @@ public class Test
         {
         };
 
-        myLambda();    // This should not change state of parameters if we analyzed the lambda.
+        myLambda();    // This should not change state of parameters.
         var y = x.ToString();
         var z = c.X;
     }
 }
-");
+",
+            // Test0.cs(18,17): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(18, 17, "void Test.M1(string str, C c)", "str"),
+            // Test0.cs(19,17): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(19, 17, "void Test.M1(string str, C c)", "c"));
 
             VerifyBasic(@"
 Public Class C
@@ -2625,15 +2638,19 @@ Public Class Test
         Dim myLambda As System.Action = Sub()
                                         End Sub
 
-        myLambda()      ' This should not change state of parameters if we analyzed the lambda.
+        myLambda()      ' This should not change state of parameters.
         Dim y = x.ToString()
         Dim z = c.X
     End Sub
-End Class");
+End Class",
+            // Test0.vb(14,17): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(14, 17, "Sub Test.M1(str As String, c As C)", "str"),
+            // Test0.vb(15,17): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(15, 17, "Sub Test.M1(str As String, c As C)", "c"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1676")]
-        public void Lambda_HazardousUsagesInBody_NoDiagnostic()
+        [Fact]
+        public void Lambda_HazardousUsagesInBody_Diagnostic()
         {
             VerifyCSharp(@"
 public class C
@@ -2649,15 +2666,20 @@ public class Test
 
         System.Action myLambda = () =>
         {
-            // Below should fire diagnostics if we analyzed the lambda invocation.
+            // Below should fire diagnostics.
             var y = x.ToString();
             var z = c.X;
         };
 
         myLambda();
+        myLambda(); // Do not fire duplicate diagnostics
     }
 }
-");
+",
+            // Test0.cs(16,21): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(16, 21, "void Test.M1(string str, C c)", "str"),
+            // Test0.cs(17,21): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(17, 21, "void Test.M1(string str, C c)", "c"));
 
             VerifyBasic(@"
 Public Class C
@@ -2669,14 +2691,200 @@ Public Class Test
         Dim x = str
 
         Dim myLambda As System.Action = Sub()
-                                            ' Below should fire diagnostics if we analyzed the lambda invocation.
+                                            ' Below should fire diagnostics.
                                             Dim y = x.ToString()
                                             Dim z = c.X
                                         End Sub
 
         myLambda()
+        myLambda() ' Do not fire duplicate diagnostics
+    End Sub
+End Class",
+            // Test0.vb(12,53): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(12, 53, "Sub Test.M1(str As String, c As C)", "str"),
+            // Test0.vb(13,53): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(13, 53, "Sub Test.M1(str As String, c As C)", "c"));
+        }
+
+        [Fact]
+        public void DelegateInvocation_ValidatedArguments_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(string str, C c)
+    {
+        var x = str;
+
+        System.Action<string, C> myDelegate = M2;
+        myDelegate(x, c);
+
+        var y = x.ToString();
+        var z = c.X;
+    }
+
+    private void M2(string x, C c)
+    {
+        if (x == null)
+        {
+            throw new ArgumentNullException(nameof(x));
+        }
+
+        if (c == null)
+        {
+            throw new ArgumentNullException(nameof(c));
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(str As String, c As C)
+        Dim x = str
+
+        Dim myDelegate As System.Action(Of String, C) = AddressOf M2
+        myDelegate(x, c)
+
+        Dim y = x.ToString()
+        Dim z = c.X
+    End Sub
+
+    Private Sub M2(x As String, c As C)
+        If x Is Nothing Then
+            Throw New System.ArgumentNullException(NameOf(x))
+        End If
+
+        If c Is Nothing Then
+            Throw New System.ArgumentNullException(NameOf(c))
+        End If
     End Sub
 End Class");
+        }
+
+        [Fact]
+        public void DelegateInvocation_EmptyBody_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(string str, C c)
+    {
+        var x = str;
+
+        System.Action<string, C> myDelegate = M2;
+        myDelegate(x, c);
+
+        var y = x.ToString();
+        var z = c.X;
+    }
+
+    private void M2(string x, C c)
+    {
+    }
+}
+",
+            // Test0.cs(16,17): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(16, 17, "void Test.M1(string str, C c)", "str"),
+            // Test0.cs(17,17): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(17, 17, "void Test.M1(string str, C c)", "c"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(str As String, c As C)
+        Dim x = str
+
+        Dim myDelegate As System.Action(Of String, C) = AddressOf M2
+        myDelegate(x, c)
+
+        Dim y = x.ToString()
+        Dim z = c.X
+    End Sub
+
+    Private Sub M2(x As String, c As C)
+    End Sub
+End Class",
+            // Test0.vb(13,17): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(13, 17, "Sub Test.M1(str As String, c As C)", "str"),
+            // Test0.vb(14,17): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(14, 17, "Sub Test.M1(str As String, c As C)", "c"));
+        }
+
+        [Fact]
+        public void DelegateInvocation_HazardousUsagesInBody_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(string str, C c)
+    {
+        var x = str;
+
+        System.Action<string, C> myDelegate = M2;
+        myDelegate(x, c);
+    }
+
+    private void M2(string x, C c)
+    {
+        var y = x.ToString();
+        var z = c.X;
+    }
+}
+",
+            // Test0.cs(14,20): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(14, 20, "void Test.M1(string str, C c)", "str"),
+            // Test0.cs(14,23): warning CA1062: In externally visible method 'void Test.M1(string str, C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(14, 23, "void Test.M1(string str, C c)", "c"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(str As String, c As C)
+        Dim x = str
+
+        Dim myDelegate As System.Action(Of String, C) = AddressOf M2
+        myDelegate(x, c)
+    End Sub
+
+    Private Sub M2(x As String, c As C)
+        Dim y = x.ToString()
+        Dim z = c.X
+    End Sub
+End Class",
+            // Test0.vb(11,20): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(11, 20, "Sub Test.M1(str As String, c As C)", "str"),
+            // Test0.vb(11,23): warning CA1062: In externally visible method 'Sub Test.M1(str As String, c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(11, 23, "Sub Test.M1(str As String, c As C)", "c"));
         }
 
         [Fact]

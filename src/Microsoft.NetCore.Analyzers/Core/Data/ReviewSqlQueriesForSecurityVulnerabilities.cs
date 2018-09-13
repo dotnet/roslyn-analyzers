@@ -211,11 +211,7 @@ namespace Microsoft.NetCore.Analyzers.Data
                 // We have a candidate for diagnostic. perform more precise dataflow analysis.
                 var cfg = argumentValue.GetEnclosingControlFlowGraph();
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
-                var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
-                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
                 ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
                 if (value.NonLiteralState == ValueContainsNonLiteralState.No)
                 {

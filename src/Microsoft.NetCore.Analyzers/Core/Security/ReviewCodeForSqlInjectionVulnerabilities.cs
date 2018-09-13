@@ -215,12 +215,6 @@ namespace Microsoft.NetCore.Analyzers.Security
             {
                 // We have a candidate for diagnostic. perform more precise dataflow analysis.
                 var cfg = argumentValue.GetEnclosingControlFlowGraph();
-                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
-                var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
-
                 var taintedDataAnalysisResult = TaintedDataAnalysis.GetOrComputeResult(cfg, operationContext.Compilation, containingMethod);
                 //TaintedDataAbstractValue abstractValue = taintedDataAnalysisResult[argumentValue];
                 TaintedDataAbstractValue abstractValue = taintedDataAnalysisResult[argumentValue.Kind, argumentValue.Syntax];

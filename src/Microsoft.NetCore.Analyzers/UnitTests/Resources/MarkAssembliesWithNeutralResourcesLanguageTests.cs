@@ -63,25 +63,25 @@ End Class", LanguageNames.VisualBasic), GetGlobalResult(MarkAssembliesWithNeutra
         [Fact]
         public void TestCSharpInvalidAttribute1()
         {
-            VerifyCSharp(GetSources(@"[assembly: System.Resources.NeutralResourcesLanguage("""")]", LanguageNames.CSharp), GetCSharpResultAt(0, 12, MarkAssembliesWithNeutralResourcesLanguageAnalyzer.Rule));
+            VerifyCSharp(GetSources(@"[assembly: System.Resources.NeutralResourcesLanguage("""")]", LanguageNames.CSharp), GetCSharpResultAt(1, 12, MarkAssembliesWithNeutralResourcesLanguageAnalyzer.Rule));
         }
 
         [Fact]
         public void TestCSharpInvalidAttribute2()
         {
-            VerifyCSharp(GetSources(@"[assembly: System.Resources.NeutralResourcesLanguage(null)]", LanguageNames.CSharp), GetCSharpResultAt(0, 12, MarkAssembliesWithNeutralResourcesLanguageAnalyzer.Rule));
+            VerifyCSharp(GetSources(@"[assembly: System.Resources.NeutralResourcesLanguage(null)]", LanguageNames.CSharp), GetCSharpResultAt(1, 12, MarkAssembliesWithNeutralResourcesLanguageAnalyzer.Rule));
         }
 
         [Fact]
         public void TestBasicInvalidAttribute1()
         {
-            VerifyBasic(GetSources(@"<Assembly: System.Resources.NeutralResourcesLanguage("""")>", LanguageNames.VisualBasic), GetBasicResultAt(0, 2, MarkAssembliesWithNeutralResourcesLanguageAnalyzer.Rule));
+            VerifyBasic(GetSources(@"<Assembly: System.Resources.NeutralResourcesLanguage("""")>", LanguageNames.VisualBasic), GetBasicResultAt(1, 2, MarkAssembliesWithNeutralResourcesLanguageAnalyzer.Rule));
         }
 
         [Fact]
         public void TestBasicInvalidAttribute2()
         {
-            VerifyBasic(GetSources(@"<Assembly: System.Resources.NeutralResourcesLanguage(Nothing)>", LanguageNames.VisualBasic), GetBasicResultAt(0, 2, MarkAssembliesWithNeutralResourcesLanguageAnalyzer.Rule));
+            VerifyBasic(GetSources(@"<Assembly: System.Resources.NeutralResourcesLanguage(Nothing)>", LanguageNames.VisualBasic), GetBasicResultAt(1, 2, MarkAssembliesWithNeutralResourcesLanguageAnalyzer.Rule));
         }
 
         [Fact]

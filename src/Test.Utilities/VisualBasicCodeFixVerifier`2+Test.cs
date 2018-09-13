@@ -19,12 +19,6 @@ namespace Test.Utilities
             {
                 SolutionTransforms.Add((solution, projectId) =>
                 {
-                    if (typeof(object).Assembly.GetType("System.ValueTuple`2", throwOnError: false) != null
-                        && MetadataReferences.SystemValueTupleReference != null)
-                    {
-                        solution = solution.RemoveMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
-                    }
-
                     if (IncludeSystemData)
                     {
                         solution = solution.AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(System.Data.DataSet).Assembly.Location));

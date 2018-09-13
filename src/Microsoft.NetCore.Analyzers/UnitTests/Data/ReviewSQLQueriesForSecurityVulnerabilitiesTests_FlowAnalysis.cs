@@ -1397,13 +1397,11 @@ class Test
         {{
         }};
 
-        MyLocalFunction();    // This should not change state of 'str' if we analyzed the local function.
+        MyLocalFunction();    // This should not change state of 'str'.
         Command c = new Command1(str, str);
     }}
 }}
-",
-            // Currently we generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
-            GetCSharpResultAt(105, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+");
 
             // VB has no local functions.
         }
@@ -1433,13 +1431,11 @@ class Test
             str = """";
         }};
 
-        MyLocalFunction();    // This should change state of 'str' to be a constant if we analyzed the local function.
+        MyLocalFunction();    // This should change state of 'str' to be a constant.
         Command c = new Command1(str, str);
     }}
 }}
-",
-            // Currently we generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
-            GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+");
 
             // VB has no local functions.
         }
@@ -1457,30 +1453,52 @@ class Command1 : Command
     }}
 }}
 
+class Command2 : Command
+{{
+    public Command2(string cmd, string parameter2)
+    {{
+    }}
+}}
+
+class Command3 : Command
+{{
+    public Command3(string cmd, string parameter2)
+    {{
+    }}
+}}
+
 class Test
 {{
     void M1(string param)
     {{
-        string str;
+        string str, str2 = param;
         str = """";
 
         void MyLocalFunction()
         {{
-            str = param;
+            str2 = str;
+            str = param;            
         }};
 
-        MyLocalFunction();    // This should change state of 'str' to be a non-constant.
-        Command c = new Command1(str, str);
+        MyLocalFunction();    // This should change state of 'str' to be a non-constant and 'str2' to be a constant.
+        Command c = new Command1(str, str);     // Diagnostic
+        c = new Command2(str2, str2);           // No Diagnostic
+
+        MyLocalFunction();    // This should change state of 'str2' to also be a non-constant.
+        c = new Command3(str2, str2);           // Diagnostic
     }}
 }}
 ",
-            GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+            // Test0.cs(121,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
+            GetCSharpResultAt(121, 21, "Command1.Command1(string cmd, string parameter2)", "M1"),
+            // Test0.cs(125,13): warning CA2100: Review if the query string passed to 'Command3.Command3(string cmd, string parameter2)' in 'M1', accepts any user input.
+            GetCSharpResultAt(125, 13, "Command3.Command3(string cmd, string parameter2)", "M1"));
 
             // VB has no local functions.
         }
 
         [Fact]
-        public void FlowAnalysis_LocalFunctionInvocation_ChangesCapturedValueContextSensitive_Diagnostic()
+        public void FlowAnalysis_LocalFunctionInvocation_ChangesCapturedValueContextSensitive_NoDiagnostic()
         {
             VerifyCSharp($@"
 {SetupCodeCSharp}
@@ -1504,19 +1522,17 @@ class Test
             str = param2;
         }};
 
-        MyLocalFunction(str);    // This should change state of 'str' to be a constant if we analyzed the local function in a context sensitive fashion.
+        MyLocalFunction(str);    // This should change state of 'str' to be a constant.
         Command c = new Command1(str, str);
     }}
 }}
-",
-            // Currently we generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
-            GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+");
 
             // VB has no local functions.
         }
 
         [Fact]
-        public void FlowAnalysis_LocalFunctionInvocation_ReturnValueContextSensitive_Diagnostic()
+        public void FlowAnalysis_LocalFunctionInvocation_ReturnValueContextSensitive_NoDiagnostic()
         {
             VerifyCSharp($@"
 {SetupCodeCSharp}
@@ -1540,13 +1556,11 @@ class Test
             return param2;
         }};
 
-        str = MyLocalFunction(str);    // This should change state of 'str' to be a constant if we analyzed the local function in a context sensitive fashion.
+        str = MyLocalFunction(str);    // This should change state of 'str' to be a constant.
         Command c = new Command1(str, str);
     }}
 }}
-",
-            // Currently we generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
-            GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+");
 
             // VB has no local functions.
         }
@@ -1575,13 +1589,11 @@ class Test
         {{
         }};
 
-        myLambda();    // This should not change state of 'str' if we analyzed the lambda.
+        myLambda();    // This should not change state of 'str'.
         Command c = new Command1(str, str);
     }}
 }}
-",
-            // Currently we generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
-            GetCSharpResultAt(105, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+");
 
             VerifyBasic($@"
 {SetupCodeBasic}
@@ -1601,12 +1613,10 @@ Module Test
         Dim myLambda As System.Action = Sub()
                                         End Sub
 
-        myLambda()      ' This should not change state of 'str' if we analyzed the lambda.
+        myLambda()      ' This should not change state of 'str'.
         Dim c As New Command1(str, str)
     End Sub
-End Module",
-            // Currently we generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
-            GetBasicResultAt(140, 18, "Sub Command1.New(cmd As String, parameter2 As String)", "M1"));
+End Module");
         }
 
         [Fact]
@@ -1634,13 +1644,11 @@ class Test
             str = """";
         }};
 
-        myLambda();    // This should change the state of 'str' to be a constant if we analyzed the lambda.
+        myLambda();    // This should change the state of 'str' to be a constant.
         Command c = new Command1(str, str);
     }}
 }}
-",
-            // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
-            GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+");
 
             VerifyBasic($@"
 {SetupCodeBasic}
@@ -1661,12 +1669,10 @@ Module Test
                                             str = """"
                                         End Sub
 
-        myLambda()      ' This should change the state of 'str' to be a constant if we analyzed the lambda.
+        myLambda()      ' This should change the state of 'str' to be a constant.
         Dim c As New Command1(str, str)
     End Sub
-End Module",
-            // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
-            GetBasicResultAt(141, 18, "Sub Command1.New(cmd As String, parameter2 As String)", "M1"));
+End Module");
         }
 
         [Fact]
@@ -1682,24 +1688,46 @@ class Command1 : Command
     }}
 }}
 
+class Command2 : Command
+{{
+    public Command2(string cmd, string parameter2)
+    {{
+    }}
+}}
+
+class Command3 : Command
+{{
+    public Command3(string cmd, string parameter2)
+    {{
+    }}
+}}
+
 class Test
 {{
     void M1(string param)
     {{
-        string str;
+        string str, str2 = param;
         str = """";
 
         System.Action myLambda = () =>
         {{
+            str2 = str;
             str = param;
         }};
 
-        myLambda();    // This should change state of 'str' to be a non-constant.
-        Command c = new Command1(str, str);
+        myLambda();    // This should change state of 'str' to be a non-constant and 'str2' to be a constant.
+        Command c = new Command1(str, str);     // Diagnostic
+        c = new Command2(str2, str2);           // No Diagnostic
+
+        myLambda();    // This should change state of 'str2' to also be a non-constant.
+        c = new Command3(str2, str2);           // Diagnostic
     }}
 }}
 ",
-            GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+            // Test0.cs(121,21): warning CA2100: Review if the query string passed to 'Command1.Command1(string cmd, string parameter2)' in 'M1', accepts any user input.
+            GetCSharpResultAt(121, 21, "Command1.Command1(string cmd, string parameter2)", "M1"),
+            // Test0.cs(125,13): warning CA2100: Review if the query string passed to 'Command3.Command3(string cmd, string parameter2)' in 'M1', accepts any user input.
+            GetCSharpResultAt(125, 13, "Command3.Command3(string cmd, string parameter2)", "M1"));
 
             VerifyBasic($@"
 {SetupCodeBasic}
@@ -1711,20 +1739,42 @@ Class Command1
     End Sub
 End Class
 
+Class Command2
+    Inherits Command
+
+    Sub New(cmd As String, parameter2 As String)
+    End Sub
+End Class
+
+Class Command3
+    Inherits Command
+
+    Sub New(cmd As String, parameter2 As String)
+    End Sub
+End Class
+
 Module Test
     Sub M1(param As String)
-        Dim str As String
+        Dim str As String, str2 As String = param
         str = """"
 
         Dim myLambda As System.Action = Sub()
+                                           str2 = str
                                            str = param 
                                         End Sub
 
-        myLambda()      ' This should change state of 'str' to be a non-constant.
-        Dim c As New Command1(str, str)
+        myLambda()      ' This should change state of 'str' to be a non-constant and 'str2' to be a constant.
+        Dim c As Command = New Command1(str, str)     ' Diagnostic
+        c = New Command2(str2, str2)                  ' No Diagnostic
+
+        myLambda()      ' This should change state of 'str' to also be a non-constant.
+        c = New Command3(str2, str2)                  ' Diagnostic
     End Sub
 End Module",
-            GetBasicResultAt(141, 18, "Sub Command1.New(cmd As String, parameter2 As String)", "M1"));
+            // Test0.vb(156,28): warning CA2100: Review if the query string passed to 'Sub Command1.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
+            GetBasicResultAt(156, 28, "Sub Command1.New(cmd As String, parameter2 As String)", "M1"),
+            // Test0.vb(160,13): warning CA2100: Review if the query string passed to 'Sub Command3.New(cmd As String, parameter2 As String)' in 'M1', accepts any user input.
+            GetBasicResultAt(160, 13, "Sub Command3.New(cmd As String, parameter2 As String)", "M1"));
         }
 
         [Fact]
@@ -1752,13 +1802,11 @@ class Test
             str = param2;
         }};
 
-        myLambda(str);    // This should change state of 'str' to be a constant if we analyzed the local function in a context sensitive fashion.
+        myLambda(str);    // This should change state of 'str' to be a constant.
         Command c = new Command1(str, str);
     }}
 }}
-",
-            // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
-            GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+");
 
             VerifyBasic($@"
 {SetupCodeBasic}
@@ -1779,16 +1827,14 @@ Module Test
                                                         str = param2 
                                                     End Sub
 
-        myLambda(str)      '  This should change state of 'str' to be a constant if we analyzed the local function in a context sensitive fashion.
+        myLambda(str)      '  This should change state of 'str' to be a constant.
         Dim c As New Command1(str, str)
     End Sub
-End Module",
-            // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
-            GetBasicResultAt(141, 18, "Sub Command1.New(cmd As String, parameter2 As String)", "M1"));
+End Module");
         }
 
         [Fact]
-        public void FlowAnalysis_LambdaInvocation_ReturnValueContextSensitive_Diagnostic()
+        public void FlowAnalysis_LambdaInvocation_ReturnValueContextSensitive_NoDiagnostic()
         {
             VerifyCSharp($@"
 {SetupCodeCSharp}
@@ -1812,13 +1858,11 @@ class Test
             return param2;
         }};
 
-        str = myLambda(str);    // This should change state of 'str' to be a constant if we analyzed the local function in a context sensitive fashion.
+        str = myLambda(str);    // This should change state of 'str' to be a constant.
         Command c = new Command1(str, str);
     }}
 }}
-",
-            // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
-            GetCSharpResultAt(106, 21, "Command1.Command1(string cmd, string parameter2)", "M1"));
+");
 
             VerifyBasic($@"
 {SetupCodeBasic}
@@ -1839,12 +1883,10 @@ Module Test
                                                                 Return param2 
                                                             End Function
 
-        str = myLambda(str)      '  This should change state of 'str' to be a constant if we analyzed the local function in a context sensitive fashion.
+        str = myLambda(str)      '  This should change state of 'str' to be a constant.
         Dim c As New Command1(str, str)
     End Sub
-End Module",
-            // Currently we generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
-            GetBasicResultAt(141, 18, "Sub Command1.New(cmd As String, parameter2 As String)", "M1"));
+End Module");
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]

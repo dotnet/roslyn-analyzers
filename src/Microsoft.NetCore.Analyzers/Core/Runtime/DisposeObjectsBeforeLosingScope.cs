@@ -1,14 +1,15 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis;
-using Microsoft.CodeAnalysis.FlowAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -44,6 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
+                var reportedNodes = new ConcurrentDictionary<SyntaxNode, bool>();
                 compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
                     if (!(operationBlockContext.OwningSymbol is IMethodSymbol containingMethod) ||
@@ -52,7 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod, out var disposeAnalysisResult))
+                    if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod, out var disposeAnalysisResult, out var pointsToAnalysisResult))
                     {
                         BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
                         ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;
@@ -70,10 +72,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 (disposeValue.DisposingOrEscapingOperations.Count > 0 &&
                                  disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph))))
                             {
+                                var syntax = location.GetNodeToReportDiagnostic(pointsToAnalysisResult);
+                                if (!reportedNodes.TryAdd(syntax, true))
+                                {
+                                    // Avoid duplicates. 
+                                    continue;
+                                }
+
                                 // CA2000: In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.
                                 var arg1 = containingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-                                var arg2 = location.CreationOpt.Syntax.ToString();
-                                var diagnostic = location.CreationOpt.Syntax.CreateDiagnostic(Rule, arg1, arg2);
+                                var arg2 = syntax.ToString();
+                                var diagnostic = syntax.CreateDiagnostic(Rule, arg1, arg2);
                                 operationBlockContext.ReportDiagnostic(diagnostic);
                             }
                         }

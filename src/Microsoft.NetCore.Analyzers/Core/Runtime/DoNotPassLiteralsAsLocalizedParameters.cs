@@ -150,11 +150,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 var cfg = topmostBlock.GetEnclosingControlFlowGraph();
                                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                                var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
-                                var copyAnalysisResult = CopyAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, pointsToAnalysisResultOpt: pointsToAnalysisResult);
-                                // Do another analysis pass to improve the results from PointsTo and Copy analysis.
-                                pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult);
-                                return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider, copyAnalysisResult, pointsToAnalysisResult);
+                                return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
                             }
                         }
 

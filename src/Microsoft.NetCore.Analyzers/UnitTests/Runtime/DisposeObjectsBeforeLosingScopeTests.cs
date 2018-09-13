@@ -1692,9 +1692,8 @@ End Class");
         }
 
         [Fact]
-        public void LocalWithDisposableAssignment_ByRefEscape_NoDiagnostic()
+        public void LocalWithDisposableAssignment_ByRef_DisposedInCallee_NoDiagnostic()
         {
-            // Local/parameter passed by ref is escaped.
             VerifyCSharp(@"
 using System;
 
@@ -1742,6 +1741,65 @@ Class Test
         a.Dispose()
         a = Nothing
     End Sub
+End Class");
+        }
+
+        [Fact]
+        public void LocalWithDisposableAssignment_ByRefEscape_AbstractVirtualMethod_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public abstract class Test
+{
+    void M1()
+    {
+        A a = new A();
+        M2(ref a);
+
+        a = new A();
+        M3(ref a);
+    }
+
+    public virtual void M2(ref A a)
+    {
+    }
+
+    public abstract void M3(ref A a);
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Public MustInherit Class Test
+    Sub M1()
+        Dim a As New A()
+        M2(a)
+
+        a = New A()
+        M3(a)
+    End Sub
+
+    Public Overridable Sub M2(ByRef a as A)
+    End Sub
+
+    Public MustOverride Sub M3(ByRef a as A)
 End Class");
         }
 
@@ -3114,10 +3172,9 @@ Class Test
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1676")]
+        [Fact]
         public void LocalFunctionInvocation_EmptyBody_Diagnostic()
         {
-            // Currently we do not generate a diagnostic as we do not analyze local function invocations and pessimistically assume it invalidates all saved state.
             VerifyCSharp(@"
 using System;
 
@@ -3140,10 +3197,12 @@ class Test
         {
         };
 
-        MyLocalFunction();    // This should not change state of 'a' if we analyzed the local function.
+        MyLocalFunction();    // This should not change state of 'a'.
     }
 }
-");
+",
+            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"));
 
             // VB has no local functions.
         }
@@ -3181,7 +3240,7 @@ class Test
             // VB has no local functions.
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
+        [Fact]
         public void LocalFunctionInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
         {
             VerifyCSharp(@"
@@ -3206,10 +3265,12 @@ class Test
             a = new A();
         };
 
-        MyLocalFunction();    // If we analyzed the local function, this should change state of 'a' to be NotDisposed and fire a diagnostic.
+        MyLocalFunction();    // This should change state of 'a' to be NotDisposed and fire a diagnostic.
     }
 }
-");
+",
+            // Test0.cs(20,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(20, 17, "void Test.M1()", "new A()"));
 
             // VB has no local functions.
         }
@@ -3239,7 +3300,144 @@ class Test
             a = b;
         };
 
-        MyLocalFunction(new A());    // If we analyzed the local function, this should change state of 'a' to be NotDisposed and fire a diagnostic.
+        MyLocalFunction(new A());    // This should change state of 'a' to be NotDisposed and fire a diagnostic.
+    }
+}
+",
+            // Test0.cs(23,25): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(23, 25, "void Test.M1()", "new A()"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LocalFunction_DisposableCreationNotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        void MyLocalFunction()
+        {
+            A a = new A();  // This should fire a diagnostic.
+        };
+
+        MyLocalFunction();
+    }
+}
+",
+            // Test0.cs(18,19): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(18, 19, "void Test.M1()", "new A()"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LocalFunction_DisposableCreation_InvokedMultipleTimes_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        void MyLocalFunction()
+        {
+            A a = new A();  // This should fire a single diagnostic.
+        };
+
+        MyLocalFunction();
+        MyLocalFunction();
+    }
+}
+",
+            // Test0.cs(18,19): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(18, 19, "void Test.M1()", "new A()"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LocalFunction_DisposableCreationReturned_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A MyLocalFunction()
+        {
+            return new A();
+        };
+
+        var a = MyLocalFunction(/*1*/);  // This should fire a diagnostic.
+        var b = MyLocalFunction(/*2*/);  // This should fire a diagnostic.
+    }
+}
+",
+            // Test0.cs(21,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'MyLocalFunction(/*1*/)' before all references to it are out of scope.
+            GetCSharpResultAt(21, 17, "void Test.M1()", "MyLocalFunction(/*1*/)"),
+            // Test0.cs(22,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'MyLocalFunction(/*2*/)' before all references to it are out of scope.
+            GetCSharpResultAt(22, 17, "void Test.M1()", "MyLocalFunction(/*2*/)"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LocalFunction_DisposableCreationReturned_Disposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A MyLocalFunction()
+        {
+            return new A();
+        };
+
+        var a = MyLocalFunction();
+        a.Dispose();
     }
 }
 ");
@@ -3247,10 +3445,210 @@ class Test
             // VB has no local functions.
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1676")]
+        [Fact]
+        public void LocalFunction_DisposableCreationAssignedToRefOutParameter_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a1 = null, a2;
+        MyLocalFunction(ref a1, out a2);  // This should fire two diagnostics.
+        return;
+
+        void MyLocalFunction(ref A param1, out A param2)
+        {
+            param1 = new A();
+            param2 = new A();
+        };
+    }
+}
+",
+            // Test0.cs(17,25): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref a1' before all references to it are out of scope.
+            GetCSharpResultAt(17, 25, "void Test.M1()", "ref a1"),
+            // Test0.cs(17,33): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out a2' before all references to it are out of scope.
+            GetCSharpResultAt(17, 33, "void Test.M1()", "out a2"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LocalFunction_DisposableCreationAssignedToRefOutParameter_Disposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a1 = null, a2;
+        MyLocalFunction(ref a1, out a2);
+        a1.Dispose();
+        a2.Dispose();
+        return;
+
+        void MyLocalFunction(ref A param1, out A param2)
+        {
+            param1 = new A();
+            param2 = new A();
+        };
+    }
+}
+");
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LocalFunction_DisposableCreationAssignedToRefOutParameter_MultipleCalls_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a1 = null, a2;
+        MyLocalFunction(ref /*1*/a1, out /*1*/a2);    // This should fire two diagnostics.
+        MyLocalFunction(ref /*2*/a1, out /*2*/a2);    // No diagnostics.
+        a1.Dispose();
+        a2.Dispose();
+        return;
+
+        void MyLocalFunction(ref A param1, out A param2)
+        {
+            param1 = new A();
+            param2 = new A();
+        };
+    }
+}
+",
+            // Test0.cs(17,25): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
+            GetCSharpResultAt(17, 25, "void Test.M1()", "ref /*1*/a1"),
+            // Test0.cs(17,38): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
+            GetCSharpResultAt(17, 38, "void Test.M1()", "out /*1*/a2"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LocalFunction_DisposableCreation_MultipleLevelsBelow_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a1 = null, a2;
+        MyLocalFunction1(ref /*1*/a1, out /*1*/a2);    // This should fire two diagnostics.
+        return;
+
+        void MyLocalFunction1(ref A param1, out A param2)
+        {
+            MyLocalFunction2(ref /*2*/param1, out /*2*/param2);
+        };
+
+        void MyLocalFunction2(ref A param3, out A param4)
+        {
+            param3 = new A();
+            param4 = new A();
+        };
+    }
+}
+",
+            // Test0.cs(17,26): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
+            GetCSharpResultAt(17, 26, "void Test.M1()", "ref /*1*/a1"),
+            // Test0.cs(17,39): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
+            GetCSharpResultAt(17, 39, "void Test.M1()", "out /*1*/a2"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
+        public void LocalFunction_DisposableCreation_MultipleLevelsBelow_Nested_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a1 = null, a2;
+        MyLocalFunction1(ref /*1*/a1, out /*1*/a2);    // This should fire two diagnostics.
+        return;
+
+        void MyLocalFunction1(ref A param1, out A param2)
+        {
+            MyLocalFunction2(ref /*2*/param1, out /*2*/param2);
+
+            void MyLocalFunction2(ref A param3, out A param4)
+            {
+                param3 = new A();
+                param4 = new A();
+            };
+        };
+    }
+}
+",
+            // Test0.cs(17,26): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
+            GetCSharpResultAt(17, 26, "void Test.M1()", "ref /*1*/a1"),
+            // Test0.cs(17,39): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
+            GetCSharpResultAt(17, 39, "void Test.M1()", "out /*1*/a2"));
+
+            // VB has no local functions.
+        }
+
+        [Fact]
         public void LambdaInvocation_EmptyBody_Diagnostic()
         {
-            // Currently we do not generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
             VerifyCSharp(@"
 using System;
 
@@ -3273,12 +3671,13 @@ class Test
         {
         };
 
-        myLambda();    // This should not change state of 'a' if we analyzed the lambda invocation.
+        myLambda();    // This should not change state of 'a'.
     }
 }
-");
+",
+            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"));
 
-            // Currently we do not generate a diagnostic as we do not analyze lambda invocations and pessimistically assume it invalidates all saved state.
             VerifyBasic(@"
 Imports System
 
@@ -3292,14 +3691,16 @@ End Class
 Module Test
     Sub M1()
         Dim a As A
-        a = new A()
+        a = New A()
 
         Dim myLambda As System.Action = Sub()
                                         End Sub
 
-        myLambda()      ' This should not change state of 'a' if we analyzed the lambda invocation.
+        myLambda()      ' This should not change state of 'a'.
     End Sub
-End Module");
+End Module",
+            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -3356,7 +3757,7 @@ Module Test
 End Module");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
+        [Fact]
         public void LambdaInvocation_CapturedValueAssignedNewDisposable_Diagnostic()
         {
             VerifyCSharp(@"
@@ -3382,10 +3783,12 @@ class Test
             a = new A();
         };
 
-        myLambda();    // If we analyzed the lambda invocation, this should change state of 'a' to be NotDisposed and fire a diagnostic.
+        myLambda();    // This should change state of 'a' to be NotDisposed and fire a diagnostic.
     }
 }
-");
+",
+            // Test0.cs(21,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.            
+            GetCSharpResultAt(21, 17, "void Test.M1()", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -3405,9 +3808,11 @@ Module Test
                                             a = New A()
                                         End Sub
 
-        myLambda()      '  If we analyzed the lambda invocation, this should change state of 'a' to be NotDisposed and fire a diagnostic.
+        myLambda()      ' This should change state of 'a' to be NotDisposed and fire a diagnostic.
     End Sub
-End Module");
+End Module",
+            // Test0.vb(16,49): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(16, 49, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -3435,10 +3840,12 @@ class Test
             a = b;
         };
 
-        myLambda(new A());    // If we analyzed the lambda invocation, this should change state of 'a' to be NotDisposed and fire a diagnostic.
+        myLambda(new A());    // This should change state of 'a' to be NotDisposed and fire a diagnostic.
     }
 }
-");
+",
+            // Test0.cs(23,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(23, 18, "void Test.M1()", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -3458,9 +3865,509 @@ Module Test
                                                 a = b
                                               End Sub
 
-        myLambda(New A())      '  If we analyzed the lambda invocation, this should change state of 'a' to be NotDisposed and fire a diagnostic.
+        myLambda(New A())      ' This should change state of 'a' to be NotDisposed and fire a diagnostic.
     End Sub
-End Module");
+End Module",
+            // Test0.vb(19,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(19, 18, "Sub Test.M1()", "New A()"));
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreationNotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        System.Action myLambda = () =>
+        {
+            A a = new A();  // This should fire a diagnostic.
+        };
+
+        myLambda();
+    }
+}
+",
+            // Test0.cs(18,19): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(18, 19, "void Test.M1()", "new A()"));
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreation_InvokedMultipleTimes_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        System.Action myLambda = () =>
+        {
+            A a = new A();  // This should fire a single diagnostic.
+        };
+
+        myLambda();
+        myLambda();
+    }
+}
+",
+            // Test0.cs(18,19): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(18, 19, "void Test.M1()", "new A()"));
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreationReturned_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        System.Func<A> myLambda = () =>
+        {
+            return new A();
+        };
+
+        var a = myLambda(/*1*/);  // This should fire a diagnostic.
+        var b = myLambda(/*2*/);  // This should fire a diagnostic.
+    }
+}
+",
+            // Test0.cs(21,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'myLambda(/*1*/)' before all references to it are out of scope.
+            GetCSharpResultAt(21, 17, "void Test.M1()", "myLambda(/*1*/)"),
+            // Test0.cs(22,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'myLambda(/*1*/)' before all references to it are out of scope.
+            GetCSharpResultAt(22, 17, "void Test.M1()", "myLambda(/*2*/)"));
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreationReturned_Disposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        System.Func<A> myLambda = () =>
+        {
+            return new A();
+        };
+
+        var a = myLambda();
+        a.Dispose();
+    }
+}
+");
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreationAssignedToRefOutParameter_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    delegate void MyDelegate(ref A a1, out A a2);
+    void M1()
+    {
+        MyDelegate myDelegate = (ref A param1, out A param2) =>
+        {
+            param1 = new A();
+            param2 = new A();
+        };
+
+        A a1 = null, a2;
+        myDelegate(ref a1, out a2);  // This should fire two diagnostics.
+        return;
+    }
+}
+",
+            // Test0.cs(24,20): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref a1' before all references to it are out of scope.
+            GetCSharpResultAt(24, 20, "void Test.M1()", "ref a1"),
+            // Test0.cs(24,28): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out a2' before all references to it are out of scope.
+            GetCSharpResultAt(24, 28, "void Test.M1()", "out a2"));
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreationAssignedToRefOutParameter_Disposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    delegate void MyDelegate(ref A a1, out A a2);
+    void M1()
+    {
+        MyDelegate myDelegate = (ref A param1, out A param2) =>
+        {
+            param1 = new A();
+            param2 = new A();
+        };
+
+        A a1 = null, a2;
+        myDelegate(ref a1, out a2);
+        a1.Dispose();
+        a2.Dispose();
+        return;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreationAssignedToRefOutParameter_MultipleCalls_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    delegate void MyDelegate(ref A a1, out A a2);
+    void M1()
+    {
+        MyDelegate myDelegate = (ref A param1, out A param2) =>
+        {
+            param1 = new A();
+            param2 = new A();
+        };
+
+        A a1 = null, a2;
+        myDelegate(ref /*1*/a1, out /*1*/a2);    // This should fire two diagnostics.
+        myDelegate(ref /*2*/a1, out /*2*/a2);    // No diagnostics.
+        a1.Dispose();
+        a2.Dispose();
+        return;
+    }
+}
+",
+            // Test0.cs(24,20): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
+            GetCSharpResultAt(24, 20, "void Test.M1()", "ref /*1*/a1"),
+            // Test0.cs(24,33): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
+            GetCSharpResultAt(24, 33, "void Test.M1()", "out /*1*/a2"));
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreation_MultipleLevelsBelow_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    delegate void MyDelegate(ref A a1, out A a2);
+    void M1()
+    {
+        MyDelegate myDelegate2 = (ref A param3, out A param4) =>
+        {
+            param3 = new A();
+            param4 = new A();
+        };
+
+        MyDelegate myDelegate1 = (ref A param1, out A param2) =>
+        {
+            myDelegate2(ref /*2*/param1, out /*2*/param2);
+        };
+
+        A a1 = null, a2;
+        myDelegate1(ref /*1*/a1, out /*1*/a2);    // This should fire two diagnostics.
+    }
+}
+",
+            // Test0.cs(29,21): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
+            GetCSharpResultAt(29, 21, "void Test.M1()", "ref /*1*/a1"),
+            // Test0.cs(29,34): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
+            GetCSharpResultAt(29, 34, "void Test.M1()", "out /*1*/a2"));
+        }
+
+        [Fact]
+        public void Lambda_DisposableCreation_MultipleLevelsBelow_Nested_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    delegate void MyDelegate(ref A a1, out A a2);
+    void M1()
+    {
+        MyDelegate myDelegate1 = (ref A param1, out A param2) =>
+        {
+            MyDelegate myDelegate2 = (ref A param3, out A param4) =>
+            {
+                param3 = new A();
+                param4 = new A();
+            };
+
+            myDelegate2(ref /*2*/param1, out /*2*/param2);
+        };
+
+        A a1 = null, a2;
+        myDelegate1(ref /*1*/a1, out /*1*/a2);    // This should fire two diagnostics.
+    }
+}
+",
+            // Test0.cs(29,21): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
+            GetCSharpResultAt(29, 21, "void Test.M1()", "ref /*1*/a1"),
+            // Test0.cs(29,34): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
+            GetCSharpResultAt(29, 34, "void Test.M1()", "out /*1*/a2"));
+        }
+
+        [Fact]
+        public void DelegateInvocation_EmptyBody_NoArguments_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a;
+        a = new A();
+
+        System.Action myDelegate = M2;
+        myDelegate();    // This should not change state of 'a' as it is not passed as argument.
+    }
+
+    void M2() { }
+}
+",
+            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"));
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Module Test
+    Sub M1()
+        Dim a As A
+        a = New A()
+
+        Dim myDelegate As System.Action = AddressOf M2
+        myDelegate()      ' This should not change state of 'a' as it is not passed as argument.
+    End Sub
+
+    Sub M2()
+    End Sub
+End Module",
+            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"));
+        }
+
+        [Fact]
+        public void DelegateInvocation_PassedAsArgumentButNotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a;
+        a = new A();
+
+        System.Action<A> myDelegate = M2;
+        myDelegate(a);    // This should not change state of 'a'.
+    }
+
+    void M2(A a) { }
+}
+",
+            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"));
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Module Test
+    Sub M1()
+        Dim a As A
+        a = New A()
+
+        Dim myDelegate As System.Action(Of A) = AddressOf M2
+        myDelegate(a)      ' This should not change state of 'a'.
+    End Sub
+
+    Sub M2(a As A)
+    End Sub
+End Module",
+            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"));
+        }
+
+        [Fact]
+        public void DelegateInvocation_DisposesCapturedValue_NoDiagnostic()
+        {
+            // Currently we report a diagnostic as we do not do interprocedural analysis
+            // of method invocations for Dispose analysis.
+            // TODO: https://github.com/dotnet/roslyn-analyzers/issues/1813
+            // Consider interprocedural dispose analysis.
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a;
+        a = new A();
+
+        System.Action<A> myDelegate = M2;
+        myDelegate(a);    // This should change state of 'a' to be disposed if we did interprocedural analysis.
+    }
+
+    void M2(A a) => a.Dispose();
+}
+",
+            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"));
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Throw New NotImplementedException()
+    End Sub
+End Class
+
+Module Test
+    Sub M1()
+        Dim a As A
+        a = New A()
+
+        Dim myDelegate As System.Action(Of A) = AddressOf M2
+        myDelegate(a)      ' This should change state of 'a' to be disposed if we did interprocedural analysis.
+    End Sub
+
+    Sub M2(a As A)
+        a.Dispose()
+    End Sub
+End Module",
+            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]

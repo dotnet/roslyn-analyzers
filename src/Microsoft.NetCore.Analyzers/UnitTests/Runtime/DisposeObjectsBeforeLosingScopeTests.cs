@@ -4312,7 +4312,8 @@ End Module",
         {
             // Currently we report a diagnostic as we do not do interprocedural analysis
             // of method invocations for Dispose analysis.
-            // TODO: File a bug to consider interprocedural dispose analysis.
+            // TODO: https://github.com/dotnet/roslyn-analyzers/issues/1813
+            // Consider interprocedural dispose analysis.
 
             VerifyCSharp(@"
 using System;

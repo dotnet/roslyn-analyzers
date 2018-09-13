@@ -35,6 +35,11 @@ namespace System.Collections.Specialized
         {
             get { return ""input""; }
         }
+
+        public string Get(string name)
+        {
+            return ""input"";
+        }
     }
 }
 
@@ -43,6 +48,7 @@ namespace System.Web
     public class HttpRequest
     {
         public System.Collections.Specialized.NameValueCollection Form { get; }
+        public string[] UserLanguages { get; }
     }
 }
 
@@ -58,7 +64,7 @@ namespace System.Web.UI
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
-        public void BadInputLocalString_Diagnostic()
+        public void HttpRequest_Form_LocalString_Diagnostic()
         {
             VerifyCSharp(
                 SystemWebNamespacesCSharp + @"
@@ -94,7 +100,7 @@ namespace VulnerableWebApp
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
-        public void BadInputLocalStringMoreBlocks_Diagnostic()
+        public void HttpRequest_Form_LocalStringMoreBlocks_Diagnostic()
         {
             VerifyCSharp(
                 SystemWebNamespacesCSharp + @"
@@ -137,7 +143,7 @@ namespace VulnerableWebApp
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
-        public void BadInputDirect_Diagnostic()
+        public void HttpRequest_Form_Direct_Diagnostic()
         {
             VerifyCSharp(
                 SystemWebNamespacesCSharp + @"
@@ -167,9 +173,42 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
         }
 
+        [Fact(Skip = "TODO: Handle methods")]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_Method_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string input = Request.Form.Get(""in"");
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = input,
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(16, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
-        public void BadInputLocalNameValueCollectionString_Diagnostic()
+        public void HttpRequest_Form_LocalNameValueCollectionString_Diagnostic()
         {
             VerifyCSharp(
                 SystemWebNamespacesCSharp + @"
@@ -203,7 +242,7 @@ namespace VulnerableWebApp
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
-        public void BadInputLocalStructNameValueCollectionString_Diagnostic()
+        public void HttpRequest_Form_LocalStructNameValueCollectionString_Diagnostic()
         {
             VerifyCSharp(
                 SystemWebNamespacesCSharp + @"
@@ -242,6 +281,104 @@ namespace VulnerableWebApp
 }
             ",
                 GetCSharpResultAt(29, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_UserLanguages_Direct_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = Request.UserLanguages[0],
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_UserLanguages_LocalStringArray_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string[] languages = Request.UserLanguages;
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = languages[0],
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(19, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_UserLanguages_LocalStringModified_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string language = ""SELECT * FROM languages WHERE language = '"" + Request.UserLanguages[0] + ""'"";
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = language,
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(19, 17, "string SqlCommand.CommandText", "Page_Load"));
         }
 
         [Fact]

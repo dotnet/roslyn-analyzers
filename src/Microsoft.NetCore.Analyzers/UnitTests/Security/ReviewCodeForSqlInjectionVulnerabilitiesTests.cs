@@ -173,7 +173,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
         }
 
-        [Fact(Skip = "TODO: Handle methods")]
+        [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Method_Diagnostic()
         {
@@ -203,7 +203,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(16, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(19, 17, "string SqlCommand.CommandText", "Page_Load"));
         }
 
         [Fact]

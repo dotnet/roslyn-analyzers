@@ -3,7 +3,7 @@
     "version": "2.1.300-rtm-008866"
   },
   "msbuild-sdks": {
-    "RoslynTools.RepoToolset": "1.0.0-beta2-62922-02"
+    "RoslynTools.RepoToolset": "1.0.0-beta2-63011-08"
   },
   "vswhere": {
     "version": "2.2.7"

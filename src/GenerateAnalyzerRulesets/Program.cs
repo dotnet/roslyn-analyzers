@@ -14,11 +14,12 @@ namespace GenerateAnalyzerRulesets
 {
     class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             if (args.Length != 4)
             {
-                throw new ArgumentException($"Excepted 4 arguments, found {args.Length}: {string.Join(';', args)}");
+                Console.Error.WriteLine($"Excepted 4 arguments, found {args.Length}: {string.Join(';', args)}");
+                return 1;
             }
 
             string analyzerRulesetsDir = args[0];
@@ -34,7 +35,8 @@ namespace GenerateAnalyzerRulesets
                 string path = Path.Combine(analyzerRulesetsDir, @"..\..", assemblyName, tfm, assembly);
                 if (!File.Exists(path))
                 {
-                    throw new ArgumentException($"{path} does not exist", "assemblyList");
+                    Console.Error.WriteLine($"'{path}' does not exist");
+                    return 1;
                 }
 
                 var analyzerFileReference = new AnalyzerFileReference(path, AnalyzerAssemblyLoader.Instance);
@@ -230,6 +232,8 @@ namespace GenerateAnalyzerRulesets
                     }
                 }
             }
+
+            return 0;
         }
 
         private enum RulesetKind

@@ -15,7 +15,10 @@ steps:
     signType: real
     esrpSigning: true
 
-- script: eng\common\CIBuild.cmd -configuration $(BuildConfiguration)
+- script: eng\common\CIBuild.cmd 
+            -configuration $(BuildConfiguration)
+            /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
+            /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
   displayName: Build
 
 - task: PublishTestResults@1
@@ -34,22 +37,6 @@ steps:
     connectedServiceName: 'RoslynAnalyzers NuGet feed'
     nuGetVersion: 4.0.0.2283
 
-- task: PublishSymbols@1
-  displayName: Prepare Symbols
-  inputs:
-    SymbolsPath: '$(DropRoot)\$(TeamName)\$(Build.DefinitionName)\$(Build.BuildNumber)\Symbols'
-    SearchPattern: '**/*.dll;**/*.exe;**/*.pdb'
-    SymbolsFolder: '$(Build.SourcesDirectory)\artifacts\$(BuildConfiguration)\SymStore'
-    SkipIndexing: true
-
-- task: ms-vscs-artifact.build-tasks.artifactSymbolTask-1.artifactSymbolTask@0
-  displayName: Publish Symbols
-  inputs:
-    symbolServiceURI: 'https://microsoft.artifacts.visualstudio.com/DefaultCollection'
-    requestName: '$(system.teamProject)/$(Build.DefinitionName)/$(Build.BuildNumber)/$(Build.BuildId)'
-    sourcePath: '$(DropRoot)\$(TeamName)\$(Build.DefinitionName)\$(Build.BuildNumber)\Symbols'
-    usePat: false
-
 - task: CopyPublishBuildArtifacts@1
   displayName: Publish Artifacts
   inputs:
@@ -59,6 +46,7 @@ steps:
      artifacts\$(BuildConfiguration)\log
      artifacts\$(BuildConfiguration)\TestResults
      artifacts\$(BuildConfiguration)\packages
+     artifacts\$(BuildConfiguration)\SymStore
      artifacts\$(BuildConfiguration)\VSSetup
     ArtifactName: '$(Build.BuildNumber)'
     ArtifactType: FilePath

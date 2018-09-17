@@ -49,7 +49,10 @@ namespace System.Web
     {
         public System.Collections.Specialized.NameValueCollection Form { get; }
         public string[] UserLanguages { get; }
-    }
+        public string this[string name]
+        {
+            get { return ""input""; }
+        }    }
 }
 
 namespace System.Web.UI
@@ -172,6 +175,39 @@ namespace VulnerableWebApp
             ",
                 GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
         }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_Item_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = Request[""in""],
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]

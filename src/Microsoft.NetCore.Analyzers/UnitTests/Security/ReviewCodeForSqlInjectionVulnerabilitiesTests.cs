@@ -52,7 +52,8 @@ namespace System.Web
         public string this[string name]
         {
             get { return ""input""; }
-        }    }
+        }
+    }
 }
 
 namespace System.Web.UI
@@ -206,6 +207,34 @@ namespace VulnerableWebApp
 }
             ",
                 GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_Item_Sql_Constructor_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SqlCommand sqlCommand = new SqlCommand(Request[""in""]);
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(16, 37, "SqlCommand.SqlCommand(string cmdText)", "Page_Load"));
         }
 
 

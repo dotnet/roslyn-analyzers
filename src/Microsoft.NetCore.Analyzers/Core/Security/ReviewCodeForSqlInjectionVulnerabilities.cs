@@ -218,7 +218,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 var taintedDataAnalysisResult = TaintedDataAnalysis.GetOrComputeResult(cfg, operationContext.Compilation, containingMethod);
                 //TaintedDataAbstractValue abstractValue = taintedDataAnalysisResult[argumentValue];
                 TaintedDataAbstractValue abstractValue = taintedDataAnalysisResult[argumentValue.Kind, argumentValue.Syntax];
-                if (abstractValue == TaintedDataAbstractValue.NotTainted || abstractValue == TaintedDataAbstractValue.Unknown)
+                if (abstractValue.Kind != TaintedDataAbstractValueKind.Tainted)
                 {
                     return false;
                 }

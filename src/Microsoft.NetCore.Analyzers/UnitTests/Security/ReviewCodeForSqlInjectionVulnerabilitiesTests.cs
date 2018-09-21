@@ -9,6 +9,7 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
     using Xunit;
     using Microsoft.NetCore.Analyzers.Security;
     using System.Linq;
+    using System;
 
     public class ReviewCodeForSqlInjectionVulnerabilitiesTests : DiagnosticAnalyzerTestBase
     {
@@ -22,8 +23,20 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
             return new ReviewCodeForSqlInjectionVulnerabilities();
         }
 
-        protected new DiagnosticResult GetCSharpResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
-            GetCSharpResultAt(SystemWebNamespacesCSharpLineCount + line, column, ReviewCodeForSqlInjectionVulnerabilities.Rule, invokedSymbol, containingMethod);
+        protected DiagnosticResult GetCSharpResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
+        {
+            this.PrintActualDiagnosticsOnFailure = true;
+            return GetCSharpResultAt(
+                new[] {
+                    Tuple.Create(SystemWebNamespacesCSharpLineCount + sinkLine, sinkColumn),
+                    Tuple.Create(SystemWebNamespacesCSharpLineCount + sourceLine, sourceColumn)
+                },
+                ReviewCodeForSqlInjectionVulnerabilities.Rule,
+                sink,
+                sinkContainingMethod,
+                source,
+                sourceContainingMethod);
+        }
 
 
         private const string SystemWebNamespacesCSharp = @"
@@ -48,6 +61,7 @@ namespace System.Web
     public class HttpRequest
     {
         public System.Collections.Specialized.NameValueCollection Form { get; }
+        public System.Collections.Specialized.NameValueCollection QueryString { get; }
         public string[] UserLanguages { get; }
         public string this[string name]
         {
@@ -99,7 +113,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(21, 21, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(21, 21, 16, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
@@ -141,8 +155,52 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(28, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(28, 17, 19, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
+
+        [Fact] //(Skip = "This doesn't work :-(")]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_And_QueryString_LocalStringMoreBlocks_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string input;
+            if (Request.Form != null)
+            {
+                input = Request.Form[""in""];
+            }
+            else
+            {
+                input = Request.QueryString[""in""];
+            }
+
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = input,
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(28, 17, 19, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"),
+                GetCSharpResultAt(28, 17, 23, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.QueryString", "Page_Load"));
+        }
+
 
 
         [Fact]
@@ -174,7 +232,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
@@ -206,7 +264,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
         }
 
         [Fact]
@@ -234,7 +292,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(16, 37, "SqlCommand.SqlCommand(string cmdText)", "Page_Load"));
+                GetCSharpResultAt(16, 37, 16, 52, "SqlCommand.SqlCommand(string cmdText)", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
         }
 
 
@@ -268,7 +326,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(19, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(19, 17, 16, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
@@ -302,7 +360,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(20, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(20, 17, 16, 70, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
@@ -345,7 +403,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(29, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(29, 17, 24, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
@@ -377,7 +435,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
         }
 
         [Fact]
@@ -410,7 +468,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(19, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(19, 17, 16, 34, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
         }
 
         [Fact]
@@ -443,12 +501,12 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(19, 17, "string SqlCommand.CommandText", "Page_Load"));
+                GetCSharpResultAt(19, 17, 16, 78, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
-        public void OkayInputLocalStructNameValueCollectionString_Diagnostic()
+        public void OkayInputLocalStructNameValueCollectionString_NoDiagnostic()
         {
             VerifyCSharp(
                 SystemWebNamespacesCSharp + @"

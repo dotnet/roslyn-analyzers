@@ -3,8 +3,8 @@
   <file datatype="xml" source-language="en" target-language="fr" original="../MicrosoftNetCoreSecurityResources.resx">
     <body>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
-        <source>Potential SQL injection vulnerability was found where {0} may be tainted by user-controlled data in method {1}.</source>
-        <target state="new">Potential SQL injection vulnerability was found where {0} may be tainted by user-controlled data in method {1}.</target>
+        <source>Potential SQL injection vulnerability was found where {0} in method {1} may be tainted by user-controlled data from {2} in method {3}.</source>
+        <target state="new">Potential SQL injection vulnerability was found where {0} in method {1} may be tainted by user-controlled data from {2} in method {3}.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">

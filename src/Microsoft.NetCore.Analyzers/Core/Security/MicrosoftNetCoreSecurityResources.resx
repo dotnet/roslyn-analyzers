@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ReviewCodeForSqlInjectionVulnerabilitiesMessage" xml:space="preserve">
-    <value>Potential SQL injection vulnerability was found where {0} may be tainted by user-controlled data in method {1}.</value>
+    <value>Potential SQL injection vulnerability was found where {0} in method {1} may be tainted by user-controlled data from {2} in method {3}.</value>
   </data>
   <data name="ReviewCodeForSqlInjectionVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for SQL injection vulnerabilities</value>

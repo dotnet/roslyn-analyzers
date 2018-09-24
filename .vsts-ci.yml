@@ -17,6 +17,8 @@ steps:
 
 - script: eng\common\CIBuild.cmd 
             -configuration $(BuildConfiguration)
+            /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
+            /p:DotNetSignType=$(SignType)
             /p:DotNetSymbolServerTokenMsdl=$(microsoft-symbol-server-pat)
             /p:DotNetSymbolServerTokenSymWeb=$(symweb-symbol-server-pat)
   displayName: Build
@@ -25,7 +27,7 @@ steps:
   displayName: Publish Test Results
   inputs:
     testRunner: XUnit
-    testResultsFiles: 'artifacts/$(BuildConfiguration)/TestResults/*.xml'
+    testResultsFiles: 'artifacts/TestResults/$(BuildConfiguration)/*.xml'
     mergeTestResults: true
     testRunTitle: 'Unit Tests'
   condition: succeededOrFailed()
@@ -33,21 +35,22 @@ steps:
 - task: NuGetPublisher@0
   displayName: Publish NuGet Packages to MyGet
   inputs:
-    searchPattern: 'artifacts\$(BuildConfiguration)\packages\*.nupkg'
+    searchPattern: 'artifacts\packages\$(BuildConfiguration)\Shipping\*.nupkg'
     connectedServiceName: 'RoslynAnalyzers NuGet feed'
     nuGetVersion: 4.0.0.2283
+  condition: succeeded()
 
 - task: CopyPublishBuildArtifacts@1
   displayName: Publish Artifacts
   inputs:
     CopyRoot: '$(Build.SourcesDirectory)'
     Contents: |
-     artifacts\$(BuildConfiguration)\bin
-     artifacts\$(BuildConfiguration)\log
-     artifacts\$(BuildConfiguration)\TestResults
-     artifacts\$(BuildConfiguration)\packages
-     artifacts\$(BuildConfiguration)\SymStore
-     artifacts\$(BuildConfiguration)\VSSetup
+     artifacts\bin\$(BuildConfiguration)
+     artifacts\log\$(BuildConfiguration)
+     artifacts\TestResults\$(BuildConfiguration)
+     artifacts\SymStore\$(BuildConfiguration)
+     artifacts\packages\$(BuildConfiguration)
+     artifacts\VSSetup\$(BuildConfiguration)
     ArtifactName: '$(Build.BuildNumber)'
     ArtifactType: FilePath
     TargetPath: '$(DropRoot)\$(TeamName)\$(Build.DefinitionName)'

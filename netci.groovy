@@ -23,7 +23,7 @@ static addGithubPRTriggerForBranch(def job, def branchName, def jobName) {
 }
 
 static addXUnitDotNETResults(def job, def configName) {
-  def resultFilePattern = "**/artifacts/${configName}/TestResults/*.xml"
+  def resultFilePattern = "**/artifacts/TestResults/${configName}/*.xml"
   def skipIfNoTestFiles = false
     
   Utilities.addXUnitDotNETResults(job, resultFilePattern, skipIfNoTestFiles)
@@ -56,7 +56,7 @@ static addBuildSteps(def job, def projectName, def os, def configName, def isPR)
 
       def branchName = GithubBranchName
 
-      def filesToArchive = "**/artifacts/${configName}/**"
+      def filesToArchive = "artifacts/**"
 
       def jobName = getJobName(os, configName)
       def fullJobName = Utilities.getFullJobName(projectName, jobName, isPR)

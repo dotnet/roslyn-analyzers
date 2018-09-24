@@ -237,6 +237,71 @@ namespace VulnerableWebApp
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_Substring_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = Request.Form[""in""].Substring(1),
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+        }
+
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void Sanitized_HttpRequest_Form_Direct_NoDiagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE id < "" + int.Parse(Request.Form[""in""]).ToString(),
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ");
+        }
+
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Item_Diagnostic()
         {
             VerifyCSharp(
@@ -265,6 +330,41 @@ namespace VulnerableWebApp
 }
             ",
                 GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_Item_Enters_SqlParameters_NoDiagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE username = @username"",
+                CommandType = CommandType.Text,
+            };
+
+            sqlCommand.Parameters.Add(""@username"", SqlDbType.NVarChar, 16).Value = Request[""in""];
+
+            sqlCommand.ExecuteReader();
+        }
+     }
+}
+            ");
         }
 
         [Fact]
@@ -404,6 +504,55 @@ namespace VulnerableWebApp
 }
             ",
                 GetCSharpResultAt(29, 17, 24, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_LocalStructConstructorNameValueCollectionString_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Collections.Specialized;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        public struct MyStruct
+        {
+            public MyStruct(NameValueCollection v)
+            {
+                this.nvc = v;
+                this.s = null;
+            }
+
+            public NameValueCollection nvc;
+            public string s;
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            MyStruct myStruct = new MyStruct();
+            myStruct.nvc = this.Request.Form;
+            myStruct.s = myStruct.nvc[""in""];
+            string input = myStruct.s;
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = input,
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(35, 17, 30, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]

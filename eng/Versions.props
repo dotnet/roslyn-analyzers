@@ -3,12 +3,13 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
 
     <VersionPrefix>2.6.2</VersionPrefix>
-    <PreReleaseVersionLabel>beta3</PreReleaseVersionLabel>
+    <PreReleaseVersionLabel>beta4</PreReleaseVersionLabel>
 
-    <!-- Opt-in RepoToolset tools -->
+    <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
     <UsingToolNuGetRepack>true</UsingToolNuGetRepack>
     <UsingToolSymbolUploader>true</UsingToolSymbolUploader>
+    <UsingToolNetFrameworkReferenceAssemblies>true</UsingToolNetFrameworkReferenceAssemblies>
 
     <!-- Toolset -->
     <MicrosoftVSSDKVersion>15.0.26201-alpha</MicrosoftVSSDKVersion>
@@ -26,10 +27,11 @@
     <!-- Roslyn Testing -->
     <MicrosoftCodeAnalysisTestingVersion>1.0.0-beta1-63230-04</MicrosoftCodeAnalysisTestingVersion>
 
-    <!-- CoreFX -->
+    <!-- Libs -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
     <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
+    <MicrosoftBuildLocatorVersion>1.0.18</MicrosoftBuildLocatorVersion>
   </PropertyGroup>
 
   <PropertyGroup>

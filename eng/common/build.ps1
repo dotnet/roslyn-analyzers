@@ -79,14 +79,14 @@ function InitializeDotNetCli {
 
   # Use dotnet installation specified in DOTNET_INSTALL_DIR if it contains the required SDK version, 
   # otherwise install the dotnet CLI and SDK to repo local .dotnet directory to avoid potential permission issues.
-  if (($env:DOTNET_INSTALL_DIR -ne $null) -and (Test-Path(Join-Path $env:DOTNET_INSTALL_DIR "sdk\$($GlobalJson.sdk.version)"))) {
+  if (($env:DOTNET_INSTALL_DIR -ne $null) -and (Test-Path(Join-Path $env:DOTNET_INSTALL_DIR "sdk\$($GlobalJson.tools.dotnet)"))) {
     $dotnetRoot = $env:DOTNET_INSTALL_DIR
   } else {
     $dotnetRoot = Join-Path $RepoRoot ".dotnet"
     $env:DOTNET_INSTALL_DIR = $dotnetRoot
     
     if ($restore) {
-      InstallDotNetSdk $dotnetRoot $GlobalJson.sdk.version
+      InstallDotNetSdk $dotnetRoot $GlobalJson.tools.dotnet
     }
   }
 
@@ -130,7 +130,7 @@ function InitializeVisualStudioBuild {
 }
 
 function LocateVisualStudio {
-  $vswhereVersion = $GlobalJson.vswhere.version
+  $vswhereVersion = $GlobalJson.tools.vswhere
   $toolsRoot = Join-Path $RepoRoot ".tools"
   $vsWhereDir = Join-Path $toolsRoot "vswhere\$vswhereVersion"
   $vsWhereExe = Join-Path $vsWhereDir "vswhere.exe"
@@ -152,7 +152,9 @@ function LocateVisualStudio {
 }
 
 function GetBuildCommand() {
-  if ((Get-Member -InputObject $GlobalJson -Name "sdk") -ne $null) {  
+  $tools = $GlobalJson.tools
+
+  if ((Get-Member -InputObject $tools -Name "dotnet") -ne $null) {  
     $dotnetRoot = InitializeDotNetCli
 
     # by default build with dotnet cli:
@@ -160,7 +162,7 @@ function GetBuildCommand() {
     $buildArgs = "msbuild"
   }
 
-  if ((Get-Member -InputObject $GlobalJson -Name "vswhere") -ne $null) {    
+  if ((Get-Member -InputObject $tools -Name "vswhere") -ne $null) {    
     $vsInstallDir = InitializeVisualStudioBuild
     
     # Presence of vswhere.version indicates the repo needs to build using VS msbuild:
@@ -169,7 +171,7 @@ function GetBuildCommand() {
   }
 
   if ($buildDriver -eq $null) {
-    Write-Host "/global.json must either specify 'sdk.version' or 'vswhere.version'." -ForegroundColor Red
+    Write-Host "/global.json must either specify 'tools.dotnet' or 'tools.vswhere'." -ForegroundColor Red
     exit 1
   }
 
@@ -181,7 +183,7 @@ function GetBuildCommand() {
 }
 
 function InitializeToolset([string] $buildDriver, [string]$buildArgs) {
-  $toolsetVersion = $GlobalJson.'msbuild-sdks'.'RoslynTools.RepoToolset'
+  $toolsetVersion = $GlobalJson.'msbuild-sdks'.'Microsoft.DotNet.Arcade.Sdk'
   $toolsetLocationFile = Join-Path $ToolsetDir "$toolsetVersion.txt"
 
   if (Test-Path $toolsetLocationFile) {
@@ -199,7 +201,7 @@ function InitializeToolset([string] $buildDriver, [string]$buildArgs) {
 
   $proj = Join-Path $ToolsetDir "restore.proj"  
 
-  '<Project Sdk="RoslynTools.RepoToolset"/>' | Set-Content $proj
+  '<Project Sdk="Microsoft.DotNet.Arcade.Sdk"/>' | Set-Content $proj
   & $buildDriver $buildArgs $proj /t:__WriteToolsetLocation /m /nologo /clp:None /warnaserror /bl:$ToolsetRestoreLog /v:$verbosity /p:__ToolsetLocationOutputFile=$toolsetLocationFile
     
   if ($lastExitCode -ne 0) {
@@ -247,7 +249,7 @@ function Build([string] $buildDriver, [string]$buildArgs) {
     /p:PerformanceTest=$performanceTest `
     /p:Sign=$sign `
     /p:Publish=$publish `
-    /p:CIBuild=$ci `
+    /p:ContinuousIntegrationBuild=$ci `
     $properties
 
   if ($lastExitCode -ne 0) {
@@ -268,10 +270,10 @@ try {
   $EngRoot = Join-Path $PSScriptRoot ".."
   $ArtifactsDir = Join-Path $RepoRoot "artifacts"
   $ToolsetDir = Join-Path $ArtifactsDir "toolset"
-  $LogDir = Join-Path (Join-Path $ArtifactsDir $configuration) "log"
+  $LogDir = Join-Path (Join-Path $ArtifactsDir "log") $configuration
   $BuildLog = Join-Path $LogDir "Build.binlog"
   $ToolsetRestoreLog = Join-Path $LogDir "ToolsetRestore.binlog"
-  $TempDir = Join-Path (Join-Path $ArtifactsDir $configuration) "tmp"
+  $TempDir = Join-Path (Join-Path $ArtifactsDir "tmp") $configuration
   $GlobalJson = Get-Content -Raw -Path (Join-Path $RepoRoot "global.json") | ConvertFrom-Json
   
   if ($projects -eq "") {

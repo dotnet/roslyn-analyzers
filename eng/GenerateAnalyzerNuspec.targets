@@ -7,7 +7,6 @@
   <PropertyGroup>
     <NuspecFile>$(IntermediateOutputPath)$(NuspecPackageId).nuspec</NuspecFile>
     <NuspecBasePath>$(ArtifactsBinDir)</NuspecBasePath>
-    <AnalyzerRulesetsDir>$(ArtifactsBinDir)Rulesets\$(NuspecPackageId)</AnalyzerRulesetsDir>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
 
@@ -23,6 +22,10 @@
           DependsOnTargets="InitializeSourceControlInformation" 
           Condition="'@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerRulesetAssembly)' != ''">
 
+    <PropertyGroup>
+      <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
+    </PropertyGroup>
+    
     <MSBuild Projects="$(RepoRoot)src\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj" Targets="Build">
       <Output TaskParameter="TargetOutputs" PropertyName="_GenerateAnalyzerRulesetsPath"/>
     </MSBuild>
@@ -31,16 +34,13 @@
       <AnalyzerRulesetAssembly Condition="'@(AnalyzerNupkgAssembly)' != '' and '@(AnalyzerRulesetAssembly)' == ''" Include="@(AnalyzerNupkgAssembly)"/>
     </ItemGroup>
     
-    <Exec Command='"$(RepoRoot).dotnet\dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(AnalyzerRulesetsDir)" "$(NuspecPackageId)" "$(TargetFramework)" "@(AnalyzerRulesetAssembly)"' />
+    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(_GeneratedRulesetsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "$(TargetFramework)" "@(AnalyzerRulesetAssembly)"' />
   </Target>
   
   <Target Name="GenerateAnalyzerNuspecFile"
           BeforeTargets="GenerateNuspec"
           DependsOnTargets="InitializeSourceControlInformation;GenerateAnalyzerRulesets" 
           Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != ''">
-    <PropertyGroup>
-      <PackageId>$(NuspecPackageId)</PackageId>
-    </PropertyGroup>
     <ItemGroup>
       <_NuspecMetadata Include="version=$(PackageVersion)" />
       <_NuspecMetadata Include="id=$(NuspecPackageId)" />
@@ -67,6 +67,6 @@
       <_CscToolPath Condition="!HasTrailingSlash('$(_CscToolPath)')">$(_CscToolPath)\</_CscToolPath>
     </PropertyGroup>
 
-    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "$(AnalyzerRulesetsDir)" "@(AnalyzerLegacyRuleset)"' />
+    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "$(_GeneratedRulesetsDir)" "@(AnalyzerLegacyRuleset)"' />
   </Target>
 </Project>

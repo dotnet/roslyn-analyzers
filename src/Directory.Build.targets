@@ -25,11 +25,6 @@
     <MSBuildAllProjects Condition="'$(CodeAnalysisRuleSet)' == '$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset'">$(MSBuildAllProjects);$(MSBuildThisFileDirectory)..\build\Analyzers_ShippingRules.ruleset</MSBuildAllProjects>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- Workaround for https://github.com/xunit/xunit/issues/1651 -->
-    <None Remove="$(NuGetPackageRoot)xunit.runner.visualstudio\$(XUnitRunnerVisualStudioVersion)\build\net20\..\_common\xunit.abstractions.dll" />
-  </ItemGroup>
-
   <Import Project="..\Directory.Build.targets" />
 
   <!-- Using Inputs/Outputs just to loop over test architectures -->

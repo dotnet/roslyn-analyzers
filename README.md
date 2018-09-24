@@ -122,4 +122,3 @@ Due to the fact that large number of our analyzers were based on the *not-yet-sh
 6.  **Visual Studio 2017 15.5 Preview5, RTW or later**: Analyzer package **Version 2.6.1**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.1
 
 On Visual Studio 2017 15.5 and later releases, you can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects. See details here: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
-

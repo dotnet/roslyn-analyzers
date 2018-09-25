@@ -168,6 +168,12 @@ function GetBuildCommand() {
     # Presence of vswhere.version indicates the repo needs to build using VS msbuild:
     $buildDriver = Join-Path $vsInstallDir "MSBuild\15.0\Bin\msbuild.exe"
     $buildArgs = "/nodeReuse:$(!$ci)"
+
+    $sci = Join-Path $vsInstallDir "MSBuild\15.0\Bin\System.Collections.Immutable.dll"
+    
+    Get-Item $sci | Select-Object -ExpandProperty VersionInfo | Write-Host
+    $an = [System.Reflection.AssemblyName]::GetAssemblyName($sci)
+    Write-Host $an.FullName
   }
 
   if ($buildDriver -eq $null) {

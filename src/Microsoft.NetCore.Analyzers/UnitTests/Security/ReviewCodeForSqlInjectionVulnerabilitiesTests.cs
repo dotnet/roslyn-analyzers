@@ -38,7 +38,9 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
                 sourceContainingMethod);
         }
 
-
+        /// <summary>
+        /// Fake dependencies, so we don't have to reference the real ones.
+        /// </summary>
         private const string SystemWebNamespacesCSharp = @"
 namespace System.Collections.Specialized
 {
@@ -78,6 +80,9 @@ namespace System.Web.UI
     }
 }";
 
+        /// <summary>
+        /// Line count of the fake dependencies source code, so we have a base offset to calculate the real line number.
+        /// </summary>
         private static readonly int SystemWebNamespacesCSharpLineCount = SystemWebNamespacesCSharp.Where(ch => ch == '\n').Count();
 
         [Fact]
@@ -114,6 +119,87 @@ namespace VulnerableWebApp
 }
             ",
                 GetCSharpResultAt(21, 21, 16, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+        }
+
+        [Fact(Skip = "Need something to handle output parameters for delegates")]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_DelegateInvocation_OutParam_LocalString_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        public delegate void StringOutputDelegate(string input, out string output);
+
+        public static StringOutputDelegate StringOutput;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            StringOutput(Request.Form[""in""], out string input);
+            if (Request.Form != null && !String.IsNullOrWhiteSpace(input))
+            {
+                SqlCommand sqlCommand = new SqlCommand()
+                {
+                    CommandText = input,
+                    CommandType = CommandType.Text,
+                };
+            }
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(25, 21, 20, 26, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+        }
+
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_InterfaceInvocation_OutParam_LocalString_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        public interface IBlah { void StringOutput(string input, out string output); }
+
+        public static IBlah Blah;
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            Blah.StringOutput(Request.Form[""in""], out string input);
+            if (Request.Form != null && !String.IsNullOrWhiteSpace(input))
+            {
+                SqlCommand sqlCommand = new SqlCommand()
+                {
+                    CommandText = input,
+                    CommandType = CommandType.Text,
+                };
+            }
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(25, 21, 20, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
@@ -158,7 +244,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(28, 17, 19, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        [Fact] //(Skip = "This doesn't work :-(")]
+        [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_And_QueryString_LocalStringMoreBlocks_Diagnostic()
         {
@@ -200,8 +286,6 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(28, 17, 19, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"),
                 GetCSharpResultAt(28, 17, 23, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.QueryString", "Page_Load"));
         }
-
-
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
@@ -293,6 +377,40 @@ namespace VulnerableWebApp
                 CommandText = ""SELECT * FROM users WHERE id < "" + int.Parse(Request.Form[""in""]).ToString(),
                 CommandType = CommandType.Text,
             };
+        }
+     }
+}
+            ");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void Sanitized_HttpRequest_Form_TryParse_NoDiagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (Int16.TryParse(Request.Form[""in""], out short i))
+            {
+                SqlCommand sqlCommand = new SqlCommand()
+                {
+                    CommandText = ""SELECT * FROM users WHERE id < "" + i.ToString(),
+                    CommandType = CommandType.Text,
+                };
+            }
         }
      }
 }
@@ -463,7 +581,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(20, 17, 16, 70, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        [Fact(Skip = "Doesn't work, array isn't tainted")]
+        [Fact(Skip = "Doesn't work, array isn't tainted, ObjectCreation visited before ArrayInitializer")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_List_Diagnostic()
         {
@@ -497,6 +615,43 @@ namespace VulnerableWebApp
             ",
                 GetCSharpResultAt(29, 17, 24, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
+
+        [Fact(Skip = "Doesn't work, array isn't tainted")]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_Array_List_Diagnostic()
+        {
+            VerifyCSharp(
+                SystemWebNamespacesCSharp + @"
+
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string[] array = new string[] { Request.Form[""in""] };
+            List<string> allTheInputs = new List<string>();
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = allTheInputs[0],
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ",
+                GetCSharpResultAt(30, 17, 25, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+        }
+
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]

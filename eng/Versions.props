@@ -2,8 +2,8 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
 
-    <VersionPrefix>2.6.2</VersionPrefix>
-    <PreReleaseVersionLabel>beta4</PreReleaseVersionLabel>
+    <VersionPrefix>2.6.3</VersionPrefix>
+    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>

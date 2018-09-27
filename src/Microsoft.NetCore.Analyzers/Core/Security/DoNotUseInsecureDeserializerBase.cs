@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text;
@@ -32,10 +34,12 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// <summary>
         /// Optional additional handling for invocation operations.
         /// </summary>
+        /// <param name="owningSymbol">Owning symbol (containing method).</param>
         /// <param name="deserializerTypeSymbol"><see cref="INamedTypeSymbol"/> of the deserializer type.</param>
         /// <param name="operationAnalysisContext">Analysis context for the invocation operation.</param>
         /// <param name="invocationOperation">Same as operationAnalysisContext.Operation.</param>
         protected virtual void AdditionalHandleInvocationOperation(
+            ISymbol owningSymbol,
             INamedTypeSymbol deserializerTypeSymbol,
             OperationAnalysisContext operationAnalysisContext,
             IInvocationOperation invocationOperation)
@@ -82,19 +86,30 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
-                    if (this.BannedMethodNames != null)
-                    {
-                        compilationStartAnalysisContext.RegisterOperationAction(
-                            (OperationAnalysisContext operationAnalysisContext) =>
+                    compilationStartAnalysisContext.RegisterOperationBlockStartAction(
+                        (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
+                        {
+                            ISymbol owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+
+                            if (this.BannedMethodNames != null)
                             {
-                                this.HandleInvocationOperation(deserializerTypeSymbol, operationAnalysisContext);
-                            },
-                            OperationKind.Invocation);
-                    }
+                                operationBlockStartAnalysisContext.RegisterOperationAction(
+                                    (OperationAnalysisContext operationAnalysisContext) =>
+                                    {
+                                        this.HandleInvocationOperation(owningSymbol, deserializerTypeSymbol, operationAnalysisContext);
+                                    },
+                                    OperationKind.Invocation);
+                            }
+
+                        });
+
                 });
         }
 
-        private void HandleInvocationOperation(INamedTypeSymbol deserializerTypeSymbol, OperationAnalysisContext operationAnalysisContext)
+        private void HandleInvocationOperation(
+            ISymbol owningSymbol,
+            INamedTypeSymbol deserializerTypeSymbol, 
+            OperationAnalysisContext operationAnalysisContext)
         {
             IInvocationOperation invocationOperation = (IInvocationOperation) operationAnalysisContext.Operation; 
             if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
@@ -107,7 +122,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         invocationOperation.TargetMethod.MetadataName));
             }
 
-            AdditionalHandleInvocationOperation(deserializerTypeSymbol, operationAnalysisContext, invocationOperation);
+            AdditionalHandleInvocationOperation(owningSymbol, deserializerTypeSymbol, operationAnalysisContext, invocationOperation);
         }
 
         /// <summary>

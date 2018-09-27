@@ -117,10 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DoNotUseInsecureDeserializationWithBinaryFormatterMessage" xml:space="preserve">
+  <data name="BinaryFormatterBannedMethodMessage" xml:space="preserve">
     <value>The method call 'BinaryFormatter.{0}' is not safe when deserializing untrusted data.</value>
   </data>
-  <data name="DoNotUseInsecureDeserializationWithBinaryFormatterTitle" xml:space="preserve">
+  <data name="BinaryFormatterBannedMethodTitle" xml:space="preserve">
     <value>Do not use insecure deserialization methods with BinaryFormatter</value>
+  </data>
+  <data name="BinaryFormatterDeserializeMaybeWithoutBinderSetMessage" xml:space="preserve">
+    <value>The method BinaryFormatter.Deserialize is not safe when deserializing untrusted data, and not having its Binder property set to restruct deserialized types.</value>
+  </data>
+  <data name="BinaryFormatterDeserializeMaybeWithoutBinderSetTitle" xml:space="preserve">
+    <value>Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize</value>
+  </data>
+  <data name="BinaryFormatterDeserializeWithoutBinderSetMessage" xml:space="preserve">
+    <value>The method BinaryFormatter.Deserialize is not safe when deserializing untrusted data, and not having its Binder property set to restruct deserialized types.</value>
+  </data>
+  <data name="BinaryFormatterDeserializeWithoutBinderSetTitle" xml:space="preserve">
+    <value>Do not call BinaryFormatter.Deserialize without setting BinaryFormatter.Binder</value>
   </data>
 </root>

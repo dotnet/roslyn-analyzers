@@ -15,6 +15,10 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
     {
         private static readonly DiagnosticDescriptor BannedMethodRule = DoNotUseInsecureDeserializerBinaryFormatter.RealBannedMethodDescriptor;
 
+        private static readonly DiagnosticDescriptor BinderNotSetRule = DoNotUseInsecureDeserializerBinaryFormatter.BinderDefinitelyNotSetDescriptor;
+
+        private static readonly DiagnosticDescriptor BinderMaybeNotSetRule = DoNotUseInsecureDeserializerBinaryFormatter.BinderMaybeNotSetDescriptor;
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotUseInsecureDeserializerBinaryFormatter();
@@ -44,6 +48,94 @@ namespace Blah
     }
 }",
             GetCSharpResultAt(12, 20, BannedMethodRule, "UnsafeDeserialize"));
+        }
+
+        [Fact]
+        public void Deserialize_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object BfUnsafeDeserialize(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            return formatter.Deserialize(new MemoryStream(bytes));
+        }
+    }
+}",
+            GetCSharpResultAt(12, 20, BinderNotSetRule));
+        }
+
+        [Fact]
+        public void Deserialize_BinderMaybeSet_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Blah
+{
+    public class MyBinder : SerializationBinder
+    {
+        public override Type BindToType(string assemblyName, string typeName)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Program
+    {
+        public object BfUnsafeDeserialize(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            if (Environment.MachineName.StartsWith(""a""))
+            {
+                formatter.Binder = new MyBinder();
+            }
+
+            return formatter.Deserialize(new MemoryStream(bytes));
+        }
+    }
+}",
+            GetCSharpResultAt(27, 20, BinderMaybeNotSetRule));
+        }
+
+        [Fact]
+        public void Deserialize_BinderSet_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Blah
+{
+    public class MyBinder : SerializationBinder
+    {
+        public override Type BindToType(string assemblyName, string typeName)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Program
+    {
+        public object BfUnsafeDeserialize(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Binder = new MyBinder();
+            return formatter.Deserialize(new MemoryStream(bytes));
+        }
+    }
+}");
         }
     }
 }

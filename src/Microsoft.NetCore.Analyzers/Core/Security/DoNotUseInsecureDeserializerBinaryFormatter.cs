@@ -1,5 +1,4 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -83,22 +82,23 @@ namespace Microsoft.NetCore.Analyzers.Security
             }
 
             ControlFlowGraph cfg = invocationOperation.GetEnclosingControlFlowGraph();
-            var dfaResult = BinaryFormatterAnalysis.GetOrComputeResult(cfg, operationAnalysisContext.Compilation, owningSymbol);
-            BinaryFormatterAbstractValue abstractValue = dfaResult[invocationOperation.Instance.Kind, invocationOperation.Instance.Syntax];
-            if (abstractValue == BinaryFormatterAbstractValue.Flagged)
+            var dfaResult = BinaryFormatterAnalysis.GetOrComputeHazardousParameterUsages(cfg, operationAnalysisContext.Compilation, owningSymbol);
+            if (dfaResult.TryGetValue(invocationOperation, out BinaryFormatterAbstractValue abstractValue))
             {
-                operationAnalysisContext.ReportDiagnostic(
-                    Diagnostic.Create(
-                        BinderDefinitelyNotSetDescriptor,
-                        invocationOperation.Syntax.GetLocation()));
-            }
-            else if (abstractValue == BinaryFormatterAbstractValue.MaybeFlagged)
-            {
-                operationAnalysisContext.ReportDiagnostic(
-                    Diagnostic.Create(
-                        BinderMaybeNotSetDescriptor,
-                        invocationOperation.Syntax.GetLocation()));
-
+                if (abstractValue == BinaryFormatterAbstractValue.Flagged)
+                {
+                    operationAnalysisContext.ReportDiagnostic(
+                        Diagnostic.Create(
+                            BinderDefinitelyNotSetDescriptor,
+                            invocationOperation.Syntax.GetLocation()));
+                }
+                else if (abstractValue == BinaryFormatterAbstractValue.MaybeFlagged)
+                {
+                    operationAnalysisContext.ReportDiagnostic(
+                        Diagnostic.Create(
+                            BinderMaybeNotSetDescriptor,
+                            invocationOperation.Syntax.GetLocation()));
+                }
             }
         }
     }

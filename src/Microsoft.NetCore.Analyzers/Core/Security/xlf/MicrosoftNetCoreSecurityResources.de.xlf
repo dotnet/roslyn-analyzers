@@ -13,8 +13,8 @@
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeMaybeWithoutBinderSetMessage">
-        <source>The method BinaryFormatter.Deserialize is not safe when deserializing untrusted data, and not having its Binder property set to restruct deserialized types.</source>
-        <target state="new">The method BinaryFormatter.Deserialize is not safe when deserializing untrusted data, and not having its Binder property set to restruct deserialized types.</target>
+        <source>The method '{0}' is not safe when deserializing untrusted data without a SerializationBinder to restrict deserialized types.</source>
+        <target state="new">The method '{0}' is not safe when deserializing untrusted data without a SerializationBinder to restrict deserialized types.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeMaybeWithoutBinderSetTitle">
@@ -23,13 +23,23 @@
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeWithoutBinderSetMessage">
-        <source>The method BinaryFormatter.Deserialize is not safe when deserializing untrusted data, and not having its Binder property set to restruct deserialized types.</source>
-        <target state="new">The method BinaryFormatter.Deserialize is not safe when deserializing untrusted data, and not having its Binder property set to restruct deserialized types.</target>
+        <source>The method '{0}' is not safe when deserializing untrusted data without a SerializationBinder to restrict deserialized types.</source>
+        <target state="new">The method '{0}' is not safe when deserializing untrusted data without a SerializationBinder to restrict deserialized types.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeWithoutBinderSetTitle">
         <source>Do not call BinaryFormatter.Deserialize without setting BinaryFormatter.Binder</source>
         <target state="new">Do not call BinaryFormatter.Deserialize without setting BinaryFormatter.Binder</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LosFormatterBannedMethodMessage">
+        <source>The method call 'LosFormatter.{0}' is not safe when deserializing untrusted data.</source>
+        <target state="new">The method call 'LosFormatter.{0}' is not safe when deserializing untrusted data.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LosFormatterBannedMethodTitle">
+        <source>Do not use insecure deserializer LosFormatter</source>
+        <target state="new">Do not use insecure deserializer LosFormatter</target>
         <note />
       </trans-unit>
     </body>

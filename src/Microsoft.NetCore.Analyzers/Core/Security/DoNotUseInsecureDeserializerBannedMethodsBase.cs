@@ -13,7 +13,10 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// <summary>
     /// Base class for insecure deserializer analyzers.
     /// </summary>
-    public abstract class DoNotUseInsecureDeserializerBase : DiagnosticAnalyzer
+    /// <remarks>This aids in implementing:
+    /// 1. Banned methods.
+    /// </remarks>
+    public abstract class DoNotUseInsecureDeserializerBannedMethodsBase : DiagnosticAnalyzer
     {
         /// <summary>
         /// Metadata name of the potentially insecure deserializer type.
@@ -30,21 +33,6 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// </summary>
         /// <remarks>Must be non-null if BannedMethods is non-null.  The string format message argument is the target method name.</remarks>
         protected virtual DiagnosticDescriptor BannedMethodDescriptor {  get { return null; } }
-
-        /// <summary>
-        /// Optional additional handling for invocation operations.
-        /// </summary>
-        /// <param name="owningSymbol">Owning symbol (containing method).</param>
-        /// <param name="deserializerTypeSymbol"><see cref="INamedTypeSymbol"/> of the deserializer type.</param>
-        /// <param name="operationAnalysisContext">Analysis context for the invocation operation.</param>
-        /// <param name="invocationOperation">Same as operationAnalysisContext.Operation.</param>
-        protected virtual void AdditionalHandleInvocationOperation(
-            ISymbol owningSymbol,
-            INamedTypeSymbol deserializerTypeSymbol,
-            OperationAnalysisContext operationAnalysisContext,
-            IInvocationOperation invocationOperation)
-        {
-        }
 
         // Statically cache things, so derived classes can be lazy and just return a new collection
         // everytime in their BannedMethodNames, etc overrides.
@@ -89,29 +77,26 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
-                            ISymbol owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
-
-                            if (this.BannedMethodNames != null)
+                            if (CachedBannedMethodNames != null)
                             {
                                 operationBlockStartAnalysisContext.RegisterOperationAction(
                                     (OperationAnalysisContext operationAnalysisContext) =>
                                     {
-                                        this.HandleInvocationOperation(owningSymbol, deserializerTypeSymbol, operationAnalysisContext);
+                                        this.HandleInvocationOperation(
+                                            deserializerTypeSymbol,
+                                            operationAnalysisContext);
                                     },
                                     OperationKind.Invocation);
                             }
-
                         });
-
                 });
         }
 
         private void HandleInvocationOperation(
-            ISymbol owningSymbol,
             INamedTypeSymbol deserializerTypeSymbol, 
             OperationAnalysisContext operationAnalysisContext)
         {
-            IInvocationOperation invocationOperation = (IInvocationOperation) operationAnalysisContext.Operation; 
+            IInvocationOperation invocationOperation = (IInvocationOperation) operationAnalysisContext.Operation;
             if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
                 && CachedBannedMethodNames.Contains(invocationOperation.TargetMethod.MetadataName))
             {
@@ -121,8 +106,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                         invocationOperation.Syntax.GetLocation(),
                         invocationOperation.TargetMethod.MetadataName));
             }
-
-            AdditionalHandleInvocationOperation(owningSymbol, deserializerTypeSymbol, operationAnalysisContext, invocationOperation);
         }
 
         /// <summary>

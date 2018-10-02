@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// Base class for insecure deserializer analyzers.
     /// </summary>
     /// <remarks>This aids in implementing:
-    /// 1. Banned methods.
+    /// 1. SerializationBinder not set at the time of deserialization.
     /// </remarks>
     public abstract class DoNotUseInsecureDeserializerWithoutBinderBase : DiagnosticAnalyzer
     {
@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected abstract string SerializationBinderPropertyMetadataName { get; }
 
         /// <summary>
-        /// Metadata names of banned methods, which should not be used at all.
+        /// Metadata names of deserialization methods.
         /// </summary>
         protected abstract ImmutableHashSet<string> DeserializationMethodNames { get; }
 
@@ -44,7 +44,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected abstract DiagnosticDescriptor BinderDefinitelyNotSetDescriptor { get; }
 
         /// <summary>
-        /// <see cref="DiagnosticDescriptor"/> for when a deserialization method is invoked and its Binder property is definitely not set.
+        /// <see cref="DiagnosticDescriptor"/> for when a deserialization method is invoked and its Binder property is possibly not set.
         /// </summary>
         protected abstract DiagnosticDescriptor BinderMaybeNotSetDescriptor { get; }
 
@@ -53,25 +53,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                 BinderDefinitelyNotSetDescriptor,
                 BinderMaybeNotSetDescriptor);
 
-        // Statically cache things, so derived classes can be lazy and just return a new collection
-        // everytime in their BannedMethodNames, etc overrides.
-        private static object StaticCacheInitializationLock = new object();
-        private static bool IsStaticCacheInitialized = false;
-        private static ImmutableHashSet<string> CachedDeserializationMethodNames;
-
         public override void Initialize(AnalysisContext context)
         {
-            if (!IsStaticCacheInitialized)
-            {
-                lock (StaticCacheInitializationLock)
-                {
-                    if (!IsStaticCacheInitialized)
-                    {
-                        CachedDeserializationMethodNames = this.DeserializationMethodNames;
-                        IsStaticCacheInitialized = true;
-                    }
-                }
-            }
+            ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
+
+            Debug.Assert(!String.IsNullOrWhiteSpace(this.DeserializerTypeMetadataName));
+            Debug.Assert(!String.IsNullOrWhiteSpace(this.SerializationBinderPropertyMetadataName));
+            Debug.Assert(cachedDeserializationMethodNames != null);
+            Debug.Assert(!cachedDeserializationMethodNames.IsEmpty);
+            Debug.Assert(this.BinderDefinitelyNotSetDescriptor != null);
+            Debug.Assert(this.BinderMaybeNotSetDescriptor != null);
 
             context.EnableConcurrentExecution();
 
@@ -100,15 +91,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
-                                    if (requiresBinderMustBeSetDataFlowAnalysis)
-                                    {
-                                        // Already know we need to perform DFA.
-                                        return;
-                                    }
-
-                                    IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
+                                    IInvocationOperation invocationOperation =
+                                        (IInvocationOperation) operationAnalysisContext.Operation;
                                     if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
-                                        && CachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
+                                        && cachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
                                     {
                                         requiresBinderMustBeSetDataFlowAnalysis = true;
                                     }
@@ -132,7 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             true /* isNewInstanceFlagged */,
                                             this.SerializationBinderPropertyMetadataName,
                                             true /* isNullPropertyFlagged */,
-                                            CachedDeserializationMethodNames);
+                                            cachedDeserializationMethodNames);
                                     foreach (KeyValuePair<IInvocationOperation, PropertySetAbstractValue> kvp in dfaResult)
                                     {
                                         switch (kvp.Value)

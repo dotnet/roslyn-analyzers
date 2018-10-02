@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -26,38 +27,25 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// <summary>
         /// Metadata names of banned methods, which should not be used at all.
         /// </summary>
-        protected virtual ImmutableHashSet<string> BannedMethodNames { get { return null; } }
+        protected abstract ImmutableHashSet<string> BannedMethodNames { get; }
 
         /// <summary>
         /// <see cref="DiagnosticDescriptor"/> for the diagnostic to create when a banned method is invoked.
         /// </summary>
-        /// <remarks>Must be non-null if BannedMethods is non-null.  The string format message argument is the target method name.</remarks>
-        protected virtual DiagnosticDescriptor BannedMethodDescriptor {  get { return null; } }
+        /// <remarks>The string format message argument is the target method name.</remarks>
+        protected abstract DiagnosticDescriptor BannedMethodDescriptor { get; }
 
-        // Statically cache things, so derived classes can be lazy and just return a new collection
-        // everytime in their BannedMethodNames, etc overrides.
-        private static object StaticCacheInitializationLock = new object();
-        private static bool IsStaticCacheInitialized = false;
-        private static ImmutableHashSet<string> CachedBannedMethodNames;
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+            ImmutableArray.Create(BannedMethodDescriptor);
 
         public override void Initialize(AnalysisContext context)
         {
-            if (!IsStaticCacheInitialized)
-            {
-                lock (StaticCacheInitializationLock)
-                {
-                    if (!IsStaticCacheInitialized)
-                    {
-                        CachedBannedMethodNames = this.BannedMethodNames;
-                        IsStaticCacheInitialized = true;
-                    }
-                }
-            }
+            ImmutableHashSet<string> cachedBannedMethodNames = this.BannedMethodNames;
 
-            if (CachedBannedMethodNames != null && this.BannedMethodDescriptor == null)
-            {
-                throw new NotImplementedException($"{nameof(BannedMethodNames)} is defined, but {nameof(BannedMethodDescriptor)} is not");
-            }
+            Debug.Assert(this.DeserializerTypeMetadataName != null);
+            Debug.Assert(cachedBannedMethodNames != null);
+            Debug.Assert(!cachedBannedMethodNames.IsEmpty);
+            Debug.Assert(this.BannedMethodDescriptor != null);
 
             context.EnableConcurrentExecution();
 
@@ -77,35 +65,25 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
-                            if (CachedBannedMethodNames != null)
-                            {
-                                operationBlockStartAnalysisContext.RegisterOperationAction(
-                                    (OperationAnalysisContext operationAnalysisContext) =>
+                            operationBlockStartAnalysisContext.RegisterOperationAction(
+                                (OperationAnalysisContext operationAnalysisContext) =>
+                                {
+                                    IInvocationOperation invocationOperation = 
+                                        (IInvocationOperation) operationAnalysisContext.Operation;
+                                    if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
+                                        && cachedBannedMethodNames.Contains(invocationOperation.TargetMethod.MetadataName))
                                     {
-                                        this.HandleInvocationOperation(
-                                            deserializerTypeSymbol,
-                                            operationAnalysisContext);
-                                    },
-                                    OperationKind.Invocation);
-                            }
+                                        operationAnalysisContext.ReportDiagnostic(
+                                            Diagnostic.Create(
+                                                this.BannedMethodDescriptor,
+                                                invocationOperation.Syntax.GetLocation(),
+                                                invocationOperation.TargetMethod.ToDisplayString(
+                                                    SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                    }
+                                },
+                                OperationKind.Invocation);
                         });
                 });
-        }
-
-        private void HandleInvocationOperation(
-            INamedTypeSymbol deserializerTypeSymbol, 
-            OperationAnalysisContext operationAnalysisContext)
-        {
-            IInvocationOperation invocationOperation = (IInvocationOperation) operationAnalysisContext.Operation;
-            if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
-                && CachedBannedMethodNames.Contains(invocationOperation.TargetMethod.MetadataName))
-            {
-                operationAnalysisContext.ReportDiagnostic(
-                    Diagnostic.Create(
-                        this.BannedMethodDescriptor,
-                        invocationOperation.Syntax.GetLocation(),
-                        invocationOperation.TargetMethod.MetadataName));
-            }
         }
 
         /// <summary>

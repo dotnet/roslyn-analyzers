@@ -4,9 +4,13 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    /// <summary>
+    /// For detecting deserialization with <see cref="System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"/> when its Binder property is not set.
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder : DoNotUseInsecureDeserializerWithoutBinderBase
     {
@@ -34,9 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected override string SerializationBinderPropertyMetadataName => "Binder";
 
         protected override ImmutableHashSet<string> DeserializationMethodNames => 
-            ImmutableHashSet.Create(
-                "Deserialize",
-                "UnsafeDeserialize");
+            SecurityConstants.BinaryFormatterDeserializationMethods;
 
         protected override DiagnosticDescriptor BinderDefinitelyNotSetDescriptor => RealBinderDefinitelyNotSetDescriptor;
 

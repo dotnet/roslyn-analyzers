@@ -117,26 +117,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BinaryFormatterBannedMethodDescription" xml:space="preserve">
+    <value>The method call '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserializations without a SerializationBinder set first, disable rule CA2300 and enable rules CA2301 and CA2302.</value>
+  </data>
   <data name="BinaryFormatterBannedMethodMessage" xml:space="preserve">
-    <value>The method call 'BinaryFormatter.{0}' is not safe when deserializing untrusted data.</value>
+    <value>The method call '{0}' is insecure when deserializing untrusted data.</value>
   </data>
   <data name="BinaryFormatterBannedMethodTitle" xml:space="preserve">
-    <value>Do not use insecure deserialization methods with BinaryFormatter</value>
+    <value>Do not use insecure deserializer BinaryFormatter</value>
   </data>
   <data name="BinaryFormatterDeserializeMaybeWithoutBinderSetMessage" xml:space="preserve">
-    <value>The method '{0}' is not safe when deserializing untrusted data without a SerializationBinder to restrict deserialized types.</value>
+    <value>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</value>
   </data>
   <data name="BinaryFormatterDeserializeMaybeWithoutBinderSetTitle" xml:space="preserve">
     <value>Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize</value>
   </data>
   <data name="BinaryFormatterDeserializeWithoutBinderSetMessage" xml:space="preserve">
-    <value>The method '{0}' is not safe when deserializing untrusted data without a SerializationBinder to restrict deserialized types.</value>
+    <value>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</value>
   </data>
   <data name="BinaryFormatterDeserializeWithoutBinderSetTitle" xml:space="preserve">
-    <value>Do not call BinaryFormatter.Deserialize without setting BinaryFormatter.Binder</value>
+    <value>Do not call BinaryFormatter.Deserialize without first setting BinaryFormatter.Binder</value>
   </data>
   <data name="LosFormatterBannedMethodMessage" xml:space="preserve">
-    <value>The method call 'LosFormatter.{0}' is not safe when deserializing untrusted data.</value>
+    <value>The method call '{0}' is insecure when deserializing untrusted data.</value>
   </data>
   <data name="LosFormatterBannedMethodTitle" xml:space="preserve">
     <value>Do not use insecure deserializer LosFormatter</value>

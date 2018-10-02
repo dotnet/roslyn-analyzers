@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Immutable;
-using System.Text;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -26,6 +26,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         protected override ImmutableHashSet<string> BannedMethodNames => 
             ImmutableHashSet.Create(
+                StringComparer.Ordinal,
                 "Deserialize");
 
         protected override DiagnosticDescriptor BannedMethodDescriptor => RealBannedMethodDescriptor;

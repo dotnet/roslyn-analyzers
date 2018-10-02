@@ -28,8 +28,8 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
             this.PrintActualDiagnosticsOnFailure = true;
             return GetCSharpResultAt(
                 new[] {
-                    Tuple.Create(SystemWebNamespacesCSharpLineCount + sinkLine, sinkColumn),
-                    Tuple.Create(SystemWebNamespacesCSharpLineCount + sourceLine, sourceColumn)
+                    Tuple.Create(sinkLine, sinkColumn),
+                    Tuple.Create(sourceLine, sourceColumn)
                 },
                 ReviewCodeForSqlInjectionVulnerabilities.Rule,
                 sink,
@@ -38,10 +38,11 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
                 sourceContainingMethod);
         }
 
-        /// <summary>
-        /// Fake dependencies, so we don't have to reference the real ones.
-        /// </summary>
-        private const string SystemWebNamespacesCSharp = @"
+
+
+        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        {
+            string systemWebNamespacesCSharp = @"
 namespace System.Collections.Specialized
 {
     public class NameValueCollection
@@ -79,19 +80,16 @@ namespace System.Web.UI
         public System.Web.HttpRequest Request { get; }      
     }
 }";
-
-        /// <summary>
-        /// Line count of the fake dependencies source code, so we have a base offset to calculate the real line number.
-        /// </summary>
-        private static readonly int SystemWebNamespacesCSharpLineCount = SystemWebNamespacesCSharp.Where(ch => ch == '\n').Count();
+            this.VerifyCSharp(
+                new[] { source, systemWebNamespacesCSharp }.ToFileAndSource(),
+                expected);
+        }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalString_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -118,16 +116,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(21, 21, 16, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(20, 21, 15, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact(Skip = "Need something to handle output parameters for delegates")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_DelegateInvocation_OutParam_LocalString_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -158,7 +154,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(25, 21, 20, 26, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(24, 21, 19, 26, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
 
@@ -166,9 +162,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_InterfaceInvocation_OutParam_LocalString_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -199,16 +193,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(25, 21, 20, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(24, 21, 19, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalStringMoreBlocks_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -241,16 +233,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(28, 17, 19, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(27, 17, 18, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_And_QueryString_LocalStringMoreBlocks_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -283,17 +273,15 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(28, 17, 19, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"),
-                GetCSharpResultAt(28, 17, 23, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.QueryString", "Page_Load"));
+                GetCSharpResultAt(27, 17, 18, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"),
+                GetCSharpResultAt(27, 17, 22, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.QueryString", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Direct_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -316,16 +304,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Substring_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -348,7 +334,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
 
@@ -356,9 +342,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void Sanitized_HttpRequest_Form_Direct_NoDiagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -387,9 +371,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void Sanitized_HttpRequest_Form_TryParse_NoDiagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -422,9 +404,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Item_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -447,16 +427,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Item_Enters_SqlParameters_NoDiagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -489,9 +467,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Item_Sql_Constructor_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -510,7 +486,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(16, 37, 16, 52, "SqlCommand.SqlCommand(string cmdText)", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
+                GetCSharpResultAt(15, 37, 15, 52, "SqlCommand.SqlCommand(string cmdText)", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
         }
 
 
@@ -518,9 +494,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Method_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -544,16 +518,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(19, 17, 16, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(18, 17, 15, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalNameValueCollectionString_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -578,16 +550,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(20, 17, 16, 70, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(19, 17, 15, 70, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact(Skip = "Doesn't work, array isn't tainted, ObjectCreation visited before ArrayInitializer")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_List_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -613,16 +583,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(29, 17, 24, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(28, 17, 23, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact(Skip = "Doesn't work, array isn't tainted")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Array_List_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -649,7 +617,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(30, 17, 25, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(29, 17, 24, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
 
@@ -657,9 +625,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Array_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -685,7 +651,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(21, 17, 18, 52, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(20, 17, 17, 52, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
 
@@ -694,9 +660,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalStructNameValueCollectionString_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -730,15 +694,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(29, 17, 24, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(28, 17, 23, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalStructConstructorNameValueCollectionString_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
+            VerifyCSharpWithDependencies(@"
 
 namespace VulnerableWebApp
 {
@@ -786,9 +749,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_UserLanguages_Direct_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -811,16 +772,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, 18, 31, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_UserLanguages_LocalStringArray_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -844,16 +803,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(19, 17, 16, 34, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
+                GetCSharpResultAt(18, 17, 15, 34, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_UserLanguages_LocalStringModified_Diagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -877,16 +834,14 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(19, 17, 16, 78, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
+                GetCSharpResultAt(18, 17, 15, 78, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
         }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void OkayInputLocalStructNameValueCollectionString_NoDiagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;
@@ -928,9 +883,7 @@ namespace VulnerableWebApp
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void OkayInputConst_NoDiagnostic()
         {
-            VerifyCSharp(
-                SystemWebNamespacesCSharp + @"
-
+            VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
 {
     using System;

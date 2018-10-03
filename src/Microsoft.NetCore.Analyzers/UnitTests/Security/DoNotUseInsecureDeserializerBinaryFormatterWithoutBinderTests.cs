@@ -27,19 +27,19 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
         protected void VerifyCSharpWithMyBinderDefined(string source, params DiagnosticResult[] expected)
         {
             string myBinderCSharpSourceCode = @"
-            using System;
-            using System.Runtime.Serialization;
+using System;
+using System.Runtime.Serialization;
 
-            namespace Blah
-            {
-                public class MyBinder : SerializationBinder
-                {
-                    public override Type BindToType(string assemblyName, string typeName)
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-            }
+namespace Blah
+{
+    public class MyBinder : SerializationBinder
+    {
+        public override Type BindToType(string assemblyName, string typeName)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
             ";
 
             this.VerifyCSharp(
@@ -292,6 +292,86 @@ namespace Blah
         }
     }
 }");
+        }
+
+        [Fact]
+        public void Deserialize_LoopBinderSetAfter_Diagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Blah
+{
+    public class Program
+    {
+        public void D(byte[][] bytes, object[] objects)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            for (int i = 0; i < 2; i++)
+            {
+                objects[i] = formatter.Deserialize(new MemoryStream(bytes[i]));
+                formatter.Binder = new MyBinder();
+            }
+        }
+    }
+}",
+                GetCSharpResultAt(15, 30, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
+        [Fact]
+        public void Deserialize_LoopBinderSetBefore_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Blah
+{
+    public class Program
+    {
+        public void D(byte[][] bytes, object[] objects)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            for (int i = 0; i < 2; i++)
+            {
+                formatter.Binder = new MyBinder();
+                objects[i] = formatter.Deserialize(new MemoryStream(bytes[i]));
+            }
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void Deserialize_LoopBinderSetBeforeMaybe_Diagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Blah
+{
+    public class Program
+    {
+        public void D(byte[][] bytes, object[] objects)
+        {
+            Random r = new Random();
+            BinaryFormatter formatter = new BinaryFormatter();
+            for (int i = 0; i < 2; i++)
+            {
+                if (r.Next() % 2 == 0)
+                    formatter.Binder = new MyBinder();
+                objects[i] = formatter.Deserialize(new MemoryStream(bytes[i]));
+                
+            }
+        }
+    }
+}",
+                GetCSharpResultAt(18, 30, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
     }
 }

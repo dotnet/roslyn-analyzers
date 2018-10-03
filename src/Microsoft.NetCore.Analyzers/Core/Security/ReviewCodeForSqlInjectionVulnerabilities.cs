@@ -107,7 +107,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.GetOrComputeResult(
                                         operationBlockAnalysisContext.OperationBlocks[0].GetEnclosingControlFlowGraph(),
                                         operationBlockAnalysisContext.Compilation,
-                                        operationBlockAnalysisContext.OwningSymbol);
+                                        operationBlockAnalysisContext.OwningSymbol,
+                                        WebInputSources.SourceInfos,
+                                        PrimitiveTypeConverterSanitizers.ConcreteSanitizers,
+                                        SqlSinks.ConcreteSinks,
+                                        SqlSinks.InterfaceSinks);
                                     foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                     {
                                         if (sourceSink.SinkKind != SinkKind.Sql)

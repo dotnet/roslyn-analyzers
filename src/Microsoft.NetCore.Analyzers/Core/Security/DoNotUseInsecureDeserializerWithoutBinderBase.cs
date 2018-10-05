@@ -34,6 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// <summary>
         /// Metadata names of deserialization methods.
         /// </summary>
+        /// <remarks>Use <see cref="StringComparer.Ordinal"/>.</remarks>
         protected abstract ImmutableHashSet<string> DeserializationMethodNames { get; }
 
         /// <summary>
@@ -46,12 +47,12 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// </summary>
         protected abstract DiagnosticDescriptor BinderMaybeNotSetDescriptor { get; }
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create<DiagnosticDescriptor>(
                 BinderDefinitelyNotSetDescriptor,
                 BinderMaybeNotSetDescriptor);
 
-        public override void Initialize(AnalysisContext context)
+        public sealed override void Initialize(AnalysisContext context)
         {
             ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
 
@@ -71,7 +72,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     WellKnownTypeProvider wellKnownTypeProvider =
-                    WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
+                        WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
                     if (!wellKnownTypeProvider.TryGetKnownType(
                             this.DeserializerTypeMetadataName,
@@ -83,26 +84,26 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
-                            ISymbol owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
-                            bool requiresBinderMustBeSetDataFlowAnalysis = false;
+                            bool isDataFlowAnalysisNeeded = false;
 
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
-                                    IInvocationOperation invocationOperation =
-                                        (IInvocationOperation) operationAnalysisContext.Operation;
-                                    if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
-                                        && cachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
+                                    IMethodReferenceOperation methodReferenceOperation =
+                                        (IMethodReferenceOperation)operationAnalysisContext.Operation;
+                                    if (methodReferenceOperation.Method.ContainingType == deserializerTypeSymbol
+                                        && cachedDeserializationMethodNames.Contains(
+                                            methodReferenceOperation.Method.MetadataName))
                                     {
-                                        requiresBinderMustBeSetDataFlowAnalysis = true;
+                                        isDataFlowAnalysisNeeded = true;
                                     }
                                 },
-                                OperationKind.Invocation);
+                                OperationKind.MethodReference);
 
                             operationBlockStartAnalysisContext.RegisterOperationBlockEndAction(
                                 (OperationBlockAnalysisContext operationBlockAnalysisContext) =>
                                 {
-                                    if (!requiresBinderMustBeSetDataFlowAnalysis)
+                                    if (!isDataFlowAnalysisNeeded)
                                     {
                                         return;
                                     }
@@ -147,19 +148,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 });
                         });
                 });
-        }
-
-        /// <summary>
-        /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreSecurityResources"/>.
-        /// </summary>
-        /// <param name="name">Name of the resource string to retrieve.</param>
-        /// <returns>The corresponding <see cref="LocalizableResourceString"/>.</returns>
-        protected static LocalizableResourceString GetResourceString(string name)
-        {
-            return new LocalizableResourceString(
-                    name,
-                    MicrosoftNetCoreSecurityResources.ResourceManager,
-                    typeof(MicrosoftNetCoreSecurityResources));
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
@@ -12,23 +13,24 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// For detecting deserialization with LosFormatter, which can result in remote code execution.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class DoNotUseInsecureDeserializerLosFormatter : DoNotUseInsecureDeserializerBannedMethodsBase
+    public class DoNotUseInsecureDeserializerLosFormatter : DoNotUseInsecureDeserializerMethodsBase
     {
-        internal static DiagnosticDescriptor RealBannedMethodDescriptor = new DiagnosticDescriptor(
-            "CA2304",
-            GetResourceString(nameof(MicrosoftNetCoreSecurityResources.LosFormatterBannedMethodTitle)),
-            GetResourceString(nameof(MicrosoftNetCoreSecurityResources.LosFormatterBannedMethodMessage)),
-            DiagnosticCategory.Security,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            false);
+        // TODO paulming: Help link URLs.
+        internal static DiagnosticDescriptor RealBannedMethodDescriptor =
+            SecurityHelpers.CreateDiagnosticDescriptor(
+                "CA2304",
+                nameof(MicrosoftNetCoreSecurityResources.LosFormatterBannedMethodTitle),
+                nameof(MicrosoftNetCoreSecurityResources.LosFormatterBannedMethodMessage),
+                isEnabledByDefault: false,
+                helpLinkUri: null);
 
         protected override string DeserializerTypeMetadataName => WellKnownTypes.SystemWebUILosFormatter;
 
-        protected override ImmutableHashSet<string> BannedMethodNames => 
+        protected override ImmutableHashSet<string> DeserializationMethodNames => 
             ImmutableHashSet.Create(
                 StringComparer.Ordinal,
                 "Deserialize");
 
-        protected override DiagnosticDescriptor BannedMethodDescriptor => RealBannedMethodDescriptor;
+        protected override DiagnosticDescriptor InsecureMethodDescriptor => RealBannedMethodDescriptor;
     }
 }

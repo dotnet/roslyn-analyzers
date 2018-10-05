@@ -16,21 +16,19 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         // TODO paulming: Help link URLs.
         internal static readonly DiagnosticDescriptor RealBinderDefinitelyNotSetDescriptor =
-            new DiagnosticDescriptor(
+            SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2301",
-                GetResourceString(nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeWithoutBinderSetTitle)),
-                GetResourceString(nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeWithoutBinderSetMessage)),
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                false);
+                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeWithoutBinderSetTitle),
+                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeWithoutBinderSetMessage),
+                isEnabledByDefault: false,
+                helpLinkUri: null);
         internal static readonly DiagnosticDescriptor RealBinderMaybeNotSetDescriptor =
-            new DiagnosticDescriptor(
+            SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2302",
-                GetResourceString(nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeMaybeWithoutBinderSetTitle)),
-                GetResourceString(nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeMaybeWithoutBinderSetMessage)),
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                false);
+                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeMaybeWithoutBinderSetTitle),
+                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeMaybeWithoutBinderSetMessage),
+                isEnabledByDefault: false,
+                helpLinkUri: null);
 
         protected override string DeserializerTypeMetadataName => 
             WellKnownTypes.SystemRuntimeSerializationFormattersBinaryBinaryFormatter;
@@ -38,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected override string SerializationBinderPropertyMetadataName => "Binder";
 
         protected override ImmutableHashSet<string> DeserializationMethodNames => 
-            SecurityConstants.BinaryFormatterDeserializationMethods;
+            SecurityHelpers.BinaryFormatterDeserializationMethods;
 
         protected override DiagnosticDescriptor BinderDefinitelyNotSetDescriptor => RealBinderDefinitelyNotSetDescriptor;
 

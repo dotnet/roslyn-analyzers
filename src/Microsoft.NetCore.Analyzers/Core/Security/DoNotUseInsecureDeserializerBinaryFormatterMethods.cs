@@ -12,25 +12,24 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// For detecting deserialization with <see cref="System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"/>.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    class DoNotUseInsecureDeserializerBinaryFormatterBannedMethods : DoNotUseInsecureDeserializerBannedMethodsBase
+    class DoNotUseInsecureDeserializerBinaryFormatterMethods : DoNotUseInsecureDeserializerMethodsBase
     {
         // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor RealBannedMethodDescriptor =
-            new DiagnosticDescriptor(
+            SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2300",
-                GetResourceString(nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterBannedMethodTitle)),
-                GetResourceString(nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterBannedMethodMessage)),
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                false,
-                GetResourceString(nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterBannedMethodDescription)));
+                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterBannedMethodTitle),
+                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterBannedMethodMessage),
+                isEnabledByDefault: false,
+                helpLinkUri: null,
+                descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterBannedMethodDescription));
 
         protected override string DeserializerTypeMetadataName =>
             WellKnownTypes.SystemRuntimeSerializationFormattersBinaryBinaryFormatter;
 
-        protected override ImmutableHashSet<string> BannedMethodNames =>
-            SecurityConstants.BinaryFormatterDeserializationMethods;
+        protected override ImmutableHashSet<string> DeserializationMethodNames =>
+            SecurityHelpers.BinaryFormatterDeserializationMethods;
 
-        protected override DiagnosticDescriptor BannedMethodDescriptor => RealBannedMethodDescriptor;
+        protected override DiagnosticDescriptor InsecureMethodDescriptor => RealBannedMethodDescriptor;
     }
 }

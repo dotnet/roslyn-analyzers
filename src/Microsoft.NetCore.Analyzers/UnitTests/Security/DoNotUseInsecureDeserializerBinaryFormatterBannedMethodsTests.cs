@@ -10,16 +10,16 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
 {
     public class DoNotUseInsecureDeserializerBinaryFormatterBannedMethodsTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly DiagnosticDescriptor BannedMethodRule = DoNotUseInsecureDeserializerBinaryFormatterBannedMethods.RealBannedMethodDescriptor;
+        private static readonly DiagnosticDescriptor BannedMethodRule = DoNotUseInsecureDeserializerBinaryFormatterMethods.RealBannedMethodDescriptor;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DoNotUseInsecureDeserializerBinaryFormatterBannedMethods();
+            return new DoNotUseInsecureDeserializerBinaryFormatterMethods();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DoNotUseInsecureDeserializerBinaryFormatterBannedMethods();
+            return new DoNotUseInsecureDeserializerBinaryFormatterMethods();
         }
 
         [Fact]

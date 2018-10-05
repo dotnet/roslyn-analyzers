@@ -91,7 +91,7 @@ namespace Blah
             GetCSharpResultAt(13, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
 
-        [Fact(Skip = " Ideally, we'd detect that this.formatter.Binder is set.")]
+        [Fact(Skip = "Ideally, we'd detect that this.formatter.Binder is set.")]
         public void DeserializeWithInstanceField_NoDiagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
@@ -373,5 +373,60 @@ namespace Blah
 }",
                 GetCSharpResultAt(18, 30, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
+
+        [Fact]
+        public void Deserialize_InvokedAsDelegate_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Blah
+{
+    public class Program
+    {
+        delegate object DeserializeDelegate(Stream s);
+
+        public object DeserializeWithDelegate(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            DeserializeDelegate del = formatter.Deserialize;
+            return del(new MemoryStream(bytes));
+        }
+    }
+}",
+                GetCSharpResultAt(15, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
+        [Fact]
+        public void Deserialize_BranchInvokedAsDelegate_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        delegate object DeserializeDelegate(Stream s, HeaderHandler h);
+
+        public object DeserializeWithDelegate(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            DeserializeDelegate del;
+            if (Environment.GetEnvironmentVariable(""USEUNSAFE"") == ""1"")
+                del = formatter.UnsafeDeserialize;
+            else
+                del = formatter.Deserialize;
+            return del(new MemoryStream(bytes), null);
+        }
+    }
+}",
+                GetCSharpResultAt(15, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
     }
 }

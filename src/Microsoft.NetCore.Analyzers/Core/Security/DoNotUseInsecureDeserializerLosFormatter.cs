@@ -16,11 +16,18 @@ namespace Microsoft.NetCore.Analyzers.Security
     public class DoNotUseInsecureDeserializerLosFormatter : DoNotUseInsecureDeserializerMethodsBase
     {
         // TODO paulming: Help link URLs.
-        internal static DiagnosticDescriptor RealBannedMethodDescriptor =
+        internal static DiagnosticDescriptor RealInvocationDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
-                "CA2304",
-                nameof(MicrosoftNetCoreSecurityResources.LosFormatterBannedMethodTitle),
-                nameof(MicrosoftNetCoreSecurityResources.LosFormatterBannedMethodMessage),
+                "CA2310",
+                nameof(MicrosoftNetCoreSecurityResources.LosFormatterMethodInvocationTitle),
+                nameof(MicrosoftNetCoreSecurityResources.LosFormatterMethodInvocationMessage),
+                isEnabledByDefault: false,
+                helpLinkUri: null);
+        internal static DiagnosticDescriptor RealReferenceDescriptor =
+            SecurityHelpers.CreateDiagnosticDescriptor(
+                "CA2311",
+                nameof(MicrosoftNetCoreSecurityResources.LosFormatterMethodReferenceTitle),
+                nameof(MicrosoftNetCoreSecurityResources.LosFormatterMethodReferenceMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null);
 
@@ -31,6 +38,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 StringComparer.Ordinal,
                 "Deserialize");
 
-        protected override DiagnosticDescriptor InsecureMethodDescriptor => RealBannedMethodDescriptor;
+        protected override DiagnosticDescriptor InvocationDescriptor => RealInvocationDescriptor;
+
+        protected override DiagnosticDescriptor ReferenceDescriptor => RealReferenceDescriptor;
     }
 }

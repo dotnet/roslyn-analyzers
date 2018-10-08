@@ -15,6 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// </summary>
     /// <remarks>This aids in implementing:
     /// 1. Detecting potentially insecure deserialization method calls.
+    /// 2. Detecting references to potentially insecure methods.
     /// </remarks>
     public abstract class DoNotUseInsecureDeserializerMethodsBase : DiagnosticAnalyzer
     {
@@ -30,13 +31,21 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected abstract ImmutableHashSet<string> DeserializationMethodNames { get; }
 
         /// <summary>
-        /// <see cref="DiagnosticDescriptor"/> for the diagnostic to create when a potentially insecure method is invoked.
+        /// <see cref="DiagnosticDescriptor"/> for when a potentially insecure method is invoked.
         /// </summary>
         /// <remarks>The string format message argument is the target method name.</remarks>
-        protected abstract DiagnosticDescriptor InsecureMethodDescriptor { get; }
+        protected abstract DiagnosticDescriptor InvocationDescriptor { get; }
+
+        /// <summary>
+        /// <see cref="DiagnosticDescriptor"/> for when a potentially insecure method is referenced.
+        /// </summary>
+        /// <remarks>The string format message argument is the target method name.</remarks>
+        protected abstract DiagnosticDescriptor ReferenceDescriptor { get; }
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-            ImmutableArray.Create(InsecureMethodDescriptor);
+            ImmutableArray.Create<DiagnosticDescriptor>(
+                this.InvocationDescriptor,
+                this.ReferenceDescriptor);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -45,7 +54,8 @@ namespace Microsoft.NetCore.Analyzers.Security
             Debug.Assert(this.DeserializerTypeMetadataName != null);
             Debug.Assert(cachedDeserializationMethodNames != null);
             Debug.Assert(!cachedDeserializationMethodNames.IsEmpty);
-            Debug.Assert(this.InsecureMethodDescriptor != null);
+            Debug.Assert(this.InvocationDescriptor != null);
+            Debug.Assert(this.ReferenceDescriptor != null);
 
             context.EnableConcurrentExecution();
 
@@ -72,13 +82,31 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                     Diagnostic.Create(
-                                        this.InsecureMethodDescriptor,
+                                        this.InvocationDescriptor,
                                         invocationOperation.Syntax.GetLocation(),
                                         invocationOperation.TargetMethod.ToDisplayString(
                                             SymbolDisplayFormat.MinimallyQualifiedFormat)));
                             }
                         },
                         OperationKind.Invocation);
+
+                    compilationStartAnalysisContext.RegisterOperationAction(
+                        (OperationAnalysisContext operationAnalysisContext) =>
+                        {
+                            IMethodReferenceOperation methodReferenceOperation =
+                                (IMethodReferenceOperation) operationAnalysisContext.Operation;
+                            if (methodReferenceOperation.Method.ContainingType == deserializerTypeSymbol
+                                && cachedDeserializationMethodNames.Contains(methodReferenceOperation.Method.MetadataName))
+                            {
+                                operationAnalysisContext.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        this.ReferenceDescriptor,
+                                        methodReferenceOperation.Syntax.GetLocation(),
+                                        methodReferenceOperation.Method.ToDisplayString(
+                                            SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                            }
+                        },
+                        OperationKind.MethodReference);
                 });
         }
     }

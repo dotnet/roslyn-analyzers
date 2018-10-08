@@ -117,15 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BinaryFormatterBannedMethodDescription" xml:space="preserve">
-    <value>The method call '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserializations without a SerializationBinder set first, disable rule CA2300 and enable rules CA2301 and CA2302.</value>
-  </data>
-  <data name="BinaryFormatterBannedMethodMessage" xml:space="preserve">
-    <value>The method call '{0}' is insecure when deserializing untrusted data.</value>
-  </data>
-  <data name="BinaryFormatterBannedMethodTitle" xml:space="preserve">
-    <value>Do not use insecure deserializer BinaryFormatter</value>
-  </data>
   <data name="BinaryFormatterDeserializeMaybeWithoutBinderSetMessage" xml:space="preserve">
     <value>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</value>
   </data>
@@ -138,10 +129,34 @@
   <data name="BinaryFormatterDeserializeWithoutBinderSetTitle" xml:space="preserve">
     <value>Do not call BinaryFormatter.Deserialize without first setting BinaryFormatter.Binder</value>
   </data>
-  <data name="LosFormatterBannedMethodMessage" xml:space="preserve">
+  <data name="BinaryFormatterMethodInvocationDescription" xml:space="preserve">
+    <value>The method call '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rules CA2300 and CA2301, and enable rules CA2302 and CA2303.</value>
+  </data>
+  <data name="BinaryFormatterMethodInvocationMessage" xml:space="preserve">
     <value>The method call '{0}' is insecure when deserializing untrusted data.</value>
   </data>
-  <data name="LosFormatterBannedMethodTitle" xml:space="preserve">
-    <value>Do not use insecure deserializer LosFormatter</value>
+  <data name="BinaryFormatterMethodInvocationTitle" xml:space="preserve">
+    <value>Do not call insecure deserializer BinaryFormatter</value>
+  </data>
+  <data name="BinaryFormatterMethodReferenceDescription" xml:space="preserve">
+    <value>The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rules CA2300 and CA2301, and enable rules CA2302 and CA2303.</value>
+  </data>
+  <data name="BinaryFormatterMethodReferenceMessage" xml:space="preserve">
+    <value>The method '{0}' is insecure when deserializing untrusted data.</value>
+  </data>
+  <data name="BinaryFormatterMethodReferenceTitle" xml:space="preserve">
+    <value>Do not reference insecure deserialization methods in BinaryFormatter</value>
+  </data>
+  <data name="LosFormatterMethodInvocationMessage" xml:space="preserve">
+    <value>The method call '{0}' is insecure when deserializing untrusted data.</value>
+  </data>
+  <data name="LosFormatterMethodInvocationTitle" xml:space="preserve">
+    <value>Do not call insecure deserializer LosFormatter</value>
+  </data>
+  <data name="LosFormatterMethodReferenceMessage" xml:space="preserve">
+    <value>The method '{0}' is insecure when deserializing untrusted data.</value>
+  </data>
+  <data name="LosFormatterMethodReferenceTitle" xml:space="preserve">
+    <value>Do not reference insecure deserialization methods in LosFormatter</value>
   </data>
 </root>

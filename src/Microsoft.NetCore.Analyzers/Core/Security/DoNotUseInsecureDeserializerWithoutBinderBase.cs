@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis;
 using Microsoft.CodeAnalysis;
@@ -49,8 +50,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create<DiagnosticDescriptor>(
-                BinderDefinitelyNotSetDescriptor,
-                BinderMaybeNotSetDescriptor);
+                this.BinderDefinitelyNotSetDescriptor,
+                this.BinderMaybeNotSetDescriptor);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -89,6 +90,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
+                                    IInvocationOperation invocationOperation =
+                                        (IInvocationOperation)operationAnalysisContext.Operation;
+                                    if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
+                                        && cachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
+                                    {
+                                        isDataFlowAnalysisNeeded = true;
+                                    }
+                                },
+                                OperationKind.Invocation);
+
+                            operationBlockStartAnalysisContext.RegisterOperationAction(
+                                (OperationAnalysisContext operationAnalysisContext) =>
+                                {
                                     IMethodReferenceOperation methodReferenceOperation =
                                         (IMethodReferenceOperation)operationAnalysisContext.Operation;
                                     if (methodReferenceOperation.Method.ContainingType == deserializerTypeSymbol
@@ -108,9 +122,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         return;
                                     }
 
-                                    ImmutableDictionary<IInvocationOperation, PropertySetAbstractValue> dfaResult =
+                                    IOperation operationToGetCfg = operationBlockStartAnalysisContext.OperationBlocks.FirstOrDefault(
+                                        o => o is IBlockOperation);
+                                     
+                                    if (operationToGetCfg == null)
+                                    {
+                                        operationToGetCfg = operationBlockStartAnalysisContext.OperationBlocks[0];
+                                    }
+
+                                    ImmutableDictionary<OperationMethodKey, PropertySetAbstractValue> dfaResult =
                                         PropertySetAnalysis.GetOrComputeHazardousParameterUsages(
-                                            operationBlockAnalysisContext.OperationBlocks[0].GetEnclosingControlFlowGraph(),
+                                            operationToGetCfg.GetEnclosingControlFlowGraph(),
                                             operationBlockAnalysisContext.Compilation,
                                             operationBlockAnalysisContext.OwningSymbol,
                                             this.DeserializerTypeMetadataName,
@@ -118,32 +140,32 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             this.SerializationBinderPropertyMetadataName,
                                             true /* isNullPropertyFlagged */,
                                             cachedDeserializationMethodNames);
-                                    foreach (KeyValuePair<IInvocationOperation, PropertySetAbstractValue> kvp in dfaResult)
+
+                                    foreach (OperationMethodKey operationMethodKey in dfaResult.Keys.OrderBy(OperationMethodKey.Comparer))
                                     {
-                                        switch (kvp.Value)
+                                        PropertySetAbstractValue abstractValue = dfaResult[operationMethodKey];
+                                        DiagnosticDescriptor descriptor;
+                                        switch (abstractValue)
                                         {
                                             case PropertySetAbstractValue.Flagged:
-                                                operationBlockAnalysisContext.ReportDiagnostic(
-                                                    Diagnostic.Create(
-                                                        BinderDefinitelyNotSetDescriptor,
-                                                        kvp.Key.Syntax.GetLocation(),
-                                                        kvp.Key.TargetMethod.ToDisplayString(
-                                                            SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                                descriptor = this.BinderDefinitelyNotSetDescriptor;
                                                 break;
 
                                             case PropertySetAbstractValue.MaybeFlagged:
-                                                operationBlockAnalysisContext.ReportDiagnostic(
-                                                    Diagnostic.Create(
-                                                        BinderMaybeNotSetDescriptor,
-                                                        kvp.Key.Syntax.GetLocation(),
-                                                        kvp.Key.TargetMethod.ToDisplayString(
-                                                            SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                                descriptor = this.BinderMaybeNotSetDescriptor;
                                                 break;
 
                                             default:
-                                                Debug.Assert(false, $"Unhandled abstract value {kvp.Value}");
-                                                break;
+                                                Debug.Assert(false, $"Unhandled abstract value {abstractValue}");
+                                                continue;
                                         }
+
+                                        operationBlockAnalysisContext.ReportDiagnostic(
+                                            Diagnostic.Create(
+                                                descriptor,
+                                                operationMethodKey.Operation.Syntax.GetLocation(),
+                                                operationMethodKey.Method.ToDisplayString(
+                                                    SymbolDisplayFormat.MinimallyQualifiedFormat)));
                                     }
                                 });
                         });

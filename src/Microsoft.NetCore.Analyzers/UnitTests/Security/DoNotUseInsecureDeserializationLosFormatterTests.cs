@@ -10,7 +10,8 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
 {
     public class DoNotUseInsecureDeserializerLosFormatterTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly DiagnosticDescriptor BannedMethodRule = DoNotUseInsecureDeserializerLosFormatter.RealBannedMethodDescriptor;
+        private static readonly DiagnosticDescriptor InvocationRule = DoNotUseInsecureDeserializerLosFormatter.RealInvocationDescriptor;
+        private static readonly DiagnosticDescriptor ReferenceRule = DoNotUseInsecureDeserializerLosFormatter.RealReferenceDescriptor;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -22,8 +23,9 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
             return new DoNotUseInsecureDeserializerLosFormatter();
         }
 
-        // So we don't have to reference System.Web.dll.
-        private const string LosFormatterCSharpSourceCode = @"
+        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        {
+            string losFormatterCSharpSourceCode = @"
 using System.IO;
 
 namespace System.Web.UI
@@ -66,12 +68,8 @@ namespace System.Web.UI
         }
     }
 }
-";
-
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            this.VerifyCSharp(
-                new[] { source, LosFormatterCSharpSourceCode }.ToFileAndSource(),
+";            this.VerifyCSharp(
+                new[] { source, losFormatterCSharpSourceCode }.ToFileAndSource(),
                 expected);
         }
 
@@ -94,7 +92,7 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(12, 20, BannedMethodRule, "object LosFormatter.Deserialize(Stream stream)"));
+            GetCSharpResultAt(12, 20, InvocationRule, "object LosFormatter.Deserialize(Stream stream)"));
         }
 
         [Fact]
@@ -115,9 +113,30 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(12, 20, BannedMethodRule, "object LosFormatter.Deserialize(string input)"));
+            GetCSharpResultAt(12, 20, InvocationRule, "object LosFormatter.Deserialize(string input)"));
         }
 
+        [Fact]
+        public void Deserialize_Reference_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.IO;
+using System.Web.UI;
+
+namespace Blah
+{
+    public class Program
+    {
+        public delegate object Des(string s);
+        public Des GetDeserializer()
+        {
+            LosFormatter formatter = new LosFormatter();
+            return formatter.Deserialize;
+        }
+    }
+}",
+                GetCSharpResultAt(13, 20, ReferenceRule, "object LosFormatter.Deserialize(string input)"));
+        }
 
         [Fact]
         public void Serialize_NoDiagnostic()

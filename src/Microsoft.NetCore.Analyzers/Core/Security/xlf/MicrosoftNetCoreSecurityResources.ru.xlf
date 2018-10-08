@@ -2,21 +2,6 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ru" original="../MicrosoftNetCoreSecurityResources.resx">
     <body>
-      <trans-unit id="BinaryFormatterBannedMethodDescription">
-        <source>The method call '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserializations without a SerializationBinder set first, disable rule CA2300 and enable rules CA2301 and CA2302.</source>
-        <target state="new">The method call '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserializations without a SerializationBinder set first, disable rule CA2300 and enable rules CA2301 and CA2302.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="BinaryFormatterBannedMethodMessage">
-        <source>The method call '{0}' is insecure when deserializing untrusted data.</source>
-        <target state="new">The method call '{0}' is insecure when deserializing untrusted data.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="BinaryFormatterBannedMethodTitle">
-        <source>Do not use insecure deserializer BinaryFormatter</source>
-        <target state="new">Do not use insecure deserializer BinaryFormatter</target>
-        <note />
-      </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeMaybeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
         <target state="new">The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</target>
@@ -37,14 +22,54 @@
         <target state="new">Do not call BinaryFormatter.Deserialize without first setting BinaryFormatter.Binder</target>
         <note />
       </trans-unit>
-      <trans-unit id="LosFormatterBannedMethodMessage">
+      <trans-unit id="BinaryFormatterMethodInvocationDescription">
+        <source>The method call '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rules CA2300 and CA2301, and enable rules CA2302 and CA2303.</source>
+        <target state="new">The method call '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rules CA2300 and CA2301, and enable rules CA2302 and CA2303.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BinaryFormatterMethodInvocationMessage">
         <source>The method call '{0}' is insecure when deserializing untrusted data.</source>
         <target state="new">The method call '{0}' is insecure when deserializing untrusted data.</target>
         <note />
       </trans-unit>
-      <trans-unit id="LosFormatterBannedMethodTitle">
-        <source>Do not use insecure deserializer LosFormatter</source>
-        <target state="new">Do not use insecure deserializer LosFormatter</target>
+      <trans-unit id="BinaryFormatterMethodInvocationTitle">
+        <source>Do not call insecure deserializer BinaryFormatter</source>
+        <target state="new">Do not call insecure deserializer BinaryFormatter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BinaryFormatterMethodReferenceDescription">
+        <source>The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rules CA2300 and CA2301, and enable rules CA2302 and CA2303.</source>
+        <target state="new">The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rules CA2300 and CA2301, and enable rules CA2302 and CA2303.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BinaryFormatterMethodReferenceMessage">
+        <source>The method '{0}' is insecure when deserializing untrusted data.</source>
+        <target state="new">The method '{0}' is insecure when deserializing untrusted data.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="BinaryFormatterMethodReferenceTitle">
+        <source>Do not reference insecure deserialization methods in BinaryFormatter</source>
+        <target state="new">Do not reference insecure deserialization methods in BinaryFormatter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LosFormatterMethodInvocationMessage">
+        <source>The method call '{0}' is insecure when deserializing untrusted data.</source>
+        <target state="new">The method call '{0}' is insecure when deserializing untrusted data.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LosFormatterMethodInvocationTitle">
+        <source>Do not call insecure deserializer LosFormatter</source>
+        <target state="new">Do not call insecure deserializer LosFormatter</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LosFormatterMethodReferenceMessage">
+        <source>The method '{0}' is insecure when deserializing untrusted data.</source>
+        <target state="new">The method '{0}' is insecure when deserializing untrusted data.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LosFormatterMethodReferenceTitle">
+        <source>Do not reference insecure deserialization methods in LosFormatter</source>
+        <target state="new">Do not reference insecure deserialization methods in LosFormatter</target>
         <note />
       </trans-unit>
     </body>

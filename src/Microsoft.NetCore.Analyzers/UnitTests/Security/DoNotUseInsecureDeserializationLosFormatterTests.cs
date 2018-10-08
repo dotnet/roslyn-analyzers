@@ -6,7 +6,7 @@ using Microsoft.NetCore.Analyzers.Security;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.NetCore.Analyzers.UnitTests.Security
+namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class DoNotUseInsecureDeserializerLosFormatterTests : DiagnosticAnalyzerTestBase
     {
@@ -155,6 +155,27 @@ namespace Blah
             MemoryStream stream = new MemoryStream();
             formatter.Serialize(stream, o);
             return stream.ToArray();
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void Serialize_Reference_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.IO;
+using System.Web.UI;
+
+namespace Blah
+{
+    public class Program
+    {
+        public delegate void Ser(Stream s, object o);
+        public Ser GetSerializer()
+        {
+            LosFormatter formatter = new LosFormatter();
+            return formatter.Serialize;
         }
     }
 }");

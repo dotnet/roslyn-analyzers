@@ -6,7 +6,7 @@ using Microsoft.NetCore.Analyzers.Security;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.NetCore.Analyzers.UnitTests.Security
+namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class DoNotUseInsecureDeserializerBinaryFormatterWithoutBinderTests : DiagnosticAnalyzerTestBase
     {

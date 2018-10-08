@@ -33,13 +33,13 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// <summary>
         /// <see cref="DiagnosticDescriptor"/> for when a potentially insecure method is invoked.
         /// </summary>
-        /// <remarks>The string format message argument is the target method name.</remarks>
+        /// <remarks>The string format message argument is the method signature.</remarks>
         protected abstract DiagnosticDescriptor InvocationDescriptor { get; }
 
         /// <summary>
         /// <see cref="DiagnosticDescriptor"/> for when a potentially insecure method is referenced.
         /// </summary>
-        /// <remarks>The string format message argument is the target method name.</remarks>
+        /// <remarks>The string format message argument is the method signature.</remarks>
         protected abstract DiagnosticDescriptor ReferenceDescriptor { get; }
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>

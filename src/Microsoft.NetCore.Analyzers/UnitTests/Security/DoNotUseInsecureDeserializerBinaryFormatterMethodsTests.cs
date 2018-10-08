@@ -6,9 +6,9 @@ using Microsoft.NetCore.Analyzers.Security;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.NetCore.Analyzers.UnitTests.Security
+namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseInsecureDeserializerBinaryFormatterBannedMethodsTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseInsecureDeserializerBinaryFormatterMethodsTests : DiagnosticAnalyzerTestBase
     {
         private static readonly DiagnosticDescriptor InvocationRule = DoNotUseInsecureDeserializerBinaryFormatterMethods.RealInvocationDescriptor;
         private static readonly DiagnosticDescriptor ReferenceRule = DoNotUseInsecureDeserializerBinaryFormatterMethods.RealReferenceDescriptor;
@@ -167,6 +167,27 @@ namespace Blah
             MemoryStream ms = new MemoryStream();
             formatter.Serialize(ms, o);
             return ms.ToArray();
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void Serialize_Reference_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+namespace Blah
+{
+    public class Program
+    {
+        public delegate void Ser(Stream s, object o);
+        public Ser GetSerializer()
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            return formatter.Serialize;
         }
     }
 }");

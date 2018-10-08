@@ -41,11 +41,13 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// <summary>
         /// <see cref="DiagnosticDescriptor"/> for when a deserialization method is invoked and its Binder property is definitely not set.
         /// </summary>
+        /// <remarks>The string format message argument is the method signature.</remarks>
         protected abstract DiagnosticDescriptor BinderDefinitelyNotSetDescriptor { get; }
 
         /// <summary>
         /// <see cref="DiagnosticDescriptor"/> for when a deserialization method is invoked and its Binder property is possibly not set.
         /// </summary>
+        /// <remarks>The string format message argument is the method signature.</remarks>
         protected abstract DiagnosticDescriptor BinderMaybeNotSetDescriptor { get; }
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
@@ -75,7 +77,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     WellKnownTypeProvider wellKnownTypeProvider =
                         WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetKnownType(
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
                             this.DeserializerTypeMetadataName,
                             out INamedTypeSymbol deserializerTypeSymbol))
                     {

@@ -1026,6 +1026,37 @@ public class C : IDisposable
         }
 
         [Fact]
+        public void CSharp_CA1063_DisposeImplementation_NoDiagnostic_ConditionalStatement_Internal()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class C : IDisposable
+{
+    private bool disposed;
+
+    public void Dispose()
+    {
+        if (!disposed)
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+");
+        }
+
+        [Fact]
         public void CSharp_CA1063_DisposeImplementation_Diagnostic_CallDisposeBoolTwice()
         {
             VerifyCSharp(@"
@@ -2279,6 +2310,36 @@ Public Class C
 End Class
 ",
             GetCA1063BasicDisposeImplementationResultAt(9, 16, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeImplementation_NoDiagnostic_ConditionalStatement_Internal()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class C
+    Implements IDisposable
+
+    Private disposed As Boolean
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        If Not disposed Then
+            Dispose(True)
+            GC.SuppressFinalize(Me)
+        End If
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+");
         }
 
         [Fact]

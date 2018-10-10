@@ -552,5 +552,51 @@ namespace Blah
 }",
                 GetCSharpResultAt(12, 39, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
+
+        [Fact]
+        public void Deserialize_InConstructorAndMethod_Diagnostics()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+abstract class Base
+{
+    object baseData;
+    object otherData;
+
+    protected Base(BinaryFormatter bf, byte[] bytes, object o)
+    {
+        baseData = bf.Deserialize(new MemoryStream(bytes));
+        otherData = o;
+    }
+}
+
+class Derived : Base
+{
+    object derivedData;
+
+    public Derived(byte[] bytes1, byte[] bytes2, byte[] bytes3)
+        : base(
+            new BinaryFormatter(), 
+            bytes1,
+            new BinaryFormatter().Deserialize(new MemoryStream(bytes2)))
+    {
+        derivedData = new BinaryFormatter().Deserialize(new MemoryStream(bytes3));
+    }
+
+    public object Deserialize(byte[] bytes)
+    {
+        return new BinaryFormatter().Deserialize(new MemoryStream(bytes));
+    }
+}"
+            ,
+            GetCSharpResultAt(14, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"),
+            GetCSharpResultAt(27, 13, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"),
+            GetCSharpResultAt(29, 23, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"),
+            GetCSharpResultAt(34, 16, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
     }
 }

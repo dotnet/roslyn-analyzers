@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis;
 using Microsoft.CodeAnalysis;
@@ -87,7 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
-                            bool isDataFlowAnalysisNeeded = false;
+                            HashSet<IOperation> rootOperationsNeedingAnalysis = new HashSet<IOperation>();
 
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
@@ -97,7 +99,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
                                         && cachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
                                     {
-                                        isDataFlowAnalysisNeeded = true;
+                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
                                     }
                                 },
                                 OperationKind.Invocation);
@@ -111,7 +113,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         && cachedDeserializationMethodNames.Contains(
                                             methodReferenceOperation.Method.MetadataName))
                                     {
-                                        isDataFlowAnalysisNeeded = true;
+                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
                                     }
                                 },
                                 OperationKind.MethodReference);
@@ -119,33 +121,50 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartAnalysisContext.RegisterOperationBlockEndAction(
                                 (OperationBlockAnalysisContext operationBlockAnalysisContext) =>
                                 {
-                                    if (!isDataFlowAnalysisNeeded)
+                                    if (!rootOperationsNeedingAnalysis.Any())
                                     {
                                         return;
                                     }
 
-                                    IOperation operationToGetCfg = operationBlockStartAnalysisContext.OperationBlocks.FirstOrDefault(
-                                        o => o is IBlockOperation);
-                                     
-                                    if (operationToGetCfg == null)
+                                    // Only instantiated if there are any results to report.
+                                    Dictionary<OperationMethodKey, PropertySetAbstractValue> allResults = null;
+
+                                    foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                     {
-                                        operationToGetCfg = operationBlockStartAnalysisContext.OperationBlocks[0];
+                                        ImmutableDictionary<OperationMethodKey, PropertySetAbstractValue> dfaResult =
+                                            PropertySetAnalysis.GetOrComputeHazardousParameterUsages(
+                                                rootOperation.GetEnclosingControlFlowGraph(),
+                                                operationBlockAnalysisContext.Compilation,
+                                                operationBlockAnalysisContext.OwningSymbol,
+                                                this.DeserializerTypeMetadataName,
+                                                true /* isNewInstanceFlagged */,
+                                                this.SerializationBinderPropertyMetadataName,
+                                                true /* isNullPropertyFlagged */,
+                                                cachedDeserializationMethodNames);
+                                        if (!dfaResult.Any())
+                                        {
+                                            continue;
+                                        }
+
+                                        if (allResults == null)
+                                        {
+                                            allResults = new Dictionary<OperationMethodKey, PropertySetAbstractValue>();
+                                        }
+
+                                        foreach (KeyValuePair<OperationMethodKey, PropertySetAbstractValue> kvp in dfaResult)
+                                        {
+                                            allResults.Add(kvp.Key, kvp.Value);
+                                        }
                                     }
 
-                                    ImmutableDictionary<OperationMethodKey, PropertySetAbstractValue> dfaResult =
-                                        PropertySetAnalysis.GetOrComputeHazardousParameterUsages(
-                                            operationToGetCfg.GetEnclosingControlFlowGraph(),
-                                            operationBlockAnalysisContext.Compilation,
-                                            operationBlockAnalysisContext.OwningSymbol,
-                                            this.DeserializerTypeMetadataName,
-                                            true /* isNewInstanceFlagged */,
-                                            this.SerializationBinderPropertyMetadataName,
-                                            true /* isNullPropertyFlagged */,
-                                            cachedDeserializationMethodNames);
-
-                                    foreach (OperationMethodKey operationMethodKey in dfaResult.Keys.OrderBy(OperationMethodKey.Comparer))
+                                    if (allResults == null)
                                     {
-                                        PropertySetAbstractValue abstractValue = dfaResult[operationMethodKey];
+                                        return;
+                                    }
+
+                                    foreach (OperationMethodKey operationMethodKey in allResults.Keys.OrderBy(OperationMethodKey.Comparer))
+                                    {
+                                        PropertySetAbstractValue abstractValue = allResults[operationMethodKey];
                                         DiagnosticDescriptor descriptor;
                                         switch (abstractValue)
                                         {

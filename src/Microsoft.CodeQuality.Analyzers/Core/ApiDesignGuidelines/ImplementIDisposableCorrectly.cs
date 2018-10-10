@@ -203,7 +203,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             CheckDisposeSignatureRule(disposeMethod, type, context);
                             CheckRenameDisposeRule(disposeMethod, type, context);
 
-                            if (!type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
+                            if (!type.IsSealed)
                             {
                                 IMethodSymbol disposeBoolMethod = FindDisposeBoolMethod(type);
                                 if (disposeBoolMethod != null)
@@ -244,7 +244,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 {
                     INamedTypeSymbol type = method.ContainingType;
                     if (type != null && type.TypeKind == TypeKind.Class &&
-                        !type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
+                        !type.IsSealed && type.IsExternallyVisible())
                     {
                         if (ImplementsDisposableDirectly(type))
                         {

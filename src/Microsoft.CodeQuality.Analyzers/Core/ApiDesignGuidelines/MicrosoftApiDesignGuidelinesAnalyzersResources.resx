@@ -1004,4 +1004,28 @@
     <value>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</value>
     <comment>1 is a comma-separated list</comment>
   </data>
+  <data name="StringBuilderShouldUseSubstringOverloadWithOneParameterTitle" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="StringBuilderShouldUseSubstringOverloadWithOneParameterDefault" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="StringBuilderShouldUseSubstringOverloadWithOneParameterDescription" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="StringBuilderShouldUseSubstringOverloadWithTwoParameterTitle" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="StringBuilderShouldUseSubstringOverloadWithTwoParameterDefault" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="StringBuilderShouldUseSubstringOverloadWithTwoParameterDescription" xml:space="preserve">
+    <value>F</value>
+  </data>
+  <data name="StringBuilderShouldUseSubstringOverloadWithOneParameterFix" xml:space="preserve">
+    <value>G</value>
+  </data>
+  <data name="StringBuilderShouldUseSubstringOverloadWithTwoParameterFix" xml:space="preserve">
+    <value>H</value>
+  </data>
 </root>

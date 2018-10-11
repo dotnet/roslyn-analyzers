@@ -92,6 +92,46 @@
         <target state="translated">ブロッキングと非同期を組み合わせないでください</target>
         <note />
       </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterDefault">
+        <source>B</source>
+        <target state="new">B</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterDescription">
+        <source>C</source>
+        <target state="new">C</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterFix">
+        <source>G</source>
+        <target state="new">G</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterTitle">
+        <source>A</source>
+        <target state="new">A</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterDefault">
+        <source>E</source>
+        <target state="new">E</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterDescription">
+        <source>F</source>
+        <target state="new">F</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterFix">
+        <source>H</source>
+        <target state="new">H</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterTitle">
+        <source>D</source>
+        <target state="new">D</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableTitle">
         <source>Types that own disposable fields should be disposable</source>
         <target state="translated">破棄可能なフィールドを所有する型は、破棄可能でなければなりません</target>

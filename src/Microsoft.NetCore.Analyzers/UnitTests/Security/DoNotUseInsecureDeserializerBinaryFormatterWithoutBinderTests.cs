@@ -39,6 +39,14 @@ namespace Blah
             throw new NotImplementedException();
         }
     }
+
+    public class SomeOtherSerializer
+    {
+        public object Deserialize(byte[] bytes)
+        {
+            return null;
+        }
+    }
 }
             ";
 
@@ -112,7 +120,7 @@ namespace Blah
             GetCSharpResultAt(13, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
 
-        [Fact(Skip = "Ideally, we'd detect that this.formatter.Binder is set.")]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1851")]
         public void DeserializeWithInstanceField_NoDiagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
@@ -131,6 +139,8 @@ namespace Blah
         }
     }
 }");
+
+            // Ideally, we'd see that this.formatter.Binder is set and *not* generate a diagnostic.
         }
 
         [Fact]
@@ -183,7 +193,7 @@ namespace Blah
         }
 
         [Fact]
-        public void TwoSettersOneBinderOnFirst_Diagnostic()
+        public void TwoDeserializersOneBinderOnFirst_Diagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
 using System;
@@ -210,11 +220,10 @@ namespace Blah
     }
 }",
                 GetCSharpResultAt(20, 24, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
-                
         }
 
         [Fact]
-        public void TwoSettersOneBinderOnSecond_Diagnostic()
+        public void TwoDeserializersOneBinderOnSecond_Diagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
 using System;
@@ -243,7 +252,7 @@ namespace Blah
         }
 
         [Fact]
-        public void TwoSettersNoBinder_Diagnostic()
+        public void TwoDeserializersNoBinder_Diagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
 using System;
@@ -446,7 +455,8 @@ namespace Blah
     }
 }",
                 GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream, HeaderHandler handler)"),
-                GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.UnsafeDeserialize(Stream serializationStream, HeaderHandler handler)"));
+                GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.UnsafeDeserialize(Stream serializationStream, HeaderHandler handler)")
+                );
         }
 
         [Fact]
@@ -598,5 +608,292 @@ class Derived : Base
             GetCSharpResultAt(29, 23, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"),
             GetCSharpResultAt(34, 16, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
+
+        [Fact]
+        public void BinderVariableSetInAllBranches_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(byte[] bytes)
+        {
+            SerializationBinder firstBinder = new MyBinder();
+            SerializationBinder binder;
+            if (Environment.GetEnvironmentVariable(""RANDOMROLL"") == ""4"")
+                binder = new MyBinder();
+            else
+                binder = firstBinder;
+            return new BinaryFormatter() { Binder = binder }.Deserialize(new MemoryStream(bytes));
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void BinderParameter_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(SerializationBinder binder, byte[] bytes)
+        {
+            binder = binder ?? new MyBinder();
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Binder = binder;
+            return formatter.Deserialize(new MemoryStream(bytes));
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void BinderNotNullInsideIf_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(SerializationBinder binder, byte[] bytes)
+        {
+            if (binder != null)
+            {
+                return new BinaryFormatter() { Binder = binder }.Deserialize(new MemoryStream(bytes));
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void SomeOtherSerializer_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter() { Binder = new MyBinder() };
+            formatter.Deserialize(null);
+            SomeOtherSerializer serializer = new SomeOtherSerializer();
+            return serializer.Deserialize(bytes);
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void OtherMethodInstantiatesWithoutBinder_Diagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(byte[] bytes)
+        {
+            return GetBinaryFormatter().Deserialize(new MemoryStream(bytes));
+        }
+
+        private BinaryFormatter GetBinaryFormatter()
+        {
+            return new BinaryFormatter();
+        }
+    }
+}",
+            GetCSharpResultAt(14, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
+        [Fact]
+        public void OtherMethodInstantiatesWithBinderMaybe_Diagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(byte[] bytes)
+        {
+            return GetBinaryFormatter().Deserialize(new MemoryStream(bytes));
+        }
+
+        private BinaryFormatter GetBinaryFormatter()
+        {
+            SerializationBinder binder = null;
+            if (Environment.GetEnvironmentVariable(""RANDOMROLL"") == ""4"")
+                binder = new MyBinder();
+            return new BinaryFormatter() { Binder = binder };
+        }
+    }
+}",
+            GetCSharpResultAt(14, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1853")]
+        public void OtherMethodInstantiatesWithBinder_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(byte[] bytes)
+        {
+            return GetBinaryFormatter().Deserialize(new MemoryStream(bytes));
+        }
+
+        private BinaryFormatter GetBinaryFormatter()
+        {
+            return new BinaryFormatter() { Binder = new MyBinder() };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void OtherMethodDeserializesWithoutBinder_Diagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(byte[] bytes)
+        {
+            return DoDeserialization(new BinaryFormatter(), new MemoryStream(bytes));
+        }
+
+        private object DoDeserialization(BinaryFormatter formatter, Stream stream)
+        {
+            return formatter.Deserialize(stream);
+        }
+    }
+}",
+            GetCSharpResultAt(19, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+
+            // Ideally we'd see Binder is never set, rather than maybe not set.
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1852")]
+        public void OtherMethodDeserializesWithoutBinderUsingDelegate_Diagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        delegate object Des(Stream s);
+
+        public object Deserialize(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            return DoDeserialization(formatter.Deserialize, new MemoryStream(bytes));
+        }
+
+        private object DoDeserialization(Des des, Stream stream)
+        {
+            return des(stream);
+        }
+    }
+}",
+            GetCSharpResultAt(22, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1853")]
+        public void OtherMethodDeserializesWithoutBinderUsingBinaryFormatter_Diagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Binder = new MyBinder();
+            formatter.Deserialize(new MemoryStream(bytes));  // Force DFA.
+            formatter.Binder = null;
+            return DoDeserialization(formatter, new MemoryStream(bytes));
+        }
+
+        private object DoDeserialization(BinaryFormatter formatter, Stream stream)
+        {
+            return formatter.Deserialize(stream);
+        }
+    }
+}",
+            GetCSharpResultAt(23, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
     }
 }

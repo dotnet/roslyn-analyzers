@@ -11,6 +11,7 @@ using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -127,11 +128,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
 
                                     // Only instantiated if there are any results to report.
-                                    Dictionary<OperationMethodKey, PropertySetAbstractValue> allResults = null;
-
+                                    Dictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> allResults = null;
+                                    List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
                                     foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                     {
-                                        ImmutableDictionary<OperationMethodKey, PropertySetAbstractValue> dfaResult =
+                                        ImmutableDictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> dfaResult =
                                             PropertySetAnalysis.GetOrComputeHazardousParameterUsages(
                                                 rootOperation.GetEnclosingControlFlowGraph(),
                                                 operationBlockAnalysisContext.Compilation,
@@ -141,17 +142,18 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 this.SerializationBinderPropertyMetadataName,
                                                 true /* isNullPropertyFlagged */,
                                                 cachedDeserializationMethodNames);
-                                        if (!dfaResult.Any())
+                                        if (dfaResult.IsEmpty)
                                         {
                                             continue;
                                         }
 
                                         if (allResults == null)
                                         {
-                                            allResults = new Dictionary<OperationMethodKey, PropertySetAbstractValue>();
+                                            allResults = new Dictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue>();
                                         }
 
-                                        foreach (KeyValuePair<OperationMethodKey, PropertySetAbstractValue> kvp in dfaResult)
+                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> kvp 
+                                            in dfaResult)
                                         {
                                             allResults.Add(kvp.Key, kvp.Value);
                                         }
@@ -162,11 +164,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         return;
                                     }
 
-                                    foreach (OperationMethodKey operationMethodKey in allResults.Keys.OrderBy(OperationMethodKey.Comparer))
+                                    foreach (KeyValuePair<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> kvp
+                                        in allResults)
                                     {
-                                        PropertySetAbstractValue abstractValue = allResults[operationMethodKey];
                                         DiagnosticDescriptor descriptor;
-                                        switch (abstractValue)
+                                        switch (kvp.Value)
                                         {
                                             case PropertySetAbstractValue.Flagged:
                                                 descriptor = this.BinderDefinitelyNotSetDescriptor;
@@ -177,15 +179,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 break;
 
                                             default:
-                                                Debug.Assert(false, $"Unhandled abstract value {abstractValue}");
+                                                Debug.Assert(false, $"Unhandled abstract value {kvp.Value}");
                                                 continue;
                                         }
 
                                         operationBlockAnalysisContext.ReportDiagnostic(
                                             Diagnostic.Create(
                                                 descriptor,
-                                                operationMethodKey.Operation.Syntax.GetLocation(),
-                                                operationMethodKey.Method.ToDisplayString(
+                                                kvp.Key.Location,
+                                                kvp.Key.Method.ToDisplayString(
                                                     SymbolDisplayFormat.MinimallyQualifiedFormat)));
                                     }
                                 });

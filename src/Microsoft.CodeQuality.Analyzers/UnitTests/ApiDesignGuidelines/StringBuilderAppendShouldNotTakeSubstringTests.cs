@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Text;
 using Analyzer.Utilities;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -30,9 +28,7 @@ public class C
             var expectedDiagnostic =
                 new DiagnosticResult(
                         StringBuilderAppendShouldNotTakeSubstring.RuleReplaceOneParameter)
-                    .WithLocation("Test0.cs", 9, 9)
-                    .WithMessage(
-                        StringBuilderAppendShouldNotTakeSubstring.RuleReplaceOneParameter.MessageFormat.ToString());
+                    .WithLocation("Test0.cs", 9, 9);
 
             VerifyCSharp(code, expectedDiagnostic);
         }
@@ -55,10 +51,7 @@ public class C
             var expectedDiagnostic = new DiagnosticResult(
                     StringBuilderAppendShouldNotTakeSubstring.RuleIdTwoParameterId,
                     DiagnosticHelpers.DefaultDiagnosticSeverity)
-                .WithLocation("Test0.cs", 9, 9)
-                .WithMessage(StringBuilderAppendShouldNotTakeSubstring.RuleReplaceTwoParameter.MessageFormat
-                    .ToString());
-                ;
+                .WithLocation("Test0.cs", 9, 9);
 
             VerifyCSharp(code, expectedDiagnostic);
         }

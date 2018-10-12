@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
+using System.Text;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -80,30 +82,30 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var invokedSymbol = context.SemanticModel.GetSymbolInfo(invocation);
                 var invokedClass = invokedSymbol.Symbol.ContainingSymbol;
                 var invokedMethod = invokedSymbol.Symbol.Name;
-                var namedType = invokedClass as INamedTypeSymbol;
 
-                if (namedType.ContainingNamespace.Name == "Text" 
-                    && namedType.ContainingNamespace.ContainingNamespace.Name == "System"
+                if (invokedClass is INamedTypeSymbol namedType
+                    && namedType.ContainingNamespace.Name == nameof(System.Text) 
+                    && namedType.ContainingNamespace.ContainingNamespace.Name == nameof(System)
                     && namedType.ContainingNamespace.ContainingNamespace.ContainingNamespace.IsGlobalNamespace
-                    && invokedClass.Name == "StringBuilder" 
-                    && invokedMethod == "Append"
+                    && invokedClass.Name == nameof(StringBuilder)
+                    && invokedMethod == nameof(StringBuilder.Append)
                     && invokedSymbol.Symbol is IMethodSymbol methodSymbol)
                 {
                     var parameters = methodSymbol.Parameters;
 
-                    if (parameters.Length == 1 && parameters[0].Type.Name == "String")
+                    if (parameters.Length == 1 && parameters[0].Type.Name == nameof(String))
                     {
-                        ArgumentSyntax argument = invocation.ArgumentList.Arguments.First();
+                        ArgumentSyntax argument = invocation.ArgumentList.Arguments.FirstOrDefault();
 
                         // todo: what if there's ref? argument.RefOrOutKeyword
-                        if (argument.Expression is InvocationExpressionSyntax invocationExpression)
+                        if (argument?.Expression is InvocationExpressionSyntax invocationExpression)
                         {
                             var innerInvokedSymbol = context.SemanticModel.GetSymbolInfo(invocationExpression);
                             if (innerInvokedSymbol.Symbol is IMethodSymbol parameterMethod
-                                && parameterMethod.ContainingSymbol.Name == "String"
-                                && parameterMethod.ContainingSymbol.ContainingNamespace.Name == "System"
+                                && parameterMethod.ContainingSymbol.Name == nameof(String)
+                                && parameterMethod.ContainingSymbol.ContainingNamespace.Name == nameof(System)
                                 && parameterMethod.ContainingSymbol.ContainingNamespace.ContainingNamespace.IsGlobalNamespace
-                                && parameterMethod.Name == "Substring")
+                                && parameterMethod.Name == nameof(String.Substring))
                             {
                                 // we know: sb.Append(text.substring()
                                 if (parameterMethod.Parameters.Length == 2)

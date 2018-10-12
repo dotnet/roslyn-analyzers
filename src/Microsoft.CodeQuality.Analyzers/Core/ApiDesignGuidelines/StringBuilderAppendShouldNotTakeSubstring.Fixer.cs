@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,28 +33,29 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
 
-            // TODO is it guaranteed that there's only one at once?
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            if (diagnostic.Id == StringBuilderAppendShouldNotTakeSubstring.RuleIdOneParameterId)
+            foreach (var diagnostic in context.Diagnostics)
             {
-                context
-                    .RegisterCodeFix(
-                        new MyCodeAction(
-                            MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix,
-                            async ctx => await FixCodeOneParameter(context.Document, root, node, ctx).ConfigureAwait(false),
-                            equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix),
-                        diagnostic);
+                if (diagnostic.Id == StringBuilderAppendShouldNotTakeSubstring.RuleIdOneParameterId)
+                {
+                    context
+                        .RegisterCodeFix(
+                            new MyCodeAction(
+                                MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix,
+                                async ctx => await FixCodeOneParameter(context.Document, root, node, ctx).ConfigureAwait(false),
+                                equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix),
+                            diagnostic);
+                }
+                else
+                {
+                    context
+                        .RegisterCodeFix(
+                            new MyCodeAction(
+                                MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix,
+                                async ctx => await FixCodeTwoParameters(context.Document, root, node, ctx).ConfigureAwait(false),
+                                equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix),
+                            diagnostic);
+                }
             }
-            else
-            {
-                context
-                    .RegisterCodeFix(
-                        new MyCodeAction(
-                            MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix,
-                            async ctx => await FixCodeTwoParameters(context.Document, root, node, ctx).ConfigureAwait(false),
-                            equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix),
-                        diagnostic);
-            }            
         }
 
         private static async Task<Document> FixCodeOneParameter(
@@ -66,26 +67,46 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var typedNodeToFix = (InvocationExpressionSyntax)nodeToFix;
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            (string stringArgumentName, SyntaxNode targetMethod, SeparatedSyntaxList<ArgumentSyntax> originalInnerArguments) = GetFixComponents(generator, typedNodeToFix);
+            var fixComponents = GetFixComponents(generator, typedNodeToFix);
 
-            SyntaxNode stringArgument = generator.IdentifierName(stringArgumentName);
+            SyntaxNode stringArgument = generator.IdentifierName(fixComponents.StringArgumentName);
             SyntaxNode lengthNode = generator
                 .MemberAccessExpression(
                     stringArgument, 
-                    generator.IdentifierName("Length"));
+                    generator.IdentifierName(nameof(string.Length)));
 
-            var lengthArgument = generator.SubtractExpression(lengthNode, originalInnerArguments[0].Expression);
+            var lengthArgument = generator
+                .SubtractExpression(
+                    lengthNode, 
+                    fixComponents.OriginalInnerArguments[0].Expression);
 
             var newNode = generator.InvocationExpression(
-                targetMethod, 
+                fixComponents.TargetMethod, 
                 stringArgument,
-                originalInnerArguments[0], 
+                fixComponents.OriginalInnerArguments[0], 
                 lengthArgument);
             var newRoot = root
                 .ReplaceNode(
                     typedNodeToFix, 
                     newNode);
             return document.WithSyntaxRoot(newRoot);
+        }
+
+        private struct FixComponents
+        {
+            public FixComponents(
+                string stringArgumentName, 
+                SyntaxNode targetMethod, 
+                SeparatedSyntaxList<ArgumentSyntax> originalInnerArguments)
+            {
+                StringArgumentName = stringArgumentName;
+                TargetMethod = targetMethod;
+                OriginalInnerArguments = originalInnerArguments;
+            }
+
+            public string StringArgumentName { get; }
+            public SyntaxNode TargetMethod { get; }
+            public SeparatedSyntaxList<ArgumentSyntax> OriginalInnerArguments { get; }
         }
 
         private static async Task<Document> FixCodeTwoParameters(
@@ -97,48 +118,51 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var typedNodeToFix = (InvocationExpressionSyntax) nodeToFix;
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            (string stringArgumentName, SyntaxNode targetMethod, SeparatedSyntaxList<ArgumentSyntax> originalInnerArguments) = GetFixComponents(generator, typedNodeToFix);
-
-            SyntaxNode stringArgument = generator.IdentifierName(stringArgumentName);
+            FixComponents fixComponents = GetFixComponents(generator, typedNodeToFix);
+            
+            SyntaxNode stringArgument = generator.IdentifierName(fixComponents.StringArgumentName);
 
             var newNode = generator.InvocationExpression(
-                targetMethod,
+                fixComponents.TargetMethod,
                 stringArgument,
-                originalInnerArguments[0],
-                originalInnerArguments[1]);
+                fixComponents.OriginalInnerArguments[0],
+                fixComponents.OriginalInnerArguments[1]);
             var newRoot = root.ReplaceNode(typedNodeToFix, newNode);
             return document.WithSyntaxRoot(newRoot);
         }
 
-        private static (string stringArgument, SyntaxNode targetMethod, SeparatedSyntaxList<ArgumentSyntax> originalInnerArguments) GetFixComponents(
+        private static FixComponents GetFixComponents(
             SyntaxGenerator generator, 
             InvocationExpressionSyntax typedNodeToFix)
         {
-            string stringBuilderName = ((typedNodeToFix.Expression as MemberAccessExpressionSyntax)
-                .Expression as IdentifierNameSyntax).Identifier.Text;
+            if (typedNodeToFix.Expression is MemberAccessExpressionSyntax memberAccessExpression
+                && memberAccessExpression.Expression is IdentifierNameSyntax identifierName)
+            {
+                string stringBuilderName = identifierName.Identifier.Text;
 
-            SyntaxNode targetMethod = generator
-                .MemberAccessExpression(
-                    generator.IdentifierName(stringBuilderName),
-                    generator.IdentifierName("Append"));
+                SyntaxNode targetMethod = generator
+                    .MemberAccessExpression(
+                        generator.IdentifierName(stringBuilderName),
+                        generator.IdentifierName(nameof(StringBuilder.Append)));
 
-            ArgumentSyntax originalAppendArg = typedNodeToFix
-                .ArgumentList
-                .Arguments[0];
-            InvocationExpressionSyntax originalSubstringExpression = originalAppendArg.Expression as InvocationExpressionSyntax;
-            
-
-            var x1 = originalAppendArg.Expression as InvocationExpressionSyntax;
-            var x2 = x1.Expression as MemberAccessExpressionSyntax;
-            var x3 = x2.Expression as IdentifierNameSyntax;
-            string stringArgumentName = x3.Identifier.ValueText;
-
-            return (
-                stringArgumentName, 
-                targetMethod,
-                originalSubstringExpression
+                ArgumentSyntax originalAppendArg = typedNodeToFix
                     .ArgumentList
-                    .Arguments);
+                    .Arguments[0];
+
+                if (originalAppendArg.Expression is InvocationExpressionSyntax originalSubstringExpression
+                    && originalSubstringExpression.Expression is MemberAccessExpressionSyntax memberAccessExpression2
+                    && memberAccessExpression2.Expression is IdentifierNameSyntax identifierName2)
+                {
+                    return new FixComponents(
+                        identifierName2.Identifier.ValueText,
+                        targetMethod,
+                        originalSubstringExpression
+                            .ArgumentList
+                            .Arguments);
+                }
+            }
+
+            return default(FixComponents);
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)

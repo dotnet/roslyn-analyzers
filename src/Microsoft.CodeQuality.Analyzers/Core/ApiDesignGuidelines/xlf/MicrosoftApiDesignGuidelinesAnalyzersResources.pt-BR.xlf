@@ -93,43 +93,43 @@
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterDefault">
-        <source>B</source>
-        <target state="new">B</target>
+        <source>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterDescription">
-        <source>C</source>
-        <target state="new">C</target>
+        <source>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterFix">
-        <source>G</source>
-        <target state="new">G</target>
+        <source>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - c)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - c)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterTitle">
-        <source>A</source>
-        <target state="new">A</target>
+        <source>Use correct StringBuilder.Append overload to reduce string allocations.</source>
+        <target state="new">Use correct StringBuilder.Append overload to reduce string allocations.</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterDefault">
-        <source>E</source>
-        <target state="new">E</target>
+        <source>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterDescription">
-        <source>F</source>
-        <target state="new">F</target>
+        <source>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterFix">
-        <source>H</source>
-        <target state="new">H</target>
+        <source>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterTitle">
-        <source>D</source>
-        <target state="new">D</target>
+        <source>Use correct StringBuilder.Append overload to reduce string allocations.</source>
+        <target state="new">Use correct StringBuilder.Append overload to reduce string allocations.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesThatOwnDisposableFieldsShouldBeDisposableTitle">

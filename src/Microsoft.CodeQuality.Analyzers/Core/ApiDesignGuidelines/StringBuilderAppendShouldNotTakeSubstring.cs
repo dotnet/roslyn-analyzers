@@ -95,9 +95,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         if (argument.Value is IInvocationOperation invocationExpression
                             && invocationExpression.TargetMethod is IMethodSymbol parameterMethod
                             && parameterMethod.Name == nameof(String.Substring)
-                            && parameterMethod.ContainingSymbol.Name == nameof(String)
-                            && parameterMethod.ContainingSymbol.ContainingNamespace.Name == nameof(System)
-                            && parameterMethod.ContainingSymbol.ContainingNamespace.ContainingNamespace.IsGlobalNamespace)
+                            && parameterMethod.ContainingSymbol is INamedTypeSymbol parameterMethodOwner
+                            && parameterMethodOwner.SpecialType == SpecialType.System_String)
                         {
                             switch (parameterMethod.Parameters.Length)
                             {

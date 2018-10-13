@@ -49,8 +49,7 @@ public class C
     }
 }";
             var expectedDiagnostic = new DiagnosticResult(
-                    StringBuilderAppendShouldNotTakeSubstring.RuleIdTwoParameterId,
-                    DiagnosticHelpers.DefaultDiagnosticSeverity)
+                    StringBuilderAppendShouldNotTakeSubstring.RuleReplaceTwoParameter)
                 .WithLocation("Test0.cs", 9, 9);
 
             VerifyCSharp(code, expectedDiagnostic);

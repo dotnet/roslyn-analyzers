@@ -89,7 +89,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     && invokedMethod.Name == nameof(StringBuilder.Append))
                 {
                     var parameters = invokedMethod.Parameters;
-                    if (parameters.Length == 1 && parameters[0].Type.Name == nameof(String))
+                    if (parameters.Length == 1 && parameters[0].Type.SpecialType == SpecialType.System_String)
                     {
                         IArgumentOperation argument = invocation.Arguments.FirstOrDefault();
                         if (argument.Value is IInvocationOperation invocationExpression

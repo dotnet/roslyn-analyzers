@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
@@ -10,7 +6,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class StringBuilderAppendShouldNotTakeSubstringFixerTests : CodeFixTestBase
+    public class StringBuilderAppendShouldNotTakeSubstringFixerTestsCsharp : CodeFixTestBase
     {
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
@@ -24,12 +20,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new StringBuilderAppendShouldNotTakeSubstringFixer();
+            return new StringBuilderAppendShouldNotTakeSubstringCsharpFixer();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new StringBuilderAppendShouldNotTakeSubstringFixer();
+            throw new NotSupportedException();
         }
 
         [Fact]
@@ -63,34 +59,6 @@ public class C
         }
 
         [Fact]
-        public void FixesExample1FromTicketBasic()
-        {
-            const string Code = @"
-Imports System.Text
-
-Public Class C
-    Public Function Append(ByVal text As String) As String
-        Dim sb = New StringBuilder()
-        sb.Append(text.Substring(0, 6))
-        Return sb.ToString()
-    End Function
-End Class
-";
-            const string FixedCode = @"
-Imports System.Text
-
-Public Class C
-    Public Function Append(ByVal text As String) As String
-        Dim sb = New StringBuilder()
-        sb.Append(text, 0, 6)
-        Return sb.ToString()
-    End Function
-End Class
-";
-            VerifyBasicFix(Code, FixedCode);
-        }
-
-        [Fact]
         public void FixesExample2FromTicket()
         {
             const string Code = @"
@@ -118,34 +86,6 @@ public class C
     }
 }";
             VerifyCSharpFix(Code, FixedCode);
-        }
-
-        [Fact]
-        public void FixesExample2FromTicketBasic()
-        {
-            const string Code = @"
-Imports System.Text
-
-Public Class C
-    Public Function Append(ByVal text As String) As String
-        Dim sb = New StringBuilder()
-        sb.Append(text.Substring(2))
-        Return sb.ToString()
-    End Function
-End Class
-";
-            const string FixedCode = @"
-Imports System.Text
-
-Public Class C
-    Public Function Append(ByVal text As String) As String
-        Dim sb = New StringBuilder()
-        sb.Append(text, 2, text.Length - 2)
-        Return sb.ToString()
-    End Function
-End Class
-";
-            VerifyBasicFix(Code, FixedCode);
         }
 
         [Fact(Skip = "not working yet")]
@@ -180,6 +120,85 @@ public class C
 }";
             VerifyCSharpFixAll(Code, FixedCode);
         }
+    }
+
+    public class StringBuilderAppendShouldNotTakeSubstringFixerTestsBasic : CodeFixTestBase
+    {
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new StringBuilderAppendShouldNotTakeSubstring();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            return new StringBuilderAppendShouldNotTakeSubstring();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            throw new NotSupportedException();
+        }
+
+        protected override CodeFixProvider GetBasicCodeFixProvider()
+        {
+            return new StringBuilderAppendShouldNotTakeSubstringBasicFixer();
+        }
+
+        [Fact]
+        public void FixesExample1FromTicket()
+        {
+            const string Code = @"
+Imports System.Text
+
+Public Class C
+    Public Function Append(ByVal text As String) As String
+        Dim sb = New StringBuilder()
+        sb.Append(text.Substring(0, 6))
+        Return sb.ToString()
+    End Function
+End Class
+";
+            const string FixedCode = @"
+Imports System.Text
+
+Public Class C
+    Public Function Append(ByVal text As String) As String
+        Dim sb = New StringBuilder()
+        sb.Append(text, 0, 6)
+        Return sb.ToString()
+    End Function
+End Class
+";
+            VerifyBasicFix(Code, FixedCode);
+        }
+
+        [Fact]
+        public void FixesExample2FromTicketBasic()
+        {
+            const string Code = @"
+Imports System.Text
+
+Public Class C
+    Public Function Append(ByVal text As String) As String
+        Dim sb = New StringBuilder()
+        sb.Append(text.Substring(2))
+        Return sb.ToString()
+    End Function
+End Class
+";
+            const string FixedCode = @"
+Imports System.Text
+
+Public Class C
+    Public Function Append(ByVal text As String) As String
+        Dim sb = New StringBuilder()
+        sb.Append(text, 2, text.Length - 2)
+        Return sb.ToString()
+    End Function
+End Class
+";
+            VerifyBasicFix(Code, FixedCode);
+        }
 
         [Fact(Skip = "not working yet")]
         public void FixesAllExamplesFromTicketBasic()
@@ -212,4 +231,5 @@ End Class
             VerifyBasicFixAll(Code, FixedCode);
         }
     }
+
 }

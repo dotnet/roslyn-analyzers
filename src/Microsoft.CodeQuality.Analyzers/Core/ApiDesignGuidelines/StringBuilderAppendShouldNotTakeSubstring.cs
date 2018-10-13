@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -72,61 +72,47 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterSyntaxNodeAction(this.Action, SyntaxKind.InvocationExpression);
+            context.RegisterOperationAction(this.Action, OperationKind.Invocation);
         }
 
-        private void Action(SyntaxNodeAnalysisContext context)
+        private void Action(OperationAnalysisContext context)
         {
-            if (context.Node is InvocationExpressionSyntax invocation)
+            if (context.Operation is IInvocationOperation invocation)
             {
-                var invokedSymbol = context.SemanticModel.GetSymbolInfo(invocation);
-                var invokedClass = invokedSymbol.Symbol.ContainingSymbol;
-                var invokedMethod = invokedSymbol.Symbol.Name;
+                var invokedMethod = invocation.TargetMethod;
 
-                if (invokedClass is INamedTypeSymbol namedType
-                    && namedType.ContainingNamespace.Name == nameof(System.Text) 
+                if (invokedMethod.ContainingSymbol is INamedTypeSymbol namedType
+                    && namedType.Name == nameof(StringBuilder) 
+                    && namedType.ContainingNamespace.Name == nameof(System.Text)
                     && namedType.ContainingNamespace.ContainingNamespace.Name == nameof(System)
                     && namedType.ContainingNamespace.ContainingNamespace.ContainingNamespace.IsGlobalNamespace
-                    && invokedClass.Name == nameof(StringBuilder)
-                    && invokedMethod == nameof(StringBuilder.Append)
-                    && invokedSymbol.Symbol is IMethodSymbol methodSymbol)
+                    && invokedMethod.Name == nameof(StringBuilder.Append))
                 {
-                    var parameters = methodSymbol.Parameters;
-
+                    var parameters = invokedMethod.Parameters;
                     if (parameters.Length == 1 && parameters[0].Type.Name == nameof(String))
                     {
-                        ArgumentSyntax argument = invocation.ArgumentList.Arguments.FirstOrDefault();
-
-                        // todo: what if there's ref? argument.RefOrOutKeyword
-                        if (argument?.Expression is InvocationExpressionSyntax invocationExpression)
+                        IArgumentOperation argument = invocation.Arguments.FirstOrDefault();
+                        if (argument.Value is IInvocationOperation invocationExpression
+                            && invocationExpression.TargetMethod is IMethodSymbol parameterMethod
+                            && parameterMethod.Name == nameof(String.Substring)
+                            && parameterMethod.ContainingSymbol.Name == nameof(String)
+                            && parameterMethod.ContainingSymbol.ContainingNamespace.Name == nameof(System)
+                            && parameterMethod.ContainingSymbol.ContainingNamespace.ContainingNamespace.IsGlobalNamespace)
                         {
-                            var innerInvokedSymbol = context.SemanticModel.GetSymbolInfo(invocationExpression);
-                            if (innerInvokedSymbol.Symbol is IMethodSymbol parameterMethod
-                                && parameterMethod.ContainingSymbol.Name == nameof(String)
-                                && parameterMethod.ContainingSymbol.ContainingNamespace.Name == nameof(System)
-                                && parameterMethod.ContainingSymbol.ContainingNamespace.ContainingNamespace.IsGlobalNamespace
-                                && parameterMethod.Name == nameof(String.Substring))
+                            switch (parameterMethod.Parameters.Length)
                             {
-                                // we know: sb.Append(text.substring()
-                                if (parameterMethod.Parameters.Length == 2)
-                                {
-                                    //"foo".Substring(StartIndex, Length);
-                                    //sb.Append(/* char[] */ "value", /*startIndex*/ 1, /*count*/ 2);
-                                    context.ReportDiagnostic(Diagnostic.Create(
-                                        RuleReplaceTwoParameter,
-                                        invocation.GetLocation()
-                                        /*, message.args */));
-
-                                }
-                                else if (parameterMethod.Parameters.Length == 1)
-                                {
-                                    //"foo".Substring(StartIndex)
-                                    context.ReportDiagnostic(Diagnostic.Create(
-                                        RuleReplaceOneParameter,
-                                        invocation.GetLocation()
-                                        /*, message args */));
-                                }
-
+                                case 1:
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            RuleReplaceOneParameter, 
+                                            invocation.Syntax.GetLocation()));
+                                    break;
+                                case 2:
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            RuleReplaceTwoParameter,
+                                            invocation.Syntax.GetLocation()));
+                                    break;
                             }
                         }
                     }

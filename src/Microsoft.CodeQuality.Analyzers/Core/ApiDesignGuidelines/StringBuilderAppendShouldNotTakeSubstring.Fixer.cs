@@ -30,9 +30,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxNode node = root.FindNode(context.Span, getInnermostNodeForTie: true);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Id == StringBuilderAppendShouldNotTakeSubstring.RuleIdOneParameterId)
@@ -41,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         .RegisterCodeFix(
                             new MyCodeAction(
                                 MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix,
-                                ctx => FixCodeOneParameter(context.Document, root, node, ctx),
+                                ctx => FixCodeOneParameter(context.Document, context.Span, ctx),
                                 equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix),
                             diagnostic);
                 }
@@ -51,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         .RegisterCodeFix(
                             new MyCodeAction(
                                 MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix,
-                                ctx => FixCodeTwoParameters(context.Document, root, node, ctx),
+                                ctx => FixCodeTwoParameters(context.Document, context.Span, ctx),
                                 equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix),
                             diagnostic);
                 }
@@ -60,10 +57,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static async Task<Document> FixCodeOneParameter(
             Document document,
-            SyntaxNode root,
-            SyntaxNode nodeToFix,
+            TextSpan span,
             CancellationToken cancellationToken)
         {
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxNode nodeToFix = root.FindNode(span, getInnermostNodeForTie: true);
+
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             var typedNodeToFix =  semanticModel.GetOperation(nodeToFix) as IInvocationOperation;
@@ -115,10 +114,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static async Task<Document> FixCodeTwoParameters(
             Document document,
-            SyntaxNode root,
-            SyntaxNode nodeToFix,
+            TextSpan span,
             CancellationToken cancellationToken)
         {
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxNode nodeToFix = root.FindNode(span, getInnermostNodeForTie: true);
+
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             var typedNodeToFix = semanticModel.GetOperation(nodeToFix) as IInvocationOperation;

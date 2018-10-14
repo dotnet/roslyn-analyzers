@@ -148,7 +148,6 @@ End Class
             VerifyBasicFix(Code, FixedCode);
         }
 
-        [Fact(Skip = "not working yet")]
         public void FixesAllExamplesFromTicket()
         {
 
@@ -181,7 +180,6 @@ public class C
             VerifyCSharpFixAll(Code, FixedCode);
         }
 
-        [Fact(Skip = "not working yet")]
         public void FixesAllExamplesFromTicketBasic()
         {
 

@@ -59,8 +59,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             TextSpan span,
             CancellationToken cancellationToken)
         {
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode nodeToFix = root.FindNode(span, getInnermostNodeForTie: true);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var nodeToFix = root.FindNode(span, getInnermostNodeForTie: true);
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
@@ -70,7 +70,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var fixComponents = GetFixComponents(generator, typedNodeToFix);
 
             // generate text.Length (or whatever "text" is instead in the actual code)
-            SyntaxNode lengthNode = generator
+            var lengthNode = generator
                 .MemberAccessExpression(
                     fixComponents.StringArgument.Syntax, 
                     generator.IdentifierName(nameof(string.Length)));
@@ -120,8 +120,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             TextSpan span,
             CancellationToken cancellationToken)
         {
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode nodeToFix = root.FindNode(span, getInnermostNodeForTie: true);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var nodeToFix = root.FindNode(span, getInnermostNodeForTie: true);
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
@@ -129,7 +129,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 var generator = SyntaxGenerator.GetGenerator(document);
 
-                FixComponents fixComponents = GetFixComponents(generator, typedNodeToFix);
+                var fixComponents = GetFixComponents(generator, typedNodeToFix);
 
                 // from sb.Append(text.Substring(2, 5)) generate sb.Append(text, 2, 5)
                 var newNode = generator.InvocationExpression(
@@ -154,19 +154,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var argumentOperation = typedNodeToFix.Arguments[0].Value;
             if (argumentOperation is IInvocationOperation stringBuilderAppendInvocationCandidate)
             {
-                var innerArguments = stringBuilderAppendInvocationCandidate.Arguments;
-                var instance = stringBuilderAppendInvocationCandidate.Instance;
-                
                 // if the stringBuilder instance is sb, generate sb.Append()
                 var append = generator.MemberAccessExpression(
                     typedNodeToFix.Instance.Syntax,
                     generator.IdentifierName(nameof(StringBuilder.Append)));
-                var instanceType = instance.Type;
 
                 return new FixComponents(
-                    stringArgument: instance,
+                    stringArgument: stringBuilderAppendInvocationCandidate.Instance,
                     targetMethod: append,
-                    originalInnerArguments: innerArguments);
+                    originalInnerArguments: stringBuilderAppendInvocationCandidate.Arguments);
             }
 
             return default(FixComponents);

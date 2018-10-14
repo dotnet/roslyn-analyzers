@@ -92,7 +92,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     var parameters = invokedMethod.Parameters;
                     if (parameters.Length == 1 && parameters[0].Type.SpecialType == SpecialType.System_String)
                     {
-                        IArgumentOperation argument = invocation.Arguments.FirstOrDefault();
+                        var argument = invocation.Arguments.FirstOrDefault();
                         if (argument.Value is IInvocationOperation invocationExpression
                             && invocationExpression.TargetMethod is IMethodSymbol parameterMethod
                             && parameterMethod.Name == nameof(String.Substring)

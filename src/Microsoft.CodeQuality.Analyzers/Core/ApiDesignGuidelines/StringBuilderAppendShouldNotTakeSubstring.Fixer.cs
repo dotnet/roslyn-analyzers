@@ -166,8 +166,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
-                : base(title, createChangedDocument, equivalenceKey)
+            public MyCodeAction(
+                string title, 
+                Func<CancellationToken, Task<Document>> createChangedDocument)
+                : base(
+                    title, 
+                    createChangedDocument, 
+                    title)
             {
             }
         }

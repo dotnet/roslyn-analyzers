@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -38,8 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         .RegisterCodeFix(
                             new MyCodeAction(
                                 MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix,
-                                ctx => FixCodeOneParameter(context.Document, context.Span, ctx),
-                                equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix),
+                                ct => FixCodeOneParameter(context.Document, context.Span, ct)),
                             diagnostic);
                 }
                 else
@@ -48,8 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         .RegisterCodeFix(
                             new MyCodeAction(
                                 MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix,
-                                ctx => FixCodeTwoParameters(context.Document, context.Span, ctx),
-                                equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix),
+                                ct => FixCodeTwoParameters(context.Document, context.Span, ct)),
                             diagnostic);
                 }
             }
@@ -70,6 +69,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             var fixComponents = GetFixComponents(generator, typedNodeToFix);
 
+            // generate text.Length (or whatever "text" is instead in the actual code)
             SyntaxNode lengthNode = generator
                 .MemberAccessExpression(
                     fixComponents.StringArgument.Syntax, 
@@ -77,17 +77,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             var startIndexNode = fixComponents.OriginalInnerArguments[0].Value.Syntax;
 
+            // generate "text".Length - 2 (where 2 is the start index given in the original code
             var lengthArgument = generator
                 .SubtractExpression(
                     lengthNode,
                     startIndexNode);
 
+            // generate sb.Append(text, 2, text.Length - 2)
             var newNode = generator.InvocationExpression(
                 fixComponents.TargetMethod, 
                 fixComponents.StringArgument.Syntax,
                 startIndexNode, 
                 lengthArgument);
 
+            // replace sb.Append(text.Substring(2)) by sb.Append(text, 2, text.Length - 2)
             var newRoot = root
                 .ReplaceNode(
                     nodeToFix, 
@@ -122,21 +125,26 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            var typedNodeToFix = semanticModel.GetOperation(nodeToFix) as IInvocationOperation;
-            var generator = SyntaxGenerator.GetGenerator(document);
+            if (semanticModel.GetOperation(nodeToFix) is IInvocationOperation typedNodeToFix)
+            {
+                var generator = SyntaxGenerator.GetGenerator(document);
 
-            FixComponents fixComponents = GetFixComponents(generator, typedNodeToFix);
-          
-            var newNode = generator.InvocationExpression(
-                fixComponents.TargetMethod,
-                fixComponents.StringArgument.Syntax,
-                fixComponents.OriginalInnerArguments[0].Syntax,
-                fixComponents.OriginalInnerArguments[1].Syntax);
-            var newRoot = root.ReplaceNode(
-                nodeToFix,
-                newNode);
+                FixComponents fixComponents = GetFixComponents(generator, typedNodeToFix);
 
-            return document.WithSyntaxRoot(newRoot);
+                // from sb.Append(text.Substring(2, 5)) generate sb.Append(text, 2, 5)
+                var newNode = generator.InvocationExpression(
+                    fixComponents.TargetMethod,
+                    fixComponents.StringArgument.Syntax,
+                    fixComponents.OriginalInnerArguments[0].Syntax,
+                    fixComponents.OriginalInnerArguments[1].Syntax);
+                var newRoot = root.ReplaceNode(
+                    nodeToFix,
+                    newNode);
+
+                return document.WithSyntaxRoot(newRoot);
+            }
+
+            return document;
         }
 
         private static FixComponents GetFixComponents(
@@ -149,6 +157,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var innerArguments = stringBuilderAppendInvocationCandidate.Arguments;
                 var instance = stringBuilderAppendInvocationCandidate.Instance;
                 
+                // if the stringBuilder instance is sb, generate sb.Append()
                 var append = generator.MemberAccessExpression(
                     typedNodeToFix.Instance.Syntax,
                     generator.IdentifierName(nameof(StringBuilder.Append)));

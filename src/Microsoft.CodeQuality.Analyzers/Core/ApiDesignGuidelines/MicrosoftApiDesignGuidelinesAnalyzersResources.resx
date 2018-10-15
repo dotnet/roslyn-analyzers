@@ -1022,10 +1022,7 @@
   <data name="StringBuilderShouldUseSubstringOverloadWithTwoParameterDescription" xml:space="preserve">
     <value>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</value>
   </data>
-  <data name="StringBuilderShouldUseSubstringOverloadWithOneParameterFix" xml:space="preserve">
-    <value>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - c)</value>
-  </data>
-  <data name="StringBuilderShouldUseSubstringOverloadWithTwoParameterFix" xml:space="preserve">
-    <value>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</value>
+  <data name="StringBuilderShouldUseSubstringOverloadFix" xml:space="preserve">
+    <value>Avoid String allocation</value>
   </data>
 </root>

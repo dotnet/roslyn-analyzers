@@ -38,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     context
                         .RegisterCodeFix(
                             new MyCodeAction(
-                                MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterFix,
+                                MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadFix,
                                 ct => FixCodeOneParameter(context.Document, context.Span, ct)),
                             diagnostic);
                 }
@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     context
                         .RegisterCodeFix(
                             new MyCodeAction(
-                                MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterFix,
+                                MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadFix,
                                 ct => FixCodeTwoParameters(context.Document, context.Span, ct)),
                             diagnostic);
                 }

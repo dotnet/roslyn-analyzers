@@ -92,6 +92,11 @@
         <target state="translated">No mezclar código de bloqueo y asincrónico</target>
         <note />
       </trans-unit>
+      <trans-unit id="StringBuilderShouldUseSubstringOverloadFix">
+        <source>Avoid String allocation</source>
+        <target state="new">Avoid String allocation</target>
+        <note />
+      </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterDefault">
         <source>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</source>
         <target state="new">Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</target>
@@ -100,11 +105,6 @@
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterDescription">
         <source>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</source>
         <target state="new">Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterFix">
-        <source>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - c)</source>
-        <target state="new">Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - c)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterTitle">
@@ -118,11 +118,6 @@
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterDescription">
-        <source>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</source>
-        <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterFix">
         <source>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</source>
         <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</target>
         <note />

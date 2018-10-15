@@ -38,50 +38,11 @@ namespace Microsoft.NetCore.Analyzers.UnitTests.Security
                 sourceContainingMethod);
         }
 
-
-
         protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
         {
-            string systemWebNamespacesCSharp = @"
-namespace System.Collections.Specialized
-{
-    public class NameValueCollection
-    {
-        public string this[string name]
-        {
-            get { return ""input""; }
-        }
-
-        public string Get(string name)
-        {
-            return ""input"";
-        }
-    }
-}
-
-namespace System.Web
-{
-    public class HttpRequest
-    {
-        public System.Collections.Specialized.NameValueCollection Form { get; }
-        public System.Collections.Specialized.NameValueCollection QueryString { get; }
-        public string[] UserLanguages { get; }
-        public string this[string name]
-        {
-            get { return ""input""; }
-        }
-    }
-}
-
-namespace System.Web.UI
-{
-    public class Page
-    {
-        public System.Web.HttpRequest Request { get; }      
-    }
-}";
+            // Okay, so there aren't any dependencies, but if there were!
             this.VerifyCSharp(
-                new[] { source, systemWebNamespacesCSharp }.ToFileAndSource(),
+                new[] { source }.ToFileAndSource(),
                 expected);
         }
 
@@ -119,7 +80,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(20, 21, 15, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        [Fact(Skip = "Need something to handle output parameters for delegates")]
+        //[Fact(Skip = "Need something to handle output parameters for delegates")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_DelegateInvocation_OutParam_LocalString_Diagnostic()
         {
@@ -427,7 +388,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
         }
 
         [Fact]
@@ -486,7 +447,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(15, 37, 15, 52, "SqlCommand.SqlCommand(string cmdText)", "Page_Load", "string HttpRequest.this[string name]", "Page_Load"));
+                GetCSharpResultAt(15, 37, 15, 52, "SqlCommand.SqlCommand(string cmdText)", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
         }
 
 
@@ -906,6 +867,45 @@ namespace VulnerableWebApp
      }
 }
             ");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void SimpleInterprocedural()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+            MyDatabaseLayer layer = new MyDatabaseLayer();
+            layer.MakeSqlInjection(taintedInput);
+        }
+    }
+
+    public class MyDatabaseLayer
+    {
+        public void MakeSqlInjection(string sqlInjection)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"",
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+                GetCSharpResultAt(26, 20, 15, 20, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
         }
     }
 }

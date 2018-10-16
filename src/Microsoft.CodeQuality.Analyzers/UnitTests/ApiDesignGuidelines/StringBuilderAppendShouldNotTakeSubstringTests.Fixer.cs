@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeFixes;
+﻿using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
@@ -33,9 +28,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void FixesExample1FromTicket()
+        public void ReplacingTwoParameterVariantOnStringVariable()
         {
-            const string Code = @"
+            const string code = @"
 using System.Text;
 
 public class C
@@ -47,7 +42,7 @@ public class C
         return sb.ToString();
     }
 }";
-            const string FixedCode = @"
+            const string fixedCode = @"
 using System.Text;
 
 public class C
@@ -59,13 +54,216 @@ public class C
         return sb.ToString();
     }
 }";
-            VerifyCSharpFix(Code, FixedCode);
+            VerifyCSharpFix(code, fixedCode);
         }
 
         [Fact]
-        public void FixesExample1FromTicketBasic()
+        public void ReplacingTwoParameterVariantOnStringVariableWithUnnamedParametersInOrder()
         {
-            const string Code = @"
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    public string Append(string text)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text.Substring(0, 6));
+        return sb.ToString();
+    }
+}";
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    public string Append(string text)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text, 0, 6);
+        return sb.ToString();
+    }
+}";
+            VerifyCSharpFix(code, fixedCode);
+        }
+
+        [Fact]
+        public void ReplacingTwoParameterVariantOnStringVariableWithNamedParametersInDifferentOrder()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    private string Append1(string text)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text.Substring(length: 20, startIndex: 4));
+        return sb.ToString();
+    }
+}";
+
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    private string Append1(string text)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text, 4, 20);
+        return sb.ToString();
+    }
+}";
+
+            VerifyCSharpFix(code, fixedCode);
+        }
+
+
+        [Fact]
+        public void ReplacingTwoParameterVariantOnStringVariableWithNamedParametersInOrder()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    private string Append2(string text)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text.Substring(startIndex: 4, length: 20));
+        return sb.ToString();
+    }
+}";
+
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    private string Append2(string text)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text, 4, 20);
+        return sb.ToString();
+    }
+}";
+            VerifyCSharpFix(code, fixedCode);
+        }
+
+        [Fact]
+        public void ReplacingTwoParameterVariantOnStringVariableWithMethodChaining()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    private string Append3(string text)
+    {
+        return (new StringBuilder().Append(text.Substring(4, 20))).ToString();
+    }
+}";
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    private string Append3(string text)
+    {
+        return (new StringBuilder().Append(text, 4, 20)).ToString();
+    }
+}";
+            VerifyCSharpFix(code, fixedCode);
+        }
+
+        [Fact]
+        public void ReplacingTwoParameterVariantOnStringVariableWithMethodChainingMultipleAppends()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    private string Append4(string text)
+    {
+        var sb = new StringBuilder().Append(text.Substring(4, 10)).Append(text.Substring(1, 3));
+        return sb.ToString();
+    }
+}";
+            
+            // TODO: what is fixed here? there are two possible fixes, probably a good test for FixAll as well?
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    private string Append4(string text)
+    {
+        var sb = new StringBuilder().Append(text, 4, 10).Append(text, 1, 3);
+        return sb.ToString();
+    }
+}";
+            VerifyCSharpFix(code, fixedCode);
+
+        }
+
+        // TODO: write analyzer test for this!
+        [Fact]
+        public void ReplacingTwoParameterVariantOnStringVariableWithChainOnStringParameter()
+        {
+            const string code = @"
+using System.Text;
+using System.Linq;
+
+public class C
+{
+    private string Append5(string text)
+    {
+        var sb = new StringBuilder()
+            .Append(text.Substring(4, 10).Reverse());
+        return sb.ToString();
+    }
+}";
+            
+            // must not fix!
+            VerifyCSharpFix(code, code);
+        }
+
+        [Fact]
+        public void ReplacingTwoParameterVariantOnStringLiteral()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    public string Append()
+    {
+        var sb = new StringBuilder();
+        sb.Append(""TestTest"".Substring(0, 6));
+        return sb.ToString();
+    }
+}";
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    public string Append()
+    {
+        var sb = new StringBuilder();
+        sb.Append(""TestTest"", 0, 6);
+        return sb.ToString();
+    }
+}";
+            VerifyCSharpFix(code, fixedCode);
+        }
+
+        [Fact]
+        public void ReplacingTwoParameterVariantOnStringVariableBasic()
+        {
+            const string code = @"
 Imports System.Text
 
 Public Class C
@@ -76,7 +274,7 @@ Public Class C
     End Function
 End Class
 ";
-            const string FixedCode = @"
+            const string fixedCode = @"
 Imports System.Text
 
 Public Class C
@@ -87,13 +285,13 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasicFix(Code, FixedCode);
+            VerifyBasicFix(code, fixedCode);
         }
 
         [Fact]
-        public void FixesExample2FromTicket()
+        public void ReplacingOneParameterVariantOnStringVariable()
         {
-            const string Code = @"
+            const string code = @"
 using System.Text;
 
 public class C
@@ -105,7 +303,7 @@ public class C
         return sb.ToString();
     }
 }";
-            const string FixedCode = @"
+            const string fixedCode = @"
 using System.Text;
 
 public class C
@@ -117,11 +315,11 @@ public class C
         return sb.ToString();
     }
 }";
-            VerifyCSharpFix(Code, FixedCode);
+            VerifyCSharpFix(code, fixedCode);
         }
 
         [Fact]
-        public void FixesExample2FromTicketBasic()
+        public void ReplacingOneParameterVariantOnStringVariableBasic()
         {
             const string Code = @"
 Imports System.Text
@@ -148,23 +346,24 @@ End Class
             VerifyBasicFix(Code, FixedCode);
         }
 
-        public void FixesAllExamplesFromTicket()
+        [Fact(Skip = "skip failing test")]
+        public void FixesAllOnExampleFromTicket()
         {
 
-            const string Code = @"
+            const string code = @"
 using System.Text;
 
 public class C
 {
-    public string Append (string text)
+    public string Append(string text)
     {
         var sb = new StringBuilder();
-        sb.Append(text.Substring (0, 6));
-        sb.Append(text.Substring (2));
+        sb.Append(text.Substring(0, 6));
+        sb.Append(text.Substring(2));
         return sb.ToString ();
     }
 }";
-            const string FixedCode = @"
+            const string fixedCode = @"
 using System.Text;
 
 public class C
@@ -177,13 +376,14 @@ public class C
         return sb.ToString ();
     }
 }";
-            VerifyCSharpFixAll(Code, FixedCode);
+            VerifyCSharpFixAll(code, fixedCode);
         }
 
-        public void FixesAllExamplesFromTicketBasic()
+        [Fact(Skip = "skip failing test")]
+        public void FixesAllOnExampleFromTicketBasic()
         {
 
-            const string Code = @"
+            const string code = @"
 Imports System.Text
 
 Public Class C
@@ -195,7 +395,7 @@ Public Class C
     End Function
 End Class
 ";
-            const string FixedCode = @"
+            const string fixedCode = @"
 Imports System.Text
 
 Public Class C
@@ -207,7 +407,7 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasicFixAll(Code, FixedCode);
+            VerifyBasicFixAll(code, fixedCode);
         }
     }
 }

@@ -131,12 +131,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 var fixComponents = GetFixComponents(generator, typedNodeToFix);
 
+                var (startIndexArgument, lengthArgument) = fixComponents.OriginalInnerArguments[0].Parameter.Name == "length"
+                    ? (fixComponents.OriginalInnerArguments[1], fixComponents.OriginalInnerArguments[0])
+                    : (fixComponents.OriginalInnerArguments[0], fixComponents.OriginalInnerArguments[1]);
+                
                 // from sb.Append(text.Substring(2, 5)) generate sb.Append(text, 2, 5)
                 var newNode = generator.InvocationExpression(
                     fixComponents.TargetMethod,
                     fixComponents.StringArgument.Syntax,
-                    fixComponents.OriginalInnerArguments[0].Syntax,
-                    fixComponents.OriginalInnerArguments[1].Syntax);
+                    startIndexArgument.Value.Syntax,
+                    lengthArgument.Value.Syntax);
                 var newRoot = root.ReplaceNode(
                     nodeToFix,
                     newNode);

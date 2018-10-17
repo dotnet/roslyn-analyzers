@@ -57,6 +57,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
+                    ImmutableDictionary<ITypeSymbol, SourceInfo> sourcesBySymbol = WebInputSources.BuildBySymbolMap(wellKnownTypeProvider);
+
                     compilationContext.RegisterOperationBlockStartAction(
                         operationBlockStartContext =>
                         {
@@ -73,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
 
                                     IPropertyReferenceOperation propertyReferenceOperation = (IPropertyReferenceOperation)operationAnalysisContext.Operation;
-                                    if (WebInputSources.IsTaintedProperty(wellKnownTypeProvider, propertyReferenceOperation))
+                                    if (WebInputSources.IsTaintedProperty(sourcesBySymbol, propertyReferenceOperation))
                                     {
                                         requiresTaintedDataAnalysis = true;
                                     }
@@ -89,7 +91,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
 
                                     IInvocationOperation invocationOperation = (IInvocationOperation) operationAnalysisContext.Operation;
-                                    if (WebInputSources.IsTaintedMethod(wellKnownTypeProvider, invocationOperation.Instance, invocationOperation.TargetMethod))
+                                    if (WebInputSources.IsTaintedMethod(sourcesBySymbol, invocationOperation.Instance, invocationOperation.TargetMethod))
                                     {
                                         requiresTaintedDataAnalysis = true;
                                     }
@@ -108,10 +110,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         operationBlockAnalysisContext.OperationBlocks[0].GetEnclosingControlFlowGraph(),
                                         operationBlockAnalysisContext.Compilation,
                                         operationBlockAnalysisContext.OwningSymbol,
-                                        WebInputSources.SourceInfos,
-                                        PrimitiveTypeConverterSanitizers.ConcreteSanitizers,
-                                        SqlSinks.ConcreteSinks,
-                                        SqlSinks.InterfaceSinks);
+                                        sourcesBySymbol,
+                                        PrimitiveTypeConverterSanitizers.BuildConcreteSanitizersBySymbolMap(wellKnownTypeProvider),
+                                        SqlSinks.BuildConcreteSinksBySymbolMap(wellKnownTypeProvider),
+                                        SqlSinks.BuildInterfaceSinksBySymbolMap(wellKnownTypeProvider));
                                     foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                     {
                                         if (sourceSink.SinkKind != SinkKind.Sql)

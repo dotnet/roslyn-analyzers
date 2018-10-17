@@ -98,13 +98,13 @@
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterDefault">
-        <source>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</source>
-        <target state="new">Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</target>
+        <source>Replace StringBuilder.Append(x.Substring(s)) with StringBuilder.Append(x, s, x.Length - s)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s)) with StringBuilder.Append(x, s, x.Length - s)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterDescription">
-        <source>Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</source>
-        <target state="new">Replace StringBuilder.Append(x.Substring(s)) by StringBuilder.Append(x, s, x.Length - s)</target>
+        <source>Replace StringBuilder.Append(x.Substring(s)) with StringBuilder.Append(x, s, x.Length - s)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s)) with StringBuilder.Append(x, s, x.Length - s)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithOneParameterTitle">
@@ -113,13 +113,13 @@
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterDefault">
-        <source>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</source>
-        <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</target>
+        <source>Replace StringBuilder.Append(x.Substring(s, c)) with StringBuilder.Append(x, s, c)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) with StringBuilder.Append(x, s, c)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterDescription">
-        <source>Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</source>
-        <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) by StringBuilder.Append(x, s, c)</target>
+        <source>Replace StringBuilder.Append(x.Substring(s, c)) with StringBuilder.Append(x, s, c)</source>
+        <target state="new">Replace StringBuilder.Append(x.Substring(s, c)) with StringBuilder.Append(x, s, c)</target>
         <note />
       </trans-unit>
       <trans-unit id="StringBuilderShouldUseSubstringOverloadWithTwoParameterTitle">

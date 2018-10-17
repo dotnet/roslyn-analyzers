@@ -83,23 +83,31 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var stringSymbol = WellKnownTypes.String(compilation);
 
             if (stringSymbol is null)
+            {
                 return;
+            }
 
             var substring1ParameterMethod = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>()
                 .SingleOrDefault(substring => substring.Parameters.Length == 1);
 
             if (substring1ParameterMethod is null)
+            {
                 return;
+            }
 
             var substring2ParameterMethod = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>()
                 .SingleOrDefault(substring => substring.Parameters.Length == 2);
             if (substring2ParameterMethod is null)
+            {
                 return;
+            }
 
             var stringBuilderSymbol = WellKnownTypes.StringBuilder(compilation);
 
             if (stringBuilderSymbol is null)
+            {
                 return;
+            }
 
             var sourceAppendMethod = stringBuilderSymbol
                 .GetMembers(nameof(StringBuilder.Append))
@@ -108,7 +116,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 .SingleOrDefault(append => append.Parameters[0].Type == stringSymbol);
 
             if (sourceAppendMethod is null)
+            {
                 return;
+            }
             
             startContext.RegisterOperationAction(
                 context =>

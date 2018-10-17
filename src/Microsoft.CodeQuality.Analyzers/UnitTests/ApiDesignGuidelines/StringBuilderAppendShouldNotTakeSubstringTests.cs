@@ -99,6 +99,31 @@ End Class
             VerifyBasic(code, expectedDiagnostic);
         }
 
+        [Fact]
+        public void FindsBothIssuesInExampleFromTicket()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    public string Append(string text)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text.Substring(0, 6));
+        sb.Append(text.Substring(2));
+        return sb.ToString ();
+    }
+}";
+            var expected1 = new DiagnosticResult(
+                    StringBuilderAppendShouldNotTakeSubstring.RuleReplaceTwoParameter)
+                .WithLocation("Test0.cs", 9, 9);
+            var expected2 = new DiagnosticResult(
+                    StringBuilderAppendShouldNotTakeSubstring.RuleReplaceOneParameter)
+                .WithLocation("Test0.cs", 10, 9);
+            VerifyCSharp(code, expected1, expected2);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new StringBuilderAppendShouldNotTakeSubstring();

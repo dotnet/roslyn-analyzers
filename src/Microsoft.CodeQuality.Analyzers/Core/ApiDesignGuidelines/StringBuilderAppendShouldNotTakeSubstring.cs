@@ -73,51 +73,78 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterOperationAction(this.OnInvocationOperation, OperationKind.Invocation);
+            context.RegisterCompilationStartAction(this.OnCompilationStart);
         }
 
-        private void OnInvocationOperation(OperationAnalysisContext context)
+        private void OnCompilationStart(CompilationStartAnalysisContext startContext)
         {
-            if (context.Operation is IInvocationOperation invocation)
-            {
-                var invokedMethod = invocation.TargetMethod;
+            var compilation = startContext.Compilation;
 
-                if (invokedMethod.ContainingSymbol is INamedTypeSymbol namedType
-                    && namedType.Name == nameof(StringBuilder) 
-                    && namedType.ContainingNamespace.Name == nameof(System.Text)
-                    && namedType.ContainingNamespace.ContainingNamespace.Name == nameof(System)
-                    && namedType.ContainingNamespace.ContainingNamespace.ContainingNamespace.IsGlobalNamespace
-                    && invokedMethod.Name == nameof(StringBuilder.Append))
+            var stringSymbol = WellKnownTypes.String(compilation);
+
+            if (stringSymbol is null)
+                return;
+
+            var substring1ParameterMethod = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>()
+                .SingleOrDefault(substring => substring.Parameters.Length == 1);
+
+            if (substring1ParameterMethod is null)
+                return;
+
+            var substring2ParameterMethod = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>()
+                .SingleOrDefault(substring => substring.Parameters.Length == 2);
+            if (substring2ParameterMethod is null)
+                return;
+
+            var stringBuilderSymbol = WellKnownTypes.StringBuilder(compilation);
+
+            if (stringBuilderSymbol is null)
+                return;
+
+            var sourceAppendMethod = stringBuilderSymbol
+                .GetMembers(nameof(StringBuilder.Append))
+                .OfType<IMethodSymbol>()
+                .Where(append => append.Parameters.Length == 1)
+                .SingleOrDefault(append => append.Parameters[0].Type == stringSymbol);
+
+            if (sourceAppendMethod is null)
+                return;
+            
+            startContext.RegisterOperationAction(
+                context =>
                 {
-                    var parameters = invokedMethod.Parameters;
-                    if (parameters.Length == 1 && parameters[0].Type.SpecialType == SpecialType.System_String)
+                    if (context.Operation is IInvocationOperation invocation)
                     {
-                        var argument = invocation.Arguments.FirstOrDefault();
-                        if (argument.Value is IInvocationOperation invocationExpression
-                            && invocationExpression.TargetMethod is IMethodSymbol parameterMethod
-                            && parameterMethod.Name == nameof(String.Substring)
-                            && parameterMethod.ContainingSymbol is INamedTypeSymbol parameterMethodOwner
-                            && parameterMethodOwner.SpecialType == SpecialType.System_String)
+                        var invokedMethod = invocation.TargetMethod;
+
+                        if (invokedMethod == sourceAppendMethod)
                         {
-                            switch (parameterMethod.Parameters.Length)
+                            var parameters = invokedMethod.Parameters;
+                            if (parameters.Length == 1 && parameters[0].Type.SpecialType == SpecialType.System_String)
                             {
-                                case 1:
-                                    context.ReportDiagnostic(
-                                        Diagnostic.Create(
-                                            RuleReplaceOneParameter, 
-                                            invocation.Syntax.GetLocation()));
-                                    break;
-                                case 2:
-                                    context.ReportDiagnostic(
-                                        Diagnostic.Create(
-                                            RuleReplaceTwoParameter,
-                                            invocation.Syntax.GetLocation()));
-                                    break;
+                                var argument = invocation.Arguments.FirstOrDefault();
+                                if (argument.Value is IInvocationOperation invocationExpression)
+                                {
+                                    if (invocationExpression.TargetMethod == substring1ParameterMethod)
+                                    {
+                                        context.ReportDiagnostic(
+                                            Diagnostic.Create(
+                                                RuleReplaceOneParameter,
+                                                invocation.Syntax.GetLocation()));
+                                    }
+                                    else if (invocationExpression.TargetMethod == substring2ParameterMethod)
+                                    {
+                                        context.ReportDiagnostic(
+                                            Diagnostic.Create(
+                                                RuleReplaceTwoParameter,
+                                                invocation.Syntax.GetLocation()));
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
+                },
+                OperationKind.Invocation);
         }
     }
 }

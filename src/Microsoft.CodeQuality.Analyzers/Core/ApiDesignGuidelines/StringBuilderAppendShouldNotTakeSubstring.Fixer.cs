@@ -80,10 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var startIndexNode = fixComponents.OriginalInnerArguments[0].Value.Syntax;
 
             // generate "text".Length - 2 (where 2 is the start index given in the original code
-            var lengthArgument = generator
-                .SubtractExpression(
-                    lengthNode,
-                    startIndexNode);
+            var lengthArgument = generator.SubtractExpression(lengthNode, startIndexNode);
 
             // generate sb.Append(text, 2, text.Length - 2)
             var newNode = generator.InvocationExpression(
@@ -93,10 +90,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 lengthArgument);
 
             // replace sb.Append(text.Substring(2)) by sb.Append(text, 2, text.Length - 2)
-            var newRoot = root
-                .ReplaceNode(
-                    nodeToFix, 
-                    newNode);
+            var newRoot = root.ReplaceNode(nodeToFix, newNode);
             return document.WithSyntaxRoot(newRoot);
         }
 
@@ -180,10 +174,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             public MyCodeAction(
                 string title, 
                 Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(
-                    title, 
-                    createChangedDocument, 
-                    title)
+                : base(title, createChangedDocument, title)
             {
             }
         }

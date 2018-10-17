@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -52,6 +52,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             diagnostic);
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         private static async Task<Document> FixCodeOneParameter(

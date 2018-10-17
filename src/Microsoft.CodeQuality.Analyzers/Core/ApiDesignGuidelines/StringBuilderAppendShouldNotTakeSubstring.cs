@@ -73,10 +73,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            context.RegisterOperationAction(this.Action, OperationKind.Invocation);
+            context.RegisterOperationAction(this.OnInvocationOperation, OperationKind.Invocation);
         }
 
-        private void Action(OperationAnalysisContext context)
+        private void OnInvocationOperation(OperationAnalysisContext context)
         {
             if (context.Operation is IInvocationOperation invocation)
             {

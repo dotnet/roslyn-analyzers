@@ -124,6 +124,25 @@ public class C
             VerifyCSharp(code, expected1, expected2);
         }
 
+        [Fact]
+        public void NoResultWhenReplacingTwoParameterVariantOnStringVariableWithChainOnStringParameter()
+        {
+            const string code = @"
+using System.Text;
+using System.Linq;
+
+public class C
+{
+    private string Append5(string text)
+    {
+        var sb = new StringBuilder()
+            .Append(text.Substring(4, 10).Reverse());
+        return sb.ToString();
+    }
+}";
+            VerifyCSharp(code);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new StringBuilderAppendShouldNotTakeSubstring();

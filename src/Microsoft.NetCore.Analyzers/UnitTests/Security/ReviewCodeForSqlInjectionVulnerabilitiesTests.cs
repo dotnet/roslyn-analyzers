@@ -905,7 +905,44 @@ namespace VulnerableWebApp
         }
     }
 }",
-                GetCSharpResultAt(26, 20, 15, 20, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
+                GetCSharpResultAt(27, 17, 15, 35, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
         }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void SimpleLocalFunction()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            SqlCommand injectSql(string sqlInjection)
+            {
+                return new SqlCommand()
+                {
+                    CommandText = ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"",
+                    CommandType = CommandType.Text,
+                };
+            };
+
+            injectSql(taintedInput);
+        }
+    }
+}",
+                GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
+        }
+
     }
 }

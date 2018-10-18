@@ -2,43 +2,24 @@
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
-    using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Text;
-    using Analyzer.Utilities;
     using Analyzer.Utilities.Extensions;
     using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.FlowAnalysis;
     using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-    using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
-    using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
     using Microsoft.CodeAnalysis.Operations;
+    using Microsoft.NetCore.Analyzers.Security.Helpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class ReviewCodeForSqlInjectionVulnerabilities : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA3001";
-
-        private static readonly LocalizableString Title = new LocalizableResourceString(
+        internal static readonly DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA3001",
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForSqlInjectionVulnerabilitiesTitle),
-            MicrosoftNetCoreSecurityResources.ResourceManager,
-            typeof(MicrosoftNetCoreSecurityResources));
-
-        private static readonly LocalizableString Message = new LocalizableResourceString(
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForSqlInjectionVulnerabilitiesMessage),
-            MicrosoftNetCoreSecurityResources.ResourceManager,
-            typeof(MicrosoftNetCoreSecurityResources));
-
-        internal static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            RuleId,
-            Title,
-            Message,
-            DiagnosticCategory.Security,
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: false);
+            isEnabledByDefault: false,
+            helpLinkUri: null); // TODO paulming: Help link.
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

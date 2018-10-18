@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Text;
 using Analyzer.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -142,6 +145,180 @@ public class C
 }";
             VerifyCSharp(code);
         }
+
+        [Fact]
+        public void FindsNoDiagnosticWhenStringBuilderAppendToStringIsTextParameter()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    private void Append6(string s)
+    {
+        var sb = new StringBuilder();
+        sb.Append(new StringBuilder().Append(s).ToString().Substring(2));
+    }
+}";
+            // must not find anything as the input might have side effects
+            VerifyCSharp(code);
+        }
+
+        [Theory]
+        [InlineData(OperationKind.ArrayElementReference, "pArray[1]")]
+        [InlineData(OperationKind.DefaultValue, "default(string)")]
+        [InlineData(OperationKind.FieldReference, "someField")]
+        [InlineData(OperationKind.InstanceReference, "this.someField")]
+        [InlineData(OperationKind.InstanceReference, "c2.someField")]
+        [InlineData(OperationKind.Literal, "\"literalString\"")]
+        [InlineData(OperationKind.LocalReference, "pVariable")]
+        [InlineData(OperationKind.NameOf, "nameof(Append)")]
+        [InlineData(OperationKind.ParameterReference, "s")]
+        public void FindsDiagnosticOnSafeOperationKindsAsTextParameter(OperationKind kind, string textParameter)
+        {
+            string code = $@"
+using System.Text;
+
+public class C
+{{
+    private string someField = ""foo-bar-bazz"";
+    const string pConst =""TestTestTest"";
+
+    private void Append(string s)
+    {{
+        string[] pArray = new [] {{ ""a"", ""b"" }};
+        var pVariable = ""testVariableString"";
+        var sb = new StringBuilder();
+        var c2 = new C();
+        sb.Append({textParameter}.Substring(2));
+    }}
+}}";
+            var expected = new DiagnosticResult(
+                    StringBuilderAppendShouldNotTakeSubstring.RuleReplaceOneParameter)
+                .WithLocation("Test0.cs", 15, 9);
+            VerifyCSharp(code, expected);
+        }
+
+        private void tmp(StringBuilder sb)
+        {
+            sb.Append("test".Substring(0, 2));
+            byte b = 2;
+            sb.Append("");
+        }
+        
+        [Theory]
+        //[InlineData(OperationKind.None, "")]
+        //[InlineData(OperationKind.Invalid, "")]
+        //[InlineData(OperationKind.Block, "")]
+        //[InlineData(OperationKind.VariableDeclarationGroup, "")]
+        //[InlineData(OperationKind.Switch, "")]
+        //[InlineData(OperationKind.Loop, "")]
+        //[InlineData(OperationKind.Labeled, "")]
+        //[InlineData(OperationKind.Branch, "")]
+        //[InlineData(OperationKind.Empty, "")]
+        //[InlineData(OperationKind.Return, "")]
+        //[InlineData(OperationKind.YieldBreak, "")]
+        //[InlineData(OperationKind.Lock, "")]
+        //[InlineData(OperationKind.Try, "")]
+        //[InlineData(OperationKind.Using, "")]
+        //[InlineData(OperationKind.YieldReturn, "")]
+        //[InlineData(OperationKind.ExpressionStatement, "")]
+        //[InlineData(OperationKind.LocalFunction, "")]
+        //[InlineData(OperationKind.Stop, "")]
+        //[InlineData(OperationKind.End, "")]
+        //[InlineData(OperationKind.RaiseEvent, "")]
+        //[InlineData(OperationKind.Conversion, "")]
+        [InlineData(OperationKind.Invocation, "someMethod()", false)]
+        //[InlineData(OperationKind.MethodReference, "")]
+        [InlineData(OperationKind.PropertyReference, "SomeProperty", false)]
+        //[InlineData(OperationKind.EventReference, "")]
+        //[InlineData(OperationKind.UnaryOperator, "")]
+        [InlineData(OperationKind.BinaryOperator, "someField + \"add\"", false)]
+        //[InlineData(OperationKind.Conditional, "")]
+        [InlineData(OperationKind.Coalesce, "(someField ?? \"else\")", false)]
+        //[InlineData(OperationKind.AnonymousFunction, "")]
+        [InlineData(OperationKind.ObjectCreation, "new string('y', 100)", false)]
+        //[InlineData(OperationKind.TypeParameterObjectCreation, "")]
+        //[InlineData(OperationKind.ArrayCreation, "")]
+        //[InlineData(OperationKind.IsType, "")]
+        [InlineData(OperationKind.Await, "(await asyncMethod())", false)]
+        [InlineData(OperationKind.SimpleAssignment, "s = \"foo\"", false)]
+        //[InlineData(OperationKind.CompoundAssignment, "")]
+        [InlineData(OperationKind.Parenthesized, "(s = \"foo\")", false)]
+        //[InlineData(OperationKind.EventAssignment, "")]
+        //[InlineData(OperationKind.ConditionalAccess, "")]
+        //[InlineData(OperationKind.ConditionalAccessInstance, "")]
+        [InlineData(OperationKind.InterpolatedString, "$\"some{i}\"", false)]
+        //[InlineData(OperationKind.AnonymousObjectCreation, "")]
+        //[InlineData(OperationKind.ObjectOrCollectionInitializer, "")]
+        //[InlineData(OperationKind.MemberInitializer, "")]
+        //[InlineData(OperationKind.CollectionElementInitializer, "")]
+        //[InlineData(OperationKind.Tuple, "")]
+        //[InlineData(OperationKind.DynamicObjectCreation, "")]
+        //[InlineData(OperationKind.DynamicMemberReference, "")]
+        //[InlineData(OperationKind.DynamicInvocation, "")]
+        //[InlineData(OperationKind.DynamicIndexerAccess, "")]
+        //[InlineData(OperationKind.TranslatedQuery, "")]
+        //[InlineData(OperationKind.DelegateCreation, "")]
+        [InlineData(OperationKind.TypeOf, "typeof(C)", true)]
+        [InlineData(OperationKind.SizeOf, "sizeOf(C)", true)]
+        [InlineData(OperationKind.AddressOf, "addressOf()", true)]
+        [InlineData(OperationKind.IsPattern, "(pArray is String)", true)]
+        [InlineData(OperationKind.Increment, "i++", true)]
+        [InlineData(OperationKind.Throw, "throw new NotImplementedException()", true)]
+        [InlineData(OperationKind.Decrement, "i--", true)]
+        //[InlineData(OperationKind.DeconstructionAssignment, "")]
+        //[InlineData(OperationKind.DeclarationExpression, "")]
+        //[InlineData(OperationKind.OmittedArgument, "")]
+        //[InlineData(OperationKind.FieldInitializer, "")]
+        //[InlineData(OperationKind.VariableInitializer, "")]
+        //[InlineData(OperationKind.PropertyInitializer, "")]
+        //[InlineData(OperationKind.ParameterInitializer, "")]
+        //[InlineData(OperationKind.ArrayInitializer, "")]
+        //[InlineData(OperationKind.VariableDeclarator, "")]
+        //[InlineData(OperationKind.VariableDeclaration, "")]
+        //[InlineData(OperationKind.Argument, "")]
+        //[InlineData(OperationKind.CatchClause, "")]
+        //[InlineData(OperationKind.SwitchCase, "")]
+        //[InlineData(OperationKind.CaseClause, "")]
+        //[InlineData(OperationKind.InterpolatedStringText, "")]
+        //[InlineData(OperationKind.Interpolation, "")]
+        //[InlineData(OperationKind.ConstantPattern, "")]
+        //[InlineData(OperationKind.DeclarationPattern, "")]
+        public void FindsNoDiagnosticOnDangerousOperationKindsAsTextParameter(OperationKind kind, string textParameter, bool allowCompilationErrors)
+        {
+            string code = $@"
+using System.Text;
+using System.Threading.Tasks;
+
+public class C
+{{
+    private string someField = ""foo-bar-bazz"";
+
+    public string SomeProperty {{get; set; }}
+
+    private string someMethod() => someField;
+
+    private async Task<string> asyncMethod()
+    {{
+        await Task.Delay(100);
+        return someField;
+    }}
+
+    private async Task Append(string s)
+    {{
+        const string pConst =""TestTestTest"";
+        int i = 1;
+        string[] pArray = new [] {{ ""a"", ""b"" }};
+        var pVariable = ""testVariableString"";
+        var sb = new StringBuilder();
+        sb.Append({textParameter}.Substring(2));
+    }}
+}}";
+
+            VerifyCSharp(code, allowCompilationErrors ? TestValidationMode.AllowCompileErrors : TestValidationMode.AllowCompileWarnings);
+        }
+        
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {

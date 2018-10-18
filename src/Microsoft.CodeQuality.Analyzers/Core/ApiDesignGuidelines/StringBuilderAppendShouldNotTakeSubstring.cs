@@ -137,10 +137,24 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                 {
                                     if (invocationExpression.TargetMethod == substring1ParameterMethod)
                                     {
-                                        context.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                RuleReplaceOneParameter,
-                                                invocation.Syntax.GetLocation()));
+                                        bool stringParameterIsSafeToReuse =
+                                            invocationExpression.Instance.ConstantValue.HasValue
+                                            || invocationExpression.Instance.Kind == OperationKind.ConstantPattern
+                                            || invocationExpression.Instance.Kind == OperationKind.ArrayElementReference
+                                            || invocationExpression.Instance.Kind == OperationKind.FieldReference
+                                            || invocationExpression.Instance.Kind == OperationKind.InstanceReference
+                                            || invocationExpression.Instance.Kind == OperationKind.Literal
+                                            || invocationExpression.Instance.Kind == OperationKind.LocalReference
+                                            || invocationExpression.Instance.Kind == OperationKind.NameOf
+                                            || invocationExpression.Instance.Kind == OperationKind.ParameterReference;
+
+                                        if (stringParameterIsSafeToReuse)
+                                        {
+                                            context.ReportDiagnostic(
+                                                Diagnostic.Create(
+                                                    RuleReplaceOneParameter,
+                                                    invocation.Syntax.GetLocation()));
+                                        }                                        
                                     }
                                     else if (invocationExpression.TargetMethod == substring2ParameterMethod)
                                     {

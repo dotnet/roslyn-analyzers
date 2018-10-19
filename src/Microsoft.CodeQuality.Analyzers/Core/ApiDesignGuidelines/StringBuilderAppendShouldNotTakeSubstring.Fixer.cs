@@ -66,32 +66,42 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            var typedNodeToFix =  semanticModel.GetOperation(nodeToFix) as IInvocationOperation;
-            var generator = SyntaxGenerator.GetGenerator(document);
+            if (semanticModel.GetOperation(nodeToFix) is IInvocationOperation typedNodeToFix)
+            {
+                var generator = SyntaxGenerator.GetGenerator(document);
 
-            var fixComponents = GetFixComponents(generator, typedNodeToFix);
+                var fixComponents = GetFixComponents(generator, typedNodeToFix);
 
-            // generate text.Length (or whatever "text" is instead in the actual code)
-            var lengthNode = generator
-                .MemberAccessExpression(
-                    fixComponents.StringArgument.Syntax, 
-                    generator.IdentifierName(nameof(string.Length)));
+                if (fixComponents.Equals(default(FixComponents)))
+                {
+                    // something went horribly wrong.
+                    return document;
+                }
 
-            var startIndexNode = fixComponents.OriginalInnerArguments[0].Value.Syntax;
+                // generate text.Length (or whatever "text" is instead in the actual code)
+                var lengthNode = generator
+                    .MemberAccessExpression(
+                        fixComponents.StringArgument.Syntax, 
+                        generator.IdentifierName(nameof(string.Length)));
 
-            // generate "text".Length - 2 (where 2 is the start index given in the original code
-            var lengthArgument = generator.SubtractExpression(lengthNode, startIndexNode);
+                var startIndexNode = fixComponents.OriginalInnerArguments[0].Value.Syntax;
 
-            // generate sb.Append(text, 2, text.Length - 2)
-            var newNode = generator.InvocationExpression(
-                fixComponents.TargetMethod, 
-                fixComponents.StringArgument.Syntax,
-                startIndexNode, 
-                lengthArgument);
+                // generate "text".Length - 2 (where 2 is the start index given in the original code
+                var lengthArgument = generator.SubtractExpression(lengthNode, startIndexNode);
 
-            // replace sb.Append(text.Substring(2)) by sb.Append(text, 2, text.Length - 2)
-            var newRoot = root.ReplaceNode(nodeToFix, newNode);
-            return document.WithSyntaxRoot(newRoot);
+                // generate sb.Append(text, 2, text.Length - 2)
+                var newNode = generator.InvocationExpression(
+                    fixComponents.TargetMethod, 
+                    fixComponents.StringArgument.Syntax,
+                    startIndexNode, 
+                    lengthArgument);
+
+                // replace sb.Append(text.Substring(2)) by sb.Append(text, 2, text.Length - 2)
+                var newRoot = root.ReplaceNode(nodeToFix, newNode);
+                return document.WithSyntaxRoot(newRoot);
+            }
+
+            return document;
         }
 
         private struct FixComponents

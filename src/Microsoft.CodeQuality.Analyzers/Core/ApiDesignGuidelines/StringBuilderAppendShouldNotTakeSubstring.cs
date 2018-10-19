@@ -132,40 +132,36 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (invokedMethod == sourceAppendMethod)
                         {
-                            var parameters = invokedMethod.Parameters;
-                            if (parameters.Length == 1 && parameters[0].Type.SpecialType == SpecialType.System_String)
+                            var argument = invocation.Arguments.FirstOrDefault();
+                            if (argument.Value is IInvocationOperation invocationExpression)
                             {
-                                var argument = invocation.Arguments.FirstOrDefault();
-                                if (argument.Value is IInvocationOperation invocationExpression)
+                                if (invocationExpression.TargetMethod == substring1ParameterMethod)
                                 {
-                                    if (invocationExpression.TargetMethod == substring1ParameterMethod)
-                                    {
-                                        bool stringParameterIsSafeToReuse =
-                                            invocationExpression.Instance.ConstantValue.HasValue
-                                            || invocationExpression.Instance.Kind == OperationKind.ConstantPattern
-                                            || invocationExpression.Instance.Kind == OperationKind.ArrayElementReference
-                                            || invocationExpression.Instance.Kind == OperationKind.FieldReference
-                                            || invocationExpression.Instance.Kind == OperationKind.InstanceReference
-                                            || invocationExpression.Instance.Kind == OperationKind.Literal
-                                            || invocationExpression.Instance.Kind == OperationKind.LocalReference
-                                            || invocationExpression.Instance.Kind == OperationKind.NameOf
-                                            || invocationExpression.Instance.Kind == OperationKind.ParameterReference;
+                                    bool stringParameterIsSafeToReuse =
+                                        invocationExpression.Instance.ConstantValue.HasValue
+                                        || invocationExpression.Instance.Kind == OperationKind.ConstantPattern
+                                        || invocationExpression.Instance.Kind == OperationKind.ArrayElementReference
+                                        || invocationExpression.Instance.Kind == OperationKind.FieldReference
+                                        || invocationExpression.Instance.Kind == OperationKind.InstanceReference
+                                        || invocationExpression.Instance.Kind == OperationKind.Literal
+                                        || invocationExpression.Instance.Kind == OperationKind.LocalReference
+                                        || invocationExpression.Instance.Kind == OperationKind.NameOf
+                                        || invocationExpression.Instance.Kind == OperationKind.ParameterReference;
 
-                                        if (stringParameterIsSafeToReuse)
-                                        {
-                                            context.ReportDiagnostic(
-                                                Diagnostic.Create(
-                                                    RuleReplaceOneParameter,
-                                                    invocation.Syntax.GetLocation()));
-                                        }                                        
-                                    }
-                                    else if (invocationExpression.TargetMethod == substring2ParameterMethod)
+                                    if (stringParameterIsSafeToReuse)
                                     {
                                         context.ReportDiagnostic(
                                             Diagnostic.Create(
-                                                RuleReplaceTwoParameter,
+                                                RuleReplaceOneParameter,
                                                 invocation.Syntax.GetLocation()));
                                     }
+                                }
+                                else if (invocationExpression.TargetMethod == substring2ParameterMethod)
+                                {
+                                    context.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            RuleReplaceTwoParameter,
+                                            invocation.Syntax.GetLocation()));
                                 }
                             }
                         }

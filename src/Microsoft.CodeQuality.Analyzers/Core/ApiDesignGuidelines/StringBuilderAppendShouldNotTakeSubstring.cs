@@ -78,9 +78,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void OnCompilationStart(CompilationStartAnalysisContext startContext)
         {
-            var compilation = startContext.Compilation;
-
-            var stringSymbol = WellKnownTypes.String(compilation);
+            var stringSymbol = WellKnownTypes.String(startContext.Compilation);
 
             if (stringSymbol is null)
             {
@@ -90,7 +88,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var substring1ParameterMethod = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>()
                 .SingleOrDefault(substring => substring.Parameters.Length == 1
                                     && substring.Parameters[0].Type.SpecialType == SpecialType.System_Int32);
-
 
             if (substring1ParameterMethod is null)
             {
@@ -107,7 +104,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            var stringBuilderSymbol = WellKnownTypes.StringBuilder(compilation);
+            var stringBuilderSymbol = WellKnownTypes.StringBuilder(startContext.Compilation);
 
             if (stringBuilderSymbol is null)
             {

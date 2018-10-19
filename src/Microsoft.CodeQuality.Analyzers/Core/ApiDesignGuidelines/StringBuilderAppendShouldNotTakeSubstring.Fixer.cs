@@ -121,6 +121,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 var fixComponents = GetFixComponents(generator, typedNodeToFix);
 
+                if (fixComponents.Equals(default(FixComponents)))
+                {
+                    // something went horribly wrong, 
+                    return document;
+                }
+
                 // check if named parameters are used to change parameter order:
                 var (startIndexArgument, lengthArgument) = fixComponents.OriginalInnerArguments[0].Parameter.Name == "length"
                     ? (fixComponents.OriginalInnerArguments[1], fixComponents.OriginalInnerArguments[0])

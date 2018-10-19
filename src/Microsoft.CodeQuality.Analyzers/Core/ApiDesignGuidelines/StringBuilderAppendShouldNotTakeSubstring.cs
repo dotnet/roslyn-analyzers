@@ -85,7 +85,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            var substring1ParameterMethod = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>()
+            var substringMethods = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>();
+            var substring1ParameterMethod = substringMethods
                 .SingleOrDefault(substring => substring.Parameters.Length == 1
                                     && substring.Parameters[0].Type.SpecialType == SpecialType.System_Int32);
 
@@ -94,7 +95,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            var substring2ParameterMethod = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>()
+            var substring2ParameterMethod = substringMethods
                 .SingleOrDefault(substring => substring.Parameters.Length == 2
                                               && substring.Parameters[0].Type.SpecialType == SpecialType.System_Int32
                                               && substring.Parameters[1].Type.SpecialType == SpecialType.System_Int32);
@@ -115,7 +116,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 .GetMembers(nameof(StringBuilder.Append))
                 .OfType<IMethodSymbol>()
                 .Where(append => append.Parameters.Length == 1)
-                .SingleOrDefault(append => append.Parameters[0].Type == stringSymbol);
+                .FirstOrDefault(append => append.Parameters[0].Type.SpecialType == SpecialType.System_String);
 
             if (sourceAppendMethod is null)
             {

@@ -96,10 +96,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private struct FixComponents
         {
-            public FixComponents(
-                IOperation stringArgument, 
-                SyntaxNode targetMethod, 
-                ImmutableArray<IArgumentOperation> originalInnerArguments)
+            public FixComponents(IOperation stringArgument, SyntaxNode targetMethod, ImmutableArray<IArgumentOperation> originalInnerArguments)
             {
                 StringArgument = stringArgument;
                 TargetMethod = targetMethod;
@@ -111,10 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             public ImmutableArray<IArgumentOperation> OriginalInnerArguments { get; }
         }
 
-        private static async Task<Document> FixCodeTwoParameters(
-            Document document,
-            TextSpan span,
-            CancellationToken cancellationToken)
+        private static async Task<Document> FixCodeTwoParameters(Document document, TextSpan span, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var nodeToFix = root.FindNode(span, getInnermostNodeForTie: true);
@@ -127,6 +121,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 var fixComponents = GetFixComponents(generator, typedNodeToFix);
 
+                // check if named parameters are used to change parameter order:
                 var (startIndexArgument, lengthArgument) = fixComponents.OriginalInnerArguments[0].Parameter.Name == "length"
                     ? (fixComponents.OriginalInnerArguments[1], fixComponents.OriginalInnerArguments[0])
                     : (fixComponents.OriginalInnerArguments[0], fixComponents.OriginalInnerArguments[1]);
@@ -137,9 +132,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     fixComponents.StringArgument.Syntax,
                     startIndexArgument.Value.Syntax,
                     lengthArgument.Value.Syntax);
-                var newRoot = root.ReplaceNode(
-                    nodeToFix,
-                    newNode);
+
+                var newRoot = root.ReplaceNode(nodeToFix, newNode);
 
                 return document.WithSyntaxRoot(newRoot);
             }

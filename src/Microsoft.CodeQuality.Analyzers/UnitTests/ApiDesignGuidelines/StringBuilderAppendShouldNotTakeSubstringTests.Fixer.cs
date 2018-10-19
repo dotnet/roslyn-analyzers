@@ -208,7 +208,6 @@ public class C
 
         }
 
-        // TODO: write analyzer test for this!
         [Fact]
         public void ReplacingTwoParameterVariantOnStringVariableWithChainOnStringParameter()
         {
@@ -315,6 +314,97 @@ public class C
         return sb.ToString();
     }
 }";
+            VerifyCSharpFix(code, fixedCode);
+        }
+
+        /// <summary>
+        /// the following test must not apply a fix - not even find a diagnostic.
+        /// On the first sight it looks like it could produce the following fixed code:
+        /// <code>
+        /// using System.Text;
+        /// 
+        /// public class C
+        /// {
+        ///   private void Append6(string s)
+        ///   {
+        ///     var sb = new StringBuilder();
+        ///     sb.Append(new StringBuilder().Append(s).ToString(), 2, new StringBuilder().Append(s).ToString().Length - 2);
+        ///   }
+        /// }</code>
+        ///
+        /// But that makes the situation even worse.
+        /// </summary>
+        [Fact]
+        public void DoesntFixWhenInputStringHasSideEffectsOnOneParameterRule()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    private void Append6(string s)
+    {
+        var sb = new StringBuilder();
+        sb.Append(new StringBuilder().Append(s).ToString().Substring(2));
+    }
+}";
+            VerifyCSharpFix(code, code);
+        }
+
+        [Fact]
+        public void FixesWhenInputStringHasSideEffectsOnTwoParameterRule()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    private void Append6(string s)
+    {
+        var sb = new StringBuilder();
+        sb.Append(new StringBuilder().Append(s).ToString().Substring(2, 3));
+    }
+}";
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    private void Append6(string s)
+    {
+        var sb = new StringBuilder();
+        sb.Append(new StringBuilder().Append(s).ToString(), 2, 3);
+    }
+}";
+            VerifyCSharpFix(code, fixedCode);
+        }
+
+        [Fact]
+        public void FindsDiagnosticWhenStringBuilderAppendToStringIsTextParameterTwoParameters()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    private void Append6(string s)
+    {
+        var sb = new StringBuilder();
+        sb.Append(new StringBuilder().Append(s).ToString().Substring(2, 3));
+    }
+}";
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    private void Append6(string s)
+    {
+        var sb = new StringBuilder();
+        sb.Append(new StringBuilder().Append(s).ToString(), 2, 3);
+    }
+}";
+
             VerifyCSharpFix(code, fixedCode);
         }
 

@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -199,13 +200,100 @@ public class C
             VerifyCSharp(code, expected);
         }
 
-        private void tmp(StringBuilder sb)
+        [Theory]
+        [InlineData(OperationKind.ArrayElementReference, "pArray[1]")]
+        [InlineData(OperationKind.DefaultValue, "default(int)")]
+        [InlineData(OperationKind.FieldReference, "someField")]
+        [InlineData(OperationKind.InstanceReference, "this.someField")]
+        [InlineData(OperationKind.InstanceReference, "c2.someField")]
+        [InlineData(OperationKind.Literal, "42")]
+        [InlineData(OperationKind.LocalReference, "variable")]
+        [InlineData(OperationKind.ParameterReference, "start")]
+        [InlineData(OperationKind.SizeOf, "sizeof(char)")] // TODO sizeof should work, returns bytes of an unmanaged type
+        [InlineData(OperationKind.Conversion, "(int)3.14")] // Conversion, but conversion of a constant is known to be constant by the compiler => works
+        public void FindsDiagnosticOnSafeOperationKindsAsStartIndexParameterForOneParameterSubstring(OperationKind kind, string startIndexParameter)
         {
-            sb.Append("test".Substring(0, 2));
-            byte b = 2;
-            sb.Append("");
+            string code = $@"
+using System.Text;
+
+public class C
+{{
+    private int someField = 2;
+
+    private void Append(int start, StringBuilder sb)
+    {{
+        var c2 = new C();
+        int variable = 23;
+        int[] pArray = new [] {{ 1, 2, 3 }};
+        sb.Append(""testTest"".Substring({startIndexParameter}));
+    }}
+}}";
+            var expected = new DiagnosticResult(
+                    StringBuilderAppendShouldNotTakeSubstring.RuleReplaceOneParameter)
+                .WithLocation("Test0.cs", 13, 9);
+            VerifyCSharp(code, expected);
         }
         
+        [Theory]
+        [InlineData(OperationKind.Conversion, "twico", false)]
+        [InlineData(OperationKind.Conversion, "(int)someLong", false)]
+        [InlineData(OperationKind.Invocation, "someMethod()", false)]
+        [InlineData(OperationKind.PropertyReference, "SomeProperty", false)]
+        [InlineData(OperationKind.Decrement, "--variable", false)]
+        [InlineData(OperationKind.BinaryOperator, "someField + 3", false)]
+        [InlineData(OperationKind.Conditional, "b ? 1 : 2", false)]
+        [InlineData(OperationKind.Coalesce, "nullableField ?? 23", false)]
+        [InlineData(OperationKind.ObjectCreation, "new TypeWithImplicitConversionOperator()", false)]
+        [InlineData(OperationKind.Await, "(await asyncMethod())", false)]
+        [InlineData(OperationKind.SimpleAssignment, "variable = 42", false)]
+        [InlineData(OperationKind.Parenthesized, "(variable = 23)", false)]
+        [InlineData(OperationKind.InterpolatedString, "$\"some{variable}\"", true)]
+        [InlineData(OperationKind.TypeOf, "typeof(C)", true)]
+        [InlineData(OperationKind.NameOf, "nameof(start)", true)]
+        [InlineData(OperationKind.IsPattern, "(pArray is String)", true)]
+        [InlineData(OperationKind.Increment, "variable++", false)]
+        [InlineData(OperationKind.Throw, "throw new NotImplementedException()", true)]
+        [InlineData(OperationKind.Decrement, "variable--", false)]
+        public void FindsNoDiagnosticOnUnsafeOperationKindsAsStartIndexParameterForOneParameterSubstring(OperationKind kind, string startIndexParameter, bool allowCompilationErrors)
+        {
+            string code = $@"
+using System.Text;
+using System.Threading.Tasks;
+
+public class C
+{{
+    private int someField = 2;
+    private int? nullableField = 3;
+    private long someLong = 1000000000;
+    private int someMethod() => 23;
+    public int SomeProperty {{get; set; }}
+
+    public class TypeWithImplicitConversionOperator
+    {{
+        public static implicit operator int(TypeWithImplicitConversionOperator input)
+        {{
+            return 22;
+        }}
+    }}
+
+    private async Task<int> asyncMethod()
+    {{
+        await Task.Delay(100);
+        return someField;
+    }}
+
+    private async Task Append(int start, StringBuilder sb, bool b)
+    {{
+        var c2 = new C();
+        int variable = 23;
+        int[] pArray = new [] {{ 1, 2, 3 }};
+        var twico = new TypeWithImplicitConversionOperator();
+        sb.Append(""testTest"".Substring({startIndexParameter}));
+    }}
+}}";
+            VerifyCSharp(code, allowCompilationErrors ? TestValidationMode.AllowCompileErrors : TestValidationMode.AllowCompileWarnings);
+        }
+
         [Theory]
         //[InlineData(OperationKind.None, "")]
         //[InlineData(OperationKind.Invalid, "")]
@@ -234,7 +322,7 @@ public class C
         //[InlineData(OperationKind.EventReference, "")]
         //[InlineData(OperationKind.UnaryOperator, "")]
         [InlineData(OperationKind.BinaryOperator, "someField + \"add\"", false)]
-        //[InlineData(OperationKind.Conditional, "")]
+        [InlineData(OperationKind.Conditional, "(true ? someField : \"somethingElse\")", false)]
         [InlineData(OperationKind.Coalesce, "(someField ?? \"else\")", false)]
         //[InlineData(OperationKind.AnonymousFunction, "")]
         [InlineData(OperationKind.ObjectCreation, "new string('y', 100)", false)]
@@ -318,7 +406,7 @@ public class C
 
             VerifyCSharp(code, allowCompilationErrors ? TestValidationMode.AllowCompileErrors : TestValidationMode.AllowCompileWarnings);
         }
-        
+
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {

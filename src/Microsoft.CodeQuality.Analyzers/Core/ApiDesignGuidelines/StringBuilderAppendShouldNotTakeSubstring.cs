@@ -137,18 +137,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             {
                                 if (invocationExpression.TargetMethod == substring1ParameterMethod)
                                 {
-                                    bool stringParameterIsSafeToReuse =
-                                        invocationExpression.Instance.ConstantValue.HasValue
-                                        || invocationExpression.Instance.Kind == OperationKind.ConstantPattern
-                                        || invocationExpression.Instance.Kind == OperationKind.ArrayElementReference
-                                        || invocationExpression.Instance.Kind == OperationKind.FieldReference
-                                        || invocationExpression.Instance.Kind == OperationKind.InstanceReference
-                                        || invocationExpression.Instance.Kind == OperationKind.Literal
-                                        || invocationExpression.Instance.Kind == OperationKind.LocalReference
-                                        || invocationExpression.Instance.Kind == OperationKind.NameOf
-                                        || invocationExpression.Instance.Kind == OperationKind.ParameterReference;
-
-                                    if (stringParameterIsSafeToReuse)
+                                    if (IsSideEffectFree(invocationExpression.Instance)
+                                        && IsSideEffectFree(invocationExpression.Arguments[0].Value))
                                     {
                                         context.ReportDiagnostic(
                                             Diagnostic.Create(
@@ -168,6 +158,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
                 },
                 OperationKind.Invocation);
+        }
+
+        private bool IsSideEffectFree(IOperation instance)
+        {
+            return instance.ConstantValue.HasValue
+                   || instance.Kind == OperationKind.ConstantPattern
+                   || instance.Kind == OperationKind.ArrayElementReference
+                   || instance.Kind == OperationKind.FieldReference
+                   || instance.Kind == OperationKind.InstanceReference
+                   || instance.Kind == OperationKind.Literal
+                   || instance.Kind == OperationKind.LocalReference
+                   || instance.Kind == OperationKind.NameOf
+                   || instance.Kind == OperationKind.ParameterReference;
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -89,7 +88,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             public FixAllStringBuilderAppendShouldNotTakeSubstringDocumentChangeAction(string title, Solution solution,
                 List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> diagnosticsToFix)
             {
-                this.Title = title;
+                Title = title;
                 _solution = solution;
                 _diagnosticsToFix = diagnosticsToFix;
             }

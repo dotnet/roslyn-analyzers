@@ -439,7 +439,6 @@ End Class
         [Fact]
         public void FixesAllOnExampleFromTicket()
         {
-
             const string code = @"
 using System.Text;
 
@@ -470,9 +469,66 @@ public class C
         }
 
         [Fact]
+        public void FixesAllInChainedAppends()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    public string Append(string text, int substringLength, int startIndex)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text.Substring(0, 6)).Append(text.Substring(2)).Append(""something"".Substring(4, substringLength)).Append(""whatever"".Substring(3, substringLength)).Append(""whocares"".Substring(startIndex, 3));
+        return sb.ToString ();
+    }
+}";
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    public string Append(string text, int substringLength, int startIndex)
+    {
+        var sb = new StringBuilder();
+        sb.Append(text, 0, 6).Append(text, 2, text.Length - 2).Append(""something"", 4, substringLength).Append(""whatever"", 3, substringLength).Append(""whocares"", startIndex, 3);
+        return sb.ToString ();
+    }
+}";
+            VerifyCSharpFixAll(code, fixedCode);
+        }
+
+        [Fact]
+        public void FixesAllInChainedAppendsBasic()
+        {
+            const string code = @"
+Imports System.Text
+
+Public Class C
+    Public Function Append(ByVal text As String, ByVal substringLength As Integer, ByVal startIndex As Integer) As String
+        Dim sb = new StringBuilder()
+        sb.Append(text.Substring(0, 6)).Append(text.Substring(2)).Append(""something"".Substring(4, substringLength)).Append(""whatever"".Substring(3, substringLength)).Append(""whocares"".Substring(startIndex, 3))
+        Return sb.ToString ()
+    End Function
+End Class
+";
+            const string fixedCode = @"
+Imports System.Text
+
+Public Class C
+    Public Function Append(ByVal text As String, ByVal substringLength As Integer, ByVal startIndex As Integer) As String
+        Dim sb = new StringBuilder()
+        sb.Append(text, 0, 6).Append(text, 2, text.Length - 2).Append(""something"", 4, substringLength).Append(""whatever"", 3, substringLength).Append(""whocares"", startIndex, 3)
+        Return sb.ToString ()
+    End Function
+End Class
+";
+            VerifyBasicFixAll(code, fixedCode);
+        }
+
+        [Fact]
         public void FixesAllOnExampleFromTicketBasic()
         {
-
             const string code = @"
 Imports System.Text
 

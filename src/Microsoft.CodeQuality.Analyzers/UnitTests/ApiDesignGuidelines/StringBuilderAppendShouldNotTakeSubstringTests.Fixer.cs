@@ -436,7 +436,7 @@ End Class
             VerifyBasicFix(Code, FixedCode);
         }
 
-        [Fact(Skip = "skip failing test")]
+        [Fact]
         public void FixesAllOnExampleFromTicket()
         {
 
@@ -469,7 +469,7 @@ public class C
             VerifyCSharpFixAll(code, fixedCode);
         }
 
-        [Fact(Skip = "skip failing test")]
+        [Fact]
         public void FixesAllOnExampleFromTicketBasic()
         {
 

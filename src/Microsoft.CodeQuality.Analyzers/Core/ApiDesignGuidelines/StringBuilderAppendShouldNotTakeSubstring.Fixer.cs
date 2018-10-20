@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +12,7 @@ using System.Threading.Tasks;
 using Analyzer.Utilities;
 
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
@@ -26,7 +30,115 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            return WellKnownFixAllProviders.BatchFixer;
+            return StringBuilderAppendShouldNotTakeSubstringFixAllProvider.Instance;
+        }
+
+        private class StringBuilderAppendShouldNotTakeSubstringFixAllProvider : FixAllProvider
+        {
+            public static StringBuilderAppendShouldNotTakeSubstringFixAllProvider Instance = new StringBuilderAppendShouldNotTakeSubstringFixAllProvider();
+
+            public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
+            {
+                var diagnosticsToFix = new List<KeyValuePair<Project, ImmutableArray<Diagnostic>>>();
+                string titleFormat = "Inline String.Substring to StringBuilder.Append() in {0} {1}"; // TODO: use localizable string here!
+                string title = null;
+
+                switch (fixAllContext.Scope)
+                {
+                    case FixAllScope.Document:
+                    {
+                        var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(fixAllContext.Document)
+                            .ConfigureAwait(false);
+                        diagnosticsToFix.Add(new KeyValuePair<Project, ImmutableArray<Diagnostic>>(fixAllContext.Project, diagnostics));
+                        title = string.Format(titleFormat, "document", fixAllContext.Document.Name);
+                        break;
+                    }
+                    case FixAllScope.Project:
+                    {
+                        var project = fixAllContext.Project;
+                        var diagnostics = await fixAllContext.GetAllDiagnosticsAsync(project).ConfigureAwait(false);
+                        diagnosticsToFix.Add(new KeyValuePair<Project, ImmutableArray<Diagnostic>>(project, diagnostics));
+                        title = string.Format(titleFormat, "project", fixAllContext.Project.Name);
+                        break;
+                    }
+                    case FixAllScope.Solution:
+                    {
+                        foreach (var project in fixAllContext.Solution.Projects)
+                        {
+                            var diagnostics = await fixAllContext.GetAllDiagnosticsAsync(project).ConfigureAwait(false);
+                            diagnosticsToFix.Add(new KeyValuePair<Project, ImmutableArray<Diagnostic>>(project, diagnostics));
+                        }
+
+                        title = "Fix all occurrences in the solution";
+                        break;
+                    }
+                    case FixAllScope.Custom:
+                        return null;
+                    default:
+                        break;
+                }
+
+                return new FixAllStringBuilderAppendShouldNotTakeSubstringDocumentChangeAction(title, fixAllContext.Solution, diagnosticsToFix);
+            }
+        }
+
+        private class FixAllStringBuilderAppendShouldNotTakeSubstringDocumentChangeAction : CodeAction
+        {
+            private readonly List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> _diagnosticsToFix;
+            private readonly Solution _solution;
+            public FixAllStringBuilderAppendShouldNotTakeSubstringDocumentChangeAction(string title, Solution solution,
+                List<KeyValuePair<Project, ImmutableArray<Diagnostic>>> diagnosticsToFix)
+            {
+                this.Title = title;
+                _solution = solution;
+                _diagnosticsToFix = diagnosticsToFix;
+            }
+
+            public override string Title { get; }
+
+            protected override async Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
+            {
+                var solution = _solution;
+
+                foreach (var pair in _diagnosticsToFix)
+                {
+                    var project = pair.Key;
+                    var diagnostics = pair.Value;
+                    var groupedDiagnostics = diagnostics.Where(d => d.Location.IsInSource)
+                        .GroupBy(d => d.Location.SourceTree);
+
+                    foreach (var grouping in groupedDiagnostics)
+                    {
+                        var document = project.GetDocument(grouping.Key);
+                        if (document == null)
+                        {
+                            continue;
+                        }
+
+                        // going to fix bottom up to keep spans of diagnostics still to fix intact by not manipulating their location:
+                        var diagnosticsInDocument = grouping.OrderByDescending(g => g.Location.SourceSpan.Start);
+
+                        foreach (var diagnostic in diagnosticsInDocument)
+                        {
+                            if (diagnostic.Id == StringBuilderAppendShouldNotTakeSubstring.RuleIdOneParameterId)
+                            {
+                                document = await FixCodeOneParameter(document, diagnostic.Location.SourceSpan,
+                                    cancellationToken).ConfigureAwait(false);
+                            }
+                            else
+                            {
+                                document = await FixCodeTwoParameters(document, diagnostic.Location.SourceSpan,
+                                    cancellationToken).ConfigureAwait(false);
+                            }
+                        }
+
+                        solution = solution.WithDocumentSyntaxRoot(document.Id,
+                            await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false));
+                    }
+                }
+
+                return solution;
+            }
         }
 
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)

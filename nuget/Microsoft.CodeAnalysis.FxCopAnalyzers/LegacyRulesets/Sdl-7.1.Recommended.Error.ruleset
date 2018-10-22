@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<RuleSet Name="Microsoft SDL 7.1 Required and Recommended" Description="This rule set contains all Microsoft SDL 7.1 required and recommended rules, configured to error rather than warn." ToolsVersion="10.0">
+  <Include Path="Sdl-7.1.Required.Error.ruleset" Action="Default" />
+</RuleSet>

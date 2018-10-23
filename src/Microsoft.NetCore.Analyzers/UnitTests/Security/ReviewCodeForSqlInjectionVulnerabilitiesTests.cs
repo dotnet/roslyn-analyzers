@@ -544,7 +544,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(28, 17, 23, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        [Fact(Skip = "Doesn't work, array isn't tainted")]
+        //[Fact(Skip = "Doesn't work, array isn't tainted")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Array_List_Diagnostic()
         {
@@ -565,7 +565,7 @@ namespace VulnerableWebApp
         protected void Page_Load(object sender, EventArgs e)
         {
             string[] array = new string[] { Request.Form[""in""] };
-            List<string> allTheInputs = new List<string>();
+            List<string> allTheInputs = new List<string>(array);
             SqlCommand sqlCommand = new SqlCommand()
             {
                 CommandText = allTheInputs[0],

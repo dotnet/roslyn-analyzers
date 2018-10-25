@@ -106,8 +106,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         {
                                             Diagnostic diagnostic = Diagnostic.Create(
                                                 Rule,
-                                                sourceSink.Sink.SyntaxNode.GetLocation(),
-                                                new Location[] { sourceOrigin.SyntaxNode.GetLocation() },
+                                                sourceSink.Sink.Location,
+                                                new Location[] { sourceOrigin.Location },
                                                 sourceSink.Sink.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
                                                 sourceSink.Sink.AccessingMethod.Name,
                                                 sourceOrigin.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),

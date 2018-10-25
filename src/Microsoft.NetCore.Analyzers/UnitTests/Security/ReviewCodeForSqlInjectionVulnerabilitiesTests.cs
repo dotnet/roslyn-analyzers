@@ -77,7 +77,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(20, 21, 15, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        //[Fact(Skip = "Need something to handle output parameters for delegates")]
+        [Fact]//(Skip = "Need something to handle output parameters for delegates")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_DelegateInvocation_OutParam_LocalString_Diagnostic()
         {
@@ -511,7 +511,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(19, 17, 15, 70, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        [Fact(Skip = "Doesn't work, array isn't tainted, ObjectCreation visited before ArrayInitializer")]
+        [Fact] //(Skip = "Doesn't work, array isn't tainted, ObjectCreation visited before ArrayInitializer")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_List_Diagnostic()
         {
@@ -544,7 +544,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(28, 17, 23, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        //[Fact(Skip = "Doesn't work, array isn't tainted")]
+        [Fact] //(Skip = "Doesn't work, array isn't tainted")]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Array_List_Diagnostic()
         {

@@ -935,7 +935,7 @@ namespace VulnerableWebApp
         }
     }
 }",
-                GetCSharpResultAt(27, 17, 15, 35, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
+                GetCSharpResultAt(27, 17, 15, 35, "string SqlCommand.CommandText", "MakeSqlInjection", "string HttpRequest.this[string key]", "Page_Load"));
         }
 
         [Fact]
@@ -971,7 +971,261 @@ namespace VulnerableWebApp
         }
     }
 }",
-                GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
+                GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "injectSql", "string HttpRequest.this[string key]", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodReturnsTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            string sqlCommandText = StillTainted(taintedInput);
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected string StillTainted(string sqlInjection)
+        {
+            return ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(31, 17, 15, 35, "string SqlCommand.CommandText", "ExecuteSql", "string HttpRequest.this[string key]", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodReturnsNotTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            string sqlCommandText = NotTainted(taintedInput);
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected string NotTainted(string sqlInjection)
+        {
+            return ""SELECT * FROM users WHERE username = 'bob'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodSanitizesTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""userid""];
+
+            string sqlCommandText = SanitizeTainted(taintedInput);
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected string SanitizeTainted(string sqlInjection)
+        {
+            return ""SELECT * FROM users WHERE userid = '"" + Int32.Parse(sqlInjection) + ""'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodOutParameterTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            StillTainted(taintedInput, out string sqlCommandText);
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void StillTainted(string sqlInjection, out string sqlCommandText)
+        {
+            sqlCommandText = ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(31, 17, 15, 35, "string SqlCommand.CommandText", "ExecuteSql", "string HttpRequest.this[string key]", "Page_Load"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodOutParameterNotTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            NotTainted(taintedInput, out string sqlCommandText);
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void NotTainted(string sqlInjection, out string sqlCommandText)
+        {
+            sqlCommandText = ""SELECT * FROM users WHERE username = 'bob'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodOutParameterSanitizesTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""userid""];
+
+            SanitizeTainted(taintedInput, out string sqlCommandText);
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void SanitizeTainted(string sqlInjection, out string sqlCommandText)
+        {
+            sqlCommandText = ""SELECT * FROM users WHERE userid = '"" + Int32.Parse(sqlInjection) + ""'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
         }
     }
 }

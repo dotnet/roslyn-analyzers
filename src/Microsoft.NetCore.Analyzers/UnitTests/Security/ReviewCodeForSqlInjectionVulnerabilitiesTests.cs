@@ -77,7 +77,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(20, 21, 15, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        [Fact]//(Skip = "Need something to handle output parameters for delegates")]
+        [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_DelegateInvocation_OutParam_LocalString_Diagnostic()
         {
@@ -511,7 +511,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(19, 17, 15, 70, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        [Fact] //(Skip = "Doesn't work, array isn't tainted, ObjectCreation visited before ArrayInitializer")]
+        [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_List_Diagnostic()
         {
@@ -541,10 +541,45 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(28, 17, 23, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(20, 17, 17, 73, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
-        [Fact] //(Skip = "Doesn't work, array isn't tainted")]
+        [Fact(Skip = "Would be nice to distinguish between tainted and non-tainted elements in the List, but for now we taint the entire List from its construction.  FxCop also has a false positive.")]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_List_SafeElement_Diagnostic()
+        {
+            // Would be nice to distinguish between tainted and non-tainted elements in the List, but for now we taint the entire List from its construction.  FxCop also has a false positive.
+
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            List<string> list = new List<string>(new string[] { Request.Form[""in""] });
+            list.Add(""SELECT * FROM users WHERE userid = 1"");
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = list[1],
+                CommandType = CommandType.Text,
+            };
+        }
+     }
+}
+            ");
+        }
+
+        [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Array_List_Diagnostic()
         {
@@ -575,7 +610,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(29, 17, 24, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(21, 17, 17, 45, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
 
 
@@ -611,8 +646,6 @@ namespace VulnerableWebApp
             ",
                 GetCSharpResultAt(20, 17, 17, 52, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
         }
-
-
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
@@ -940,6 +973,5 @@ namespace VulnerableWebApp
 }",
                 GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
         }
-
     }
 }

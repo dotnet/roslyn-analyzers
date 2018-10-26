@@ -6147,5 +6147,58 @@ Class Test
     End Sub
 End Class");
         }
+
+        [Fact, WorkItem(1855, "https://github.com/dotnet/roslyn-analyzers/issues/1855")]
+        public void PointsToAbstractValue_MakeMayBeNull_AssertsKindNotEqualKnownKnownLValueCaptures()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+ namespace Blah
+{
+    public class SomeSetting
+    {
+        private string[] _modules;
+        private readonly IDictionary<string, string> _values;
+         public SomeSetting()
+        {
+            _values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            Modules = new string[0];
+        }
+         public SomeSetting(SomeSetting settings)
+        {
+            _values = new Dictionary<string, string>(settings._values, StringComparer.OrdinalIgnoreCase);
+            Modules = settings.Modules;
+        }
+         public string this[string key]
+        {
+            get
+            {
+                string retVal;
+                return _values.TryGetValue(key, out retVal) ? retVal : null;
+            }
+            set { _values[key] = value; }
+        }
+         /// <summary>
+        /// List of available modules for this setting
+        /// </summary>
+        public string[] Modules
+        {
+            get
+            {
+                return _modules ?? (Modules = (_values[""Modules""] ?? """").Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                                                                     .Select(t => t.Trim())
+                                                                     .ToArray();
+            }
+            set
+            {
+                _modules = value;
+                this[""Modules""] = string.Join("";"", value);
+            }
+        }
+    }
+}");
+        }
     }
 }

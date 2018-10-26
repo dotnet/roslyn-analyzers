@@ -109,9 +109,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 sourceSink.Sink.Location,
                                                 new Location[] { sourceOrigin.Location },
                                                 sourceSink.Sink.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                sourceSink.Sink.AccessingMethod.Name,
+                                                sourceSink.Sink.AccessingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
                                                 sourceOrigin.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                sourceOrigin.AccessingMethod.Name);
+                                                sourceOrigin.AccessingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
                                             operationBlockAnalysisContext.ReportDiagnostic(diagnostic);
                                         }
                                     }

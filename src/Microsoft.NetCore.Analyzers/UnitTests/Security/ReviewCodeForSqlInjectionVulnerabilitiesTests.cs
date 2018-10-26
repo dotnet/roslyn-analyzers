@@ -74,7 +74,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(20, 21, 15, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(20, 21, 15, 28, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(24, 21, 19, 26, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(24, 21, 19, 26, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
 
@@ -151,7 +151,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(24, 21, 19, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(24, 21, 19, 31, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -191,7 +191,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(27, 17, 18, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(27, 17, 18, 25, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -231,8 +231,8 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(27, 17, 18, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"),
-                GetCSharpResultAt(27, 17, 22, 25, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.QueryString", "Page_Load"));
+                GetCSharpResultAt(27, 17, 18, 25, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"),
+                GetCSharpResultAt(27, 17, 22, 25, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.QueryString", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -262,7 +262,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -292,7 +292,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
 
@@ -385,7 +385,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -444,7 +444,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(15, 37, 15, 52, "SqlCommand.SqlCommand(string cmdText)", "Page_Load", "string HttpRequest.this[string key]", "Page_Load"));
+                GetCSharpResultAt(15, 37, 15, 52, "SqlCommand.SqlCommand(string cmdText)", "void WebForm.Page_Load(object sender, EventArgs e)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
 
@@ -476,7 +476,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, 15, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(18, 17, 15, 28, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -508,7 +508,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(19, 17, 15, 70, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(19, 17, 15, 70, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -541,7 +541,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(20, 17, 17, 73, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(20, 17, 17, 73, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact(Skip = "Would be nice to distinguish between tainted and non-tainted elements in the List, but for now we taint the entire List from its construction.  FxCop also has a false positive.")]
@@ -610,7 +610,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(21, 17, 17, 45, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(21, 17, 17, 45, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
 
@@ -644,7 +644,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(20, 17, 17, 52, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(20, 17, 17, 52, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -685,7 +685,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(28, 17, 23, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(28, 17, 23, 28, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -733,7 +733,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(35, 17, 30, 28, "string SqlCommand.CommandText", "Page_Load", "NameValueCollection HttpRequest.Form", "Page_Load"));
+                GetCSharpResultAt(35, 17, 30, 28, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -763,7 +763,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
+                GetCSharpResultAt(17, 17, 17, 31, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "string[] HttpRequest.UserLanguages", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -794,7 +794,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, 15, 34, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
+                GetCSharpResultAt(18, 17, 15, 34, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "string[] HttpRequest.UserLanguages", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -825,7 +825,7 @@ namespace VulnerableWebApp
      }
 }
             ",
-                GetCSharpResultAt(18, 17, 15, 78, "string SqlCommand.CommandText", "Page_Load", "string[] HttpRequest.UserLanguages", "Page_Load"));
+                GetCSharpResultAt(18, 17, 15, 78, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "string[] HttpRequest.UserLanguages", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -935,7 +935,7 @@ namespace VulnerableWebApp
         }
     }
 }",
-                GetCSharpResultAt(27, 17, 15, 35, "string SqlCommand.CommandText", "MakeSqlInjection", "string HttpRequest.this[string key]", "Page_Load"));
+                GetCSharpResultAt(27, 17, 15, 35, "string SqlCommand.CommandText", "void MyDatabaseLayer.MakeSqlInjection(string sqlInjection)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -971,7 +971,7 @@ namespace VulnerableWebApp
         }
     }
 }",
-                GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "injectSql", "string HttpRequest.this[string key]", "Page_Load"));
+                GetCSharpResultAt(21, 21, 15, 35, "string SqlCommand.CommandText", "SqlCommand injectSql(string sqlInjection)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -1014,7 +1014,7 @@ namespace VulnerableWebApp
         }
     }
 }",
-            GetCSharpResultAt(31, 17, 15, 35, "string SqlCommand.CommandText", "ExecuteSql", "string HttpRequest.this[string key]", "Page_Load"));
+            GetCSharpResultAt(31, 17, 15, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -1141,7 +1141,7 @@ namespace VulnerableWebApp
         }
     }
 }",
-            GetCSharpResultAt(31, 17, 15, 35, "string SqlCommand.CommandText", "ExecuteSql", "string HttpRequest.this[string key]", "Page_Load"));
+            GetCSharpResultAt(31, 17, 15, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]

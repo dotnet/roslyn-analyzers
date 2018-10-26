@@ -3243,5 +3243,35 @@ public class Test
 }
 ");
         }
+
+        [Fact, WorkItem(1852, "https://github.com/dotnet/roslyn-analyzers/issues/1852")]
+        public void Issue1852()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        delegate object Des(Stream s);
+
+        public object Deserialize(byte[] bytes)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            return DoDeserialization(formatter.Deserialize, new MemoryStream(bytes));
+        }
+
+        private object DoDeserialization(Des des, Stream stream)
+        {
+            return des(stream);
+        }
+    }
+}");
+        }
     }
 }

@@ -1016,6 +1016,182 @@ namespace VulnerableWebApp
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodReturnsTaintedButOutputUntainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+            
+            string sqlCommandText = StillTainted(taintedInput, out string notTaintedSqlCommandText);
+
+            ExecuteSql(notTaintedSqlCommandText);
+        }
+
+        protected string StillTainted(string sqlInjection, out string notSqlInjection)
+        {
+            notSqlInjection = ""SELECT * FROM users WHERE userid = "" + Int32.Parse(sqlInjection);
+            return ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodReturnsTaintedButRefUntainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+            
+            string notTaintedSqlCommandText = taintedInput;
+            string sqlCommandText = StillTainted(taintedInput, ref notTaintedSqlCommandText);
+
+            ExecuteSql(notTaintedSqlCommandText);
+        }
+
+        protected string StillTainted(string sqlInjection, ref string notSqlInjection)
+        {
+            notSqlInjection = ""SELECT * FROM users WHERE userid = "" + Int32.Parse(sqlInjection);
+            return ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodReturnsUntaintedButOutputTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+            
+            string sqlCommandText = StillTainted(taintedInput, out string taintedSqlCommandText);
+
+            ExecuteSql(taintedSqlCommandText);
+        }
+
+        protected string StillTainted(string input, out string sqlInjection)
+        {
+            sqlInjection = ""SELECT * FROM users WHERE username = '"" + input + ""'"";
+            return ""SELECT * FROM users WHERE userid = "" + Int32.Parse(input);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+                GetCSharpResultAt(32, 17, 15, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void IntermediateMethodReturnsUntaintedButRefTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+            
+            string taintedSqlCommandText = null;
+            string sqlCommandText = StillTainted(taintedInput, ref taintedSqlCommandText);
+
+            ExecuteSql(taintedSqlCommandText);
+        }
+
+        protected string StillTainted(string input, ref string taintedSqlCommandText)
+        {
+            taintedSqlCommandText = ""SELECT * FROM users WHERE username = '"" + input + ""'"";
+            return ""SELECT * FROM users WHERE userid = "" + Int32.Parse(input);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+                GetCSharpResultAt(33, 17, 15, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodReturnsNotTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1367,7 +1543,55 @@ namespace VulnerableWebApp
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
-        public void CrossBinaryTaintedObjectFromConstructor()
+        public void CrossBinarySetsReferenceToDefaultStillTainted()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            StillTainted(taintedInput, out string sqlCommandText);
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            string sqlToExecute = null;
+            OtherDllStaticMethods.SetsReferenceToDefault(sqlCommandText, ref sqlToExecute);
+
+            ExecuteSql(sqlToExecute);
+        }
+
+        protected void StillTainted(string sqlInjection, out string sqlCommandText)
+        {
+            sqlCommandText = ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"";
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(36, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_TaintedObject_Property_ConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
 namespace VulnerableWebApp
@@ -1404,6 +1628,887 @@ namespace VulnerableWebApp
     }
 }",
             GetCSharpResultAt(29, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_TaintedObject_Property_Default()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(taintedInput);
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.Default + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(30, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_TaintedObject_Method_ReturnsConstructedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(taintedInput);
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsConstructedInput() + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(29, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_TaintedObject_Method_SetsOutputToConstructedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(taintedInput);
+
+            otherDllObj.SetsOutputToConstructedInput(out string outputParameter);
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + outputParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(31, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_TaintedObject_Method_SetsReferenceToConstructedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(taintedInput);
+
+            string referenceParameter = ""not tainted"";
+            otherDllObj.SetsReferenceToConstructedInput(ref referenceParameter);
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + referenceParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(32, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_TaintedObject_Method_ReturnsDefault()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(taintedInput);
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsDefault() + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(30, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_TaintedObject_Method_SetsReferenceToDefault()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(taintedInput);
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            string referenceParameter = ""not tainted"";
+            otherDllObj.SetsReferenceToDefault(ref referenceParameter);
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + referenceParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(33, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_TaintedObject_Method_ReturnsDefault_UntaintedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(taintedInput);
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsDefault(""not tainted"") + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(30, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Property_ConstructedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ConstructedInput + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Property_Default()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.Default + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_ReturnsConstructedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsConstructedInput() + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_SetsOutputToConstructedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            otherDllObj.SetsOutputToConstructedInput(out string outputParameter);
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + outputParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_SetsReferenceToConstructedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            string referenceParameter = ""also not tainted"";
+            otherDllObj.SetsReferenceToConstructedInput(ref referenceParameter);
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + referenceParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_ReturnsDefault()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsDefault() + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_SetsReferenceToDefault()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainteed"");
+
+            string referenceParameter = ""also not tainted"";
+            otherDllObj.SetsReferenceToDefault(ref referenceParameter);
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + referenceParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_ReturnsDefault_UntaintedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsDefault(""also not tainted"") + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}");
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_ReturnsDefault_TaintedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsDefault(taintedInput) + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(30, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_ReturnsInput_TaintedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsInput(taintedInput) + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(29, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_ReturnsRandom_TaintedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + otherDllObj.ReturnsRandom(taintedInput) + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(30, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_SetsOutputToDefault_TaintedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            otherDllObj.SetsOutputToDefault(taintedInput, out string outputParameter);
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + outputParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(31, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_SetsOutputToInput_TaintedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            otherDllObj.SetsOutputToInput(taintedInput, out string outputParameter);
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + outputParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(30, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void CrossBinary_UntaintedObject_Method_SetsOutputToRandom_TaintedInput()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+    using OtherDll;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+
+            OtherDllClass<string> otherDllObj = new OtherDllClass<string>(""not tainted"");
+
+            // Still tainted, cuz not doing cross-binary interprocedural DFA.
+            otherDllObj.SetsOutputToRandom(taintedInput, out string outputParameter);
+            string sqlCommandText = ""SELECT * FROM users WHERE username = '"" + outputParameter + ""'"";
+
+            ExecuteSql(sqlCommandText);
+        }
+
+        protected void ExecuteSql(string sqlCommandText)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = sqlCommandText,
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+            GetCSharpResultAt(31, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
     }
 }

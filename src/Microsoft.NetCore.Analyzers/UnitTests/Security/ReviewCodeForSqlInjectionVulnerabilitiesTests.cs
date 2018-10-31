@@ -898,6 +898,67 @@ namespace VulnerableWebApp
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void DataBoundLiteralControl_DirectImplementation_Text()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Web.UI;
+
+    public class SomeClass
+    {
+        public DataBoundLiteralControl Control { get; set; }
+
+        public void Execute()
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE username = '"" + this.Control.Text + ""'"",
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}
+            ",
+                GetCSharpResultAt(17, 17, 17, 74, "string SqlCommand.CommandText", "void SomeClass.Execute()", "string DataBoundLiteralControl.Text", "void SomeClass.Execute()"));
+        }
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void DataBoundLiteralControl_Interface_Text()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Web.UI;
+
+    public class SomeClass
+    {
+        public DataBoundLiteralControl Control { get; set; }
+
+        public void Execute()
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE username = '"" + ((ITextControl) this.Control).Text + ""'"",
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}
+            ",
+                GetCSharpResultAt(17, 17, 17, 74, "string SqlCommand.CommandText", "void SomeClass.Execute()", "string ITextControl.Text", "void SomeClass.Execute()"));
+        }
+
+
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void SimpleInterprocedural()
         {
             VerifyCSharpWithDependencies(@"

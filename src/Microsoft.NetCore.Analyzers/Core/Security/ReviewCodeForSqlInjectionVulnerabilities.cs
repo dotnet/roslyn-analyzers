@@ -32,13 +32,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationContext =>
                 {
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
-                    if (!WebInputSources.DoesCompilationIncludeSources(wellKnownTypeProvider)
-                        || !SqlSinks.DoesCompilationIncludeSinks(wellKnownTypeProvider))
+                    TaintedDataSymbolMap<SourceInfo> sourceInfoSymbolMap = new TaintedDataSymbolMap<SourceInfo>(
+                        wellKnownTypeProvider, 
+                        WebInputSources.SourceInfos.Values);
+
+                    if (sourceInfoSymbolMap.IsEmpty || !SqlSinks.DoesCompilationIncludeSinks(wellKnownTypeProvider))
                     {
                         return;
                     }
-
-                    ImmutableDictionary<ITypeSymbol, SourceInfo> sourcesBySymbol = WebInputSources.BuildBySymbolMap(wellKnownTypeProvider);
 
                     compilationContext.RegisterOperationBlockStartAction(
                         operationBlockStartContext =>
@@ -56,7 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
 
                                     IPropertyReferenceOperation propertyReferenceOperation = (IPropertyReferenceOperation)operationAnalysisContext.Operation;
-                                    if (WebInputSources.IsTaintedProperty(sourcesBySymbol, propertyReferenceOperation))
+                                    if (sourceInfoSymbolMap.IsSourceProperty(propertyReferenceOperation.Property))
                                     {
                                         requiresTaintedDataAnalysis = true;
                                     }
@@ -72,7 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
 
                                     IInvocationOperation invocationOperation = (IInvocationOperation) operationAnalysisContext.Operation;
-                                    if (WebInputSources.IsTaintedMethod(sourcesBySymbol, invocationOperation.Instance, invocationOperation.TargetMethod))
+                                    if (sourceInfoSymbolMap.IsSourceMethod(invocationOperation.TargetMethod))
                                     {
                                         requiresTaintedDataAnalysis = true;
                                     }
@@ -91,7 +92,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         operationBlockAnalysisContext.OperationBlocks[0].GetEnclosingControlFlowGraph(),
                                         operationBlockAnalysisContext.Compilation,
                                         operationBlockAnalysisContext.OwningSymbol,
-                                        sourcesBySymbol,
+                                        sourceInfoSymbolMap,
                                         PrimitiveTypeConverterSanitizers.BuildConcreteSanitizersBySymbolMap(wellKnownTypeProvider),
                                         SqlSinks.BuildConcreteSinksBySymbolMap(wellKnownTypeProvider),
                                         SqlSinks.BuildInterfaceSinksBySymbolMap(wellKnownTypeProvider));

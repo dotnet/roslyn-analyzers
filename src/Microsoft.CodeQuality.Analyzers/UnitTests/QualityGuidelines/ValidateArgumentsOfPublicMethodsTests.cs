@@ -3391,5 +3391,52 @@ public class C
             // Test0.cs(8,15): warning CA1062: In externally visible method 'void C.M(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(8, 15, "void C.M(C c)", "c"));
         }
+
+        [Fact, WorkItem(1870, "https://github.com/dotnet/roslyn-analyzers/issues/1870")]
+        public void Issue1870()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Runtime.CompilerServices;
+using System.Reflection;
+ namespace ANamespace {
+    public interface IInterface {
+    }
+     public class PropConvert {
+        public static IInterface ToSettings(object o) {
+            if (IsATypeOfSomeSort(o.GetType())) {
+                dynamic b = new PropBag();
+                 foreach (var p in o.GetType().GetProperties()) {
+                    b[p.Name] = p.GetValue(o, null);
+                }
+                 return b;
+            }
+             return null;
+        }
+         private static bool IsATypeOfSomeSort(Type type) {
+            return type.IsGenericType
+                && Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false);
+        }
+    }
+     public class PropBag : DynamicObject, IInterface {
+        internal readonly Dictionary<string, IInterface> _properties = new Dictionary<string, IInterface>();
+         public static dynamic New() {
+            return new PropBag();
+        }
+         public void SetMember(string name, object value) {
+            if (value == null && _properties.ContainsKey(name)) {
+                _properties.Remove(name);
+            }
+            else {
+                _properties[name] = PropConvert.ToSettings(value);
+            }
+        }
+    }
+}",
+            // Test0.cs(14,36): warning CA1062: In externally visible method 'IInterface PropConvert.ToSettings(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(14, 36, "IInterface PropConvert.ToSettings(object o)", "o"));
+        }
     }
 }

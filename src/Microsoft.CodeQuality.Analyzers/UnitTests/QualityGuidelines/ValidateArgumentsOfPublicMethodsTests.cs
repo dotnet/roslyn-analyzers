@@ -3273,5 +3273,170 @@ namespace Blah
     }
 }");
         }
+
+        [Fact, WorkItem(1856, "https://github.com/dotnet/roslyn-analyzers/issues/1856")]
+        public void PointsToDataFlowOperationVisitor_VisitInstanceReference_Assert()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Xml.Linq;
+ namespace Blah
+{
+    public class ContentContext
+    {
+        public XElement Data { get; set; }
+         public XElement Element(string elementName)
+        {
+            var element = Data.Element(elementName);
+            if (element == null)
+            {
+                element = new XElement(elementName);
+                Data.Add(element);
+            }
+            return element;
+        }
+    }
+     public interface IDef
+    {
+        string Name { get; }
+    }
+     public interface IContent
+    {
+        T As<T>();
+        IDef Definition { get; }
+    }
+     public class Container
+    {
+        private XElement _element;
+         private void SetElement(XElement value)
+        {
+            _element = value;
+        }
+         public XElement Element
+        {
+            get
+            {
+                return _element ?? (_element = new XElement(""Data""));
+            }
+        }
+         public string Data
+        {
+            get
+            {
+                return _element == null ? null : Element.ToString(SaveOptions.DisableFormatting);
+            }
+            set
+            {
+                SetElement(string.IsNullOrEmpty(value) ? null : XElement.Parse(value, LoadOptions.PreserveWhitespace));
+            }
+        }
+    }
+     public class ContainerPart
+    {
+        public Container Container;
+        public Container VersionContainer;
+    }
+     public abstract class Idk<TContent> where TContent : IContent, new()
+    {
+        public static void ExportInfo(TContent part, ContentContext context)
+        {
+            var containerPart = part.As<ContainerPart>();
+             if (containerPart == null)
+            {
+                return;
+            }
+             Action<XElement, bool> exportInfo = (element, versioned) => {
+                if (element == null)
+                {
+                    return;
+                }
+                 var elementName = GetContainerXmlElementName(part, versioned);
+                foreach (var attribute in element.Attributes())
+                {
+                    context.Element(elementName).SetAttributeValue(attribute.Name, attribute.Value);
+                }
+            };
+             exportInfo(containerPart.VersionContainer.Element.Element(part.Definition.Name), true);
+            exportInfo(containerPart.Container.Element.Element(part.Definition.Name), false);
+        }
+         private static string GetContainerXmlElementName(TContent part, bool versioned)
+        {
+            return part.Definition.Name + ""-"" + (versioned ? ""VersionInfoset"" : ""Infoset"");
+        }
+    }
+}",
+            // Test0.cs(77,21): warning CA1062: In externally visible method 'void Idk<TContent>.ExportInfo(TContent part, ContentContext context)', validate parameter 'context' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(77, 21, "void Idk<TContent>.ExportInfo(TContent part, ContentContext context)", "context"));
+        }
+
+        [Fact, WorkItem(1856, "https://github.com/dotnet/roslyn-analyzers/issues/1856")]
+        public void InvocationThroughAnUninitializedLocalInstance()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    private int _field;
+    public void M(C c)
+    {
+        C c2;
+        c2.M2(c);
+    }
+
+    private void M2(C c)
+    {
+        var x = c._field;
+    }
+}
+", validationMode: TestValidationMode.AllowCompileErrors, expected:
+            // Test0.cs(8,15): warning CA1062: In externally visible method 'void C.M(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(8, 15, "void C.M(C c)", "c"));
+        }
+
+        [Fact, WorkItem(1870, "https://github.com/dotnet/roslyn-analyzers/issues/1870")]
+        public void Issue1870()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Runtime.CompilerServices;
+using System.Reflection;
+ namespace ANamespace {
+    public interface IInterface {
+    }
+     public class PropConvert {
+        public static IInterface ToSettings(object o) {
+            if (IsATypeOfSomeSort(o.GetType())) {
+                dynamic b = new PropBag();
+                 foreach (var p in o.GetType().GetProperties()) {
+                    b[p.Name] = p.GetValue(o, null);
+                }
+                 return b;
+            }
+             return null;
+        }
+         private static bool IsATypeOfSomeSort(Type type) {
+            return type.IsGenericType
+                && Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false);
+        }
+    }
+     public class PropBag : DynamicObject, IInterface {
+        internal readonly Dictionary<string, IInterface> _properties = new Dictionary<string, IInterface>();
+         public static dynamic New() {
+            return new PropBag();
+        }
+         public void SetMember(string name, object value) {
+            if (value == null && _properties.ContainsKey(name)) {
+                _properties.Remove(name);
+            }
+            else {
+                _properties[name] = PropConvert.ToSettings(value);
+            }
+        }
+    }
+}",
+            // Test0.cs(14,36): warning CA1062: In externally visible method 'IInterface PropConvert.ToSettings(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(14, 36, "IInterface PropConvert.ToSettings(object o)", "o"));
+        }
     }
 }

@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var method = (IMethodSymbol)context.Symbol;
 
             // Bail out if this method is a constructor
-            if(method.IsConstructor())
+            if (method.IsConstructor())
             {
                 return;
             }

@@ -47,6 +47,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             var method = (IMethodSymbol)context.Symbol;
 
+            // Bail out if this method is a constructor
+            if(method.IsConstructor())
+            {
+                return;
+            }
+
             // Bail out if this method overrides another (parameter types must match) or doesn't have any parameters
             if (method.IsOverride || !method.Parameters.Any())
             {

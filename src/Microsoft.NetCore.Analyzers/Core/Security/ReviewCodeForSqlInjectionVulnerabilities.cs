@@ -2,6 +2,7 @@
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using System.Linq;
     using System.Collections.Immutable;
     using Analyzer.Utilities.Extensions;
     using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
@@ -36,7 +37,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                         wellKnownTypeProvider, 
                         WebInputSources.SourceInfos.Values);
 
-                    if (sourceInfoSymbolMap.IsEmpty || !SqlSinks.DoesCompilationIncludeSinks(wellKnownTypeProvider))
+                    if (sourceInfoSymbolMap.IsEmpty)
+                    {
+                        return;
+                    }
+
+                    TaintedDataSymbolMap<SinkInfo> sinkInfoSymbolMap = new TaintedDataSymbolMap<SinkInfo>(
+                        wellKnownTypeProvider,
+                        SqlSinks.ConcreteSinks.Values.Concat(SqlSinks.InterfaceSinks.Values));
+                    if (sinkInfoSymbolMap.IsEmpty)
                     {
                         return;
                     }
@@ -93,9 +102,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         operationBlockAnalysisContext.Compilation,
                                         operationBlockAnalysisContext.OwningSymbol,
                                         sourceInfoSymbolMap,
-                                        PrimitiveTypeConverterSanitizers.BuildConcreteSanitizersBySymbolMap(wellKnownTypeProvider),
-                                        SqlSinks.BuildConcreteSinksBySymbolMap(wellKnownTypeProvider),
-                                        SqlSinks.BuildInterfaceSinksBySymbolMap(wellKnownTypeProvider));
+                                        new TaintedDataSymbolMap<SanitizerInfo>(
+                                            wellKnownTypeProvider,
+                                            PrimitiveTypeConverterSanitizers.ConcreteSanitizers.Values),
+                                        sinkInfoSymbolMap);
                                     foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                     {
                                         if (sourceSink.SinkKind != SinkKind.Sql)

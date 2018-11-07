@@ -815,5 +815,17 @@ Public Class B29
 End Class
 ");
         }
+
+        [Fact]
+        public void CA1052NoDiagnosticForAbstractNonStaticClassCSharp()
+        {
+            VerifyCSharp(@"
+public abstract class C1
+{
+    internal class C2 : C1 {
+    }
+}
+");
+        }
     }
 }

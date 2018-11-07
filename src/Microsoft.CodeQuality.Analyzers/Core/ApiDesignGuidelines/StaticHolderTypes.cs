@@ -75,7 +75,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var symbol = (INamedTypeSymbol)context.Symbol;
             if (!symbol.IsStatic &&
                 symbol.IsExternallyVisible() &&
-                symbol.IsStaticHolderType())
+                symbol.IsStaticHolderType() &&
+                !symbol.IsAbstract)
             {
                 context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
             }

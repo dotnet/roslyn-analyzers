@@ -35,8 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
                     TaintedDataSymbolMap<SourceInfo> sourceInfoSymbolMap = new TaintedDataSymbolMap<SourceInfo>(
                         wellKnownTypeProvider, 
-                        WebInputSources.SourceInfos.Values);
-
+                        WebInputSources.SourceInfos);
                     if (sourceInfoSymbolMap.IsEmpty)
                     {
                         return;
@@ -44,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     TaintedDataSymbolMap<SinkInfo> sinkInfoSymbolMap = new TaintedDataSymbolMap<SinkInfo>(
                         wellKnownTypeProvider,
-                        SqlSinks.ConcreteSinks.Values.Concat(SqlSinks.InterfaceSinks.Values));
+                        SqlSinks.SinkInfos);
                     if (sinkInfoSymbolMap.IsEmpty)
                     {
                         return;
@@ -104,7 +103,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         sourceInfoSymbolMap,
                                         new TaintedDataSymbolMap<SanitizerInfo>(
                                             wellKnownTypeProvider,
-                                            PrimitiveTypeConverterSanitizers.ConcreteSanitizers.Values),
+                                            PrimitiveTypeConverterSanitizers.SanitizerInfos),
                                         sinkInfoSymbolMap);
                                     foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                     {

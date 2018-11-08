@@ -956,6 +956,36 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(17, 17, 17, 74, "string SqlCommand.CommandText", "void SomeClass.Execute()", "string ITextControl.Text", "void SomeClass.Execute()"));
         }
 
+        [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HtmlInputButton_Value()
+        {
+            // HtmlInputButton derives from HtmlInputControl, and HtmlInputControl.Value is a tainted data source.
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Web.UI.HtmlControls;
+
+    public class SomeClass
+    {
+        public HtmlInputButton Button { get; set; }
+
+        public void Execute()
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE username = '"" + this.Button.Value + ""'"",
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}
+            ",
+                GetCSharpResultAt(17, 17, 17, 74, "string SqlCommand.CommandText", "void SomeClass.Execute()", "string HtmlInputControl.Value", "void SomeClass.Execute()"));
+        }
 
         [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]

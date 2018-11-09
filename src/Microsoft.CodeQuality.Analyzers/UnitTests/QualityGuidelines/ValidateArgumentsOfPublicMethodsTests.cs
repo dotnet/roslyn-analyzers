@@ -3438,5 +3438,31 @@ using System.Reflection;
             // Test0.cs(14,36): warning CA1062: In externally visible method 'IInterface PropConvert.ToSettings(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(14, 36, "IInterface PropConvert.ToSettings(object o)", "o"));
         }
+
+        [Fact, WorkItem(1870, "https://github.com/dotnet/roslyn-analyzers/issues/1870")]
+        public void Issue1870_02()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+namespace ANamespace
+{
+    public static class SomeExtensions
+    {
+        public static Dictionary<string, string> Merge(this Dictionary<string, string> dictionary, Dictionary<string, string> dictionaryToMerge) {
+            if (dictionaryToMerge == null)
+                return dictionary;
+
+            var newDictionary = new Dictionary<string, string>(dictionary);
+
+            foreach (var valueDictionary in dictionaryToMerge)
+                newDictionary[valueDictionary.Key] = valueDictionary.Value;
+
+            return newDictionary;
+        }
+    }
+}");
+        }
     }
 }

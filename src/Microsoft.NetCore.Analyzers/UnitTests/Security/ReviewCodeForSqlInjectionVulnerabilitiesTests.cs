@@ -2601,5 +2601,84 @@ namespace VulnerableWebApp
 }",
             GetCSharpResultAt(31, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
+
+        [Fact(Skip = "Asserts")]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void NonMonotonicMergeAssert()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+public class SettingData1
+{
+    public string Name { get; set; }
+    public string CartType { get; set; }
+}
+
+public class SettingData2
+{
+    public string CartType { get; set; }
+    public string Index { get; set; }
+}
+
+public class Settings
+{
+    public string DefaultIndex { get; set; }
+    public List<SettingData1> Datas1 { get; set; }
+    public List<SettingData2> Datas2 { get; set; }
+}
+
+public class Class1
+{
+    public Settings MySettings { get; set; }
+    public string SiteCartType { get; set; }
+    private SettingData1 GetDefaultData1(string contentType, string taintedInput)
+    {
+        var settings = MySettings;
+        var defaultData = settings.Datas2.FirstOrDefault(x => x.CartType == taintedInput);
+        var defaultIndex = defaultData != null ? defaultData.Index : ""0"";
+
+        if (String.IsNullOrWhiteSpace(defaultIndex))
+            defaultIndex = ""0"";
+
+        if (!settings.Datas2.Any(x => String.Equals(x.CartType, taintedInput, StringComparison.OrdinalIgnoreCase)))
+        {
+            var patternIndex = String.IsNullOrWhiteSpace(settings.DefaultIndex) ? ""0"" : settings.DefaultIndex;
+            if (String.Equals(taintedInput, SiteCartType, StringComparison.OrdinalIgnoreCase))
+            {
+                settings.Datas2.Add(new SettingData2 { Index = patternIndex, CartType = taintedInput });
+                return settings.Datas1.Where(x => x.CartType == null).ElementAt(Convert.ToInt32(defaultIndex));
+            }
+            else
+            {
+                settings.Datas2.Add(new SettingData2 { Index = ""0"", CartType = taintedInput });
+                return new SettingData1 { Name = ""Name"", CartType = taintedInput };
+            }
+        }
+
+        var cartTypeSearch = settings.Datas1.Any(x => String.Equals(x.CartType, taintedInput, StringComparison.OrdinalIgnoreCase)) ? taintedInput : null;
+
+        if (settings.Datas1.Any())
+        {
+            if (settings.Datas1.Where(x => x.CartType == cartTypeSearch).ElementAt(Convert.ToInt32(defaultIndex)) != null)
+            {
+                return settings.Datas1.Where(x => x.CartType == cartTypeSearch).ElementAt(Convert.ToInt32(defaultIndex));
+            };
+        }
+
+        return new SettingData1 { Name = ""Name"", CartType = taintedInput };
+    }
+
+    public void ProcessRequest()
+    {
+        string tainted = HttpContext.Current.Request.Form[""taintedinput""];
+        GetDefaultData1(HttpContext.Current.Request.ContentType, tainted);
+    }
+}
+");
+        }
     }
 }

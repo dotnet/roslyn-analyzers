@@ -2602,7 +2602,7 @@ namespace VulnerableWebApp
             GetCSharpResultAt(31, 17, 16, 35, "string SqlCommand.CommandText", "void WebForm.ExecuteSql(string sqlCommandText)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
-        [Fact(Skip = "Asserts")]
+        [Fact]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void NonMonotonicMergeAssert()
         {

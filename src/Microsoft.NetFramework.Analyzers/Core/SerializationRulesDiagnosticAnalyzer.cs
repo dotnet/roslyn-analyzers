@@ -34,7 +34,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2229,
                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2229-implement-serialization-constructors",
-                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                        customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         // Mark ISerializable types with SerializableAttribute
         internal const string RuleCA2237Id = "CA2237";
@@ -60,7 +60,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2237,
                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2237-mark-iserializable-types-with-serializableattribute",
-                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                        customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         // Mark all non-serializable fields
         internal const string RuleCA2235Id = "CA2235";
@@ -86,7 +86,7 @@ namespace Microsoft.NetFramework.Analyzers
                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                         description: s_localizableDescriptionCA2235,
                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2235-mark-all-non-serializable-fields",
-                                                                        customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                        customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA2229, RuleCA2235, RuleCA2237);
 

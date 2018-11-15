@@ -28,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                       isEnabledByDefault: false,
                                                                                       description: new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case",
-                                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                      customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

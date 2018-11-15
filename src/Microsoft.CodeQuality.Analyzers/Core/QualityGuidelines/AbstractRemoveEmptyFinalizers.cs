@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1821-remove-empty-finalizers",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

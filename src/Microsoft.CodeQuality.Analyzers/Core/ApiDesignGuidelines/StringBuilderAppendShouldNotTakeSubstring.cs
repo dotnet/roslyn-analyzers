@@ -43,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableMessageDefault,
-            helpLinkUri: "", // TODO (might require an addition to docs repository?
+            helpLinkUri: "", // TODO document it, see https://github.com/dotnet/roslyn-analyzers/issues/1898 and add link here.
             customTags: WellKnownDiagnosticTags.AnalyzerException);
 
         internal static DiagnosticDescriptor RuleReplaceTwoParameter = new DiagnosticDescriptor(
@@ -54,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableMessageDefault2,
-            helpLinkUri: "", // TODO (might require an addition to docs repository?
+            helpLinkUri: "", // TODO document it, see https://github.com/dotnet/roslyn-analyzers/issues/1898 and add link here.
             customTags: WellKnownDiagnosticTags.AnalyzerException);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleReplaceOneParameter, RuleReplaceTwoParameter);

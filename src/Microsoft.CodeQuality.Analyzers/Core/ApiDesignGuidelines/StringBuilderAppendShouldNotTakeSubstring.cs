@@ -26,11 +26,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
             typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(
-            nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithOneParameterDescription),
-            MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-            typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-
         private static readonly LocalizableString s_localizableTitle2 = new LocalizableResourceString(
             nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterTitle),
             MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, 
@@ -38,10 +33,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly LocalizableString s_localizableMessageDefault2 = new LocalizableResourceString(
             nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterDefault),
             MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-            typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription2 = new LocalizableResourceString(
-            nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.StringBuilderShouldUseSubstringOverloadWithTwoParameterDescription),
-            MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, 
             typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleReplaceOneParameter = new DiagnosticDescriptor(
@@ -51,7 +42,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: s_localizableDescription,
+            description: s_localizableMessageDefault,
             helpLinkUri: "", // TODO (might require an addition to docs repository?
             customTags: WellKnownDiagnosticTags.AnalyzerException);
 
@@ -62,7 +53,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: s_localizableDescription2,
+            description: s_localizableMessageDefault2,
             helpLinkUri: "", // TODO (might require an addition to docs repository?
             customTags: WellKnownDiagnosticTags.AnalyzerException);
 

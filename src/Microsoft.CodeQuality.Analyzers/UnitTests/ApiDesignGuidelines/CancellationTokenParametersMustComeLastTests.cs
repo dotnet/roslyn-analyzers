@@ -1,8 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Analyzer.Utilities;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -29,17 +28,7 @@ class T
     {
     }
 }";
-            var expected = new DiagnosticResult
-            {
-                Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
-                Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "T.M(System.Threading.CancellationToken, int)"),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation("Test0.cs", 5, 10)
-                }
-            };
-
+            var expected = new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(5, 10).WithArguments("T.M(System.Threading.CancellationToken, int)");
             VerifyCSharp(source, expected);
         }
 
@@ -144,17 +133,7 @@ class T : B
 }";
 
             // One diagnostic for the virtual, but none for the override.
-            var expected = new DiagnosticResult
-            {
-                Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
-                Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "B.M(System.Threading.CancellationToken, int)"),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation("Test0.cs", 5, 28)
-                }
-            };
-
+            var expected = new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(5, 28).WithArguments("B.M(System.Threading.CancellationToken, int)");
             VerifyCSharp(test, expected);
         }
 
@@ -174,17 +153,7 @@ class T : I
 }";
 
             // One diagnostic for the interface, but none for the implementation.
-            var expected = new DiagnosticResult
-            {
-                Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
-                Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "I.M(System.Threading.CancellationToken, int)"),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation("Test0.cs", 5, 10)
-                }
-            };
-
+            var expected = new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(5, 10).WithArguments("I.M(System.Threading.CancellationToken, int)");
             VerifyCSharp(test, expected);
         }
 
@@ -204,17 +173,7 @@ class T : I
 }";
 
             // One diagnostic for the interface, but none for the implementation.
-            var expected = new DiagnosticResult
-            {
-                Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
-                Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "I.M(System.Threading.CancellationToken, int)"),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation("Test0.cs", 5, 10)
-                }
-            };
-
+            var expected = new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(5, 10).WithArguments("I.M(System.Threading.CancellationToken, int)");
             VerifyCSharp(test, expected);
         }
 
@@ -244,17 +203,7 @@ static class C1
     }
 }";
 
-            var expected = new DiagnosticResult
-            {
-                Id = CancellationTokenParametersMustComeLastAnalyzer.RuleId,
-                Message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CancellationTokenParametersMustComeLastMessage, "C1.M1(object, System.Threading.CancellationToken, object)"),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation("Test0.cs", 5, 24)
-                }
-            };
-
+            var expected = new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(5, 24).WithArguments("C1.M1(object, System.Threading.CancellationToken, object)");
             VerifyCSharp(test, expected);
         }
 

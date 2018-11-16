@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -398,37 +399,30 @@ End Structure
 
         private static DiagnosticResult GetCSharpOverrideEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(LanguageNames.CSharp, line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
         }
 
         private static DiagnosticResult GetCSharpOperatorEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(LanguageNames.CSharp, line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
         }
 
         private static DiagnosticResult GetBasicOverrideEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(LanguageNames.VisualBasic, line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
         }
 
         private static DiagnosticResult GetBasicOperatorEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(LanguageNames.VisualBasic, line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
         }
 
-        private static DiagnosticResult GetExpectedDiagnostic(string language, int line, int column, string typeName, string messageFormat)
+        private static DiagnosticResult GetExpectedDiagnostic(int line, int column, string typeName, string messageFormat)
         {
-            string fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
-            return new DiagnosticResult
-            {
-                Id = OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer.RuleId,
-                Message = string.Format(messageFormat, typeName),
-                Severity = OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer.EqualsRule.DefaultSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation(fileName, line, column)
-                }
-            };
+            return new DiagnosticResult(OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer.EqualsRule)
+                .WithLocation(line, column)
+                .WithMessageFormat(messageFormat)
+                .WithArguments(typeName);
         }
     }
 }

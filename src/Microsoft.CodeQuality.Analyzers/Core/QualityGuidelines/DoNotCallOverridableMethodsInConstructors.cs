@@ -33,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2214-do-not-call-overridable-methods-in-constructors",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
@@ -65,7 +65,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             IMethodSymbol method = operation.TargetMethod;
             if (method != null &&
                 (method.IsAbstract || method.IsVirtual) &&
-                method.ContainingType == containingType)
+                method.ContainingType == containingType &&
+                !operation.IsInsideAnonymousFunction())
             {
                 context.ReportDiagnostic(operation.Syntax.CreateDiagnostic(Rule));
             }

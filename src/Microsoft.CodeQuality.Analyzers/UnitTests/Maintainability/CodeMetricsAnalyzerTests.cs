@@ -4,6 +4,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -658,120 +659,86 @@ CA 1501: 10
 
         private static DiagnosticResult GetCSharpCA1501ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold, string baseTypes)
         {
-            return GetCA1501ExpectedDiagnostic(LanguageNames.CSharp, line, column, symbolName, metricValue, threshold, baseTypes);
+            return GetCA1501ExpectedDiagnostic(line, column, symbolName, metricValue, threshold, baseTypes);
         }
 
         private static DiagnosticResult GetBasicCA1501ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold, string baseTypes)
         {
-            return GetCA1501ExpectedDiagnostic(LanguageNames.VisualBasic, line, column, symbolName, metricValue, threshold, baseTypes);
+            return GetCA1501ExpectedDiagnostic(line, column, symbolName, metricValue, threshold, baseTypes);
         }
 
         private static DiagnosticResult GetCSharpCA1502ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
         {
-            return GetCA1502ExpectedDiagnostic(LanguageNames.CSharp, line, column, symbolName, metricValue, threshold);
+            return GetCA1502ExpectedDiagnostic(line, column, symbolName, metricValue, threshold);
         }
 
         private static DiagnosticResult GetBasicCA1502ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
         {
-            return GetCA1502ExpectedDiagnostic(LanguageNames.VisualBasic, line, column, symbolName, metricValue, threshold);
+            return GetCA1502ExpectedDiagnostic(line, column, symbolName, metricValue, threshold);
         }
 
         private static DiagnosticResult GetCSharpCA1505ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
         {
-            return GetCA1505ExpectedDiagnostic(LanguageNames.CSharp, line, column, symbolName, metricValue, threshold);
+            return GetCA1505ExpectedDiagnostic(line, column, symbolName, metricValue, threshold);
         }
 
         private static DiagnosticResult GetBasicCA1505ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
         {
-            return GetCA1505ExpectedDiagnostic(LanguageNames.VisualBasic, line, column, symbolName, metricValue, threshold);
+            return GetCA1505ExpectedDiagnostic(line, column, symbolName, metricValue, threshold);
         }
 
         private static DiagnosticResult GetCSharpCA1506ExpectedDiagnostic(int line, int column, string symbolName, int coupledTypesCount, int namespaceCount, int threshold)
         {
-            return GetCA1506ExpectedDiagnostic(LanguageNames.CSharp, line, column, symbolName, coupledTypesCount, namespaceCount, threshold);
+            return GetCA1506ExpectedDiagnostic(line, column, symbolName, coupledTypesCount, namespaceCount, threshold);
         }
 
         private static DiagnosticResult GetBasicCA1506ExpectedDiagnostic(int line, int column, string symbolName, int coupledTypesCount, int namespaceCount, int threshold)
         {
-            return GetCA1506ExpectedDiagnostic(LanguageNames.VisualBasic, line, column, symbolName, coupledTypesCount, namespaceCount, threshold);
+            return GetCA1506ExpectedDiagnostic(line, column, symbolName, coupledTypesCount, namespaceCount, threshold);
         }
 
         // '{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'
-        private static DiagnosticResult GetCA1501ExpectedDiagnostic(string language, int line, int column, string symbolName, int metricValue, int threshold, string baseTypes)
+        private static DiagnosticResult GetCA1501ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold, string baseTypes)
         {
-            string fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
-            return new DiagnosticResult
-            {
-                Id = CodeMetricsAnalyzer.CA1501RuleId,
-                Message = string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveInheritanceMessage, symbolName, metricValue, threshold, baseTypes),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation(fileName, line, column)
-                }
-            };
+            return new DiagnosticResult(CodeMetricsAnalyzer.CA1501RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
+                .WithLocation(line, column)
+                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveInheritanceMessage)
+                .WithArguments(symbolName, metricValue, threshold, baseTypes);
         }
 
         // '{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.
-        private static DiagnosticResult GetCA1502ExpectedDiagnostic(string language, int line, int column, string symbolName, int metricValue, int threshold)
+        private static DiagnosticResult GetCA1502ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
         {
-            string fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
-            return new DiagnosticResult
-            {
-                Id = CodeMetricsAnalyzer.CA1502RuleId,
-                Message = string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveComplexityMessage, symbolName, metricValue, threshold),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation(fileName, line, column)
-                }
-            };
+            return new DiagnosticResult(CodeMetricsAnalyzer.CA1502RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
+                .WithLocation(line, column)
+                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveComplexityMessage)
+                .WithArguments(symbolName, metricValue, threshold);
         }
 
         // '{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.
-        private static DiagnosticResult GetCA1505ExpectedDiagnostic(string language, int line, int column, string symbolName, int metricValue, int threshold)
+        private static DiagnosticResult GetCA1505ExpectedDiagnostic(int line, int column, string symbolName, int metricValue, int threshold)
         {
-            string fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
-            return new DiagnosticResult
-            {
-                Id = CodeMetricsAnalyzer.CA1505RuleId,
-                Message = string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidUnmantainableCodeMessage, symbolName, metricValue, threshold),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation(fileName, line, column)
-                }
-            };
+            return new DiagnosticResult(CodeMetricsAnalyzer.CA1505RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
+                .WithLocation(line, column)
+                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.AvoidUnmantainableCodeMessage)
+                .WithArguments(symbolName, metricValue, threshold);
         }
 
         // '{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.
-        private static DiagnosticResult GetCA1506ExpectedDiagnostic(string language, int line, int column, string symbolName, int coupledTypesCount, int namespaceCount, int threshold)
+        private static DiagnosticResult GetCA1506ExpectedDiagnostic(int line, int column, string symbolName, int coupledTypesCount, int namespaceCount, int threshold)
         {
-            string fileName = language == LanguageNames.CSharp ? "Test0.cs" : "Test0.vb";
-            return new DiagnosticResult
-            {
-                Id = CodeMetricsAnalyzer.CA1506RuleId,
-                Message = string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveClassCouplingMessage, symbolName, coupledTypesCount, namespaceCount, threshold),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation(fileName, line, column)
-                }
-            };
+            return new DiagnosticResult(CodeMetricsAnalyzer.CA1506RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
+                .WithLocation(line, column)
+                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveClassCouplingMessage)
+                .WithArguments(symbolName, coupledTypesCount, namespaceCount, threshold);
         }
 
         private static DiagnosticResult GetCA1509ExpectedDiagnostic(int line, int column, string entry, string additionalFile)
         {
-            return new DiagnosticResult
-            {
-                Id = CodeMetricsAnalyzer.CA1509RuleId,
-                Message = string.Format(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage, entry, additionalFile),
-                Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-                Locations = new[]
-                {
-                    new DiagnosticResultLocation(AdditionalFileName, line, column)
-                }
-            };
+            return new DiagnosticResult(CodeMetricsAnalyzer.CA1509RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
+                .WithLocation(AdditionalFileName, line, column)
+                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage)
+                .WithArguments(entry, additionalFile);
         }
 
         private const string AdditionalFileName = "CodeMetricsConfig.txt";

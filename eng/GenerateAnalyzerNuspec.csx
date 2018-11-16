@@ -1,13 +1,14 @@
 string nuspecFile = Args[0];
 string assetsDir = Args[1];
 string projectDir = Args[2];
-string tfm = Args[3];
-var metadataList = Args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var fileList = Args[5].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var assemblyList = Args[6].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var dependencyList = Args[7].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var rulesetsDir = Args[8];
-var legacyRulesets = Args[9].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+string configuration = Args[3];
+string tfm = Args[4];
+var metadataList = Args[5].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var fileList = Args[6].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var assemblyList = Args[7].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var dependencyList = Args[8].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var rulesetsDir = Args[9];
+var legacyRulesets = Args[10].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
 var result = new StringBuilder();
 
@@ -107,7 +108,7 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
             targets = allTargets;
         }
 
-        string path = Path.Combine(Path.GetFileNameWithoutExtension(assembly), tfm, assembly);
+        string path = Path.Combine(Path.GetFileNameWithoutExtension(assembly), configuration, tfm, assembly);
 
         foreach (string target in targets)
         {
@@ -117,7 +118,8 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
 
     foreach (string file in fileList)
     {
-        result.AppendLine(FileElement(Path.Combine(projectDir, file), "build"));
+        var fileWithPath = System.IO.Path.IsPathRooted(file) ? file : Path.Combine(projectDir, file);
+        result.AppendLine(FileElement(fileWithPath, "build"));
     }
 
     result.AppendLine(FileElement(Path.Combine(assetsDir, "Install.ps1"), "tools"));

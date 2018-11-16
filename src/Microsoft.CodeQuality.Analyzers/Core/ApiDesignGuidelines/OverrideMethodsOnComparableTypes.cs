@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                   isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                                   description: s_localizableDescription,
                                                                                   helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types",
-                                                                                  customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                  customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static readonly DiagnosticDescriptor RuleOperator = new DiagnosticDescriptor(RuleId,
                                                                                   s_localizableTitle,
@@ -46,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                   isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                                   description: s_localizableDescription,
                                                                                   helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types",
-                                                                                  customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                  customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static readonly DiagnosticDescriptor RuleBoth = new DiagnosticDescriptor(RuleId,
                                                                                   s_localizableTitle,
@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                   isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                                   description: s_localizableDescription,
                                                                                   helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1036-override-methods-on-comparable-types",
-                                                                                  customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                  customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleBoth, RuleEquals, RuleOperator);
 

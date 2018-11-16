@@ -26,7 +26,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                        isEnabledByDefault: false,
                                                                                        description: s_localizableDescription,
                                                                                        helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1017-mark-assemblies-with-comvisibleattribute",
-                                                                                       customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                       customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static readonly DiagnosticDescriptor RuleB = new DiagnosticDescriptor(RuleId,
                                                                                        s_localizableTitle,
@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                        isEnabledByDefault: false,
                                                                                        description: s_localizableDescription,
                                                                                        helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1017-mark-assemblies-with-comvisibleattribute",
-                                                                                       customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                       customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleA, RuleB);
 

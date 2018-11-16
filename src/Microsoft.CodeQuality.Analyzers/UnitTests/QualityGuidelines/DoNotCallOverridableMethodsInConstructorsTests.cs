@@ -3,6 +3,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -283,7 +284,7 @@ abstract class F : System.ComponentModel.Component
             Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
             project = project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location));
             DiagnosticAnalyzer analyzer = GetCSharpDiagnosticAnalyzer();
-            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer);
+            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer, GetDefaultPath(LanguageNames.CSharp));
         }
 
         [Fact]
@@ -334,7 +335,7 @@ End Class
             Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
             project = project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location));
             DiagnosticAnalyzer analyzer = GetBasicDiagnosticAnalyzer();
-            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer);
+            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer, GetDefaultPath(LanguageNames.VisualBasic));
         }
 
         [Fact]
@@ -374,6 +375,43 @@ Class C
             d.Foo()
         End If
     End Sub
+End Class
+");
+        }
+
+        [Fact, WorkItem(1652, "https://github.com/dotnet/roslyn-analyzers/issues/1652")]
+        public void CA2214VirtualInvocationsInLambdaCSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal abstract class A
+{
+    private readonly Lazy<int> _lazyField;
+    protected A()
+    {
+        _lazyField = new Lazy<int>(() => M());
+    }
+
+    protected abstract int M();
+}
+");
+        }
+
+        [Fact, WorkItem(1652, "https://github.com/dotnet/roslyn-analyzers/issues/1652")]
+        public void CA2214VirtualInvocationsInLambdaBasic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend MustInherit Class A
+    Private ReadOnly _lazyField As Lazy(Of Integer)
+
+    Protected Sub New()
+        _lazyField = New Lazy(Of Integer)(Function() M())
+    End Sub
+
+    Protected MustOverride Function M() As Integer
 End Class
 ");
         }

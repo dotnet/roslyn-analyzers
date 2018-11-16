@@ -24,6 +24,5 @@ namespace Microsoft.NetFramework.Analyzers
         public const string EnableDocumentFunction = "EnableDocumentFunction";
         public const string EnableScript = "EnableScript";
         public const string MaxCharactersFromEntities = "MaxCharactersFromEntities";
-        public const string CreateSignature = "CreateSignature";
     }
 }

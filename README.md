@@ -1,4 +1,5 @@
-﻿.NET Compiler Platform ("Roslyn") Analyzers
+﻿
+.NET Compiler Platform ("Roslyn") Analyzers
 ===========================================
 
 [![Join the chat at https://gitter.im/roslyn-analyzers/Lobby](https://badges.gitter.im/roslyn-analyzers/Lobby.svg)](https://gitter.im/roslyn-analyzers/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

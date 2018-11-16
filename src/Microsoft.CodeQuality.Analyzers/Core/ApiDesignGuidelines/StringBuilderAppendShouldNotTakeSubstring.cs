@@ -117,33 +117,31 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             startContext.RegisterOperationAction(
                 context =>
                 {
-                    if (context.Operation is IInvocationOperation invocation)
-                    {
-                        var invokedMethod = invocation.TargetMethod;
+                    var invocation = (IInvocationOperation) context.Operation;
+                    var invokedMethod = invocation.TargetMethod;
 
-                        if (invokedMethod == sourceAppendMethod)
+                    if (invokedMethod == sourceAppendMethod)
+                    {
+                        var argument = invocation.Arguments.FirstOrDefault();
+                        if (argument.Value is IInvocationOperation invocationExpression)
                         {
-                            var argument = invocation.Arguments.FirstOrDefault();
-                            if (argument.Value is IInvocationOperation invocationExpression)
+                            if (invocationExpression.TargetMethod == substring1ParameterMethod)
                             {
-                                if (invocationExpression.TargetMethod == substring1ParameterMethod)
-                                {
-                                    if (IsSideEffectFree(invocationExpression.Instance)
-                                        && IsSideEffectFree(invocationExpression.Arguments[0].Value))
-                                    {
-                                        context.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                RuleReplaceOneParameter,
-                                                invocation.Syntax.GetLocation()));
-                                    }
-                                }
-                                else if (invocationExpression.TargetMethod == substring2ParameterMethod)
+                                if (IsSideEffectFree(invocationExpression.Instance)
+                                    && IsSideEffectFree(invocationExpression.Arguments[0].Value))
                                 {
                                     context.ReportDiagnostic(
                                         Diagnostic.Create(
-                                            RuleReplaceTwoParameter,
+                                            RuleReplaceOneParameter,
                                             invocation.Syntax.GetLocation()));
                                 }
+                            }
+                            else if (invocationExpression.TargetMethod == substring2ParameterMethod)
+                            {
+                                context.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        RuleReplaceTwoParameter,
+                                        invocation.Syntax.GetLocation()));
                             }
                         }
                     }

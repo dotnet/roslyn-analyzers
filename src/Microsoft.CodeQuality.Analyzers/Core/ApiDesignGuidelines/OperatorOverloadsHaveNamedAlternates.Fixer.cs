@@ -118,7 +118,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             var containingType = (ITypeSymbol)operatorOverloadSymbol.ContainingType;
             ITypeSymbol returnType = operatorOverloadSymbol.ReturnType;
-            string expectedName = OperatorOverloadsHaveNamedAlternatesAnalyzer.GetExpectedAlternateMethodGroup(operatorOverloadSymbol.Name, returnType).AlternateMethod1;
+            ITypeSymbol parameterType = operatorOverloadSymbol.Parameters.FirstOrDefault()?.Type;
+            string expectedName = OperatorOverloadsHaveNamedAlternatesAnalyzer.GetExpectedAlternateMethodGroup(operatorOverloadSymbol.Name, returnType, parameterType).AlternateMethod1;
             switch (operatorOverloadSymbol.Name)
             {
                 case "op_GreaterThan":

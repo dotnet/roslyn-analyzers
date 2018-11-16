@@ -31,7 +31,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
             description: s_localizableDescription,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1061-do-not-hide-base-class-methods",
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -46,6 +46,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void SymbolAnalyzer(SymbolAnalysisContext context)
         {
             var method = (IMethodSymbol)context.Symbol;
+
+            // Bail out if this method is a constructor
+            if (method.IsConstructor())
+            {
+                return;
+            }
 
             // Bail out if this method overrides another (parameter types must match) or doesn't have any parameters
             if (method.IsOverride || !method.Parameters.Any())

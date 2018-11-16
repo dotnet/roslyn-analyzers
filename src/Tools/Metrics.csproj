@@ -3,10 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>net46</TargetFrameworks>
     <OutputType>Exe</OutputType>
+    <IsShipping>false</IsShipping>
   </PropertyGroup>
   <Import Project="..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Locator" Version="1.0.18" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="$(MicrosoftBuildLocatorVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="$(MicrosoftCodeAnalysisVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="$(MicrosoftCodeAnalysisVersion)" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="$(MicrosoftCodeAnalysisVersion)" />

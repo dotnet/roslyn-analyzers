@@ -27,8 +27,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1062-validate-arguments-of-public-methods",
-                                                                             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1062-validate-arguments-of-public-methods",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

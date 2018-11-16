@@ -106,6 +106,60 @@ public class CultureInfoTestClass2
         }
 
         [Fact]
+        public void CA1304_MethodOverloadHasCultureInfoAsFirstAndSecondArgument_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+
+public class CultureInfoTestClass2
+{
+    public static void Method(CultureInfo provider)
+    {
+        MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref provider);
+    }
+
+    public static void MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo provider)
+    {
+        MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref provider, CultureInfo.CurrentCulture);
+    }
+
+    public static void MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo provider, CultureInfo provider2)
+    {
+    }
+}",
+            // Test0.cs(9,9): warning CA1304: The behavior of 'CultureInfoTestClass2.MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo)' could vary based on the current user's locale settings. Replace this call in 'CultureInfoTestClass2.Method(CultureInfo)' with a call to 'CultureInfoTestClass2.MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo, CultureInfo)'.
+            GetCSharpResultAt(9, 9, SpecifyCultureInfoAnalyzer.Rule, "CultureInfoTestClass2.MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo)", "CultureInfoTestClass2.Method(CultureInfo)", "CultureInfoTestClass2.MethodOverloadHasCultureInfoAsFirstAndSecondArgument(ref CultureInfo, CultureInfo)"));
+        }
+
+        [Fact]
+        public void CA1304_MethodOverloadHasCultureInfoAsFirstArgument_RefKindRef_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+
+public class CultureInfoTestClass2
+{
+    public static void Method()
+    {
+        MethodOverloadHasCultureInfoAsFirstArgument(""Foo"");
+    }
+
+    public static void MethodOverloadHasCultureInfoAsFirstArgument(string format)
+    {
+        var provider = CultureInfo.CurrentCulture;
+        MethodOverloadHasCultureInfoAsFirstArgument(ref provider, format);
+    }
+
+    public static void MethodOverloadHasCultureInfoAsFirstArgument(ref CultureInfo provider, string format)
+    {
+        Console.WriteLine(string.Format(provider, format));
+    }
+}");
+        }
+
+        [Fact]
         public void CA1304_MethodOverloadHasCultureInfoAsLastArgument_CSharp()
         {
             VerifyCSharp(@"
@@ -135,6 +189,34 @@ public class CultureInfoTestClass2
     }
 }",
             GetCSharpResultAt(9, 9, SpecifyCultureInfoAnalyzer.Rule, "CultureInfoTestClass2.MethodOverloadHasCultureInfoAsLastArgument(string)", "CultureInfoTestClass2.Method()", "CultureInfoTestClass2.MethodOverloadHasCultureInfoAsLastArgument(string, CultureInfo)"));
+        }
+
+        [Fact]
+        public void CA1304_MethodOverloadHasCultureInfoAsLastArgument_RefKindOut_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+
+public class CultureInfoTestClass2
+{
+    public static void Method()
+    {
+        MethodOverloadHasCultureInfoAsLastArgument(""Foo"");
+    }
+
+    public static void MethodOverloadHasCultureInfoAsLastArgument(string format)
+    {
+        CultureInfo provider;
+        MethodOverloadHasCultureInfoAsLastArgument(format, out provider);
+    }
+
+    public static void MethodOverloadHasCultureInfoAsLastArgument(string format, out CultureInfo provider)
+    {
+        provider = CultureInfo.CurrentCulture;
+        Console.WriteLine(string.Format(provider, format));
+    }
+}");
         }
 
         [Fact]
@@ -299,6 +381,8 @@ public class CultureInfoTestClass2
         MethodOverloadHasMoreThanCultureInfo(""Foo"");
         // No Diag - Since the CultureInfo parameter is neither as the first parameter nor as the last parameter
         MethodOverloadWithJustCultureInfoAsInbetweenParameter("""", """");
+        // No Diag - Since the non-CultureInfo parameter in the overload has RefKind != RefKind.None
+        MethodOverloadHasNonCultureInfoWithRefKindRef("""");
     }
 
     public static void MethodOverloadHasInheritedCultureInfo(string format)
@@ -329,6 +413,16 @@ public class CultureInfoTestClass2
     public static void MethodOverloadWithJustCultureInfoAsInbetweenParameter(string a, CultureInfo provider, string b)
     {
         Console.WriteLine(string.Format(provider, """"));
+    }
+
+    public static void MethodOverloadHasNonCultureInfoWithRefKindRef(string format)
+    {
+        MethodOverloadHasNonCultureInfoWithRefKindRef(ref format, CultureInfo.CurrentCulture);
+    }
+
+    public static void MethodOverloadHasNonCultureInfoWithRefKindRef(ref string format, CultureInfo provider)
+    {
+        Console.WriteLine(string.Format(provider, format));
     }
 }
 

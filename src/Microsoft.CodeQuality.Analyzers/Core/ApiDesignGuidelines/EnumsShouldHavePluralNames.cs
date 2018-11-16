@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription_CA1714,
                 helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1714-flags-enums-should-have-plural-names",
-                customTags: WellKnownDiagnosticTags.Telemetry);
+                customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         #endregion
 
@@ -82,7 +82,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription_CA1717,
                 helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1717-only-flagsattribute-enums-should-have-plural-names",
-                customTags: WellKnownDiagnosticTags.Telemetry);
+                customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         #endregion
 

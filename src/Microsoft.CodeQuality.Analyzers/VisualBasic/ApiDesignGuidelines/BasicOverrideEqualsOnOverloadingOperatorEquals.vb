@@ -34,8 +34,8 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             s_localizableDescription,
-            "https://msdn.microsoft.com/en-us/library/ms182357.aspx",
-            WellKnownDiagnosticTags.Telemetry)
+            "https://docs.microsoft.com/visualstudio/code-quality/ca2224-override-equals-on-overloading-operator-equals",
+            FxCopWellKnownDiagnosticTags.PortedFxCopRule)
 
         Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor) = ImmutableArray.Create(Rule)
 

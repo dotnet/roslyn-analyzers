@@ -1,11 +1,9 @@
 {
-  "sdk": {
-    "version": "2.1.300-rtm-008866"
+  "tools": {
+    "dotnet": "2.1.401",
+    "vswhere": "2.2.7"
   },
   "msbuild-sdks": {
-    "RoslynTools.RepoToolset": "1.0.0-beta2-62922-02"
-  },
-  "vswhere": {
-    "version": "2.2.7"
+    "Microsoft.DotNet.Arcade.Sdk": "1.0.0-beta.18476.3"
   }
 }

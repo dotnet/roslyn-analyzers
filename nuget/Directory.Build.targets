@@ -1,16 +1,5 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
-  <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
-
-  <Import Project="Sdk.targets" Sdk="RoslynTools.RepoToolset" />
+  <Import Project="..\Directory.Build.targets" />
   <Import Project="$(RepoRoot)eng\GenerateAnalyzerNuspec.targets" Condition="'$(IsPackable)' == 'true'"/>
-
-  <!-- Nothing to build, just create packages -->
-  <Target Name="Build">
-    <MakeDir Directories="$(IntermediateOutputPath)" ContinueOnError="True"/>
-  </Target>
-  
-  <Target Name="Test" />
 </Project>

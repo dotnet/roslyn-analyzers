@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -460,13 +461,8 @@ End Namespace");
         [Fact]
         public void XmlTextReaderDerivedTypeParseAndUrlResolverMethodShouldGenerateDiagnostic()
         {
-            DiagnosticResult diagWith2Locations = GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodCSharpResultAt(17, 13, "method");
-
-            diagWith2Locations.Locations = new[]
-                {
-                    diagWith2Locations.Locations[0],
-                    new DiagnosticResultLocation(diagWith2Locations.Locations[0].Path, 18, 13)
-                };
+            DiagnosticResult diagWith2Locations = GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodCSharpResultAt(17, 13, "method")
+                .WithLocation(18, 13);
 
             VerifyCSharp(@"
 using System;
@@ -492,13 +488,8 @@ namespace TestNamespace
                 diagWith2Locations
             );
 
-            diagWith2Locations = GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodBasicResultAt(13, 13, "method");
-
-            diagWith2Locations.Locations = new[]
-                {
-                    diagWith2Locations.Locations[0],
-                    new DiagnosticResultLocation(diagWith2Locations.Locations[0].Path, 14, 13)
-                };
+            diagWith2Locations = GetCA3077XmlTextReaderDerivedClassSetInsecureSettingsInMethodBasicResultAt(13, 13, "method")
+                .WithLocation(14, 13);
 
             VerifyBasic(@"
 Imports System.Xml

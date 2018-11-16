@@ -27,8 +27,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly string s_category = DiagnosticCategory.Design;
         private const DiagnosticSeverity Severity = DiagnosticHelpers.DefaultDiagnosticSeverity;
         private const string HelpLinkUrl = "https://docs.microsoft.com/visualstudio/code-quality/ca1034-nested-types-should-not-be-visible";
-        private static readonly string[] s_customTags = { WellKnownDiagnosticTags.Telemetry };
-
+        
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,
@@ -37,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
-                                                                             customTags: s_customTags);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor VisualBasicModuleRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageVisualBasicModule,
@@ -46,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
-                                                                             customTags: s_customTags);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, VisualBasicModuleRule);
 

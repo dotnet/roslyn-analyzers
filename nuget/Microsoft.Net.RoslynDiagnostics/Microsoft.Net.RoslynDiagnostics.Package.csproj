@@ -10,6 +10,9 @@
     <Summary>Diagnostic Analyzers consumed by Roslyn.sln (https://github.com/dotnet/roslyn)</Summary>
     <ReleaseNotes>$(Description)</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+
+    <!-- We include a custom "Microsoft.Net.RoslynDiagnostics.props" as "AnalyzerNupkgFile" item below, so avoid generating one.-->
+    <GeneratePackagePropsFile>false</GeneratePackagePropsFile>
   </PropertyGroup>
   
   <ItemGroup>

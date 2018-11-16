@@ -3,19 +3,11 @@
   <Import Project="..\Directory.Build.props"/>
 
   <PropertyGroup>
-    <ImportNetSdkFromRepoToolset>false</ImportNetSdkFromRepoToolset>
-  </PropertyGroup>
-
-  <Import Project="Sdk.props" Sdk="RoslynTools.RepoToolset" />
-  
-  <PropertyGroup>
     <!-- TODO: Remove suppressions of Xunit warnings: https://github.com/dotnet/roslyn-analyzers/issues/1257 -->
     <NoWarn>$(NoWarn);xUnit1004;xUnit2000;xUnit2003;xUnit2004;xUnit2009;xUnit2010;xUnit1013</NoWarn>
 
     <DefineConstants Condition="'$(BUILDING_VSIX)' == 'true'">$(DefineConstants),BUILDING_VSIX</DefineConstants>
-
-    <!-- Set 'IsProductComponent = false' as we are not shipping in the box with Visual Studio -->
-    <IsProductComponent>false</IsProductComponent>
+    <DefineConstants Condition="'$(LEGACY_CODE_METRICS_MODE)' == 'true'">$(DefineConstants),LEGACY_CODE_METRICS_MODE</DefineConstants>
   </PropertyGroup>
 
   <!-- Test runner configuration -->

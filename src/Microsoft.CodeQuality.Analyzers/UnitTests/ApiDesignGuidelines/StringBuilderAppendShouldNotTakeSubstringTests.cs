@@ -165,6 +165,26 @@ public class C
             VerifyCSharp(code);
         }
 
+        [Fact]
+        public void ShouldNotReportDiagnosticWhenStartIndexIsUnsafe()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    public static string GetText() => string.Empty;
+
+    public string Append()
+    {
+        var sb = new StringBuilder();
+        sb.Append(GetText().Substring(2));
+        return sb.ToString();
+    }
+}";
+            VerifyCSharp(code);
+        }
+
         [Theory]
         [InlineData(OperationKind.ArrayElementReference, "pArray[1]")]
         [InlineData(OperationKind.DefaultValue, "default(string)")]

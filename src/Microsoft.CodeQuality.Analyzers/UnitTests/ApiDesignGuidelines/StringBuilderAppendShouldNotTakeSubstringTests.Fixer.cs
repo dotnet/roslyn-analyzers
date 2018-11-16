@@ -317,6 +317,38 @@ public class C
             VerifyCSharpFix(code, fixedCode);
         }
 
+        [Fact]
+        public void ReplaceWhenSbAppendIsAParameterToValidateGetInnermostForTie()
+        {
+            const string code = @"
+using System.Text;
+
+public class C
+{
+    public void Log(StringBuilder x) {}
+
+    public void Append(string text)
+    {
+        var sb = new StringBuilder();
+        this.Log(sb.Append(text.Substring(2)));
+    }
+}";
+            const string fixedCode = @"
+using System.Text;
+
+public class C
+{
+    public void Log(StringBuilder x) {}
+
+    public void Append(string text)
+    {
+        var sb = new StringBuilder();
+        this.Log(sb.Append(text, 2, text.Length - 2));
+    }
+}";
+            VerifyCSharpFix(code, fixedCode);
+        }
+
         /// <summary>
         /// the following test must not apply a fix - not even find a diagnostic.
         /// On the first sight it looks like it could produce the following fixed code:
@@ -436,6 +468,39 @@ End Class
             VerifyBasicFix(Code, FixedCode);
         }
 
+        [Fact]
+        public void ReplaceWhenSbAppendIsAParameterToValidateGetInnermostForTieBasic()
+        {
+            const string code = @"
+Imports System.Text
+
+Public Class C
+    Public Function Log(ByRef x As StringBuilder) As String
+        Return x.ToString()
+    End Function
+
+    Public Function Append(ByVal text As String) As String
+        Dim sb = New StringBuilder()
+        Return Log(sb.Append(text.Substring(2)))
+    End Function
+End Class
+";
+            const string fixedCode = @"
+Imports System.Text
+
+Public Class C
+    Public Function Log(ByRef x As StringBuilder) As String
+        Return x.ToString()
+    End Function
+
+    Public Function Append(ByVal text As String) As String
+        Dim sb = New StringBuilder()
+        Return Log(sb.Append(text, 2, text.Length - 2))
+    End Function
+End Class
+";
+            VerifyBasicFix(code, fixedCode);
+        }
         [Fact]
         public void FixesAllOnExampleFromTicket()
         {

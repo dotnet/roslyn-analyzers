@@ -78,7 +78,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             var substringMethods = stringSymbol.GetMembers(nameof(string.Substring)).OfType<IMethodSymbol>();
             var substring1ParameterMethod = substringMethods
-                .SingleOrDefault(substring => substring.Parameters.Length == 1
+                .FirstOrDefault(substring => substring.Parameters.Length == 1
                                     && substring.Parameters[0].Type.SpecialType == SpecialType.System_Int32);
 
             if (substring1ParameterMethod is null)
@@ -87,7 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             var substring2ParameterMethod = substringMethods
-                .SingleOrDefault(substring => substring.Parameters.Length == 2
+                .FirstOrDefault(substring => substring.Parameters.Length == 2
                                               && substring.Parameters[0].Type.SpecialType == SpecialType.System_Int32
                                               && substring.Parameters[1].Type.SpecialType == SpecialType.System_Int32);
 

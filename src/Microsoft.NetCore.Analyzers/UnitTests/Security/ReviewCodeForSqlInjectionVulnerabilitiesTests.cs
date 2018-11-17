@@ -8,6 +8,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     using Test.Utilities;
     using Xunit;
 
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
     public class ReviewCodeForSqlInjectionVulnerabilitiesTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
@@ -40,8 +41,27 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             this.VerifyCSharp(source, ReferenceFlags.AddTestReferenceAssembly, expected);
         }
 
+        protected DiagnosticResult GetBasicResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
+        {
+            this.PrintActualDiagnosticsOnFailure = true;
+            return GetBasicResultAt(
+                new[] {
+                    Tuple.Create(sinkLine, sinkColumn),
+                    Tuple.Create(sourceLine, sourceColumn)
+                },
+                ReviewCodeForSqlInjectionVulnerabilities.Rule,
+                sink,
+                sinkContainingMethod,
+                source,
+                sourceContainingMethod);
+        }
+
+        protected void VerifyBasicWithDependencies(string source, params DiagnosticResult[] expected)
+        {
+            this.VerifyBasic(source, ReferenceFlags.AddTestReferenceAssembly, expected);
+        }
+
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalString_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -75,7 +95,34 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_LocalString_VB_Diagnostic()
+        {
+            VerifyBasicWithDependencies(@"
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Linq
+Imports System.Web
+Imports System.Web.UI
+
+Namespace VulnerableWebApp
+    Partial Public Class WebForm
+        Inherits System.Web.UI.Page
+
+        Protected Sub Page_Load(sender As Object, e As EventArgs)
+            Dim input As String = Me.Request.Form(""In"")
+            If Me.Request.Form IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(input) Then
+                Dim sqlCommand As SqlCommand = New SqlCommand() With {.CommandText = input,
+                                                                      .CommandType = CommandType.Text}
+            End If
+        End Sub
+    End Class
+End Namespace
+            ",
+                GetBasicResultAt(16, 72, 14, 35, "Property SqlCommand.CommandText As String", "Sub WebForm.Page_Load(sender As Object, e As EventArgs)", "Property HttpRequest.Form As NameValueCollection", "Sub WebForm.Page_Load(sender As Object, e As EventArgs)"));
+        }
+
+        [Fact]
         public void HttpRequest_Form_DelegateInvocation_OutParam_LocalString_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -112,9 +159,7 @@ namespace VulnerableWebApp
                 GetCSharpResultAt(24, 21, 19, 26, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
-
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_InterfaceInvocation_OutParam_LocalString_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -152,7 +197,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalStringMoreBlocks_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -192,7 +236,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_And_QueryString_LocalStringMoreBlocks_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -233,7 +276,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Direct_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -263,7 +305,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Substring_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -294,7 +335,6 @@ namespace VulnerableWebApp
 
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void Sanitized_HttpRequest_Form_Direct_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -323,7 +363,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void Sanitized_HttpRequest_Form_TryParse_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -356,7 +395,6 @@ namespace VulnerableWebApp
 
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Item_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -386,7 +424,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Item_Enters_SqlParameters_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -419,7 +456,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Item_Sql_Constructor_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -446,7 +482,6 @@ namespace VulnerableWebApp
 
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Method_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -477,7 +512,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalNameValueCollectionString_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -509,7 +543,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_List_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -542,7 +575,6 @@ namespace VulnerableWebApp
         }
 
         [Fact(Skip = "Would be nice to distinguish between tainted and non-tainted elements in the List, but for now we taint the entire List from its construction.  FxCop also has a false positive.")]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_List_SafeElement_Diagnostic()
         {
             // Would be nice to distinguish between tainted and non-tainted elements in the List, but for now we taint the entire List from its construction.  FxCop also has a false positive.
@@ -577,7 +609,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Array_List_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -612,7 +643,6 @@ namespace VulnerableWebApp
 
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_Array_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -645,7 +675,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalStructNameValueCollectionString_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -686,7 +715,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_Form_LocalStructConstructorNameValueCollectionString_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -734,7 +762,48 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
+        public void HttpRequest_Form_LocalStructConstructorNameValueCollectionString_VB_Diagnostic()
+        {
+            VerifyBasicWithDependencies(@"
+Imports System
+Imports System.Collections.Specialized
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Linq
+Imports System.Web
+Imports System.Web.UI
+
+
+Namespace VulnerableWebApp
+    Public Structure MyStruct
+        Public Sub MyStruct(v As NameValueCollection)
+            Me.nvc = v
+            Me.s = Nothing
+        End Sub
+
+
+        Public nvc As NameValueCollection
+        Public s As String
+    End Structure
+
+    Partial Public Class WebForm
+        Inherits System.Web.UI.Page
+
+        Protected Sub Page_Load(sender As Object, e As EventArgs)
+            Dim myStruct As MyStruct = New MyStruct()
+            myStruct.nvc = Me.Request.Form
+            myStruct.s = myStruct.nvc(""in"")
+            Dim input As String = myStruct.s
+            Dim sqlCommand As SqlCommand = New SqlCommand() With {.CommandText = input,
+                                                                  .CommandType = CommandType.Text}
+            End Sub
+    End Class
+End Namespace
+",
+                GetBasicResultAt(31, 68, 28, 28, "Property SqlCommand.CommandText As String", "Sub WebForm.Page_Load(sender As Object, e As EventArgs)", "Property HttpRequest.Form As NameValueCollection", "Sub WebForm.Page_Load(sender As Object, e As EventArgs)"));
+        }
+
+        [Fact]
         public void HttpRequest_UserLanguages_Direct_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -764,7 +833,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_UserLanguages_LocalStringArray_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -795,7 +863,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HttpRequest_UserLanguages_LocalStringModified_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -826,7 +893,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void OkayInputLocalStructNameValueCollectionString_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -868,7 +934,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void OkayInputConst_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -897,7 +962,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void DataBoundLiteralControl_DirectImplementation_Text()
         {
             VerifyCSharpWithDependencies(@"
@@ -927,7 +991,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void DataBoundLiteralControl_Interface_Text()
         {
             VerifyCSharpWithDependencies(@"
@@ -957,7 +1020,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void HtmlInputButton_Value()
         {
             // HtmlInputButton derives from HtmlInputControl, and HtmlInputControl.Value is a tainted data source.
@@ -988,7 +1050,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void SimpleInterprocedural()
         {
             VerifyCSharpWithDependencies(@"
@@ -1027,7 +1088,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void SimpleLocalFunction()
         {
             VerifyCSharpWithDependencies(@"
@@ -1063,7 +1123,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodReturnsTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1106,7 +1165,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodReturnsTaintedButOutputUntainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1149,7 +1207,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodReturnsTaintedButRefUntainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1193,7 +1250,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodReturnsUntaintedButOutputTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1237,7 +1293,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodReturnsUntaintedButRefTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1282,7 +1337,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodReturnsNotTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1324,7 +1378,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodSanitizesTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1366,7 +1419,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodOutParameterTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1409,7 +1461,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodOutParameterNotTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1451,7 +1502,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void IntermediateMethodOutParameterSanitizesTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1493,7 +1543,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinaryReturnsDefaultStillTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1540,7 +1589,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinaryReturnsInputStillTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1586,7 +1634,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinarySetsOutputToDefaultStillTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1633,7 +1680,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinarySetsReferenceToDefaultStillTainted()
         {
             VerifyCSharpWithDependencies(@"
@@ -1681,7 +1727,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_TaintedObject_Property_ConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -1722,7 +1767,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_TaintedObject_Property_Default()
         {
             VerifyCSharpWithDependencies(@"
@@ -1764,7 +1808,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_TaintedObject_Method_ReturnsConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -1805,7 +1848,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_TaintedObject_Method_SetsOutputToConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -1848,7 +1890,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_TaintedObject_Method_SetsReferenceToConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -1892,7 +1933,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_TaintedObject_Method_ReturnsDefault()
         {
             VerifyCSharpWithDependencies(@"
@@ -1934,7 +1974,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_TaintedObject_Method_SetsReferenceToDefault()
         {
             VerifyCSharpWithDependencies(@"
@@ -1979,7 +2018,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_TaintedObject_Method_ReturnsDefault_UntaintedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2021,7 +2059,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Property_ConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2061,7 +2098,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Property_Default()
         {
             VerifyCSharpWithDependencies(@"
@@ -2101,7 +2137,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_ReturnsConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2141,7 +2176,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_SetsOutputToConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2183,7 +2217,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_SetsReferenceToConstructedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2226,7 +2259,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_ReturnsDefault()
         {
             VerifyCSharpWithDependencies(@"
@@ -2267,7 +2299,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_SetsReferenceToDefault()
         {
             VerifyCSharpWithDependencies(@"
@@ -2310,7 +2341,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_ReturnsDefault_UntaintedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2350,7 +2380,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_ReturnsDefault_TaintedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2392,7 +2421,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_ReturnsInput_TaintedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2433,7 +2461,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_ReturnsRandom_TaintedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2475,7 +2502,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_SetsOutputToDefault_TaintedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2518,7 +2544,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_SetsOutputToInput_TaintedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2560,7 +2585,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void CrossBinary_UntaintedObject_Method_SetsOutputToRandom_TaintedInput()
         {
             VerifyCSharpWithDependencies(@"
@@ -2603,7 +2627,6 @@ namespace VulnerableWebApp
         }
 
         [Fact]
-        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
         public void NonMonotonicMergeAssert()
         {
             VerifyCSharpWithDependencies(@"

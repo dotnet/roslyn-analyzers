@@ -11,6 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
     using Microsoft.CodeAnalysis.Operations;
     using Microsoft.NetCore.Analyzers.Security.Helpers;
+    using System.Collections.Generic;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class ReviewCodeForSqlInjectionVulnerabilities : DiagnosticAnalyzer
@@ -20,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForSqlInjectionVulnerabilitiesTitle),
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForSqlInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null); // TODO paulming: Help link.
+            helpLinkUri: null); // TODO paulming: Help link.  https://github.com/dotnet/roslyn-analyzers/issues/1892
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -54,20 +55,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                         {
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
 
-                            bool requiresTaintedDataAnalysis = false;
+                            HashSet<IOperation> rootOperationsNeedingAnalysis = new HashSet<IOperation>();
 
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
                                 {
-                                    if (requiresTaintedDataAnalysis)
-                                    {
-                                        return;
-                                    }
-
                                     IPropertyReferenceOperation propertyReferenceOperation = (IPropertyReferenceOperation)operationAnalysisContext.Operation;
                                     if (sourceInfoSymbolMap.IsSourceProperty(propertyReferenceOperation.Property))
                                     {
-                                        requiresTaintedDataAnalysis = true;
+                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
                                     }
                                 },
                                 OperationKind.PropertyReference);
@@ -75,15 +71,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
                                 {
-                                    if (requiresTaintedDataAnalysis)
-                                    {
-                                        return;
-                                    }
-
                                     IInvocationOperation invocationOperation = (IInvocationOperation) operationAnalysisContext.Operation;
                                     if (sourceInfoSymbolMap.IsSourceMethod(invocationOperation.TargetMethod))
                                     {
-                                        requiresTaintedDataAnalysis = true;
+                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
                                     }
                                 },
                                 OperationKind.Invocation);
@@ -91,38 +82,43 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartContext.RegisterOperationBlockEndAction(
                                 operationBlockAnalysisContext =>
                                 {
-                                    if (!requiresTaintedDataAnalysis)
+                                    if (!rootOperationsNeedingAnalysis.Any())
                                     {
                                         return;
                                     }
 
-                                    TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.GetOrComputeResult(
-                                        operationBlockAnalysisContext.OperationBlocks[0].GetEnclosingControlFlowGraph(),
-                                        operationBlockAnalysisContext.Compilation,
-                                        operationBlockAnalysisContext.OwningSymbol,
-                                        sourceInfoSymbolMap,
-                                        new TaintedDataSymbolMap<SanitizerInfo>(
-                                            wellKnownTypeProvider,
-                                            PrimitiveTypeConverterSanitizers.SanitizerInfos),
-                                        sinkInfoSymbolMap);
-                                    foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
+                                    foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                     {
-                                        if (sourceSink.SinkKind != SinkKind.Sql)
+                                        TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.GetOrComputeResult(
+                                            rootOperation.GetEnclosingControlFlowGraph(),
+                                            operationBlockAnalysisContext.Compilation,
+                                            operationBlockAnalysisContext.OwningSymbol,
+                                            sourceInfoSymbolMap,
+                                            new TaintedDataSymbolMap<SanitizerInfo>(
+                                                wellKnownTypeProvider,
+                                                PrimitiveTypeConverterSanitizers.SanitizerInfos),
+                                            sinkInfoSymbolMap);
+                                        foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                         {
-                                            continue;
-                                        }
+                                            if (sourceSink.SinkKind != SinkKind.Sql)
+                                            {
+                                                continue;
+                                            }
 
-                                        foreach (SymbolAccess sourceOrigin in sourceSink.SourceOrigins)
-                                        {
-                                            Diagnostic diagnostic = Diagnostic.Create(
-                                                Rule,
-                                                sourceSink.Sink.Location,
-                                                new Location[] { sourceOrigin.Location },
-                                                sourceSink.Sink.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                sourceSink.Sink.AccessingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                sourceOrigin.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                                                sourceOrigin.AccessingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
-                                            operationBlockAnalysisContext.ReportDiagnostic(diagnostic);
+                                            foreach (SymbolAccess sourceOrigin in sourceSink.SourceOrigins)
+                                            {
+                                                // CA3001: Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.
+                                                Diagnostic diagnostic = Diagnostic.Create(
+                                                    Rule,
+                                                    sourceSink.Sink.Location,
+                                                    additionalLocations: new Location[] { sourceOrigin.Location },
+                                                    messageArgs: new object[] {
+                                                    sourceSink.Sink.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                                                    sourceSink.Sink.AccessingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                                                    sourceOrigin.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                                                    sourceOrigin.AccessingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)});
+                                                operationBlockAnalysisContext.ReportDiagnostic(diagnostic);
+                                            }
                                         }
                                     }
                                 });

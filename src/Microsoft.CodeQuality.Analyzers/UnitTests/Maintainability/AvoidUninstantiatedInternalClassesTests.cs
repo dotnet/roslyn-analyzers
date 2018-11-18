@@ -1211,6 +1211,26 @@ Module Library
 End Module");
         }
 
+        [Fact, WorkItem(1739, "https://github.com/dotnet/roslyn-analyzers/issues/1739")]
+        public void CA1812_CSharp_NoDiagnostic_GenericTypeWithRecursiveConstraint()
+        {
+            VerifyCSharp(@"
+public abstract class JobStateBase<TState>
+    where TState : JobStateBase<TState>, new()
+{
+    public void SomeFunction ()
+    {
+        new JobStateChangeHandler<TState>();
+    }
+}
+
+public class JobStateChangeHandler<TState>
+    where TState : JobStateBase<TState>, new()
+{
+}
+");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new AvoidUninstantiatedInternalClassesAnalyzer();

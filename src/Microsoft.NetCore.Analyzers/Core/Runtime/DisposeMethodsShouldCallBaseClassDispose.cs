@@ -33,10 +33,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2215-dispose-methods-should-call-base-class-dispose",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
+            //ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {

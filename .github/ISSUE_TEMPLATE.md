@@ -4,7 +4,7 @@ Example: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/
 
 #### Package Version
 
-Example: v2.6.1
+Example: v2.6.2
 
 #### Diagnostic ID
 

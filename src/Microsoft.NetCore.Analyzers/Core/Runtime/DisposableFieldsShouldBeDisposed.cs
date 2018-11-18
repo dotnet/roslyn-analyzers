@@ -31,8 +31,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed",
-                                                                             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

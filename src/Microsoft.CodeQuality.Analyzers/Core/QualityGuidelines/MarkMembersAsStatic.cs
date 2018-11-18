@@ -32,8 +32,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1822-mark-members-as-static",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

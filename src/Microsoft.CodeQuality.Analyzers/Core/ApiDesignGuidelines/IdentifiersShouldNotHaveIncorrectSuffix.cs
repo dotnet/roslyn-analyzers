@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MemberNewerVersionRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberNewerVersion,
@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor TypeNewerVersionRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTypeNewerVersion,
@@ -54,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MemberWithAlternateRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberWithAlternate,
@@ -63,7 +63,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
             TypeNoAlternateRule,

@@ -4,6 +4,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     using System;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.NetCore.Analyzers.Security;
     using Test.Utilities;
     using Xunit;

@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                     isEnabledByDefault: false,
                                                                                     helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
-                                                                                    customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                    customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor IncreaseVisibilityRule = new DiagnosticDescriptor(RuleId,
                                                                                                s_localizableTitle,
@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                                DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                                isEnabledByDefault: false,
                                                                                                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
-                                                                                               customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                               customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor RemoveSetterRule = new DiagnosticDescriptor(RuleId,
                                                                                          s_localizableTitle,
@@ -54,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                          isEnabledByDefault: false,
                                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
-                                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, IncreaseVisibilityRule, RemoveSetterRule);
 

@@ -38,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

@@ -31,7 +31,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              helpLinkUri: null,     // TODO: add MSDN url
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
+            //ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

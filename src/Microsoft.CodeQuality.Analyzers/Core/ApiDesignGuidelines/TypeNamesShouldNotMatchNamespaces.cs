@@ -33,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1724-type-names-should-not-match-namespaces",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor SystemRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystem,
@@ -42,7 +42,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1724-type-names-should-not-match-namespaces",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
@@ -108,14 +108,37 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 });
         }
 
-        private static void AddNamespacesFromCompilation(ConcurrentBag<string> namespaceNamesInCompilation, INamespaceSymbol @namespace)
+        private static bool AddNamespacesFromCompilation(ConcurrentBag<string> namespaceNamesInCompilation, INamespaceSymbol @namespace)
         {
-            namespaceNamesInCompilation.Add(@namespace.ToDisplayString());
+            bool hasExternallyVisibleType = false;
 
             foreach (INamespaceSymbol namespaceMember in @namespace.GetNamespaceMembers())
             {
-                AddNamespacesFromCompilation(namespaceNamesInCompilation, namespaceMember);
+                if (AddNamespacesFromCompilation(namespaceNamesInCompilation, namespaceMember))
+                {
+                    hasExternallyVisibleType = true;
+                }
             }
+
+            if (!hasExternallyVisibleType)
+            {
+                foreach (var type in @namespace.GetTypeMembers())
+                {
+                    if (type.IsExternallyVisible())
+                    {
+                        hasExternallyVisibleType = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasExternallyVisibleType)
+            {
+                namespaceNamesInCompilation.Add(@namespace.ToDisplayString());
+                return true;
+            }
+
+            return false;
         }
 
         private static void InitializeWellKnownSystemNamespaceTable()

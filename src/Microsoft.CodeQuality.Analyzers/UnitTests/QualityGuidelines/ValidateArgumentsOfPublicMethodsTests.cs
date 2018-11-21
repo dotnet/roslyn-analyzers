@@ -3664,7 +3664,7 @@ public class Class1
             GetCSharpResultAt(115, 28, "void Class1.Method(IContext aContext)", "aContext"));
         }
 
-        [Fact, WorkItem(1891, "https://github.com/dotnet/roslyn-analyzers/issues/1891")]
+        [Fact]
         public void MakeNullAndMakeMayBeNullAssert()
         {
             VerifyCSharp(@"
@@ -3722,6 +3722,40 @@ public class Class1
 }",
             // Test0.cs(10,31): warning CA1062: In externally visible method 'void Class1.M1(Class1 node, bool flag1, bool flag2)', validate parameter 'node' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(10, 31, "void Class1.M1(Class1 node, bool flag1, bool flag2)", "node"));
+        }
+
+        [Fact]
+        public void OutParameterAssert()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(string s, bool b)
+    {
+        C2.M(s, b);
+    }
+}
+
+internal class C2
+{
+    public static void M(string s, bool b)
+    {
+        char? unused;
+        M(s, b, out unused);
+    }
+
+    public static void M(string s, bool b, out char? ch)
+    {
+        ch = null;
+        while (b)
+        {
+            if (!string.IsNullOrEmpty(s))
+            {
+                ch = s[0];
+            }
+        }
+    }
+}");
         }
     }
 }

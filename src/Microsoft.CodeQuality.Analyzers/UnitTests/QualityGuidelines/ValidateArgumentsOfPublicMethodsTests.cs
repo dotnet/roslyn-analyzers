@@ -3663,5 +3663,65 @@ public class Class1
             // Test0.cs(115,28): warning CA1062: In externally visible method 'void Class1.Method(IContext aContext)', validate parameter 'aContext' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(115, 28, "void Class1.Method(IContext aContext)", "aContext"));
         }
+
+        [Fact, WorkItem(1891, "https://github.com/dotnet/roslyn-analyzers/issues/1891")]
+        public void MakeNullAndMakeMayBeNullAssert()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Class1
+{
+    public virtual void M1(Class1 node, bool flag1, bool flag2)
+    {
+        foreach (var child in node.M2())
+        {
+            if (flag1)
+            {
+                if (flag2)
+                {
+                    M1(child);
+                }
+            }
+            else if (flag2)
+            {
+                if (!flag1)
+                {
+                    M3(child);
+                }
+            }
+        }
+    }
+
+    public virtual void M1(Class1 node)
+    {
+    }
+
+    private Enumerator M2() => default(Enumerator);
+
+    private void M3(object o) { }
+
+    private struct Enumerator : IReadOnlyList<Class1>
+    {
+        public Class1 this[int index] => throw new NotImplementedException();
+
+        public int Count => throw new NotImplementedException();
+
+        public IEnumerator<Class1> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}",
+            // Test0.cs(10,31): warning CA1062: In externally visible method 'void Class1.M1(Class1 node, bool flag1, bool flag2)', validate parameter 'node' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(10, 31, "void Class1.M1(Class1 node, bool flag1, bool flag2)", "node"));
+        }
     }
 }

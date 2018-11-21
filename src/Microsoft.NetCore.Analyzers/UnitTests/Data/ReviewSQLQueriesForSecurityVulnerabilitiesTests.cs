@@ -1588,5 +1588,37 @@ class C { }", ReferenceFlags.RemoveSystemData);
 Class C
 End Class", ReferenceFlags.RemoveSystemData);
         }
+
+        [Fact]
+        public void HttpRequest_Form_LocalString_Diagnostic()
+        {
+            VerifyCSharp($@"
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+{SetupCodeCSharp}
+
+    public partial class WebForm : System.Web.UI.Page
+    {{
+        protected void Page_Load(object sender, EventArgs e)
+        {{
+            string input = Request.Form[""in""];
+            if (Request.Form != null && !String.IsNullOrWhiteSpace(input))
+            {{
+                Command sqlCommand = new Command()
+                {{
+                    CommandText = input,
+                    CommandType = CommandType.Text,
+                }};
+            }}
+        }}
+     }}
+            ",
+                GetCSharpResultAt(102, 21, "string Command.CommandText", "Page_Load"));
+        }
     }
 }

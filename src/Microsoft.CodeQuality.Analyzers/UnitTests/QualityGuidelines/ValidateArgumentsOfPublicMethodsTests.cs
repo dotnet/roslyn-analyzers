@@ -3757,5 +3757,29 @@ internal class C2
     }
 }");
         }
+
+        [Fact]
+        public void GetValueOrDefaultAssert()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public bool Flag;
+    public object Old;
+    public object New;
+
+    public bool Equals(S other)
+    {
+        return this.Flag == other.Flag
+            && (this.Old == null ? other.Old == null : this.Old.Equals(other.Old))
+            && (this.New == null ? other.New == null : this.New.Equals(other.New));
+    }
+ 
+    public override bool Equals(object obj)
+    {
+        return obj is S && Equals((S)obj);
+    }
+}");
+        }
     }
 }

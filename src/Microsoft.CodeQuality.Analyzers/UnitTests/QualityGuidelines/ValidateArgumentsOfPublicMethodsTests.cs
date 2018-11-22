@@ -3781,5 +3781,43 @@ public struct S
     }
 }");
         }
+
+        [Fact]
+        public void GetValueOrDefaultAssert_02()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public object Node;
+    public int Index;
+    public S2 Token;
+
+    public bool Equals(S other)
+    {
+        return Node == other.Node && Index == other.Index && Token.Equals(other.Token);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is S && Equals((S)obj);
+    }
+}
+
+public struct S2
+{
+    public object Parent { get; } 
+    internal object Node { get; } 
+    internal int Index { get; } 
+    internal int Position { get; }
+
+    public bool Equals(S2 other)
+    {
+        return Parent == other.Parent &&
+            Node == other.Node &&
+            Position == other.Position &&
+            Index == other.Index;
+    }
+}");
+        }
     }
 }

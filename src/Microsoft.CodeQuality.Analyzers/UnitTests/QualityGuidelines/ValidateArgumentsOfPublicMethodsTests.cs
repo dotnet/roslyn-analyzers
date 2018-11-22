@@ -3819,5 +3819,29 @@ public struct S2
     }
 }");
         }
+
+        [Fact]
+        public void SameFlowCaptureIdAcrossInterproceduralMethod()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public bool Flag;
+    public void M(C c, bool flag)
+    {
+        c = c ?? Create(flag);
+    }
+
+    public C Create(bool flag)
+    {
+        if (Flag == flag)
+        {
+            return this;
+        }
+
+        return new C() { Flag = flag };
+    }
+}");
+        }
     }
 }

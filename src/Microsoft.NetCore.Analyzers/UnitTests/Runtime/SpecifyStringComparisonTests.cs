@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -160,6 +161,40 @@ public class StringComparisonTests
 GetCA1307CSharpResultsAt(9, 9, "StringComparisonTests.DoNothing(string)",
                                "StringComparisonTests.NonString()",
                                "StringComparisonTests.DoNothing<T>(string, System.StringComparison)"));
+        }
+
+        [Fact]
+        public void CA1307_OverloadWithMismatchRefKind_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Globalization;
+
+public class StringComparisonTests
+{
+    public void MyMethod()
+    {
+        M("""");
+    }
+
+    public void M(string str)
+    {
+    }
+
+    public void M(string str, out StringComparison strCompare)
+    {
+        strCompare = StringComparison.Ordinal;
+    }
+
+    public void M(ref StringComparison strCompare, string str)
+    {
+        strCompare = StringComparison.Ordinal;
+    }
+
+    public void M(ref string str, StringComparison strCompare)
+    {
+    }
+}");
         }
 
         [Fact]

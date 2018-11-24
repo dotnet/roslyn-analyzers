@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
+using Xunit;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {

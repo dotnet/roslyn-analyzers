@@ -3,6 +3,7 @@
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -151,11 +152,7 @@ using System.Reflection;
 ");
         }
 
-        private static readonly DiagnosticResult s_diagnostic = new DiagnosticResult
-        {
-            Id = MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016RuleId,
-            Severity = DiagnosticHelpers.DefaultDiagnosticSeverity,
-            Message = MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage
-        };
+        private static readonly DiagnosticResult s_diagnostic = new DiagnosticResult(MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
+            .WithMessageFormat(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage);
     }
 }

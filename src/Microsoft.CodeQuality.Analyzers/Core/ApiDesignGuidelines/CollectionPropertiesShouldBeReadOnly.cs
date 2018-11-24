@@ -44,7 +44,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                     isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                     description: s_localizableDescription,
                                                                     helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2227-collection-properties-should-be-read-only",
-                                                                    customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                    customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

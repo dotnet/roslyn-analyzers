@@ -12,6 +12,7 @@ namespace Microsoft.NetFramework.Analyzers
     public partial class MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA3147";
+        private const string HelpLinkUri = "https://aka.ms/ca3147";
 
         private static readonly LocalizableString Title = new LocalizableResourceString(
             nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenTitle),
@@ -49,7 +50,8 @@ namespace Microsoft.NetFramework.Analyzers
             NoVerbsMessage, 
             DiagnosticCategory.Security,
             DiagnosticHelpers.DefaultDiagnosticSeverity, 
-            isEnabledByDefault: true);
+            isEnabledByDefault: true,
+            helpLinkUri: HelpLinkUri);
 
         private static readonly DiagnosticDescriptor NoVerbsNoTokenRule = new DiagnosticDescriptor(
             RuleId,
@@ -57,7 +59,8 @@ namespace Microsoft.NetFramework.Analyzers
             NoVerbsNoTokenMessage,
             DiagnosticCategory.Security,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true,
+            helpLinkUri: HelpLinkUri);
 
         private static readonly DiagnosticDescriptor GetAndTokenRule = new DiagnosticDescriptor(
             RuleId,
@@ -65,7 +68,8 @@ namespace Microsoft.NetFramework.Analyzers
             GetAndTokenMessage,
             DiagnosticCategory.Security,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true,
+            helpLinkUri: HelpLinkUri);
 
         private static readonly DiagnosticDescriptor GetAndOtherAndTokenRule = new DiagnosticDescriptor(
             RuleId,
@@ -73,7 +77,8 @@ namespace Microsoft.NetFramework.Analyzers
             GetAndOtherAndTokenMessage,
             DiagnosticCategory.Security,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true,
+            helpLinkUri: HelpLinkUri);
 
         private static readonly DiagnosticDescriptor VerbsAndNoTokenRule = new DiagnosticDescriptor(
             RuleId,
@@ -81,7 +86,8 @@ namespace Microsoft.NetFramework.Analyzers
             VerbsAndNoTokenMessage,
             DiagnosticCategory.Security,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true);
+            isEnabledByDefault: true,
+            helpLinkUri: HelpLinkUri);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(NoVerbsRule, NoVerbsNoTokenRule, GetAndTokenRule, GetAndOtherAndTokenRule, VerbsAndNoTokenRule);
 

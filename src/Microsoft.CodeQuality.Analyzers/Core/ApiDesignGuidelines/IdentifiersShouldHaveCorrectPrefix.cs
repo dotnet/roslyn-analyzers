@@ -26,7 +26,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                     isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                     description: s_localizableDescription,
                                                                                     helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix",
-                                                                                    customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                    customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly LocalizableString s_localizableMessageTypeParameterRule = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageTypeParameter), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         public static readonly DiagnosticDescriptor TypeParameterRule = new DiagnosticDescriptor(RuleId,
@@ -37,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                       isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                       description: s_localizableDescription,
                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix",
-                                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                      customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(InterfaceRule, TypeParameterRule);
 

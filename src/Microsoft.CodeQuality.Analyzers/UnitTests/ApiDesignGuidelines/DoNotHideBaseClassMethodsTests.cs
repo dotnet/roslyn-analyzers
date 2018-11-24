@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -114,6 +115,26 @@ Class Derived
     End Sub
 End Class",
                 GetCA1061BasicResultAt(10, 16, "Public Sub Method(input As Object)", "Public Sub Method(input As String)"));
+        }
+
+        [Fact]
+        public void CA1061_ConstructorCallsBaseConstructorWithDifferentParameterType_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Base
+{
+    public Base(string input)
+    {
+    }
+}
+class Derived : Base
+{
+    public Derived(object input)
+        :base(null)
+    {
+    }
+}
+");
         }
 
         [Fact]

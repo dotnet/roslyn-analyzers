@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -1022,6 +1023,37 @@ public class C : IDisposable
 }
 ",
             GetCA1063CSharpDisposeImplementationResultAt(8, 17, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void CSharp_CA1063_DisposeImplementation_NoDiagnostic_ConditionalStatement_Internal()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class C : IDisposable
+{
+    private bool disposed;
+
+    public void Dispose()
+    {
+        if (!disposed)
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+    }
+
+    ~C()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+");
         }
 
         [Fact]
@@ -2278,6 +2310,36 @@ Public Class C
 End Class
 ",
             GetCA1063BasicDisposeImplementationResultAt(9, 16, "C", "Dispose"));
+        }
+
+        [Fact]
+        public void Basic_CA1063_DisposeImplementation_NoDiagnostic_ConditionalStatement_Internal()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class C
+    Implements IDisposable
+
+    Private disposed As Boolean
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        If Not disposed Then
+            Dispose(True)
+            GC.SuppressFinalize(Me)
+        End If
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+");
         }
 
         [Fact]

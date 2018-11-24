@@ -3,6 +3,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -95,12 +96,11 @@ public class Sdk
             Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(Xunit.Sdk.AllException).Assembly.Location));
             DiagnosticAnalyzer analyzer = GetCSharpDiagnosticAnalyzer();
             GetSortedDiagnostics(analyzer, project.Documents.Single())
-                .Verify(analyzer,
-                        CSharpDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
+                .Verify(analyzer, GetDefaultPath(LanguageNames.CSharp), CSharpDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
         }
 
-        [Fact]
-        public void CA1724CSharpDeterministicDiagnosticOnA()
+        [Fact, WorkItem(1673,"https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        public void CA1724CSharp_NoDiagnostic_NamespaceWithNoTypes()
         {
             VerifyCSharp(@"
 namespace A.B
@@ -110,8 +110,132 @@ namespace A.B
 namespace D
 {
     public class A {}
+}");
+        }
+
+        [Fact, WorkItem(1673, "https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        public void CA1724CSharp_NoDiagnostic_NamespaceWithNoExternallyVisibleTypes()
+        {
+            VerifyCSharp(@"
+namespace A
+{
+    internal class C { }
+}
+
+namespace D
+{
+    public class A {}
+}");
+        }
+
+        [Fact, WorkItem(1673, "https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        public void CA1724CSharp_NoDiagnostic_NamespaceWithNoExternallyVisibleTypes_02()
+        {
+            VerifyCSharp(@"
+namespace A
+{
+    namespace B
+    {
+        internal class C { }
+    }
+}
+
+namespace D
+{
+    public class A {}
+}");
+        }
+
+        [Fact, WorkItem(1673, "https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        public void CA1724CSharp_NoDiagnostic_ClashingTypeIsNotExternallyVisible()
+        {
+            VerifyCSharp(@"
+namespace A
+{
+    namespace B
+    {
+        public class C { }
+    }
+}
+
+namespace D
+{
+    internal class A {}
+}");
+        }
+
+        [Fact, WorkItem(1673, "https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        public void CA1724CSharp_Diagnostic_NamespaceWithExternallyVisibleTypeMember()
+        {
+            VerifyCSharp(@"
+namespace A
+{
+    public class C { }
+}
+
+namespace D
+{
+    public class A {}
 }",
-            CSharpDefaultResultAt(8, 18, "A", "A"));
+            // Test0.cs(9,18): warning CA1724: The type name A conflicts in whole or in part with the namespace name 'A'. Change either name to eliminate the conflict.
+            CSharpDefaultResultAt(9, 18, "A", "A"));
+        }
+
+        [Fact, WorkItem(1673, "https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        public void CA1724CSharp_Diagnostic_NamespaceWithExternallyVisibleTypeMember_02()
+        {
+            VerifyCSharp(@"
+namespace B
+{
+    namespace A
+    {
+        public class C { }
+    }
+}
+
+namespace D
+{
+    public class A {}
+}",
+            // Test0.cs(12,18): warning CA1724: The type name A conflicts in whole or in part with the namespace name 'B.A'. Change either name to eliminate the conflict.
+            CSharpDefaultResultAt(12, 18, "A", "B.A"));
+        }
+
+        [Fact, WorkItem(1673, "https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        public void CA1724CSharp_Diagnostic_NamespaceWithExternallyVisibleTypeMember_InChildNamespace()
+        {
+            VerifyCSharp(@"
+namespace A
+{
+    namespace B
+    {
+        public class C { }
+    }
+}
+
+namespace D
+{
+    public class A {}
+}",
+            // Test0.cs(12,18): warning CA1724: The type name A conflicts in whole or in part with the namespace name 'A'. Change either name to eliminate the conflict.
+            CSharpDefaultResultAt(12, 18, "A", "A"));
+        }
+
+        [Fact, WorkItem(1673, "https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        public void CA1724CSharp_Diagnostic_NamespaceWithExternallyVisibleTypeMember_InChildNamespace_02()
+        {
+            VerifyCSharp(@"
+namespace A.B
+{
+    public class C { }
+}
+
+namespace D
+{
+    public class A {}
+}",
+            // Test0.cs(9,18): warning CA1724: The type name A conflicts in whole or in part with the namespace name 'A'. Change either name to eliminate the conflict.
+            CSharpDefaultResultAt(9, 18, "A", "A"));
         }
 
         [Fact]
@@ -160,8 +284,7 @@ End Class";
             Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(Xunit.Sdk.AllException).Assembly.Location));
             DiagnosticAnalyzer analyzer = GetCSharpDiagnosticAnalyzer();
             GetSortedDiagnostics(analyzer, project.Documents.Single())
-                .Verify(analyzer,
-                        BasicDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
+                .Verify(analyzer, GetDefaultPath(LanguageNames.VisualBasic), BasicDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
         }
     }
 }

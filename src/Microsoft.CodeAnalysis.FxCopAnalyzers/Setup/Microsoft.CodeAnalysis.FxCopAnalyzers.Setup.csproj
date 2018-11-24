@@ -8,7 +8,7 @@
     <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
     <ImportVSSDKTargets>true</ImportVSSDKTargets>
     <CreateVsixContainer>true</CreateVsixContainer>
-    <PublishOutputToSymStore>false</PublishOutputToSymStore>
+    <PublishWindowsPdb>false</PublishWindowsPdb>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="EULA.rtf">

@@ -39,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                           isEnabledByDefault: false,
                                                                           description: s_localizableDescription,
                                                                           helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1033-interface-methods-should-be-callable-by-child-types",
-                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                          customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 

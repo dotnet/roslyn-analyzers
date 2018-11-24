@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -103,6 +104,30 @@ public class C
 {
     public static implicit operator int(C item) { return 0; }
     public int ToInt32() { return 0; }
+}
+");
+        }
+
+        [Fact, WorkItem(1717, "https://github.com/dotnet/roslyn-analyzers/issues/1717")]
+        public void HasAppropriateConversionAlternate02_CSharp()
+        {
+            VerifyCSharp(@"
+public class Bar
+{	
+	public int i {get; set;}
+
+	public Bar(int i) => this.i = i;	
+}
+
+public class Foo
+{	
+	public int i {get; set;}
+
+	public Foo(int i) => this.i = i;
+
+	public static implicit operator Foo(Bar b) => new Foo(b.i);
+
+	public static Foo FromBar(Bar b) => new Foo(b.i);
 }
 ");
         }

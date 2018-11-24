@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.CSharp.Analyzers.Documentation;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.Documentation;
+using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Documentation.UnitTests

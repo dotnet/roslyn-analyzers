@@ -34,7 +34,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1812-avoid-uninstantiated-internal-classes",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -45,8 +45,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             analysisContext.RegisterCompilationStartAction(startContext =>
             {
-                var instantiatedTypes = new ConcurrentBag<INamedTypeSymbol>();
-                var internalTypes = new ConcurrentBag<INamedTypeSymbol>();
+                var instantiatedTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
+                var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
 
                 var compilation = startContext.Compilation;
 
@@ -77,7 +77,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     var expr = (IObjectCreationOperation)context.Operation;
                     if (expr.Type is INamedTypeSymbol namedType)
                     {
-                        instantiatedTypes.Add(namedType);
+                        instantiatedTypes.TryAdd(namedType, null);
                     }
                 }, OperationKind.ObjectCreation);
 
@@ -94,13 +94,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             mef1ExportAttributeSymbol,
                             mef2ExportAttributeSymbol))
                     {
-                        internalTypes.Add(type);
+                        internalTypes.TryAdd(type, null);
                     }
 
                     // Instantiation from the subtype constructor initializer.
                     if (type.BaseType != null)
                     {
-                        instantiatedTypes.Add(type.BaseType);
+                        instantiatedTypes.TryAdd(type.BaseType, null);
                     }
                 }, SymbolKind.NamedType);
 
@@ -115,7 +115,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         {
                             void ProcessNamedTypeParamConstraint(INamedTypeSymbol namedTypeArg)
                             {
-                                instantiatedTypes.Add(namedTypeArg);
+                                if (!instantiatedTypes.TryAdd(namedTypeArg, null))
+                                {
+                                    // Already processed.
+                                    return;
+                                }
 
                                 // We need to handle if this type param also has type params that have a generic constraint. Take the following example:
                                 // new Factory1<Factory2<InstantiatedType>>();
@@ -185,9 +189,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 startContext.RegisterCompilationEndAction(context =>
                 {
                     var uninstantiatedInternalTypes = internalTypes
-                        .Select(it => it.OriginalDefinition)
-                        .Except(instantiatedTypes.Select(it => it.OriginalDefinition))
-                        .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes));
+                        .Select(it => it.Key.OriginalDefinition)
+                        .Except(instantiatedTypes.Select(it => it.Key.OriginalDefinition))
+                        .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes.Keys));
 
                     foreach (var type in uninstantiatedInternalTypes)
                     {
@@ -314,6 +318,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
+            var taskSymbol = WellKnownTypes.Task(compilation);
+            var genericTaskSymbol = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+
             // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.
             // TODO: Test: can't have type parameters.
             // TODO: Main in nested class? If allowed, what name does it have?
@@ -321,17 +328,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             return type.GetMembers("Main")
                 .Where(m => m is IMethodSymbol)
                 .Cast<IMethodSymbol>()
-                .Any(IsEntryPoint);
+                .Any(m => IsEntryPoint(m, taskSymbol, genericTaskSymbol));
         }
 
-        private static bool IsEntryPoint(IMethodSymbol method)
+        private static bool IsEntryPoint(IMethodSymbol method, ITypeSymbol taskSymbol, ITypeSymbol genericTaskSymbol)
         {
             if (!method.IsStatic)
             {
                 return false;
             }
 
-            if (method.ReturnType.SpecialType != SpecialType.System_Int32 && !method.ReturnsVoid)
+            if (!IsSupportedReturnType(method, taskSymbol, genericTaskSymbol))
             {
                 return false;
             }
@@ -349,6 +356,31 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             ITypeSymbol parameterType = method.Parameters.Single().Type;
 
             return true;
+        }
+
+        private static bool IsSupportedReturnType(IMethodSymbol method, ITypeSymbol taskSymbol, ITypeSymbol genericTaskSymbol)
+        {
+            if (method.ReturnType.SpecialType == SpecialType.System_Int32)
+            {
+                return true;
+            }
+
+            if (method.ReturnsVoid)
+            {
+                return true;
+            }
+
+            if (taskSymbol != null && method.ReturnType == taskSymbol)
+            {
+                return true;
+            }
+
+            if (genericTaskSymbol != null && method.ReturnType.OriginalDefinition == genericTaskSymbol && ((INamedTypeSymbol)method.ReturnType).TypeArguments.Single().SpecialType == SpecialType.System_Int32)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -34,9 +34,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/library/ms182279.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
-
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1820-test-for-empty-strings-using-string-length",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(s_rule);
 

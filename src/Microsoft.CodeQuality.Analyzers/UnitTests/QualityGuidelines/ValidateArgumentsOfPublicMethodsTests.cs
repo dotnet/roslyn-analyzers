@@ -3843,5 +3843,75 @@ public class C
     }
 }");
         }
+
+        [Fact]
+        public void HashCodeClashForUnequalPointsToAbstractValues()
+        {
+            VerifyCSharp(@"
+using System.Diagnostics;
+
+internal static class FileUtilities
+{
+    internal static string ResolveRelativePath(string path, string baseDirectory)
+    {
+        return ResolveRelativePath(path, null, baseDirectory);
+    }
+
+    internal static string ResolveRelativePath(string path, string basePath, string baseDirectory)
+    {
+        Debug.Assert(baseDirectory == null || PathUtilities.IsAbsolute(baseDirectory));
+        return ResolveRelativePath(PathKind.Empty, path, basePath, baseDirectory);
+    }
+ 
+    private static string ResolveRelativePath(PathKind kind, string path, string basePath, string baseDirectory)
+    {
+        baseDirectory = GetBaseDirectory(basePath, baseDirectory);
+        return baseDirectory;
+    }
+ 
+    private static string GetBaseDirectory(string basePath, string baseDirectory)
+    {
+        string resolvedBasePath = ResolveRelativePath(basePath, baseDirectory);
+        if (resolvedBasePath == null)
+        {
+            return baseDirectory;
+        }
+
+        return resolvedBasePath;
+    }
+}
+
+internal enum PathKind
+{
+    Empty,
+    Relative,
+}
+
+internal static class PathUtilities
+{
+    public static bool IsAbsolute(string path) => true;
+}
+
+public class C
+{
+    private string _baseDirectory;
+    public string ResolveReference(string path, string baseFilePath, bool flag)
+    {
+        string resolvedPath;
+ 
+        if (baseFilePath != null)
+        {
+            resolvedPath = FileUtilities.ResolveRelativePath(path, baseFilePath, _baseDirectory);
+            Debug.Assert(resolvedPath == null || PathUtilities.IsAbsolute(resolvedPath));
+            if (flag)
+            {
+                return resolvedPath;
+            }
+        }
+
+        return null;
+    }
+}");
+        }
     }
 }

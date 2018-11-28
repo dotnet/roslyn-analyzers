@@ -3759,6 +3759,48 @@ internal class C2
         }
 
         [Fact]
+        public void OutParameterAssert_02()
+        {
+            VerifyCSharp(@"
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+
+public class C
+{
+    public void M(Encoding encoding, Stream stream)
+    {
+        EncodingExtensions.GetMaxCharCountOrThrowIfHuge(encoding, stream);
+    }
+}
+
+internal static class EncodingExtensions
+{
+    internal static int GetMaxCharCountOrThrowIfHuge(this Encoding encoding, Stream stream)
+    {
+        Debug.Assert(stream.CanSeek);
+        long length = stream.Length;
+
+        int maxCharCount;
+        if (encoding.TryGetMaxCharCount(length, out maxCharCount))
+        {
+            return maxCharCount;
+        }
+
+        return 0;
+    }
+
+    internal static bool TryGetMaxCharCount(this Encoding encoding, long length, out int maxCharCount)
+    {
+        maxCharCount = 0;
+        return false;
+    }
+}",
+            // Test0.cs(10,67): warning CA1062: In externally visible method 'void C.M(Encoding encoding, Stream stream)', validate parameter 'stream' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(10, 67, "void C.M(Encoding encoding, Stream stream)", "stream"));
+        }
+
+        [Fact]
         public void GetValueOrDefaultAssert()
         {
             VerifyCSharp(@"

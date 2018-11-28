@@ -3993,5 +3993,36 @@ public class C
     }
 }");
         }
+
+        [Fact]
+        public void AnalysisEntityWithIndexAssert()
+        {
+            VerifyCSharp(@"
+public struct C1
+{
+    public void M1(int index, C2 c2)
+    {
+        for (int i = 0; i < index; i++)
+        {
+            c2.M2(this[i]);
+        }
+    }
+
+    public S this[int i]
+    {
+        get { return new S(); }
+    }
+}
+
+public class C2
+{
+    public void M2(S s) { }
+}
+
+public struct S { }
+",
+            // Test0.cs(8,13): warning CA1062: In externally visible method 'void C1.M1(int index, C2 c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(8, 13, "void C1.M1(int index, C2 c2)", "c2"));
+        }
     }
 }

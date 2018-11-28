@@ -3995,6 +3995,42 @@ public class C
         }
 
         [Fact]
+        public void AssignmentInTry_CatchWithThrow()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+public class C
+{
+    private C2 _c;
+
+    private readonly Func<C2> _createC2;
+
+    public void M1(C2 c1, bool flag)
+    {
+        C2 c2;
+        try
+        {
+            c2 = (_createC2 != null) ? _createC2() : null;
+        }
+        catch (IOException ex) when (ex != null)
+        {
+            var message = flag ? null : """";
+            throw new Exception(message);
+        }
+
+        _c = c2;
+    }
+}
+
+public class C2
+{
+}
+");
+        }
+
+        [Fact]
         public void AnalysisEntityWithIndexAssert()
         {
             VerifyCSharp(@"

@@ -3863,6 +3863,44 @@ public struct S2
         }
 
         [Fact]
+        public void GetValueAssert()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public int Major { get; }
+    public int Minor { get; }
+    public static S None = new S();
+    
+    public bool Equals(S other)
+    {
+        return this.Major == other.Major && this.Minor == other.Minor;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is S && Equals((S)obj);
+    }
+
+    public bool IsValid => true;
+}
+
+public struct S2
+{
+    public S s { get; private set; }
+
+    public bool IsNone(object o)
+    {
+        if (!s.Equals(S.None) && !s.IsValid)
+        {
+        }
+
+        return true;
+    }
+}");
+        }
+
+        [Fact]
         public void SameFlowCaptureIdAcrossInterproceduralMethod()
         {
             VerifyCSharp(@"

@@ -3663,5 +3663,297 @@ public class Class1
             // Test0.cs(115,28): warning CA1062: In externally visible method 'void Class1.Method(IContext aContext)', validate parameter 'aContext' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(115, 28, "void Class1.Method(IContext aContext)", "aContext"));
         }
+
+        [Fact]
+        public void MakeNullAndMakeMayBeNullAssert()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Class1
+{
+    public virtual void M1(Class1 node, bool flag1, bool flag2)
+    {
+        foreach (var child in node.M2())
+        {
+            if (flag1)
+            {
+                if (flag2)
+                {
+                    M1(child);
+                }
+            }
+            else if (flag2)
+            {
+                if (!flag1)
+                {
+                    M3(child);
+                }
+            }
+        }
+    }
+
+    public virtual void M1(Class1 node)
+    {
+    }
+
+    private Enumerator M2() => default(Enumerator);
+
+    private void M3(object o) { }
+
+    private struct Enumerator : IReadOnlyList<Class1>
+    {
+        public Class1 this[int index] => throw new NotImplementedException();
+
+        public int Count => throw new NotImplementedException();
+
+        public IEnumerator<Class1> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}",
+            // Test0.cs(10,31): warning CA1062: In externally visible method 'void Class1.M1(Class1 node, bool flag1, bool flag2)', validate parameter 'node' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(10, 31, "void Class1.M1(Class1 node, bool flag1, bool flag2)", "node"));
+        }
+
+        [Fact]
+        public void OutParameterAssert()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(string s, bool b)
+    {
+        C2.M(s, b);
+    }
+}
+
+internal class C2
+{
+    public static void M(string s, bool b)
+    {
+        char? unused;
+        M(s, b, out unused);
+    }
+
+    public static void M(string s, bool b, out char? ch)
+    {
+        ch = null;
+        while (b)
+        {
+            if (!string.IsNullOrEmpty(s))
+            {
+                ch = s[0];
+            }
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void OutParameterAssert_02()
+        {
+            VerifyCSharp(@"
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+
+public class C
+{
+    public void M(Encoding encoding, Stream stream)
+    {
+        EncodingExtensions.GetMaxCharCountOrThrowIfHuge(encoding, stream);
+    }
+}
+
+internal static class EncodingExtensions
+{
+    internal static int GetMaxCharCountOrThrowIfHuge(this Encoding encoding, Stream stream)
+    {
+        Debug.Assert(stream.CanSeek);
+        long length = stream.Length;
+
+        int maxCharCount;
+        if (encoding.TryGetMaxCharCount(length, out maxCharCount))
+        {
+            return maxCharCount;
+        }
+
+        return 0;
+    }
+
+    internal static bool TryGetMaxCharCount(this Encoding encoding, long length, out int maxCharCount)
+    {
+        maxCharCount = 0;
+        return false;
+    }
+}",
+            // Test0.cs(10,67): warning CA1062: In externally visible method 'void C.M(Encoding encoding, Stream stream)', validate parameter 'stream' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(10, 67, "void C.M(Encoding encoding, Stream stream)", "stream"));
+        }
+
+        [Fact]
+        public void GetValueOrDefaultAssert()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public bool Flag;
+    public object Old;
+    public object New;
+
+    public bool Equals(S other)
+    {
+        return this.Flag == other.Flag
+            && (this.Old == null ? other.Old == null : this.Old.Equals(other.Old))
+            && (this.New == null ? other.New == null : this.New.Equals(other.New));
+    }
+ 
+    public override bool Equals(object obj)
+    {
+        return obj is S && Equals((S)obj);
+    }
+}");
+        }
+
+        [Fact]
+        public void GetValueOrDefaultAssert_02()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public object Node;
+    public int Index;
+    public S2 Token;
+
+    public bool Equals(S other)
+    {
+        return Node == other.Node && Index == other.Index && Token.Equals(other.Token);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is S && Equals((S)obj);
+    }
+}
+
+public struct S2
+{
+    public object Parent { get; } 
+    internal object Node { get; } 
+    internal int Index { get; } 
+    internal int Position { get; }
+
+    public bool Equals(S2 other)
+    {
+        return Parent == other.Parent &&
+            Node == other.Node &&
+            Position == other.Position &&
+            Index == other.Index;
+    }
+}");
+        }
+
+        [Fact]
+        public void SameFlowCaptureIdAcrossInterproceduralMethod()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public bool Flag;
+    public void M(C c, bool flag)
+    {
+        c = c ?? Create(flag);
+    }
+
+    public C Create(bool flag)
+    {
+        if (Flag == flag)
+        {
+            return this;
+        }
+
+        return new C() { Flag = flag };
+    }
+}");
+        }
+
+        [Fact]
+        public void HashCodeClashForUnequalPointsToAbstractValues()
+        {
+            VerifyCSharp(@"
+using System.Diagnostics;
+
+internal static class FileUtilities
+{
+    internal static string ResolveRelativePath(string path, string baseDirectory)
+    {
+        return ResolveRelativePath(path, null, baseDirectory);
+    }
+
+    internal static string ResolveRelativePath(string path, string basePath, string baseDirectory)
+    {
+        Debug.Assert(baseDirectory == null || PathUtilities.IsAbsolute(baseDirectory));
+        return ResolveRelativePath(PathKind.Empty, path, basePath, baseDirectory);
+    }
+ 
+    private static string ResolveRelativePath(PathKind kind, string path, string basePath, string baseDirectory)
+    {
+        baseDirectory = GetBaseDirectory(basePath, baseDirectory);
+        return baseDirectory;
+    }
+ 
+    private static string GetBaseDirectory(string basePath, string baseDirectory)
+    {
+        string resolvedBasePath = ResolveRelativePath(basePath, baseDirectory);
+        if (resolvedBasePath == null)
+        {
+            return baseDirectory;
+        }
+
+        return resolvedBasePath;
+    }
+}
+
+internal enum PathKind
+{
+    Empty,
+    Relative,
+}
+
+internal static class PathUtilities
+{
+    public static bool IsAbsolute(string path) => true;
+}
+
+public class C
+{
+    private string _baseDirectory;
+    public string ResolveReference(string path, string baseFilePath, bool flag)
+    {
+        string resolvedPath;
+ 
+        if (baseFilePath != null)
+        {
+            resolvedPath = FileUtilities.ResolveRelativePath(path, baseFilePath, _baseDirectory);
+            Debug.Assert(resolvedPath == null || PathUtilities.IsAbsolute(resolvedPath));
+            if (flag)
+            {
+                return resolvedPath;
+            }
+        }
+
+        return null;
+    }
+}");
+        }
     }
 }

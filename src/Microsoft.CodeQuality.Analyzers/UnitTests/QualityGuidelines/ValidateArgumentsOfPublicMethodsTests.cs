@@ -4130,5 +4130,35 @@ public struct S { }
             // Test0.cs(11,13): warning CA1062: In externally visible method 'void C1.M1(int index, int index2, C2 c2, S[] items)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(11, 13, "void C1.M1(int index, int index2, C2 c2, S[] items)", "c2"));
         }
+
+        [Fact]
+        public void NonMonotonicMergeAssert_LValueFlowCatpure_ResetAcrossInterproceduralCall()
+        {
+            VerifyCSharp(@"
+using System.Threading;
+
+public class C<T> where T : class
+{
+    internal delegate T Factory();
+    private readonly Factory _factory;
+
+    public void M(string s, object o)
+    {
+        o = o ?? new object();
+        AllocateSlow(s);
+        var x = s.Length;
+    }
+
+    private T AllocateSlow(string s)
+    {
+        if (s != null)
+        {
+            return null;
+        }
+
+        return _factory();
+    }
+}");
+        }
     }
 }

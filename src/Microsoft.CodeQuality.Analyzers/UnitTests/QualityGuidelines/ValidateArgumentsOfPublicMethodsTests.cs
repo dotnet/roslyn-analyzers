@@ -3863,6 +3863,44 @@ public struct S2
         }
 
         [Fact]
+        public void GetValueAssert()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public int Major { get; }
+    public int Minor { get; }
+    public static S None = new S();
+    
+    public bool Equals(S other)
+    {
+        return this.Major == other.Major && this.Minor == other.Minor;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is S && Equals((S)obj);
+    }
+
+    public bool IsValid => true;
+}
+
+public struct S2
+{
+    public S s { get; private set; }
+
+    public bool IsNone(object o)
+    {
+        if (!s.Equals(S.None) && !s.IsValid)
+        {
+        }
+
+        return true;
+    }
+}");
+        }
+
+        [Fact]
         public void SameFlowCaptureIdAcrossInterproceduralMethod()
         {
             VerifyCSharp(@"
@@ -3954,6 +3992,143 @@ public class C
         return null;
     }
 }");
+        }
+
+        [Fact]
+        public void AssignmentInTry_CatchWithThrow()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+public class C
+{
+    private C2 _c;
+
+    private readonly Func<C2> _createC2;
+
+    public void M1(C2 c1, bool flag)
+    {
+        C2 c2;
+        try
+        {
+            c2 = (_createC2 != null) ? _createC2() : null;
+        }
+        catch (IOException ex) when (ex != null)
+        {
+            var message = flag ? null : """";
+            throw new Exception(message);
+        }
+
+        _c = c2;
+    }
+}
+
+public class C2
+{
+}
+");
+        }
+
+        [Fact]
+        public void AnalysisEntityWithIndexAssert()
+        {
+            VerifyCSharp(@"
+public struct C1
+{
+    public void M1(int index, C2 c2)
+    {
+        for (int i = 0; i < index; i++)
+        {
+            c2.M2(this[i]);
+        }
+    }
+
+    public S this[int i]
+    {
+        get { return new S(); }
+    }
+}
+
+public class C2
+{
+    public void M2(S s) { }
+}
+
+public struct S { }
+",
+            // Test0.cs(8,13): warning CA1062: In externally visible method 'void C1.M1(int index, C2 c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(8, 13, "void C1.M1(int index, C2 c2)", "c2"));
+        }
+
+        [Fact]
+        public void NonMonotonicMergeAssert_FieldAllocatedInCallee()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public class C1
+{
+    public void M1(int index, int index2, C2 c2, S[] items)
+    {
+        for (int i = 0; i < index; i++)
+        {
+            c2.Add(this[i]);
+        }
+
+        c2.AddRange(items);
+
+        for (int i = index; i < index2; i++)
+        {
+            c2.Add(this[i]);
+        }
+    }
+
+    public S this[int i]
+    {
+        get { return new S(); }
+    }
+}
+
+public class C2
+{
+    private S[] _nodes;
+    private int _count;
+
+    internal void AddRange(IEnumerable<S> items)
+    {
+        if (items != null)
+        {
+            foreach (var item in items)
+            {
+                this.Add(item);
+            }
+        }
+    }
+ 
+    internal void Add(S item)
+    {
+        if (_nodes == null || _count >= _nodes.Length)
+        {
+            this.Grow(_count == 0 ? 8 : _nodes.Length * 2);
+        }
+ 
+        _nodes[_count++] = item;
+    }
+
+    private void Grow(int size)
+    {
+        var tmp = new S[size];
+        Array.Copy(_nodes, tmp, _nodes.Length);
+        _nodes = tmp;
+    }
+}
+
+public struct S { }
+",
+            // Test0.cs(11,13): warning CA1062: In externally visible method 'void C1.M1(int index, int index2, C2 c2, S[] items)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(11, 13, "void C1.M1(int index, int index2, C2 c2, S[] items)", "c2"));
         }
     }
 }

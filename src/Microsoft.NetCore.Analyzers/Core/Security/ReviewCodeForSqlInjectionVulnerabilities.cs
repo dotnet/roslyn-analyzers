@@ -33,18 +33,14 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 compilationContext =>
                 {
-                    WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation);
-                    TaintedDataSymbolMap<SourceInfo> sourceInfoSymbolMap = new TaintedDataSymbolMap<SourceInfo>(
-                        wellKnownTypeProvider, 
-                        WebInputSources.SourceInfos);
+                    TaintedDataConfig taintedDataConfig = TaintedDataConfig.GetOrCreate(compilationContext.Compilation);
+                    TaintedDataSymbolMap<SourceInfo> sourceInfoSymbolMap = taintedDataConfig.GetSourceSymbolMap(SinkKind.Sql);
                     if (sourceInfoSymbolMap.IsEmpty)
                     {
                         return;
                     }
 
-                    TaintedDataSymbolMap<SinkInfo> sinkInfoSymbolMap = new TaintedDataSymbolMap<SinkInfo>(
-                        wellKnownTypeProvider,
-                        SqlSinks.SinkInfos);
+                    TaintedDataSymbolMap<SinkInfo> sinkInfoSymbolMap = taintedDataConfig.GetSinkSymbolMap(SinkKind.Sql);
                     if (sinkInfoSymbolMap.IsEmpty)
                     {
                         return;
@@ -94,9 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             operationBlockAnalysisContext.Compilation,
                                             operationBlockAnalysisContext.OwningSymbol,
                                             sourceInfoSymbolMap,
-                                            new TaintedDataSymbolMap<SanitizerInfo>(
-                                                wellKnownTypeProvider,
-                                                PrimitiveTypeConverterSanitizers.SanitizerInfos),
+                                            taintedDataConfig.GetSanitizerSymbolMap(SinkKind.Sql),
                                             sinkInfoSymbolMap);
                                         foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                         {

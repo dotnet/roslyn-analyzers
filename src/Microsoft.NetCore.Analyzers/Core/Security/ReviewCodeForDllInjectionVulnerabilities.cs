@@ -8,16 +8,16 @@ namespace Microsoft.NetCore.Analyzers.Security
     using Microsoft.NetCore.Analyzers.Security.Helpers;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class ReviewCodeForSqlInjectionVulnerabilities : SourceTriggeredTaintedDataAnalyzerBase
+    public class ReviewCodeForDllInjectionVulnerabilities : SourceTriggeredTaintedDataAnalyzerBase
     {
         internal static readonly DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA3001",
-            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForSqlInjectionVulnerabilitiesTitle),
-            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForSqlInjectionVulnerabilitiesMessage),
+            "CA3011",
+            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForDllInjectionVulnerabilitiesTitle),
+            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForDllInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
             helpLinkUri: null); // TODO paulming: Help link.  https://github.com/dotnet/roslyn-analyzers/issues/1892
 
-        protected override SinkKind SinkKind { get { return SinkKind.Sql; } }
+        protected override SinkKind SinkKind { get { return SinkKind.Dll; } }
 
         protected override DiagnosticDescriptor TaintedDataEnteringSinkDescriptor { get { return Rule; } }
     }

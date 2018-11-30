@@ -2,16 +2,15 @@
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    using System;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.NetCore.Analyzers.Security;
-    using Test.Utilities;
     using Xunit;
 
-    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
-    public class ReviewCodeForSqlInjectionVulnerabilitiesTests : DiagnosticAnalyzerTestBase
+    public class ReviewCodeForSqlInjectionVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        protected override DiagnosticDescriptor Rule => ReviewCodeForSqlInjectionVulnerabilities.Rule;
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new ReviewCodeForSqlInjectionVulnerabilities();
@@ -20,46 +19,6 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new ReviewCodeForSqlInjectionVulnerabilities();
-        }
-
-        protected DiagnosticResult GetCSharpResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
-        {
-            this.PrintActualDiagnosticsOnFailure = true;
-            return GetCSharpResultAt(
-                new[] {
-                    Tuple.Create(sinkLine, sinkColumn),
-                    Tuple.Create(sourceLine, sourceColumn)
-                },
-                ReviewCodeForSqlInjectionVulnerabilities.Rule,
-                sink,
-                sinkContainingMethod,
-                source,
-                sourceContainingMethod);
-        }
-
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            this.VerifyCSharp(source, ReferenceFlags.AddTestReferenceAssembly, expected);
-        }
-
-        protected DiagnosticResult GetBasicResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
-        {
-            this.PrintActualDiagnosticsOnFailure = true;
-            return GetBasicResultAt(
-                new[] {
-                    Tuple.Create(sinkLine, sinkColumn),
-                    Tuple.Create(sourceLine, sourceColumn)
-                },
-                ReviewCodeForSqlInjectionVulnerabilities.Rule,
-                sink,
-                sinkContainingMethod,
-                source,
-                sourceContainingMethod);
-        }
-
-        protected void VerifyBasicWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            this.VerifyBasic(source, ReferenceFlags.AddTestReferenceAssembly, expected);
         }
 
         [Fact]

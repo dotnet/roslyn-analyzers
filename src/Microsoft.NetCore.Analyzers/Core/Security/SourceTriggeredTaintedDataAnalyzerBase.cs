@@ -103,7 +103,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             sinkInfoSymbolMap);
                                         foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                         {
-                                            if (sourceSink.SinkKind != this.SinkKind)
+                                            if (!sourceSink.SinkKinds.Contains(this.SinkKind))
                                             {
                                                 continue;
                                             }

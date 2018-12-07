@@ -4160,5 +4160,91 @@ public class C<T> where T : class
     }
 }");
         }
+
+        [Fact]
+        public void YieldReturn_WithinLoop()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public string Path;
+    public C[] Array;
+
+    public IEnumerable<object> M(object o)
+    {
+        foreach (C item in Array)
+        {
+            yield return M2(item, o) ?? (C)new E(item.Path);
+        }
+    }
+
+    private D M2(C item, object o)
+    {
+        var resolved = item.Path;
+        if (resolved != null)
+        {
+            return new D();
+        }
+
+        return null;
+    }
+}
+
+public class D : C
+{
+}
+
+public class E : C
+{
+    public E(string s)
+    {
+        if (s == null)
+        {
+            throw new System.ArgumentNullException(nameof(s));
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void NonMonotonicMergeAssert_UnknownValueMerge()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+using System.IO;
+
+public class B
+{
+    internal C Node;
+
+    public void WriteTo(TextWriter writer)
+    {
+        Node?.WriteTo(writer);
+    }
+}
+
+public class C
+{
+    internal void WriteTo(TextWriter writer)
+    {
+        var stack = new Stack<(C node, bool leading, bool trailing)>();
+        ProcessStack(writer, stack);
+    }
+
+    private static void ProcessStack(TextWriter writer, Stack<(C node, bool leading, bool trailing)> stack)
+    {
+        while (stack.Count > 0)
+        {
+            var current = stack.Pop();
+            var currentNode = current.node;
+            var currentLeading = current.leading;
+            var currentTrailing = current.trailing;
+        }
+    }
+}
+");
+        }
     }
 }

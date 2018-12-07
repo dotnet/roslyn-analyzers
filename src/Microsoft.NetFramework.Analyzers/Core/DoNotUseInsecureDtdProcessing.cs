@@ -256,15 +256,7 @@ namespace Microsoft.NetFramework.Analyzers
 
                     if (xmlReaderSettingsIndex < 0)
                     {
-                        DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessing;
-                        Diagnostic diag = Diagnostic.Create(
-                                RuleDoNotUseInsecureDtdProcessing,
-                                expressionSyntax.GetLocation(),
-                                SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                    nameof(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateWrongOverloadMessage)
-                                )
-                            );
-                        context.ReportDiagnostic(diag);
+                        // If no XmlReaderSettings are passed, then the default is used, with DtdProcessing set to Prohibit.
                     }
                     else
                     {

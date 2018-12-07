@@ -179,7 +179,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 break;
 
                                             default:
-                                                Debug.Assert(false, $"Unhandled abstract value {kvp.Value}");
+                                                Debug.Fail($"Unhandled abstract value {kvp.Value}");
                                                 continue;
                                         }
 

@@ -165,4 +165,10 @@
   <data name="LosFormatterMethodReferenceTitle" xml:space="preserve">
     <value>Do not reference insecure deserialization methods in LosFormatter</value>
   </data>
+  <data name="ReviewCodeForDllInjectionVulnerabilitiesMessage" xml:space="preserve">
+    <value>Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+  </data>
+  <data name="ReviewCodeForDllInjectionVulnerabilitiesTitle" xml:space="preserve">
+    <value>Review code for DLL injection vulnerabilities</value>
+  </data>
 </root>

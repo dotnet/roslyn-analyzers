@@ -2,6 +2,16 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="cs" original="../MicrosoftNetCoreSecurityResources.resx">
     <body>
+      <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesMessage">
+        <source>Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
+        <target state="new">Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesTitle">
+        <source>Review code for DLL injection vulnerabilities</source>
+        <target state="new">Review code for DLL injection vulnerabilities</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
         <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
         <target state="new">Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>

@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
+using Xunit;
+
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    using System;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Testing;
-    using Test.Utilities;
-    using Xunit;
-
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
     public abstract class TaintedDataAnalyzerTestBase : DiagnosticAnalyzerTestBase
     {

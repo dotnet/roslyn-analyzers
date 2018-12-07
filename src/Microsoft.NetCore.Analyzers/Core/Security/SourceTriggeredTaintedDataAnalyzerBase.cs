@@ -1,16 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
+
 namespace Microsoft.NetCore.Analyzers.Security
 {
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using Analyzer.Utilities.Extensions;
-    using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Operations;
-
     /// <summary>
     /// Base class to aid in implementing tainted data analyzers.
     /// </summary>
@@ -19,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// <summary>
         /// <see cref="DiagnosticDescriptor"/> for when tainted data enters a sink.
         /// </summary>
-        /// <remarks>Message format string arguments are:
+        /// <remarks>Format string arguments are:
         /// 0. Sink symbol.
         /// 1. Method name containing the code where the tainted data enters the sink.
         /// 2. Source symbol.

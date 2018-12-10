@@ -74,6 +74,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             }
                         }
 
+                        // Ignore multiple cancellation token parameters at the end of the parameter list.
+                        while (last >= 0 && methodSymbol.Parameters[last].Type.Equals(cancellationTokenType))
+                        {
+                            last--;
+                        }
+
                         // Ignore parameters passed by reference when they appear at the end of the parameter list.
                         while (last >= 0 && methodSymbol.Parameters[last].RefKind != RefKind.None)
                         {

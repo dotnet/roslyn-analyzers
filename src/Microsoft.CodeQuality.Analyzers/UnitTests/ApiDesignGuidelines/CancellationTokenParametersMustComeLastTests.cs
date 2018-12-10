@@ -191,6 +191,22 @@ static class C1
             VerifyCSharp(test);
         }
 
+        [Fact, WorkItem(1816, "https://github.com/dotnet/roslyn-analyzers/issues/1816")]
+        public void NoDiagnosticWhenMultipleAtEndOfParameterList()
+        {
+            var test = @"
+using System.Threading;
+static class C1
+{
+    public static void M1(object p1, CancellationToken token1, CancellationToken token2) { }
+    public static void M2(object p1, CancellationToken token1, CancellationToken token2, CancellationToken token3) { }
+    public static void M3(CancellationToken token1, CancellationToken token2, CancellationToken token3) { }
+    public static void M4(CancellationToken token1, CancellationToken token2 = default(CancellationToken)) { }
+    public static void M5(CancellationToken token1 = default(CancellationToken), CancellationToken token2 = default(CancellationToken)) { }
+}";
+            VerifyCSharp(test);
+        }
+
         [Fact]
         public void DiagnosticOnExtensionMethodWhenCancellationTokenIsNotFirstParameter()
         {

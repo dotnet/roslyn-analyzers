@@ -4130,5 +4130,121 @@ public struct S { }
             // Test0.cs(11,13): warning CA1062: In externally visible method 'void C1.M1(int index, int index2, C2 c2, S[] items)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(11, 13, "void C1.M1(int index, int index2, C2 c2, S[] items)", "c2"));
         }
+
+        [Fact]
+        public void NonMonotonicMergeAssert_LValueFlowCatpure_ResetAcrossInterproceduralCall()
+        {
+            VerifyCSharp(@"
+using System.Threading;
+
+public class C<T> where T : class
+{
+    internal delegate T Factory();
+    private readonly Factory _factory;
+
+    public void M(string s, object o)
+    {
+        o = o ?? new object();
+        AllocateSlow(s);
+        var x = s.Length;
+    }
+
+    private T AllocateSlow(string s)
+    {
+        if (s != null)
+        {
+            return null;
+        }
+
+        return _factory();
+    }
+}");
+        }
+
+        [Fact]
+        public void YieldReturn_WithinLoop()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public string Path;
+    public C[] Array;
+
+    public IEnumerable<object> M(object o)
+    {
+        foreach (C item in Array)
+        {
+            yield return M2(item, o) ?? (C)new E(item.Path);
+        }
+    }
+
+    private D M2(C item, object o)
+    {
+        var resolved = item.Path;
+        if (resolved != null)
+        {
+            return new D();
+        }
+
+        return null;
+    }
+}
+
+public class D : C
+{
+}
+
+public class E : C
+{
+    public E(string s)
+    {
+        if (s == null)
+        {
+            throw new System.ArgumentNullException(nameof(s));
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void NonMonotonicMergeAssert_UnknownValueMerge()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+using System.IO;
+
+public class B
+{
+    internal C Node;
+
+    public void WriteTo(TextWriter writer)
+    {
+        Node?.WriteTo(writer);
+    }
+}
+
+public class C
+{
+    internal void WriteTo(TextWriter writer)
+    {
+        var stack = new Stack<(C node, bool leading, bool trailing)>();
+        ProcessStack(writer, stack);
+    }
+
+    private static void ProcessStack(TextWriter writer, Stack<(C node, bool leading, bool trailing)> stack)
+    {
+        while (stack.Count > 0)
+        {
+            var current = stack.Pop();
+            var currentNode = current.node;
+            var currentLeading = current.leading;
+            var currentTrailing = current.trailing;
+        }
+    }
+}
+");
+        }
     }
 }

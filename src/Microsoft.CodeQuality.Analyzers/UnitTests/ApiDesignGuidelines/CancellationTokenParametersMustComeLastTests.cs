@@ -33,6 +33,21 @@ class T
         }
 
         [Fact]
+        public void DiagnosticWhenFirstAndLastByOtherInBetween()
+        {
+            var source = @"
+using System.Threading;
+class T
+{
+    void M(CancellationToken t1, int i, CancellationToken t2)
+    {
+    }
+}";
+            var expected = new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(5, 10).WithArguments("T.M(System.Threading.CancellationToken, int, System.Threading.CancellationToken)");
+            VerifyCSharp(source, expected);
+        }
+
+        [Fact]
         public void NoDiagnosticWhenLastParam()
         {
             var test = @"

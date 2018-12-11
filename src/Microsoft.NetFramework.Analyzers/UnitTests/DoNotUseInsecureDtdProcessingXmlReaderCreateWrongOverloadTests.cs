@@ -21,7 +21,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void XmlReaderCreateWithoutXmlReaderSettingsShouldNotGenerateDiagnostic()
+        public void UseXmlReaderCreateWrongOverloadShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml;
@@ -35,7 +35,8 @@ namespace TestNamespace
             var reader = XmlTextReader.Create(""doc.xml"");
         }
     }
-}"
+}",
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(10, 26)
             );
 
             VerifyBasic(@"
@@ -47,12 +48,13 @@ Namespace TestNamespace
             Dim reader = XmlTextReader.Create(""doc.xml"")
         End Sub
     End Class
-End Namespace"
+End Namespace",
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(7, 26)
             );
         }
 
         [Fact]
-        public void XmlReaderCreateWithoutXmlReaderSettingsInGetShouldNotGenerateDiagnostic()
+        public void UseXmlReaderCreateInsecureOverloadInGetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml;
@@ -67,7 +69,8 @@ class TestClass
             return reader;
         }
     }
-}"
+}",
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(10, 32)
             );
 
             VerifyBasic(@"
@@ -81,12 +84,13 @@ Class TestClass
             Return reader
         End Get
     End Property
-End Class"
+End Class",
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 39)
             );
         }
 
         [Fact]
-        public void XmlReaderCreateWithoutXmlReaderSettingsInSetShouldNotGenerateDiagnostic()
+        public void UseXmlReaderCreateInsecureOverloadInSetShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml;
@@ -104,7 +108,8 @@ class TestClass1
                 reader = value;
         }
     }
-}"
+}",
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(12, 26)
             );
 
             VerifyBasic(@"
@@ -121,12 +126,13 @@ Class TestClass1
             End If
         End Set
     End Property
-End Class"
+End Class",
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(9, 26)
             );
         }
 
         [Fact]
-        public void XmlReaderCreateWithoutXmlReaderSettingsInTryShouldNotGenerateDiagnostic()
+        public void UseXmlReaderCreateInsecureOverloadInTryShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -143,7 +149,8 @@ class TestClass
         catch (Exception) { throw; }
         finally { }
     }
-}"
+}",
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(11, 26)
             );
 
             VerifyBasic(@"
@@ -159,12 +166,13 @@ Class TestClass
         Finally
         End Try
     End Sub
-End Class"
+End Class",
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 26)
             );
         }
 
         [Fact]
-        public void XmlReaderCreateWithoutXmlReaderSettingsInCatchShouldNotGenerateDiagnostic()
+        public void UseXmlReaderCreateInsecureOverloadInCatchShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -180,7 +188,8 @@ class TestClass
         }
         finally { }
     }
-}"
+}",
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(11, 26)
             );
 
             VerifyBasic(@"
@@ -195,12 +204,13 @@ Class TestClass
         Finally
         End Try
     End Sub
-End Class"
+End Class",
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(9, 26)
             );
         }
 
         [Fact]
-        public void XmlReaderCreateWithoutXmlReaderSettingsInFinallyShouldNotGenerateDiagnostic()
+        public void UseXmlReaderCreateInsecureOverloadInFinallyShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -216,7 +226,8 @@ class TestClass
             var reader = XmlTextReader.Create(""doc.xml"");
         }
     }
-}"
+}",
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(12, 26)
             );
 
             VerifyBasic(@"
@@ -232,12 +243,13 @@ Class TestClass
             Dim reader = XmlTextReader.Create(""doc.xml"")
         End Try
     End Sub
-End Class"
+End Class",
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(11, 26)
             );
         }
 
         [Fact]
-        public void XmlReaderCreateWithoutXmlReaderSettingsInAsyncAwaitShouldNotGenerateDiagnostic()
+        public void UseXmlReaderCreateInsecureOverloadInAsyncAwaitShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Threading.Tasks;
@@ -254,7 +266,8 @@ class TestClass
     {
         await TestMethod();
     }
-}"
+}",
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(9, 45)
             );
 
             VerifyBasic(@"
@@ -272,12 +285,13 @@ End Function)
     Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
-End Class"
+End Class",
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 22)
             );
         }
 
         [Fact]
-        public void XmlReaderCreateWithoutXmlReaderSettingsInDelegateShouldNotGenerateDiagnostic()
+        public void UseXmlReaderCreateInsecureOverloadInDelegateShouldGenerateDiagnostic()
         {
             VerifyCSharp(@"
 using System.Xml;
@@ -287,7 +301,8 @@ class TestClass
     delegate void Del();
 
     Del d = delegate () { var reader = XmlTextReader.Create(""doc.xml""); };
-}"
+}",
+                GetCA3075XmlReaderCreateWrongOverloadCSharpResultAt(8, 40)
             );
 
             VerifyBasic(@"
@@ -299,7 +314,8 @@ Class TestClass
     Private d As Del = Sub() 
                             Dim reader = XmlTextReader.Create(""doc.xml"")
                        End Sub
-End Class"
+End Class",
+                GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 42)
             );
         }
 

@@ -34,7 +34,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: s_helpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor OpEqualityRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -44,7 +44,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: s_helpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(EqualsRule, OpEqualityRule);
 

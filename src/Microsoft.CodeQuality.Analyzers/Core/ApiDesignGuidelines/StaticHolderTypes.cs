@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1052-static-holder-types-should-be-sealed",
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -75,7 +75,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var symbol = (INamedTypeSymbol)context.Symbol;
             if (!symbol.IsStatic &&
                 symbol.IsExternallyVisible() &&
-                symbol.IsStaticHolderType())
+                symbol.IsStaticHolderType() &&
+                !symbol.IsAbstract)
             {
                 context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
             }

@@ -118,6 +118,26 @@ End Class",
         }
 
         [Fact]
+        public void CA1061_ConstructorCallsBaseConstructorWithDifferentParameterType_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class Base
+{
+    public Base(string input)
+    {
+    }
+}
+class Derived : Base
+{
+    public Derived(object input)
+        :base(null)
+    {
+    }
+}
+");
+        }
+
+        [Fact]
         public void CA1061_DerivedMethodHasLessDerivedParameter_MultipleMethodsHidden_Diagnostics()
         {
             VerifyCSharp(@"

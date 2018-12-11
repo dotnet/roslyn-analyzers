@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          description: s_localizableDescriptionCA1401,
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1401-p-invokes-should-not-be-visible",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly LocalizableString s_localizableMessageAndTitleCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescriptionCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescriptionCA2101,
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2101-specify-marshaling-for-p-invoke-string-arguments",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleCA1401, RuleCA2101);
 

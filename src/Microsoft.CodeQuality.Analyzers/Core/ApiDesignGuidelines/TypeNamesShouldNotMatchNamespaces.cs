@@ -33,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1724-type-names-should-not-match-namespaces",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor SystemRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystem,
@@ -42,7 +42,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1724-type-names-should-not-match-namespaces",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -16,9 +17,9 @@ namespace GenerateAnalyzerRulesets
     {
         public static int Main(string[] args)
         {
-            if (args.Length != 5)
+            if (args.Length != 8)
             {
-                Console.Error.WriteLine($"Excepted 5 arguments, found {args.Length}: {string.Join(';', args)}");
+                Console.Error.WriteLine($"Excepted 8 arguments, found {args.Length}: {string.Join(';', args)}");
                 return 1;
             }
 
@@ -27,6 +28,12 @@ namespace GenerateAnalyzerRulesets
             string configuration = args[2];
             string tfm = args[3];
             var assemblyList = args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            string propsFileDir = args[5];
+            string propsFileName = args[6];
+            if (!bool.TryParse(args[7], out var containsPortedFxCopRules))
+            {
+                containsPortedFxCopRules = false;
+            }
 
             var allRulesByAssembly = new SortedList<string, SortedList<string, DiagnosticDescriptor>>();
             var categories = new HashSet<string>();
@@ -94,6 +101,11 @@ namespace GenerateAnalyzerRulesets
                     categoryOpt: category);
             }
 
+            createPropsFile();
+
+            return 0;
+
+            // Local functions.
             void createRuleset(
                 string rulesetFileName,
                 string rulesetName,
@@ -234,7 +246,80 @@ namespace GenerateAnalyzerRulesets
                 }
             }
 
-            return 0;
+            void createPropsFile()
+            {
+                if (string.IsNullOrEmpty(propsFileDir) || string.IsNullOrEmpty(propsFileName))
+                {
+                    Debug.Assert(!containsPortedFxCopRules);
+                    return;
+                }
+
+                var fileContents =
+$@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+  {getCodeAnalysisTreatWarningsNotAsErrors()}{getRulesetOverrides()}
+</Project>";
+                var directory = Directory.CreateDirectory(propsFileDir);
+                var fileWithPath = Path.Combine(directory.FullName, propsFileName);
+                File.WriteAllText(fileWithPath, fileContents);
+            }
+
+            string getCodeAnalysisTreatWarningsNotAsErrors()
+            {
+                var allRuleIds = string.Join(';', allRulesByAssembly.Values.SelectMany(l => l.Keys).Distinct());
+                return $@"
+  <!-- 
+    This property group prevents the rule ids implemented in this package to be bumped to errors when
+    the 'CodeAnalysisTreatWarningsAsErrors' = 'false'.
+  -->
+  <PropertyGroup Condition=""'$(CodeAnalysisTreatWarningsAsErrors)' == 'false'"">
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);{allRuleIds}</WarningsNotAsErrors>
+  </PropertyGroup>";
+            }
+
+            string getRulesetOverrides()
+            {
+                if (containsPortedFxCopRules)
+                {
+                    var rulesetOverridesBuilder = new StringBuilder();
+                    foreach (var category in categories.OrderBy(k => k))
+                    {
+                        // Each rule entry format is: -[Category]#[ID];
+                        // For example, -Microsoft.Design#CA1001;
+                        var categoryPrefix = $"      -Microsoft.{category}#";
+                        var entries = allRulesByAssembly.Values
+                                          .SelectMany(l => l)
+                                          .Where(ruleIdAndDescriptor => ruleIdAndDescriptor.Value.Category == category &&
+                                                                        FxCopWellKnownDiagnosticTags.IsPortedFxCopRule(ruleIdAndDescriptor.Value))
+                                          .OrderBy(ruleIdAndDescriptor => ruleIdAndDescriptor.Key)
+                                          .Select(ruleIdAndDescriptor => $"{categoryPrefix}{ruleIdAndDescriptor.Key};")
+                                          .Distinct();
+
+                        if (entries.Any())
+                        {
+                            rulesetOverridesBuilder.AppendLine();
+                            rulesetOverridesBuilder.Append(string.Join(Environment.NewLine, entries));
+                            rulesetOverridesBuilder.AppendLine();
+                        }
+                    }
+
+                    if (rulesetOverridesBuilder.Length > 0)
+                    {
+                        return $@"
+
+  <!-- 
+    This property group contains the rules that have been implemented in this package and therefore should be disabled for the binary FxCop.
+    The format is -[Category]#[ID], e.g., -Microsoft.Design#CA1001;
+  -->
+  <PropertyGroup>
+    <CodeAnalysisRuleSetOverrides>
+      $(CodeAnalysisRuleSetOverrides);{rulesetOverridesBuilder.ToString()}
+    </CodeAnalysisRuleSetOverrides>
+  </PropertyGroup>";
+                    }
+                }
+
+                return string.Empty;
+            }
         }
 
         private enum RulesetKind

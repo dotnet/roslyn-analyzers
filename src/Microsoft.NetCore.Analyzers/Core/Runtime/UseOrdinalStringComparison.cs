@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal const string CompareMethodName = "Compare";
         internal const string EqualsMethodName = "Equals";

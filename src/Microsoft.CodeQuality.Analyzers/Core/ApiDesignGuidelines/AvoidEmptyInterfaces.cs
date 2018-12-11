@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1040-avoid-empty-interfaces",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

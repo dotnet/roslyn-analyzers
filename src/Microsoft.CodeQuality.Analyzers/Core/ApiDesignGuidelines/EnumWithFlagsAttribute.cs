@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
                                                                              description: s_localizableDescriptionCA1027,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1027-mark-enums-with-flagsattribute",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly LocalizableString s_localizableTitleCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -60,7 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
                                                                              description: s_localizableDescriptionCA2217,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2217-do-not-mark-enums-with-flagsattribute",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule1027, Rule2217);
 

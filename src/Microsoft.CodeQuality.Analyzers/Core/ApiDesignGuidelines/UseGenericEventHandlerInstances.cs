@@ -42,8 +42,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: false,
             description: s_localizableDescriptionForDelegate,
-            helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
+            customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor RuleForEvents = new DiagnosticDescriptor(
             RuleId,
@@ -53,8 +53,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: false,
             description: s_localizableDescriptionForEvent,
-            helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
+            customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor RuleForEvents2 = new DiagnosticDescriptor(
             RuleId,
@@ -64,8 +64,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: false,
             description: s_localizableDescriptionForEvent2,
-            helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
-            customTags: WellKnownDiagnosticTags.Telemetry);
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
+            customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleForDelegates, RuleForEvents, RuleForEvents2);
         protected abstract bool IsAssignableTo(Compilation compilation, ITypeSymbol fromSymbol, ITypeSymbol toSymbol);

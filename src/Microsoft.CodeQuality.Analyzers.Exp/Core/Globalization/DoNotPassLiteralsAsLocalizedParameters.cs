@@ -43,8 +43,8 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Globalization
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 

@@ -10,16 +10,13 @@
     <Summary>Microsoft.NetFramework.Analyzers</Summary>
     <ReleaseNotes>Microsoft.NetFramework.Analyzers</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+    <ContainsPortedFxCopRules>true</ContainsPortedFxCopRules>
   </PropertyGroup>
 
   <ItemGroup>
     <AnalyzerNupkgAssembly Include="Microsoft.NetFramework.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.NetFramework.CSharp.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.NetFramework.VisualBasic.Analyzers.dll" />
-    
-    <AnalyzerNupkgFile Include="Microsoft.NetFramework.Analyzers.props" />
-    <AnalyzerNupkgFile Include="Microsoft.NetFramework.CSharp.Analyzers.props" />
-    <AnalyzerNupkgFile Include="Microsoft.NetFramework.VisualBasic.Analyzers.props" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.NetFramework.Analyzers\Core\Microsoft.NetFramework.Analyzers.csproj" />

@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          isEnabledByDefault: false,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1060-move-p-invokes-to-nativemethods-class",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private const string NativeMethodsText = "NativeMethods";
         private const string SafeNativeMethodsText = "SafeNativeMethods";

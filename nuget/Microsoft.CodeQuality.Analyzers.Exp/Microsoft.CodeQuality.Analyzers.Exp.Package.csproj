@@ -10,16 +10,13 @@
     <Summary>Experimental Microsoft.CodeQuality Analyzers</Summary>
     <ReleaseNotes>Experimental diagnostic analyzers for the Microsoft .NET Compiler Platform (Roslyn)</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+    <ContainsPortedFxCopRules>true</ContainsPortedFxCopRules>
   </PropertyGroup>
   
   <ItemGroup>
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.Analyzers.Exp.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.CSharp.Analyzers.Exp.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.CodeQuality.VisualBasic.Analyzers.Exp.dll" />
-
-    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.Analyzers.Exp.props" />
-    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.VisualBasic.Analyzers.Exp.props" />
-    <AnalyzerNupkgFile Include="Microsoft.CodeQuality.CSharp.Analyzers.Exp.props" />
   </ItemGroup>
   
   <ItemGroup>

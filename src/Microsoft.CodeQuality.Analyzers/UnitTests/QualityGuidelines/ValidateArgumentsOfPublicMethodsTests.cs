@@ -4246,5 +4246,164 @@ public class C
 }
 ");
         }
+
+        [Fact]
+        public void NonMonotonicMergeAssert_DefaultEntityEntryMissing()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    private IEnumerable<Reference> References { get; }
+    private string BaseDirectory { get; }
+    public IEnumerable<BaseResolvedReference> ResolveReferences(Loader loader)
+    {
+        foreach (var reference in References)
+        {
+            yield return ResolveReference(reference, loader)
+                ?? (BaseResolvedReference)new UnresolvedReference(reference.FilePath);
+        }
+    }
+
+    private ResolvedReference ResolveReference(Reference reference, Loader loader)
+    {
+        string resolvedPath = FileUtilities.ResolveRelativePath(reference.FilePath);
+        if (resolvedPath != null)
+        {
+            resolvedPath = FileUtilities.TryNormalizeAbsolutePath(resolvedPath);
+        }
+
+        if (resolvedPath != null)
+        {
+            return new ResolvedReference(resolvedPath, loader);
+        }
+
+        return null;
+    }
+}
+
+public abstract class BaseResolvedReference { }
+public class ResolvedReference : BaseResolvedReference {  public ResolvedReference(string path, Loader loader) { } }
+public class UnresolvedReference : BaseResolvedReference { public UnresolvedReference(string path) { } }
+public class Reference { public string FilePath { get; } }
+public class Loader { }
+internal static class FileUtilities
+{
+    public static string ResolveRelativePath(string path) => path.Length > 0 ? path : ""newPath"";
+    public static string TryNormalizeAbsolutePath(string path) => ""newPath"";
+}
+");
+        }
+
+        [Fact]
+        public void NonMonotonicMergeAssert_DefaultEntityEntryMissing_02()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public class C
+{
+    private GreenNode[] _nodes;
+    private int _count;
+
+    public void Add(IEnumerable<SyntaxNodeOrToken> nodeOrTokens)
+    {
+        foreach (var n in nodeOrTokens)
+        {
+            this.Add(n);
+        }
+    }
+
+    private void Add(SyntaxNodeOrToken item)
+    {
+        var x = item.Token;
+    }
+}
+
+public struct SyntaxNodeOrToken
+{
+    internal GreenNode Token { get; }
+}
+
+public class GreenNode { }
+",
+            // Test0.cs(12,27): warning CA1062: In externally visible method 'void C.Add(IEnumerable<SyntaxNodeOrToken> nodeOrTokens)', validate parameter 'nodeOrTokens' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(12, 27, "void C.Add(IEnumerable<SyntaxNodeOrToken> nodeOrTokens)", "nodeOrTokens"));
+        }
+
+        [Fact]
+        public void ComparisonOfValueTypeCastToObjectWithNull()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(object p)
+    {
+        var s = new S();
+        var o = (object)s;
+        var y = o != null ? o.GetType().ToString() : p.ToString();
+    }
+}
+
+public struct S { }",
+            // Test0.cs(8,54): warning CA1062: In externally visible method 'void C.M(object p)', validate parameter 'p' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(8, 54, "void C.M(object p)", "p"));
+        }
+
+        [Fact]
+        public void InvalidParentInstanceAssertForAnalysisEntity()
+        {
+            VerifyCSharp(@"
+using System.Threading;
+
+public struct S
+{
+    private readonly CancellationToken _cancellationToken;
+    public void M(object obj, C c)
+    {
+        c?.M2(obj, _cancellationToken);
+    }
+}
+
+public class C
+{
+    public void M2(object obj, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var x = obj.ToString();
+    }
+}",
+            // Test0.cs(18,17): warning CA1062: In externally visible method 'void C.M2(object obj, CancellationToken cancellationToken)', validate parameter 'obj' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(18, 17, "void C.M2(object obj, CancellationToken cancellationToken)", "obj"));
+        }
+
+        [Fact]
+        public void InvalidParentInstanceAssertForAnalysisEntity_02()
+        {
+            VerifyCSharp(@"
+using System.Threading;
+
+public struct S
+{
+    private readonly CancellationToken _cancellationToken;
+    public void M(object obj)
+    {
+        C.M2(obj, _cancellationToken);
+    }
+}
+
+internal static class C
+{
+    public static void M2(object obj, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var x = obj.ToString();
+    }
+}",
+            // Test0.cs(9,14): warning CA1062: In externally visible method 'void S.M(object obj)', validate parameter 'obj' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(9, 14, "void S.M(object obj)", "obj"));
+        }
     }
 }

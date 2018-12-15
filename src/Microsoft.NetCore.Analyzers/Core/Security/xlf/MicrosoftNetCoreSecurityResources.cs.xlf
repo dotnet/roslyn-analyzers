@@ -12,6 +12,16 @@
         <target state="new">Review code for DLL injection vulnerabilities</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReviewCodeForInformationDisclosureVulnerabilitiesMessage">
+        <source>Potential information disclosure vulnerability was found where '{0}' in method '{1}' may be contain unintended information from '{2}' in method '{3}'.</source>
+        <target state="new">Potential information disclosure vulnerability was found where '{0}' in method '{1}' may be contain unintended information from '{2}' in method '{3}'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReviewCodeForInformationDisclosureVulnerabilitiesTitle">
+        <source>Review code for information disclosure vulnerabilities</source>
+        <target state="new">Review code for information disclosure vulnerabilities</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
         <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
         <target state="new">Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>

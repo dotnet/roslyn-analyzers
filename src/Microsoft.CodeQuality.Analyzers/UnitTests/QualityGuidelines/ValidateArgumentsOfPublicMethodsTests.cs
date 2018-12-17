@@ -4405,5 +4405,117 @@ internal static class C
             // Test0.cs(9,14): warning CA1062: In externally visible method 'void S.M(object obj)', validate parameter 'obj' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(9, 14, "void S.M(object obj)", "obj"));
         }
+
+        [Fact]
+        public void IndexedEntityInstanceLocationMergeAssert()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+using System.Threading;
+
+public class C
+{
+    public void M(string id, List<object> containers, int index, bool flag)
+    {
+        M2(id, containers, index, flag);
+    }
+
+    private void M2(string id, List<object> containers, int index, bool flag)
+    {
+        M3(id, containers, index, flag);
+    }
+
+    private void M3(string id, List<object> containers, int index, bool flag)
+    {
+        for (int i = 0, n = containers.Count; i < n; i++)
+        {
+            if (flag)
+            {
+                index++;
+                var returnType = ParseTypeSymbol(id);
+
+                if (returnType != null)
+                {
+                }
+            }
+        }
+    }
+
+    private object ParseTypeSymbol(string id)
+    {
+        var results = Allocate();
+        try
+        {
+            M3(results);
+            if (results.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return results[0];
+            }
+        }
+        finally
+        {
+            Free(results);
+        }
+    }
+
+    private void M3(List<object> results)
+    {
+        results.AddRange(new object[] { 1, 2 });
+    }
+
+    private struct Element
+    {
+        internal List<object> Value;
+    }
+
+    internal delegate List<object> Factory();
+    private readonly Factory _factory;
+
+    private List<object> _firstItem;
+    private readonly Element[] _items;
+
+    private List<object> Allocate()
+    {
+        var inst = _firstItem;
+        if (inst == null || inst != Interlocked.CompareExchange(ref _firstItem, null, inst))
+        {
+            inst = AllocateSlow();
+        }
+
+        return inst;
+    }
+
+    private List<object> AllocateSlow()
+    {
+        var items = _items;
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            List<object> inst = items[i].Value;
+            if (inst != null)
+            {
+                if (inst == Interlocked.CompareExchange(ref items[i].Value, null, inst))
+                {
+                    return inst;
+                }
+            }
+        }
+
+        return CreateInstance();
+    }
+
+    private List<object> CreateInstance()
+    {
+        var inst = _factory();
+        return inst;
+    }
+
+    private static void Free(List<object> results) { }
+}");
+        }
     }
 }

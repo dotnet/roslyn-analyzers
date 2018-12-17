@@ -4517,5 +4517,34 @@ public class C
     private static void Free(List<object> results) { }
 }");
         }
+
+        [Fact]
+        public void CopyValueMergeAssert()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(object obj, ref int index)
+    {
+        var startIndex = index;
+        var endIndex = index;
+
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                index = startIndex;
+
+                if (i > j)
+                {
+                    endIndex = index;
+                }
+            }
+
+            index = endIndex;
+        }
+    }
+}");
+        }
     }
 }

@@ -66,7 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     INamedTypeSymbol cipherModeTypeSymbol =
-                        compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(CipherModeTypeMetadataName);
+                        compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(this.CipherModeTypeMetadataName);
                     if (cipherModeTypeSymbol == null)
                     {
                         return;
@@ -79,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 (IFieldReferenceOperation)operationAnalysisContext.Operation;
                             IFieldSymbol fieldSymbol = fieldReferenceOperation.Field;
                             if (fieldSymbol.ContainingType == cipherModeTypeSymbol
-                                && UnsafeCipherModes.Contains(fieldSymbol.MetadataName))
+                                && this.UnsafeCipherModes.Contains(fieldSymbol.MetadataName))
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                     Diagnostic.Create(

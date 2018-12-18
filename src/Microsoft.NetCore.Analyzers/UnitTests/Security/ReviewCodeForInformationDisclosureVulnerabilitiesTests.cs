@@ -21,7 +21,31 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         }
 
         [Fact]
-        public void NullReferenceException_HttpResponseWrite()
+        public void ExceptionToString_ConsoleOutWriteLine()
+        {
+            this.VerifyCSharp(@"
+using System;
+
+public class Class
+{
+    public void Blah()
+    {
+        try
+        {
+            object o = null;
+            o.ToString();
+        }
+        catch (Exception e)
+        {
+            Console.Out.WriteLine(e.ToString());
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public void NullReferenceExceptionToString_HttpResponseWrite()
         {
             this.VerifyCSharp(@"
 using System;
@@ -44,6 +68,60 @@ public class Class
 }
 ",
                 GetCSharpResultAt(16, 13, 16, 28, "void HttpResponse.Write(string s)", "void Class.Blah(HttpResponse response)", "string Exception.ToString()", "void Class.Blah(HttpResponse response)"));
+        }
+
+        [Fact]
+        public void NullReferenceExceptionMessage_HtmlSelectInnerHtml()
+        {
+            this.VerifyCSharp(@"
+using System;
+using System.Web.UI.HtmlControls;
+
+public class Class
+{
+    public HtmlSelect Select;
+    public void Blah()
+    {
+        try
+        {
+            object o = null;
+            o.ToString();
+        }
+        catch (NullReferenceException nre)
+        {
+            Select.InnerHtml = nre.Message;
+        }
+    }
+}
+",
+                GetCSharpResultAt(17, 13, 17, 32, "string HtmlSelect.InnerHtml", "void Class.Blah()", "string Exception.Message", "void Class.Blah()"));
+        }
+
+        [Fact]
+        public void NullReferenceExceptionStackTrace_BulletedListText()
+        {
+            this.VerifyCSharp(@"
+using System;
+using System.Web.UI.WebControls;
+
+public class Class
+{
+    public BulletedList BulletedList;
+    public void Blah()
+    {
+        try
+        {
+            object o = null;
+            o.ToString();
+        }
+        catch (NullReferenceException nre)
+        {
+            this.BulletedList.Text = nre.StackTrace;
+        }
+    }
+}
+",
+                GetCSharpResultAt(17, 13, 17, 38, "string BulletedList.Text", "void Class.Blah()", "string Exception.StackTrace", "void Class.Blah()"));
         }
     }
 }

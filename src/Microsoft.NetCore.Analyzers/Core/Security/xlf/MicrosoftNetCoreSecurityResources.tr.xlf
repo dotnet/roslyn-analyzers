@@ -13,8 +13,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForInformationDisclosureVulnerabilitiesMessage">
-        <source>Potential information disclosure vulnerability was found where '{0}' in method '{1}' may be contain unintended information from '{2}' in method '{3}'.</source>
-        <target state="new">Potential information disclosure vulnerability was found where '{0}' in method '{1}' may be contain unintended information from '{2}' in method '{3}'.</target>
+        <source>Potential information disclosure vulnerability was found where '{0}' in method '{1}' may contain unintended information from '{2}' in method '{3}'.</source>
+        <target state="new">Potential information disclosure vulnerability was found where '{0}' in method '{1}' may contain unintended information from '{2}' in method '{3}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForInformationDisclosureVulnerabilitiesTitle">

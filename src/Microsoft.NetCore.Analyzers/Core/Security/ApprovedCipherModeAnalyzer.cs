@@ -32,10 +32,10 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        internal string CipherModeTypeMetadataName =>
+        internal static string CipherModeTypeMetadataName =>
             WellKnownTypes.SystemSecurityCryptographyCipherMode;
 
-        internal ImmutableHashSet<string> UnsafeCipherModes = ImmutableHashSet.Create(
+        internal static ImmutableHashSet<string> UnsafeCipherModes = ImmutableHashSet.Create(
                 StringComparer.Ordinal,
                 "ECB",
                 "OFB",
@@ -66,7 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     INamedTypeSymbol cipherModeTypeSymbol =
-                        compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(this.CipherModeTypeMetadataName);
+                        compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(CipherModeTypeMetadataName);
                     if (cipherModeTypeSymbol == null)
                     {
                         return;
@@ -79,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 (IFieldReferenceOperation)operationAnalysisContext.Operation;
                             IFieldSymbol fieldSymbol = fieldReferenceOperation.Field;
                             if (fieldSymbol.ContainingType == cipherModeTypeSymbol
-                                && this.UnsafeCipherModes.Contains(fieldSymbol.MetadataName))
+                                && UnsafeCipherModes.Contains(fieldSymbol.MetadataName))
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                     Diagnostic.Create(

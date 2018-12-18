@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     class ApprovedCipherModeAnalyzer : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "ApprovedCipherMode";
+        internal const string DiagnosticId = "CA5358";
         private static readonly LocalizableString Title = new LocalizableResourceString(
             nameof(SystemSecurityCryptographyResources.ApprovedCipherMode),
             SystemSecurityCryptographyResources.ResourceManager,
@@ -32,8 +32,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        internal string CipherModeTypeMetadataName =
-            "System.Security.Cryptography.CipherMode";
+        internal string CipherModeTypeMetadataName =>
+            WellKnownTypes.SystemSecurityCryptographyCipherMode;
 
         internal ImmutableHashSet<string> UnsafeCipherModes = ImmutableHashSet.Create(
                 StringComparer.Ordinal,
@@ -49,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 message,
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                isEnabledByDefault: false,
                 description: description,
                 helpLinkUri: uri,
                 customTags: WellKnownDiagnosticTags.Telemetry);
@@ -57,10 +57,6 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public sealed override void Initialize(AnalysisContext context)
         {
-            Debug.Assert(CipherModeTypeMetadataName != null);
-            Debug.Assert(UnsafeCipherModes != null);
-            Debug.Assert(!UnsafeCipherModes.IsEmpty);
-
             context.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics on generated code.
@@ -75,6 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         return;
                     }
+
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {

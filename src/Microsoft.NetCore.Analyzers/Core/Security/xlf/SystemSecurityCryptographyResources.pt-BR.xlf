@@ -3,8 +3,8 @@
   <file datatype="xml" source-language="en" target-language="pt-BR" original="../SystemSecurityCryptographyResources.resx">
     <body>
       <trans-unit id="ApprovedCipherMode">
-        <source>Do Not Use Unsafe Encryption Modes</source>
-        <target state="new">Do Not Use Unsafe Encryption Modes</target>
+        <source>Do Not Use Unsafe Cipher Modes</source>
+        <target state="new">Do Not Use Unsafe Cipher Modes</target>
         <note />
       </trans-unit>
       <trans-unit id="ApprovedCipherModeDescription">
@@ -13,8 +13,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ApprovedCipherModeMessage">
-        <source>It uses an unsafe Encryption Mode {0}</source>
-        <target state="new">It uses an unsafe Encryption Mode {0}</target>
+        <source>It uses an unsafe Cipher Mode {0}</source>
+        <target state="new">It uses an unsafe Cipher Mode {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">

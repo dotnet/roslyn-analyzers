@@ -8,7 +8,6 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ApprovedCipherModeTests : DiagnosticAnalyzerTestBase
     {
-
         [Fact]
         public void TestECBMode()
         {
@@ -63,7 +62,6 @@ Public Module SecurityCenter
     End Sub
 End Module",
             GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule,  "OFB"));
-
         }
 
         [Fact]
@@ -92,8 +90,64 @@ Public Module SecurityCenter
     End Sub
 End Module",
             GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule, "CFB"));
-
         }
+
+        [Fact]
+        public void TestCBCMode()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Security.Cryptography;
+
+class TestClass {
+    private static void TestMethod () {
+        RijndaelManaged rijn = new RijndaelManaged();
+        rijn.Mode  = CipherMode.CBC;
+    }
+}"
+            );
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Public Module SecurityCenter
+    Sub TestSub()
+        Dim encripter As System.Security.Cryptography.Aes = System.Security.Cryptography.Aes.Create(""AES"")
+        encripter.Mode = CipherMode.CBC
+    End Sub
+End Module"
+            );
+        }
+
+        [Fact]
+        public void TestCTSMode()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Security.Cryptography;
+
+class TestClass {
+    private static void TestMethod () {
+        RijndaelManaged rijn = new RijndaelManaged();
+        rijn.Mode  = CipherMode.CTS;
+    }
+}"
+            );
+
+            VerifyBasic(@"
+Imports System.Security.Cryptography
+
+Public Module SecurityCenter
+    Sub TestSub()
+        Dim encripter As System.Security.Cryptography.Aes = System.Security.Cryptography.Aes.Create(""AES"")
+        encripter.Mode = CipherMode.CTS
+    End Sub
+End Module"
+            );
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new ApprovedCipherModeAnalyzer();
@@ -103,6 +157,5 @@ End Module",
         {
             return new ApprovedCipherModeAnalyzer();
         }
-
     }
 }

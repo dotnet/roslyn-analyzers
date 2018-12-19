@@ -4639,5 +4639,44 @@ public class C
             // Test0.cs(10,12): warning CA1062: In externally visible method 'void C.M(object o, int param)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(10, 12, "void C.M(object o, int param)", "o"));
         }
+
+        [Fact]
+        public void CopyValueTrackingEntityWithUnknownInstanceLocationAssert()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public struct S { }
+public class D
+{
+    public S S;
+}
+
+public class C
+{
+    public D D;
+    private List<C> list;
+
+    public void M(object o)
+    {
+        foreach (C c in list)
+        {
+            LocalFunction(ref c.D);
+        }
+
+        return;
+
+        void LocalFunction(ref D d)
+        {
+            LocalFunction2(ref d.S);
+        }
+
+        void LocalFunction2(ref S s)
+        {
+        }
+    }
+}");
+        }
     }
 }

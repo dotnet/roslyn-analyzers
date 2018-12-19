@@ -4678,5 +4678,33 @@ public class C
     }
 }");
         }
+
+        [Fact]
+        public void RecursiveLocalFunctionInvocation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public class C
+{
+    public int Field;
+    public object M(C c)
+    {
+        c = LocalFunction(c);
+        return c;
+
+        C LocalFunction(C c2)
+        {
+            if (c2.Field > 0)
+            {
+                c2 = LocalFunction(new C());
+            }
+
+            return c2;
+        }
+    }
+}");
+        }
     }
 }

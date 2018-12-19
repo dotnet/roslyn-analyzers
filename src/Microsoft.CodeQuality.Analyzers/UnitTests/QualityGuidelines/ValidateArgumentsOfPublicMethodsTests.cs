@@ -4706,5 +4706,74 @@ public class C
     }
 }");
         }
+
+        [Fact]
+        public void MultiChainedLocalFunctionInvocations()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public class C
+{
+    public int Field;
+    public object M(C c)
+    {
+        c = LocalFunction1(c);
+        return c;
+
+        C LocalFunction1(C c2)
+        {
+            return LocalFunction2(c2);
+        }
+
+        C LocalFunction2(C c2)
+        {
+            return LocalFunction3(c2);
+        }
+
+        C LocalFunction3(C c2)
+        {
+            if (c2.Field > 0)
+            {
+                c2 = LocalFunction3(new C());
+            }
+
+            return c2;
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void MultiChainedLambdaInvocations()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public object M(C c)
+    {
+        Func<C, C> lambda1 = (C c2) =>
+        {
+            return c2;
+        };
+
+        Func<C, C> lambda2 = (C c2) =>
+        {
+            return lambda1(c2);
+        };
+
+        Func<C, C> lambda3 = (C c2) =>
+        {
+            return lambda2(c2);
+        };
+
+        c = lambda3(c);
+        return c;
+    }
+}");
+        }
     }
 }

@@ -4546,5 +4546,98 @@ public class C
     }
 }");
         }
+
+        [Fact]
+        public void CopyValueInvalidResetDataAssert()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public Func<bool> Predicate { get; }
+
+    public void M(object o)
+    {
+        M2(this, Predicate);
+    }
+
+    private static void M2(C c, Func<bool> predicate)
+    {
+        M3(c, predicate);
+    }
+
+    private static void M3(C c, Func<bool> predicate)
+    {
+        M4(c, predicate);
+    }
+
+    private static void M4(C c, Func<bool> predicate)
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (predicate())
+            {
+                return;
+            }
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void CopyValueAddressSharedEntityAssert()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M(object o)
+    {
+        int xLocal;
+        M2(o, out xLocal);
+    }
+
+    private void M2(object o, out int xParam)
+    {
+        xParam = 0;
+        var x = o.ToString();
+    }
+}",
+            // Test0.cs(9,12): warning CA1062: In externally visible method 'void C.M(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(9, 12, "void C.M(object o)", "o"));
+        }
+
+        [Fact]
+        public void CopyValueAddressSharedEntityAssert_RecursiveInvocations()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M(object o, int param)
+    {
+        int xLocal;
+        int param2 = param;
+        M2(o, out xLocal, ref param2);
+    }
+
+    private void M2(object o, out int xParam, ref int param2)
+    {
+        xParam = 0;
+        if (param2 < 10)
+        {
+            param2++;
+            M2(o, out xParam, ref param2);
+        }
+
+        var x = o.ToString();
+    }
+}",
+            // Test0.cs(10,12): warning CA1062: In externally visible method 'void C.M(object o, int param)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(10, 12, "void C.M(object o, int param)", "o"));
+        }
     }
 }

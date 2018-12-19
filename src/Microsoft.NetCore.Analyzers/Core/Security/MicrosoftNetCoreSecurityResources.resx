@@ -171,4 +171,10 @@
   <data name="ReviewCodeForDllInjectionVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for DLL injection vulnerabilities</value>
   </data>
+  <data name="ReviewCodeForInformationDisclosureVulnerabilitiesMessage" xml:space="preserve">
+    <value>Potential information disclosure vulnerability was found where '{0}' in method '{1}' may contain unintended information from '{2}' in method '{3}'.</value>
+  </data>
+  <data name="ReviewCodeForInformationDisclosureVulnerabilitiesTitle" xml:space="preserve">
+    <value>Review code for information disclosure vulnerabilities</value>
+  </data>
 </root>

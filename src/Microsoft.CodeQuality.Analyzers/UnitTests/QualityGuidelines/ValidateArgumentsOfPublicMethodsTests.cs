@@ -4639,5 +4639,165 @@ public class C
             // Test0.cs(10,12): warning CA1062: In externally visible method 'void C.M(object o, int param)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(10, 12, "void C.M(object o, int param)", "o"));
         }
+
+        [Fact]
+        public void CopyValueTrackingEntityWithUnknownInstanceLocationAssert()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public struct S { }
+public class D
+{
+    public S S;
+}
+
+public class C
+{
+    public D D;
+    private List<C> list;
+
+    public void M(object o)
+    {
+        foreach (C c in list)
+        {
+            LocalFunction(ref c.D);
+        }
+
+        return;
+
+        void LocalFunction(ref D d)
+        {
+            LocalFunction2(ref d.S);
+        }
+
+        void LocalFunction2(ref S s)
+        {
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void RecursiveLocalFunctionInvocation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public class C
+{
+    public int Field;
+    public object M(C c)
+    {
+        c = LocalFunction(c);
+        return c;
+
+        C LocalFunction(C c2)
+        {
+            if (c2.Field > 0)
+            {
+                c2 = LocalFunction(new C());
+            }
+
+            return c2;
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void MultiChainedLocalFunctionInvocations()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+public class C
+{
+    public int Field;
+    public object M(C c)
+    {
+        c = LocalFunction1(c);
+        return c;
+
+        C LocalFunction1(C c2)
+        {
+            return LocalFunction2(c2);
+        }
+
+        C LocalFunction2(C c2)
+        {
+            return LocalFunction3(c2);
+        }
+
+        C LocalFunction3(C c2)
+        {
+            if (c2.Field > 0)
+            {
+                c2 = LocalFunction3(new C());
+            }
+
+            return c2;
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void MultiChainedLambdaInvocations()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public object M(C c)
+    {
+        Func<C, C> lambda1 = (C c2) =>
+        {
+            return c2;
+        };
+
+        Func<C, C> lambda2 = (C c2) =>
+        {
+            return lambda1(c2);
+        };
+
+        Func<C, C> lambda3 = (C c2) =>
+        {
+            return lambda2(c2);
+        };
+
+        c = lambda3(c);
+        return c;
+    }
+}");
+        }
+
+        [Fact]
+        public void IsPatterExpression_UndefinedValueAssert()
+        {
+            VerifyCSharp(@"
+using System;
+public class C
+{
+    public void M(C c)
+    {
+        if (c is D d)
+        {
+            M2(d);
+        }
+    }
+
+    private void M2(D d)
+    {
+    }
+}
+
+public class D : C { }
+");
+        }
     }
 }

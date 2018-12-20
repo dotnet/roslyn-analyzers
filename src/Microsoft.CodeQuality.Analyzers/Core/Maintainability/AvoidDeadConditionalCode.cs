@@ -66,7 +66,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 (op as IInvocationOperation)?.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean ||
                                 op.Kind == OperationKind.Coalesce ||
                                 op.Kind == OperationKind.ConditionalAccess ||
-                                op.Kind == OperationKind.IsNull;
+                                op.Kind == OperationKind.IsNull ||
+                                op.Kind == OperationKind.IsPattern;
 
                         if (operationRoot.HasAnyOperationDescendant(ShouldAnalyze))
                         {
@@ -100,6 +101,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                         break;
 
                                     case OperationKind.Invocation:
+                                    case OperationKind.IsPattern:
                                         predicateKind = GetPredicateKind(operation);
                                         if (predicateKind != PredicateValueKind.Unknown)
                                         {
@@ -136,7 +138,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                             PredicateValueKind GetPredicateKind(IOperation operation)
                             {
-                                Debug.Assert(operation.Kind == OperationKind.BinaryOperator || operation.Kind == OperationKind.Invocation || operation.Kind == OperationKind.IsNull);
+                                Debug.Assert(operation.Kind == OperationKind.BinaryOperator ||
+                                             operation.Kind == OperationKind.Invocation ||
+                                             operation.Kind == OperationKind.IsNull ||
+                                             operation.Kind == OperationKind.IsPattern);
 
                                 if (operation is IBinaryOperation binaryOperation &&
                                     binaryOperation.IsComparisonOperator() ||

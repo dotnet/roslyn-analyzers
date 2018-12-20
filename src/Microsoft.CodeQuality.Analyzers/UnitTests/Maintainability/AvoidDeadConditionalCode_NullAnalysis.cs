@@ -3566,6 +3566,133 @@ End Class",
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
+        public void NullCheck_AfterTryCast_IsPattern_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+}
+
+class D: C
+{
+}
+
+class Test
+{
+    void M1_IsDeclarationPattern_AlwaysTrue(C c1)
+    {
+        c1 = new D();
+        if (c1 is D d1)
+        {
+            return;
+        }
+    }
+
+    void M1_IsDeclarationPattern_AlwaysFalse(C c2)
+    {
+        c2 = null;
+        if (c2 is D d2)
+        {
+            return;
+        }
+    }
+
+    void M1_IsConstantPattern_AlwaysTrue(C c3)
+    {
+        c3 = new C();
+        var d3 = c3 as D; // Our analysis is currently conservative here.
+        if (d3 is null)
+        {
+            return;
+        }
+    }
+
+    void M1_IsConstantPattern_AlwaysFalse(C c4)
+    {
+        c4 = new D();
+        var d4 = c4 as D;
+        if (d4 is null)
+        {
+            return;
+        }
+    }
+
+    void M2_IsDeclarationPattern_AlwaysTrue(C c5)
+    {
+        c5 = new D();
+        var d5 = c5 as D;
+        if (d5 is C c5_2)
+        {
+            return;
+        }
+    }
+}
+",
+            // Test0.cs(15,13): warning CA1508: 'c1 is D d1' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(15, 13, "c1 is D d1", "true"),
+            // Test0.cs(24,13): warning CA1508: 'c2 is D d2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(24, 13, "c2 is D d2", "false"),
+            // Test0.cs(44,13): warning CA1508: 'd4 is null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(44, 13, "d4 is null", "false"),
+            // Test0.cs(54,13): warning CA1508: 'd5 is C c5_2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(54, 13, "d5 is C c5_2", "true"));
+            
+            // VB does not support patterns.
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void NullCheck_AfterTryCast_IsPattern_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+}
+
+class D: C
+{
+}
+
+class Test
+{
+    void M1_IsDeclarationPattern(C c1, bool flag)
+    {
+        c1 = new D();
+        if (flag)
+        {
+            c1 = new C();
+        }
+
+        if (c1 is D d1)
+        {
+            return;
+        }
+    }
+
+    void M1_IsConstantPattern(C c2, bool flag)
+    {
+        c2 = new D();
+        if (flag)
+        {
+            c2 = new C();
+        }
+
+        var d2 = c2 as D;
+        if (d2 is null)
+        {
+            return;
+        }
+    }
+}
+");
+
+            // VB does not support patterns.
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
         public void NullCheck_AfterTryCast_Interfaces_NoDiagnostic()
         {
             VerifyCSharp(@"

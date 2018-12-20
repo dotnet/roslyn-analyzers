@@ -4775,5 +4775,29 @@ public class C
     }
 }");
         }
+
+        [Fact]
+        public void IsPatterExpression_UndefinedValueAssert()
+        {
+            VerifyCSharp(@"
+using System;
+public class C
+{
+    public void M(C c)
+    {
+        if (c is D d)
+        {
+            M2(d);
+        }
+    }
+
+    private void M2(D d)
+    {
+    }
+}
+
+public class D : C { }
+");
+        }
     }
 }

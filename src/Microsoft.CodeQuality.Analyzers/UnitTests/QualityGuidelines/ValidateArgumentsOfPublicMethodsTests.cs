@@ -4405,5 +4405,239 @@ internal static class C
             // Test0.cs(9,14): warning CA1062: In externally visible method 'void S.M(object obj)', validate parameter 'obj' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(9, 14, "void S.M(object obj)", "obj"));
         }
+
+        [Fact]
+        public void IndexedEntityInstanceLocationMergeAssert()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+using System.Threading;
+
+public class C
+{
+    public void M(string id, List<object> containers, int index, bool flag)
+    {
+        M2(id, containers, index, flag);
+    }
+
+    private void M2(string id, List<object> containers, int index, bool flag)
+    {
+        M3(id, containers, index, flag);
+    }
+
+    private void M3(string id, List<object> containers, int index, bool flag)
+    {
+        for (int i = 0, n = containers.Count; i < n; i++)
+        {
+            if (flag)
+            {
+                index++;
+                var returnType = ParseTypeSymbol(id);
+
+                if (returnType != null)
+                {
+                }
+            }
+        }
+    }
+
+    private object ParseTypeSymbol(string id)
+    {
+        var results = Allocate();
+        try
+        {
+            M3(results);
+            if (results.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return results[0];
+            }
+        }
+        finally
+        {
+            Free(results);
+        }
+    }
+
+    private void M3(List<object> results)
+    {
+        results.AddRange(new object[] { 1, 2 });
+    }
+
+    private struct Element
+    {
+        internal List<object> Value;
+    }
+
+    internal delegate List<object> Factory();
+    private readonly Factory _factory;
+
+    private List<object> _firstItem;
+    private readonly Element[] _items;
+
+    private List<object> Allocate()
+    {
+        var inst = _firstItem;
+        if (inst == null || inst != Interlocked.CompareExchange(ref _firstItem, null, inst))
+        {
+            inst = AllocateSlow();
+        }
+
+        return inst;
+    }
+
+    private List<object> AllocateSlow()
+    {
+        var items = _items;
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            List<object> inst = items[i].Value;
+            if (inst != null)
+            {
+                if (inst == Interlocked.CompareExchange(ref items[i].Value, null, inst))
+                {
+                    return inst;
+                }
+            }
+        }
+
+        return CreateInstance();
+    }
+
+    private List<object> CreateInstance()
+    {
+        var inst = _factory();
+        return inst;
+    }
+
+    private static void Free(List<object> results) { }
+}");
+        }
+
+        [Fact]
+        public void CopyValueMergeAssert()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(object obj, ref int index)
+    {
+        var startIndex = index;
+        var endIndex = index;
+
+        for (int i = 0; i < 10; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                index = startIndex;
+
+                if (i > j)
+                {
+                    endIndex = index;
+                }
+            }
+
+            index = endIndex;
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void CopyValueInvalidResetDataAssert()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public Func<bool> Predicate { get; }
+
+    public void M(object o)
+    {
+        M2(this, Predicate);
+    }
+
+    private static void M2(C c, Func<bool> predicate)
+    {
+        M3(c, predicate);
+    }
+
+    private static void M3(C c, Func<bool> predicate)
+    {
+        M4(c, predicate);
+    }
+
+    private static void M4(C c, Func<bool> predicate)
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (predicate())
+            {
+                return;
+            }
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void CopyValueAddressSharedEntityAssert()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M(object o)
+    {
+        int xLocal;
+        M2(o, out xLocal);
+    }
+
+    private void M2(object o, out int xParam)
+    {
+        xParam = 0;
+        var x = o.ToString();
+    }
+}",
+            // Test0.cs(9,12): warning CA1062: In externally visible method 'void C.M(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(9, 12, "void C.M(object o)", "o"));
+        }
+
+        [Fact]
+        public void CopyValueAddressSharedEntityAssert_RecursiveInvocations()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M(object o, int param)
+    {
+        int xLocal;
+        int param2 = param;
+        M2(o, out xLocal, ref param2);
+    }
+
+    private void M2(object o, out int xParam, ref int param2)
+    {
+        xParam = 0;
+        if (param2 < 10)
+        {
+            param2++;
+            M2(o, out xParam, ref param2);
+        }
+
+        var x = o.ToString();
+    }
+}",
+            // Test0.cs(10,12): warning CA1062: In externally visible method 'void C.M(object o, int param)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(10, 12, "void C.M(object o, int param)", "o"));
+        }
     }
 }

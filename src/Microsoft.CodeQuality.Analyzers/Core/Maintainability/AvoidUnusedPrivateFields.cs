@@ -125,7 +125,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         private static ImmutableHashSet<INamedTypeSymbol> GetSpecialAttributes(Compilation compilation)
         {
-            var specialAttributes = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+            var specialAttributes = PooledHashSet<INamedTypeSymbol>.GetInstance();
 
             var fieldOffsetAttribute = WellKnownTypes.FieldOffsetAttribute(compilation);
             if (fieldOffsetAttribute != null)
@@ -145,7 +145,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 specialAttributes.Add(mefV2Attribute);
             }
 
-            return specialAttributes.ToImmutable();
+            return specialAttributes.ToImmutableAndFree();
         }
     }
 }

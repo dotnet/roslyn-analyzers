@@ -162,7 +162,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static ImmutableHashSet<INamedTypeSymbol> GetTypesToIgnore(Compilation compilation)
         {
-            var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+            var builder = PooledHashSet<INamedTypeSymbol>.GetInstance();
 
             var xmlWriter = WellKnownTypes.XmlWriter(compilation);
             if (xmlWriter != null)
@@ -194,7 +194,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 builder.Add(unitTestingCollectionStringAssert);
             }
 
-            return builder.ToImmutable();
+            return builder.ToImmutableAndFree();
         }
 
         private static bool ShouldBeLocalized(

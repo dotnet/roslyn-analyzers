@@ -4799,5 +4799,31 @@ public class C
 public class D : C { }
 ");
         }
+
+        [WorkItem(1939, "https://github.com/dotnet/roslyn-analyzers/issues/1939")]
+        [Fact]
+        public void Issue1939()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class Test
+{
+    public void M(bool b, int maxR, int maxC, object o)
+    {
+        Func<int, int, int> l = (r, c) => r * maxC + c;
+        if (!b)
+            l = (r, c) => c * maxR + r;
+        for (int r = 0; r < maxR; r++)
+        {
+            for (int c = 0; c < maxC; c++)
+            {
+                int i = l(r, c);
+            }
+        }
+    }
+}
+");
+        }
     }
 }

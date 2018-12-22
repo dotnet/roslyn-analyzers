@@ -8,6 +8,7 @@ using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
+    [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PropertySetAnalysis)]
     public class DoNotUseInsecureDeserializerLosFormatterTests : DiagnosticAnalyzerTestBase
     {
         private static readonly DiagnosticDescriptor InvocationRule = DoNotUseInsecureDeserializerLosFormatter.RealInvocationDescriptor;

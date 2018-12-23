@@ -31,6 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\OperationBlockAnalysisContextExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WellKnownDiagnosticTagsExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\AbstractAnalysisData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\AbstractBlockAnalysisResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\DictionaryAnalysisData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\AddressSharedEntitiesProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Analysis\PropertySetAnalysis\PropertySetAbstractValue.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Analysis\ValueContentAnalysis\ValueContentAnalysisData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Analysis\ValueContentAnalysis\ValueContentBlockAnalysisResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\AbstractAnalysisDomain.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\AbstractBlockAnalysisResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\AbstractBlockAnalysisResult`2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\InterproceduralCaptureId.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\ArgumentInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FlowAnalysis\Framework\DataFlow\InterproceduralAnalysisKind.cs" />

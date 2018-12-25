@@ -54,7 +54,15 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                 isNullPropertyFlagged,
                 methodNamesToCheckForFlaggedUsage);
             var result = GetOrComputeResultForAnalysisContext(analysisContext);
-            return result.HazardousUsages;
+            try
+            {
+                return result.HazardousUsages;
+            }
+            finally
+            {
+                result.Dispose();
+                pointsToAnalysisResult.Dispose();
+            }
         }
 
         private static PropertySetAnalysisResult GetOrComputeResultForAnalysisContext(PropertySetAnalysisContext analysisContext)

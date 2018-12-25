@@ -81,7 +81,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         }
                     }
                 });
-
             });
         }
     }

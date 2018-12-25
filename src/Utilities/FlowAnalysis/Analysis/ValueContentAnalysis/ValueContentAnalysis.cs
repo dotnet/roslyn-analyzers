@@ -25,8 +25,18 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis
             bool pessimisticAnalysis = true,
             bool performPointsToAndCopyAnalysis = true)
         {
-            return GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, out var _, out var _,
-                interproceduralAnalysisKind, pessimisticAnalysis, performPointsToAndCopyAnalysis);
+            CopyAnalysisResult copyAnalysisResultOpt = null;
+            PointsToAnalysisResult pointsToAnalysisResultOpt = null;
+            try
+            {
+                return GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, out copyAnalysisResultOpt, out pointsToAnalysisResultOpt,
+                    interproceduralAnalysisKind, pessimisticAnalysis, performPointsToAndCopyAnalysis);
+            }
+            finally
+            {
+                copyAnalysisResultOpt?.Dispose();
+                pointsToAnalysisResultOpt?.Dispose();
+            }
         }
 
         public static ValueContentAnalysisResult GetOrComputeResult(

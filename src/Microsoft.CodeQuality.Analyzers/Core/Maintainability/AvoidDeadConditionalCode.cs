@@ -81,61 +81,74 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             var cfg = operationBlockContext.GetControlFlowGraph(operationRoot);
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
                             var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, out var copyAnalysisResult, out var pointsToAnalysisResult);
-                            Debug.Assert(copyAnalysisResult != null);
-                            Debug.Assert(pointsToAnalysisResult != null);
 
-                            foreach (var operation in cfg.DescendantOperations())
+                            try
                             {
-                                switch (operation.Kind)
+                                Debug.Assert(copyAnalysisResult != null);
+                                Debug.Assert(pointsToAnalysisResult != null);
+
+                                foreach (var operation in cfg.DescendantOperations())
                                 {
-                                    case OperationKind.BinaryOperator:
-                                        var binaryOperation = (IBinaryOperation)operation;
-                                        PredicateValueKind predicateKind = GetPredicateKind(binaryOperation);
-                                        if (predicateKind != PredicateValueKind.Unknown &&
-                                            (!(binaryOperation.LeftOperand is IBinaryOperation leftBinary) || GetPredicateKind(leftBinary) == PredicateValueKind.Unknown) &&
-                                            (!(binaryOperation.RightOperand is IBinaryOperation rightBinary) || GetPredicateKind(rightBinary) == PredicateValueKind.Unknown))
-                                        {
-                                            ReportAlwaysTrueFalseOrNullDiagnostic(operation, predicateKind);
-                                        }
+                                    switch (operation.Kind)
+                                    {
+                                        case OperationKind.BinaryOperator:
+                                            var binaryOperation = (IBinaryOperation)operation;
+                                            PredicateValueKind predicateKind = GetPredicateKind(binaryOperation);
+                                            if (predicateKind != PredicateValueKind.Unknown &&
+                                                (!(binaryOperation.LeftOperand is IBinaryOperation leftBinary) || GetPredicateKind(leftBinary) == PredicateValueKind.Unknown) &&
+                                                (!(binaryOperation.RightOperand is IBinaryOperation rightBinary) || GetPredicateKind(rightBinary) == PredicateValueKind.Unknown))
+                                            {
+                                                ReportAlwaysTrueFalseOrNullDiagnostic(operation, predicateKind);
+                                            }
 
-                                        break;
+                                            break;
 
-                                    case OperationKind.Invocation:
-                                    case OperationKind.IsPattern:
-                                        predicateKind = GetPredicateKind(operation);
-                                        if (predicateKind != PredicateValueKind.Unknown)
-                                        {
-                                            ReportAlwaysTrueFalseOrNullDiagnostic(operation, predicateKind);
-                                        }
+                                        case OperationKind.Invocation:
+                                        case OperationKind.IsPattern:
+                                            predicateKind = GetPredicateKind(operation);
+                                            if (predicateKind != PredicateValueKind.Unknown)
+                                            {
+                                                ReportAlwaysTrueFalseOrNullDiagnostic(operation, predicateKind);
+                                            }
 
-                                        break;
+                                            break;
 
-                                    case OperationKind.IsNull:
-                                        // '{0}' is always/never '{1}'. Remove or refactor the condition(s) to avoid dead code.
-                                        predicateKind = GetPredicateKind(operation);
-                                        DiagnosticDescriptor rule;
-                                        switch (predicateKind)
-                                        {
-                                            case PredicateValueKind.AlwaysTrue:
-                                                rule = AlwaysTrueFalseOrNullRule;
-                                                break;
+                                        case OperationKind.IsNull:
+                                            // '{0}' is always/never '{1}'. Remove or refactor the condition(s) to avoid dead code.
+                                            predicateKind = GetPredicateKind(operation);
+                                            DiagnosticDescriptor rule;
+                                            switch (predicateKind)
+                                            {
+                                                case PredicateValueKind.AlwaysTrue:
+                                                    rule = AlwaysTrueFalseOrNullRule;
+                                                    break;
 
-                                            case PredicateValueKind.AlwaysFalse:
-                                                rule = NeverNullRule;
-                                                break;
+                                                case PredicateValueKind.AlwaysFalse:
+                                                    rule = NeverNullRule;
+                                                    break;
 
-                                            default:
-                                                continue;
-                                        }
+                                                default:
+                                                    continue;
+                                            }
 
-                                        var arg1 = operation.Syntax.ToString();
-                                        var arg2 = operation.Language == LanguageNames.VisualBasic ? "Nothing" : "null";
-                                        var diagnostic = operation.CreateDiagnostic(rule, arg1, arg2);
-                                        operationBlockContext.ReportDiagnostic(diagnostic);
-                                        break;
+                                            var arg1 = operation.Syntax.ToString();
+                                            var arg2 = operation.Language == LanguageNames.VisualBasic ? "Nothing" : "null";
+                                            var diagnostic = operation.CreateDiagnostic(rule, arg1, arg2);
+                                            operationBlockContext.ReportDiagnostic(diagnostic);
+                                            break;
+                                    }
                                 }
                             }
+                            finally
+                            {
+                                valueContentAnalysisResult.Dispose();
+                                pointsToAnalysisResult.Dispose();
+                                copyAnalysisResult.Dispose();
+                            }
 
+                            return;
+
+                            // Local functions.
                             PredicateValueKind GetPredicateKind(IOperation operation)
                             {
                                 Debug.Assert(operation.Kind == OperationKind.BinaryOperator ||

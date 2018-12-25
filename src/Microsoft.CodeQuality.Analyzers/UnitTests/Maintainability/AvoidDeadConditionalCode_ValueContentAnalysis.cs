@@ -893,6 +893,24 @@ class Test
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void IntegralValueCompare_ForLoop_02()
+        {
+            VerifyCSharp(@"
+class Test
+{
+    void M(int param, string param2, string param3)
+    {
+        for (int i = 0; i < param; i++)
+        {
+            var x = i == 0 ? param2 : param3;
+        }
+    }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
         public void StringCompare_CopyAnalysis()

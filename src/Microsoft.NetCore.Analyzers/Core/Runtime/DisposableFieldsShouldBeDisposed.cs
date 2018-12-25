@@ -87,52 +87,44 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks,
                             containingMethod, out var disposeAnalysisResult, out var pointsToAnalysisResult))
                         {
-                            try
-                            {
-                                Debug.Assert(disposeAnalysisResult != null);
-                                Debug.Assert(pointsToAnalysisResult != null);
+                            Debug.Assert(disposeAnalysisResult != null);
+                            Debug.Assert(pointsToAnalysisResult != null);
 
-                                operationBlockStartContext.RegisterOperationAction(operationContext =>
-                                {
-                                    var fieldReference = (IFieldReferenceOperation)operationContext.Operation;
-                                    var field = fieldReference.Field;
+                            operationBlockStartContext.RegisterOperationAction(operationContext =>
+                            {
+                                var fieldReference = (IFieldReferenceOperation)operationContext.Operation;
+                                var field = fieldReference.Field;
 
                                 // Only track instance fields on the current instance.
                                 if (field.IsStatic || fieldReference.Instance?.Kind != OperationKind.InstanceReference)
-                                    {
-                                        return;
-                                    }
+                                {
+                                    return;
+                                }
 
                                 // Check if this is a Disposable field that is not currently being tracked.
                                 if (fieldDisposeValueMap.ContainsKey(field) ||
-                                        !disposeAnalysisHelper.GetDisposableFields(field.ContainingType).Contains(field))
-                                    {
-                                        return;
-                                    }
+                                    !disposeAnalysisHelper.GetDisposableFields(field.ContainingType).Contains(field))
+                                {
+                                    return;
+                                }
 
                                 // We have a field reference for a disposable field.
                                 // Check if it is being assigned a locally created disposable object.
                                 if (fieldReference.Parent is ISimpleAssignmentOperation simpleAssignmentOperation &&
-                                        simpleAssignmentOperation.Target == fieldReference)
+                                    simpleAssignmentOperation.Target == fieldReference)
+                                {
+                                    PointsToAbstractValue assignedPointsToValue = pointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
+                                    foreach (var location in assignedPointsToValue.Locations)
                                     {
-                                        PointsToAbstractValue assignedPointsToValue = pointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
-                                        foreach (var location in assignedPointsToValue.Locations)
+                                        if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
                                         {
-                                            if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
-                                            {
-                                                addOrUpdateFieldDisposedValue(field, disposed: false);
-                                                break;
-                                            }
+                                            addOrUpdateFieldDisposedValue(field, disposed: false);
+                                            break;
                                         }
                                     }
-                                },
-                                OperationKind.FieldReference);
-                            }
-                            finally
-                            {
-                                disposeAnalysisResult.Dispose();
-                                pointsToAnalysisResult.Dispose();
-                            }
+                                }
+                            },
+                            OperationKind.FieldReference);
                         }
                     }
 
@@ -145,44 +137,36 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, trackInstanceFields: true,
                                 disposeAnalysisResult: out var disposeAnalysisResult, pointsToAnalysisResult: out var pointsToAnalysisResult))
                             {
-                                try
+                                BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
+                                foreach (var fieldWithPointsToValue in disposeAnalysisResult.TrackedInstanceFieldPointsToMap)
                                 {
-                                    BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
-                                    foreach (var fieldWithPointsToValue in disposeAnalysisResult.TrackedInstanceFieldPointsToMap)
+                                    IFieldSymbol field = fieldWithPointsToValue.Key;
+                                    PointsToAbstractValue pointsToValue = fieldWithPointsToValue.Value;
+
+                                    Debug.Assert(field.Type.IsDisposable(disposeAnalysisHelper.IDisposable));
+                                    var disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;
+                                    var disposed = false;
+                                    foreach (var location in pointsToValue.Locations)
                                     {
-                                        IFieldSymbol field = fieldWithPointsToValue.Key;
-                                        PointsToAbstractValue pointsToValue = fieldWithPointsToValue.Value;
-
-                                        Debug.Assert(field.Type.IsDisposable(disposeAnalysisHelper.IDisposable));
-                                        var disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;
-                                        var disposed = false;
-                                        foreach (var location in pointsToValue.Locations)
+                                        if (disposeDataAtExit.TryGetValue(location, out DisposeAbstractValue disposeValue))
                                         {
-                                            if (disposeDataAtExit.TryGetValue(location, out DisposeAbstractValue disposeValue))
+                                            switch (disposeValue.Kind)
                                             {
-                                                switch (disposeValue.Kind)
-                                                {
-                                                    // For MaybeDisposed, conservatively mark the field as disposed as we don't support path sensitive analysis.
-                                                    case DisposeAbstractValueKind.MaybeDisposed:
-                                                    case DisposeAbstractValueKind.Disposed:
-                                                        disposed = true;
-                                                        addOrUpdateFieldDisposedValue(field, disposed);
-                                                        break;
+                                                // For MaybeDisposed, conservatively mark the field as disposed as we don't support path sensitive analysis.
+                                                case DisposeAbstractValueKind.MaybeDisposed:
+                                                case DisposeAbstractValueKind.Disposed:
+                                                    disposed = true;
+                                                    addOrUpdateFieldDisposedValue(field, disposed);
+                                                    break;
 
-                                                }
-                                            }
-
-                                            if (disposed)
-                                            {
-                                                break;
                                             }
                                         }
+
+                                        if (disposed)
+                                        {
+                                            break;
+                                        }
                                     }
-                                }
-                                finally
-                                {
-                                    disposeAnalysisResult.Dispose();
-                                    pointsToAnalysisResult.Dispose();
                                 }
                             }
                         }

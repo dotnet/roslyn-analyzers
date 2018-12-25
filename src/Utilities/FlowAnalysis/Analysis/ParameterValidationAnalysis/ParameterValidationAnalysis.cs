@@ -37,15 +37,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
             var pointsToAnalysisResult = PointsToAnalysis.PointsToAnalysis.GetOrComputeResult(
                 cfg, owningSymbol, wellKnownTypeProvider, interproceduralAnalysisKind, pessimisticAnalysis);
             var result = GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, interproceduralAnalysisKind, pessimisticAnalysis, pointsToAnalysisResult);
-            try
-            {
-                return result.HazardousParameterUsages;
-            }
-            finally
-            {
-                result.Dispose();
-                pointsToAnalysisResult.Dispose();
-            }
+            return result.HazardousParameterUsages;
         }
 
         public static ParameterValidationAnalysisResult GetOrComputeResult(

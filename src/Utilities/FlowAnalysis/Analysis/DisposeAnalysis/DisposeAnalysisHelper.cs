@@ -91,6 +91,14 @@ namespace Analyzer.Utilities
         public bool TryGetOrComputeResult(
             ImmutableArray<IOperation> operationBlocks,
             IMethodSymbol containingMethod,
+            out DisposeAnalysisResult disposeAnalysisResult)
+        {
+            return TryGetOrComputeResult(operationBlocks, containingMethod, out disposeAnalysisResult, out var _);
+        }
+
+        public bool TryGetOrComputeResult(
+            ImmutableArray<IOperation> operationBlocks,
+            IMethodSymbol containingMethod,
             out DisposeAnalysisResult disposeAnalysisResult,
             out PointsToAnalysisResult pointsToAnalysisResult)
         {

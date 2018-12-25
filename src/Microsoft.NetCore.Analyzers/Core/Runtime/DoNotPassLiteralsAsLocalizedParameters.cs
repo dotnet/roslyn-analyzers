@@ -94,15 +94,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }, OperationKind.PropertyReference);
 
-                    operationBlockStartContext.RegisterOperationBlockEndAction(operationEndContext =>
-                    {
-                        if (lazyValueContentResult.IsValueCreated)
-                        {
-                            lazyValueContentResult.Value?.Dispose();
-                        }
-                    });
-
-
                     void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
                     {
                         if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore))

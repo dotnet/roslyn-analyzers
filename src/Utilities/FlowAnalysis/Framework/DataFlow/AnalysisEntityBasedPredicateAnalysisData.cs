@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
@@ -154,7 +155,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return result;
         }
 
-        public void AddTrackedEntities(PooledHashSet<AnalysisEntity> builder) => builder.UnionWith(CoreAnalysisData.Keys);
+        public void AddTrackedEntities(PooledHashSet<AnalysisEntity> builder)
+            => builder.AddRange(CoreAnalysisData.Keys);
 
         protected override void Dispose(bool disposing)
         {

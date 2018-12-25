@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
+using System;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     /// Marker interface for analysis results from execution of <see cref="DataFlowAnalysis"/> on a control flow graph.
     /// Primarily exists for specifying constraints on analysis result type parameters.
     /// </summary>
-    internal interface IDataFlowAnalysisResult<TAbstractAnalysisValue>
+    internal interface IDataFlowAnalysisResult<TAbstractAnalysisValue> : IDisposable
     {
         ControlFlowGraph ControlFlowGraph { get; }
         (TAbstractAnalysisValue Value, PredicateValueKind PredicateValueKind)? ReturnValueAndPredicateKindOpt { get; }

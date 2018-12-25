@@ -11,16 +11,16 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ParameterValidationAnalys
     /// Result from execution of <see cref="ParameterValidationAnalysis"/> on a basic block.
     /// It stores ParameterValidation values for each <see cref="AbstractLocation"/> at the start and end of the basic block.
     /// </summary>
-    internal class ParameterValidationBlockAnalysisResult : AbstractBlockAnalysisResult
+    internal class ParameterValidationBlockAnalysisResult : AbstractBlockAnalysisResult<ParameterValidationAnalysisData>
     {
         public ParameterValidationBlockAnalysisResult(BasicBlock basicBlock, DataFlowAnalysisInfo<ParameterValidationAnalysisData> blockAnalysisData)
-            : base (basicBlock)
+            : base(basicBlock, blockAnalysisData)
         {
-            InputData = blockAnalysisData.Input?.ToImmutableDictionary() ?? ImmutableDictionary<AbstractLocation, ParameterValidationAbstractValue>.Empty;
-            OutputData = blockAnalysisData.Output?.ToImmutableDictionary() ?? ImmutableDictionary<AbstractLocation, ParameterValidationAbstractValue>.Empty;
+            InputData = blockAnalysisData.Input?.Seal() ?? ImmutableDictionary<AbstractLocation, ParameterValidationAbstractValue>.Empty;
+            OutputData = blockAnalysisData.Output?.Seal() ?? ImmutableDictionary<AbstractLocation, ParameterValidationAbstractValue>.Empty;
         }
 
-        public ImmutableDictionary<AbstractLocation, ParameterValidationAbstractValue> InputData { get; }
-        public ImmutableDictionary<AbstractLocation, ParameterValidationAbstractValue> OutputData { get; }
+        public IDictionary<AbstractLocation, ParameterValidationAbstractValue> InputData { get; }
+        public IDictionary<AbstractLocation, ParameterValidationAbstractValue> OutputData { get; }
     }
 }

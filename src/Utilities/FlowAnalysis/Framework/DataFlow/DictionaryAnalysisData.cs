@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
@@ -11,6 +9,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     internal sealed class DictionaryAnalysisData<TKey, TValue> : AbstractAnalysisData, IDictionary<TKey, TValue>
     {
         private PooledDictionary<TKey, TValue> _coreAnalysisData;
+        private bool _sealed;
 
         public DictionaryAnalysisData()
         {
@@ -22,10 +21,12 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             _coreAnalysisData = PooledDictionary<TKey, TValue>.GetInstance(initializer);
         }
 
-        public ImmutableDictionary<TKey, TValue> ToImmutableDictionary()
+        public IDictionary<TKey, TValue> Seal()
         {
             Debug.Assert(!IsDisposed);
-            return _coreAnalysisData.ToImmutableDictionary();
+            Debug.Assert(!_sealed);
+            _sealed = true;
+            return this;
         }
 
         public TValue this[TKey key]
@@ -38,6 +39,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             set
             {
                 Debug.Assert(!IsDisposed);
+                Debug.Assert(!_sealed);
                 _coreAnalysisData[key] = value;
             }
         }
@@ -82,18 +84,21 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         public void Add(TKey key, TValue value)
         {
             Debug.Assert(!IsDisposed);
+            Debug.Assert(!_sealed);
             _coreAnalysisData.Add(key, value);
         }
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
             Debug.Assert(!IsDisposed);
+            Debug.Assert(!_sealed);
             _coreAnalysisData.Add(item.Key, item.Value);
         }
 
         public void Clear()
         {
             Debug.Assert(!IsDisposed);
+            Debug.Assert(!_sealed);
             _coreAnalysisData.Clear();
         }
 
@@ -124,12 +129,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         public bool Remove(TKey key)
         {
             Debug.Assert(!IsDisposed);
+            Debug.Assert(!_sealed);
             return _coreAnalysisData.Remove(key);
         }
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
             Debug.Assert(!IsDisposed);
+            Debug.Assert(!_sealed);
             return Remove(item.Key);
         }
 

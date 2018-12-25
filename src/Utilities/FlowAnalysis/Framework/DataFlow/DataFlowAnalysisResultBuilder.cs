@@ -64,7 +64,6 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 
         public void Dispose()
         {
-            _info.Values.Dispose();
             _info.Free();
         }
     }

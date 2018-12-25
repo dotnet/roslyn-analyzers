@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
@@ -10,16 +11,16 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis
     /// Result from execution of <see cref="DisposeAnalysis"/> on a basic block.
     /// It store dispose values for each <see cref="AbstractLocation"/> at the start and end of the basic block.
     /// </summary>
-    internal class DisposeBlockAnalysisResult : AbstractBlockAnalysisResult
+    internal class DisposeBlockAnalysisResult : AbstractBlockAnalysisResult<DisposeAnalysisData>
     {
         public DisposeBlockAnalysisResult(BasicBlock basicBlock, DataFlowAnalysisInfo<DisposeAnalysisData> blockAnalysisData)
-            : base (basicBlock)
+            : base(basicBlock, blockAnalysisData)
         {
-            InputData = blockAnalysisData.Input?.ToImmutableDictionary() ?? ImmutableDictionary<AbstractLocation, DisposeAbstractValue>.Empty;
-            OutputData = blockAnalysisData.Output?.ToImmutableDictionary() ?? ImmutableDictionary<AbstractLocation, DisposeAbstractValue>.Empty;
+            InputData = blockAnalysisData.Input?.Seal() ?? ImmutableDictionary<AbstractLocation, DisposeAbstractValue>.Empty;
+            OutputData = blockAnalysisData.Output?.Seal() ?? ImmutableDictionary<AbstractLocation, DisposeAbstractValue>.Empty;
         }
 
-        public ImmutableDictionary<AbstractLocation, DisposeAbstractValue> InputData { get; }
-        public ImmutableDictionary<AbstractLocation, DisposeAbstractValue> OutputData { get; }
+        public IDictionary<AbstractLocation, DisposeAbstractValue> InputData { get; }
+        public IDictionary<AbstractLocation, DisposeAbstractValue> OutputData { get; }
     }
 }

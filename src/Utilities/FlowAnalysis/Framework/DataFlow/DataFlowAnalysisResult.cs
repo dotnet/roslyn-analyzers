@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Analyzer.Utilities.Extensions;
@@ -109,5 +110,36 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         public (TAbstractAnalysisValue Value, PredicateValueKind PredicateValueKind)? ReturnValueAndPredicateKindOpt { get; }
         public TBlockAnalysisResult MergedStateForUnhandledThrowOperationsOpt { get; }
         public PredicateValueKind GetPredicateKind(IOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
+
+        public bool IsDisposed { get; private set; }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (IsDisposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _basicBlockStateMap.Values.Dispose();
+                _interproceduralResultsMap.Values.Dispose();
+                MergedStateForUnhandledThrowOperationsOpt?.Dispose();
+                IsDisposed = true;
+            }
+        }
+
+#pragma warning disable CA1063 // Implement IDisposable Correctly - We want to ensure that we cleanup managed resources even when object was not explicitly disposed.
+        ~DataFlowAnalysisResult()
+#pragma warning restore CA1063 // Implement IDisposable Correctly
+        {
+            Dispose(true);  // We want to explicitly cleanup managed resources, so pass 'true'
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

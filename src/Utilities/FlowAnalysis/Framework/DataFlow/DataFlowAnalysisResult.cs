@@ -111,35 +111,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         public TBlockAnalysisResult MergedStateForUnhandledThrowOperationsOpt { get; }
         public PredicateValueKind GetPredicateKind(IOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
 
-        public bool IsDisposed { get; private set; }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (IsDisposed)
-            {
-                return;
-            }
-
-            if (disposing)
-            {
-                _basicBlockStateMap.Values.Dispose();
-                _interproceduralResultsMap.Values.Dispose();
-                MergedStateForUnhandledThrowOperationsOpt?.Dispose();
-                IsDisposed = true;
-            }
-        }
-
-#pragma warning disable CA1063 // Implement IDisposable Correctly - We want to ensure that we cleanup managed resources even when object was not explicitly disposed.
         ~DataFlowAnalysisResult()
-#pragma warning restore CA1063 // Implement IDisposable Correctly
         {
-            Dispose(true);  // We want to explicitly cleanup managed resources, so pass 'true'
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            _basicBlockStateMap.Values.Dispose();
+            MergedStateForUnhandledThrowOperationsOpt?.Dispose();
         }
     }
 }

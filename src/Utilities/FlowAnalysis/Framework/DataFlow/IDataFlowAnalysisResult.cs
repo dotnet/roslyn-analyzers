@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
     /// Marker interface for analysis results from execution of <see cref="DataFlowAnalysis"/> on a control flow graph.
     /// Primarily exists for specifying constraints on analysis result type parameters.
     /// </summary>
-    internal interface IDataFlowAnalysisResult<TAbstractAnalysisValue> : IDisposable
+    internal interface IDataFlowAnalysisResult<TAbstractAnalysisValue>
     {
         ControlFlowGraph ControlFlowGraph { get; }
         (TAbstractAnalysisValue Value, PredicateValueKind PredicateValueKind)? ReturnValueAndPredicateKindOpt { get; }

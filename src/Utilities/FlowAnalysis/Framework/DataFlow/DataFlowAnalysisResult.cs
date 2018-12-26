@@ -110,11 +110,5 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         public (TAbstractAnalysisValue Value, PredicateValueKind PredicateValueKind)? ReturnValueAndPredicateKindOpt { get; }
         public TBlockAnalysisResult MergedStateForUnhandledThrowOperationsOpt { get; }
         public PredicateValueKind GetPredicateKind(IOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
-
-        ~DataFlowAnalysisResult()
-        {
-            _basicBlockStateMap.Values.Dispose();
-            MergedStateForUnhandledThrowOperationsOpt?.Dispose();
-        }
     }
 }

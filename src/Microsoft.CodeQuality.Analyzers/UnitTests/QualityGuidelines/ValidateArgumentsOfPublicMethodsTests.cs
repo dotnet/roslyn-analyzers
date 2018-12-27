@@ -4825,5 +4825,162 @@ public class Test
 }
 ");
         }
+
+        [Fact]
+        public void CopyAnalysisGetTrimmedDataAssert()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public int Length { get; set; }
+    public void M(C c)
+    {
+        int length1 = c.Length;
+        M2(c);
+    }
+
+    private void M2(C c)
+    {
+        int length2 = c.Length;
+        Console.WriteLine(length2);
+    }
+}",
+            // Test0.cs(9,23): warning CA1062: In externally visible method 'void C.M(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(9, 23, "void C.M(C c)", "c"));
+        }
+
+        [Fact]
+        public void CopyAnalysisGetTrimmedDataAssert_02()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Text;
+
+public class C
+{
+    public static C M(Stream stream)
+    {
+        var x = M2(stream);
+        if (x >= 1000)
+        {
+            return M1(stream);
+        }
+
+        return null;
+    }
+
+    internal static C M1(Stream stream)
+    {
+        long longLength = stream.Length;
+        M2(stream);
+        return null;
+    }
+
+    internal static int M2(Stream stream)
+    {
+        long length = stream.Length;
+        return 0;
+    }
+}
+",
+            // Test0.cs(10,20): warning CA1062: In externally visible method 'C C.M(Stream stream)', validate parameter 'stream' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(10, 20, "C C.M(Stream stream)", "stream"));
+        }
+
+        [Fact]
+        public void CopyAnalysisFlowCaptureReturnValueAssert()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public int Length { get; set; }
+    public void M(S s1, S s2, bool flag, object obj)
+    {
+        switch (M2(s1, flag))
+        {
+            case Kind.Kind1:
+                break;
+            default:
+                throw new Exception();
+        }
+
+        switch (M2(s2, flag))
+        {
+            case Kind.Kind2:
+                break;
+            default:
+                throw new Exception();
+        }
+    }
+
+    private static Kind M2(S s, bool flag)
+    {
+        return flag ? s.Kind : default(Kind);
+    }
+}
+
+public struct S
+{
+    public Kind Kind { get; }
+}
+
+public enum Kind
+{
+    Kind1,
+    Kind2
+}");
+        }
+
+        [Fact]
+        public void CopyAnalysisFlowCaptureReturnValueAssert_02()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public int Length { get; set; }
+    public void M(S s1, S s2, bool flag, object obj)
+    {
+        switch (M2(s1, flag))
+        {
+            case Kind.Kind1:
+                break;
+            default:
+                throw new Exception();
+        }
+
+        switch (M2(s2, flag))
+        {
+            case Kind.Kind2:
+                break;
+            default:
+                throw new Exception();
+        }
+    }
+
+    private static Kind M2(S s, bool flag)
+    {
+        var x = flag ? s.Kind : default(Kind);
+        return x;
+    }
+}
+
+public struct S
+{
+    public Kind Kind { get; }
+}
+
+public enum Kind
+{
+    Kind1,
+    Kind2
+}");
+        }
     }
 }

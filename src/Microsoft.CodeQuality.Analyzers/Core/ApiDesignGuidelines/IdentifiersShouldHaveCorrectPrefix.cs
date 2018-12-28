@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using System.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -49,11 +50,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(
                 (context) =>
             {
-                // FxCop compat: only analyze externally visible symbols
-                if (!context.Symbol.IsExternallyVisible())
+                // FxCop compat: only analyze externally visible symbols by default.
+                if (!context.Symbol.MatchesConfiguredVisibility(context.Options, InterfaceRule, context.CancellationToken))
                 {
+                    Debug.Assert(!context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.CancellationToken));
                     return;
                 }
+
+                Debug.Assert(context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.CancellationToken));
 
                 switch (context.Symbol.Kind)
                 {

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
+using System.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -108,10 +109,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 context.RegisterSymbolAction((saContext) =>
                 {
                     var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;
-                    if (!namedTypeSymbol.IsExternallyVisible())
+                    if (!namedTypeSymbol.MatchesConfiguredVisibility(context.Options, DefaultRule, context.CancellationToken))
                     {
+                        Debug.Assert(!namedTypeSymbol.MatchesConfiguredVisibility(context.Options, SpecialCollectionRule, context.CancellationToken));
                         return;
                     }
+
+                    Debug.Assert(namedTypeSymbol.MatchesConfiguredVisibility(context.Options, SpecialCollectionRule, context.CancellationToken));
 
                     var baseType = namedTypeSymbol.GetBaseTypes().FirstOrDefault(bt => baseTypeSuffixMap.ContainsKey(bt.OriginalDefinition));
                     if (baseType != null)

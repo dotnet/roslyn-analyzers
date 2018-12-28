@@ -108,7 +108,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol flagsAttribute)
         {
             var symbol = (INamedTypeSymbol)context.Symbol;
-            if (symbol.TypeKind != TypeKind.Enum || !symbol.IsExternallyVisible())
+            if (symbol.TypeKind != TypeKind.Enum)
+            {
+                return;
+            }
+
+            var reportCA1714 = symbol.MatchesConfiguredVisibility(context.Options, Rule_CA1714, context.CancellationToken);
+            var reportCA1717 = symbol.MatchesConfiguredVisibility(context.Options, Rule_CA1717, context.CancellationToken);
+            if (!reportCA1714 && !reportCA1717)
             {
                 return;
             }
@@ -116,14 +123,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass.Equals(flagsAttribute));
             if (hasFlagsAttribute)
             {
-                if (!symbol.Name.IsPlural()) // Checking Rule CA1714
+                if (reportCA1714 && !symbol.Name.IsPlural()) // Checking Rule CA1714
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule_CA1714, symbol.OriginalDefinition.Locations.First(), symbol.Name));
                 }
             }
             else
             {
-                if (symbol.Name.IsPlural()) // Checking Rule CA1717
+                if (reportCA1717 && symbol.Name.IsPlural()) // Checking Rule CA1717
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule_CA1717, symbol.OriginalDefinition.Locations.First(), symbol.Name));
                 }

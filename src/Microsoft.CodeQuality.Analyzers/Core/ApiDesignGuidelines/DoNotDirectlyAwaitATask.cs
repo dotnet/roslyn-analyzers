@@ -47,7 +47,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                context.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
+                context.RegisterOperationBlockStartAction(operationBlockStartContext =>
+                {
+                    if (operationBlockStartContext.OwningSymbol is IMethodSymbol method &&
+                        method.IsAsync &&
+                        !method.ReturnsVoid)
+                    {
+                        operationBlockStartContext.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
+                    }
+                });
             });
         }
 

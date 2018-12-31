@@ -272,6 +272,28 @@ End Class
                 GetBasicResultAt(9, 33));
         }
 
+        [Fact, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
+        public void CSharpAsyncVoidMethod_NoDiagnostic()
+        {
+            var code = @"
+using System.Threading.Tasks;
+
+public class C
+{
+    private Task t;
+    public async void M()
+    {
+        await M1Async();
+    }
+
+    private async Task M1Async()
+    {
+        await t.ConfigureAwait(false);
+    }
+}";
+            VerifyCSharp(code);
+        }
+        
         private DiagnosticResult GetCSharpResultAt(int line, int column)
         {
             return GetCSharpResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDirectlyAwaitATaskMessage);

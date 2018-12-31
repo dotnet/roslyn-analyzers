@@ -46,6 +46,19 @@ public class A
 ", GetCSharpResultAt(6, 43, "Col"));
         }
 
+        [Fact, WorkItem(1900, "https://github.com/dotnet/roslyn-analyzers/issues/1900")]
+        public void CSharp_CA2227_Test_GenericCollection()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class A
+{
+    public System.Collections.Generic.ICollection<int> Col { get; set; }
+}
+", GetCSharpResultAt(6, 56, "Col"));
+        }
+
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void CSharp_CA2227_Test_Internal()
         {
@@ -170,7 +183,7 @@ class A
             VerifyCSharp(@"
 using System;
 
-class A
+public class A
 {
     public int[] Col { get; set; }
 }
@@ -183,13 +196,55 @@ class A
             VerifyCSharp(@"
 using System;
 
-class A
+public class A
 {
     public System.Collections.ICollection this[int i]
     {
         get { throw new NotImplementedException(); }
         set { }
     }
+}
+");
+        }
+
+        [Fact]
+        public void CSharp_CA2227_NonCollection()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class A
+{
+    public string Name { get; set; }
+}
+");
+        }
+
+        [Fact, WorkItem(1900, "https://github.com/dotnet/roslyn-analyzers/issues/1900")]
+        public void CSharp_CA2227_ReadOnlyCollection()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class A
+{
+    public IReadOnlyCollection<byte> Col { get; set; }
+}
+");
+        }
+
+        [Fact, WorkItem(1900, "https://github.com/dotnet/roslyn-analyzers/issues/1900")]
+        public void CSharp_CA2227_ImmutableCollection()
+        {
+            VerifyCSharp(@"
+using System.Collections.Immutable;
+
+public class A
+{
+    public ImmutableArray<byte> ImmArray { get; set; }
+    public ImmutableHashSet<string> ImmSet { get; set; }
+    public ImmutableList<int> ImmList { get; set; }
+    public ImmutableDictionary<A, int> ImmDictionary { get; set; }
 }
 ");
         }

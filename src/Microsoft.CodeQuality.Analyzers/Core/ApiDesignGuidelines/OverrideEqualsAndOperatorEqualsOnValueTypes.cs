@@ -70,7 +70,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // will always have identical configured visibility.
                     if (!namedType.IsValueType ||
                         namedType.TypeKind == TypeKind.Enum ||
-                        !namedType.MatchesConfiguredVisibility(compilationStartContext.Options, EqualsRule, compilationStartContext.CancellationToken) ||
+                        !namedType.MatchesConfiguredVisibility(context.Options, EqualsRule, context.CancellationToken) ||
                         !namedType.GetMembers().Any(m => !m.IsConstructor()))
                     {
                         return;

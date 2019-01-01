@@ -1107,6 +1107,35 @@ public sealed class C : IDisposable
 
         #region CSharp FinalizeImplementation Unit Tests
 
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CSharp_CA1063_FinalizeImplementation_NoDiagnostic_ExpressionBodiedImpl()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+public class SomeTestClass : IDisposable
+{
+    private readonly Stream resource = new MemoryStream(1024);
+
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool dispose)
+    {
+        if (dispose)
+        {
+            this.resource.Dispose();
+        }
+    }
+
+    ~SomeTestClass() => this.Dispose(false);
+}");
+        }
+
         [Fact]
         public void CSharp_CA1063_FinalizeImplementation_Diagnostic_MissingCallDisposeBool()
         {

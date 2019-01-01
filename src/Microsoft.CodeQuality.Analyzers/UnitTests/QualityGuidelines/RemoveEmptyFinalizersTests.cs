@@ -173,6 +173,28 @@ public class Class1
             GetCA1821CSharpResultAt(11, 3));
         }
 
+        // Unskip the test once we move to Microsoft.CodeAnalysis version >= 2.7
+        // as we need the fix for https://github.com/dotnet/roslyn/issues/26520
+        // for the analyzer to report a diagnostic here.
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1788"), WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFail_ExpressionBody()
+        {
+            VerifyCSharp(@"
+using System.Diagnostics;
+
+public class Class1
+{
+	// Violation occurs because Debug.Fail is a conditional method. 
+	// The finalizer will contain code only if the DEBUG directive 
+	// symbol is present at compile time. When the DEBUG 
+	// directive is not present, the finalizer will still exist, but 
+	// it will be empty.
+	~Class1() => Debug.Fail(""Finalizer called!"");
+}
+",
+            GetCA1821CSharpResultAt(11, 3));
+        }
+
         [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirective()
         {
@@ -393,6 +415,17 @@ public class Class1
                 GetCA1821CSharpResultAt(4, 6));
         }
 
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1788"), WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CA1821CSharpTestRemoveEmptyFinalizersWithThrowExpression()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    ~Class1() => throw new System.Exception();
+}",
+                GetCA1821CSharpResultAt(4, 6));
+        }
+
         [Fact]
         public void CA1821BasicTestRemoveEmptyFinalizersWithThrowStatement()
         {
@@ -433,6 +466,35 @@ Public Class Class1
 End Class
 ",
                 TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CA1821CSharpRemoveEmptyFinalizers_ExpressionBodiedImpl()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+public class SomeTestClass : IDisposable
+{
+    private readonly Stream resource = new MemoryStream(1024);
+
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool dispose)
+    {
+        if (dispose)
+        {
+            this.resource.Dispose();
+        }
+    }
+
+    ~SomeTestClass() => this.Dispose(false);
+}");
         }
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)

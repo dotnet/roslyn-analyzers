@@ -1,7 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
@@ -13,39 +14,79 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
     {
         protected override bool IsEmptyFinalizer(SyntaxNode methodBody, CodeBlockAnalysisContext analysisContext)
         {
-            var destructorDeclaration = (DestructorDeclarationSyntax)methodBody;
+            // TODO: Switch the analyzer to be IOperation based to avoid handling different syntactic constructs.
 
-            if ((destructorDeclaration?.Body?.Statements.Count ?? 0) == 0)
+            var destructorDeclaration = (DestructorDeclarationSyntax)methodBody;
+            if (destructorDeclaration.Body != null)
             {
-                return true;
+                // Bail out for error case where both expression and block body are non-null.
+                if (destructorDeclaration.ExpressionBody != null)
+                {
+                    return false;
+                }
+
+                return IsEmptyBlockBody(destructorDeclaration.Body, analysisContext.SemanticModel);
             }
 
-            if (destructorDeclaration.Body.Statements.Count == 1)
+            if (destructorDeclaration.ExpressionBody != null)
             {
-                var body = destructorDeclaration.Body.Statements[0];
+                return IsEmptyExpressionBody(destructorDeclaration.ExpressionBody, analysisContext.SemanticModel);
+            }
 
-                if (body.Kind() == CodeAnalysis.CSharp.SyntaxKind.ThrowStatement)
-                {
+            // Return false for error case where both expression and block body are null.
+            return false;
+        }
+
+        private static bool IsEmptyBlockBody(BlockSyntax blockBody, SemanticModel semanticModel)
+        {
+            switch (blockBody.Statements.Count)
+            {
+                case 0:
                     return true;
-                }
 
-                if (body.Kind() == CodeAnalysis.CSharp.SyntaxKind.ExpressionStatement &&
-                    body is ExpressionStatementSyntax expr &&
-                    expr.Expression.Kind() == CodeAnalysis.CSharp.SyntaxKind.InvocationExpression)
-                {
-                    if (!(analysisContext.SemanticModel.GetSymbolInfo(expr.Expression).Symbol is IMethodSymbol invocationSymbol))
+                case 1:
+                    var body = blockBody.Statements[0];
+                    switch (body.Kind())
                     {
-                        // Presumably, if the user has typed something but it doesn't have a symbol yet, the body won't be empty
-                        // once all compile errors are corrected, so we return false here.
-                        return false;
+                        case SyntaxKind.ThrowStatement:
+                            return true;
+
+                        case SyntaxKind.ExpressionStatement:
+                            return ((ExpressionStatementSyntax)body).Expression is InvocationExpressionSyntax invocationExpr &&
+                                IsConditionalInvocation(invocationExpr, semanticModel);
                     }
 
-                    var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.SemanticModel.Compilation);
-                    return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol);
-                }
+                    break;
             }
 
             return false;
+        }
+
+        private static bool IsEmptyExpressionBody(ArrowExpressionClauseSyntax expressionBody, SemanticModel semanticModel)
+        {
+            switch (expressionBody.Expression.Kind())
+            {
+                case SyntaxKind.ThrowExpression:
+                    return true;
+
+                case SyntaxKind.InvocationExpression:
+                    return IsConditionalInvocation((InvocationExpressionSyntax)expressionBody.Expression, semanticModel);
+            }
+
+            return false;
+        }
+
+        private static bool IsConditionalInvocation(InvocationExpressionSyntax invocationExpr, SemanticModel semanticModel)
+        {
+            if (!(semanticModel.GetSymbolInfo(invocationExpr).Symbol is IMethodSymbol invocationSymbol))
+            {
+                // Presumably, if the user has typed something but it doesn't have a symbol yet, the body won't be empty
+                // once all compile errors are corrected, so we return false here.
+                return false;
+            }
+
+            var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(semanticModel.Compilation);
+            return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol);
         }
     }
 }

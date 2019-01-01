@@ -519,7 +519,46 @@ public class B : A
 
         #region CSharp FinalizeOverride Unit Tests
 
-        [Fact]
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
+        public void CSharp_CA1063_FinalizeOverride_Diagnostic_SimpleFinalizeOverride_OverridesDisposeBool()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class B : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~B()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+
+[|public class C : B
+{
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+    }
+    
+    ~C()
+    {
+    }
+}|]
+",
+            GetCA1063CSharpFinalizeImplementationResultAt(29, 6, "C", "Finalize"));
+        }
+
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
         public void CSharp_CA1063_FinalizeOverride_Diagnostic_SimpleFinalizeOverride()
         {
             VerifyCSharp(@"
@@ -550,10 +589,10 @@ public class B : IDisposable
     }
 }|]
 ",
-            GetCA1063CSharpFinalizeOverrideResultAt(22, 14, "C"));
+            GetCA1063CSharpFinalizeImplementationResultAt(24, 6, "C", "Finalize"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
         public void CSharp_CA1063_FinalizeOverride_Diagnostic_DoubleFinalizeOverride()
         {
             VerifyCSharp(@"
@@ -591,7 +630,98 @@ public class B : A
     }
 }|]
 ",
-            GetCA1063CSharpFinalizeOverrideResultAt(29, 14, "C"));
+            GetCA1063CSharpFinalizeImplementationResultAt(31, 6, "C", "Finalize"));
+        }
+
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
+        public void CSharp_CA1063_FinalizeOverride_NoDiagnostic_SimpleFinalizeOverride_InvokesDisposeBool()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class B : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~B()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+
+[|public class C : B
+{
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+    }
+    
+    ~C()
+    {
+        Dispose(false);
+    }
+}|]
+");
+        }
+
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
+        public void CSharp_CA1063_FinalizeOverride_NoDiagnostic_DoubleFinalizeOverride_InvokesDisposeBool()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class A : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~A()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+
+public class B : A
+{
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+    }
+    
+    ~B()
+    {
+        Dispose(false);
+    }
+}
+
+[|public class C : B
+{
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+    }
+    
+    ~C()
+    {
+        Dispose(false);
+    }
+}|]
+");
         }
 
         [Fact]
@@ -1804,8 +1934,83 @@ End Class|]
 
         #region VB FinalizeOverride Unit Tests
 
-        [Fact]
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
         public void Basic_CA1063_FinalizeOverride_Diagnostic_SimpleFinalizeOverride()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class B
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+
+[|Public Class C
+    Inherits B
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+End Class|]
+",
+            GetCA1063BasicFinalizeImplementationResultAt(23, 29, "C", "Finalize"));
+        }
+
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
+        public void Basic_CA1063_FinalizeOverride_Diagnostic_DoubleFinalizeOverride()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+        GC.SuppressFinalize(Me)
+    End Sub
+
+    Protected Overrides Sub Finalize()
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+
+Public Class B
+    Inherits A
+
+    Protected Overrides Sub Finalize()
+        Dispose(False)
+        MyBase.Finalize()
+    End Sub
+End Class
+
+[|Public Class C
+    Inherits B
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
+    End Sub
+End Class|]
+",
+            GetCA1063BasicFinalizeImplementationResultAt(32, 29, "C", "Finalize"));
+        }
+
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
+        public void Basic_CA1063_FinalizeOverride_NoDiagnostic_SimpleFinalizeOverride_InvokesDisposeBool()
         {
             VerifyBasic(@"
 Imports System
@@ -1832,15 +2037,15 @@ End Class
     Inherits B
 
     Protected Overrides Sub Finalize()
+        Dispose(False)
         MyBase.Finalize()
     End Sub
 End Class|]
-",
-            GetCA1063BasicFinalizeOverrideResultAt(22, 14, "C"));
+");
         }
 
-        [Fact]
-        public void Basic_CA1063_FinalizeOverride_Diagnostic_DoubleFinalizeOverride()
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
+        public void Basic_CA1063_FinalizeOverride_NoDiagnostic_DoubleFinalizeOverride_InvokesDisposeBool()
         {
             VerifyBasic(@"
 Imports System
@@ -1875,11 +2080,11 @@ End Class
     Inherits B
 
     Protected Overrides Sub Finalize()
+        Dispose(False)
         MyBase.Finalize()
     End Sub
 End Class|]
-",
-            GetCA1063BasicFinalizeOverrideResultAt(30, 14, "C"));
+");
         }
 
         [Fact]
@@ -2554,18 +2759,6 @@ End Class
         private static DiagnosticResult GetCA1063BasicDisposeOverrideResultAt(int line, int column, string typeName, string method)
         {
             string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride, typeName + "." + method);
-            return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
-        }
-
-        private static DiagnosticResult GetCA1063CSharpFinalizeOverrideResultAt(int line, int column, string typeName)
-        {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName);
-            return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
-        }
-
-        private static DiagnosticResult GetCA1063BasicFinalizeOverrideResultAt(int line, int column, string typeName)
-        {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 

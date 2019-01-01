@@ -842,11 +842,6 @@
         <target state="translated">Usuń interfejs IDisposable z listy interfejsów implementowanych przez typ {0}, ponieważ jest już implementowany przez typ bazowy {1}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">Usuń finalizator z typu {0}, przesłoń metodę Dispose(bool disposing) i umieść logikę finalizacji w ścieżce kodu wykonywanej, gdy parametr „disposing” ma wartość false.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
         <target state="translated">Usuń metodę {0}, przesłoń metodę Dispose(bool disposing) i umieść logikę likwidowania w ścieżce kodu wykonywanej, gdy parametr „disposing” ma wartość true.</target>

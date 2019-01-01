@@ -842,11 +842,6 @@
         <target state="translated">IDisposable は、基本型 {1} で既に実装されているため、{0} によって実装されたインターフェイスのリストから削除します。</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">型 {0} からファイナライザーを削除し、Dispose(bool disposing) をオーバーライドして、'disposing' が false であるコード パスに finalization 論理を入れます。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
         <target state="translated">{0} を削除し、Dispose(bool disposing) をオーバーライドして、'disposing' が true であるコード パスに dispose 論理を入れます。</target>

@@ -26,7 +26,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageIDisposableReimplementation = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageFinalizeOverride = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageDisposeOverride = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageDisposeSignature = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageRenameDispose = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -39,15 +38,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal static DiagnosticDescriptor IDisposableReimplementationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageIDisposableReimplementation,
-                                                                             DiagnosticCategory.Design,
-                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: HelpLinkUri,
-                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
-        internal static DiagnosticDescriptor FinalizeOverrideRule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessageFinalizeOverride,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
@@ -119,7 +109,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-            ImmutableArray.Create(IDisposableReimplementationRule, FinalizeOverrideRule, DisposeOverrideRule, DisposeSignatureRule, RenameDisposeRule, DisposeBoolSignatureRule, DisposeImplementationRule, FinalizeImplementationRule, ProvideDisposeBoolRule);
+            ImmutableArray.Create(IDisposableReimplementationRule, DisposeOverrideRule, DisposeSignatureRule, RenameDisposeRule, DisposeBoolSignatureRule, DisposeImplementationRule, FinalizeImplementationRule, ProvideDisposeBoolRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -224,8 +214,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         {
                             CheckDisposeOverrideRule(method, type, context);
                         }
-
-                        CheckFinalizeOverrideRule(type, context);
                     }
                 }
             }
@@ -251,18 +239,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             IMethodSymbol disposeMethod = FindDisposeMethod(type);
                             if (disposeMethod != null)
                             {
-                                if (method == disposeMethod)
+                                if (method.Equals(disposeMethod))
                                 {
                                     CheckDisposeImplementationRule(method, type, context.OperationBlocks, context);
                                 }
                                 else if (isFinalizerMethod)
                                 {
-                                    // Check implementation of finalizer only if the class explicitly implements IDisposable
-                                    // If class implements interface inherited from IDisposable and IDisposable is implemented in base class
-                                    // then implementation of finalizer is ignored
                                     CheckFinalizeImplementationRule(method, type, context.OperationBlocks, context);
                                 }
                             }
+                        }
+                        else if (isFinalizerMethod &&
+                            ImplementsDisposableInBaseType(type) &&
+                            FindInheritedDisposeBoolMethod(type) != null)
+                        {
+                            // Finalizer must invoke Dispose(false) if any of its base type has a Dispose(bool) implementation.
+                            CheckFinalizeImplementationRule(method, type, context.OperationBlocks, context);
                         }
                     }
                 }
@@ -323,17 +315,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     {
                         context.ReportDiagnostic(method.CreateDiagnostic(DisposeOverrideRule, $"{type.Name}.{method.Name}"));
                     }
-                }
-            }
-
-            /// <summary>
-            /// Checks rule: Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.
-            /// </summary>
-            private static void CheckFinalizeOverrideRule(INamedTypeSymbol type, SymbolAnalysisContext context)
-            {
-                if (type.HasFinalizer())
-                {
-                    context.ReportDiagnostic(type.CreateDiagnostic(FinalizeOverrideRule, type.Name));
                 }
             }
 
@@ -440,7 +421,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static bool IsDisposeBoolCall(IInvocationOperation invocationExpression, INamedTypeSymbol type, bool expectedValue)
         {
             if (invocationExpression.TargetMethod == null ||
-                invocationExpression.TargetMethod.ContainingType != type ||
                 !invocationExpression.TargetMethod.HasDisposeBoolMethodSignature())
             {
                 return false;

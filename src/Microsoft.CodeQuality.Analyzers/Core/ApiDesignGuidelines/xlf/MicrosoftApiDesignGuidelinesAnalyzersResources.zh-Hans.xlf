@@ -842,11 +842,6 @@
         <target state="translated">从 {0} 实现的接口列表中删除 IDisposable，因为它已由基类型 {1} 实现。</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">从类型 {0} 中删除终结器，重写 Dispose(bool disposing)，并在 "disposing" 为 false 的代码路径中加入终结逻辑。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
         <target state="translated">移除 {0}，重写 Dispose(bool disposing)，并在 "disposing" 为 true 的代码路径中加入释放逻辑。</target>

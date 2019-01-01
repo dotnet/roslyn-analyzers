@@ -842,11 +842,6 @@
         <target state="translated">IDisposable zaten {1} temel türü tarafından uygulandığından, {0} tarafından uygulanan arabirim listesinden bunu kaldırın.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">{0} türünden sonlandırıcıyı kaldırın, Dispose(bool disposing) yöntemini geçersiz kılın ve sonlandırma mantığını 'disposing' değerinin false olduğu kod yoluna koyun.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
         <target state="translated">{0} türünü kaldırın, Dispose(bool disposing) öğesini geçersiz kılın ve atma mantığını 'disposing' değerinin true olduğu kod yoluna koyun.</target>

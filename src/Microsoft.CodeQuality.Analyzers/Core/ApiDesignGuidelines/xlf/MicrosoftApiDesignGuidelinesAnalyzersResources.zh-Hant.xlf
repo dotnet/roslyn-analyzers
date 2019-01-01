@@ -842,11 +842,6 @@
         <target state="translated">從 {0} 實作的介面清單中移除 IDisposable，因為其已由基底類型 {1} 實作。</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">從類型 {0} 中移除完成項、覆寫 Dispose(bool disposing)，並將完成項邏輯置於 'disposing' 為 false 的程式碼路徑中。</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
         <target state="translated">移除 {0}、覆寫 Dispose(bool disposing)，並將處置邏輯放在 'disposing' 為 true 的程式碼路徑中。</target>

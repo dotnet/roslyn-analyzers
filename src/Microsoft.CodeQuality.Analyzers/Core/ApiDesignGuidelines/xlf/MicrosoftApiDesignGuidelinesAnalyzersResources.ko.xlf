@@ -842,11 +842,6 @@
         <target state="translated">기본 형식 {1}에서 이미 구현되었으므로 {0}에서 구현된 인터페이스 목록의 IDisposable을 제거하세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">{0} 형식에서 종료자를 제거하고 Dispose(bool disposing)를 재정의한 후 종료 논리를 'disposing'이 false인 코드 경로에 추가하세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
         <target state="translated">{0}을(를) 제거하고 Dispose(bool disposing)를 재정의한 후 삭제 논리를 'disposing'이 true인 코드 경로에 추가하세요.</target>

@@ -842,11 +842,6 @@
         <target state="translated">Odeberte IDisposable ze seznamu rozhraní implementovaných pomocí {0}, protože se už implementuje pomocí základního typu {1}.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">Odeberte finalizační metodu z typu {0}, přepište Dispose(likvidace logického typu) a vložte logiku finalizační metody do cesty kódu, kde disposing nabývá hodnoty false.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
         <target state="translated">Odeberte {0}, přepište Dispose(likvidace logického typu) a vložte logiku likvidace do cesty kódu, kde disposing nabývá hodnoty true.</target>

@@ -50,6 +50,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
+                    // Do not flag non-ordinary methods, such as conversions, operator overloads, etc.
                     if (symbol is IMethodSymbol methodSymbol &&
                         methodSymbol.MethodKind != MethodKind.Ordinary)
                     {

@@ -225,7 +225,7 @@ namespace Microsoft.NetFramework.Analyzers
                     foreach (IFieldSymbol field in nonSerializableFields)
                     {
                         // Only process instance fields
-                        if (field.IsConst || field.IsStatic)
+                        if (field.IsStatic)
                         {
                             continue;
                         }

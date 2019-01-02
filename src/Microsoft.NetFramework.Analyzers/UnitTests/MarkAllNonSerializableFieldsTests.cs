@@ -531,6 +531,32 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 End Class");
         }
 
+        [Fact, WorkItem(1883, "https://github.com/dotnet/roslyn-analyzers/issues/1883")]
+        public void CA2235WithNonInstanceFieldsOfNonSerializableType()
+        {
+            VerifyCSharp(@"
+                using System;
+                public class NonSerializableType { }
+
+                [Serializable]
+                internal class CA2235WithNonInstanceFieldsOfNonSerializableType
+                {
+                    public const NonSerializableType s1 = null;
+                    public static NonSerializableType s2;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+                Public Class NonSerializableType
+                End Class
+
+                <Serializable>
+                Friend Class CA2235WithNonInstanceFieldsOfNonSerializableType 
+                    Public Const s1 As Object = Nothing
+                    Public Shared s2 As NonSerializableType
+                End Class");
+        }
+
         internal static readonly string CA2235Message = MicrosoftNetFrameworkAnalyzersResources.MarkAllNonSerializableFieldsMessage;
 
         private static DiagnosticResult GetCA2235CSharpResultAt(int line, int column, string fieldName, string containerName, string typeName)

@@ -224,6 +224,12 @@ namespace Microsoft.NetFramework.Analyzers
                         namedTypeSymbol.GetMembers().OfType<IFieldSymbol>().Where(m => !IsSerializable(m.Type));
                     foreach (IFieldSymbol field in nonSerializableFields)
                     {
+                        // Only process instance fields
+                        if (field.IsStatic)
+                        {
+                            continue;
+                        }
+
                         // Check for [NonSerialized]
                         if (field.GetAttributes().Any(x => x.AttributeClass.Equals(_nonSerializedAttributeTypeSymbol)))
                         {

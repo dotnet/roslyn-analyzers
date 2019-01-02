@@ -75,7 +75,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             INamedTypeSymbol constructedEquatable = equatableType.Construct(namedType);
             INamedTypeSymbol implementation = namedType
-                .Interfaces
+                .AllInterfaces
                 .FirstOrDefault(x => x.Equals(constructedEquatable));
             bool implementsEquatable = implementation != null;
 

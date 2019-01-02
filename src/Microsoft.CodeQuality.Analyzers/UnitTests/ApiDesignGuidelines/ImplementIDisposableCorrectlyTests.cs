@@ -781,6 +781,39 @@ public class B : IDisposable
 ");
         }
 
+        [Fact, WorkItem(1950, "https://github.com/dotnet/roslyn-analyzers/issues/1950")]
+        public void CSharp_CA1063_FinalizeOverride_NoDiagnostic_FinalizeNotOverriden()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class B : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~B()
+    {
+        Dispose(false);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+
+[|public class C : B
+{
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+    }
+}|]
+");
+        }
         #endregion
 
         #region CSharp ProvideDisposeBool Unit Tests

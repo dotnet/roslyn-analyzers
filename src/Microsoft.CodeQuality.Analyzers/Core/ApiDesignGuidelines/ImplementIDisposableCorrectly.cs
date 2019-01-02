@@ -663,7 +663,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // a finalizer, C# will create a try/finally statement to wrap the finalizer, with a
                     // call to the base finalizer in the finally section. We need to validate the contents
                     // of the try block
-                    var shouldAnalyze = !operation.IsImplicit || operation.Kind == OperationKind.Try;
+                    // Also analyze the implicit expression statement created for expression bodied implementation.
+                    var shouldAnalyze = !operation.IsImplicit || operation.Kind == OperationKind.Try || operation.Kind == OperationKind.ExpressionStatement;
                     if (shouldAnalyze && !ValidateOperation(operation))
                     {
                         return false;

@@ -249,6 +249,153 @@ public class A
 ");
         }
 
+        [Fact, WorkItem(1900, "https://github.com/dotnet/roslyn-analyzers/issues/1900")]
+        public void CSharp_CA2227_ImmutableCollection_02()
+        {
+            VerifyCSharp(@"
+using System.Collections.Immutable;
+
+public class A
+{
+    public IImmutableStack<byte> ImmStack { get; set; }
+    public IImmutableQueue<byte> ImmQueue { get; set; }
+    public IImmutableSet<string> ImmSet { get; set; }
+    public IImmutableList<int> ImmList { get; set; }
+    public IImmutableDictionary<A, int> ImmDictionary { get; set; }
+}
+");
+        }
+
+        [Fact, WorkItem(1900, "https://github.com/dotnet/roslyn-analyzers/issues/1900")]
+        public void CSharp_CA2227_ImmutableCollection_03()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+
+public class A
+{
+    public CustomImmutableList ImmList { get; set; }
+}
+
+public class CustomImmutableList : IImmutableList<int>, ICollection<int>
+{
+    public int this[int index] => throw new NotImplementedException();
+
+    public int Count => throw new NotImplementedException();
+
+    public bool IsReadOnly => throw new NotImplementedException();
+
+    public IImmutableList<int> Add(int value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> AddRange(IEnumerable<int> items)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> Clear()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Contains(int item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void CopyTo(int[] array, int arrayIndex)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerator<int> GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+
+    public int IndexOf(int item, int index, int count, IEqualityComparer<int> equalityComparer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> Insert(int index, int element)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> InsertRange(int index, IEnumerable<int> items)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int LastIndexOf(int item, int index, int count, IEqualityComparer<int> equalityComparer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> Remove(int value, IEqualityComparer<int> equalityComparer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Remove(int item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> RemoveAll(Predicate<int> match)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> RemoveAt(int index)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> RemoveRange(IEnumerable<int> items, IEqualityComparer<int> equalityComparer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> RemoveRange(int index, int count)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> Replace(int oldValue, int newValue, IEqualityComparer<int> equalityComparer)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IImmutableList<int> SetItem(int index, int value)
+    {
+        throw new NotImplementedException();
+    }
+
+    void ICollection<int>.Add(int item)
+    {
+        throw new NotImplementedException();
+    }
+
+    void ICollection<int>.Clear()
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        throw new NotImplementedException();
+    }
+}
+");
+        }
+
         [Fact]
         public void CSharp_CA2227_DataMember()
         {

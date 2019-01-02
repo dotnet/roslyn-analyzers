@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
@@ -62,6 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     INamedTypeSymbol genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
                     INamedTypeSymbol arrayType = WellKnownTypes.Array(context.Compilation);
                     INamedTypeSymbol dataMemberAttribute = WellKnownTypes.DataMemberAttribute(context.Compilation);
+                    ImmutableHashSet<INamedTypeSymbol> immutableInterfaces = WellKnownTypes.IImmutableInterfaces(context.Compilation);
 
                     if (iCollectionType == null ||
                         genericICollectionType == null ||
@@ -70,7 +70,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    context.RegisterSymbolAction(c => AnalyzeSymbol(c, iCollectionType, genericICollectionType, arrayType, dataMemberAttribute), SymbolKind.Property);
+                    context.RegisterSymbolAction(c => AnalyzeSymbol(c, iCollectionType, genericICollectionType, arrayType, dataMemberAttribute, immutableInterfaces), SymbolKind.Property);
                 });
         }
 
@@ -79,7 +79,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             INamedTypeSymbol iCollectionType,
             INamedTypeSymbol genericICollectionType,
             INamedTypeSymbol arrayType,
-            INamedTypeSymbol dataMemberAttribute)
+            INamedTypeSymbol dataMemberAttribute,
+            ImmutableHashSet<INamedTypeSymbol> immutableInterfaces)
         {
             var property = (IPropertySymbol)context.Symbol;
 
@@ -110,9 +111,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             
             // exclude Immutable collections
             // see https://github.com/dotnet/roslyn-analyzers/issues/1900 for details
-            if (property.Type.IsSealed &&
-                property.Type.Name.StartsWith("Immutable", StringComparison.Ordinal) &&
-                property.Type.ContainingNamespace?.ToDisplayString() == "System.Collections.Immutable")
+            if (!immutableInterfaces.IsEmpty &&
+                property.Type.AllInterfaces.Any(i => immutableInterfaces.Contains(i.OriginalDefinition)))
             {
                 return;
             }

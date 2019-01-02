@@ -133,7 +133,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static bool Inherits(ITypeSymbol symbol, ITypeSymbol baseType)
         {
             Debug.Assert(baseType.Equals(baseType.OriginalDefinition));
-            return symbol == null ? false : symbol.OriginalDefinition.Inherits(baseType);
+            return symbol?.OriginalDefinition.Inherits(baseType) ?? false;
         }
     }
 }

@@ -221,16 +221,25 @@ public class A
         }
 
         [Fact, WorkItem(1900, "https://github.com/dotnet/roslyn-analyzers/issues/1900")]
-        public void CSharp_CA2227_ReadOnlyCollection()
+        public void CSharp_CA2227_ReadOnlyCollections()
         {
+            // NOTE: ReadOnlyCollection<T> and ReadOnlyDictionary<Key, Value> implement ICollection and hence are flagged.
+            //       IReadOnlyCollection<T> does not implement ICollection or ICollection<T>, hence is not flagged.
             VerifyCSharp(@"
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 public class A
 {
-    public IReadOnlyCollection<byte> Col { get; set; }
+    public IReadOnlyCollection<byte> P1 { get; set; }
+    public ReadOnlyCollection<byte> P2 { get; set; }
+    public ReadOnlyDictionary<string, byte> P3 { get; set; }
 }
-");
+",
+            // Test0.cs(8,37): warning CA2227: Change 'P2' to be read-only by removing the property setter.
+            GetCSharpResultAt(8, 37, "P2"),
+            // Test0.cs(9,45): warning CA2227: Change 'P3' to be read-only by removing the property setter.
+            GetCSharpResultAt(9, 45, "P3"));
         }
 
         [Fact, WorkItem(1900, "https://github.com/dotnet/roslyn-analyzers/issues/1900")]

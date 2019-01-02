@@ -14,8 +14,6 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
     {
         protected override bool IsEmptyFinalizer(SyntaxNode methodBody, CodeBlockAnalysisContext analysisContext)
         {
-            // TODO: Switch the analyzer to be IOperation based to avoid handling different syntactic constructs.
-
             var destructorDeclaration = (DestructorDeclarationSyntax)methodBody;
             if (destructorDeclaration.Body != null)
             {

@@ -455,6 +455,19 @@ public class C1
                 TestValidationMode.AllowCompileErrors);
         }
 
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CA1821CSharpRemoveEmptyFinalizers_ErrorCodeWithBothBlockAndExpressionBody()
+        {
+            VerifyCSharp(@"
+public class C1
+{
+    ~C1() { }
+    => ;
+}
+",
+                TestValidationMode.AllowCompileErrors);
+        }
+
         [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
         public void CA1821BasicRemoveEmptyFinalizersInvalidInvocationExpression()
         {

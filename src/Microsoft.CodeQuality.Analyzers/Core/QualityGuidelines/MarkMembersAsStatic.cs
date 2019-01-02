@@ -168,10 +168,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // If this looks like an event handler don't flag such cases.
+            // However, we do want to consider EventRaise accessor as a candidate
+            // so we can flag the associated event if none of it's accessors need instance reference.
             if (methodSymbol.Parameters.Length == 2 &&
                 methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
                 IsEventArgs(methodSymbol.Parameters[1].Type, compilation) &&
-                !methodSymbol.IsAccessorMethod())
+                methodSymbol.MethodKind != MethodKind.EventRaise)
             {
                 return false;
             }

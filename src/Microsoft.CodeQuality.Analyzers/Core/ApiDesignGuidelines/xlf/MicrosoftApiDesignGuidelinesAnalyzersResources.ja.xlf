@@ -62,6 +62,11 @@
         <target state="translated">デリゲート型を返す Void として非同期ラムダを格納しないでください</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
+        <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
+        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">可能な場合は CancellationToken を伝達してください</target>
@@ -838,43 +843,43 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
-        <source>Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.</source>
-        <target state="translated">IDisposable は、基本型 {1} で既に実装されているため、{0} によって実装されたインターフェイスのリストから削除します。</target>
+        <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
+        <target state="needs-review-translation">IDisposable は、基本型 {1} で既に実装されているため、{0} によって実装されたインターフェイスのリストから削除します。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
-        <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="translated">{0} を削除し、Dispose(bool disposing) をオーバーライドして、'disposing' が true であるコード パスに dispose 論理を入れます。</target>
+        <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
+        <target state="needs-review-translation">{0} を削除し、Dispose(bool disposing) をオーバーライドして、'disposing' が true であるコード パスに dispose 論理を入れます。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
-        <source>Ensure that {0} is declared as public and sealed.</source>
-        <target state="translated">{0} が public および sealed として宣言されていることを確認してください。</target>
+        <source>Ensure that '{0}' is declared as public and sealed.</source>
+        <target state="needs-review-translation">{0} が public および sealed として宣言されていることを確認してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
-        <source>Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="translated">{0} の名前を 'Dispose' に変更し、public および sealed として宣言されていることを確認してください。</target>
+        <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
+        <target state="needs-review-translation">{0} の名前を 'Dispose' に変更し、public および sealed として宣言されていることを確認してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
-        <source>Ensure that {0} is declared as protected, virtual, and unsealed.</source>
-        <target state="translated">{0} が protected、virtual、および unsealed として宣言されていることを確認してください。</target>
+        <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
+        <target state="needs-review-translation">{0} が protected、virtual、および unsealed として宣言されていることを確認してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
-        <source>Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="translated">Dispose(true) を呼び出してから、現在のオブジェクトのインスタンス (Visual Basic では 'this' または 'Me') で GC.SuppressFinalize を呼び出し、その後戻り値を返すように、{0} を変更してください。</target>
+        <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
+        <target state="needs-review-translation">Dispose(true) を呼び出してから、現在のオブジェクトのインスタンス (Visual Basic では 'this' または 'Me') で GC.SuppressFinalize を呼び出し、その後戻り値を返すように、{0} を変更してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
-        <source>Modify {0} so that it calls Dispose(false) and then returns.</source>
-        <target state="translated">Dispose(false) を呼び出してから、戻り値を返すように、{0} を変更してください。</target>
+        <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
+        <target state="needs-review-translation">Dispose(false) を呼び出してから、戻り値を返すように、{0} を変更してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
-        <source>Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="translated">Dispose(bool) のオーバーライド可能な実装を {0} で指定するか、または型をシールドに設定します。Dispose(false) への呼び出しは、ネイティブ リソースのみをクリーンアップしなければなりません。Dispose(true) への呼び出しは、マネージおよびネイティブの両方のリソースをクリーンアップしなければなりません。</target>
+        <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
+        <target state="needs-review-translation">Dispose(bool) のオーバーライド可能な実装を {0} で指定するか、または型をシールドに設定します。Dispose(false) への呼び出しは、ネイティブ リソースのみをクリーンアップしなければなりません。Dispose(true) への呼び出しは、マネージおよびネイティブの両方のリソースをクリーンアップしなければなりません。</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">

@@ -62,6 +62,11 @@
         <target state="translated">No almacenar expresiones lambda asincrónicas como void que devuelve tipos de delegado</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
+        <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
+        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">Propagar elementos CancellationToken cuando sea posible</target>
@@ -838,48 +843,43 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
-        <source>Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.</source>
-        <target state="translated">Quite IDisposable de la lista de interfaces que implementa {0} porque el tipo base {1} ya la ha implementado.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">Quite el finalizador del tipo {0}, invalide Dispose(bool disposing) y coloque la lógica de finalización en la ruta de acceso del código donde “disposing” es false.</target>
+        <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
+        <target state="needs-review-translation">Quite IDisposable de la lista de interfaces que implementa {0} porque el tipo base {1} ya la ha implementado.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
-        <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="translated">Quite {0}, invalide Dispose(bool disposing) y coloque la lógica de Dispose en la ruta de acceso del código donde “disposing” es true.</target>
+        <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
+        <target state="needs-review-translation">Quite {0}, invalide Dispose(bool disposing) y coloque la lógica de Dispose en la ruta de acceso del código donde “disposing” es true.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
-        <source>Ensure that {0} is declared as public and sealed.</source>
-        <target state="translated">Asegúrese de que el elemento {0} se declara como público y sellado.</target>
+        <source>Ensure that '{0}' is declared as public and sealed.</source>
+        <target state="needs-review-translation">Asegúrese de que el elemento {0} se declara como público y sellado.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
-        <source>Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="translated">Cambie el nombre de {0} a “Dispose” y asegúrese de que este elemento se declara como público y sellado.</target>
+        <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
+        <target state="needs-review-translation">Cambie el nombre de {0} a “Dispose” y asegúrese de que este elemento se declara como público y sellado.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
-        <source>Ensure that {0} is declared as protected, virtual, and unsealed.</source>
-        <target state="translated">Asegúrese de que el elemento {0} se declara como protegido, virtual y no sellado.</target>
+        <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
+        <target state="needs-review-translation">Asegúrese de que el elemento {0} se declara como protegido, virtual y no sellado.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
-        <source>Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="translated">Modifique {0} de modo que llame a Dispose(true), después llame a GC.SuppressFinalize en la instancia de objeto actual (“this” o “Me” en Visual Basic) y, a continuación, vuelva.</target>
+        <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
+        <target state="needs-review-translation">Modifique {0} de modo que llame a Dispose(true), después llame a GC.SuppressFinalize en la instancia de objeto actual (“this” o “Me” en Visual Basic) y, a continuación, vuelva.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
-        <source>Modify {0} so that it calls Dispose(false) and then returns.</source>
-        <target state="translated">Modifique {0} para que llame a Dispose(false) y, a continuación, vuelva.</target>
+        <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
+        <target state="needs-review-translation">Modifique {0} para que llame a Dispose(false) y, a continuación, vuelva.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
-        <source>Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="translated">Proporcione una implementación reemplazable de Dispose(bool) en {0} o marque el tipo como sellado. Una llamada a Dispose(false) solo debe limpiar los recursos nativos. Una llamada a Dispose(true) debe limpiar tanto los recursos administrados como nativos.</target>
+        <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
+        <target state="needs-review-translation">Proporcione una implementación reemplazable de Dispose(bool) en {0} o marque el tipo como sellado. Una llamada a Dispose(false) solo debe limpiar los recursos nativos. Una llamada a Dispose(true) debe limpiar tanto los recursos administrados como nativos.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">

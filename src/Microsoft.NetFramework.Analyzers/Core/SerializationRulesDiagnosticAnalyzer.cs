@@ -248,6 +248,8 @@ namespace Microsoft.NetFramework.Analyzers
                             continue;
                         }
 
+                        // Handle compiler-generated fields (without source declaration) that have an associated symbol in code.
+                        // For example, auto-property backing fields.
                         ISymbol targetSymbol = field.IsImplicitlyDeclared && field.AssociatedSymbol != null 
                             ? field.AssociatedSymbol 
                             : field;

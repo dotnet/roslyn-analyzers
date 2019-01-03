@@ -162,10 +162,13 @@ namespace Microsoft.NetFramework.Analyzers
                     return;
                 }
 
+                var implementsISerializable = namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol);
+                var isSerializable = IsSerializable(namedTypeSymbol);
+
                 // If the type is public and implements ISerializable
-                if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public && namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))
+                if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public && implementsISerializable)
                 {
-                    if (!IsSerializable(namedTypeSymbol))
+                    if (!isSerializable)
                     {
                         // CA2237 : Mark serializable types with the SerializableAttribute
                         if (namedTypeSymbol.BaseType.SpecialType == SpecialType.System_Object ||
@@ -218,7 +221,7 @@ namespace Microsoft.NetFramework.Analyzers
                 }
 
                 // If this is type is marked Serializable and doesn't implement ISerializable, check its fields' types as well
-                if (IsSerializable(namedTypeSymbol) && !namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))
+                if (isSerializable && !implementsISerializable)
                 {
                     System.Collections.Generic.IEnumerable<IFieldSymbol> nonSerializableFields =
                         namedTypeSymbol.GetMembers().OfType<IFieldSymbol>().Where(m => !IsSerializable(m.Type));

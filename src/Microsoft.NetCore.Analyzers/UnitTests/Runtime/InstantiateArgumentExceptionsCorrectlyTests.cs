@@ -538,6 +538,57 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                End Class");
         }
 
+        [Fact, WorkItem(1824, "https://github.com/dotnet/roslyn-analyzers/issues/1824")]
+        public void ArgumentNullException_LocalFunctionParameter_DoesNotWarn()
+        {
+            VerifyCSharp(@"
+                public class Class
+                {
+                    public void Test()
+                    {
+                        void Validate(string a)
+                        {
+                            if (a == null) throw new System.ArgumentNullException(nameof(a));
+                        }
+                    }
+                }");
+        }
+
+        [Fact, WorkItem(1824, "https://github.com/dotnet/roslyn-analyzers/issues/1824")]
+        public void ArgumentNullException_NestedLocalFunctionParameter_DoesNotWarn()
+        {
+            VerifyCSharp(@"
+                public class Class
+                {
+                    public void Test()
+                    {
+                        void Validate(string a)
+                        {
+                            void ValidateNested()
+                            {
+                                if (a == null) throw new System.ArgumentNullException(nameof(a));
+                            }
+                        }
+                    }
+                }");
+        }
+
+        [Fact, WorkItem(1824, "https://github.com/dotnet/roslyn-analyzers/issues/1824")]
+        public void ArgumentNullException_LambdaParameter_DoesNotWarn()
+        {
+            VerifyCSharp(@"
+                public class Class
+                {
+                    public void Test()
+                    {
+                        System.Action<string> lambda = a =>
+                        {
+                            if (a == null) throw new System.ArgumentNullException(nameof(a));
+                        };
+                    }
+                }");
+        }
+
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column, string format, params string[] args)
         {
             string message = string.Format(format, args);

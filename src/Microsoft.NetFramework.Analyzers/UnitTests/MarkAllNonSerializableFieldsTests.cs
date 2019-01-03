@@ -19,10 +19,10 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             return new SerializationRulesDiagnosticAnalyzer();
         }
 
-        [WorkItem(858655, "DevDiv")]
         #region CA2235
 
         [Fact]
+        [WorkItem(858655, "DevDiv")]
         public void CA2235WithOnlyPrimitiveFields()
         {
             VerifyCSharp(@"
@@ -568,6 +568,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         {
             return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2235Id, string.Format(CA2235Message, fieldName, containerName, typeName));
         }
+
         #endregion
     }
 }

@@ -222,10 +222,20 @@ namespace Microsoft.NetFramework.Analyzers
                 // If this is type is marked Serializable and doesn't implement ISerializable, check its fields' types as well
                 if (isSerializable && !implementsISerializable)
                 {
-                    System.Collections.Generic.IEnumerable<IFieldSymbol> nonSerializableFields =
-                        namedTypeSymbol.GetMembers().OfType<IFieldSymbol>().Where(m => !IsSerializable(m.Type));
-                    foreach (IFieldSymbol field in nonSerializableFields)
+                    foreach (ISymbol member in namedTypeSymbol.GetMembers())
                     {
+                        // Only process field members
+                        if (!(member is IFieldSymbol field))
+                        {
+                            continue;
+                        }
+
+                        // Only process non-serializable fields
+                        if (IsSerializable(field.Type))
+                        {
+                            continue;
+                        }
+
                         // Only process instance fields
                         if (field.IsStatic)
                         {

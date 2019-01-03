@@ -217,8 +217,8 @@ namespace Microsoft.NetFramework.Analyzers
                     }
                 }
 
-                // If this is type is marked Serializable check it's fields types' as well
-                if (IsSerializable(namedTypeSymbol))
+                // If this is type is marked Serializable and doesn't implement ISerializable, check its fields' types as well
+                if (IsSerializable(namedTypeSymbol) && !namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))
                 {
                     System.Collections.Generic.IEnumerable<IFieldSymbol> nonSerializableFields =
                         namedTypeSymbol.GetMembers().OfType<IFieldSymbol>().Where(m => !IsSerializable(m.Type));

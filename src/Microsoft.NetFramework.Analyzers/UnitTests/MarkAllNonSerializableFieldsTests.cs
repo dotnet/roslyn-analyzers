@@ -135,7 +135,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/3898")]
+        [Fact]
         public void CA2235WithSerializableLibraryTypes()
         {
             VerifyCSharp(@"

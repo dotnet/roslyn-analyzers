@@ -2,6 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
+    <RootNamespace />
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Microsoft.CodeQuality.Analyzers.Exp.csproj" />

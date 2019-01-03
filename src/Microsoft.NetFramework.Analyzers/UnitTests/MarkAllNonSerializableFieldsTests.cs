@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class MarkAllNonSerializableFieldsTests : DiagnosticAnalyzerTestBase
+    public class MarkAllNonSerializableFieldsTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

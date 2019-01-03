@@ -184,8 +184,8 @@ namespace Microsoft.NetFramework.Analyzers
                         IMethodSymbol serializationCtor = namedTypeSymbol.Constructors
                             .SingleOrDefault(
                                 c => c.Parameters.Length == 2 &&
-                                     c.Parameters[0].Type == _serializationInfoTypeSymbol &&
-                                     c.Parameters[1].Type == _streamingContextTypeSymbol);
+                                     c.Parameters[0].Type.Equals(_serializationInfoTypeSymbol) &&
+                                     c.Parameters[1].Type.Equals(_streamingContextTypeSymbol));
 
                         // There is no serialization ctor - issue a diagnostic.
                         if (serializationCtor == null)

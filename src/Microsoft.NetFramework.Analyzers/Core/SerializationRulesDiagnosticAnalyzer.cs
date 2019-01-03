@@ -248,16 +248,16 @@ namespace Microsoft.NetFramework.Analyzers
                             continue;
                         }
 
-                        if (field.IsImplicitlyDeclared && field.AssociatedSymbol != null)
-                        {
-                            context.ReportDiagnostic(field.AssociatedSymbol.CreateDiagnostic(RuleCA2235,
-                                field.AssociatedSymbol.Name, namedTypeSymbol.Name, field.Type));
-                        }
-                        else
-                        {
-                            context.ReportDiagnostic(field.CreateDiagnostic(RuleCA2235, field.Name, namedTypeSymbol.Name,
+                        ISymbol targetSymbol = field.IsImplicitlyDeclared && field.AssociatedSymbol != null 
+                            ? field.AssociatedSymbol 
+                            : field;
+
+                        context.ReportDiagnostic(
+                            targetSymbol.CreateDiagnostic(
+                                RuleCA2235,
+                                targetSymbol.Name,
+                                namedTypeSymbol.Name,
                                 field.Type));
-                        }
                     }
                 }
             }

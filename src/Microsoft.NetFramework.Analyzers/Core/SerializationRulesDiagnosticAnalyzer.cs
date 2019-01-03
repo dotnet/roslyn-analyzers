@@ -230,14 +230,14 @@ namespace Microsoft.NetFramework.Analyzers
                             continue;
                         }
 
-                        // Only process non-serializable fields
-                        if (IsSerializable(field.Type))
+                        // Only process instance fields
+                        if (field.IsStatic)
                         {
                             continue;
                         }
 
-                        // Only process instance fields
-                        if (field.IsStatic)
+                        // Only process non-serializable fields
+                        if (IsSerializable(field.Type))
                         {
                             continue;
                         }

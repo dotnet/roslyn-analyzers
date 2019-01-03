@@ -2357,5 +2357,129 @@ Public Class A
     End Sub
 End Class");
         }
+
+        [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
+        public void DisposableAllocation_DisposedWithDisposeAsyncInvocation_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class A : IDisposable
+{
+    public void Dispose() => DisposeAsync();
+
+    public Task DisposeAsync() => Task.CompletedTask;
+}
+
+class B : IDisposable
+{
+    private A a = new A();
+    
+    public void Dispose()
+    {
+        a.DisposeAsync();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeAsync()
+    End Sub
+
+    Public Function DisposeAsync() As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+
+Class B
+    Implements IDisposable
+
+    Private a As A = New A()
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        a.DisposeAsync()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
+        public void DisposableAllocation_DisposedInsideDisposeCoreAsync_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+abstract class A : IDisposable
+{
+    public void Dispose() => DisposeAsync();
+
+    public Task DisposeAsync() => DisposeCoreAsync(true);
+
+    protected abstract Task DisposeCoreAsync(bool initialized);
+}
+
+class A2 : A
+{
+    protected override Task DisposeCoreAsync(bool initialized)
+    {
+        return Task.CompletedTask;
+    }
+}
+
+class B : A
+{
+    private A2 a = new A2();
+    
+    protected override Task DisposeCoreAsync(bool initialized)
+    {
+        return a.DisposeAsync();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+MustInherit Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeAsync()
+    End Sub
+
+    Public Function DisposeAsync() As Task
+        Return Task.CompletedTask
+    End Function
+
+    Protected MustOverride Function DisposeCoreAsync(initialized As Boolean) As Task
+End Class
+
+Class A2
+    Inherits A
+
+    Protected Overrides Function DisposeCoreAsync(initialized As Boolean) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+
+Class B
+    Inherits A
+
+    Private a As New A2()
+
+    Protected Overrides Function DisposeCoreAsync(initialized As Boolean) As Task
+        Return a.DisposeAsync()
+    End Function
+End Class");
+        }
     }
 }

@@ -273,7 +273,7 @@ End Class
         }
 
         [Fact, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
-        public void CSharpAsyncVoidMethod_NoDiagnostic()
+        public void CSharpAsyncVoidMethod_Diagnostic()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -291,9 +291,57 @@ public class C
         await t.ConfigureAwait(false);
     }
 }";
-            VerifyCSharp(code);
+            VerifyCSharp(code, GetCSharpResultAt(9, 15));
         }
-        
+
+        [Theory, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
+        [InlineData("dotnet_code_quality.skip_async_void_methods = true")]
+        [InlineData("dotnet_code_quality.CA2007.skip_async_void_methods = true")]
+        public void CSharpAsyncVoidMethod_AnalyzerOption_NoDiagnostic(string editorConfigText)
+        {
+            var code = @"
+using System.Threading.Tasks;
+
+public class C
+{
+    private Task t;
+    public async void M()
+    {
+        await M1Async();
+    }
+
+    private async Task M1Async()
+    {
+        await t.ConfigureAwait(false);
+    }
+}";
+            VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText));
+        }
+
+        [Theory, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
+        [InlineData("dotnet_code_quality.skip_async_void_methods = false")]
+        [InlineData("dotnet_code_quality.CA2007.skip_async_void_methods = false")]
+        public void CSharpAsyncVoidMethod_AnalyzerOption_Diagnostic(string editorConfigText)
+        {
+            var code = @"
+using System.Threading.Tasks;
+
+public class C
+{
+    private Task t;
+    public async void M()
+    {
+        await M1Async();
+    }
+
+    private async Task M1Async()
+    {
+        await t.ConfigureAwait(false);
+    }
+}";
+            VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText), GetCSharpResultAt(9, 15));
+        }
+
         private DiagnosticResult GetCSharpResultAt(int line, int column)
         {
             return GetCSharpResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDirectlyAwaitATaskMessage);

@@ -50,9 +50,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 context.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     if (operationBlockStartContext.OwningSymbol is IMethodSymbol method &&
-                        method.IsAsync &&
-                        !method.ReturnsVoid)
+                        method.IsAsync)
                     {
+                        if (method.ReturnsVoid &&
+                            operationBlockStartContext.Options.GetBoolOptionValue(
+                                optionName: EditorConfigOptionNames.SkipAsyncVoidMethods,
+                                rule: Rule,
+                                defaultValue: false,
+                                cancellationToken: operationBlockStartContext.CancellationToken))
+                        {
+                            // Configured to skip this analysis in async void methods.
+                            return;
+                        }
+
                         operationBlockStartContext.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
                     }
                 });

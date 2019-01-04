@@ -154,7 +154,7 @@ public class C
 {{
     {accessibility} interface I {{ }}
 }}",
-                GetAdditionalFile(editorConfigText),
+                GetEditorConfigAdditionalFile(editorConfigText),
                 CreateCSharpResult(4, 16 + accessibility.Length));
         }
 
@@ -190,7 +190,7 @@ Public Class C
     {accessibility} Interface I
     End Interface
 End Class",
-                GetAdditionalFile(editorConfigText),
+                GetEditorConfigAdditionalFile(editorConfigText),
                 CreateBasicResult(3, 16 + accessibility.Length));
         }
 
@@ -207,7 +207,7 @@ public class C
 {{
     {accessibility} interface I {{ }}
 }}",
-                GetAdditionalFile(editorConfigText));
+                GetEditorConfigAdditionalFile(editorConfigText));
         }
 
         [Theory]
@@ -223,7 +223,7 @@ Public Class C
     {accessibility} Interface I
     End Interface
 End Class",
-                GetAdditionalFile(editorConfigText));
+                GetEditorConfigAdditionalFile(editorConfigText));
         }
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)
@@ -235,8 +235,5 @@ End Class",
         {
             return GetBasicResultAt(line, col, AvoidEmptyInterfacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidEmptyInterfacesMessage);
         }
-
-        private static FileAndSource GetAdditionalFile(string source)
-            => new FileAndSource() { Source = source, FilePath = ".editorconfig" };
     }
 }

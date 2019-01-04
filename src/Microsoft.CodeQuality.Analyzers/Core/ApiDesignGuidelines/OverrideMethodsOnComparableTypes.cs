@@ -78,17 +78,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 compilationContext.RegisterSymbolAction(context =>
                 {
-                    AnalyzeSymbol((INamedTypeSymbol)context.Symbol, comparableType, genericComparableType, context.ReportDiagnostic);
+                    AnalyzeSymbol(context, comparableType, genericComparableType);
                 },
                 SymbolKind.NamedType);
             });
         }
 
-        private static void AnalyzeSymbol(INamedTypeSymbol namedTypeSymbol, INamedTypeSymbol comparableType, INamedTypeSymbol genericComparableType, Action<Diagnostic> addDiagnostic)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol comparableType, INamedTypeSymbol genericComparableType)
         {
+            // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+            // will always have identical configured visibility.
+            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
             if (namedTypeSymbol.TypeKind == TypeKind.Interface ||
                 namedTypeSymbol.TypeKind == TypeKind.Enum ||
-                !namedTypeSymbol.IsExternallyVisible())
+                !namedTypeSymbol.MatchesConfiguredVisibility(context.Options, RuleBoth, context.CancellationToken))
             {
                 return;
             }
@@ -100,15 +103,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (!overridesEquals && comparisonOperatorsString.Length != 0)
                 {
-                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleBoth, namedTypeSymbol.Name, comparisonOperatorsString));
+                    context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleBoth, namedTypeSymbol.Name, comparisonOperatorsString));
                 }
                 else if (!overridesEquals)
                 {
-                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleEquals, namedTypeSymbol.Name));
+                    context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleEquals, namedTypeSymbol.Name));
                 }
                 else if (comparisonOperatorsString.Length != 0)
                 {
-                    addDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleOperator, namedTypeSymbol.Name, comparisonOperatorsString));
+                    context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleOperator, namedTypeSymbol.Name, comparisonOperatorsString));
                 }
             }
         }

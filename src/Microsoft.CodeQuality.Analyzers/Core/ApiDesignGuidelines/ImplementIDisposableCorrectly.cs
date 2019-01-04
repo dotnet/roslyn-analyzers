@@ -182,9 +182,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)
             {
+                // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                // will always have identical configured visibility.
                 if (context.Symbol is INamedTypeSymbol type &&
                     type.TypeKind == TypeKind.Class &&
-                    type.IsExternallyVisible())
+                    type.MatchesConfiguredVisibility(context.Options, IDisposableReimplementationRule, context.CancellationToken))
                 {
                     bool implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 
@@ -242,9 +244,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 bool isDisposeMethod = method.Name == DisposeMethodName;
                 if (isFinalizerMethod || isDisposeMethod)
                 {
+                    // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                    // will always have identical configured visibility.
                     INamedTypeSymbol type = method.ContainingType;
                     if (type != null && type.TypeKind == TypeKind.Class &&
-                        !type.IsSealed && type.IsExternallyVisible())
+                        !type.IsSealed && type.MatchesConfiguredVisibility(context.Options, IDisposableReimplementationRule, context.CancellationToken))
                     {
                         if (ImplementsDisposableDirectly(type))
                         {

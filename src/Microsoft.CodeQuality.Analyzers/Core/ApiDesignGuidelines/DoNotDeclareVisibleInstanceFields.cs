@@ -42,7 +42,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 var field = (IFieldSymbol)symbolAnalysisContext.Symbol;
 
-                // Only report diagnostic on non-static, non-const, private fields.
+                // Only report diagnostic on non-static, non-const, non-private fields.
                 // Additionally, by default only report externally visible fields for FxCop compat.
                 if (!field.IsStatic &&
                     !field.IsConst &&

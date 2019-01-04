@@ -62,6 +62,11 @@
         <target state="translated">請勿將 Async Lambdas 儲存為 Void 傳回委派類型</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
+        <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
+        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">於可能時散佈 CancellationToken</target>
@@ -838,48 +843,43 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
-        <source>Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.</source>
-        <target state="translated">從 {0} 實作的介面清單中移除 IDisposable，因為其已由基底類型 {1} 實作。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">從類型 {0} 中移除完成項、覆寫 Dispose(bool disposing)，並將完成項邏輯置於 'disposing' 為 false 的程式碼路徑中。</target>
+        <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
+        <target state="needs-review-translation">從 {0} 實作的介面清單中移除 IDisposable，因為其已由基底類型 {1} 實作。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
-        <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="translated">移除 {0}、覆寫 Dispose(bool disposing)，並將處置邏輯放在 'disposing' 為 true 的程式碼路徑中。</target>
+        <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
+        <target state="needs-review-translation">移除 {0}、覆寫 Dispose(bool disposing)，並將處置邏輯放在 'disposing' 為 true 的程式碼路徑中。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
-        <source>Ensure that {0} is declared as public and sealed.</source>
-        <target state="translated">請確認 {0} 已宣告為公用且已密封。</target>
+        <source>Ensure that '{0}' is declared as public and sealed.</source>
+        <target state="needs-review-translation">請確認 {0} 已宣告為公用且已密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
-        <source>Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="translated">將 {0} 重新命名為 'Dispose'，並確認已將其宣告為公用且密封。</target>
+        <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
+        <target state="needs-review-translation">將 {0} 重新命名為 'Dispose'，並確認已將其宣告為公用且密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
-        <source>Ensure that {0} is declared as protected, virtual, and unsealed.</source>
-        <target state="translated">請確認 {0} 已宣告為受保護、虛擬以及非密封。</target>
+        <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
+        <target state="needs-review-translation">請確認 {0} 已宣告為受保護、虛擬以及非密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
-        <source>Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="translated">修改 {0}，使其呼叫 Dispose(true)，然後在目前的物件執行個體上呼叫 GC.SuppressFinalize (在 Visual Basic 中為 'this' 或 'Me')，然後再傳回。</target>
+        <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
+        <target state="needs-review-translation">修改 {0}，使其呼叫 Dispose(true)，然後在目前的物件執行個體上呼叫 GC.SuppressFinalize (在 Visual Basic 中為 'this' 或 'Me')，然後再傳回。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
-        <source>Modify {0} so that it calls Dispose(false) and then returns.</source>
-        <target state="translated">修改 {0}，使其呼叫 Dispose(false) 然後再傳回。</target>
+        <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
+        <target state="needs-review-translation">修改 {0}，使其呼叫 Dispose(false) 然後再傳回。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
-        <source>Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="translated">提供 {0} 上 Dispose(bool) 的可覆寫實作，或將類型標記為密封。呼叫 Dispose(false) 只會清除原生資源，呼叫 Dispose(true) 則會同時清除受控和原生資源。</target>
+        <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
+        <target state="needs-review-translation">提供 {0} 上 Dispose(bool) 的可覆寫實作，或將類型標記為密封。呼叫 Dispose(false) 只會清除原生資源，呼叫 Dispose(true) 則會同時清除受控和原生資源。</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">

@@ -80,9 +80,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                if (!property.IsExternallyVisible())
+                if (!property.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
                 {
-                    // only apply to methods that are exposed outside
+                    // only apply to methods that are exposed outside by default
                     return;
                 }
 

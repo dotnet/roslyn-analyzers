@@ -123,8 +123,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeSymbol(ISymbol symbol, SymbolAnalysisContext context)
         {
-            // FxCop compat: only analyze externally visible symbols.
-            if (!symbol.IsExternallyVisible())
+            // FxCop compat: only analyze externally visible symbols by default.
+            if (!symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 return;
             }

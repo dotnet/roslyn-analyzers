@@ -62,6 +62,11 @@
         <target state="translated">비동기 람다를 Void 반환 대리자 형식으로 저장하지 마세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
+        <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
+        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">가능한 경우 취소 토큰을 전파하세요.</target>
@@ -838,48 +843,43 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
-        <source>Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.</source>
-        <target state="translated">기본 형식 {1}에서 이미 구현되었으므로 {0}에서 구현된 인터페이스 목록의 IDisposable을 제거하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">{0} 형식에서 종료자를 제거하고 Dispose(bool disposing)를 재정의한 후 종료 논리를 'disposing'이 false인 코드 경로에 추가하세요.</target>
+        <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
+        <target state="needs-review-translation">기본 형식 {1}에서 이미 구현되었으므로 {0}에서 구현된 인터페이스 목록의 IDisposable을 제거하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
-        <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="translated">{0}을(를) 제거하고 Dispose(bool disposing)를 재정의한 후 삭제 논리를 'disposing'이 true인 코드 경로에 추가하세요.</target>
+        <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
+        <target state="needs-review-translation">{0}을(를) 제거하고 Dispose(bool disposing)를 재정의한 후 삭제 논리를 'disposing'이 true인 코드 경로에 추가하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
-        <source>Ensure that {0} is declared as public and sealed.</source>
-        <target state="translated">{0}이(가) public 및 sealed로 선언되었는지 확인하세요.</target>
+        <source>Ensure that '{0}' is declared as public and sealed.</source>
+        <target state="needs-review-translation">{0}이(가) public 및 sealed로 선언되었는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
-        <source>Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="translated">{0}의 이름을 'Dispose'로 바꾸고 public 및 sealed로 선언되었는지 확인하세요.</target>
+        <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
+        <target state="needs-review-translation">{0}의 이름을 'Dispose'로 바꾸고 public 및 sealed로 선언되었는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
-        <source>Ensure that {0} is declared as protected, virtual, and unsealed.</source>
-        <target state="translated">{0}이(가) protected, virtual 및 unsealed로 선언되었는지 확인하세요.</target>
+        <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
+        <target state="needs-review-translation">{0}이(가) protected, virtual 및 unsealed로 선언되었는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
-        <source>Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="translated">Dispose(true)를 호출한 다음 현재 개체 인스턴스(Visual Basic의 경우 'this' 또는 'Me')에서 GC.SuppressFinalize를 호출한 후 반환하도록 {0}을(를) 수정하세요.</target>
+        <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
+        <target state="needs-review-translation">Dispose(true)를 호출한 다음 현재 개체 인스턴스(Visual Basic의 경우 'this' 또는 'Me')에서 GC.SuppressFinalize를 호출한 후 반환하도록 {0}을(를) 수정하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
-        <source>Modify {0} so that it calls Dispose(false) and then returns.</source>
-        <target state="translated">Dispose(false)를 호출한 다음 반환하도록 {0}을(를) 수정하세요.</target>
+        <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
+        <target state="needs-review-translation">Dispose(false)를 호출한 다음 반환하도록 {0}을(를) 수정하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
-        <source>Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="translated">{0}에 Dispose(bool)의 재정의 가능한 구현을 제거하거나 형식을 sealed로 표시하세요. Dispose(false)에 대한 호출은 네이티브 리소스만 정리해야 합니다. Dispose(true)에 대한 호출은 관리되는 리소스와 네이티브 리소스를 모두 정리해야 합니다.</target>
+        <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
+        <target state="needs-review-translation">{0}에 Dispose(bool)의 재정의 가능한 구현을 제거하거나 형식을 sealed로 표시하세요. Dispose(false)에 대한 호출은 네이티브 리소스만 정리해야 합니다. Dispose(true)에 대한 호출은 관리되는 리소스와 네이티브 리소스를 모두 정리해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">

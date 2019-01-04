@@ -48,10 +48,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 // Since property/event accessors cannot be marked static themselves and the associated symbol (property/event)
-                // has to be marked static, we want to report the diagnostic once on the property/event. So we make a note
-                // of the associated symbols on which we've reported diagnostics for this compilation so that we don't duplicate 
-                // those.
-                var reportedAssociatedSymbols = new HashSet<ISymbol>();
+                // has to be marked static, we want to report the diagnostic on the property/event.
+                // So we make a note of the property/event symbols which have at least one accessor with no instance access.
+                // At compilation end, we report candidate property/event symbols whose all accessors are candidates to be marked static.
+                var propertyOrEventCandidates = new HashSet<ISymbol>();
+                var accessorCandidates = new HashSet<IMethodSymbol>();
 
                 // For candidate methods that are not externally visible, we only report a diagnostic if they are actually invoked via a method call in the compilation.
                 // This prevents us from incorrectly flagging methods that are only invoked via delegate invocations: https://github.com/dotnet/roslyn-analyzers/issues/1511
@@ -83,24 +84,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         // and methods containing only NotImplementedException should not considered for marking them as static
                         if (!isInstanceReferenced && !blockEndContext.IsMethodNotImplementedOrSupported())
                         {
-                            ISymbol reportingSymbol = methodSymbol;
-                            var isAccessor = methodSymbol.IsPropertyAccessor() || methodSymbol.IsEventAccessor();
-
-                            if (isAccessor)
+                            if (methodSymbol.IsAccessorMethod())
                             {
-                                // If we've already reported on this associated symbol (i.e property/event) then don't report again.
-                                if (reportedAssociatedSymbols.Contains(methodSymbol.AssociatedSymbol))
-                                {
-                                    return;
-                                }
-
-                                reportingSymbol = methodSymbol.AssociatedSymbol;
-                                reportedAssociatedSymbols.Add(reportingSymbol);
+                                accessorCandidates.Add(methodSymbol);
+                                propertyOrEventCandidates.Add(methodSymbol.AssociatedSymbol);
                             }
-
-                            if (isAccessor || methodSymbol.IsExternallyVisible())
+                            else if (methodSymbol.IsExternallyVisible())
                             {
-                                blockEndContext.ReportDiagnostic(reportingSymbol.CreateDiagnostic(Rule, reportingSymbol.Name));
+                                blockEndContext.ReportDiagnostic(methodSymbol.CreateDiagnostic(Rule, methodSymbol.Name));
                             }
                             else
                             {
@@ -126,6 +117,24 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         if (invokedInternalMethods.Contains(candidate))
                         {
                             compilationEndContext.ReportDiagnostic(candidate.CreateDiagnostic(Rule, candidate.Name));
+                        }
+                    }
+
+                    foreach (var candidatePropertyOrEvent in propertyOrEventCandidates)
+                    {
+                        var allAccessorsAreCandidates = true;
+                        foreach (var accessor in candidatePropertyOrEvent.GetAccessors())
+                        {
+                            if (!accessorCandidates.Contains(accessor))
+                            {
+                                allAccessorsAreCandidates = false;
+                                break;
+                            }
+                        }
+
+                        if (allAccessorsAreCandidates)
+                        {
+                            compilationEndContext.ReportDiagnostic(candidatePropertyOrEvent.CreateDiagnostic(Rule, candidatePropertyOrEvent.Name));
                         }
                     }
                 });
@@ -159,9 +168,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // If this looks like an event handler don't flag such cases.
+            // However, we do want to consider EventRaise accessor as a candidate
+            // so we can flag the associated event if none of it's accessors need instance reference.
             if (methodSymbol.Parameters.Length == 2 &&
                 methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
-                IsEventArgs(methodSymbol.Parameters[1].Type, compilation))
+                IsEventArgs(methodSymbol.Parameters[1].Type, compilation) &&
+                methodSymbol.MethodKind != MethodKind.EventRaise)
             {
                 return false;
             }

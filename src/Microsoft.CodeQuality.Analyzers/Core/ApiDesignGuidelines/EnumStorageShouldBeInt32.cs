@@ -70,8 +70,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            // If accessibility of enum is not public exit
-            if (!symbol.IsExternallyVisible())
+            // Check accessibility of enum matches configuration or is public if not configured
+            if (!symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 return;
             }

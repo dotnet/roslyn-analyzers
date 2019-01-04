@@ -638,31 +638,31 @@
     <value>All IDisposable types should implement the Dispose pattern correctly.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageIDisposableReimplementation" xml:space="preserve">
-    <value>Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.</value>
+    <value>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageFinalizeOverride" xml:space="preserve">
-    <value>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</value>
+    <value>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageDisposeOverride" xml:space="preserve">
-    <value>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</value>
+    <value>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageDisposeSignature" xml:space="preserve">
-    <value>Ensure that {0} is declared as public and sealed.</value>
+    <value>Ensure that '{0}' is declared as public and sealed.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageRenameDispose" xml:space="preserve">
-    <value>Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.</value>
+    <value>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageDisposeBoolSignature" xml:space="preserve">
-    <value>Ensure that {0} is declared as protected, virtual, and unsealed.</value>
+    <value>Ensure that '{0}' is declared as protected, virtual, and unsealed.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageDisposeImplementation" xml:space="preserve">
-    <value>Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</value>
+    <value>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageFinalizeImplementation" xml:space="preserve">
-    <value>Modify {0} so that it calls Dispose(false) and then returns.</value>
+    <value>Modify '{0}' so that it calls Dispose(false) and then returns.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageProvideDisposeBool" xml:space="preserve">
-    <value>Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</value>
+    <value>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</value>
   </data>
   <data name="ExceptionsShouldBePublicTitle" xml:space="preserve">
     <value>Exceptions should be public</value>

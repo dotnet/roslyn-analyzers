@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -483,6 +483,34 @@ End Class
                        Public Class A
                         < System.Flags > _
                         Public Enum trophi
+                            M1 = 0
+                            M2 = 1
+                            M3 = 2
+                        End Enum
+                        End Class");
+        }
+
+        [Fact, WorkItem(1323, "https://github.com/dotnet/roslyn-analyzers/issues/1323")]
+        public void CA1714_CA1717_Test_EnumWithNoFlags_NonAscii()
+        {
+            // We skip non-ASCII names.
+            VerifyCSharp(@" 
+                            public class A 
+                            { 
+                               [System.Flags] 
+                               public enum UnicodeNameΔ
+                               {
+                                    M1 = 0,
+                                    M2 = 1,
+                                    M3 = 2
+
+                                };
+                            }");
+
+            VerifyBasic(@"
+                       Public Class A
+                        < System.Flags > _
+                        Public Enum UnicodeNameΔ
                             M1 = 0
                             M2 = 1
                             M3 = 2

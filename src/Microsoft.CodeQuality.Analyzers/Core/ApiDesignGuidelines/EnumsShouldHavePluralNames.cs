@@ -130,6 +130,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
+            if (!symbol.Name.IsASCII())
+            {
+                // Skip non-ASCII names.
+                return;
+            }
+
             bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass.Equals(flagsAttribute));
             if (hasFlagsAttribute)
             {

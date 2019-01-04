@@ -24,15 +24,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.NestedTypesShouldNotBeVisibleDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         // Properties common to the descriptors defined by this analyzer.
-        private static readonly string s_category = DiagnosticCategory.Design;
-        private const DiagnosticSeverity Severity = DiagnosticHelpers.DefaultDiagnosticSeverity;
         private const string HelpLinkUrl = "https://docs.microsoft.com/visualstudio/code-quality/ca1034-nested-types-should-not-be-visible";
         
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,
-                                                                             s_category,
-                                                                             Severity,
+                                                                             DiagnosticCategory.Design,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
@@ -40,8 +38,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal static DiagnosticDescriptor VisualBasicModuleRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageVisualBasicModule,
-                                                                             s_category,
-                                                                             Severity,
+                                                                             DiagnosticCategory.Design,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,

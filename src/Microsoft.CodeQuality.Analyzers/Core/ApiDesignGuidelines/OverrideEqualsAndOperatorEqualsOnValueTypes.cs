@@ -23,13 +23,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly LocalizableString s_localizableMessageOpEquality = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private static readonly string s_category = DiagnosticCategory.Performance;
         private const string s_helpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1815-override-equals-and-operator-equals-on-value-types";
 
         internal static DiagnosticDescriptor EqualsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEquals,
-                                                                             s_category,
+                                                                             DiagnosticCategory.Performance,
                                                                              defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
@@ -39,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal static DiagnosticDescriptor OpEqualityRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageOpEquality,
-                                                                             s_category,
+                                                                             DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
@@ -66,9 +65,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     //  1. Do not fire for enums.
                     //  2. Do not fire for enumerators.
                     //  3. Do not fire for value types without members.
+                    //  4. Externally visible types by default.
+                    // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                    // will always have identical configured visibility.
                     if (!namedType.IsValueType ||
                         namedType.TypeKind == TypeKind.Enum ||
-                        !namedType.IsExternallyVisible() ||
+                        !namedType.MatchesConfiguredVisibility(context.Options, EqualsRule, context.CancellationToken) ||
                         !namedType.GetMembers().Any(m => !m.IsConstructor()))
                     {
                         return;

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class MarkAllNonSerializableFieldsTests : DiagnosticAnalyzerTestBase
+    public class MarkAllNonSerializableFieldsTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -135,7 +135,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/3898")]
+        [Fact]
         public void CA2235WithSerializableLibraryTypes()
         {
             VerifyCSharp(@"
@@ -145,7 +145,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 [Serializable]
                 public class CA2235WithSerializableLibraryTypes
                 {
-                    public Regex R = new Regex(""\w+"");
+                    public Regex R = new Regex(@""\w+"");
                     public Nullable<int> NI = new Nullable<int>(42);
                     public bool? NB = true;
                     public Version V = new Version(1, 1, 12, 2);
@@ -157,12 +157,11 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
 
                 <Serializable>
                 Public Class CA2235WithSerializableLibraryTypes
-
                     Public R As Regex = New Regex(""\w+"")
-                    Public NI As Nullable(Of Integer)  = new Nullable(Of Integer)(42)
+                    Public NI As Nullable(Of Integer) = new Nullable(Of Integer)(42)
                     Public NB As Boolean? = true
                     Public V As Version = New Version(1, 1, 12, 2)
-                }");
+                End Class");
         }
 
         [Fact]

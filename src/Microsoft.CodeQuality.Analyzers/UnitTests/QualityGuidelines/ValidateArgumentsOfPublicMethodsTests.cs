@@ -4982,5 +4982,71 @@ public enum Kind
     Kind2
 }");
         }
+
+        [WorkItem(1943, "https://github.com/dotnet/roslyn-analyzers/issues/1943")]
+        [Fact]
+        public void Issue1943()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Web;
+
+namespace MyComments
+{
+    public interface ISomething
+    {
+        string Action(string s1, string s2, object o1);
+    }
+
+    public class Class
+    {
+        public static ISomething Something;
+        public delegate string MyDelegate(string d, params object[] p);
+        public MyDelegate T;
+
+        public void M(HttpContext httpContext, TextWriter Output, int id, int count, int pendingCount)
+        {
+            var text = """";
+
+            if (id != 0)
+            {
+                var totalCount = count + pendingCount;
+                var totalText = T(""1 count"", ""{0} counts"", totalCount);
+                if (totalCount == 0)
+                {
+                    text += totalText.ToString();
+                }
+                else
+                {
+                    text +=
+                        Something.Action(
+                            totalText.ToString(),
+                            ""Details"",
+                            new
+                            {
+                                id = id,
+                                returnUrl = httpContext.Request.Url
+                            });
+                }
+
+                if (pendingCount > 0)
+                {
+                    text += "" "" + Something.Action(
+                        T(""({0} pending)"", pendingCount).ToString(),
+                        ""Details"",
+                        new
+                        {
+                            id = id,
+                            returnUrl = httpContext.Request.Url
+                        });
+                }
+            }
+
+            Output.Write(text);
+        }
+    }
+}
+");
+        }
     }
 }

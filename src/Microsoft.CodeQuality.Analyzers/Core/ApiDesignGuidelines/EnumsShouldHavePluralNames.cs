@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Humanizer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -90,6 +93,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            if (!CultureInfo.CurrentCulture.Name.Equals("en", StringComparison.Ordinal) &&
+				!CultureInfo.CurrentCulture.Parent.Name.Equals("en", StringComparison.Ordinal))
+            {
+                // FxCop compat: Skip for non-English cultures.
+                return;
+            }
+
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
@@ -120,22 +130,38 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
+            if (symbol.Name.EndsWith("i", StringComparison.OrdinalIgnoreCase) || symbol.Name.EndsWith("ae", StringComparison.OrdinalIgnoreCase))
+            {
+                // Skip words ending with 'i' and 'ae' to avoid flagging irregular plurals.
+                // Humanizer does not recognize these as plurals, such as 'formulae', 'trophi', etc.
+                return;
+            }
+
+            if (!symbol.Name.IsASCII())
+            {
+                // Skip non-ASCII names.
+                return;
+            }
+
             bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass.Equals(flagsAttribute));
             if (hasFlagsAttribute)
             {
-                if (reportCA1714 && !symbol.Name.IsPlural()) // Checking Rule CA1714
+                if (reportCA1714 && !IsPlural(symbol.Name)) // Checking Rule CA1714
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule_CA1714, symbol.OriginalDefinition.Locations.First(), symbol.Name));
                 }
             }
             else
             {
-                if (reportCA1717 && symbol.Name.IsPlural()) // Checking Rule CA1717
+                if (reportCA1717 && IsPlural(symbol.Name)) // Checking Rule CA1717
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule_CA1717, symbol.OriginalDefinition.Locations.First(), symbol.Name));
                 }
             }
         }
+
+        private static bool IsPlural(string word)
+            => word.Equals(word.Pluralize(inputIsKnownToBeSingular: false), StringComparison.OrdinalIgnoreCase);
     }
 }
 

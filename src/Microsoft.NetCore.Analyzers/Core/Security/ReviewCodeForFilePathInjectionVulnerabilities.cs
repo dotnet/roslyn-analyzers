@@ -17,7 +17,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             isEnabledByDefault: false,
             helpLinkUri: null); // TODO paulming: Help link.  https://github.com/dotnet/roslyn-analyzers/issues/1892
 
-        protected override SinkKind SinkKind { get { return SinkKind.FilePathInjection; } }
+        protected override SinkKind SinkKind => SinkKind.FilePathInjection;
 
         protected override DiagnosticDescriptor TaintedDataEnteringSinkDescriptor { get { return Rule; } }
     }

@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -340,6 +342,41 @@ public class C
     }
 }";
             VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText), GetCSharpResultAt(9, 15));
+        }
+
+        [Fact, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
+        public void CSharpSimpleAwaitTask_AnalyzerOption_OutputKind()
+        {
+            var code = @"
+using System.Threading.Tasks;
+
+public class C
+{
+    public async Task M()
+    {
+        Task t = null;
+        await t;
+    }
+}
+";
+            var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+
+            // Verify diagnostic with no editor config options.
+            VerifyCSharp(code, compilationOptions, parseOptions: null, expected: GetCSharpResultAt(9, 15));
+
+            // Verify no diagnostic with editor config options that exclude OutputKind.DynamicallyLinkedLibrary.
+            var editorConfigText = "dotnet_code_quality.output_kind = ConsoleApplication";
+            VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText), compilationOptions, parseOptions: null);
+
+            editorConfigText = "dotnet_code_quality.CA2007.output_kind = ConsoleApplication, WindowsApplication";
+            VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText), compilationOptions, parseOptions: null);
+
+            // Verify diagnostic with editor config options that include OutputKind.DynamicallyLinkedLibrary.
+            editorConfigText = "dotnet_code_quality.output_kind = DynamicallyLinkedLibrary";
+            VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText), compilationOptions, parseOptions: null, expected: GetCSharpResultAt(9, 15));
+
+            editorConfigText = "dotnet_code_quality.CA2007.output_kind = ConsoleApplication, DynamicallyLinkedLibrary";
+            VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText), compilationOptions, parseOptions: null, expected: GetCSharpResultAt(9, 15));
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column)

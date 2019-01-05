@@ -41,6 +41,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(context =>
             {
+                if (!context.Options.GetOutputKindsOption(Rule, context.CancellationToken).Contains(context.Compilation.Options.OutputKind))
+                {
+                    // Configured to skip analysis for the compilation's output kind
+                    return;
+                }
+
                 ImmutableArray<INamedTypeSymbol> taskTypes = GetTaskTypes(context.Compilation);
                 if (taskTypes.Any(t => t == null))
                 {

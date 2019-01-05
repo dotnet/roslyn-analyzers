@@ -2,6 +2,11 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="tr" original="../MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
     <body>
+      <trans-unit id="AppendConfigureAwaitTrue">
+        <source>Append .ConfigureAwait(true)</source>
+        <target state="new">Append .ConfigureAwait(true)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
         <source>Avoid Async Void</source>
         <target state="translated">Async Void Kullanmayın</target>

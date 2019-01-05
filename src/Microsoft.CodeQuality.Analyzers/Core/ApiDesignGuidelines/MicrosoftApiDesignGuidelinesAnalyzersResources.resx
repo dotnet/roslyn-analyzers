@@ -982,6 +982,9 @@
   <data name="AppendConfigureAwaitFalse" xml:space="preserve">
     <value>Append .ConfigureAwait(false)</value>
   </data>
+  <data name="AppendConfigureAwaitTrue" xml:space="preserve">
+    <value>Append .ConfigureAwait(true)</value>
+  </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
     <value>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</value>
   </data>

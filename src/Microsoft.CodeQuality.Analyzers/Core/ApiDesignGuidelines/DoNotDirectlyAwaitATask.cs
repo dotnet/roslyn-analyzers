@@ -41,13 +41,37 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(context =>
             {
+                if (!context.Options.GetOutputKindsOption(Rule, context.CancellationToken).Contains(context.Compilation.Options.OutputKind))
+                {
+                    // Configured to skip analysis for the compilation's output kind
+                    return;
+                }
+
                 ImmutableArray<INamedTypeSymbol> taskTypes = GetTaskTypes(context.Compilation);
                 if (taskTypes.Any(t => t == null))
                 {
                     return;
                 }
 
-                context.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
+                context.RegisterOperationBlockStartAction(operationBlockStartContext =>
+                {
+                    if (operationBlockStartContext.OwningSymbol is IMethodSymbol method &&
+                        method.IsAsync)
+                    {
+                        if (method.ReturnsVoid &&
+                            operationBlockStartContext.Options.GetBoolOptionValue(
+                                optionName: EditorConfigOptionNames.SkipAsyncVoidMethods,
+                                rule: Rule,
+                                defaultValue: false,
+                                cancellationToken: operationBlockStartContext.CancellationToken))
+                        {
+                            // Configured to skip this analysis in async void methods.
+                            return;
+                        }
+
+                        operationBlockStartContext.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
+                    }
+                });
             });
         }
 

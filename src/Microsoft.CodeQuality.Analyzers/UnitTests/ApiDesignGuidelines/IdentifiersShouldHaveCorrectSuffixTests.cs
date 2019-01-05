@@ -1079,6 +1079,31 @@ Public NotInheritable Class VerifiableAttribute
 End Class");
         }
 
+        [Fact, WorkItem(1822, "https://github.com/dotnet/roslyn-analyzers/issues/1822")]
+        public void CA1710_SystemAction_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public event Action MyEvent;
+}");
+        }
+
+        [Fact, WorkItem(1822, "https://github.com/dotnet/roslyn-analyzers/issues/1822")]
+        public void CA1710_CustomDelegate_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public delegate void MyDelegate(int param);
+    public event MyDelegate MyEvent;
+}");
+        }
+
         private static DiagnosticResult GetCA1710BasicResultAt(int line, int column, string symbolName, string replacementName, bool isSpecial = false)
         {
             return GetBasicResultAt(

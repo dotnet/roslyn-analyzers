@@ -78,6 +78,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         isInstanceReferenced = true;
                     }, OperationKind.InstanceReference);
 
+                    blockStartContext.RegisterOperationAction(operationContext =>
+                    {
+                        var invocation = (IInvocationOperation)operationContext.Operation;
+                        if (!invocation.TargetMethod.IsExternallyVisible())
+                        {
+                            invokedInternalMethods.Add(invocation.TargetMethod);
+                        }
+                    }, OperationKind.Invocation);
+
                     blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
                     {
                         // Methods referenced by other non static methods 
@@ -100,15 +109,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         }
                     });
                 });
-
-                compilationContext.RegisterOperationAction(operationContext =>
-                {
-                    var invocation = (IInvocationOperation)operationContext.Operation;
-                    if (!invocation.TargetMethod.IsExternallyVisible())
-                    {
-                        invokedInternalMethods.Add(invocation.TargetMethod);
-                    }
-                }, OperationKind.Invocation);
 
                 compilationContext.RegisterCompilationEndAction(compilationEndContext =>
                 {

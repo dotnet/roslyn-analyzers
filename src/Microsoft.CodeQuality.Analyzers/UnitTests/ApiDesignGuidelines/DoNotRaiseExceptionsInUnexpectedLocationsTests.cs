@@ -199,6 +199,19 @@ End Class
                         GetBasicAllowedExceptionsResultAt(28, 13, "remove_Event1", "Exception"));
         }
 
+        [Fact, WorkItem(1842, "https://github.com/dotnet/roslyn-analyzers/issues/1842")]
+        public void CSharpIndexer_KeyNotFoundException_NoDiagnostics()
+        {
+            var code = @"
+using System.Collections.Generic;
+
+public class C
+{
+    public int this[int x] { get { throw new KeyNotFoundException(); } }
+}";
+            VerifyCSharp(code);
+        }
+
         #endregion
 
         #region Equals, GetHashCode, Dispose and ToString Tests

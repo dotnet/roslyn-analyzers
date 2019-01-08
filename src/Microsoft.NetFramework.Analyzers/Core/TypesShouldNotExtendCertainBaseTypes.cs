@@ -69,7 +69,7 @@ namespace Microsoft.NetFramework.Analyzers
 
                         if (namedTypeSymbol.BaseType != null &&
                             badBaseTypes.Contains(namedTypeSymbol.BaseType) &&
-                            namedTypeSymbol.IsExternallyVisible())
+                            namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, Rule, saContext.CancellationToken))
                         {
                             string baseTypeName = namedTypeSymbol.BaseType.ToDisplayString();
                             Debug.Assert(s_badBaseTypesToMessage.ContainsKey(baseTypeName));

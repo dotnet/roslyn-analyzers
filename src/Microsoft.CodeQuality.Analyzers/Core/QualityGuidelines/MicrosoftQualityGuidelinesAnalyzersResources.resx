@@ -240,4 +240,7 @@
   <data name="ValidateArgumentsOfPublicMethodsTitle" xml:space="preserve">
     <value>Validate arguments of public methods</value>
   </data>
+  <data name="MarkMembersAsStaticCodeFix" xml:space="preserve">
+    <value>Make static</value>
+  </data>
 </root>

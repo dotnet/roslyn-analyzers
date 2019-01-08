@@ -129,7 +129,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // Mark fields disposed in Dispose method(s).
-                    if (containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable) != DisposeMethodKind.None)
+                    if (containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task) != DisposeMethodKind.None)
                     {
                         var disposableFields = disposeAnalysisHelper.GetDisposableFields(containingMethod.ContainingType);
                         if (!disposableFields.IsEmpty)

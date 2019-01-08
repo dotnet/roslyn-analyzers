@@ -33,6 +33,21 @@ class T
         }
 
         [Fact]
+        public void DiagnosticWhenFirstAndLastByOtherInBetween()
+        {
+            var source = @"
+using System.Threading;
+class T
+{
+    void M(CancellationToken t1, int i, CancellationToken t2)
+    {
+    }
+}";
+            var expected = new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(5, 10).WithArguments("T.M(System.Threading.CancellationToken, int, System.Threading.CancellationToken)");
+            VerifyCSharp(source, expected);
+        }
+
+        [Fact]
         public void NoDiagnosticWhenLastParam()
         {
             var test = @"
@@ -187,6 +202,22 @@ static class C1
     public static void M1(this CancellationToken p1, object p2)
     {
     }
+}";
+            VerifyCSharp(test);
+        }
+
+        [Fact, WorkItem(1816, "https://github.com/dotnet/roslyn-analyzers/issues/1816")]
+        public void NoDiagnosticWhenMultipleAtEndOfParameterList()
+        {
+            var test = @"
+using System.Threading;
+static class C1
+{
+    public static void M1(object p1, CancellationToken token1, CancellationToken token2) { }
+    public static void M2(object p1, CancellationToken token1, CancellationToken token2, CancellationToken token3) { }
+    public static void M3(CancellationToken token1, CancellationToken token2, CancellationToken token3) { }
+    public static void M4(CancellationToken token1, CancellationToken token2 = default(CancellationToken)) { }
+    public static void M5(CancellationToken token1 = default(CancellationToken), CancellationToken token2 = default(CancellationToken)) { }
 }";
             VerifyCSharp(test);
         }

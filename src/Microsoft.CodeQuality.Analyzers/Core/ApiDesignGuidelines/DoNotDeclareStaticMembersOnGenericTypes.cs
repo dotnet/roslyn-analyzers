@@ -40,22 +40,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(
                 symbolAnalysisContext =>
                 {
-                    // Fxcop compat: fire only on public static members within externally visible generic types.
+                    // Fxcop compat: fire only on public static members within externally visible generic types by default.
                     ISymbol symbol = symbolAnalysisContext.Symbol;
                     if (!symbol.IsStatic ||
                         symbol.DeclaredAccessibility != Accessibility.Public ||
                         !symbol.ContainingType.IsGenericType ||
-                        !symbol.ContainingType.IsExternallyVisible())
+                        !symbol.ContainingType.MatchesConfiguredVisibility(symbolAnalysisContext.Options, Rule, symbolAnalysisContext.CancellationToken))
                     {
                         return;
                     }
 
+                    // Do not flag non-ordinary methods, such as conversions, operator overloads, etc.
                     if (symbol is IMethodSymbol methodSymbol &&
-                        (methodSymbol.IsAccessorMethod() ||
-                        (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
-                        (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
-                        methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName)) ||
-                        methodSymbol.MethodKind == MethodKind.Conversion))
+                        methodSymbol.MethodKind != MethodKind.Ordinary)
                     {
                         return;
                     }

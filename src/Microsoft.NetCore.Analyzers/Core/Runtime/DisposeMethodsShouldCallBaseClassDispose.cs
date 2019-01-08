@@ -60,11 +60,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var disposeMethodKind = containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable);
+                    var disposeMethodKind = containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task);
                     switch (disposeMethodKind)
                     {
                         case DisposeMethodKind.Dispose:
                         case DisposeMethodKind.DisposeBool:
+                        case DisposeMethodKind.DisposeAsync:
+                        case DisposeMethodKind.DisposeCoreAsync:
                             break;
 
                         case DisposeMethodKind.Close:
@@ -88,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             invocation.Instance is IInstanceReferenceOperation instanceReference &&
                             instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                         {
-                            Debug.Assert(invocation.TargetMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable) == disposeMethodKind);
+                            Debug.Assert(invocation.TargetMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task) == disposeMethodKind);
                             invokesBaseDispose = true;
                         }
                     }, OperationKind.Invocation);
@@ -100,10 +102,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             // Ensure that method '{0}' calls '{1}' in all possible control flow paths.
                             var arg1 = containingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
                             var baseKeyword = containingMethod.Language == LanguageNames.CSharp ? "base" : "MyBase";
-                            var disposeMethodParam = disposeMethodKind == DisposeMethodKind.Dispose ?
-                                string.Empty :
-                                containingMethod.Language == LanguageNames.CSharp ? "bool" : "Boolean";
-                            var arg2 = $"{baseKeyword}.Dispose({disposeMethodParam})";
+                            var disposeMethodParam = (disposeMethodKind == DisposeMethodKind.DisposeBool || disposeMethodKind == DisposeMethodKind.DisposeCoreAsync) ?
+                                containingMethod.Language == LanguageNames.CSharp ? "bool" : "Boolean" :
+                                string.Empty;
+                            var disposeMethodName = disposeMethodKind == DisposeMethodKind.DisposeBool ?
+                                "Dispose" :
+                                disposeMethodKind.ToString();
+                            var arg2 = $"{baseKeyword}.{disposeMethodName}({disposeMethodParam})";
                             var diagnostic = containingMethod.CreateDiagnostic(Rule, arg1, arg2);
                             operationEndContext.ReportDiagnostic(diagnostic);
                         }

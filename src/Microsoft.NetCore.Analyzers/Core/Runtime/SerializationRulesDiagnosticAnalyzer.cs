@@ -162,10 +162,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
+                var implementsISerializable = namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol);
+                var isSerializable = IsSerializable(namedTypeSymbol);
+
                 // If the type is public and implements ISerializable
-                if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public && namedTypeSymbol.AllInterfaces.Contains(_iserializableTypeSymbol))
+                if (namedTypeSymbol.DeclaredAccessibility == Accessibility.Public && implementsISerializable)
                 {
-                    if (!IsSerializable(namedTypeSymbol))
+                    if (!isSerializable)
                     {
                         // CA2237 : Mark serializable types with the SerializableAttribute
                         if (namedTypeSymbol.BaseType.SpecialType == SpecialType.System_Object ||
@@ -178,12 +181,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         // Look for a serialization constructor.
                         // A serialization constructor takes two params of type SerializationInfo and StreamingContext.
-                        IMethodSymbol serializationCtor = namedTypeSymbol.Constructors.Where(c => c.Parameters.Count() == 2 &&
-                                                                                        c.Parameters[0].Type ==
-                                                                                        _serializationInfoTypeSymbol &&
-                                                                                        c.Parameters[1].Type ==
-                                                                                        _streamingContextTypeSymbol)
-                            .SingleOrDefault();
+                        IMethodSymbol serializationCtor = namedTypeSymbol.Constructors
+                            .SingleOrDefault(
+                                c => c.Parameters.Length == 2 &&
+                                     c.Parameters[0].Type.Equals(_serializationInfoTypeSymbol) &&
+                                     c.Parameters[1].Type.Equals(_streamingContextTypeSymbol));
 
                         // There is no serialization ctor - issue a diagnostic.
                         if (serializationCtor == null)
@@ -217,29 +219,47 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
                 }
 
-                // If this is type is marked Serializable check it's fields types' as well
-                if (IsSerializable(namedTypeSymbol))
+                // If this is type is marked Serializable and doesn't implement ISerializable, check its fields' types as well
+                if (isSerializable && !implementsISerializable)
                 {
-                    System.Collections.Generic.IEnumerable<IFieldSymbol> nonSerializableFields =
-                        namedTypeSymbol.GetMembers().OfType<IFieldSymbol>().Where(m => !IsSerializable(m.Type));
-                    foreach (IFieldSymbol field in nonSerializableFields)
+                    foreach (ISymbol member in namedTypeSymbol.GetMembers())
                     {
+                        // Only process field members
+                        if (!(member is IFieldSymbol field))
+                        {
+                            continue;
+                        }
+
+                        // Only process instance fields
+                        if (field.IsStatic)
+                        {
+                            continue;
+                        }
+
+                        // Only process non-serializable fields
+                        if (IsSerializable(field.Type))
+                        {
+                            continue;
+                        }
+
                         // Check for [NonSerialized]
                         if (field.GetAttributes().Any(x => x.AttributeClass.Equals(_nonSerializedAttributeTypeSymbol)))
                         {
                             continue;
                         }
 
-                        if (field.IsImplicitlyDeclared && field.AssociatedSymbol != null)
-                        {
-                            context.ReportDiagnostic(field.AssociatedSymbol.CreateDiagnostic(RuleCA2235,
-                                field.AssociatedSymbol.Name, namedTypeSymbol.Name, field.Type));
-                        }
-                        else
-                        {
-                            context.ReportDiagnostic(field.CreateDiagnostic(RuleCA2235, field.Name, namedTypeSymbol.Name,
+                        // Handle compiler-generated fields (without source declaration) that have an associated symbol in code.
+                        // For example, auto-property backing fields.
+                        ISymbol targetSymbol = field.IsImplicitlyDeclared && field.AssociatedSymbol != null 
+                            ? field.AssociatedSymbol 
+                            : field;
+
+                        context.ReportDiagnostic(
+                            targetSymbol.CreateDiagnostic(
+                                RuleCA2235,
+                                targetSymbol.Name,
+                                namedTypeSymbol.Name,
                                 field.Type));
-                        }
                     }
                 }
             }

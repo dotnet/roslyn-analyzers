@@ -92,12 +92,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
-            // FxCop compat: only fire on externally visible types.
-            if (!namedTypeSymbol.IsExternallyVisible())
+            // FxCop compat: only fire on externally visible types by default.
+            if (!namedTypeSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 return;
             }
-
 
             var allInterfacesStatus = default(CollectionsInterfaceStatus);
             foreach (var @interface in namedTypeSymbol.AllInterfaces)

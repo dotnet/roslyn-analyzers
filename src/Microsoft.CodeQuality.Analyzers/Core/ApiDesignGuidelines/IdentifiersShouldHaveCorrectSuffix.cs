@@ -147,16 +147,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
                 , SymbolKind.NamedType);
 
-                context.RegisterSymbolAction((saContext) =>
+                var eventArgsType = WellKnownTypes.EventArgs(context.Compilation);
+                if (eventArgsType != null)
                 {
-                    const string eventHandlerString = "EventHandler";
-                    var eventSymbol = saContext.Symbol as IEventSymbol;
-                    if (!eventSymbol.Type.Name.EndsWith(eventHandlerString, StringComparison.Ordinal))
+                    context.RegisterSymbolAction((saContext) =>
                     {
-                        saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, eventHandlerString));
-                    }
-                },
-                SymbolKind.Event);
+                        const string eventHandlerString = "EventHandler";
+                        var eventSymbol = (IEventSymbol)saContext.Symbol;
+                        if (!eventSymbol.Type.Name.EndsWith(eventHandlerString, StringComparison.Ordinal) &&
+                            eventSymbol.Type.IsInSource() &&
+                            eventSymbol.Type.TypeKind == TypeKind.Delegate &&
+                            ((INamedTypeSymbol)eventSymbol.Type).DelegateInvokeMethod?.HasEventHandlerSignature(eventArgsType) == true)
+                        {
+                            saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, eventHandlerString));
+                        }
+                    },
+                    SymbolKind.Event);
+                }
             }
         }
     }

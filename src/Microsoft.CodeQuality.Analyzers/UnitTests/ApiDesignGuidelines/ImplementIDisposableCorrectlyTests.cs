@@ -1113,8 +1113,8 @@ public class C : IDisposable
             GetCA1063CSharpDisposeImplementationResultAt(6, 17, "C", "Dispose"));
         }
 
-        [Fact]
-        public void CSharp_CA1063_DisposeImplementation_Diagnostic_MissingCallSuppressFinalize()
+        [Fact, WorkItem(1974, "https://github.com/dotnet/roslyn-analyzers/issues/1974")]
+        public void CSharp_CA1063_DisposeImplementation_Diagnostic_MissingCallSuppressFinalize_HasFinalizer()
         {
             VerifyCSharp(@"
 using System;
@@ -1137,6 +1137,26 @@ public class C : IDisposable
 }
 ",
             GetCA1063CSharpDisposeImplementationResultAt(6, 17, "C", "Dispose"));
+        }
+
+        [Fact, WorkItem(1974, "https://github.com/dotnet/roslyn-analyzers/issues/1974")]
+        public void CSharp_CA1063_DisposeImplementation_NoDiagnostic_MissingCallSuppressFinalize_NoFinalizer()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+");
         }
 
         [Fact]
@@ -2541,8 +2561,8 @@ End Class
             GetCA1063BasicDisposeImplementationResultAt(7, 16, "C", "Dispose"));
         }
 
-        [Fact]
-        public void Basic_CA1063_DisposeImplementation_Diagnostic_MissingCallSuppressFinalize()
+        [Fact, WorkItem(1974, "https://github.com/dotnet/roslyn-analyzers/issues/1974")]
+        public void Basic_CA1063_DisposeImplementation_Diagnostic_MissingCallSuppressFinalize_HasFinalizer()
         {
             VerifyBasic(@"
 Imports System
@@ -2565,6 +2585,26 @@ Public Class C
 End Class
 ",
             GetCA1063BasicDisposeImplementationResultAt(7, 16, "C", "Dispose"));
+        }
+
+        [Fact, WorkItem(1974, "https://github.com/dotnet/roslyn-analyzers/issues/1974")]
+        public void Basic_CA1063_DisposeImplementation_NoDiagnostic_MissingCallSuppressFinalize_NoFinalizer()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        Dispose(True)
+    End Sub
+
+    Protected Overridable Sub Dispose(disposing As Boolean)
+    End Sub
+
+End Class
+");
         }
 
         [Fact]

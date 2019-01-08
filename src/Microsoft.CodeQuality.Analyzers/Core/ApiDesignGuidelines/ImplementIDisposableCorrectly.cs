@@ -526,7 +526,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (ValidateOperations(operations))
                 {
-                    return _callsDisposeBool && _callsSuppressFinalize;
+                    return _callsDisposeBool && (_callsSuppressFinalize || !_type.HasFinalizer());
                 }
 
                 return false;

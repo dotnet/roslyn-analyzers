@@ -232,6 +232,6 @@
     <value>Do not duplicate indexed element initializations</value>
   </data>
   <data name="MarkMembersAsStaticCodeFix" xml:space="preserve">
-    <value>Make static (Shared in VB)</value>
+    <value>Make static</value>
   </data>
 </root>

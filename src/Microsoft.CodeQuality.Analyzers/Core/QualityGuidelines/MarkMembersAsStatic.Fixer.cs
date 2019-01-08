@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -78,15 +79,24 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             cancellationToken.ThrowIfCancellationRequested();
 
             var references = await SymbolFinder.FindReferencesAsync(symbol, solution, cancellationToken).ConfigureAwait(false);
-            if (references?.Count() != 1)
+            if (references.Count() != 1)
             {
                 return solution;
             }
 
+            // Group references by document and fix references in each document.
             foreach (var referenceLocationGroup in references.Single().Locations.GroupBy(r => r.Document))
             {
                 // Get document in current solution
                 var document = solution.GetDocument(referenceLocationGroup.Key.Id);
+
+                // Skip references in projects with different language.
+                // https://github.com/dotnet/roslyn-analyzers/issues/1986 tracks handling them.
+                if (!document.Project.Language.Equals(symbol.Language, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
                 var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
                 var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
@@ -99,7 +109,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     var referenceNode = root.FindNode(referenceLocation.Location.SourceSpan, getInnermostNodeForTie: true);
                     if (referenceNode != null)
                     {
-                        var operation = GetOperationWalkingUpParentChain(referenceNode, semanticModel);
+                        var operation = semanticModel.GetOperationWalkingUpParentChain(referenceNode, cancellationToken);
                         SyntaxNode nodeToReplaceOpt = null;
                         switch (operation)
                         {
@@ -155,24 +165,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             return solution;
 
             // Local functions.
-            IOperation GetOperationWalkingUpParentChain(SyntaxNode node, SemanticModel semanticModel)
-            {
-                // Walk up the parent chain to fetch the first non-null operation.
-                do
-                {
-                    var operation = semanticModel.GetOperation(node, cancellationToken);
-                    if (operation != null)
-                    {
-                        return operation;
-                    }
-
-                    node = node.Parent;
-                }
-                while (node != null);
-
-                return null;
-            }
-
             bool IsReplacableOperation(IOperation operation)
             {
                 // We only replace reference operations whose removal cannot change semantics.

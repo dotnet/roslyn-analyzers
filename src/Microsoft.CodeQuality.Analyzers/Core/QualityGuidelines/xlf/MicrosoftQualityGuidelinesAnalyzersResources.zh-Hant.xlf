@@ -3,8 +3,8 @@
   <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftQualityGuidelinesAnalyzersResources.resx">
     <body>
       <trans-unit id="MarkMembersAsStaticCodeFix">
-        <source>Make static (Shared in VB)</source>
-        <target state="new">Make static (Shared in VB)</target>
+        <source>Make static</source>
+        <target state="new">Make static</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">

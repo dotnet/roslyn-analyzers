@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public partial class MarkAllNonSerializableFieldsTests : DiagnosticAnalyzerTestBase
+    public class MarkAllNonSerializableFieldsTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -19,10 +19,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             return new SerializationRulesDiagnosticAnalyzer();
         }
 
-        [WorkItem(858655, "DevDiv")]
         #region CA2235
 
         [Fact]
+        [WorkItem(858655, "DevDiv")]
         public void CA2235WithOnlyPrimitiveFields()
         {
             VerifyCSharp(@"
@@ -135,7 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/3898")]
+        [Fact]
         public void CA2235WithSerializableLibraryTypes()
         {
             VerifyCSharp(@"
@@ -145,7 +145,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 [Serializable]
                 public class CA2235WithSerializableLibraryTypes
                 {
-                    public Regex R = new Regex(""\w+"");
+                    public Regex R = new Regex(@""\w+"");
                     public Nullable<int> NI = new Nullable<int>(42);
                     public bool? NB = true;
                     public Version V = new Version(1, 1, 12, 2);
@@ -157,12 +157,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                 <Serializable>
                 Public Class CA2235WithSerializableLibraryTypes
-
                     Public R As Regex = New Regex(""\w+"")
-                    Public NI As Nullable(Of Integer)  = new Nullable(Of Integer)(42)
+                    Public NI As Nullable(Of Integer) = new Nullable(Of Integer)(42)
                     Public NB As Boolean? = true
                     Public V As Version = New Version(1, 1, 12, 2)
-                }");
+                End Class");
         }
 
         [Fact]
@@ -531,6 +530,65 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 End Class");
         }
 
+        [Fact, WorkItem(1883, "https://github.com/dotnet/roslyn-analyzers/issues/1883")]
+        public void CA2235WithNonInstanceFieldsOfNonSerializableType()
+        {
+            VerifyCSharp(@"
+                using System;
+                public class NonSerializableType { }
+
+                [Serializable]
+                internal class CA2235WithNonInstanceFieldsOfNonSerializableType
+                {
+                    public const NonSerializableType s1 = null;
+                    public static NonSerializableType s2;
+                }");
+
+            VerifyBasic(@"
+                Imports System
+                Public Class NonSerializableType
+                End Class
+
+                <Serializable>
+                Friend Class CA2235WithNonInstanceFieldsOfNonSerializableType 
+                    Public Const s1 As Object = Nothing
+                    Public Shared s2 As NonSerializableType
+                End Class");
+        }
+
+        [Fact, WorkItem(1970, "https://github.com/dotnet/roslyn-analyzers/issues/1970")]
+        public void CA2235WithISerializableImplementation()
+        {
+            VerifyCSharp(@"
+                using System;
+                using System.Runtime.Serialization;
+                public class NonSerializableType { }
+
+                [Serializable]
+                internal class CA2235WithISerializableImplementation : ISerializable
+                {
+                    private NonSerializableType _nonSerializable;
+                    public CA2235WithISerializableImplementation(SerializationInfo info, StreamingContext context) { }
+                    public void GetObjectData(SerializationInfo info, StreamingContext context) { }
+                }");
+
+            VerifyBasic(@"
+                Imports System
+                Imports System.Runtime.Serialization
+                Public Class NonSerializableType
+                End Class
+
+                <Serializable>
+                Friend Class CA2235WithISerializableImplementation
+                    Implements ISerializable
+                    Private _nonSerializable As NonSerializableType
+                    Private Sub New(Info As SerializationInfo, Context As StreamingContext)
+                    End Sub
+                    Private Sub GetObjectData(Info As SerializationInfo, Context As StreamingContext) Implements ISerializable.GetObjectData
+                    End Sub
+                End Class");
+        }
+
         internal static readonly string CA2235Message = SystemRuntimeAnalyzersResources.MarkAllNonSerializableFieldsMessage;
 
         private static DiagnosticResult GetCA2235CSharpResultAt(int line, int column, string fieldName, string containerName, string typeName)
@@ -542,6 +600,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         {
             return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2235Id, string.Format(CA2235Message, fieldName, containerName, typeName));
         }
+
         #endregion
     }
 }

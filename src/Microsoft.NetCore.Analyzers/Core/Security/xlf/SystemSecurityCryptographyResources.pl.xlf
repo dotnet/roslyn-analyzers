@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pl" original="../SystemSecurityCryptographyResources.resx">
     <body>
+      <trans-unit id="ApprovedCipherMode">
+        <source>Do Not Use Unsafe Cipher Modes</source>
+        <target state="new">Do Not Use Unsafe Cipher Modes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApprovedCipherModeDescription">
+        <source>These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).</source>
+        <target state="new">These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ApprovedCipherModeMessage">
+        <source>It uses an unsafe Cipher Mode {0}</source>
+        <target state="new">It uses an unsafe Cipher Mode {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
         <source>Do Not Use Broken Cryptographic Algorithms</source>
         <target state="new">Do Not Use Broken Cryptographic Algorithms</target>

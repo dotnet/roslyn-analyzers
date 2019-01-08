@@ -376,5 +376,59 @@ Public Class Class1(Of T)
 End Class
 ");
         }
+
+        [Fact, WorkItem(1791, "https://github.com/dotnet/roslyn-analyzers/issues/1791")]
+        public void CSharp_CA1000_ShouldNotGenerate_OperatorOverloads()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class TestObject<T2> : IEquatable<TestObject<T2>>, IComparable<TestObject<T2>>
+        where T2 : TestObject<T2>, new()
+{
+    public static bool operator ==(TestObject<T2> first, TestObject<T2> second) => first.Equals(second);
+
+    public static bool operator !=(TestObject<T2> first, TestObject<T2> second) => !(first == second);
+
+    public static bool operator <(TestObject<T2> first, TestObject<T2> second) => first.CompareTo(second) < 0;
+
+    public static bool operator >(TestObject<T2> first, TestObject<T2> second) => first.CompareTo(second) > 0;
+
+    public static bool operator <=(TestObject<T2> first, TestObject<T2> second) => first.CompareTo(second) <= 0;
+
+    public static bool operator >=(TestObject<T2> first, TestObject<T2> second) => first.CompareTo(second) >= 0;
+
+    public int CompareTo(TestObject<T2> other)
+    {
+        return 0;
+    }
+
+    public bool Equals(TestObject<T2> other)
+    {
+        return true;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(this, obj))
+        {
+            return true;
+        }
+
+        if (obj is null)
+        {
+            return false;
+        }
+
+        throw new NotImplementedException();
+    }
+
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
+}
+");
+        }
     }
 }

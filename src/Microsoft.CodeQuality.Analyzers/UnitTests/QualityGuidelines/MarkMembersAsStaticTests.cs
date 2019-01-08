@@ -600,6 +600,75 @@ End Class
             GetBasicResultAt(3, 16, "M"));
         }
 
+        [Fact, WorkItem(1933, "https://github.com/dotnet/roslyn-analyzers/issues/1933")]
+        public void CSharpPropertySingleAccessorAccessingInstance_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class MyClass
+{
+    private static bool StaticThing;
+    private bool InstanceThing;
+
+    public bool Thing1
+    {
+        get { return StaticThing; }
+        set
+        {
+            StaticThing = value;
+            InstanceThing = value;
+        }
+    }
+
+    public bool Thing2
+    {
+        get { return InstanceThing && StaticThing; }
+        set
+        {
+            StaticThing = value;
+        }
+    }
+}");
+        }
+
+        [Fact, WorkItem(1933, "https://github.com/dotnet/roslyn-analyzers/issues/1933")]
+        public void CSharpEventWithSingleAccessorAccessingInstance_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class MyClass
+{
+    private static bool StaticThing;
+    private bool InstanceThing;
+
+    event EventHandler MyEvent1
+    {
+        add
+        {
+            StaticThing = true;
+            InstanceThing = true;
+        }
+        remove
+        {
+            StaticThing = true;
+        }
+    }
+
+    event EventHandler MyEvent2
+    {
+        add
+        {
+            StaticThing = true;
+        }
+        remove
+        {
+            StaticThing = true;
+            InstanceThing = true;
+        }
+    }
+}");
+        }
+
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
         {
             return GetCSharpResultAt(line, column, MarkMembersAsStaticAnalyzer.Rule, symbolName);

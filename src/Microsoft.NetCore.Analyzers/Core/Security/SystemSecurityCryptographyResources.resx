@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApprovedCipherMode" xml:space="preserve">
+    <value>Do Not Use Unsafe Cipher Modes</value>
+  </data>
+  <data name="ApprovedCipherModeDescription" xml:space="preserve">
+    <value>These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).</value>
+  </data>
+  <data name="ApprovedCipherModeMessage" xml:space="preserve">
+    <value>It uses an unsafe Cipher Mode {0}</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>

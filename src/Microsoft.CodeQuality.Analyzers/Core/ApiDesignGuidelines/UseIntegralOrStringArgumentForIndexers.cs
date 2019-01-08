@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var symbol = (IPropertySymbol)context.Symbol;
             if (symbol.IsIndexer &&
                 !symbol.IsOverride &&
-                symbol.IsExternallyVisible())
+                symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 if (symbol.GetParameters().Length == 1)
                 {

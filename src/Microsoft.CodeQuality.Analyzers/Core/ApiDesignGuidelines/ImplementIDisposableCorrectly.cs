@@ -182,9 +182,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)
             {
+                // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                // will always have identical configured visibility.
                 if (context.Symbol is INamedTypeSymbol type &&
                     type.TypeKind == TypeKind.Class &&
-                    type.IsExternallyVisible())
+                    type.MatchesConfiguredVisibility(context.Options, IDisposableReimplementationRule, context.CancellationToken))
                 {
                     bool implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 
@@ -242,27 +244,33 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 bool isDisposeMethod = method.Name == DisposeMethodName;
                 if (isFinalizerMethod || isDisposeMethod)
                 {
+                    // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                    // will always have identical configured visibility.
                     INamedTypeSymbol type = method.ContainingType;
                     if (type != null && type.TypeKind == TypeKind.Class &&
-                        !type.IsSealed && type.IsExternallyVisible())
+                        !type.IsSealed && type.MatchesConfiguredVisibility(context.Options, IDisposableReimplementationRule, context.CancellationToken))
                     {
                         if (ImplementsDisposableDirectly(type))
                         {
                             IMethodSymbol disposeMethod = FindDisposeMethod(type);
                             if (disposeMethod != null)
                             {
-                                if (method == disposeMethod)
+                                if (method.Equals(disposeMethod))
                                 {
                                     CheckDisposeImplementationRule(method, type, context.OperationBlocks, context);
                                 }
                                 else if (isFinalizerMethod)
                                 {
-                                    // Check implementation of finalizer only if the class explicitly implements IDisposable
-                                    // If class implements interface inherited from IDisposable and IDisposable is implemented in base class
-                                    // then implementation of finalizer is ignored
                                     CheckFinalizeImplementationRule(method, type, context.OperationBlocks, context);
                                 }
                             }
+                        }
+                        else if (isFinalizerMethod &&
+                            ImplementsDisposableInBaseType(type) &&
+                            FindInheritedDisposeBoolMethod(type) != null)
+                        {
+                            // Finalizer must invoke Dispose(false) if any of its base type has a Dispose(bool) implementation.
+                            CheckFinalizeImplementationRule(method, type, context.OperationBlocks, context);
                         }
                     }
                 }
@@ -327,13 +335,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             /// <summary>
-            /// Checks rule: Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.
+            /// Checks rule: Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.
             /// </summary>
             private static void CheckFinalizeOverrideRule(INamedTypeSymbol type, SymbolAnalysisContext context)
             {
                 if (type.HasFinalizer())
                 {
-                    context.ReportDiagnostic(type.CreateDiagnostic(FinalizeOverrideRule, type.Name));
+                    // Flag the finalizer if there is any base type with a finalizer, this can cause duplicate Dispose(false) invocations.
+                    var baseTypeWithFinalizerOpt = GetFirstBaseTypeWithFinalizerOrDefault(type);
+                    if (baseTypeWithFinalizerOpt != null)
+                    {
+                        context.ReportDiagnostic(type.CreateDiagnostic(FinalizeOverrideRule, type.Name, baseTypeWithFinalizerOpt.Name));
+                    }
                 }
             }
 
@@ -374,12 +387,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// </summary>
             private static void CheckFinalizeImplementationRule(IMethodSymbol method, INamedTypeSymbol type, ImmutableArray<IOperation> operationBlocks, OperationBlockAnalysisContext context)
             {
+                // Bail out if any base type also provides a finalizer - we will fire CheckFinalizeOverrideRule for that case.
+                if (GetFirstBaseTypeWithFinalizerOrDefault(type) != null)
+                {
+                    return;
+                }
+
                 var validator = new FinalizeImplementationValidator(type);
                 if (!validator.Validate(operationBlocks))
                 {
                     context.ReportDiagnostic(method.CreateDiagnostic(FinalizeImplementationRule, $"{type.Name}.{method.Name}"));
                 }
             }
+
+            private static INamedTypeSymbol GetFirstBaseTypeWithFinalizerOrDefault(INamedTypeSymbol type)
+                => type.GetBaseTypes().FirstOrDefault(baseType => baseType.SpecialType != SpecialType.System_Object && baseType.HasFinalizer());
 
             /// <summary>
             /// Checks if type implements IDisposable interface or an interface inherited from IDisposable.
@@ -440,7 +462,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static bool IsDisposeBoolCall(IInvocationOperation invocationExpression, INamedTypeSymbol type, bool expectedValue)
         {
             if (invocationExpression.TargetMethod == null ||
-                invocationExpression.TargetMethod.ContainingType != type ||
                 !invocationExpression.TargetMethod.HasDisposeBoolMethodSignature())
             {
                 return false;
@@ -505,7 +526,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (ValidateOperations(operations))
                 {
-                    return _callsDisposeBool && _callsSuppressFinalize;
+                    return _callsDisposeBool && (_callsSuppressFinalize || !_type.HasFinalizer());
                 }
 
                 return false;
@@ -646,7 +667,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // a finalizer, C# will create a try/finally statement to wrap the finalizer, with a
                     // call to the base finalizer in the finally section. We need to validate the contents
                     // of the try block
-                    var shouldAnalyze = !operation.IsImplicit || operation.Kind == OperationKind.Try;
+                    // Also analyze the implicit expression statement created for expression bodied implementation.
+                    var shouldAnalyze = !operation.IsImplicit || operation.Kind == OperationKind.Try || operation.Kind == OperationKind.ExpressionStatement;
                     if (shouldAnalyze && !ValidateOperation(operation))
                     {
                         return false;

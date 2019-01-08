@@ -155,6 +155,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         const string eventHandlerString = "EventHandler";
                         var eventSymbol = (IEventSymbol)saContext.Symbol;
                         if (!eventSymbol.Type.Name.EndsWith(eventHandlerString, StringComparison.Ordinal) &&
+                            eventSymbol.Type.IsInSource() &&
                             eventSymbol.Type.TypeKind == TypeKind.Delegate &&
                             ((INamedTypeSymbol)eventSymbol.Type).DelegateInvokeMethod?.HasEventHandlerSignature(eventArgsType) == true)
                         {

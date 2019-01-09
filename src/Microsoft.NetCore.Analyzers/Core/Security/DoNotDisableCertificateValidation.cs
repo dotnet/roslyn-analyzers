@@ -34,7 +34,6 @@ namespace Microsoft.NetCore.Analyzers.Security
         
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-
         private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString message, LocalizableString description, string uri = null)
         {
             return new DiagnosticDescriptor(
@@ -59,9 +58,8 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    INamedTypeSymbol systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol =
-                        compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(WellKnownTypes.SystemNetSecurityRemoteCertificateValidationCallback);
-                    
+                    INamedTypeSymbol systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol =compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(
+                            WellKnownTypes.SystemNetSecurityRemoteCertificateValidationCallback);
                     if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null)
                     {
                         return;
@@ -76,9 +74,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             if (delegateCreationOperation.Type == systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol)
                             {
                                 bool flag = true;
-                                var kind = delegateCreationOperation.Target.Kind;
-                                
-                                switch (kind)
+
+                                var kind = delegateCreationOperation.Target.Kind;switch (kind)
                                 {
                                     case OperationKind.AnonymousFunction:
                                         flag = dealWithAnonmousFunction(delegateCreationOperation.Target);
@@ -96,8 +93,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             Rule,
                                             delegateCreationOperation.Syntax.GetLocation(),
                                             kind.ToString()));
-
-
                             }
                         },
                         OperationKind.DelegateCreation);
@@ -107,8 +102,8 @@ namespace Microsoft.NetCore.Analyzers.Security
         bool dealWithAnonmousFunction(IOperation operation)
         {
             bool flag = false;
-            var descendants = operation.Descendants();
 
+            var descendants = operation.Descendants();
             foreach (var tmp in descendants)
             {
                 if (tmp.Kind == OperationKind.Return)
@@ -129,9 +124,9 @@ namespace Microsoft.NetCore.Analyzers.Security
         bool dealWithMethodReference(IMethodReferenceOperation methodReferenceOperation)
         {
             bool flag = false;
+
             MethodDeclarationSyntax methodDeclarationSyntax = AnalysisGetStatements(methodReferenceOperation.Method) as MethodDeclarationSyntax;
             var returnStatementSyntaxs = methodDeclarationSyntax.DescendantNodes().OfType<ReturnStatementSyntax>();
-
             foreach (var returnStatementSyntax in returnStatementSyntaxs)
             {
                 if (returnStatementSyntax.Expression.ToString() == "false")
@@ -140,6 +135,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     break;
                 }
             }
+
             return flag;
         }
 

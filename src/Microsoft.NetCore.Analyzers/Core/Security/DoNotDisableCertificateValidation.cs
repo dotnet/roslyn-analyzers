@@ -75,7 +75,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 bool flag = true;
 
-                                var kind = delegateCreationOperation.Target.Kind;switch (kind)
+                                var kind = delegateCreationOperation.Target.Kind;
+                                switch (kind)
                                 {
                                     case OperationKind.AnonymousFunction:
                                         flag = dealWithAnonmousFunction(delegateCreationOperation.Target);

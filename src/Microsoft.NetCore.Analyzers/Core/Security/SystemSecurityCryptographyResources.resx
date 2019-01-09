@@ -130,7 +130,7 @@
     <value>Do Not Disable Certification Validation</value>
   </data>
   <data name="DoNotDisableCertificateValidationDescription" xml:space="preserve">
-    <value>The certificate establish a trust between the recipient of a signed message and the signer of the message. Each recipient of a signed message need to decide if the certificate is trustworthy. If the ServerCertificateValidationCallback always return 'true', it will pass the validation and trust all certificates.</value>
+    <value>A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</value>
   </data>
   <data name="DoNotDisableCertificateValidationMessage" xml:space="preserve">
     <value>The certificate verification is delgated a {0} and always return 'true'.</value>

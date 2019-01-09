@@ -23,8 +23,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationDescription">
-        <source>The certificate establish a trust between the recipient of a signed message and the signer of the message. Each recipient of a signed message need to decide if the certificate is trustworthy. If the ServerCertificateValidationCallback always return 'true', it will pass the validation and trust all certificates.</source>
-        <target state="new">The certificate establish a trust between the recipient of a signed message and the signer of the message. Each recipient of a signed message need to decide if the certificate is trustworthy. If the ServerCertificateValidationCallback always return 'true', it will pass the validation and trust all certificates.</target>
+        <source>A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</source>
+        <target state="new">A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationMessage">

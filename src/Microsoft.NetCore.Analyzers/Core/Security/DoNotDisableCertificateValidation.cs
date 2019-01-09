@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
+using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Linq;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
@@ -50,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public sealed override void Initialize(AnalysisContext context)
         {
-            context.EnableConcurrentExecution();
+           // context.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics on generated code.
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
@@ -58,7 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    INamedTypeSymbol systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol =compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(
+                    var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(
                             WellKnownTypes.SystemNetSecurityRemoteCertificateValidationCallback);
                     if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null)
                     {
@@ -68,95 +67,75 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
-                            IDelegateCreationOperation delegateCreationOperation =
+                            var delegateCreationOperation =
                                 (IDelegateCreationOperation)operationAnalysisContext.Operation;
-                            
-                            if (delegateCreationOperation.Type == systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol)
+                            if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol.Equals(delegateCreationOperation.Type))
                             {
-                                bool flag = true;
+                                var alwaysReturnTrue = true;
 
-                                var kind = delegateCreationOperation.Target.Kind;
-                                switch (kind)
+                                var kindOfTargetFunction = delegateCreationOperation.Target.Kind;
+                                switch (kindOfTargetFunction)
                                 {
                                     case OperationKind.AnonymousFunction:
-                                        flag = dealWithAnonmousFunction(delegateCreationOperation.Target);
+                                        alwaysReturnTrue = AlwaysReturnTrue(delegateCreationOperation.Target.Descendants());
                                         break;
 
                                     case OperationKind.MethodReference:
-                                        IMethodReferenceOperation methodReferenceOperation = (IMethodReferenceOperation)delegateCreationOperation.Target;
-                                        flag = dealWithMethodReference(methodReferenceOperation);
+                                        var methodReferenceOperation = (IMethodReferenceOperation)delegateCreationOperation.Target;
+                                        var methodSymbol = methodReferenceOperation.Method;
+                                        var blockOperation = methodSymbol.GetTopmostOperationBlock(compilationStartAnalysisContext.Compilation);
+                                        var tmp = ImmutableArray.ToImmutableArray(blockOperation.Descendants()).GetOperations();
+                                        alwaysReturnTrue = AlwaysReturnTrue(tmp);
                                         break;
                                 }
 
-                                if (!flag)
+                                if (alwaysReturnTrue)
+                                {
                                     operationAnalysisContext.ReportDiagnostic(
-                                        Diagnostic.Create(
+                                        delegateCreationOperation.CreateDiagnostic(
                                             Rule,
-                                            delegateCreationOperation.Syntax.GetLocation(),
-                                            kind.ToString()));
+                                            kindOfTargetFunction.ToString()));
+                                }
                             }
                         },
                         OperationKind.DelegateCreation);
                 });
         }
 
-        private static bool dealWithAnonmousFunction(IOperation operation)
+        /// <summary>
+        /// Find every IReturnOperation in the method and get the value of return statement to determine if the method always return true.
+        /// </summary>
+        /// <param name="operation">A method body in the form of a IOperation</param>
+        private static bool AlwaysReturnTrue(IEnumerable<IOperation> operations)
         {
-            bool flag = false;
-
-            var descendants = operation.Descendants();
-            foreach (var tmp in descendants)
+            var result = true;
+            var countOfReturnStatement = 0;
+            
+            foreach (var descendant in operations)
             {
-                if (tmp.Kind == OperationKind.Return)
+                if (descendant.Kind == OperationKind.Return)
                 {
-                    IReturnOperation a=(IReturnOperation)tmp;
-                    bool returnedValue = (bool)a.ReturnedValue.ConstantValue.Value;
-                    if (returnedValue == false)
+                    var returnOperation = (IReturnOperation)descendant;
+                    var constantValue = returnOperation.ReturnedValue.ConstantValue;
+
+                    countOfReturnStatement++;
+
+                    // If it invokes another function which is from local or 3rd assembly,
+                    // or the value of return statement is false.
+                    if (!constantValue.HasValue || constantValue.Value.Equals(false))
                     {
-                        flag = true;
+                        result = false;
                         break;
                     }
                 }
             }
 
-            return flag;
-        }
-
-        private static bool dealWithMethodReference(IMethodReferenceOperation methodReferenceOperation)
-        {
-            bool flag = false;
-
-            MethodDeclarationSyntax methodDeclarationSyntax = AnalysisGetStatements(methodReferenceOperation.Method) as MethodDeclarationSyntax;
-            var returnStatementSyntaxs = methodDeclarationSyntax.DescendantNodes().OfType<ReturnStatementSyntax>();
-            foreach (var returnStatementSyntax in returnStatementSyntaxs)
+            if (countOfReturnStatement == 0)
             {
-                if (returnStatementSyntax.Expression.ToString() == "false")
-                {
-                    flag = true;
-                    break;
-                }
+                result = false;
             }
 
-            return flag;
-        }
-
-        // Returns a list containing the method declaration, and the statements within the method, returns an empty list if failed
-        private static MethodDeclarationSyntax AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
-        {
-            MethodDeclarationSyntax result = null;
-
-            if (analysisMethodSymbol == null)
-            {
-                return result;
-            }
-
-            var methodDeclaration = analysisMethodSymbol.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
-            if (methodDeclaration == null)
-            {
-                return result;
-            }
-
-            return methodDeclaration;
+            return result;
         }
     }
 }

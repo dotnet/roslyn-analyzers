@@ -92,9 +92,13 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             cancellationToken.ThrowIfCancellationRequested();
 
             var references = await SymbolFinder.FindReferencesAsync(symbol, solution, cancellationToken).ConfigureAwait(false);
+            
+            // Filter out cascaded symbol references. For example, accessor references for property symbol.
+            references = references.Where(r => symbol.Equals(r.Definition));
+
             if (references.Count() != 1)
             {
-                return (newSolution: solution, allReferencesFixed: true);
+                return (newSolution: solution, allReferencesFixed: references.Count() == 0);
             }
 
             var allReferencesFixed = true;
@@ -158,8 +162,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     // Fetch the symbol for the node to replace - note that this might be
                     // different from the original symbol due to generic type arguments.
-                    var symbolInfo = semanticModel.GetSymbolInfo(nodeToReplaceOpt, cancellationToken);
-                    if (symbolInfo.Symbol == null)
+                    var symbolForNodeToReplace = GetSymbolForNodeToReplace(nodeToReplaceOpt, semanticModel);
+                    if (symbolForNodeToReplace == null)
                     {
                         allReferencesFixed = false;
                         continue;
@@ -168,11 +172,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     SyntaxNode memberName;
                     var typeArgumentsOpt = GetTypeArguments(referenceNode);
                     memberName = typeArgumentsOpt != null ?
-                        editor.Generator.GenericName(symbolInfo.Symbol.Name, typeArgumentsOpt) :
-                        editor.Generator.IdentifierName(symbolInfo.Symbol.Name);
+                        editor.Generator.GenericName(symbolForNodeToReplace.Name, typeArgumentsOpt) :
+                        editor.Generator.IdentifierName(symbolForNodeToReplace.Name);
 
                     var newNode = editor.Generator.MemberAccessExpression(
-                            expression: editor.Generator.TypeExpression(symbolInfo.Symbol.ContainingType),
+                            expression: editor.Generator.TypeExpression(symbolForNodeToReplace.ContainingType),
                             memberName: memberName)
                         .WithLeadingTrivia(nodeToReplaceOpt.GetLeadingTrivia())
                         .WithTrailingTrivia(nodeToReplaceOpt.GetTrailingTrivia())
@@ -207,6 +211,21 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 }
 
                 return false;
+            }
+
+            ISymbol GetSymbolForNodeToReplace(SyntaxNode nodeToReplace, SemanticModel semanticModel)
+            {
+                var symbolInfo = semanticModel.GetSymbolInfo(nodeToReplace, cancellationToken);
+                var symbolForNodeToReplace = symbolInfo.Symbol;
+
+                if (symbolForNodeToReplace == null &&
+                    symbolInfo.CandidateReason == CandidateReason.StaticInstanceMismatch &&
+                    symbolInfo.CandidateSymbols.Length == 1)
+                {
+                    return symbolInfo.CandidateSymbols[0];
+                }
+
+                return symbolForNodeToReplace;
             }
         }
 

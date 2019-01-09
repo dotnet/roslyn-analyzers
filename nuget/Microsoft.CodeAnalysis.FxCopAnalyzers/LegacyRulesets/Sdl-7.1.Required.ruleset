@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <RuleSet Name="Microsoft SDL 7.1 Required" Description="This rule set contains all Microsoft SDL 7.1 required rules." ToolsVersion="10.0">
   <Include Path="..\AllRulesDisabled.ruleset" Action="Default" />
+  <Rules AnalyzerId="Microsoft.NetCore.Analyzers" RuleNamespace="Microsoft.NetCore.Analyzers">
+    <Rule Id="CA5358" Action="Warning" />          <!-- Do Not Use Unsafe Cipher Modes -->
+  </Rules>
   <Rules AnalyzerId="Microsoft.NetCore.CSharp.Analyzers" RuleNamespace="Microsoft.NetCore.CSharp.Analyzers">
     <Rule Id="CA5350" Action="Warning" />          <!-- Do Not Use Weak Cryptographic Algorithms -->
     <Rule Id="CA5351" Action="Warning" />          <!-- Do Not Use Broken Cryptographic Algorithms -->

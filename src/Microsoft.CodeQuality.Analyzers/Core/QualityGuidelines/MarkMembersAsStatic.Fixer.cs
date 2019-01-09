@@ -94,7 +94,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             var references = await SymbolFinder.FindReferencesAsync(symbol, solution, cancellationToken).ConfigureAwait(false);
             if (references.Count() != 1)
             {
-                return (newSolution: solution, allReferencesFixed: false);
+                return (newSolution: solution, allReferencesFixed: true);
             }
 
             var allReferencesFixed = true;

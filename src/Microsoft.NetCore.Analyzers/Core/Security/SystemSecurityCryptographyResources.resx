@@ -126,6 +126,15 @@
   <data name="ApprovedCipherModeMessage" xml:space="preserve">
     <value>It uses an unsafe Cipher Mode {0}</value>
   </data>
+  <data name="DoNotDisableCertificateValidation" xml:space="preserve">
+    <value>Do Not Disable Certification Validation</value>
+  </data>
+  <data name="DoNotDisableCertificateValidationDescription" xml:space="preserve">
+    <value>The certificate establish a trust between the recipient of a signed message and the signer of the message. Each recipient of a signed message need to decide if the certificate is trustworthy. If the ServerCertificateValidationCallback always return 'true', it will pass the validation and trust all certificates.</value>
+  </data>
+  <data name="DoNotDisableCertificateValidationMessage" xml:space="preserve">
+    <value>The certificate verification is delgated a {0} and always return 'true'.</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>

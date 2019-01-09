@@ -17,6 +17,21 @@
         <target state="new">It uses an unsafe Cipher Mode {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidation">
+        <source>Do Not Disable Certification Validation</source>
+        <target state="new">Do Not Disable Certification Validation</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidationDescription">
+        <source>Do not force ServerCertificateValidationCallback to always return 'true'.</source>
+        <target state="new">Do not force ServerCertificateValidationCallback to always return 'true'.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidationMessage">
+        <source>The certificate verification is delgated a {0} and always return 'true'.</source>
+        <target state="new">The certificate verification is delgated a {0} and always return 'true'.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
         <source>Do Not Use Broken Cryptographic Algorithms</source>
         <target state="new">Do Not Use Broken Cryptographic Algorithms</target>

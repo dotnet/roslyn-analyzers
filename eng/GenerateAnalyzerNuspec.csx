@@ -118,7 +118,8 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
 
     foreach (string file in fileList)
     {
-        result.AppendLine(FileElement(Path.Combine(projectDir, file), "build"));
+        var fileWithPath = System.IO.Path.IsPathRooted(file) ? file : Path.Combine(projectDir, file);
+        result.AppendLine(FileElement(fileWithPath, "build"));
     }
 
     result.AppendLine(FileElement(Path.Combine(assetsDir, "Install.ps1"), "tools"));

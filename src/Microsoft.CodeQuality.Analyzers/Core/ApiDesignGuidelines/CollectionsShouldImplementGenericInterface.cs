@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription,
                 helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1010-collections-should-implement-generic-interface",
-                customTags: WellKnownDiagnosticTags.Telemetry);
+                customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -92,12 +92,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
 
-            // FxCop compat: only fire on externally visible types.
-            if (!namedTypeSymbol.IsExternallyVisible())
+            // FxCop compat: only fire on externally visible types by default.
+            if (!namedTypeSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 return;
             }
-
 
             var allInterfacesStatus = default(CollectionsInterfaceStatus);
             foreach (var @interface in namedTypeSymbol.AllInterfaces)

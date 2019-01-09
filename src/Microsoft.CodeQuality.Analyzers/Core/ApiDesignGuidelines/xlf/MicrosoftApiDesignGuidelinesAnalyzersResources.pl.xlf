@@ -2,6 +2,11 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pl" original="../MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
     <body>
+      <trans-unit id="AppendConfigureAwaitTrue">
+        <source>Append .ConfigureAwait(true)</source>
+        <target state="new">Append .ConfigureAwait(true)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
         <source>Avoid Async Void</source>
         <target state="translated">Unikaj metod async void</target>
@@ -60,6 +65,11 @@
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">Nie przechowuj asynchronicznych wyrażeń lambda jako typów delegatów zwracających typ void</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
+        <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
+        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -838,48 +848,43 @@
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
-        <source>Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.</source>
-        <target state="translated">Usuń interfejs IDisposable z listy interfejsów implementowanych przez typ {0}, ponieważ jest już implementowany przez typ bazowy {1}.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
-        <source>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</source>
-        <target state="translated">Usuń finalizator z typu {0}, przesłoń metodę Dispose(bool disposing) i umieść logikę finalizacji w ścieżce kodu wykonywanej, gdy parametr „disposing” ma wartość false.</target>
+        <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
+        <target state="needs-review-translation">Usuń interfejs IDisposable z listy interfejsów implementowanych przez typ {0}, ponieważ jest już implementowany przez typ bazowy {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
-        <source>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="translated">Usuń metodę {0}, przesłoń metodę Dispose(bool disposing) i umieść logikę likwidowania w ścieżce kodu wykonywanej, gdy parametr „disposing” ma wartość true.</target>
+        <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
+        <target state="needs-review-translation">Usuń metodę {0}, przesłoń metodę Dispose(bool disposing) i umieść logikę likwidowania w ścieżce kodu wykonywanej, gdy parametr „disposing” ma wartość true.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
-        <source>Ensure that {0} is declared as public and sealed.</source>
-        <target state="translated">Upewnij się, że element {0} jest zadeklarowany jako publiczny i zapieczętowany.</target>
+        <source>Ensure that '{0}' is declared as public and sealed.</source>
+        <target state="needs-review-translation">Upewnij się, że element {0} jest zadeklarowany jako publiczny i zapieczętowany.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
-        <source>Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="translated">Zmień nazwę elementu {0} na „Dispose” i upewnij się, że jest on zadeklarowany jako publiczny i zapieczętowany.</target>
+        <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
+        <target state="needs-review-translation">Zmień nazwę elementu {0} na „Dispose” i upewnij się, że jest on zadeklarowany jako publiczny i zapieczętowany.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
-        <source>Ensure that {0} is declared as protected, virtual, and unsealed.</source>
-        <target state="translated">Upewnij się, że metoda {0} jest zadeklarowana jako chroniona, wirtualna i niezapieczętowana.</target>
+        <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
+        <target state="needs-review-translation">Upewnij się, że metoda {0} jest zadeklarowana jako chroniona, wirtualna i niezapieczętowana.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
-        <source>Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="translated">Zmodyfikuj metodę {0} tak, aby wywoływała metodę Dispose(true), następnie metodę GC.SuppressFinalize dla bieżącego wystąpienia obiektu („this” lub „Me” w języku Visual Basic), po czym kończyła pracę.</target>
+        <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
+        <target state="needs-review-translation">Zmodyfikuj metodę {0} tak, aby wywoływała metodę Dispose(true), następnie metodę GC.SuppressFinalize dla bieżącego wystąpienia obiektu („this” lub „Me” w języku Visual Basic), po czym kończyła pracę.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
-        <source>Modify {0} so that it calls Dispose(false) and then returns.</source>
-        <target state="translated">Zmodyfikuj metodę {0} tak, aby wywoływała metodę Dispose(false) i kończyła pracę.</target>
+        <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
+        <target state="needs-review-translation">Zmodyfikuj metodę {0} tak, aby wywoływała metodę Dispose(false) i kończyła pracę.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
-        <source>Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="translated">Określ w klasie {0} implementację metody Dispose(bool), którą można przesłonić, lub oznacz typ jako zapieczętowany. Wywołanie metody Dispose(false) powinno czyścić tylko zasoby natywne. Wywołanie metody Dispose(true) powinno czyścić zasoby zarządzane i natywne.</target>
+        <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
+        <target state="needs-review-translation">Określ w klasie {0} implementację metody Dispose(bool), którą można przesłonić, lub oznacz typ jako zapieczętowany. Wywołanie metody Dispose(false) powinno czyścić tylko zasoby natywne. Wywołanie metody Dispose(true) powinno czyścić zasoby zarządzane i natywne.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">

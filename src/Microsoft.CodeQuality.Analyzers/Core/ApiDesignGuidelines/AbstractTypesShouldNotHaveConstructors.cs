@@ -28,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1012-abstract-types-should-not-have-constructors",
                                                                          description: s_localizableDescription,
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -43,7 +43,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var symbol = context.Symbol as INamedTypeSymbol;
-            if (symbol.IsAbstract && symbol.IsExternallyVisible())
+            if (symbol.IsAbstract &&
+                symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 bool hasAnyPublicConstructors =
                     symbol.InstanceConstructors.Any(

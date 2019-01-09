@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1051-do-not-declare-visible-instance-fields",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -38,17 +38,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(obj =>
+            analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
-                var field = (IFieldSymbol)obj.Symbol;
+                var field = (IFieldSymbol)symbolAnalysisContext.Symbol;
 
-                // Only report diagnostic on non-static, non-const, public or protected or protected internal/friend fields.
-                // Additionally, only report on members within externally visible types for FxCop compat.
+                // Only report diagnostic on non-static, non-const, non-private fields.
+                // Additionally, by default only report externally visible fields for FxCop compat.
                 if (!field.IsStatic &&
                     !field.IsConst &&
-                    field.IsExternallyVisible())
+                    field.DeclaredAccessibility != Accessibility.Private && 
+                    field.MatchesConfiguredVisibility(symbolAnalysisContext.Options, Rule, symbolAnalysisContext.CancellationToken))
                 {
-                    obj.ReportDiagnostic(field.CreateDiagnostic(Rule));
+                    symbolAnalysisContext.ReportDiagnostic(field.CreateDiagnostic(Rule));
                 }
             }, SymbolKind.Field);
         }

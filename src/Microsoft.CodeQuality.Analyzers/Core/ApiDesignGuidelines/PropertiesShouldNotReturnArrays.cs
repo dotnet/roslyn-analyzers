@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1819-properties-should-not-return-arrays",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -46,7 +46,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var symbol = (IPropertySymbol)context.Symbol;
             if (symbol.Type.TypeKind == TypeKind.Array && !symbol.IsOverride)
             {
-                if (symbol.IsExternallyVisible() && !symbol.ContainingType.IsAttribute())
+                if (symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) &&
+                    !symbol.ContainingType.IsAttribute())
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
                 }

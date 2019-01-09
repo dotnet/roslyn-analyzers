@@ -256,15 +256,24 @@ namespace Microsoft.NetFramework.Analyzers
 
                     if (xmlReaderSettingsIndex < 0)
                     {
-                        DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessing;
-                        Diagnostic diag = Diagnostic.Create(
-                                RuleDoNotUseInsecureDtdProcessing,
-                                expressionSyntax.GetLocation(),
-                                SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                    nameof(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateWrongOverloadMessage)
-                                )
-                            );
-                        context.ReportDiagnostic(diag);
+                        if (method.Parameters.Length == 1 
+                            && method.Parameters[0].RefKind == RefKind.None
+                            && method.Parameters[0].Type.SpecialType == SpecialType.System_String)
+                        {
+                            // inputUri can load be a URL.  Should further investigate if this is worth flagging.
+                            DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessing;
+                            Diagnostic diag = Diagnostic.Create(
+                                    RuleDoNotUseInsecureDtdProcessing,
+                                    expressionSyntax.GetLocation(),
+                                    SecurityDiagnosticHelpers.GetLocalizableResourceString(
+                                        nameof(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateWrongOverloadMessage)
+                                    )
+                                );
+                            context.ReportDiagnostic(diag);
+                        }
+
+                        // If no XmlReaderSettings are passed, then the default
+                        // XmlReaderSettings are used, with DtdProcessing set to Prohibit.
                     }
                     else
                     {
@@ -276,7 +285,6 @@ namespace Microsoft.NetFramework.Analyzers
                         {
                             return;
                         }
-
 
                         if (!_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out XmlReaderSettingsEnvironment env))
                         {

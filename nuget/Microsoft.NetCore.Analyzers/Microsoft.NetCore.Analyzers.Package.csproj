@@ -10,16 +10,13 @@
     <Summary>Microsoft .NetCore API Analyzers</Summary>
     <ReleaseNotes>Microsoft .NetCore API Analyzers</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics</PackageTags>
+    <ContainsPortedFxCopRules>true</ContainsPortedFxCopRules>
   </PropertyGroup>
 
   <ItemGroup>
     <AnalyzerNupkgAssembly Include="Microsoft.NetCore.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.NetCore.CSharp.Analyzers.dll" />
     <AnalyzerNupkgAssembly Include="Microsoft.NetCore.VisualBasic.Analyzers.dll" />
-    
-    <AnalyzerNupkgFile Include="Microsoft.NetCore.CSharp.Analyzers.props" />
-    <AnalyzerNupkgFile Include="Microsoft.NetCore.VisualBasic.Analyzers.props" />
-    <AnalyzerNupkgFile Include="Microsoft.NetCore.Analyzers.props" />
   </ItemGroup>
   
   <ItemGroup>

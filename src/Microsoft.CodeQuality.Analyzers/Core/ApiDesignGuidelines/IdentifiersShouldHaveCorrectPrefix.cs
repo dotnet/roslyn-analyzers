@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using System.Diagnostics;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -26,7 +27,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                     isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                     description: s_localizableDescription,
                                                                                     helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix",
-                                                                                    customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                    customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly LocalizableString s_localizableMessageTypeParameterRule = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageTypeParameter), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         public static readonly DiagnosticDescriptor TypeParameterRule = new DiagnosticDescriptor(RuleId,
@@ -37,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                                       isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                       description: s_localizableDescription,
                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix",
-                                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                      customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(InterfaceRule, TypeParameterRule);
 
@@ -49,11 +50,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(
                 (context) =>
             {
-                // FxCop compat: only analyze externally visible symbols
-                if (!context.Symbol.IsExternallyVisible())
+                // FxCop compat: only analyze externally visible symbols by default.
+                if (!context.Symbol.MatchesConfiguredVisibility(context.Options, InterfaceRule, context.CancellationToken))
                 {
+                    Debug.Assert(!context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.CancellationToken));
                     return;
                 }
+
+                Debug.Assert(context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.CancellationToken));
 
                 switch (context.Symbol.Kind)
                 {

@@ -31,7 +31,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          isEnabledByDefault: false,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1024-use-properties-where-appropriate",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         private const string GetHashCodeName = "GetHashCode";
         private const string GetEnumeratorName = "GetEnumerator";
 
@@ -50,7 +50,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     methodSymbol.ReturnsVoid ||
                     methodSymbol.ReturnType.Kind == SymbolKind.ArrayType ||
                     methodSymbol.Parameters.Length > 0 ||
-                    !methodSymbol.IsExternallyVisible() ||
+                    !methodSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) ||
                     methodSymbol.IsAccessorMethod() ||
                     !IsPropertyLikeName(methodSymbol.Name))
                 {

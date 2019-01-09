@@ -38,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor NamespaceRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNamespace,
@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor TypeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageType,
@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MemberRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMember,
@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor TypeTypeParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTypeTypeParameter,
@@ -74,7 +74,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MethodTypeParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMethodTypeParameter,
@@ -83,7 +83,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MemberParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberParameter,
@@ -92,7 +92,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor DelegateParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDelegateParameter,
@@ -101,7 +101,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AssemblyRule, NamespaceRule, TypeRule, MemberRule, TypeTypeParameterRule, MethodTypeParameterRule, MemberParameterRule, DelegateParameterRule);
 
@@ -114,8 +114,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 var symbol = symbolAnalysisContext.Symbol;
 
-                // FxCop compat: only analyze externally visible symbols
-                if (!symbol.IsExternallyVisible())
+                // FxCop compat: only analyze externally visible symbols by default
+                // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                // will always have identical configured visibility.
+                if (!symbol.MatchesConfiguredVisibility(symbolAnalysisContext.Options, AssemblyRule, symbolAnalysisContext.CancellationToken))
                 {
                     return;
                 }
@@ -189,7 +191,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                 AnalyzeParameters(symbolAnalysisContext, propertySymbol.Parameters);
                             }
 
-                            if (!ContainsUnderScore(symbol.Name) || IsInvalidSymbol(symbol))
+                            if (!ContainsUnderScore(symbol.Name) || IsInvalidSymbol(symbol, symbolAnalysisContext))
                             {
                                 return;
                             }
@@ -214,9 +216,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             });
         }
 
-        private static bool IsInvalidSymbol(ISymbol symbol)
+        private static bool IsInvalidSymbol(ISymbol symbol, SymbolAnalysisContext context)
         {
-            return (!(symbol.IsExternallyVisible() && !symbol.IsOverride)) ||
+            // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+            // will always have identical configured visibility.
+            var matchesConfiguration = symbol.MatchesConfiguredVisibility(context.Options, AssemblyRule, context.CancellationToken);
+            
+            return (!(matchesConfiguration && !symbol.IsOverride)) ||
                 symbol.IsAccessorMethod() || symbol.IsImplementationOfAnyInterfaceMember();
         }
 
@@ -236,7 +242,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             symbolAnalysisContext.ReportDiagnostic(parameter.CreateDiagnostic(DelegateParameterRule, containingType.ToDisplayString(), parameter.Name));
                         }
                     }
-                    else if (!IsInvalidSymbol(parameter.ContainingSymbol))
+                    else if (!IsInvalidSymbol(parameter.ContainingSymbol, symbolAnalysisContext))
                     {
                         symbolAnalysisContext.ReportDiagnostic(parameter.CreateDiagnostic(MemberParameterRule, parameter.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), parameter.Name));
                     }
@@ -258,7 +264,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             symbolAnalysisContext.ReportDiagnostic(typeParameter.CreateDiagnostic(TypeTypeParameterRule, containingSymbol.ToDisplayString(), typeParameter.Name));
                         }
                     }
-                    else if (containingSymbol.Kind == SymbolKind.Method && !IsInvalidSymbol(containingSymbol))
+                    else if (containingSymbol.Kind == SymbolKind.Method && !IsInvalidSymbol(containingSymbol, symbolAnalysisContext))
                     {
                         symbolAnalysisContext.ReportDiagnostic(typeParameter.CreateDiagnostic(MethodTypeParameterRule, containingSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat), typeParameter.Name));
                     }

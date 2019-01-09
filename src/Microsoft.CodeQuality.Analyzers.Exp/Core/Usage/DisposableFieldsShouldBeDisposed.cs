@@ -32,8 +32,8 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -131,7 +131,7 @@ namespace Microsoft.CodeQuality.Analyzers.Exp.Usage
                     }
 
                     // Mark fields disposed in Dispose method(s).
-                    if (containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable) != DisposeMethodKind.None)
+                    if (containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task) != DisposeMethodKind.None)
                     {
                         var disposableFields = disposeAnalysisHelper.GetDisposableFields(containingMethod.ContainingType);
                         if (!disposableFields.IsEmpty)

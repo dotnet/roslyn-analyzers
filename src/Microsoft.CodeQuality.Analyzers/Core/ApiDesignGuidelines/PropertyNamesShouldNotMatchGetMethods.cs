@@ -32,7 +32,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1721-property-names-should-not-match-get-methods",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -50,8 +50,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             string identifier;
             var symbol = context.Symbol;
 
-            // Bail out if the method/property is not exposed (public, protected, or protected internal)
-            if (!symbol.IsExternallyVisible())
+            // Bail out if the method/property is not exposed (public, protected, or protected internal) by default
+            var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, SymbolVisibilityGroup.Public, context.CancellationToken);
+            if (!configuredVisibilities.Contains(symbol.GetResultantVisibility()))
             {
                 return;
             }
@@ -77,7 +78,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 Diagnostic diagnostic = null;
 
-                var exposedMembers = type.GetMembers(identifier).Where(member => member.IsExternallyVisible());
+                var exposedMembers = type.GetMembers(identifier).Where(member => configuredVisibilities.Contains(member.GetResultantVisibility()));
                 foreach (var member in exposedMembers)
                 {
                     // Ignore Object.GetType, as it's commonly seen and Type is a commonly-used property name.

@@ -28,47 +28,44 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotMatchKeywordsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
         // Properties common to all DiagnosticDescriptors for this rule:
-        private static readonly string s_category = DiagnosticCategory.Naming;
-        private const DiagnosticSeverity Severity = DiagnosticHelpers.DefaultDiagnosticSeverity;
         private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords";
-        private static readonly string[] s_customTags = new[] { WellKnownDiagnosticTags.Telemetry };
-
+        
         internal static DiagnosticDescriptor MemberParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberParameter,
-                                                                             s_category,
-                                                                             Severity,
+                                                                             DiagnosticCategory.Naming,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: s_customTags);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MemberRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMember,
-                                                                             s_category,
-                                                                             Severity,
+                                                                             DiagnosticCategory.Naming,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: s_customTags);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor TypeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageType,
-                                                                             s_category,
-                                                                             Severity,
+                                                                             DiagnosticCategory.Naming,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: s_customTags);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor NamespaceRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNamespace,
-                                                                             s_category,
-                                                                             Severity,
+                                                                             DiagnosticCategory.Naming,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: s_customTags);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         // Define the format in which this rule displays namespace names. The format is chosen to be
         // consistent with FxCop's display format for this rule.
@@ -113,7 +110,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
 
                 // Don't complain about a namespace unless it contains at least one public type.
-                if (!type.IsExternallyVisible())
+                if (!type.MatchesConfiguredVisibility(context.Options, NamespaceRule, context.CancellationToken))
                 {
                     return;
                 }
@@ -155,7 +152,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeTypeRule(SymbolAnalysisContext context)
         {
             INamedTypeSymbol type = (INamedTypeSymbol)context.Symbol;
-            if (!type.IsExternallyVisible())
+            if (!type.MatchesConfiguredVisibility(context.Options, TypeRule, context.CancellationToken))
             {
                 return;
             }
@@ -173,7 +170,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeMemberRule(SymbolAnalysisContext context)
         {
             ISymbol symbol = context.Symbol;
-            if (!symbol.IsExternallyVisible())
+            if (!symbol.MatchesConfiguredVisibility(context.Options, MemberRule, context.CancellationToken))
             {
                 return;
             }
@@ -197,7 +194,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeMemberParameterRule(SymbolAnalysisContext context)
         {
             var method = (IMethodSymbol)context.Symbol;
-            if (!method.IsExternallyVisible())
+            if (!method.MatchesConfiguredVisibility(context.Options, MemberParameterRule, context.CancellationToken))
             {
                 return;
             }

@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
                                                                              description: s_localizableDescriptionCA1027,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1027-mark-enums-with-flagsattribute",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly LocalizableString s_localizableTitleCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -60,7 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
                                                                              description: s_localizableDescriptionCA2217,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2217-do-not-mark-enums-with-flagsattribute",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule1027, Rule2217);
 
@@ -79,39 +79,46 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 compilationStartContext.RegisterSymbolAction(symbolContext =>
                 {
-                    AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, flagsAttributeType, symbolContext.ReportDiagnostic);
+                    AnalyzeSymbol(symbolContext, flagsAttributeType);
                 }, SymbolKind.NamedType);
             });
 
         }
 
-        private static void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol flagsAttributeType, Action<Diagnostic> addDiagnostic)
+        private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext, INamedTypeSymbol flagsAttributeType)
         {
+            var symbol = (INamedTypeSymbol)symbolContext.Symbol;
             if (symbol != null &&
-                symbol.TypeKind == TypeKind.Enum &&
-                symbol.IsExternallyVisible())
+                symbol.TypeKind == TypeKind.Enum)
             {
+                var reportCA1027 = symbol.MatchesConfiguredVisibility(symbolContext.Options, Rule1027, symbolContext.CancellationToken);
+                var reportCA2217 = symbol.MatchesConfiguredVisibility(symbolContext.Options, Rule2217, symbolContext.CancellationToken);
+                if (!reportCA1027 && !reportCA2217)
+                {
+                    return;
+                }
+
                 if (EnumHelpers.TryGetEnumMemberValues(symbol, out IList<ulong> memberValues))
                 {
                     bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass == flagsAttributeType);
                     if (hasFlagsAttribute)
                     {
                         // Check "CA2217: Do not mark enums with FlagsAttribute"
-                        if (!ShouldBeFlags(memberValues, out IEnumerable<ulong> missingValues))
+                        if (reportCA2217 && !ShouldBeFlags(memberValues, out IEnumerable<ulong> missingValues))
                         {
                             Debug.Assert(missingValues != null);
 
                             string missingValuesString = missingValues.Select(v => v.ToString()).Aggregate((i, j) => i + ", " + j);
-                            addDiagnostic(symbol.CreateDiagnostic(Rule2217, symbol.Name, missingValuesString));
+                            symbolContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule2217, symbol.Name, missingValuesString));
                         }
                     }
                     else
                     {
                         // Check "CA1027: Mark enums with FlagsAttribute"
                         // Ignore contiguous value enums to reduce noise.
-                        if (!IsContiguous(memberValues) && ShouldBeFlags(memberValues))
+                        if (reportCA1027 && !IsContiguous(memberValues) && ShouldBeFlags(memberValues))
                         {
-                            addDiagnostic(symbol.CreateDiagnostic(Rule1027, symbol.Name));
+                            symbolContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule1027, symbol.Name));
                         }
                     }
                 }

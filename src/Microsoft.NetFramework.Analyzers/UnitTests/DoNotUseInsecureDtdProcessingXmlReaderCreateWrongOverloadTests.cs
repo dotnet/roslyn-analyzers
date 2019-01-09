@@ -318,5 +318,46 @@ End Class",
                 GetCA3075XmlReaderCreateWrongOverloadBasicResultAt(8, 42)
             );
         }
+
+        [Fact]
+        public void UseXmlReaderCreateTextReaderOnlyOverloadShouldNotGenerateDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Xml;
+
+namespace TestNamespace
+{
+    class TestClass
+    {
+        private static void TestMethod()
+        {
+            var reader = XmlTextReader.Create(new StringReader(""<root> </root>""));
+        }
+    }
+}"
+            );
+        }
+
+        [Fact]
+        public void UseXmlReaderCreateStreamOnlyOverloadShouldNotGenerateDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Text;
+using System.Xml;
+
+namespace TestNamespace
+{
+    class TestClass
+    {
+        private static void TestMethod()
+        {
+            var reader = XmlTextReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(""<root> </root>"")));
+        }
+    }
+}"
+            );
+        }
     }
 }

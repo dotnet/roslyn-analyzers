@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1043-use-integral-or-string-argument-for-indexers",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly SpecialType[] s_allowedTypes = new[] {
                         SpecialType.System_String,
@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var symbol = (IPropertySymbol)context.Symbol;
             if (symbol.IsIndexer &&
                 !symbol.IsOverride &&
-                symbol.IsExternallyVisible())
+                symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 if (symbol.GetParameters().Length == 1)
                 {

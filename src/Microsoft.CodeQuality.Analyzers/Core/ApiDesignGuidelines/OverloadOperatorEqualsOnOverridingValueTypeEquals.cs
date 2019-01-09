@@ -26,7 +26,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescription,
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2231-overload-operator-equals-on-overriding-valuetype-equals",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -39,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
                 if (namedTypeSymbol.IsValueType &&
-                    namedTypeSymbol.IsExternallyVisible() &&
+                    namedTypeSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) &&
                     namedTypeSymbol.OverridesEquals() && 
                     !namedTypeSymbol.ImplementsEqualityOperators())
                 {

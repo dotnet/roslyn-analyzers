@@ -12,6 +12,7 @@
     <InternalsVisibleTo Include="Microsoft.CodeQuality.CSharp.Analyzers" />
     <InternalsVisibleTo Include="Microsoft.CodeQuality.VisualBasic.Analyzers" />
     <InternalsVisibleTo Include="Microsoft.CodeQuality.Analyzers.UnitTests" />
+    <PackageReference Include="Humanizer.Core" Version="$(HumanizerVersion)"/>
   </ItemGroup>
   <Import Project="..\..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
 </Project>

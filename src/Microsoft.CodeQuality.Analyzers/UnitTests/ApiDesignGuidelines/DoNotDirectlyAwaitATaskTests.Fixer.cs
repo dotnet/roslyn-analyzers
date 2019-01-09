@@ -59,6 +59,36 @@ public class C
             VerifyCSharpFix(code, fixedCode);
         }
 
+        [Fact, WorkItem(1962, "https://github.com/dotnet/roslyn-analyzers/issues/1962")]
+        public void CSharpSimpleAwaitTask_ConfigureAwaitTrue()
+        {
+            var code = @"
+using System.Threading.Tasks;
+
+public class C
+{
+    public async Task M()
+    {
+        Task t = null;
+        await t;
+    }
+}
+";
+            var fixedCode = @"
+using System.Threading.Tasks;
+
+public class C
+{
+    public async Task M()
+    {
+        Task t = null;
+        await t.ConfigureAwait(true);
+    }
+}
+";
+            VerifyCSharpFix(code, fixedCode, codeFixIndex: 1);
+        }
+
         [Fact]
         public void BasicSimpleAwaitTask()
         {
@@ -84,6 +114,33 @@ Public Class C
 End Class
 ";
             VerifyBasicFix(code, fixedCode);
+        }
+
+        [Fact, WorkItem(1962, "https://github.com/dotnet/roslyn-analyzers/issues/1962")]
+        public void BasicSimpleAwaitTask_ConfigureAwaitTrue()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Async Function M() As Task
+        Dim t As Task
+        Await t
+    End Function
+End Class
+";
+
+            var fixedCode = @"
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Async Function M() As Task
+        Dim t As Task
+        Await t.ConfigureAwait(True)
+    End Function
+End Class
+";
+            VerifyBasicFix(code, fixedCode, codeFixIndex: 1);
         }
 
         [Fact]

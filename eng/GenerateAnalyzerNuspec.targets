@@ -24,9 +24,19 @@
 
     <PropertyGroup>
       <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
+      <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
+      <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>
     </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">
+      <PackagePropsFileDir>$(IntermediateOutputPath)Build</PackagePropsFileDir>
+      <PackagePropsFileName>$(NuspecPackageId).props</PackagePropsFileName>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(GeneratePackagePropsFile)' == 'true'" >
+      <AnalyzerNupkgFile Include="$(PackagePropsFileDir)\$(PackagePropsFileName)"/>
+    </ItemGroup>
     
-    <MSBuild Projects="$(RepoRoot)src\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj" Targets="Build">
+      <MSBuild Projects="$(RepoRoot)src\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj" Targets="Build">
       <Output TaskParameter="TargetOutputs" PropertyName="_GenerateAnalyzerRulesetsPath"/>
     </MSBuild>
 
@@ -34,7 +44,7 @@
       <AnalyzerRulesetAssembly Condition="'@(AnalyzerNupkgAssembly)' != '' and '@(AnalyzerRulesetAssembly)' == ''" Include="@(AnalyzerNupkgAssembly)"/>
     </ItemGroup>
     
-    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(_GeneratedRulesetsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "$(TargetFramework)" "@(AnalyzerRulesetAssembly)"' />
+    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(_GeneratedRulesetsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "$(TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" $(ContainsPortedFxCopRules)' />
   </Target>
   
   <Target Name="GenerateAnalyzerNuspecFile"

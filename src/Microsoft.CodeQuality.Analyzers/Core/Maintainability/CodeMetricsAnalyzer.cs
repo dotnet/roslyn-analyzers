@@ -72,8 +72,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                      isEnabledByDefault: false,
                                                                      description: s_localizableDescriptionCA1501,
-                                                                     helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1501-avoid-excessive-inheritance",
-                                                                     customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                     helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1501-avoid-excessive-inheritance",
+                                                                     customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor CA1502Rule = new DiagnosticDescriptor(CA1502RuleId,
                                                                      s_localizableTitleCA1502,
@@ -82,8 +82,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                      isEnabledByDefault: false,
                                                                      description: s_localizableDescriptionCA1502,
-                                                                     helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1502-avoid-excessive-complexity",
-                                                                     customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                     helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1502-avoid-excessive-complexity",
+                                                                     customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor CA1505Rule = new DiagnosticDescriptor(CA1505RuleId,
                                                                      s_localizableTitleCA1505,
@@ -92,8 +92,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                      isEnabledByDefault: false,
                                                                      description: s_localizableDescriptionCA1505,
-                                                                     helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1505-avoid-unmaintainable-code",
-                                                                     customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                     helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1505-avoid-unmaintainable-code",
+                                                                     customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor CA1506Rule = new DiagnosticDescriptor(CA1506RuleId,
                                                                      s_localizableTitleCA1506,
@@ -102,8 +102,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                                                                      DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                      isEnabledByDefault: false,
                                                                      description: s_localizableDescriptionCA1506,
-                                                                     helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling",
-                                                                     customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                     helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling",
+                                                                     customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor InvalidEntryInCodeMetricsConfigFileRule = new DiagnosticDescriptor(CA1509RuleId,
                                                                      s_localizableTitleCA1509,

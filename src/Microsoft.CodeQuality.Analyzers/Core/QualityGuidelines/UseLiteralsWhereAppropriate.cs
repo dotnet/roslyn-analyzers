@@ -33,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor EmptyStringRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEmptyString,
@@ -42,7 +42,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyStringRule);
 
@@ -56,10 +56,13 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 var fieldInitializer = saContext.Operation as IFieldInitializerOperation;
 
                 // Diagnostics are reported on the last initialized field to retain the previous FxCop behavior
+                // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                // will always have identical configured visibility.
                 var lastField = fieldInitializer?.InitializedFields.LastOrDefault();
                 var fieldInitializerValue = fieldInitializer?.Value;
                 if (fieldInitializerValue == null || lastField.IsConst ||
-                    lastField.IsExternallyVisible() || !lastField.IsStatic ||
+                    !lastField.MatchesConfiguredVisibility(saContext.Options, DefaultRule, saContext.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.Internal | SymbolVisibilityGroup.Private) ||
+                    !lastField.IsStatic ||
                     !lastField.IsReadOnly || !fieldInitializerValue.ConstantValue.HasValue)
                 {
                     return;

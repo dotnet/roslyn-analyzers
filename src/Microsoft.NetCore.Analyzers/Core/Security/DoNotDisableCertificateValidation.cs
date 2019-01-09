@@ -100,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 });
         }
 
-        bool dealWithAnonmousFunction(IOperation operation)
+        private static bool dealWithAnonmousFunction(IOperation operation)
         {
             bool flag = false;
 
@@ -122,7 +122,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             return flag;
         }
 
-        bool dealWithMethodReference(IMethodReferenceOperation methodReferenceOperation)
+        private static bool dealWithMethodReference(IMethodReferenceOperation methodReferenceOperation)
         {
             bool flag = false;
 
@@ -141,7 +141,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         }
 
         // Returns a list containing the method declaration, and the statements within the method, returns an empty list if failed
-        private MethodDeclarationSyntax AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
+        private static MethodDeclarationSyntax AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
         {
             MethodDeclarationSyntax result = null;
 

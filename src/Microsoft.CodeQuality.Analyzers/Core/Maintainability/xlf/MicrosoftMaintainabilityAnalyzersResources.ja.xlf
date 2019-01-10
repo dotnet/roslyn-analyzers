@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
         <source>This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</source>
-        <target state="new">This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</target>
+        <target state="translated">このルールは、シンボルが含まれる一意の型参照の数をカウントすることによってクラス結合度を測定します。クラス結合度の高いシンボルは保守が困難になることがあります。低い結合度と高い凝集度を指定する型とメソッドを含めることをお勧めします。この違反を修正するには、コードを書き直し、結合する型の数を減らします。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingMessage">
         <source>'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</source>
-        <target state="new">'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</target>
+        <target state="translated">'{0}' は、異なる名前空間 '{2}' の中の異なる型 '{1}' と結合しています。コードを書き直すかリファクタリングを行って、'{3}' の下のクラス間結合を小さくしてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingTitle">
         <source>Avoid excessive class coupling</source>
-        <target state="new">Avoid excessive class coupling</target>
+        <target state="translated">過剰なクラス結合を避ける</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
@@ -23,68 +23,67 @@
 cyclomatic complexity = the number of edges - the number of nodes + 1
 
 where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="new">Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
+        <target state="translated">サイクロマティック複雑度は、メソッドから線形的に独立した経路の数を測定し、条件分岐の数と複雑度によってサイクロマティック複雑度を判別します。サイクロマティック複雑度が低いと、一般には理解、テスト、保守が容易であることを示します。サイクロマティック複雑度は、メソッドの制御フロー グラフに基づいて算出されます。次のようになります。
 
-cyclomatic complexity = the number of edges - the number of nodes + 1
+サイクロマティック複雑度 = エッジ数 - ノード数 + 1
 
-where a node represents a logic branch point and an edge represents a line between nodes.</target>
+ノードは論理分岐ポイントを表し、エッジはノード間の線を表します。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
         <source>'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</source>
-        <target state="new">'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</target>
+        <target state="translated">'{0}' のサイクロマティック複雑度は '{1}' です。コードを書き換えるか、リファクタリングし、複雑度を '{2}' 未満に緩和します。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityTitle">
         <source>Avoid excessive complexity</source>
-        <target state="new">Avoid excessive complexity</target>
+        <target state="translated">複雑にしすぎない</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceDescription">
         <source>Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</source>
-        <target state="new">Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</target>
+        <target state="translated">入れ子の深度が深い型階層はフォロー、理解、保守が難しくなることがあります。このルールは、同じモジュールの階層にのみ分析対象を制限します。このルール違反を修正するには、継承階層にある深度の深くない基本型から型を派生させるか、一部の中間基本型を削除します。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceMessage">
         <source>'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</source>
-        <target state="new">'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</target>
+        <target state="translated">'{0}' の定義モジュールには深さが '{1}' のオブジェクト階層レベルが含まれています。可能な場合には、階層レベルを '{2}' 未満になるよう階層内の基本クラスを減らしてください: '{3}'</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceTitle">
         <source>Avoid excessive inheritance</source>
-        <target state="new">Avoid excessive inheritance</target>
+        <target state="translated">継承を使用しすぎない</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
 A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="new">The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</target>
+        <target state="translated">保守容易性指数は、コード行数、プログラム ボリューム、サイクロマティック複雑度というメトリックを使用して算出されます。プログラム ボリュームは、シンボルの理解しにくさのメトリックで、コード内の演算子とオペランドの数に基づいています。サイクロマティック複雑度は、型またはメソッドの構造上の複雑さのメトリックです。保守容易性指標が低いと、コードを保守することが難しい可能性があり、再設計を検討できます。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">
         <source>'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</source>
-        <target state="new">'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</target>
+        <target state="translated">'{0}' の保守容易性指数は '{1}' です。コードを書き直すかリファクタリングを行い、保守容易性指数 (MI) が '{2}' より大きくなるようにしてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeTitle">
         <source>Avoid unmaintainable code</source>
-        <target state="new">Avoid unmaintainable code</target>
+        <target state="translated">メンテナンスできないコードを使用しない</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileDescription">
         <source>Invalid entry in code metrics rule specification file</source>
-        <target state="new">Invalid entry in code metrics rule specification file</target>
+        <target state="translated">コード メトリック ルール仕様ファイル内のエントリが無効です</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileMessage">
         <source>Invalid entry '{0}' in code metrics rule specification file '{1}'</source>
-        <target state="new">Invalid entry '{0}' in code metrics rule specification file '{1}'</target>
+        <target state="translated">コード メトリック ルール仕様ファイル '{1}' のエントリ '{0}' が無効です</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileTitle">
         <source>Invalid entry in code metrics rule specification file</source>
-        <target state="new">Invalid entry in code metrics rule specification file</target>
+        <target state="translated">コード メトリック ルール仕様ファイル内のエントリが無効です</target>
         <note />
       </trans-unit>
       <trans-unit id="VariableNamesShouldNotMatchFieldNamesTitle">

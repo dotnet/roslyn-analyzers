@@ -1,17 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="ja" original="../MicrosoftQualityGuidelinesAnalyzersResources.resx">
     <body>
-      <trans-unit id="MarkMembersAsStaticCodeFix">
-        <source>Make static</source>
-        <target state="new">Make static</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkMembersAsStaticCodeFix_WarningAnnotation">
-        <source>Some references to '{0}' could not be fixed, they should be fixed manually.</source>
-        <target state="new">Some references to '{0}' could not be fixed, they should be fixed manually.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">
         <source>Use literals where appropriate</source>
         <target state="translated">適切な場所にリテラルを使用します</target>
@@ -19,7 +9,7 @@
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateDescription">
         <source>A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.</source>
-        <target state="translated">フィールドが static および read-only (Visual Basic では Shared および ReadOnly) として宣言され、コンパイル時に計算できる値によって初期化されています。対象フィールドに代入された値はコンパイル時に計算できるため、宣言を const (Visual Basic では Const) フィールドに変更して、値が実行時ではなくコンパイル時に計算されるようにします。</target>
+        <target state="translated">フィールドが static および read-only (Visual Basic では Shared および ReadOnly) として宣言され、コンパイル時に計算できる値によって初期化されています。対象フィールドに代入された値はコンパイル時に計算できるため、宣言を const (Visual Basic では Const) フィールドに変更して、値が実行時ではなくコンパイル時にコンピューティングされるようにします。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">

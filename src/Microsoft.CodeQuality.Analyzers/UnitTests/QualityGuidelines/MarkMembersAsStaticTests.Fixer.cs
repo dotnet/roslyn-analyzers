@@ -1169,5 +1169,77 @@ Class C3
     End Sub
 End Class" });
         }
+
+        [Fact]
+        public void TestCSharp_PropertyWithReferences()
+        {
+            VerifyCSharpFix(@"
+public class C
+{
+    private C fieldC;
+    public C M1 { get { return null; } set { } }
+
+    public C M2(C paramC)
+    {
+        var x = this.M1;
+        paramC.M1 = x;
+        return fieldC;
+    }
+}",
+@"
+public class C
+{
+    private C fieldC;
+    public static C M1 { get { return null; } set { } }
+
+    public C M2(C paramC)
+    {
+        var x = M1;
+        M1 = x;
+        return fieldC;
+    }
+}");
+        }
+
+        [Fact]
+        public void TestBasic_PropertyWithReferences()
+        {
+            VerifyBasicFix(@"
+Public Class C
+    Private fieldC As C
+
+    Public Property M1 As C
+        Get
+            Return Nothing
+        End Get
+        Set(ByVal value As C)
+        End Set
+    End Property
+
+    Public Function M2(paramC As C) As C
+        Dim x = Me.M1
+        paramC.M1 = x
+        Return fieldC
+    End Function
+End Class",
+@"
+Public Class C
+    Private fieldC As C
+
+    Public Shared Property M1 As C
+        Get
+            Return Nothing
+        End Get
+        Set(ByVal value As C)
+        End Set
+    End Property
+
+    Public Function M2(paramC As C) As C
+        Dim x = M1
+        M1 = x
+        Return fieldC
+    End Function
+End Class");
+        }
     }
 }

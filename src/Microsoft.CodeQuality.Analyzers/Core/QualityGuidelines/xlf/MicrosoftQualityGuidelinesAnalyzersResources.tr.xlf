@@ -7,6 +7,11 @@
         <target state="new">Make static</target>
         <note />
       </trans-unit>
+      <trans-unit id="MarkMembersAsStaticCodeFix_WarningAnnotation">
+        <source>Some references to '{0}' could not be fixed, they should be fixed manually.</source>
+        <target state="new">Some references to '{0}' could not be fixed, they should be fixed manually.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">
         <source>Use literals where appropriate</source>
         <target state="translated">Uygun durumlarda sabit değerler kullanın</target>

@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="es" original="../MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
-        <target state="new">Append .ConfigureAwait(true)</target>
+        <target state="translated">Anexar .ConfigureAwait(true)</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <target state="translated">Elimine el finalizador del tipo "{0}", reemplace el valor de "Dispose(bool disposing)" y coloque la lógica de finalización en la ruta de código de manera que el valor de "disposing" se establezca como falso. De lo contrario, se duplicarían las invocaciones de "Dispose" ya que el tipo Base "{1}" también ofrece un finalizador.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -494,7 +494,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">El tipo {0} debe implementar IEquatable&lt;T&gt; porque invalida a Equals</target>
+        <target state="translated">El tipo {0} debe implementar IEquatable&lt;T&gt; porque reemplaza el valor de Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -849,42 +849,42 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
-        <target state="needs-review-translation">Quite IDisposable de la lista de interfaces que implementa {0} porque el tipo base {1} ya la ha implementado.</target>
+        <target state="translated">Elimine IDisposable de la lista de interfaces implementadas por "{0}" puesto que ya está implementado por el tipo base "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="needs-review-translation">Quite {0}, invalide Dispose(bool disposing) y coloque la lógica de Dispose en la ruta de acceso del código donde “disposing” es true.</target>
+        <target state="translated">Elimine "{0}", reemplace Dispose(bool disposing) y coloque la lógica de eliminación en la ruta de acceso al código de manera que "disposing" se establezca en verdadero.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed.</source>
-        <target state="needs-review-translation">Asegúrese de que el elemento {0} se declara como público y sellado.</target>
+        <target state="translated">Asegúrese de que "{0}" se declara como público y con sello.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
         <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="needs-review-translation">Cambie el nombre de {0} a “Dispose” y asegúrese de que este elemento se declara como público y sellado.</target>
+        <target state="translated">Cambie el nombre de "{0}" a "Dispose" y asegúrese de que se declara como público y con sello.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
-        <target state="needs-review-translation">Asegúrese de que el elemento {0} se declara como protegido, virtual y no sellado.</target>
+        <target state="translated">Asegúrese de que "{0}" se declara como protegido, virtual y no sellado.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="needs-review-translation">Modifique {0} de modo que llame a Dispose(true), después llame a GC.SuppressFinalize en la instancia de objeto actual (“this” o “Me” en Visual Basic) y, a continuación, vuelva.</target>
+        <target state="translated">Modifique "{0}" de manera que llame a Dispose(true), seguidamente llame a GC.SuppressFinalize en la instancia actual del objeto ("this" o "Me" en Visual Basic) y finalmente devuelva un valor.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
-        <target state="needs-review-translation">Modifique {0} para que llame a Dispose(false) y, a continuación, vuelva.</target>
+        <target state="translated">Modifique "{0}" para que llame a Dispose(false) y luego devuelva un valor.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="needs-review-translation">Proporcione una implementación reemplazable de Dispose(bool) en {0} o marque el tipo como sellado. Una llamada a Dispose(false) solo debe limpiar los recursos nativos. Una llamada a Dispose(true) debe limpiar tanto los recursos administrados como nativos.</target>
+        <target state="translated">Proporcione una implementación reemplazable de Dispose(bool) en "{0}" o marque el tipo como sellado. Una llamada a Dispose(false) solo debería limpiar recursos nativos. Una llamada a Dispose(true) debería limpiar tanto recursos administrados como nativos.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1374,12 +1374,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">El tipo {0} debe reemplazar Equals porque implementa IEquatable&lt;T&gt;</target>
+        <target state="translated">El tipo {0} debe reemplazar el valor de "Equals" porque implementa IEquatable &lt; T &gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">Reemplazar Object.Equals(object) al implementar IEquatable&lt;T&gt;</target>
+        <target state="translated">Reemplace Object.Equals(object) al implementar IEquatable&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1419,12 +1419,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Cuando un tipo T reemplaza Object.Equals(object), la implementación debe convertir el argumento de objeto al tipo T correcto antes de realizar la comparación. Si el tipo implementa IEquatable&lt;T&gt; y, por lo tanto, ofrece el método T.Equals(T) y, además, si se sabe que el argumento en tiempo de compilación es de tipo T, el compilador puede llamar a IEquatable&lt;T&gt;.Equals(T) en lugar de a Object.Equals(object) y no es necesario realizar ninguna conversión, lo que mejora el rendimiento.</target>
+        <target state="translated">Cuando un tipo T reemplaza a Object.Equals(object), la implementación debe convertir el argumento del objeto al tipo T correcto antes de realizar la comparación. Si el tipo implementa IEquatable &lt; T &gt; y, por lo tanto, ofrece el método T.Equals(T) y si el argumento es conocido en tiempo de compilación por ser del tipo T, el compilador puede llamar a IEquatable &lt; T &gt;. Equals(T) en lugar de Object.Equals(object) y no es necesaria ninguna conversión, con lo que se mejora el rendimiento.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Cuando un tipo T implementa la interfaz IEquatable&lt;T&gt;, este sugiere a un usuario que ve una llamada al método Equals en el código fuente que una instancia de ese tipo puede equivaler a una instancia de cualquier otro tipo. Puede confundirse al usuario si su intento de equivalencia del tipo con una instancia de otro tipo no se puede compilar. Esto infringe el "principio de sorpresa mínima".</target>
+        <target state="translated">Cuando un tipo T implementa la interfaz IEquatable&lt;T&gt;, esto indica a un usuario que ve una llamada al método Equals en el código fuente que una instancia de ese tipo puede ser equivalente a una instancia de cualquier otro tipo. El usuario podría confundirse si fracasa su intento de compilar la equiparación del tipo con una instancia de otro tipo. Esto violaría el "Principio de la mínima sorpresa".</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1449,7 +1449,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Quite "{0}" y reemplace su uso por un valor EventHandler genérico; por ejemplo, EventHandler&lt;T&gt;, donde T es un valor EventArgs válido.</target>
+        <target state="translated">Elimine "{0}" y reemplace su uso con un EventHandler genérico, por ejemplo EventHandler &lt; T &gt;, donde T sea un EventArgs válido.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1459,7 +1459,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Cambie el evento "{0}" para reemplazar el tipo "{1}" por un valor EventHandler genérico; por ejemplo, EventHandler&lt;T&gt;, donde T es un valor EventArgs válido.</target>
+        <target state="translated">Cambie el evento "{0}" para reemplazar el tipo "{1}" con un EventHandler genérico, por ejemplo EventHandler &lt; T &gt;, donde T sea un EventArgs válido.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

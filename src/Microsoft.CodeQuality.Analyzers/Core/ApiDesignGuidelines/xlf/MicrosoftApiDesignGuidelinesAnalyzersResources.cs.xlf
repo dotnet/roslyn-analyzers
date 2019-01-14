@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="cs" original="../MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
-        <target state="new">Append .ConfigureAwait(true)</target>
+        <target state="translated">Připojit .ConfigureAwait(true)</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <target state="translated">Odeberte finalizační metodu z typu {0}, přepište Dispose(bool disposing) a vložte finalizační logiku do cesty kódu, kde je disposing hodnoty false. V opačném případě by to mohlo vést k duplicitním voláním Dispose, protože základní typ {1} také poskytuje finalizační metodu.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -494,7 +494,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">Typ {0} má implementovat IEquatable&lt;T&gt;, protože přepisuje Equals.</target>
+        <target state="translated">Typ {0} by měl implementovat IEquatable&lt;T&gt;, protože přepisuje Equals.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -849,42 +849,42 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
-        <target state="needs-review-translation">Odeberte IDisposable ze seznamu rozhraní implementovaných pomocí {0}, protože se už implementuje pomocí základního typu {1}.</target>
+        <target state="translated">Odebrete IDisposable ze seznamu rozhraní, která implementuje {0}, protože už jej implementuje základní typ {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="needs-review-translation">Odeberte {0}, přepište Dispose(likvidace logického typu) a vložte logiku likvidace do cesty kódu, kde disposing nabývá hodnoty true.</target>
+        <target state="translated">Odeberte {0}, přepište Dispose(bool disposing) a vložte finalizační logiku do cesty kódu, kde je disposing hodnoty true.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed.</source>
-        <target state="needs-review-translation">Zajistěte, aby {0} bylo deklarované jako veřejné a zapečetěné.</target>
+        <target state="translated">Zajistěte, aby metoda {0} byla deklarovaná jako veřejná a zapečetěná.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
         <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="needs-review-translation">Přejmenujte {0} na Dispose a zajistěte, aby bylo deklarované jako veřejné a zapečetěné.</target>
+        <target state="translated">Přejmenujte metodu {0} na Dispose a zajistěte, aby byla deklarovaná jako veřejná a zapečetěná.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
-        <target state="needs-review-translation">Zajistěte, aby {0} bylo deklarované jako chráněné, virtuální na nezapečetěné.</target>
+        <target state="translated">Zajistěte, aby metoda {0} byla deklarovaná jako chráněná, virtuální a nezapečetěná.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="needs-review-translation">Změňte {0} tak, aby volalo Dispose(true), pak volalo GC.SuppressFinalize u aktuální instance objektu (this nebo Me ve Visual Basicu) a pak se vrátilo.</target>
+        <target state="translated">Upravte {0} tak, že volá Dispose(true), pak volá GC.SupressFinalize na aktuální instanci objektu (this nebo Me ve Visual Basicu) a potom se vrací.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
-        <target state="needs-review-translation">Změňte {0} tak, aby volalo Dispose(false) a pak se vrátilo.</target>
+        <target state="translated">Upravte {0} tak, že volá Dispose(false) a potom se vrací.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="needs-review-translation">Zadejte u {0} přepisovatelnou implementaci Dispose(logický typ) nebo tento typ označte jako zapečetěný. Volání Dispose(false) by mělo vyčistit jenom nativní prostředky. Volání Dispose(true) by mělo vyčistit spravované i nativní prostředky.</target>
+        <target state="translated">Poskytněte přepisovatelnou implementaci Dispose(bool) na {0} nebo označte typ jako zapečetěný. Volání Dispose(false) by mělo vyčistit jenom nativní prostředky. Volání Dispose(true) by mělo vyčistit prostředky spravované i nativní.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1374,12 +1374,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">Typ {0} má přepisovat Equals, protože implementuje IEquatable&lt;T&gt;.</target>
+        <target state="translated">Typ {0} by měl přepsat Equals, protože implementuje IEquatable&lt;T&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">Při implementaci IEquatable&lt;T&gt; přepište Object.Equals(objekt).</target>
+        <target state="translated">Přepsat Object.Equals(objekt) při implementaci IEquatable&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1419,12 +1419,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Když typ T přepisuje Object.Equals(objekt), musí implementace před provedením porovnání přetypovat argument objektu na správný typ T. Pokud tento typ implementuje IEquatable&lt;T&gt; a nabízí tudíž metodu T.Equals(T), a pokud je v době kompilace známo, že argument je typu T, může kompilátor volat IEquatable&lt;T&gt;.Equals(T) místo Object.Equals(objekt). Pak není potřeba žádné přetypování, což zvyšuje výkon.</target>
+        <target state="translated">Pokud typ T přepisuje Object.Equals(objekt), musí implementace přetypovat argument objektu na správný typ T před provedením porovnání. Pokud typ implementuje IEquatable&lt;T&gt; a nabízí metodu T.Equals(T) a pokud se o argumentu při kompilaci ví, že je typu T, může kompilátor volat IEquatable&lt;T&gt;.Equals(T) namísto Object.Equals(objekt) a není nutné přetypování, čímž se zlepšuje výkon.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Pokud typ T implementuje rozhraní IEquatable&lt;T&gt;, naznačuje to uživateli, který ve zdrojovém kódu vidí volání metody Equals, že instance tohoto typu může být srovnána s instancí jakéhokoli jiného typu. Uživatel může být zmatený, pokud se pokus o srovnání tohoto typu s instancí jiného typu nepodaří zkompilovat. To porušuje „princip minimálního překvapení“.</target>
+        <target state="translated">Pokud typ T implementuje rozhraní IEquatable&lt;T&gt;, vyvolá to v uživateli, který ve zdrojovém kódu vidí volání metody Equals, dojem, že instanci typu lze srovnávat s instancí libovolného jiného typu. Uživatele může zmást, pokud při jeho pokusu o srovnání typu s instancí jiného typu dojde k chybě kompilace. To porušuje takzvaný „princip nejmenšího překvapení“.</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1449,7 +1449,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Odeberte {0} a nahraďte jeho použití obecnou obslužnou rutinou EventHandler, např. EventHandler&lt;T&gt;, kde T je platný argument EventArgs.</target>
+        <target state="translated">Odeberte {0} a místo toho použijte obecnou obslužnou rutinu událostí, například EventHandler&lt;T&gt;, kde T je platná hodnota EventArgs.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1459,7 +1459,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Změňte událost {0}, aby nahradila typ {1} obecnou obslužnou rutinou EventHandler, např. EventHandler&lt;T&gt;, kde T je platný argument EventArgs.</target>
+        <target state="translated">Změňte událost {0} tak, aby se typ {1} nahradil obecnou obslužnou rutinou událostí, například EventHandler&lt;T&gt;, kde T je platná hodnota EventArgs.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

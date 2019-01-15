@@ -70,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 (IDelegateCreationOperation)operationAnalysisContext.Operation;
                             if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol.Equals(delegateCreationOperation.Type))
                             {
-                                var alwaysReturnTrue = true;
+                                var alwaysReturnTrue = false;
                                 var kindOfTargetFunction = delegateCreationOperation.Target.Kind;
 
                                 switch (kindOfTargetFunction)
@@ -83,6 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         var methodReferenceOperation = (IMethodReferenceOperation)delegateCreationOperation.Target;
                                         var methodSymbol = methodReferenceOperation.Method;
                                         var blockOperation = methodSymbol.GetTopmostOperationBlock(compilationStartAnalysisContext.Compilation);
+                                        // TODO(LINCHE): This is an issue tracked by #2009. We filter extraneous based on IsImplicit.
                                         var targetOperations = FilterImplicitOperations(ImmutableArray.ToImmutableArray(blockOperation.Descendants()));
                                         alwaysReturnTrue = AlwaysReturnTrue(targetOperations);
                                         break;
@@ -150,7 +151,6 @@ namespace Microsoft.NetCore.Analyzers.Security
             
             foreach (var descendant in operations)
             {
-                // TODO(LINCHE): This is an issue tracked by #2009. We filter extraneous based on IsImplicit.
                 if (descendant.Kind == OperationKind.Return)
                 {
                     var returnOperation = (IReturnOperation)descendant;

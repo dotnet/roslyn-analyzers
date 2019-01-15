@@ -28,8 +28,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationMessage">
-        <source>The certificate verification is delgated a {0} and always return 'true'.</source>
-        <target state="new">The certificate verification is delgated a {0} and always return 'true'.</target>
+        <source>The certificate verification is delegated a {0} and always return 'true'.</source>
+        <target state="new">The certificate verification is delegated a {0} and always return 'true'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">

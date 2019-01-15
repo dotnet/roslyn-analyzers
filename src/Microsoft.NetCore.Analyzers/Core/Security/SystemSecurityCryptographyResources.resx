@@ -133,7 +133,7 @@
     <value>A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</value>
   </data>
   <data name="DoNotDisableCertificateValidationMessage" xml:space="preserve">
-    <value>The certificate verification is delgated a {0} and always return 'true'.</value>
+    <value>The certificate verification is delegated a {0} and always return 'true'.</value>
   </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>

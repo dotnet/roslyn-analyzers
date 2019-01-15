@@ -71,8 +71,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol.Equals(delegateCreationOperation.Type))
                             {
                                 var alwaysReturnTrue = true;
-
                                 var kindOfTargetFunction = delegateCreationOperation.Target.Kind;
+
                                 switch (kindOfTargetFunction)
                                 {
                                     case OperationKind.AnonymousFunction:

@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -49,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public sealed override void Initialize(AnalysisContext context)
         {
-           // context.EnableConcurrentExecution();
+            context.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics on generated code.
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
@@ -84,8 +83,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         var methodReferenceOperation = (IMethodReferenceOperation)delegateCreationOperation.Target;
                                         var methodSymbol = methodReferenceOperation.Method;
                                         var blockOperation = methodSymbol.GetTopmostOperationBlock(compilationStartAnalysisContext.Compilation);
-                                        var tmp = ImmutableArray.ToImmutableArray(blockOperation.Descendants()).GetOperations();
-                                        alwaysReturnTrue = AlwaysReturnTrue(tmp);
+                                        //var targetOperations = ImmutableArray.ToImmutableArray(blockOperation.Descendants()).GetOperations();
+                                        var targetOperations = FilterImplicitOperations(ImmutableArray.ToImmutableArray(blockOperation.Descendants()));
+                                        alwaysReturnTrue = AlwaysReturnTrue(targetOperations);
                                         break;
                                 }
 
@@ -103,9 +103,47 @@ namespace Microsoft.NetCore.Analyzers.Security
         }
 
         /// <summary>
+        /// Gets all valid members of the block operation body, excluding the VB implicit statements.
+        /// </summary>
+        /// <param name="operations">All the descendants of the IBlockOperation of target method.</param>
+        private static ImmutableArray<IOperation> FilterImplicitOperations(ImmutableArray<IOperation> operations)
+        {
+            if (operations.IsDefaultOrEmpty)
+            {
+                return operations;
+            }
+
+            if (operations.Length > 2 && operations[0].Language == LanguageNames.VisualBasic)
+            {
+                var lastOperation = operations[operations.Length - 1];
+                var secondLastOperation = operations[operations.Length - 2];
+                var thirdLastOperation = operations[operations.Length - 3];
+
+                if (lastOperation.Kind == OperationKind.LocalReference && lastOperation.IsImplicit &&
+                    secondLastOperation.Kind == OperationKind.Return && secondLastOperation.IsImplicit &&
+                    thirdLastOperation.Kind == OperationKind.Labeled &&
+                    ((ILabeledOperation)thirdLastOperation).Label.Name == "exit" &&
+                    thirdLastOperation.IsImplicit)
+                {
+                    var builder = ImmutableArray.CreateBuilder<IOperation>();
+                    builder.AddRange(operations, operations.Length - 2);
+                    return builder.ToImmutable();
+                }
+                else
+                {
+                    return operations;
+                }
+            }
+            else
+            {
+                return operations;
+            }
+        }
+
+        /// <summary>
         /// Find every IReturnOperation in the method and get the value of return statement to determine if the method always return true.
         /// </summary>
-        /// <param name="operation">A method body in the form of a IOperation</param>
+        /// <param name="operation">A method body in the form of explicit IOperations</param>
         private static bool AlwaysReturnTrue(IEnumerable<IOperation> operations)
         {
             var result = true;
@@ -113,6 +151,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             
             foreach (var descendant in operations)
             {
+                // TODO(LINCHE): This is an issue tracked by #2009. We filter extraneous based on IsImplicit.
                 if (descendant.Kind == OperationKind.Return)
                 {
                     var returnOperation = (IReturnOperation)descendant;
@@ -120,7 +159,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     countOfReturnStatement++;
 
-                    // If it invokes another function which is from local or 3rd assembly,
+                    // If the target method invokes another function which is from local or 3rd assembly,
                     // or the value of return statement is false.
                     if (!constantValue.HasValue || constantValue.Value.Equals(false))
                     {
@@ -130,6 +169,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 }
             }
 
+            // If the target method is from 3rd assembly
             if (countOfReturnStatement == 0)
             {
                 result = false;

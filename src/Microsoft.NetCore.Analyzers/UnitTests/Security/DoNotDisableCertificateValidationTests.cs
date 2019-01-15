@@ -102,7 +102,7 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-            GetBasicResultAt(8, 78, DoNotDisableCertificateValidation.Rule, "MethodReference"));
+            GetBasicResultAt(9, 82, DoNotDisableCertificateValidation.Rule, "MethodReference"));
         }
 
         [Fact]
@@ -126,8 +126,7 @@ namespace AcceptAllCertificationsNamespace
             return true;
         }
     }
-}
-";
+}";
 
             var source2 = @"
 using System.Net;
@@ -173,6 +172,7 @@ namespace AcceptAllCertificationsNamespace
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using AcceptAllCertificationsNamespace;
 
 class TestClass
 {
@@ -182,7 +182,7 @@ class TestClass
           X509Chain chain,
           SslPolicyErrors sslPolicyErrors)
     {
-        return AcceptAllCertificationsNamespace.AcceptAllCertificationsClass.AcceptAllCertifications2(sender, certificate, chain, sslPolicyErrors);
+        return AcceptAllCertificationsClass.AcceptAllCertifications2(sender, certificate, chain, sslPolicyErrors);
     }
 
     public void TestMethod()
@@ -204,7 +204,7 @@ class TestClass
 {
     public void TestMethod()
     {
-        ServicePointManager.ServerCertificateValidationCallback += (a, b, c, d) => { if(a != null) return true; return false;};
+        ServicePointManager.ServerCertificateValidationCallback += (a, b, c, d) => { if(a != null) {return true;} return false;};
     }
 }");
         }
@@ -285,8 +285,7 @@ Public Module TestModule
             Return False
         End If
     End Function
-End Module
-");
+End Module");
         }
 
         [Fact]
@@ -369,8 +368,7 @@ Public Module TestModule
     Function AcceptAllCertifications2(ByVal sender As Object, ByVal certification As System.Security.Cryptography.X509Certificates.X509Certificate, ByVal chain As System.Security.Cryptography.X509Certificates.X509Chain, ByVal sslPolicyErrors As System.Net.Security.SslPolicyErrors) As Boolean
         Return True
     End Function
-End Module
-");
+End Module");
         }
 
         [Fact]

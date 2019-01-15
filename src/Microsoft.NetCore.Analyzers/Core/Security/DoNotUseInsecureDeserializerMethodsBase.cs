@@ -31,21 +31,15 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected abstract ImmutableHashSet<string> DeserializationMethodNames { get; }
 
         /// <summary>
-        /// <see cref="DiagnosticDescriptor"/> for when a potentially insecure method is invoked.
+        /// <see cref="DiagnosticDescriptor"/> for when a potentially insecure method is invoked
+        /// or referenced (e.g. used as a delegate).
         /// </summary>
         /// <remarks>The string format message argument is the method signature.</remarks>
-        protected abstract DiagnosticDescriptor InvocationDescriptor { get; }
-
-        /// <summary>
-        /// <see cref="DiagnosticDescriptor"/> for when a potentially insecure method is referenced.
-        /// </summary>
-        /// <remarks>The string format message argument is the method signature.</remarks>
-        protected abstract DiagnosticDescriptor ReferenceDescriptor { get; }
+        protected abstract DiagnosticDescriptor MethodUsedDescriptor { get; }
 
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create<DiagnosticDescriptor>(
-                this.InvocationDescriptor,
-                this.ReferenceDescriptor);
+                this.MethodUsedDescriptor);
 
         public sealed override void Initialize(AnalysisContext context)
         {
@@ -54,8 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             Debug.Assert(this.DeserializerTypeMetadataName != null);
             Debug.Assert(cachedDeserializationMethodNames != null);
             Debug.Assert(!cachedDeserializationMethodNames.IsEmpty);
-            Debug.Assert(this.InvocationDescriptor != null);
-            Debug.Assert(this.ReferenceDescriptor != null);
+            Debug.Assert(this.MethodUsedDescriptor != null);
 
             context.EnableConcurrentExecution();
 
@@ -82,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                     Diagnostic.Create(
-                                        this.InvocationDescriptor,
+                                        this.MethodUsedDescriptor,
                                         invocationOperation.Syntax.GetLocation(),
                                         invocationOperation.TargetMethod.ToDisplayString(
                                             SymbolDisplayFormat.MinimallyQualifiedFormat)));
@@ -100,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                     Diagnostic.Create(
-                                        this.ReferenceDescriptor,
+                                        this.MethodUsedDescriptor,
                                         methodReferenceOperation.Syntax.GetLocation(),
                                         methodReferenceOperation.Method.ToDisplayString(
                                             SymbolDisplayFormat.MinimallyQualifiedFormat)));

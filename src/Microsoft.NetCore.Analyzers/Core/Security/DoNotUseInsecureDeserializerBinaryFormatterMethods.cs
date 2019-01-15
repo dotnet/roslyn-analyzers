@@ -15,22 +15,14 @@ namespace Microsoft.NetCore.Analyzers.Security
     class DoNotUseInsecureDeserializerBinaryFormatterMethods : DoNotUseInsecureDeserializerMethodsBase
     {
         // TODO paulming: Help links URLs.
-        internal static readonly DiagnosticDescriptor RealInvocationDescriptor =
+        internal static readonly DiagnosticDescriptor RealMethodUsedDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2300",
-                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodInvocationTitle),
-                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodInvocationMessage),
+                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodUsedTitle),
+                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodUsedMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null,
-                descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodInvocationDescription));
-        internal static readonly DiagnosticDescriptor RealReferenceDescriptor =
-            SecurityHelpers.CreateDiagnosticDescriptor(
-                "CA2301",
-                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodReferenceTitle),
-                nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodReferenceMessage),
-                isEnabledByDefault: false,
-                helpLinkUri: null,
-                descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodReferenceDescription));
+                descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodUsedDescription));
 
         protected override string DeserializerTypeMetadataName =>
             WellKnownTypes.SystemRuntimeSerializationFormattersBinaryBinaryFormatter;
@@ -38,8 +30,6 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected override ImmutableHashSet<string> DeserializationMethodNames =>
             SecurityHelpers.BinaryFormatterDeserializationMethods;
 
-        protected override DiagnosticDescriptor InvocationDescriptor => RealInvocationDescriptor;
-
-        protected override DiagnosticDescriptor ReferenceDescriptor => RealReferenceDescriptor;
+        protected override DiagnosticDescriptor MethodUsedDescriptor => RealMethodUsedDescriptor;
     }
 }

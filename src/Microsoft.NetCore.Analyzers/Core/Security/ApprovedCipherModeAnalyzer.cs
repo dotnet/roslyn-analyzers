@@ -68,7 +68,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         return;
                     }
-                    
+
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {

@@ -126,7 +126,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     thirdLastOperation.IsImplicit)
                 {
                     var builder = ImmutableArray.CreateBuilder<IOperation>();
-                    builder.AddRange(operations, operations.Length - 2);
+                    builder.AddRange(operations, operations.Length - 3);
                     return builder.ToImmutable();
                 }
                 else

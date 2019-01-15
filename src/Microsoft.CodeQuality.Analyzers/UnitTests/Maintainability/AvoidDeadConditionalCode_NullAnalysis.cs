@@ -6153,6 +6153,43 @@ End Class
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
         [Fact]
+        public void NullCheck_LambdaResult_EditorConfig_NoInterproceduralLambdaAnalysis_NoDiagnostic()
+        {
+            const string editorConfigText = "dotnet_code_quality.max_interprocedural_lambda_or_local_function_call_chain = 0";
+
+            VerifyCSharp(@"
+class Test
+{
+    void M1()
+    {
+        string x = null;
+        System.Func<string, bool> isNonNull = s => s != null;
+
+        if (isNonNull(x))
+        {
+            return;
+        }
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText));
+
+            VerifyBasic(@"
+Class Test
+    Private Sub M1()
+        Dim x As String = Nothing
+        Dim isNonNull As System.Func(Of String, Boolean) = Function(s) s IsNot Nothing
+
+        If isNonNull(x) Then
+            Return
+        End If
+    End Sub
+End Class
+", GetEditorConfigAdditionalFile(editorConfigText));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
         public void NullCheck_LambdaResult_NoDiagnostic()
         {
             VerifyCSharp(@"

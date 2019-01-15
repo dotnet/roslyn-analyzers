@@ -98,9 +98,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             rootOperation.GetEnclosingControlFlowGraph(),
                                             operationBlockAnalysisContext.Compilation,
                                             operationBlockAnalysisContext.OwningSymbol,
+                                            operationBlockAnalysisContext.Options,
+                                            TaintedDataEnteringSinkDescriptor,
                                             sourceInfoSymbolMap,
                                             taintedDataConfig.GetSanitizerSymbolMap(this.SinkKind),
-                                            sinkInfoSymbolMap);
+                                            sinkInfoSymbolMap,
+                                            operationBlockAnalysisContext.CancellationToken);
                                         foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                         {
                                             if (!sourceSink.SinkKinds.Contains(this.SinkKind))

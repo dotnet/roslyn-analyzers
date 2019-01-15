@@ -211,7 +211,8 @@ namespace Microsoft.NetCore.Analyzers.Data
                 // We have a candidate for diagnostic. perform more precise dataflow analysis.
                 var cfg = argumentValue.GetEnclosingControlFlowGraph();
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
-                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
+                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                    operationContext.Options, Rule, operationContext.CancellationToken);
                 ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
                 if (value.NonLiteralState == ValueContainsNonLiteralState.No)
                 {

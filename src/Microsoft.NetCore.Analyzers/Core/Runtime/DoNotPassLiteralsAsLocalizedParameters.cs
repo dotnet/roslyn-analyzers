@@ -150,7 +150,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 var cfg = topmostBlock.GetEnclosingControlFlowGraph();
                                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                                return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider);
+                                return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                                    operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
                             }
                         }
 

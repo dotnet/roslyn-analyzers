@@ -80,7 +80,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                             var cfg = operationBlockContext.GetControlFlowGraph(operationRoot);
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
-                            var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider, out var copyAnalysisResult, out var pointsToAnalysisResult);
+                            var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
+                                    operationBlockContext.Options, AlwaysTrueFalseOrNullRule, operationBlockContext.CancellationToken,
+                                    out var copyAnalysisResult, out var pointsToAnalysisResult);
                             Debug.Assert(copyAnalysisResult != null);
                             Debug.Assert(pointsToAnalysisResult != null);
 

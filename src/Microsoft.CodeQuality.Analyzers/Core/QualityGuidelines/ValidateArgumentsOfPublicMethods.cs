@@ -61,7 +61,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     {
                         if (operationBlock is IBlockOperation topmostBlock)
                         {
-                            hazardousParameterUsages = ParameterValidationAnalysis.GetOrComputeHazardousParameterUsages(topmostBlock, operationBlockContext.Compilation, containingMethod);
+                            hazardousParameterUsages = ParameterValidationAnalysis.GetOrComputeHazardousParameterUsages(
+                                topmostBlock, operationBlockContext.Compilation, containingMethod,
+                                operationBlockContext.Options, Rule, operationBlockContext.CancellationToken);
                             break;
                         }
                     }

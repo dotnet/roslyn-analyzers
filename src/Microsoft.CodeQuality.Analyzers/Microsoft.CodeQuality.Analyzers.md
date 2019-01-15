@@ -540,6 +540,16 @@ Severity: Warning
 
 Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling)
 
+### CA1508: Avoid dead conditional code ###
+
+Conditional expressions which are always true/false and null checks for operations that are always null/non-null lead to dead code. Such conditional expressions should be removed or refactored to avoid dead code.
+
+Category: Maintainability.
+
+Severity: Warning
+
+Help: <To be added>
+
 ### CA1509: Invalid entry in code metrics rule specification file ###
 
 Invalid entry in code metrics rule specification file "CodeMetricsConfig.txt". Expected format example:

@@ -1805,6 +1805,59 @@ End Class
             GetBasicResultAt(9, 12, "Sub Test.M1(c1 As C, c2 As C)", "c2"));
         }
 
+        [Theory]
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None")]
+        [InlineData(@"dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive
+                      dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
+        public void HazardousUsageInInvokedMethod_PrivateMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c1, C c2)
+    {
+        M2(c1); // No diagnostic
+        M3(c2); // Diagnostic
+    }
+
+    private static void M2(C c)
+    {
+    }
+
+    private static void M3(C c)
+    {
+        var x = c.X;
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Integer
+End Class
+
+Public Class Test
+    Public Sub M1(c1 As C, c2 As C)
+        M2(c1) ' No diagnostic
+        M3(c2) ' Diagnostic
+    End Sub
+
+    Private Shared Sub M2(c As C)
+    End Sub
+
+    Private Shared Sub M3(c As C)
+        Dim x = c.X
+    End Sub
+End Class
+", GetEditorConfigAdditionalFile(editorConfigText));
+        }
+
         [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
         public void HazardousUsageInInvokedMethod_PrivateMethod_Generic_Diagnostic()
         {

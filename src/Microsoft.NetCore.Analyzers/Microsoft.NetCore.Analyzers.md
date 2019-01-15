@@ -74,16 +74,6 @@ Severity: Warning
 
 Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1308-normalize-strings-to-uppercase](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1308-normalize-strings-to-uppercase)
 
-### CA1508: Avoid dead conditional code ###
-
-Conditional expressions which are always true/false and null checks for operations that are always null/non-null lead to dead code. Such conditional expressions should be removed or refactored to avoid dead code.
-
-Category: Maintainability.
-
-Severity: Warning
-
-Help: <To be added>
-
 ### CA1309: Use ordinal stringcomparison ###
 
 A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.

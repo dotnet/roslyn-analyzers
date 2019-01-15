@@ -54,7 +54,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod, out var disposeAnalysisResult, out var pointsToAnalysisResult))
+                    if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod,
+                        operationBlockContext.Options, Rule, operationBlockContext.CancellationToken,
+                        out var disposeAnalysisResult, out var pointsToAnalysisResult))
                     {
                         BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
                         ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;

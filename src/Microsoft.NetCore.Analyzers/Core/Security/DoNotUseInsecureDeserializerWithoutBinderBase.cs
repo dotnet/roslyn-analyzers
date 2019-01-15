@@ -130,6 +130,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     // Only instantiated if there are any results to report.
                                     Dictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> allResults = null;
                                     List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
+
+                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                        operationBlockAnalysisContext.Options, SupportedDiagnostics,
+                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
+                                        cancellationToken: operationBlockAnalysisContext.CancellationToken,
+                                        defaultMaxInterproceduralMethodCallChain: 1); // By default, we only want to track method calls one level down.
+
                                     foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                     {
                                         ImmutableDictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> dfaResult =
@@ -141,7 +148,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 true /* isNewInstanceFlagged */,
                                                 this.SerializationBinderPropertyMetadataName,
                                                 true /* isNullPropertyFlagged */,
-                                                cachedDeserializationMethodNames);
+                                                cachedDeserializationMethodNames,
+                                                interproceduralAnalysisConfig);
                                         if (dfaResult.IsEmpty)
                                         {
                                             continue;

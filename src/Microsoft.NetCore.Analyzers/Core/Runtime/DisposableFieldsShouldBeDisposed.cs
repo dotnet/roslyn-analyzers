@@ -85,7 +85,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     if (disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockStartContext.OperationBlocks, containingMethod))
                     {
                         if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks,
-                            containingMethod, out var disposeAnalysisResult, out var pointsToAnalysisResult))
+                            containingMethod, operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken,
+                            out var disposeAnalysisResult, out var pointsToAnalysisResult))
                         {
                             Debug.Assert(disposeAnalysisResult != null);
                             Debug.Assert(pointsToAnalysisResult != null);
@@ -134,7 +135,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         var disposableFields = disposeAnalysisHelper.GetDisposableFields(containingMethod.ContainingType);
                         if (!disposableFields.IsEmpty)
                         {
-                            if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod, trackInstanceFields: true,
+                            if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks, containingMethod,
+                                operationBlockStartContext.Options, Rule, trackInstanceFields: true, cancellationToken: operationBlockStartContext.CancellationToken,
                                 disposeAnalysisResult: out var disposeAnalysisResult, pointsToAnalysisResult: out var pointsToAnalysisResult))
                             {
                                 BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();

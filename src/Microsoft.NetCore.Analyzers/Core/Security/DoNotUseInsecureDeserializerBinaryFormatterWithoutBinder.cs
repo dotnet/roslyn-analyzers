@@ -17,14 +17,14 @@ namespace Microsoft.NetCore.Analyzers.Security
         // TODO paulming: Help link URLs.
         internal static readonly DiagnosticDescriptor RealBinderDefinitelyNotSetDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
-                "CA2302",
+                "CA2301",
                 nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeWithoutBinderSetTitle),
                 nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeWithoutBinderSetMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null);
         internal static readonly DiagnosticDescriptor RealBinderMaybeNotSetDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
-                "CA2303",
+                "CA2302",
                 nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeMaybeWithoutBinderSetTitle),
                 nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterDeserializeMaybeWithoutBinderSetMessage),
                 isEnabledByDefault: false,

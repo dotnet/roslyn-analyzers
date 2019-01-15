@@ -11,8 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PropertySetAnalysis)]
     public class DoNotUseInsecureDeserializerBinaryFormatterMethodsTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly DiagnosticDescriptor InvocationRule = DoNotUseInsecureDeserializerBinaryFormatterMethods.RealInvocationDescriptor;
-        private static readonly DiagnosticDescriptor ReferenceRule = DoNotUseInsecureDeserializerBinaryFormatterMethods.RealReferenceDescriptor;
+        private static readonly DiagnosticDescriptor Rule = DoNotUseInsecureDeserializerBinaryFormatterMethods.RealMethodUsedDescriptor;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -42,7 +41,7 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, InvocationRule, "object BinaryFormatter.UnsafeDeserialize(Stream serializationStream, HeaderHandler handler)"));
+                GetCSharpResultAt(12, 20, Rule, "object BinaryFormatter.UnsafeDeserialize(Stream serializationStream, HeaderHandler handler)"));
         }
 
         [Fact]
@@ -63,7 +62,7 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, InvocationRule, "object BinaryFormatter.UnsafeDeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)"));
+                GetCSharpResultAt(12, 20, Rule, "object BinaryFormatter.UnsafeDeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)"));
         }
 
         [Fact]
@@ -84,7 +83,7 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, InvocationRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+                GetCSharpResultAt(12, 20, Rule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
 
         [Fact]
@@ -105,7 +104,7 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, InvocationRule, "object BinaryFormatter.Deserialize(Stream serializationStream, HeaderHandler handler)"));
+                GetCSharpResultAt(12, 20, Rule, "object BinaryFormatter.Deserialize(Stream serializationStream, HeaderHandler handler)"));
         }
 
         [Fact]
@@ -126,7 +125,7 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(12, 20, InvocationRule, "object BinaryFormatter.DeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)"));
+                GetCSharpResultAt(12, 20, Rule, "object BinaryFormatter.DeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)"));
         }
 
         [Fact]
@@ -148,7 +147,7 @@ namespace Blah
         }
     }
 }",
-                GetCSharpResultAt(13, 20, ReferenceRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+                GetCSharpResultAt(13, 20, Rule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
 
         [Fact]

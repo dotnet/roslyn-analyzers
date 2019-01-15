@@ -147,7 +147,7 @@ Public Module SecurityCenter
 End Module"
             );
         }
-        
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new ApprovedCipherModeAnalyzer();

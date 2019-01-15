@@ -25,7 +25,7 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback += (a, b, c, d) => { return true; };
     }
 }",
-            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule, "AnonymousFunction"));
+            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule));
         }
 
         [Fact]
@@ -41,7 +41,7 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback += (a, b, c, d) => true;
     }
 }",
-            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule, "AnonymousFunction"));
+            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule));
         }
 
         [Fact]
@@ -57,7 +57,34 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback += delegate { return true; };
     }
 }",
-            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule, "AnonymousFunction"));
+            GetCSharpResultAt(8, 68, DoNotDisableCertificateValidation.Rule));
+        }
+
+        [Fact]
+        public void TestDelegateCreationLocalFunctionDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(AcceptAllCertifications);
+
+        bool AcceptAllCertifications(
+                  object sender,
+                  X509Certificate certificate,
+                  X509Chain chain,
+                  SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
+        }
+    }
+}",
+            GetCSharpResultAt(10, 67, DoNotDisableCertificateValidation.Rule));
         }
 
         [Fact]
@@ -84,7 +111,7 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(AcceptAllCertifications);
     }
 }",
-            GetCSharpResultAt(19, 67, DoNotDisableCertificateValidation.Rule, "MethodReference"));
+            GetCSharpResultAt(19, 67, DoNotDisableCertificateValidation.Rule));
 
             VerifyBasic(@"
 Imports System.Net
@@ -102,11 +129,11 @@ Namespace TestNamespace
         End Function
     End Class
 End Namespace",
-            GetBasicResultAt(9, 82, DoNotDisableCertificateValidation.Rule, "MethodReference"));
+            GetBasicResultAt(9, 82, DoNotDisableCertificateValidation.Rule));
         }
 
         [Fact]
-        public void TestDelegatedMethodFromDifferentAssemblyDiagnostic()
+        public void TestDelegatedMethodFromDifferentAssemblyNoDiagnostic()
         {
             string source1 = @"
 
@@ -235,6 +262,36 @@ class TestClass
     public void TestMethod()
     {
         ServicePointManager.ServerCertificateValidationCallback += delegate { return false; };
+    }
+}");
+        }
+
+        [Fact]
+        public void TestDelegateCreationLocalFunctionNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(AcceptAllCertifications);
+
+        bool AcceptAllCertifications(
+                  object sender,
+                  X509Certificate certificate,
+                  X509Chain chain,
+                  SslPolicyErrors sslPolicyErrors)
+        {
+            if(sender != null)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }");
         }

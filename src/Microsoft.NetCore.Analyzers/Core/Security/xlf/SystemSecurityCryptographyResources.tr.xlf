@@ -28,8 +28,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationMessage">
-        <source>The certificate verification is delegated a {0} and always return 'true'.</source>
-        <target state="new">The certificate verification is delegated a {0} and always return 'true'.</target>
+        <source>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</source>
+        <target state="new">The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">

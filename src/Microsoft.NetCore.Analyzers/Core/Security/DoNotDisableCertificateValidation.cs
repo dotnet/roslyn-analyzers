@@ -83,7 +83,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         var methodReferenceOperation = (IMethodReferenceOperation)delegateCreationOperation.Target;
                                         var methodSymbol = methodReferenceOperation.Method;
                                         var blockOperation = methodSymbol.GetTopmostOperationBlock(compilationStartAnalysisContext.Compilation);
-                                        //var targetOperations = ImmutableArray.ToImmutableArray(blockOperation.Descendants()).GetOperations();
                                         var targetOperations = FilterImplicitOperations(ImmutableArray.ToImmutableArray(blockOperation.Descendants()));
                                         alwaysReturnTrue = AlwaysReturnTrue(targetOperations);
                                         break;

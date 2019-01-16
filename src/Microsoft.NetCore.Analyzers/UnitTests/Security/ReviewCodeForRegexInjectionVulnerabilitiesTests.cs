@@ -58,7 +58,7 @@ public partial class WebForm : System.Web.UI.Page
         }
 
         [Fact]
-        public void IsMatch_Diagnostic()
+        public void IsMatch_Static_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -77,7 +77,7 @@ public partial class WebForm : System.Web.UI.Page
         }
 
         [Fact]
-        public void IsMatch_NoDiagnostic()
+        public void IsMatch_Static_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -90,6 +90,25 @@ public partial class WebForm : System.Web.UI.Page
     {
         string input = Request.Form[""in""];
         Regex.IsMatch(input, ""^[a-z]{1,128}$"");
+    }
+}");
+        }
+
+        [Fact]
+        public void IsMatch_Instance_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Web;
+using System.Text.RegularExpressions;
+
+public partial class WebForm : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        string input = Request.Form[""in""];
+        Regex r = new Regex(""^[a-z]{1,128}$"");
+        r.IsMatch(input);
     }
 }");
         }

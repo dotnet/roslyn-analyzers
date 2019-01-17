@@ -51,7 +51,8 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(
+                    var compilation = compilationStartAnalysisContext.Compilation;
+                    var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = compilation.GetTypeByMetadataName(
                             WellKnownTypes.SystemNetSecurityRemoteCertificateValidationCallback);
 
                     if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null)
@@ -78,8 +79,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         {
                                             return;
                                         }
-
-                                        if (delegateTargetFunction.Symbol.ReturnType.SpecialType != SpecialType.System_Boolean)
+                                        
+                                        if (!IsTargetFunction(compilation, delegateTargetFunction.Symbol))
                                         {
                                             return;
                                         }
@@ -96,8 +97,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         }
 
                                         var methodSymbol = methodReferenceOperation.Method;
-
-                                        if (methodSymbol.ReturnType.SpecialType != SpecialType.System_Boolean)
+                                        
+                                        if (!IsTargetFunction(compilation, methodSymbol))
                                         {
                                             return;
                                         }
@@ -125,6 +126,36 @@ namespace Microsoft.NetCore.Analyzers.Security
                         },
                         OperationKind.DelegateCreation);
                 });
+        }
+
+        private static bool IsTargetFunction(Compilation compilation, IMethodSymbol methodSymbol)
+        {
+            if (methodSymbol.ReturnType.SpecialType != SpecialType.System_Boolean)
+            {
+                return false;
+            }
+
+            var parameters = methodSymbol.Parameters;
+
+            if (parameters.Length != 4)
+            {
+                return false;
+            }
+
+            var obj = WellKnownTypes.Object(compilation);
+            var x509Certificate = WellKnownTypes.X509Certificate(compilation);
+            var x509Chain = WellKnownTypes.X509Chain(compilation);
+            var sslPolicyErrors = WellKnownTypes.SslPolicyErrors(compilation);
+
+            if ((obj == null || !obj.Equals(parameters[0].Type))
+                || (x509Certificate == null || !x509Certificate.Equals(parameters[1].Type))
+                || (x509Chain == null || !x509Chain.Equals(parameters[2].Type))
+                || (sslPolicyErrors == null || !sslPolicyErrors.Equals(parameters[3].Type)))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static IEnumerable<IOperation> GetFilteredOperations(ImmutableArray<IOperation> blockOperations)

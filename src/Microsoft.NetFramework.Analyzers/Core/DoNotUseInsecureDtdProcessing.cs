@@ -80,18 +80,18 @@ namespace Microsoft.NetFramework.Analyzers
             #region Environment classes
             private class XmlDocumentEnvironment
             {
-                internal SyntaxNode XmlDocumentDefinition;
-                internal bool IsXmlResolverSet;
-                internal bool IsSecureResolver;
+                internal SyntaxNode XmlDocumentDefinition { get; set; }
+                internal bool IsXmlResolverSet { get; set; }
+                internal bool IsSecureResolver { get; set; }
             }
 
             private class XmlTextReaderEnvironment
             {
-                internal SyntaxNode XmlTextReaderDefinition;
-                internal bool IsDtdProcessingSet;
-                internal bool IsDtdProcessingDisabled;
-                internal bool IsXmlResolverSet;
-                internal bool IsSecureResolver;
+                internal SyntaxNode XmlTextReaderDefinition { get; set; }
+                internal bool IsDtdProcessingSet { get; set; }
+                internal bool IsDtdProcessingDisabled { get; set; }
+                internal bool IsXmlResolverSet { get; set; }
+                internal bool IsSecureResolver { get; set; }
 
                 internal XmlTextReaderEnvironment(bool isTargetFrameworkSecure)
                 {
@@ -105,11 +105,11 @@ namespace Microsoft.NetFramework.Analyzers
 
             private class XmlReaderSettingsEnvironment
             {
-                internal SyntaxNode XmlReaderSettingsDefinition;
-                internal bool IsDtdProcessingDisabled;
-                internal bool IsMaxCharactersFromEntitiesLimited;
-                internal bool IsSecureResolver;
-                internal bool IsConstructedInCodeBlock;
+                internal SyntaxNode XmlReaderSettingsDefinition { get; set; }
+                internal bool IsDtdProcessingDisabled { get; set; }
+                internal bool IsMaxCharactersFromEntitiesLimited { get; set; }
+                internal bool IsSecureResolver { get; set; }
+                internal bool IsConstructedInCodeBlock { get; set; }
 
                 // this constructor is used for keep track of XmlReaderSettings not created in the code block
                 internal XmlReaderSettingsEnvironment() { }

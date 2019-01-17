@@ -285,12 +285,12 @@ namespace Microsoft.NetFramework.Analyzers
 
             private class XsltSettingsEnvironment
             {
-                internal ISymbol XsltSettingsSymbol;
-                internal ISymbol XsltSettingsDefinitionSymbol;
-                internal SyntaxNode XsltSettingsDefinition;
-                internal ISymbol EnclosingConstructSymbol;
-                internal bool IsScriptDisabled;
-                internal bool IsDocumentFunctionDisabled;
+                internal ISymbol XsltSettingsSymbol { get; set; }
+                internal ISymbol XsltSettingsDefinitionSymbol { get; set; }
+                internal SyntaxNode XsltSettingsDefinition { get; set; }
+                internal ISymbol EnclosingConstructSymbol { get; set; }
+                internal bool IsScriptDisabled { get; set; }
+                internal bool IsDocumentFunctionDisabled { get; set; }
             }
         }
     }

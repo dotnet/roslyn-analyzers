@@ -500,7 +500,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// <summary>
         /// Validates implementation of Dispose method. The method must call Dispose(true) and then GC.SuppressFinalize(this).
         /// </summary>
-        private struct DisposeImplementationValidator
+        private sealed class DisposeImplementationValidator
         {
             // this type will be created per compilation
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
@@ -632,7 +632,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// <summary>
         /// Validates implementation of the finalizer. This method must call Dispose(false) and then return
         /// </summary>
-        private struct FinalizeImplementationValidator
+        private sealed class FinalizeImplementationValidator
         {
             // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845

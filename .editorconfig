@@ -76,3 +76,21 @@ csharp_new_line_before_catch = true
 csharp_new_line_before_finally = true
 csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
+
+
+### Configuration for FxCop analyzers executed on this repo
+
+# Default analyzed API surface = 'all' (public APIs + non-public APIs)
+dotnet_code_quality.api_surface = all
+
+# Restrict the analyzed API surface for certain analyzers to 'public' (public APIs only).
+# CA1043: Use integral or string argument for indexers
+dotnet_code_quality.CA1043.api_surface = public
+# CA1707: Identifiers should not contain underscores
+dotnet_code_quality.CA1707.api_surface = public
+# CA1720: Identifiers should not contain type names
+dotnet_code_quality.CA1720.api_surface = public
+
+# Allow single letter type parameter names
+# CA1715: Identifiers should have correct prefix
+dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true

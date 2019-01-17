@@ -53,6 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(
                             WellKnownTypes.SystemNetSecurityRemoteCertificateValidationCallback);
+
                     if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null)
                     {
                         return;
@@ -63,6 +64,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         {
                             var delegateCreationOperation =
                                 (IDelegateCreationOperation)operationAnalysisContext.Operation;
+
                             if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol.Equals(delegateCreationOperation.Type))
                             {
                                 var alwaysReturnTrue = false;

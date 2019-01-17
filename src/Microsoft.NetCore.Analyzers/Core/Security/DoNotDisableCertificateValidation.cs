@@ -181,7 +181,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
 
                     var constantValue = returnOperation.ReturnedValue.ConstantValue;
-
                     hasReturnStatement = true;
 
                     // Check if the value being returned is a compile time constant 'true'

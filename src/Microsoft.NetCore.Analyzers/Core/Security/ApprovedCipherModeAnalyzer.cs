@@ -27,8 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 
-        internal static DiagnosticDescriptor Rule =
-            new DiagnosticDescriptor(
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
                 s_Title,
                 s_Message,

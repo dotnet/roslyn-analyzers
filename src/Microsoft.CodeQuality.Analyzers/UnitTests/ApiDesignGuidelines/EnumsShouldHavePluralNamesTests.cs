@@ -1,6 +1,7 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -60,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                                        
                                 };
                             }",
-                            GetCSharpResultAt(4, 44, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
+                            GetCSharpNoPluralResultAt(4, 44));
 
             VerifyBasic(@"
                         Public Class A
@@ -72,7 +73,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 	                        End Enum
                         End Class
                         ",
-                        GetBasicResultAt(3, 38, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
+                        GetBasicNoPluralResultAt(3, 38));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -154,7 +155,7 @@ End Class
                                        
                                 };
                             }",
-                            GetCSharpResultAt(4, 44, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
+                            GetCSharpNoPluralResultAt(4, 44));
 
             VerifyBasic(@"
                         Public Class A
@@ -166,7 +167,7 @@ End Class
 	                        End Enum
                         End Class
                         ",
-                        GetBasicResultAt(3, 38, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1717.MessageFormat.ToString()));
+                        GetBasicNoPluralResultAt(3, 38));
         }
 
         [Fact]
@@ -184,7 +185,7 @@ End Class
                                        
                                 };
                             }",
-                            GetCSharpResultAt(5, 44, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
+                            GetCSharpPluralResultAt(5, 44));
 
             VerifyBasic(@"
                        Public Class A
@@ -195,7 +196,7 @@ End Class
 		                    Tuesday = 2
 	                    End Enum
                         End Class",
-                            GetBasicResultAt(4, 34, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
+                            GetBasicPluralResultAt(4, 34));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -323,8 +324,8 @@ End Class
                         End Class");
         }
 
-        [Fact]
-        public void CA1714_CA1717_Test_EnumWithFlags_NameEndsWithS()
+        [Fact, WorkItem(1323, "https://github.com/dotnet/roslyn-analyzers/issues/1323")]
+        public void CA1714_CA1717_Test_EnumWithFlags_NonPluralNameEndsWithS()
         {
             VerifyCSharp(@" 
                             public class A 
@@ -337,7 +338,8 @@ End Class
                                     z = 2
                                        
                                 };
-                            }");
+                            }",
+                            GetCSharpPluralResultAt(5, 44));
 
             VerifyBasic(@"
                        Public Class A
@@ -347,12 +349,38 @@ End Class
 		                    y = 1
 		                    z = 2
 	                    End Enum
+                        End Class",
+                        GetBasicPluralResultAt(4, 34));
+        }
+
+        [Fact, WorkItem(1323, "https://github.com/dotnet/roslyn-analyzers/issues/1323")]
+        public void CA1714_CA1717_Test_EnumWithFlags_PluralNameEndsWithS()
+        {
+            VerifyCSharp(@" 
+                            public class A 
+                            { 
+                               [System.Flags] 
+                               public enum Axes 
+                               {
+                                    x = 0,
+                                    y = 1,
+                                    z = 2
+                                       
+                                };
+                            }");
+
+            VerifyBasic(@"
+                       Public Class A
+	                    <System.Flags> _
+	                    Public Enum Axes
+		                    x = 0
+		                    y = 1
+		                    z = 2
+	                    End Enum
                         End Class");
         }
 
-        [Fact]
-        // TODO: when the Isplural function handles better checks.
-        // this test should not fail.
+        [Fact, WorkItem(1323, "https://github.com/dotnet/roslyn-analyzers/issues/1323")]
         public void CA1714_CA1717_Test_EnumWithFlags_PluralName_NotEndingWithS()
         {
             VerifyCSharp(@" 
@@ -366,8 +394,7 @@ End Class
                                     M3 = 2
                                        
                                 };
-                            }",
-                            GetCSharpResultAt(5, 44, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
+                            }");
 
             VerifyBasic(@"
                        Public Class A
@@ -377,11 +404,10 @@ End Class
                             M2 = 1
                             M3 = 2
                         End Enum
-                        End Class",
-                            GetBasicResultAt(4, 37, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, EnumsShouldHavePluralNamesAnalyzer.Rule_CA1714.MessageFormat.ToString()));
+                        End Class");
         }
 
-        [Fact]
+        [Fact, WorkItem(1323, "https://github.com/dotnet/roslyn-analyzers/issues/1323")]
         public void CA1714_CA1717_Test_EnumWithNoFlags_PluralWord_NotEndingWithS()
         {
             VerifyCSharp(@" 
@@ -394,7 +420,8 @@ End Class
                                     M3 = 2
                                        
                                 };
-                            }");
+                            }",
+                            GetCSharpNoPluralResultAt(4, 44));
 
             VerifyBasic(@"
                        Public Class A
@@ -403,12 +430,14 @@ End Class
                             M2 = 1
                             M3 = 2
                         End Enum
-                        End Class");
+                        End Class",
+                        GetBasicNoPluralResultAt(3, 37));
         }
 
-        [Fact]
+        [Fact, WorkItem(1323, "https://github.com/dotnet/roslyn-analyzers/issues/1323")]
         public void CA1714_CA1717_Test_EnumWithNoFlags_irregularPluralWord_EndingWith_ae()
         {
+            // Humanizer does not recognize 'formulae' as plural, but we skip words ending with 'ae'
             VerifyCSharp(@" 
                             public class A 
                             { 
@@ -418,7 +447,7 @@ End Class
                                     M1 = 0,
                                     M2 = 1,
                                     M3 = 2
-                                       
+
                                 };
                             }");
 
@@ -432,9 +461,11 @@ End Class
                         End Enum
                         End Class");
         }
-        [Fact]
+
+        [Fact, WorkItem(1323, "https://github.com/dotnet/roslyn-analyzers/issues/1323")]
         public void CA1714_CA1717_Test_EnumWithNoFlags_irregularPluralWord_EndingWith_i()
         {
+            // Humanizer does not recognize 'trophi' as plural, but we skip words ending with 'i'
             VerifyCSharp(@" 
                             public class A 
                             { 
@@ -457,6 +488,54 @@ End Class
                             M3 = 2
                         End Enum
                         End Class");
+        }
+
+        [Fact, WorkItem(1323, "https://github.com/dotnet/roslyn-analyzers/issues/1323")]
+        public void CA1714_CA1717_Test_EnumWithNoFlags_NonAscii()
+        {
+            // We skip non-ASCII names.
+            VerifyCSharp(@" 
+                            public class A 
+                            { 
+                               [System.Flags] 
+                               public enum UnicodeNameΔ
+                               {
+                                    M1 = 0,
+                                    M2 = 1,
+                                    M3 = 2
+
+                                };
+                            }");
+
+            VerifyBasic(@"
+                       Public Class A
+                        < System.Flags > _
+                        Public Enum UnicodeNameΔ
+                            M1 = 0
+                            M2 = 1
+                            M3 = 2
+                        End Enum
+                        End Class");
+        }
+
+        private static DiagnosticResult GetCSharpPluralResultAt(int line, int column)
+        {
+            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
+        }
+
+        private static DiagnosticResult GetBasicPluralResultAt(int line, int column)
+        {
+            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
+        }
+
+        private static DiagnosticResult GetCSharpNoPluralResultAt(int line, int column)
+        {
+            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
+        }
+
+        private static DiagnosticResult GetBasicNoPluralResultAt(int line, int column)
+        {
+            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
         }
     }
 }

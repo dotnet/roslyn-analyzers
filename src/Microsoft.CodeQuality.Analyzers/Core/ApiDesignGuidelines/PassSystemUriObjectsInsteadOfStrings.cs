@@ -66,16 +66,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         protected abstract SyntaxNode GetInvocationExpression(SyntaxNode invocationNode);
 
-        private struct PerCompilationAnalyzer
+        private sealed class PerCompilationAnalyzer
         {
             // this type will be created per compilation 
-            // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
-#pragma warning disable RS1008 
             private readonly Compilation _compilation;
             private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _uri;
             private readonly Func<SyntaxNode, SyntaxNode> _expressionGetter;
-#pragma warning restore RS1008
 
             public PerCompilationAnalyzer(
                 Compilation compilation,
@@ -107,9 +104,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                if (!method.IsExternallyVisible())
+                if (!method.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
                 {
-                    // only apply to methods that are exposed outside
+                    // only apply to methods that are exposed outside by default
                     return;
                 }
 

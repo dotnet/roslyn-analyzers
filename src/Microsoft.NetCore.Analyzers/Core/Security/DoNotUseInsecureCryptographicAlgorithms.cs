@@ -42,35 +42,33 @@ namespace Microsoft.NetCore.Analyzers.Security
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 
-        internal static DiagnosticDescriptor DoNotUseBrokenCryptographyRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographyRuleId,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsTitle,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsDescription,
-                                                                                          CA5351HelpLink);
+        internal static DiagnosticDescriptor DoNotUseBrokenCryptographyRule =
+            new DiagnosticDescriptor(
+                DoNotUseBrokenCryptographyRuleId,
+                s_localizableDoNotUseBrokenAlgorithmsTitle,
+                s_localizableDoNotUseBrokenAlgorithmsMessage,
+                DiagnosticCategory.Security,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                description: s_localizableDoNotUseBrokenAlgorithmsDescription,
+                helpLinkUri: CA5351HelpLink,
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
-        internal static DiagnosticDescriptor DoNotUseWeakCryptographyRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographyRuleId,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsTitle,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsDescription,
-                                                                                          CA5350HelpLink);
+        internal static DiagnosticDescriptor DoNotUseWeakCryptographyRule =
+            new DiagnosticDescriptor(
+                DoNotUseWeakCryptographyRuleId,
+                s_localizableDoNotUseWeakAlgorithmsTitle,
+                s_localizableDoNotUseWeakAlgorithmsMessage,
+                DiagnosticCategory.Security,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                description: s_localizableDoNotUseWeakAlgorithmsDescription,
+                helpLinkUri: CA5350HelpLink,
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
         protected abstract SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseBrokenCryptographyRule, DoNotUseWeakCryptographyRule);
-
-        private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString message, LocalizableString description, string uri = null)
-        {
-            return new DiagnosticDescriptor(
-                ruleId,
-                title,
-                message,
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                description: description,
-                helpLinkUri: uri,
-                customTags: WellKnownDiagnosticTags.Telemetry);
-        }
 
         public override void Initialize(AnalysisContext analysisContext)
         {

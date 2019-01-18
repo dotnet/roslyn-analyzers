@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
             }
         }
         public PredicateValueKind GetPredicateKind(IOperation operation) => _predicateValueKindMap.TryGetValue(operation, out var valueKind) ? valueKind : PredicateValueKind.Unknown;
-        public TAnalysisResult MergedStateForUnhandledThrowOperationsOpt;
+        public TAnalysisResult MergedStateForUnhandledThrowOperationsOpt { get; }
         public ControlFlowGraph ControlFlowGraph { get; }
     }
 }

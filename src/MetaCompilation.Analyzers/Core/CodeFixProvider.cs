@@ -1748,10 +1748,10 @@ namespace MetaCompilation.Analyzers
         }
         #endregion
 
-        private class CodeFixHelper
+        private static class CodeFixHelper
         {
             // removes the provided statement from the method that it is in
-            protected internal static SyntaxNode RemoveStatement(StatementSyntax statement)
+            internal static SyntaxNode RemoveStatement(StatementSyntax statement)
             {
                 MethodDeclarationSyntax initializeDeclaration = statement.Ancestors().OfType<MethodDeclarationSyntax>().First();
                 MethodDeclarationSyntax newInitializeDeclaration = initializeDeclaration.RemoveNode(statement, 0);
@@ -1759,7 +1759,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // checks if the statement is a correct regsiter statement
-            protected internal static bool IsCorrectRegister(ExpressionStatementSyntax statement)
+            internal static bool IsCorrectRegister(ExpressionStatementSyntax statement)
             {
                 var expression = statement.Expression as InvocationExpressionSyntax;
                 if (expression == null)
@@ -1800,42 +1800,42 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the span variable
-            protected internal static string GetSpanName(MethodDeclarationSyntax methodDecl)
+            internal static string GetSpanName(MethodDeclarationSyntax methodDecl)
             {
                 string spanName = (methodDecl.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return spanName;
             }
 
             // gets the name of the start span variable
-            protected internal static string GetStartSpanName(MethodDeclarationSyntax methodDecl)
+            internal static string GetStartSpanName(MethodDeclarationSyntax methodDecl)
             {
                 string startIdentifier = (methodDecl.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return startIdentifier;
             }
 
             // gets the name of the end span variable
-            protected internal static string GetEndSpanName(MethodDeclarationSyntax methodDecl)
+            internal static string GetEndSpanName(MethodDeclarationSyntax methodDecl)
             {
                 string endIdentifier = (methodDecl.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return endIdentifier;
             }
 
             // gets the name of the open paren variable
-            protected internal static string GetOpenParenName(MethodDeclarationSyntax methodDecl)
+            internal static string GetOpenParenName(MethodDeclarationSyntax methodDecl)
             {
                 string openParenName = (methodDecl.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return openParenName;
             }
 
             // gets the name of the location variable
-            protected internal static string GetLocationName(MethodDeclarationSyntax methodDecl)
+            internal static string GetLocationName(MethodDeclarationSyntax methodDecl)
             {
                 string locationName = (methodDecl.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return locationName;
             }
 
             // adds a statement to the provided method
-            protected internal static SyntaxNode AddStatementToMethod(SyntaxGenerator generator, MethodDeclarationSyntax methodDecl, SyntaxNode statement)
+            internal static SyntaxNode AddStatementToMethod(SyntaxGenerator generator, MethodDeclarationSyntax methodDecl, SyntaxNode statement)
             {
                 var oldStatements = (SyntaxList<SyntaxNode>)methodDecl.Body.Statements;
                 SyntaxList<SyntaxNode> newStatements = oldStatements.Add(statement);
@@ -1844,21 +1844,21 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the diagnostic variable
-            protected internal static string GetDiagnosticName(MethodDeclarationSyntax methodDecl)
+            internal static string GetDiagnosticName(MethodDeclarationSyntax methodDecl)
             {
                 string diagnosticName = (methodDecl.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return diagnosticName;
             }
 
             // gets the context parameter of the analysis method
-            protected internal static string GetContextParameter(MethodDeclarationSyntax methodDecl)
+            internal static string GetContextParameter(MethodDeclarationSyntax methodDecl)
             {
                 string contextName = methodDecl.ParameterList.Parameters[0].Identifier.Text;
                 return contextName;
             }
 
             // builds a register statement
-            protected internal static SyntaxNode BuildRegister(SyntaxGenerator generator, string context, string register, ArgumentListSyntax argumentList)
+            internal static SyntaxNode BuildRegister(SyntaxGenerator generator, string context, string register, ArgumentListSyntax argumentList)
             {
                 SyntaxNode registerIdentifier = generator.IdentifierName(register);
                 SyntaxNode contextIdentifier = generator.IdentifierName(context);
@@ -1868,7 +1868,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the method registered, null if none found
-            protected internal static string GetRegisterMethodName(InvocationExpressionSyntax invocationExpression)
+            internal static string GetRegisterMethodName(InvocationExpressionSyntax invocationExpression)
             {
                 string methodName = null;
                 ArgumentListSyntax argList = invocationExpression.ArgumentList;
@@ -1892,7 +1892,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the analysis method
-            protected internal static string AnalysisMethodName(MethodDeclarationSyntax methodDeclaration)
+            internal static string AnalysisMethodName(MethodDeclarationSyntax methodDeclaration)
             {
                 var statements = methodDeclaration.Body.Statements.First() as ExpressionStatementSyntax;
                 var invocationExpression = statements.Expression as InvocationExpressionSyntax;
@@ -1902,14 +1902,14 @@ namespace MetaCompilation.Analyzers
             }
 
             // set method accessibility to accessibility
-            protected internal static SyntaxNode MethodAccessibility(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration, Accessibility accessibility)
+            internal static SyntaxNode MethodAccessibility(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration, Accessibility accessibility)
             {
                 SyntaxNode newMethod = generator.WithAccessibility(methodDeclaration, accessibility);
                 return newMethod;
             }
 
             // set method return type to returnType
-            protected internal static SyntaxNode MethodReturnType(MethodDeclarationSyntax methodDeclaration, string returnType)
+            internal static SyntaxNode MethodReturnType(MethodDeclarationSyntax methodDeclaration, string returnType)
             {
                 TypeSyntax voidType = SyntaxFactory.ParseTypeName(returnType).WithTrailingTrivia(SyntaxFactory.Whitespace(" "));
                 methodDeclaration = methodDeclaration.WithReturnType(voidType);
@@ -1917,7 +1917,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the if-statement variable
-            protected internal static string GetIfStatementName(BlockSyntax methodBlock)
+            internal static string GetIfStatementName(BlockSyntax methodBlock)
             {
                 var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
                 string variableName = firstStatement.Declaration.Variables[0].Identifier.ValueText;
@@ -1925,7 +1925,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the if-keyword variable
-            protected internal static string GetIfKeywordName(BlockSyntax methodBlock)
+            internal static string GetIfKeywordName(BlockSyntax methodBlock)
             {
                 var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
                 string variableName = secondStatement.Declaration.Variables[0].Identifier.ValueText;
@@ -1933,7 +1933,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the trailing trivia variable
-            protected internal static string GetTrailingTriviaName(BlockSyntax ifBlock)
+            internal static string GetTrailingTriviaName(BlockSyntax ifBlock)
             {
                 var trailingTriviaDeclaration = ifBlock.Statements[0] as LocalDeclarationStatementSyntax;
                 string variableName = trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText;
@@ -1941,7 +1941,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the first parameter of the method
-            protected internal static string GetFirstParameterName(MethodDeclarationSyntax methodDeclaration)
+            internal static string GetFirstParameterName(MethodDeclarationSyntax methodDeclaration)
             {
                 ParameterSyntax firstParameter = methodDeclaration.ParameterList.Parameters[0];
                 string name = firstParameter.Identifier.Text;
@@ -1949,7 +1949,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates an if-statement checking the count of trailing trivia
-            protected internal static SyntaxNode TriviaCountHelper(SyntaxGenerator generator, string name, SyntaxList<StatementSyntax> ifBlockStatements)
+            internal static SyntaxNode TriviaCountHelper(SyntaxGenerator generator, string name, SyntaxList<StatementSyntax> ifBlockStatements)
             {
                 SyntaxNode variableName = generator.IdentifierName(name);
                 SyntaxNode memberAccess = generator.MemberAccessExpression(variableName, "TrailingTrivia");
@@ -1962,7 +1962,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a statement casting context.Node to if-statement
-            protected internal static SyntaxNode IfHelper(SyntaxGenerator generator, string name)
+            internal static SyntaxNode IfHelper(SyntaxGenerator generator, string name)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
                 SyntaxNode expression = generator.IdentifierName(name);
@@ -1974,7 +1974,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the if-keyword statement
-            protected internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, BlockSyntax methodBlock)
+            internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, BlockSyntax methodBlock)
             {
                 string variableName = GetIfStatementName(methodBlock);
                 SyntaxNode identifierName = generator.IdentifierName(variableName);
@@ -1985,7 +1985,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the HasTrailingTrivia check
-            protected internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, BlockSyntax methodBlock, SyntaxList<StatementSyntax> ifBlockStatements)
+            internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, BlockSyntax methodBlock, SyntaxList<StatementSyntax> ifBlockStatements)
             {
                 string variableName = GetIfKeywordName(methodBlock);
                 SyntaxNode identifierName = generator.IdentifierName(variableName);
@@ -1996,7 +1996,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the first trailing trivia variable
-            protected internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
+            internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
             {
                 MethodDeclarationSyntax methodDecl = declaration.Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                 var methodBlock = methodDecl.Body as BlockSyntax;
@@ -2014,7 +2014,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the trivia kind check
-            protected internal static SyntaxNode TriviaKindCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+            internal static SyntaxNode TriviaKindCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
             {
                 var ifBlock = ifStatement.Statement as BlockSyntax;
                 string variableName = GetTrailingTriviaName(ifBlock);
@@ -2033,7 +2033,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the whitespace check
-            protected internal static SyntaxNode WhitespaceCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+            internal static SyntaxNode WhitespaceCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
             {
                 var ifBlock = ifStatement.Parent as BlockSyntax;
                 string variableName = GetTrailingTriviaName(ifBlock);
@@ -2050,7 +2050,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // builds an Initialize method
-            protected internal static SyntaxNode BuildInitialize(SyntaxGenerator generator, INamedTypeSymbol notImplementedException, SyntaxList<StatementSyntax> statements, string name)
+            internal static SyntaxNode BuildInitialize(SyntaxGenerator generator, INamedTypeSymbol notImplementedException, SyntaxList<StatementSyntax> statements, string name)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("AnalysisContext");
                 SyntaxNode[] parameters = new[] { generator.ParameterDeclaration(name, type) };
@@ -2065,7 +2065,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a new id with the provided name as a literal expression
-            protected internal static SyntaxNode NewIdCreator(SyntaxGenerator generator, string fieldName, string idName)
+            internal static SyntaxNode NewIdCreator(SyntaxGenerator generator, string fieldName, string idName)
             {
                 SyntaxNode initializer = generator.LiteralExpression(idName);
                 SyntaxNode newField = generator.FieldDeclaration(fieldName, generator.TypeExpression(SpecialType.System_String), Accessibility.Public, DeclarationModifiers.Const, initializer);
@@ -2074,7 +2074,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable creating a location for the diagnostic
-            protected internal static SyntaxNode CreateLocation(SyntaxGenerator generator, string ifStatementIdentifier, string spanIdentifier)
+            internal static SyntaxNode CreateLocation(SyntaxGenerator generator, string ifStatementIdentifier, string spanIdentifier)
             {
                 string name = "diagnosticLocation";
 
@@ -2101,7 +2101,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable creating a span for the diagnostic
-            protected internal static SyntaxNode CreateSpan(SyntaxGenerator generator, string startIdentifier, string endIdentifier)
+            internal static SyntaxNode CreateSpan(SyntaxGenerator generator, string startIdentifier, string endIdentifier)
             {
                 string name = "diagnosticSpan";
 
@@ -2124,7 +2124,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable of the form var variableName = identifierString.SpanStart;
-            protected internal static SyntaxNode CreateEndOrStartSpan(SyntaxGenerator generator, string identifierString, string variableName)
+            internal static SyntaxNode CreateEndOrStartSpan(SyntaxGenerator generator, string identifierString, string variableName)
             {
                 SyntaxNode identifier = generator.IdentifierName(identifierString);
                 SyntaxNode initializer = generator.MemberAccessExpression(identifier, "SpanStart");
@@ -2134,7 +2134,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable of the form var openParen = expressionString.OpenParentToken
-            protected internal static SyntaxNode CreateOpenParen(SyntaxGenerator generator, string expressionString)
+            internal static SyntaxNode CreateOpenParen(SyntaxGenerator generator, string expressionString)
             {
                 string name = "openParen";
                 SyntaxNode expression = generator.IdentifierName(expressionString);
@@ -2145,7 +2145,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable that creates a diagnostic
-            protected internal static SyntaxNode CreateDiagnostic(SyntaxGenerator generator, string locationName, string ruleName)
+            internal static SyntaxNode CreateDiagnostic(SyntaxGenerator generator, string locationName, string ruleName)
             {
                 SyntaxNode identifier = generator.IdentifierName("Diagnostic");
                 SyntaxNode expression = generator.MemberAccessExpression(identifier, "Create");
@@ -2169,7 +2169,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the first rule, or null if none is found
-            protected internal static string GetFirstRuleName(ClassDeclarationSyntax declaration)
+            internal static string GetFirstRuleName(ClassDeclarationSyntax declaration)
             {
                 SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
                 FieldDeclarationSyntax rule = null;
@@ -2195,7 +2195,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the analysis method
-            protected internal static MethodDeclarationSyntax GetAnalysis(ClassDeclarationSyntax declaration)
+            internal static MethodDeclarationSyntax GetAnalysis(ClassDeclarationSyntax declaration)
             {
                 SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
                 MethodDeclarationSyntax analysisMethod = null;
@@ -2213,7 +2213,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // check if the member is the SyntaxNodeAnalysis method, returns the MethodDeclarationSyntax if it is, null if not
-            protected internal static MethodDeclarationSyntax IsSyntaxNodeAnalysisMethod(MemberDeclarationSyntax member)
+            internal static MethodDeclarationSyntax IsSyntaxNodeAnalysisMethod(MemberDeclarationSyntax member)
             {
                 MethodDeclarationSyntax analysisMethod = member as MethodDeclarationSyntax;
                 if (analysisMethod == null)
@@ -2248,7 +2248,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a statement that reports a diagnostic
-            protected internal static SyntaxNode CreateDiagnosticReport(SyntaxGenerator generator, string argumentName, string contextName)
+            internal static SyntaxNode CreateDiagnosticReport(SyntaxGenerator generator, string argumentName, string contextName)
             {
                 SyntaxNode argumentExpression = generator.IdentifierName(argumentName);
                 SyntaxNode argument = generator.Argument(argumentExpression);
@@ -2263,7 +2263,7 @@ namespace MetaCompilation.Analyzers
 
             // creates a variable holding a DiagnosticDescriptor
             // uses SyntaxFactory for formatting
-            protected internal static FieldDeclarationSyntax CreateEmptyRule(SyntaxGenerator generator, string idName = "", string titleDefault = "Enter a title for this diagnostic", string messageDefault = "Enter a message to be displayed with this diagnostic",
+            internal static FieldDeclarationSyntax CreateEmptyRule(SyntaxGenerator generator, string idName = "", string titleDefault = "Enter a title for this diagnostic", string messageDefault = "Enter a message to be displayed with this diagnostic",
                                                                     string categoryDefault = "Enter a category for this diagnostic (e.g. Formatting)", ExpressionSyntax severityDefault = null, ExpressionSyntax enabledDefault = null)
             {
                 if (severityDefault == null)
@@ -2332,7 +2332,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the SupportedDiagnostics property with a get accessor with a not implemented exception
-            protected internal static PropertyDeclarationSyntax CreateSupportedDiagnostics(SyntaxGenerator generator, INamedTypeSymbol notImplementedException)
+            internal static PropertyDeclarationSyntax CreateSupportedDiagnostics(SyntaxGenerator generator, INamedTypeSymbol notImplementedException)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("ImmutableArray<DiagnosticDescriptor>");
                 DeclarationModifiers modifiers = DeclarationModifiers.Override;
@@ -2349,7 +2349,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a SyntaxKind.IfStatement argument
-            protected internal static ArgumentSyntax CreateSyntaxKindIfStatement(SyntaxGenerator generator)
+            internal static ArgumentSyntax CreateSyntaxKindIfStatement(SyntaxGenerator generator)
             {
                 SyntaxNode syntaxKind = generator.IdentifierName("SyntaxKind");
                 SyntaxNode expression = generator.MemberAccessExpression(syntaxKind, "IfStatement");
@@ -2359,7 +2359,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a correct register statement
-            protected internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName)
+            internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName)
             {
                 var argument1 = generator.Argument(generator.IdentifierName(methodName)) as ArgumentSyntax;
                 var argument2 = generator.Argument(generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement")) as ArgumentSyntax;
@@ -2374,7 +2374,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the SyntaxNode analysis method
-            protected internal static SyntaxNode CreateAnalysisMethod(SyntaxGenerator generator, string methodName, SemanticModel semanticModel)
+            internal static SyntaxNode CreateAnalysisMethod(SyntaxGenerator generator, string methodName, SemanticModel semanticModel)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
                 SyntaxNode[] parameters = new[] { generator.ParameterDeclaration("context", type) };
@@ -2387,7 +2387,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of an existing analysis method, or null if none is found
-            protected internal static string GetExistingAnalysisMethodName(ClassDeclarationSyntax classDeclaration)
+            internal static string GetExistingAnalysisMethodName(ClassDeclarationSyntax classDeclaration)
             {
                 IEnumerable<MethodDeclarationSyntax> methods = classDeclaration.Members.OfType<MethodDeclarationSyntax>();
 
@@ -2411,7 +2411,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a method keeping everything except for the parameters, and inserting a parameter of type SyntaxNodeAnalysisContext
-            protected internal static SyntaxNode CreateMethodWithContextParameter(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration)
+            internal static SyntaxNode CreateMethodWithContextParameter(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
                 SyntaxNode[] parameters = new[] { generator.ParameterDeclaration("context", type) };
@@ -2423,7 +2423,7 @@ namespace MetaCompilation.Analyzers
                 return newDeclaration;
             }
 
-            protected internal static List<string> GetAllRuleNames(ClassDeclarationSyntax declaration)
+            internal static List<string> GetAllRuleNames(ClassDeclarationSyntax declaration)
             {
                 List<string> ruleNames = new List<string>();
                 IEnumerable<FieldDeclarationSyntax> fieldMembers = declaration.Members.OfType<FieldDeclarationSyntax>();
@@ -2438,7 +2438,7 @@ namespace MetaCompilation.Analyzers
                 return ruleNames;
             }
 
-            protected internal static SyntaxList<SyntaxNode> CreateRuleList(Document document, List<string> ruleNames)
+            internal static SyntaxList<SyntaxNode> CreateRuleList(Document document, List<string> ruleNames)
             {
                 string argumentListString = "";
                 foreach (string ruleName in ruleNames)

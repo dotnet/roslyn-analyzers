@@ -122,8 +122,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     context.RegisterSymbolAction(symbolContext =>
                     {
+                        // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                        // will always have identical configured visibility.
                         var namedType = (INamedTypeSymbol)symbolContext.Symbol;
-                        if (namedType.IsExternallyVisible() &&
+                        if (namedType.MatchesConfiguredVisibility(symbolContext.Options, RuleForDelegates, symbolContext.CancellationToken) &&
                             IsDelegateTypeWithInvokeMethod(namedType) &&
                             IsValidNonGenericEventHandler(namedType.DelegateInvokeMethod))
                         {
@@ -142,8 +144,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         // NOTE: Legacy FxCop reports CA1009 for delegate type that handles a public or protected event and does not have the correct signature, return type, or parameter names.
                         //       which recommends fixing the signature to use a valid non-generic event handler.
                         //       We do not report CA1009, but instead report CA1003 and recommend using a generic event handler.
+                        // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                        // will always have identical configured visibility.
                         var eventSymbol = (IEventSymbol)symbolContext.Symbol;
-                        if (eventSymbol.IsExternallyVisible() &&
+                        if (eventSymbol.MatchesConfiguredVisibility(symbolContext.Options, RuleForEvents, symbolContext.CancellationToken) &&
                             !eventSymbol.IsOverride &&
                             !eventSymbol.IsImplementationOfAnyInterfaceMember() &&
                             !ContainingTypeHasComSourceInterfacesAttribute(eventSymbol) &&

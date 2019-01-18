@@ -162,7 +162,7 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
                 cfg, OperationVisitor.ValueDomain.UnknownOrMayBeValue);
         }
 
-        public static TAnalysisData Flow(DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor, BasicBlock block, TAnalysisData data)
+        protected static TAnalysisData Flow(DataFlowOperationVisitor<TAnalysisData, TAbstractAnalysisValue> operationVisitor, BasicBlock block, TAnalysisData data)
         {
             if (block.Kind == BasicBlockKind.Entry)
             {

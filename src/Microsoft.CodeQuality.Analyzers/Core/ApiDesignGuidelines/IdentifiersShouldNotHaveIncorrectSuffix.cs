@@ -141,7 +141,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
                             var namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                            if (!namedTypeSymbol.IsExternallyVisible())
+                            
+                            // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                            // will always have identical configured visibility.
+                            if (!namedTypeSymbol.MatchesConfiguredVisibility(symbolAnalysisContext.Options, TypeNoAlternateRule, symbolAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -201,7 +204,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 (SymbolAnalysisContext context) =>
                 {
                     var memberSymbol = context.Symbol;
-                    if (!memberSymbol.IsExternallyVisible())
+
+                    // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                    // will always have identical configured visibility.
+                    if (!memberSymbol.MatchesConfiguredVisibility(context.Options, TypeNoAlternateRule, context.CancellationToken))
                     {
                         return;
                     }

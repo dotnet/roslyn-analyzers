@@ -1,7 +1,5 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-Imports System.Collections.Generic
-Imports System.Linq
 Imports Microsoft.NetFramework.Analyzers.Helpers
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.VisualBasic
@@ -12,13 +10,7 @@ Namespace Microsoft.NetFramework.VisualBasic.Analyzers.Helpers
     Public NotInheritable Class BasicSyntaxNodeHelper
         Inherits SyntaxNodeHelper
 
-        Private Shared s_defaultInstance As BasicSyntaxNodeHelper = New BasicSyntaxNodeHelper()
-
-        Public Shared ReadOnly Property DefaultInstance As BasicSyntaxNodeHelper
-            Get
-                Return s_defaultInstance
-            End Get
-        End Property
+        Public Shared ReadOnly Property DefaultInstance As BasicSyntaxNodeHelper = New BasicSyntaxNodeHelper()
 
         Private Sub New()
         End Sub

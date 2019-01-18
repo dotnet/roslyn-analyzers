@@ -352,6 +352,252 @@ Class B
 End Class");
         }
 
+        [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
+        public void BaseDisposeAsyncCall_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class A : IDisposable
+{
+    public void Dispose() => DisposeAsync();
+
+    public virtual Task DisposeAsync()
+    {
+        return Task.CompletedTask;
+    }
+}
+
+class B : A
+{
+    public override Task DisposeAsync()
+    {
+        return base.DisposeAsync();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeAsync()
+    End Sub
+
+    Public Overridable Function DisposeAsync() As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+
+Class B
+    Inherits A
+
+    Public Overrides Function DisposeAsync() As Task
+        Return MyBase.DisposeAsync()
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
+        public void NoBaseDisposeAsyncCall_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class A : IDisposable
+{
+    public void Dispose() => DisposeAsync();
+
+    public virtual Task DisposeAsync()
+    {
+        return Task.CompletedTask;
+    }
+}
+
+class B : A
+{
+    public override Task DisposeAsync()
+    {
+        return Task.CompletedTask;
+    }
+}
+",
+            // Test0.cs(17,26): warning CA2215: Ensure that method 'Task B.DisposeAsync()' calls 'base.DisposeAsync()' in all possible control flow paths.
+            GetCSharpResultAt(17, 26, "Task B.DisposeAsync()", "base.DisposeAsync()"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeAsync()
+    End Sub
+
+    Public Overridable Function DisposeAsync() As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+
+Class B
+    Inherits A
+
+    Public Overrides Function DisposeAsync() As Task
+        Return Task.CompletedTask
+    End Function
+End Class",
+            // Test0.vb(20,31): warning CA2215: Ensure that method 'Function B.DisposeAsync() As Task' calls 'MyBase.DisposeAsync()' in all possible control flow paths.
+            GetBasicResultAt(20, 31, "Function B.DisposeAsync() As Task", "MyBase.DisposeAsync()"));
+        }
+
+        [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
+        public void BaseDisposeCoreAsyncCall_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+abstract class A : IDisposable
+{
+    public void Dispose() => DisposeAsync();
+
+    public Task DisposeAsync() => DisposeCoreAsync(true);
+
+    protected abstract Task DisposeCoreAsync(bool initialized);
+}
+
+class B : A
+{
+    protected override Task DisposeCoreAsync(bool initialized)
+    {
+        return Task.CompletedTask;
+    }
+}
+
+class C : B
+{
+    protected override Task DisposeCoreAsync(bool initialized)
+    {
+        return base.DisposeCoreAsync(initialized);
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+MustInherit Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeAsync()
+    End Sub
+
+    Public Function DisposeAsync() As Task
+        Return DisposeCoreAsync(True)
+    End Function
+
+    Protected MustOverride Function DisposeCoreAsync(initialized As Boolean) As Task
+End Class
+
+Class B
+    Inherits A
+
+    Protected Overrides Function DisposeCoreAsync(initialized As Boolean) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+
+Class C
+    Inherits B
+
+    Protected Overrides Function DisposeCoreAsync(initialized As Boolean) As Task
+        Return MyBase.DisposeCoreAsync(initialized)
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
+        public void NoBaseDisposeCoreAsyncCall_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+abstract class A : IDisposable
+{
+    public void Dispose() => DisposeAsync();
+
+    public Task DisposeAsync() => DisposeCoreAsync(true);
+
+    protected abstract Task DisposeCoreAsync(bool initialized);
+}
+
+class B : A
+{
+    protected override Task DisposeCoreAsync(bool initialized)
+    {
+        return Task.CompletedTask;
+    }
+}
+
+class C : B
+{
+    protected override Task DisposeCoreAsync(bool initialized)
+    {
+        return Task.CompletedTask;
+    }
+}
+",
+            // Test0.cs(24,29): warning CA2215: Ensure that method 'Task C.DisposeCoreAsync(bool initialized)' calls 'base.DisposeCoreAsync(bool)' in all possible control flow paths.
+            GetCSharpResultAt(24, 29, "Task C.DisposeCoreAsync(bool initialized)", "base.DisposeCoreAsync(bool)"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+MustInherit Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeAsync()
+    End Sub
+
+    Public Function DisposeAsync() As Task
+        Return DisposeCoreAsync(True)
+    End Function
+
+    Protected MustOverride Function DisposeCoreAsync(initialized As Boolean) As Task
+End Class
+
+Class B
+    Inherits A
+
+    Protected Overrides Function DisposeCoreAsync(initialized As Boolean) As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+
+Class C
+    Inherits B
+
+    Protected Overrides Function DisposeCoreAsync(initialized As Boolean) As Task
+        Return Task.CompletedTask
+    End Function
+End Class",
+            // Test0.vb(30,34): warning CA2215: Ensure that method 'Function C.DisposeCoreAsync(initialized As Boolean) As Task' calls 'MyBase.DisposeCoreAsync(Boolean)' in all possible control flow paths.
+            GetBasicResultAt(30, 34, "Function C.DisposeCoreAsync(initialized As Boolean) As Task", "MyBase.DisposeCoreAsync(Boolean)"));
+        }
+
         [Fact]
         public void AbstractBaseDisposeMethod_NoBaseDisposeCall_NoDiagnostic()
         {

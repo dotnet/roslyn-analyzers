@@ -61,7 +61,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var x509Chain = WellKnownTypes.X509Chain(compilation);
                     var sslPolicyErrors = WellKnownTypes.SslPolicyErrors(compilation);
 
-                    if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null)
+                    if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null
+                        || obj == null
+                        || x509Certificate == null
+                        || x509Chain == null
+                        || sslPolicyErrors == null)
                     {
                         return;
                     }
@@ -79,14 +83,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 switch (delegateCreationOperation.Target.Kind)
                                 {
                                     case OperationKind.AnonymousFunction:
-                                        var delegateTargetFunction = (IAnonymousFunctionOperation)delegateCreationOperation.Target;
-
-                                        if (delegateTargetFunction == null)
-                                        {
-                                            return;
-                                        }
-                                        
-                                        if (!IsCertificateValidationFunction(delegateTargetFunction.Symbol, obj, x509Certificate, x509Chain, sslPolicyErrors))
+                                        if (!IsCertificateValidationFunction(
+                                            (delegateCreationOperation.Target as IAnonymousFunctionOperation).Symbol,
+                                            obj,
+                                            x509Certificate,
+                                            x509Chain,
+                                            sslPolicyErrors))
                                         {
                                             return;
                                         }
@@ -96,15 +98,14 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                     case OperationKind.MethodReference:
                                         var methodReferenceOperation = (IMethodReferenceOperation)delegateCreationOperation.Target;
-
-                                        if (methodReferenceOperation == null)
-                                        {
-                                            return;
-                                        }
-
                                         var methodSymbol = methodReferenceOperation.Method;
                                         
-                                        if (!IsCertificateValidationFunction(methodSymbol, obj, x509Certificate, x509Chain, sslPolicyErrors))
+                                        if (!IsCertificateValidationFunction(
+                                            methodSymbol,
+                                            obj,
+                                            x509Certificate,
+                                            x509Chain,
+                                            sslPolicyErrors))
                                         {
                                             return;
                                         }
@@ -117,7 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         }
 
                                         // TODO(LINCHE): This is an issue tracked by #2009. We filter extraneous based on IsImplicit.
-                                        var targetOperations = GetFilteredOperations(ImmutableArray.ToImmutableArray(blockOperation.Descendants()));
+                                        var targetOperations = ImmutableArray.ToImmutableArray(blockOperation.Descendants()).WithoutFullyImplicitOperations();
                                         alwaysReturnTrue = AlwaysReturnTrue(targetOperations);
                                         break;
                                 }
@@ -158,9 +159,6 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             return true;
         }
-
-        private static IEnumerable<IOperation> GetFilteredOperations(ImmutableArray<IOperation> blockOperations)
-            => blockOperations.GetOperations().Where(o => !o.IsImplicit);
 
         /// <summary>
         /// Find every IReturnOperation in the method and get the value of return statement to determine if the method always return true.

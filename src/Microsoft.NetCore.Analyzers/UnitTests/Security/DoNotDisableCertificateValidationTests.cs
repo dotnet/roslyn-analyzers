@@ -133,6 +133,30 @@ End Namespace",
         }
 
         [Fact]
+        public void TestDelegateCreationNormalMethodWithLambdaDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public bool AcceptAllCertifications(
+          object sender,
+          X509Certificate certificate,
+          X509Chain chain,
+          SslPolicyErrors sslPolicyErrors) => true;
+
+    public void TestMethod()
+    {
+        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(AcceptAllCertifications);
+    }
+}",
+            GetCSharpResultAt(16, 67, DoNotDisableCertificateValidation.Rule));
+        }
+
+        [Fact]
         public void TestDelegatedMethodFromDifferentAssemblyNoDiagnostic()
         {
             string source1 = @"

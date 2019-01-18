@@ -231,4 +231,10 @@
   <data name="AvoidDuplicateElementInitializationTitle" xml:space="preserve">
     <value>Do not duplicate indexed element initializations</value>
   </data>
+  <data name="MarkMembersAsStaticCodeFix" xml:space="preserve">
+    <value>Make static</value>
+  </data>
+  <data name="MarkMembersAsStaticCodeFix_WarningAnnotation" xml:space="preserve">
+    <value>Some references to '{0}' could not be fixed, they should be fixed manually.</value>
+  </data>
 </root>

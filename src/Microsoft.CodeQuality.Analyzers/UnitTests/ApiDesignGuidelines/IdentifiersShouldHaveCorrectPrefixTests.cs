@@ -217,8 +217,9 @@ public class C2
 ");
         }
 
+        [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
         [Fact]
-        public void TestTypeParameterNamesCSharp_NoDiagnosticCases()
+        public void TestTypeParameterNamesCSharp_SingleLetterCases_Default()
         {
             VerifyCSharp(@"
 using System;
@@ -244,7 +245,89 @@ public class Class4<T>
 public class Class6<TTypeParameter>
 {
 }
-");
+",
+            GetCA1715CSharpResultAt(4, 25, CA1715TypeParameterMessage, "V"),
+            GetCA1715CSharpResultAt(8, 31, CA1715TypeParameterMessage, "V"),
+            GetCA1715CSharpResultAt(10, 24, CA1715TypeParameterMessage, "V"),
+            GetCA1715CSharpResultAt(16, 24, CA1715TypeParameterMessage, "K"),
+            GetCA1715CSharpResultAt(16, 27, CA1715TypeParameterMessage, "V"));
+        }
+
+        [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
+        [Theory]
+        [InlineData(@"")]
+        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.CA1715.allow_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = true
+                      dotnet_code_quality.CA1715.allow_single_letter_type_parameters = false")]
+        public void TestTypeParameterNamesCSharp_SingleLetterCases_EditorConfig_Diagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+
+public class IInterface<V>
+{
+}
+
+public delegate void Callback<V>();
+
+public class Class2<T, V>
+{
+}
+
+public class Class4<T>
+{
+    public void Method<K, V>(K key, V value)
+    {
+        Console.WriteLine(key.ToString() + value.ToString());
+    }
+}
+
+public class Class6<TTypeParameter>
+{
+}
+",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            GetCA1715CSharpResultAt(4, 25, CA1715TypeParameterMessage, "V"),
+            GetCA1715CSharpResultAt(8, 31, CA1715TypeParameterMessage, "V"),
+            GetCA1715CSharpResultAt(10, 24, CA1715TypeParameterMessage, "V"),
+            GetCA1715CSharpResultAt(16, 24, CA1715TypeParameterMessage, "K"),
+            GetCA1715CSharpResultAt(16, 27, CA1715TypeParameterMessage, "V"));
+        }
+
+        [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
+        [Theory]
+        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = false
+                      dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true")]
+        public void TestTypeParameterNamesCSharp_SingleLetterCases_EditorConfig_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+
+public class IInterface<V>
+{
+}
+
+public delegate void Callback<V>();
+
+public class Class2<T, V>
+{
+}
+
+public class Class4<T>
+{
+    public void Method<K, V>(K key, V value)
+    {
+        Console.WriteLine(key.ToString() + value.ToString());
+    }
+}
+
+public class Class6<TTypeParameter>
+{
+}
+", GetEditorConfigAdditionalFile(editorConfigText));
         }
 
         [Fact]
@@ -413,8 +496,9 @@ End Class
 ");
         }
 
+        [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
         [Fact]
-        public void TestTypeParameterNamesBasic_NoDiagnosticCases()
+        public void TestTypeParameterNamesBasic_SingleLetterCases_Default()
         {
             VerifyBasic(@"
 Imports System
@@ -435,7 +519,79 @@ End Class
 
 Public Class Class6(Of TTypeParameter)
 End Class
-");
+",
+            GetCA1715BasicResultAt(4, 28, CA1715TypeParameterMessage, "V"),
+            GetCA1715BasicResultAt(7, 33, CA1715TypeParameterMessage, "V"),
+            GetCA1715BasicResultAt(9, 27, CA1715TypeParameterMessage, "V"),
+            GetCA1715BasicResultAt(13, 26, CA1715TypeParameterMessage, "K"),
+            GetCA1715BasicResultAt(13, 29, CA1715TypeParameterMessage, "V"));
+        }
+
+        [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
+        [Theory]
+        [InlineData(@"")]
+        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.CA1715.allow_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = true
+                      dotnet_code_quality.CA1715.allow_single_letter_type_parameters = false")]
+        public void TestTypeParameterNamesBasic_SingleLetterCases_EditorConfig_Diagnostic(string editorConfigText)
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class IInterface(Of V)
+End Class
+
+Public Delegate Sub Callback(Of V)()
+
+Public Class Class2(Of T, V)
+End Class
+
+Public Class Class4(Of T)
+    Public Sub Method(Of K, V)(key As K, value As V)
+        Console.WriteLine(key.ToString() + value.ToString())
+    End Sub
+End Class
+
+Public Class Class6(Of TTypeParameter)
+End Class
+",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            GetCA1715BasicResultAt(4, 28, CA1715TypeParameterMessage, "V"),
+            GetCA1715BasicResultAt(7, 33, CA1715TypeParameterMessage, "V"),
+            GetCA1715BasicResultAt(9, 27, CA1715TypeParameterMessage, "V"),
+            GetCA1715BasicResultAt(13, 26, CA1715TypeParameterMessage, "K"),
+            GetCA1715BasicResultAt(13, 29, CA1715TypeParameterMessage, "V"));
+        }
+
+        [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
+        [Theory]
+        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = false
+                      dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true")]
+        public void TestTypeParameterNamesBasic_SingleLetterCases_EditorConfig_NoDiagnostic(string editorConfigText)
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class IInterface(Of V)
+End Class
+
+Public Delegate Sub Callback(Of V)()
+
+Public Class Class2(Of T, V)
+End Class
+
+Public Class Class4(Of T)
+    Public Sub Method(Of K, V)(key As K, value As V)
+        Console.WriteLine(key.ToString() + value.ToString())
+    End Sub
+End Class
+
+Public Class Class6(Of TTypeParameter)
+End Class
+", GetEditorConfigAdditionalFile(editorConfigText));
         }
 
         internal static readonly string CA1715InterfaceMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageInterface;

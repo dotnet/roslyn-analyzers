@@ -2,6 +2,16 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftQualityGuidelinesAnalyzersResources.resx">
     <body>
+      <trans-unit id="MarkMembersAsStaticCodeFix">
+        <source>Make static</source>
+        <target state="new">Make static</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkMembersAsStaticCodeFix_WarningAnnotation">
+        <source>Some references to '{0}' could not be fixed, they should be fixed manually.</source>
+        <target state="new">Some references to '{0}' could not be fixed, they should be fixed manually.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">
         <source>Use literals where appropriate</source>
         <target state="translated">適當時機使用常值</target>

@@ -109,7 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             return;
                                         }
 
-                                        var blockOperation = methodSymbol.GetTopmostOperationBlock(compilationStartAnalysisContext.Compilation);
+                                        var blockOperation = methodSymbol.GetTopmostOperationBlock(compilation);
 
                                         if (blockOperation == null)
                                         {

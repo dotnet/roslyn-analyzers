@@ -49,7 +49,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             var methodSymbol = (IMethodSymbol)analysisContext.Symbol;
 
-            if (!methodSymbol.IsExternallyVisible() ||
+            if (!methodSymbol.MatchesConfiguredVisibility(analysisContext.Options, Rule, analysisContext.CancellationToken) ||
                 !(methodSymbol.CanBeReferencedByName || methodSymbol.IsImplementationOfAnyExplicitInterfaceMember())
                 || !methodSymbol.Locations.Any(x => x.IsInSource)
                 || string.IsNullOrWhiteSpace(methodSymbol.Name))

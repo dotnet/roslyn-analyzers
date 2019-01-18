@@ -95,18 +95,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         continue;
                     }
 
-                    CheckArgument(owningSymbol, creation.Type, argument.Parameter, value, context);
+                    CheckArgument(owningSymbol, creation, argument.Parameter, value, context);
                 }
             }
         }
         private static void CheckArgument(
             ISymbol targetSymbol,
-            ITypeSymbol exceptionType,
+            IObjectCreationOperation creation,
             IParameterSymbol parameter,
             string stringArgument,
             OperationAnalysisContext context)
         {
-            bool matchesParameter = MatchesParameter(targetSymbol, stringArgument);
+            bool matchesParameter = MatchesParameter(targetSymbol, creation, stringArgument);
             LocalizableString format = null;
 
             if (IsMessage(parameter) && matchesParameter)
@@ -120,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (format != null)
             {
-                ReportDiagnostic(context, format, targetSymbol.Name, stringArgument, parameter.Name, exceptionType.Name);
+                ReportDiagnostic(context, format, targetSymbol.Name, stringArgument, parameter.Name, creation.Type.Name);
             }
         }
 
@@ -164,7 +164,40 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return false;
         }
 
-        private static bool MatchesParameter(ISymbol symbol, string stringArgumentValue)
+        private static bool MatchesParameter(ISymbol symbol, IObjectCreationOperation creation, string stringArgumentValue)
+        {
+            if (MatchesParameterCore(symbol, stringArgumentValue))
+            {
+                return true;
+            }
+
+            var operation = creation.Parent;
+            while (operation != null)
+            {
+                symbol = null;
+                switch (operation.Kind)
+                {
+                    case OperationKind.LocalFunction:
+                        symbol = ((ILocalFunctionOperation)operation).Symbol;
+                        break;
+
+                    case OperationKind.AnonymousFunction:
+                        symbol = ((IAnonymousFunctionOperation)operation).Symbol;
+                        break;
+                }
+
+                if (symbol != null && MatchesParameterCore(symbol, stringArgumentValue))
+                {
+                    return true;
+                }
+
+                operation = operation.Parent;
+            }
+
+            return false;
+        }
+
+        private static bool MatchesParameterCore(ISymbol symbol, string stringArgumentValue)
         {
             foreach (IParameterSymbol parameter in symbol.GetParameters())
             {

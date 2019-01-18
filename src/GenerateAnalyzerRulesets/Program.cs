@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace GenerateAnalyzerRulesets
 {
-    class Program
+    public static class Program
     {
         public static int Main(string[] args)
         {
@@ -256,7 +256,7 @@ namespace GenerateAnalyzerRulesets
 
                 var fileContents =
 $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-  {getCodeAnalysisTreatWarningsNotAsErrors()}{getRulesetOverrides()}
+  {getEditorConfigAsAdditionalFile()}{getCodeAnalysisTreatWarningsNotAsErrors()}{getRulesetOverrides()}
 </Project>";
                 var directory = Directory.CreateDirectory(propsFileDir);
                 var fileWithPath = Path.Combine(directory.FullName, propsFileName);
@@ -319,6 +319,19 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
                 }
 
                 return string.Empty;
+            }
+
+            string getEditorConfigAsAdditionalFile()
+            {
+                return $@"
+  <!-- 
+    This item group adds any .editorconfig file present at the project root directory
+    as an additional file.
+  -->  
+  <ItemGroup Condition=""'$(SkipDefaultEditorConfigAsAdditionalFile)' != 'true' And Exists('$(MSBuildProjectDirectory)\.editorconfig')"" >
+    <AdditionalFiles Include=""$(MSBuildProjectDirectory)\.editorconfig"" />
+  </ItemGroup>
+";
             }
         }
 

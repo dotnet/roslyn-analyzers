@@ -235,11 +235,12 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow.DisposeAnalysis
             public override DisposeAbstractValue VisitInvocation_NonLambdaOrDelegateOrLocalFunction(IInvocationOperation operation, object argument)
             {
                 var value = base.VisitInvocation_NonLambdaOrDelegateOrLocalFunction(operation, argument);
-                var disposeMethodKind = operation.TargetMethod.GetDisposeMethodKind(WellKnownTypeProvider.IDisposable);
+                var disposeMethodKind = operation.TargetMethod.GetDisposeMethodKind(WellKnownTypeProvider.IDisposable, WellKnownTypeProvider.Task);
                 switch (disposeMethodKind)
                 {
                     case DisposeMethodKind.Dispose:
                     case DisposeMethodKind.DisposeBool:
+                    case DisposeMethodKind.DisposeAsync:
                         HandleDisposingOperation(operation, operation.Instance);
                         break;
 

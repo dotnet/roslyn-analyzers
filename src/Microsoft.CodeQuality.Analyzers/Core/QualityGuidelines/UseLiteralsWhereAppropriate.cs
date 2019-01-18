@@ -56,10 +56,13 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 var fieldInitializer = saContext.Operation as IFieldInitializerOperation;
 
                 // Diagnostics are reported on the last initialized field to retain the previous FxCop behavior
+                // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                // will always have identical configured visibility.
                 var lastField = fieldInitializer?.InitializedFields.LastOrDefault();
                 var fieldInitializerValue = fieldInitializer?.Value;
                 if (fieldInitializerValue == null || lastField.IsConst ||
-                    lastField.IsExternallyVisible() || !lastField.IsStatic ||
+                    !lastField.MatchesConfiguredVisibility(saContext.Options, DefaultRule, saContext.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.Internal | SymbolVisibilityGroup.Private) ||
+                    !lastField.IsStatic ||
                     !lastField.IsReadOnly || !fieldInitializerValue.ConstantValue.HasValue)
                 {
                     return;

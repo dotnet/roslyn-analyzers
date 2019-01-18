@@ -749,6 +749,64 @@ Class Test
 End Class");
         }
 
+        [Fact, WorkItem(1796, "https://github.com/dotnet/roslyn-analyzers/issues/1796")]
+        public void LocalWithDisposableAssignment_DisposeAsyncCall_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class A : IDisposable
+{
+    public void Dispose() => DisposeAsync();
+
+    public Task DisposeAsync() => Task.CompletedTask;
+}
+
+class Test
+{
+    async Task M1()
+    {
+        A a;
+        a = new A();
+        await a.DisposeAsync();
+
+        A b = new A();
+        a = b;
+        await a.DisposeAsync();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeAsync()
+    End Sub
+
+    Public Function DisposeAsync() As Task
+        Return Task.CompletedTask
+    End Function
+End Class
+
+Class Test
+    Async Function M1() As Task
+        Dim a As A
+        a = New A()
+        Await a.DisposeAsync()
+
+        Dim b As New A()
+        a = b
+        Await a.DisposeAsync()
+    End Function
+End Class");
+        }
+
         [Fact]
         public void ArrayElementWithDisposableAssignment_NoDiagnostic()
         {

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ValidateArgumentsOfPublicMethodsDescription">
         <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
-        <target state="translated">外部可见的方法可以取消引用其中一种引用参数，而无需验证该参数是否为 null（Visual Studio 中为 Nothing）。传递给外部可见方法的所有引用参数均应检查是否为 null。如果合适，当参数为 null 时引发 ArgumentNullException，或添加代码协定前置条件断言非 null 参数。如果该方法仅为由已知程序集调用而设计，应使方法内部可用。</target>
+        <target state="translated">外部可见的方法可以取消引用其中一种引用参数，而无需验证该参数是否为 null（Visual Basic 中为 Nothing）。传递给外部可见方法的所有引用参数均应检查是否为 null。如果合适，当参数为 null 时引发 ArgumentNullException，或添加代码协定前置条件断言非 null 参数。如果该方法仅为由已知程序集调用而设计，应使方法内部可用。</target>
         <note />
       </trans-unit>
       <trans-unit id="ValidateArgumentsOfPublicMethodsMessage">

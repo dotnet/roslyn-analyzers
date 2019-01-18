@@ -3,6 +3,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -34,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 s_Message,
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: false,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTags.Telemetry);
@@ -54,6 +56,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var compilation = compilationStartAnalysisContext.Compilation;
                     var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = compilation.GetTypeByMetadataName(
                             WellKnownTypes.SystemNetSecurityRemoteCertificateValidationCallback);
+                    var obj = WellKnownTypes.Object(compilation);
+                    var x509Certificate = WellKnownTypes.X509Certificate(compilation);
+                    var x509Chain = WellKnownTypes.X509Chain(compilation);
+                    var sslPolicyErrors = WellKnownTypes.SslPolicyErrors(compilation);
 
                     if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null)
                     {
@@ -80,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             return;
                                         }
                                         
-                                        if (!IsTargetFunction(compilation, delegateTargetFunction.Symbol))
+                                        if (!IsCertificateValidationFunction(delegateTargetFunction.Symbol, obj, x509Certificate, x509Chain, sslPolicyErrors))
                                         {
                                             return;
                                         }
@@ -98,7 +104,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                         var methodSymbol = methodReferenceOperation.Method;
                                         
-                                        if (!IsTargetFunction(compilation, methodSymbol))
+                                        if (!IsCertificateValidationFunction(methodSymbol, obj, x509Certificate, x509Chain, sslPolicyErrors))
                                         {
                                             return;
                                         }
@@ -128,7 +134,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 });
         }
 
-        private static bool IsTargetFunction(Compilation compilation, IMethodSymbol methodSymbol)
+        private static bool IsCertificateValidationFunction(IMethodSymbol methodSymbol, INamedTypeSymbol obj, INamedTypeSymbol x509Certificate, INamedTypeSymbol x509Chain, INamedTypeSymbol sslPolicyErrors)
         {
             if (methodSymbol.ReturnType.SpecialType != SpecialType.System_Boolean)
             {
@@ -141,16 +147,11 @@ namespace Microsoft.NetCore.Analyzers.Security
             {
                 return false;
             }
-
-            var obj = WellKnownTypes.Object(compilation);
-            var x509Certificate = WellKnownTypes.X509Certificate(compilation);
-            var x509Chain = WellKnownTypes.X509Chain(compilation);
-            var sslPolicyErrors = WellKnownTypes.SslPolicyErrors(compilation);
-
-            if ((obj == null || !obj.Equals(parameters[0].Type))
-                || (x509Certificate == null || !x509Certificate.Equals(parameters[1].Type))
-                || (x509Chain == null || !x509Chain.Equals(parameters[2].Type))
-                || (sslPolicyErrors == null || !sslPolicyErrors.Equals(parameters[3].Type)))
+            
+            if (!parameters[0].Type.Equals(obj)
+                || !parameters[1].Type.Equals(x509Certificate)
+                || !parameters[2].Type.Equals(x509Chain)
+                || !parameters[3].Type.Equals(sslPolicyErrors))
             {
                 return false;
             }

@@ -314,6 +314,7 @@ class TestClass
             {
                 return true;
             }
+
             return false;
         }
     }
@@ -390,6 +391,29 @@ class TestClass
 
     public void TestMethod()
     {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestDelegateCreationNormalMethodWithLambdaNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public bool AcceptAllCertifications(
+          object sender,
+          X509Certificate certificate,
+          X509Chain chain,
+          SslPolicyErrors sslPolicyErrors) => false;
+
+    public void TestMethod()
+    {
+        ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(AcceptAllCertifications);
     }
 }");
         }

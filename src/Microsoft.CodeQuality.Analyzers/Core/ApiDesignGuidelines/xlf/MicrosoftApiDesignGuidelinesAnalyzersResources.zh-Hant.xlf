@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
-        <target state="new">Append .ConfigureAwait(true)</target>
+        <target state="translated">附加 .ConfigureAwait(true)</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <target state="translated">從類型 '{0}' 移除完成項，覆寫 Dispose(bool disposing)，然後在程式碼路徑中放置完成項邏輯，其中 'disposing' 為 false。否則這可能導致 Dispose 引動過程重複，原因是基底類型 ‘{1}’ 也提供了完成項。</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -494,7 +494,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">因為類型 {0} 會覆寫 Equals，所以其應實作 IEquatable&lt;T&gt;</target>
+        <target state="translated">因為類型 {0} 覆寫 Equals，所以其應實作 IEquatable&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -849,42 +849,42 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
-        <target state="needs-review-translation">從 {0} 實作的介面清單中移除 IDisposable，因為其已由基底類型 {1} 實作。</target>
+        <target state="translated">從 ‘{0}’ 實作的介面清單中移除 IDisposable，原因是基底類型 ‘{1}’ 已實作該項。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="needs-review-translation">移除 {0}、覆寫 Dispose(bool disposing)，並將處置邏輯放在 'disposing' 為 true 的程式碼路徑中。</target>
+        <target state="translated">移除 ‘{0}’，覆寫 Dispose(bool disposing)，並在程式碼路徑中放置處置邏輯，其中 ‘disposing’ 為 true。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed.</source>
-        <target state="needs-review-translation">請確認 {0} 已宣告為公用且已密封。</target>
+        <target state="translated">確保 '{0}' 已宣告為公用並密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
         <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="needs-review-translation">將 {0} 重新命名為 'Dispose'，並確認已將其宣告為公用且密封。</target>
+        <target state="translated">將 ‘{0}’ 重新命名為 'Dispose’，並確保其已宣告為公用並密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
-        <target state="needs-review-translation">請確認 {0} 已宣告為受保護、虛擬以及非密封。</target>
+        <target state="translated">確保 ‘{0}’ 已宣告為受保護、虛擬和未密封。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="needs-review-translation">修改 {0}，使其呼叫 Dispose(true)，然後在目前的物件執行個體上呼叫 GC.SuppressFinalize (在 Visual Basic 中為 'this' 或 'Me')，然後再傳回。</target>
+        <target state="translated">修改 ‘{0}’，以便其呼叫 Dispose(true)，並在目前的物件執行個體 (Visual Basic 中的 'this' 或 'Me') 上呼叫 GC.SuppressFinalize，然後傳回。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
-        <target state="needs-review-translation">修改 {0}，使其呼叫 Dispose(false) 然後再傳回。</target>
+        <target state="translated">修改 ‘{0}’，以便其呼叫 Dispose(false) 然後傳回。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="needs-review-translation">提供 {0} 上 Dispose(bool) 的可覆寫實作，或將類型標記為密封。呼叫 Dispose(false) 只會清除原生資源，呼叫 Dispose(true) 則會同時清除受控和原生資源。</target>
+        <target state="translated">在 '{0}' 上提供 Dispose(bool) 的可覆寫實作，或將該類型標記為密封。呼叫 Dispose(false) 只能清除原生資源。呼叫 Dispose(true) 則能同時清除受控與原生資源。</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1374,12 +1374,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">因為類型 {0} 會實作 IEquatable&lt;T&gt;，所以其應覆寫 Equals</target>
+        <target state="translated">類型 {0} 應覆寫 Equals，原因是它實作了 IEquatable&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">實作 IEquatable&lt;T&gt; 時覆寫 Object.Equals(object)</target>
+        <target state="translated">在實作 IEquatable&lt;T&gt; 時覆寫 Object.Equals(object)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1419,12 +1419,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">當類型 T 覆寫 Object.Equals(object) 時，實作必須先將物件引數轉換為正確的類型 T，然後再執行比較。若類型會實作 IEquatable&lt;T&gt;，因而提供方法 T.Equals(T)，且若引數在編譯期間已知為類型 T，則編譯器可以呼叫 IEquatable&lt;T&gt;.Equals(T) 而不是呼叫 Object.Equals(object)，且無須任何轉換，因此提高了效能。</target>
+        <target state="translated">當類型 T 覆寫 Object.Equals(object) 時，該實作必須在執行比較前，將物件引數轉換為正確的類型 T。如果該類型實作 IEquatable&lt;T&gt;，則會提供方法 T.Equals(T)，如果在編譯時間知道該引數屬於類型 T，則編譯器可能會呼叫 IEquatable&lt;T&gt;.Equals(T)，而不是 Object.Equals(object)，而且不需轉換，以提升效能。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">當類型 T 實作介面 IEquatable&lt;T&gt; 時，對於在原始程式碼中看到呼叫 Equals 方法的任何使用者而言，這表示該類型的執行個體可以與任何其他類型的執行個體相等。若使用者嘗試讓該類型與其他類型的執行個體相等但無法完成，使用者可能會感到困惑。這違反了「最小意外原則」。</target>
+        <target state="translated">當類型 T 實作介面 IEquatable&lt;T&gt; 時，會建議在原始程式碼中看到 Equals 方法呼叫的使用者，該類型的執行個體可與另一個類型的執行個體相等。該使用者可能會不清楚其嘗試讓類型與另一個類型的執行個體相等是否無法編譯。這違反了「最不意外的原則」。</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1449,7 +1449,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">請移除 '{0}' 並以泛型 EventHandler 取代其使用方式，例如 EventHandler&lt;T&gt;，其中 T 為有效的 EventArgs</target>
+        <target state="translated">移除 ‘{0}’ 並改為使用一般 EventHandler，例如 EventHandler&lt;T&gt;，其中 T 是有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1459,7 +1459,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">變更事件 '{0}' 以使用泛型 EventHandler 取代類型 '{1}'，例如 EventHandler&lt;T&gt;，其中 T 為有效的 EventArgs</target>
+        <target state="translated">變更事件 ‘{0}’，以將類型 ‘{1}’ 取代為一般 EventHandler，例如 EventHandler&lt;T&gt;，其中 T 是有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

@@ -4,12 +4,12 @@
     <body>
       <trans-unit id="MarkMembersAsStaticCodeFix">
         <source>Make static</source>
-        <target state="new">Make static</target>
+        <target state="translated">Als statisch festlegen</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticCodeFix_WarningAnnotation">
         <source>Some references to '{0}' could not be fixed, they should be fixed manually.</source>
-        <target state="new">Some references to '{0}' could not be fixed, they should be fixed manually.</target>
+        <target state="translated">Einige Verweise auf "{0}" konnten nicht korrigiert werden. Korrigieren Sie sie manuell.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">

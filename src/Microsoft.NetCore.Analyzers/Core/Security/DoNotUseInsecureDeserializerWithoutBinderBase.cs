@@ -97,7 +97,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     IInvocationOperation invocationOperation =
                                         (IInvocationOperation)operationAnalysisContext.Operation;
-                                    if (invocationOperation.TargetMethod.ContainingType == deserializerTypeSymbol
+                                    if (invocationOperation.Instance?.Type == deserializerTypeSymbol
                                         && cachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
                                     {
                                         rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
@@ -110,8 +110,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     IMethodReferenceOperation methodReferenceOperation =
                                         (IMethodReferenceOperation)operationAnalysisContext.Operation;
-                                    if (methodReferenceOperation.Method.ContainingType == deserializerTypeSymbol
-                                        && cachedDeserializationMethodNames.Contains(
+                                    if (methodReferenceOperation.Instance?.Type == deserializerTypeSymbol
+                                       && cachedDeserializationMethodNames.Contains(
                                             methodReferenceOperation.Method.MetadataName))
                                     {
                                         rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());

@@ -48,6 +48,15 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 "UnsafeDeserializeMethodResponse");
 
         /// <summary>
+        /// Deserialization methods for <see cref="System.Runtime.Serialization.NetDataContractSerializer"/>.
+        /// </summary>
+        public static readonly ImmutableHashSet<string> NetDataContractSerializerDeserializationMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "Deserialize",
+                "ReadObject");
+
+        /// <summary>
         /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreSecurityResources"/>.
         /// </summary>
         /// <param name="name">Name of the resource string to retrieve.</param>

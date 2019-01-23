@@ -5,9 +5,9 @@
 
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <NuspecPackageId>Microsoft.CodeMetrics</NuspecPackageId>
+    <NuspecPackageId>Microsoft.CodeAnalysis.Metrics</NuspecPackageId>
     <Description>Report source based Code Metrics</Description>
-    <Summary>Microsoft.CodeMetrics</Summary>
+    <Summary>Microsoft.CodeAnalysis.Metrics</Summary>
     <ReleaseNotes>Tool to report source based code metrics</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis CodeMetrics Metrics Compiler CSharp VB VisualBasic Syntax Semantics</PackageTags>
     <ContainsPortedFxCopRules>false</ContainsPortedFxCopRules>
@@ -18,7 +18,7 @@
   <ItemGroup>
     <AnalyzerNupkgFolder Include="Metrics" />
     <AnalyzerNupkgFolder Include="Metrics.Legacy" />
-    <AnalyzerNupkgFile Include="Microsoft.CodeMetrics.targets" />
+    <AnalyzerNupkgFile Include="Microsoft.CodeAnalysis.Metrics.targets" />
   </ItemGroup>
   
   <ItemGroup>

@@ -129,8 +129,14 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
         string folderPath = Path.Combine(artifactsBinDir, folder, configuration, tfm);
         foreach (var file in Directory.EnumerateFiles(folderPath))
         {
-            var fileWithPath = Path.Combine(folderPath, file);
-            result.AppendLine(FileElement(fileWithPath, folder));
+            var fileExtension = Path.GetExtension(file);
+            if (fileExtension == ".exe" ||
+                fileExtension == ".dll" ||
+                fileExtension == ".config")
+            {
+                var fileWithPath = Path.Combine(folderPath, file);
+                result.AppendLine(FileElement(fileWithPath, folder));
+            }
         }
     }
 

@@ -4,6 +4,7 @@
     <TargetFrameworks>net46</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <IsShipping>true</IsShipping>
+    <DefineConstants>$(DefineConstants),LEGACY_CODE_METRICS_MODE</DefineConstants>
   </PropertyGroup>
   <Import Project="..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
   <ItemGroup>

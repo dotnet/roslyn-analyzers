@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
         <source>This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</source>
-        <target state="new">This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</target>
+        <target state="translated">Toto pravidlo měří párování tříd tak, že počítá jedinečné odkazy na typy obsažené v symbolu. Symboly s vysokým stupněm párování tříd může být složité udržovat. Doporučeným postupem je používat typy a metody s nízkým párováním a vysokou kohezí. Pokud chcete porušení tohoto pravidla opravit, zkuste kód přepracovat tak, aby se snížil počet typů, na které se páruje.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingMessage">
         <source>'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</source>
-        <target state="new">'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</target>
+        <target state="translated">{0} se páruje s {1} různými typy z {2} různých oborů názvů. Přepište nebo refaktorujte kód tak, aby se párování tříd snížilo pod {3}.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingTitle">
         <source>Avoid excessive class coupling</source>
-        <target state="new">Avoid excessive class coupling</target>
+        <target state="translated">Vyhněte se nadměrnému párování tříd</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
@@ -23,68 +23,68 @@
 cyclomatic complexity = the number of edges - the number of nodes + 1
 
 where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="new">Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
+        <target state="translated">Cyklomatická složitost měří počet lineárně nezávislých cest skrz metodu, který se určuje podle počtu a složitosti podmínkových větví. Nízká cyklomatická složitost obecně naznačuje, že metodu bude snadné pochopit, testovat a udržovat. Cyklomatická složitost se počítá z grafu toku řízení metody, a to takto:
 
-cyclomatic complexity = the number of edges - the number of nodes + 1
+cyklomatická složitost = počet hran - počet uzlů + 1
 
-where a node represents a logic branch point and an edge represents a line between nodes.</target>
+kde uzel představuje bod větvení logiky a hrana představuje spojnici mezi uzly.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
         <source>'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</source>
-        <target state="new">'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</target>
+        <target state="translated">{0} má cyklomatickou složitost na úrovni {1}. Přepište nebo refaktorujte kód tak, aby se složitost snížila pod úroveň {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityTitle">
         <source>Avoid excessive complexity</source>
-        <target state="new">Avoid excessive complexity</target>
+        <target state="translated">Vyhněte se nadměrné složitosti</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceDescription">
         <source>Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</source>
-        <target state="new">Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</target>
+        <target state="translated">Hluboce vnořené hierarchie typů můžou být složité na sledování, pochopení a údržbu. Toto pravidlo omezuje analýzu na hierarchie ve stejném modulu. Pokud chcete porušení tohoto pravidla opravit, odvoďte typ od základního typu, který je méně hluboko v hierarchii dědičnosti, nebo eliminujte některé z mezilehlých základních typů.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceMessage">
         <source>'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</source>
-        <target state="new">'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</target>
+        <target state="translated">{0} má hierarchii objektů, která v definujícím modulu dosahuje hloubky {1} úrovní. Pokud je to možné, eliminujte v hierarchii základní třídy tak, aby se počet úrovní v hierarchii snížil pod {2}: {3}</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceTitle">
         <source>Avoid excessive inheritance</source>
-        <target state="new">Avoid excessive inheritance</target>
+        <target state="translated">Vyhněte se nadměrné dědičnosti</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
 A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="new">The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</target>
+        <target state="translated">Index udržovatelnosti se počítá za použití následujících metrik: řádky kódu, objem programu a cyklomatická složitost. Objem programu je míra složitosti pochopení symbolu, která je založená na počtu operátorů a operandů v kódu. Cyklomatická složitost je míra strukturální složitosti typu nebo metody.
+Nízký index udržovatelnosti naznačuje, že kód bude pravděpodobně složité udržovat a že by bylo vhodné ho přepracovat.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">
         <source>'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</source>
-        <target state="new">'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</target>
+        <target state="translated">{0} má index udržovatelnosti {1}. Přepište nebo refaktorujte kód tak, aby se index udržovatelnosti zvýšil nad {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeTitle">
         <source>Avoid unmaintainable code</source>
-        <target state="new">Avoid unmaintainable code</target>
+        <target state="translated">Vyhněte se neudržovatelnému kódu</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileDescription">
         <source>Invalid entry in code metrics rule specification file</source>
-        <target state="new">Invalid entry in code metrics rule specification file</target>
+        <target state="translated">Neplatná položka v souboru specifikace pravidel metrik kódu</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileMessage">
         <source>Invalid entry '{0}' in code metrics rule specification file '{1}'</source>
-        <target state="new">Invalid entry '{0}' in code metrics rule specification file '{1}'</target>
+        <target state="translated">Neplatná položka {0} v souboru specifikace pravidel metrik kódu {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileTitle">
         <source>Invalid entry in code metrics rule specification file</source>
-        <target state="new">Invalid entry in code metrics rule specification file</target>
+        <target state="translated">Neplatná položka v souboru specifikace pravidel metrik kódu</target>
         <note />
       </trans-unit>
       <trans-unit id="VariableNamesShouldNotMatchFieldNamesTitle">

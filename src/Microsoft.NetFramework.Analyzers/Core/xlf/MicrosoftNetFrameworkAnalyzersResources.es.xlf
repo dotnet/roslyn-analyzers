@@ -344,7 +344,7 @@
       </trans-unit>
       <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument">
         <source>Change the base type of {0} so that it no longer extends {1}. The preferred design is to decouple the underlying XmlDocument representation from the type's interface by using containment instead of inheritance.</source>
-        <target state="translated">Cambie el tipo base de {0} de manera que deje de extender {1}. El diseño preferido es desasociar la representación de XmlDocument subyacente de la interfaz del tipo utilizando la contención en vez de la herencia.</target>
+        <target state="translated">Cambie el tipo base de {0} de manera que deje de extender {1}. El diseño preferido es desasociar la representación de XmlDocument subyacente de la interfaz del tipo usando independencia en lugar de herencia.</target>
         <note />
       </trans-unit>
       <trans-unit id="TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException">

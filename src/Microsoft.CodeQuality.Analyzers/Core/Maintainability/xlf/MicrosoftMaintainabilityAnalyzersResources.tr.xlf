@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
         <source>This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</source>
-        <target state="new">This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</target>
+        <target state="translated">Bu kural, bir sembolün içerdiği benzersiz tür başvurularını sayarak sınıf bağlantılarını ölçer. Yüksek düzeyde sınıf bağlantısı içeren sembollerin bakımının yapılması zor olabilir. Düşük bağlantı düzeyine ve yüksek uyuma sahip türler ve metotlar kullanılması iyi bir uygulamadır. Bu ihlali düzeltmek için kodu yeniden tasarlayarak kodun bağlı olduğu tür sayısını azaltmayı deneyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingMessage">
         <source>'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</source>
-        <target state="new">'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</target>
+        <target state="translated">'{0}', '{2}' farklı ad alanından '{1}' farklı türe bağlı. Kodu yeniden yazarak veya yeniden düzenleyerek sınıf bağlantısını '{3}' düzeyinin altına düşürün.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingTitle">
         <source>Avoid excessive class coupling</source>
-        <target state="new">Avoid excessive class coupling</target>
+        <target state="translated">Aşırı miktarda sınıf bağlantısından kaçının</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
@@ -23,68 +23,68 @@
 cyclomatic complexity = the number of edges - the number of nodes + 1
 
 where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="new">Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
+        <target state="translated">Döngüsel karmaşıklık, metot aracılığıyla oluşturulmuş, doğrusal olarak bağımsız yol sayısını ölçer ve bu sayı, koşullu dalların sayısı ve karmaşıklığına göre belirlenir. Döngüsel karmaşıklığın düşük olması genellikle metodu anlamanın, test etmenin ve metoda bakım uygulamanın kolay olduğu anlamına gelir. Döngüsel karmaşıklık, metodun denetim akışı grafiğinden hesaplanır ve aşağıdaki formülle elde edilir:
 
-cyclomatic complexity = the number of edges - the number of nodes + 1
+döngüsel karmaşıklık = uç sayısı - düğüm sayısı + 1
 
-where a node represents a logic branch point and an edge represents a line between nodes.</target>
+burada her düğüm bir mantık dalı noktasını temsil ederken, her uç düğümler arası bir hattı temsil eder.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
         <source>'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</source>
-        <target state="new">'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</target>
+        <target state="translated">'{0}', '{1}' düzeyinde döngüsel karmaşıklığa sahip. Kodu yeniden yazarak veya yeniden düzenleyerek karmaşıklığı '{2}' düzeyinin altına düşürün.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityTitle">
         <source>Avoid excessive complexity</source>
-        <target state="new">Avoid excessive complexity</target>
+        <target state="translated">Aşırı karmaşıklıktan kaçının</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceDescription">
         <source>Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</source>
-        <target state="new">Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</target>
+        <target state="translated">Çok fazla iç içe girmiş tür hiyerarşileri izlemeyi, anlamayı ve bakım yapmayı zorlaştırabilir. Bu kural, analizi aynı modül içindeki hiyerarşilerle sınırlı tutar. Bu kuralın ihlal edildiği bir durumu düzeltmek için türü devralınan hiyerarşiden daha az iç içe geçmiş bir hiyerarşiden alın veya ara taban türlerin bir kısmını kaldırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceMessage">
         <source>'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</source>
-        <target state="new">'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</target>
+        <target state="translated">'{0}', tanımlama modülü içinde '{1}' düzey derinliğinde bir nesne hiyerarşisine sahip. Mümkünse hiyerarşideki temel sınıfları ortadan kaldırarak hiyerarşi düzeyini '{2}': '{3}' seviyesinin altına düşürün</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceTitle">
         <source>Avoid excessive inheritance</source>
-        <target state="new">Avoid excessive inheritance</target>
+        <target state="translated">Aşırı devralmadan kaçının</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
 A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="new">The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</target>
+        <target state="translated">Bakım endeksi şu ölçümler kullanılarak hesaplanır: kod satırı sayısı, program hacmi ve döngüsel karmaşıklık. Program hacmi, koddaki işleçler ve işlenenlerden yola çıkılarak bir sembolün anlaşılmasının ne kadar zor olduğunu gösteren bir ölçüdür. Döngüsel karmaşıklık, tür veya metodun yapısal karmaşıklığını gösteren bir ölçüdür.
+Bakım endeksinin düşük olması, koda bakım uygulamanın zor olabileceğini ve kodun yeniden tasarlanmasının uygun olduğunu gösterir.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">
         <source>'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</source>
-        <target state="new">'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</target>
+        <target state="translated">'{0}' öğesinin bakım endeksi '{1}'. Kodu yeniden yazarak veya yeniden düzenleyerek bakım endeksini (MI) '{2}' düzeyinin üstüne çıkarın.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeTitle">
         <source>Avoid unmaintainable code</source>
-        <target state="new">Avoid unmaintainable code</target>
+        <target state="translated">Avoid unmaintainable code</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileDescription">
         <source>Invalid entry in code metrics rule specification file</source>
-        <target state="new">Invalid entry in code metrics rule specification file</target>
+        <target state="translated">Kod ölçümleri kural belirtimi dosyasında geçersiz giriş</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileMessage">
         <source>Invalid entry '{0}' in code metrics rule specification file '{1}'</source>
-        <target state="new">Invalid entry '{0}' in code metrics rule specification file '{1}'</target>
+        <target state="translated">'{1}' adlı kod ölçümleri kural belirtimi dosyasındaki '{0}' girişi geçersiz</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileTitle">
         <source>Invalid entry in code metrics rule specification file</source>
-        <target state="new">Invalid entry in code metrics rule specification file</target>
+        <target state="translated">Ölçüm kuralı belirtim dosyasında geçersiz giriş</target>
         <note />
       </trans-unit>
       <trans-unit id="VariableNamesShouldNotMatchFieldNamesTitle">

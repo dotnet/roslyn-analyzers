@@ -4,32 +4,32 @@
     <body>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage">
         <source>The ValidateAntiForgeryAttribute is defined with HttpVerbs.Get and at least one of HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete, or HttpVerbs.Patch on controller action {0}. The attribute will not be used when GET verb is used.</source>
-        <target state="new">The ValidateAntiForgeryAttribute is defined with HttpVerbs.Get and at least one of HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete, or HttpVerbs.Patch on controller action {0}. The attribute will not be used when GET verb is used.</target>
+        <target state="translated">ValidateAntiForgeryAttribute 是使用 HttpVerbs.Get 以及控制器操作 {0} 中的 HttpVerbs.Post、HttpVerbs.Put、HttpVerbs.Delete 或 HttpVerbs.Patch (至少其中之一)进行定义的。使用 GET 谓词时将不使用该属性。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage">
         <source>Using HttpVerbs.GET and ValidateAntiForgeryTokenAttribute is not supported by MVC on controller action {0}.</source>
-        <target state="new">Using HttpVerbs.GET and ValidateAntiForgeryTokenAttribute is not supported by MVC on controller action {0}.</target>
+        <target state="translated">在控制器操作 {0} 上, MVC 不支持使用 HttpVerbs.GET 和 ValidateAntiForgeryTokenAttribute。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage">
         <source>HTTP verb attributes attributes are missing on controller action {0}. The ValidateAntiForgeryTokenAttribute will not be used when GET verb is used.</source>
-        <target state="new">HTTP verb attributes attributes are missing on controller action {0}. The ValidateAntiForgeryTokenAttribute will not be used when GET verb is used.</target>
+        <target state="translated">控制器操作 {0} 上缺少 HTTP 谓词属性。使用 GET 谓词时将不使用 ValidateAntiForgeryTokenAttribute。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage">
         <source>Missing ValidateAntiForgeryTokenAttribute on MVC controller action {0} which by default accepts POST requests.</source>
-        <target state="new">Missing ValidateAntiForgeryTokenAttribute on MVC controller action {0} which by default accepts POST requests.</target>
+        <target state="translated">MVC 控制器操作 {0} 上缺少默认接受 POST 请求的 ValidateAntiForgeryTokenAttribute。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenTitle">
         <source>MarkVerbHandlersWithValidateAntiforgeryTokenTitle</source>
-        <target state="new">MarkVerbHandlersWithValidateAntiforgeryTokenTitle</target>
+        <target state="translated">MarkVerbHandlersWithValidateAntiforgeryTokenTitle</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">
         <source>Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</source>
-        <target state="new">Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</target>
+        <target state="translated">控制器操作 {0} 上缺少 ValidateAntiForgeryTokenAttribute。</target>
         <note />
       </trans-unit>
     </body>

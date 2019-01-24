@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
         <source>This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</source>
-        <target state="new">This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</target>
+        <target state="translated">Esta regla mide el acoplamiento de clase contando el número de referencias de tipo únicas que contiene un símbolo. Los símbolos que tienen un alto grado de acoplamiento de la clase pueden ser difíciles de mantener. Es una buena práctica tener tipos y métodos que exhiben un acoplamiento bajo y una alta cohesión. Para corregir esta infracción, intente rediseñar el código para reducir el número de tipos a los que está acoplado.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingMessage">
         <source>'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</source>
-        <target state="new">'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</target>
+        <target state="translated">"{0}" se combina con "{1}" tipos diferentes de "{2}" diferentes espacios de nombres. Reescriba o refactorice el código para disminuir su acoplamiento de clase por debajo de "{3}".</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingTitle">
         <source>Avoid excessive class coupling</source>
-        <target state="new">Avoid excessive class coupling</target>
+        <target state="translated">Evite el acoplamiento excesivo de clases</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
@@ -23,68 +23,68 @@
 cyclomatic complexity = the number of edges - the number of nodes + 1
 
 where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="new">Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
+        <target state="translated">La complejidad ciclomática mide el número de caminos linealmente independientes a través del método, que se determina por el número y la complejidad de las ramas condicionales. Una complejidad ciclomática baja generalmente indica un método que es fácil de entender, probar y mantener. La complejidad ciclomática se calcula a partir de un gráfico de flujo de control del método y se da de la siguiente manera:
 
-cyclomatic complexity = the number of edges - the number of nodes + 1
+complejidad ciclomática = el número de aristas-el número de nodos + 1
 
-where a node represents a logic branch point and an edge represents a line between nodes.</target>
+donde un nodo representa un punto de bifurcación lógica y un borde representa una línea entre nodos.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
         <source>'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</source>
-        <target state="new">'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</target>
+        <target state="translated">"{0}" tiene una complejidad ciclomática de "{1}". Escriba o refactorice el código para reducir su complejidad a continuación "{2}".</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityTitle">
         <source>Avoid excessive complexity</source>
-        <target state="new">Avoid excessive complexity</target>
+        <target state="translated">Evite la excesiva complejidad</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceDescription">
         <source>Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</source>
-        <target state="new">Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</target>
+        <target state="translated">Las jerarquías de tipo profundamente anidado pueden ser difíciles de seguir, entender y mantener. Esta regla limita el análisis a las jerarquías en el mismo módulo. Para corregir una infracción de esta regla, derive el tipo de un tipo base que es menos profundo en la jerarquía de herencia o elimine algunos de los tipos base intermedios.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceMessage">
         <source>'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</source>
-        <target state="new">'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</target>
+        <target state="translated">"{0}" tiene un nivel de jerarquía de objetos "{1}" en el interior del módulo de definición. Si es posible, elimine las clases base dentro de la jerarquía para disminuir su nivel de jerarquía por debajo de "{2}": "{3}"</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceTitle">
         <source>Avoid excessive inheritance</source>
-        <target state="new">Avoid excessive inheritance</target>
+        <target state="translated">Evite una herencia excesiva</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
 A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="new">The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</target>
+        <target state="translated">El índice de mantenibilidad se calcula utilizando las siguientes métricas: líneas de código, volumen de programa y complejidad de ciclomática. El volumen del programa es una medida de la dificultad de comprensión de un símbolo que se basa en el número de operadores y operandos en el código. La complejidad ciclomática es una medida de la complejidad estructural del tipo o método.
+Un índice de mantenibilidad bajo indica que el código es probablemente difícil de mantener y sería un buen candidato para rediseñar.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">
         <source>'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</source>
-        <target state="new">'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</target>
+        <target state="translated">"{0}" tiene un índice de mantenimiento de "{1}". Escriba o refactorice el código para aumentar su índice de mantenimiento sobre "{2}".</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeTitle">
         <source>Avoid unmaintainable code</source>
-        <target state="new">Avoid unmaintainable code</target>
+        <target state="translated">Evite código que no se puede mantener</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileDescription">
         <source>Invalid entry in code metrics rule specification file</source>
-        <target state="new">Invalid entry in code metrics rule specification file</target>
+        <target state="translated">Entrada no válida en el archivo de especificación de regla de métricas de código</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileMessage">
         <source>Invalid entry '{0}' in code metrics rule specification file '{1}'</source>
-        <target state="new">Invalid entry '{0}' in code metrics rule specification file '{1}'</target>
+        <target state="translated">Entrada no válida "{0}" en el archivo de especificación de la regla de métricas de código "{1}"</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileTitle">
         <source>Invalid entry in code metrics rule specification file</source>
-        <target state="new">Invalid entry in code metrics rule specification file</target>
+        <target state="translated">Entrada no válida en el archivo de especificación de regla de métricas de código</target>
         <note />
       </trans-unit>
       <trans-unit id="VariableNamesShouldNotMatchFieldNamesTitle">

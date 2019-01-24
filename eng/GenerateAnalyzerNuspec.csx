@@ -5,10 +5,12 @@ string configuration = Args[3];
 string tfm = Args[4];
 var metadataList = Args[5].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var fileList = Args[6].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var assemblyList = Args[7].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var dependencyList = Args[8].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var rulesetsDir = Args[9];
-var legacyRulesets = Args[10].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var folderList = Args[7].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var assemblyList = Args[8].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var dependencyList = Args[9].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var rulesetsDir = Args[10];
+var legacyRulesets = Args[11].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var artifactsBinDir = Args[12];
 
 var result = new StringBuilder();
 
@@ -95,7 +97,7 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
     {
         IEnumerable<string> targets;
 
-        if (assembly.Contains(csName))
+		if (assembly.Contains(csName))
         {
             targets = new[] { csTarget };
         }
@@ -118,8 +120,24 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
 
     foreach (string file in fileList)
     {
-        var fileWithPath = System.IO.Path.IsPathRooted(file) ? file : Path.Combine(projectDir, file);
+        var fileWithPath = Path.IsPathRooted(file) ? file : Path.Combine(projectDir, file);
         result.AppendLine(FileElement(fileWithPath, "build"));
+    }
+
+    foreach (string folder in folderList)
+    {
+        string folderPath = Path.Combine(artifactsBinDir, folder, configuration, tfm);
+        foreach (var file in Directory.EnumerateFiles(folderPath))
+        {
+            var fileExtension = Path.GetExtension(file);
+            if (fileExtension == ".exe" ||
+                fileExtension == ".dll" ||
+                fileExtension == ".config")
+            {
+                var fileWithPath = Path.Combine(folderPath, file);
+                result.AppendLine(FileElement(fileWithPath, folder));
+            }
+        }
     }
 
     result.AppendLine(FileElement(Path.Combine(assetsDir, "Install.ps1"), "tools"));

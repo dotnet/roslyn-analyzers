@@ -59,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         out var disposeAnalysisResult, out var pointsToAnalysisResult))
                     {
                         BasicBlock exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
-                        ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;
+                        ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult.ExitBlockOutput.Data;
                         foreach (var kvp in disposeDataAtExit)
                         {
                             AbstractLocation location = kvp.Key;

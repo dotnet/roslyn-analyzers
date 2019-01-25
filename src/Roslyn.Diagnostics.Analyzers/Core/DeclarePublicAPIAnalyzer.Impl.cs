@@ -507,16 +507,34 @@ namespace Roslyn.Diagnostics.Analyzers
 
             private bool IsPublicAPI(ISymbol symbol)
             {
+
                 if (symbol is IMethodSymbol methodSymbol && s_ignorableMethodKinds.Contains(methodSymbol.MethodKind))
                 {
                     return false;
                 }
-
                 // We don't consider properties to be public APIs. Instead, property getters and setters
                 // (which are IMethodSymbols) are considered as public APIs.
-                if (symbol is IPropertySymbol)
+                // Unless property is an auto-property.
+                if (symbol is IPropertySymbol propertySymbol)
                 {
-                    return false;
+                    if (symbol.Language != "Visual Basic") return false;
+                    // Write-Only auto-properties are not allowed. (as of VB 15.0)
+                    if (propertySymbol.IsWriteOnly)
+                    {
+                        //if (!propertySymbol.SetMethod.IsImplicitlyDeclared)
+                        //{
+                        //    return false;
+                        //}
+                        return false;
+                    };
+                    if (propertySymbol.IsReadOnly && !propertySymbol.GetMethod.IsImplicitlyDeclared)
+                    {
+                        return false;
+                    }
+                    if (!propertySymbol.GetMethod.IsImplicitlyDeclared && !propertySymbol.SetMethod.IsImplicitlyDeclared)
+                    {
+                        return false;
+                    }
                 }
 
                 return IsPublicApiCore(symbol);

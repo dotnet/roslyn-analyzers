@@ -141,8 +141,8 @@ public class C
                 // Test0.cs(7,43): error RS0016: Symbol 'ArrowExpressionProperty.get' is not part of the declared API.
                 GetCSharpResultAt(7, 43, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ArrowExpressionProperty.get"));
         }
-
-        [Fact(Skip = "821"), WorkItem(821, "https://github.com/dotnet/roslyn-analyzers/issues/821")]
+        // Skip = "821"
+        [Fact(), WorkItem(821, "https://github.com/dotnet/roslyn-analyzers/issues/821")]
         public void SimpleMissingMember_Basic()
         {
             var source = @"
@@ -165,6 +165,11 @@ Public Class C
     End Sub
 
     Public ReadOnly Property ReadOnlyProperty As Integer = 0
+    Public ReadOnly Property ReadOnlyProperty1 As Integer
+    Public Property Property1 As Integer
+' Write-Only properties as not allowed (as upto VB15.0)
+'   Public WriteOnly Property WriteOnlyProperty As Integer
+
 End Class
 ";
 
@@ -174,6 +179,7 @@ End Class
             VerifyBasic(source, shippedText, unshippedText,
                 // Test0.vb(4,14): warning RS0016: Symbol 'C' is not part of the declared API.
                 GetBasicResultAt(4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "C"),
+                 GetBasicResultAt(4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "implicit constructor for C"),
                 // Test0.vb(5,12): warning RS0016: Symbol 'Field' is not part of the declared API.
                 GetBasicResultAt(5, 12, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Field"),
                 // Test0.vb(8,9): warning RS0016: Symbol 'Property' is not part of the declared API.
@@ -182,8 +188,12 @@ End Class
                 GetBasicResultAt(11, 9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property"),
                 // Test0.vb(17,16): warning RS0016: Symbol 'Method' is not part of the declared API.
                 GetBasicResultAt(17, 16, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Method"),
-                // Test0.vb(17,60): warning RS0016: Symbol 'ReadOnlyProperty' is not part of the declared API.
-                GetBasicResultAt(20, 60, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty"));
+                // Test0.vb(21,30): warning RS0016: Symbol 'ReadOnlyProperty' is not part of the declared API.
+                GetBasicResultAt(20, 30, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty"),
+                // Test0.vb(21,30): warning RS0016: Symbol 'ReadOnlyProperty1' is not part of the declared API.
+                GetBasicResultAt(21, 30, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty1"),
+                // Test0.vb(21,21): warning RS0016: Symbol 'ReadOnlyProperty1' is not part of the declared API.
+                GetBasicResultAt(22, 21, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property1"));
         }
 
         [Fact, WorkItem(806, "https://github.com/dotnet/roslyn-analyzers/issues/806")]

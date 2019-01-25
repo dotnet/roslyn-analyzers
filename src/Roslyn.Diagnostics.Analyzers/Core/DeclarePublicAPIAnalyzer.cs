@@ -169,7 +169,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 SymbolKind.NamedType,
                 SymbolKind.Event,
                 SymbolKind.Field,
-                SymbolKind.Method);
+                SymbolKind.Method, SymbolKind.Property);
             compilationContext.RegisterCompilationEndAction(impl.OnCompilationEnd);
         }
 

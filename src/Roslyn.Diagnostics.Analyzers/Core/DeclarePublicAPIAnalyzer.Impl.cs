@@ -157,7 +157,6 @@ namespace Roslyn.Diagnostics.Analyzers
                         reportDiagnostic(Diagnostic.Create(descriptor, location, propertyBag, args));
                     }
                 }
-
                 var hasPublicApiEntry = _publicApiMap.TryGetValue(publicApiName, out ApiLine apiLine);
                 if (!hasPublicApiEntry)
                 {
@@ -361,17 +360,16 @@ namespace Roslyn.Diagnostics.Analyzers
             private string GetPublicApiName(ISymbol symbol)
             {
                 string publicApiName = symbol.ToDisplayString(s_publicApiFormat);
-
                 ITypeSymbol memberType = null;
-                if (symbol is IMethodSymbol)
+                if (symbol is IPropertySymbol property)
+                {
+                    memberType = property.Type;
+                }
+                else if (symbol is IMethodSymbol)
                 {
                     memberType = ((IMethodSymbol)symbol).ReturnType;
                 }
-                else if (symbol is IPropertySymbol)
-                {
-                    memberType = ((IPropertySymbol)symbol).Type;
-                }
-                else if (symbol is IEventSymbol)
+                else  if (symbol is IEventSymbol)
                 {
                     memberType = ((IEventSymbol)symbol).Type;
                 }
@@ -382,7 +380,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
                 if (memberType != null)
                 {
-                    publicApiName = publicApiName + " -> " + memberType.ToDisplayString(s_publicApiFormat);
+                    publicApiName = publicApiName +  " -> " + memberType.ToDisplayString(s_publicApiFormat);
                 }
 
                 if (((symbol as INamespaceSymbol)?.IsGlobalNamespace).GetValueOrDefault())
@@ -396,6 +394,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
 
                 return publicApiName;
+
             }
 
             private static bool ContainsPublicApiName(string apiLineText, string publicApiNameToSearch)
@@ -507,35 +506,26 @@ namespace Roslyn.Diagnostics.Analyzers
 
             private bool IsPublicAPI(ISymbol symbol)
             {
-
                 if (symbol is IMethodSymbol methodSymbol && s_ignorableMethodKinds.Contains(methodSymbol.MethodKind))
                 {
                     return false;
                 }
+
                 // We don't consider properties to be public APIs. Instead, property getters and setters
                 // (which are IMethodSymbols) are considered as public APIs.
                 // Unless property is an auto-property.
                 if (symbol is IPropertySymbol propertySymbol)
                 {
-                    if (symbol.Language != "Visual Basic") return false;
+                    if (symbol.Language != LanguageNames.VisualBasic) return false;
                     // Write-Only auto-properties are not allowed. (as of VB 15.0)
-                    if (propertySymbol.IsWriteOnly)
-                    {
-                        //if (!propertySymbol.SetMethod.IsImplicitlyDeclared)
-                        //{
-                        //    return false;
-                        //}
-                        return false;
-                    };
-                    if (propertySymbol.IsReadOnly && !propertySymbol.GetMethod.IsImplicitlyDeclared)
-                    {
-                        return false;
-                    }
-                    if (!propertySymbol.GetMethod.IsImplicitlyDeclared && !propertySymbol.SetMethod.IsImplicitlyDeclared)
-                    {
-                        return false;
+                    if (propertySymbol.IsWriteOnly) return false;
+                    if (!propertySymbol.GetMethod.IsImplicitlyDeclared)
+                    { 
+                        if (propertySymbol.IsReadOnly) return false;
+                        if (!propertySymbol.SetMethod.IsImplicitlyDeclared) return false;
                     }
                 }
+
 
                 return IsPublicApiCore(symbol);
             }

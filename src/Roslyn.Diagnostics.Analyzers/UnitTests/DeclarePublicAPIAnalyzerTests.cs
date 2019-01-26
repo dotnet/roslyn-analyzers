@@ -141,7 +141,7 @@ public class C
                 // Test0.cs(7,43): error RS0016: Symbol 'ArrowExpressionProperty.get' is not part of the declared API.
                 GetCSharpResultAt(7, 43, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ArrowExpressionProperty.get"));
         }
-        // Skip = "821"
+
         [Fact(), WorkItem(821, "https://github.com/dotnet/roslyn-analyzers/issues/821")]
         public void SimpleMissingMember_Basic()
         {
@@ -179,7 +179,7 @@ End Class
             VerifyBasic(source, shippedText, unshippedText,
                 // Test0.vb(4,14): warning RS0016: Symbol 'C' is not part of the declared API.
                 GetBasicResultAt(4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "C"),
-                 GetBasicResultAt(4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "implicit constructor for C"),
+                GetBasicResultAt(4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "implicit constructor for C"),
                 // Test0.vb(5,12): warning RS0016: Symbol 'Field' is not part of the declared API.
                 GetBasicResultAt(5, 12, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Field"),
                 // Test0.vb(8,9): warning RS0016: Symbol 'Property' is not part of the declared API.

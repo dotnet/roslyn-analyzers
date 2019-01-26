@@ -364,6 +364,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 if (symbol is IPropertySymbol property)
                 {
                     memberType = property.Type;
+
                     //
                     // Use the name of compiler generateed auto implemented getter, rather than the property.
                     // As to preserve compatibility with existing PublicAPI.txt, otherwise by using the property
@@ -380,7 +381,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     //
                     publicApiName = property.GetMethod.ToDisplayString(s_publicApiFormat);
                 }
-                if (symbol is IMethodSymbol)
+                else if (symbol is IMethodSymbol)
                 {
                     memberType = ((IMethodSymbol)symbol).ReturnType;
                 }

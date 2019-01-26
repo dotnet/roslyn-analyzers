@@ -146,7 +146,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     PointsToAbstractValue pointsToValue = fieldWithPointsToValue.Value;
 
                                     Debug.Assert(field.Type.IsDisposable(disposeAnalysisHelper.IDisposable));
-                                    ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult[exitBlock].OutputData;
+                                    ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeDataAtExit = disposeAnalysisResult.ExitBlockOutput.Data;
                                     var disposed = false;
                                     foreach (var location in pointsToValue.Locations)
                                     {

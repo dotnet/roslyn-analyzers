@@ -36,8 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO: Make analyzer thread safe
-            //analysisContext.EnableConcurrentExecution();
+            analysisContext.EnableConcurrentExecution();
 
             // We need to analyze generated code, but don't intend to report diagnostics for generated code fields.
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
@@ -81,7 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 }
                             }
 
-                            if (field.DeclaredAccessibility == Accessibility.Private && !referencedPrivateFields.Contains(field))
+                            if (field.DeclaredAccessibility == Accessibility.Private && !SynchronizedContains(referencedPrivateFields, field))
                             {
                                 // Fields with certain special attributes should never be considered unused.
                                 if (!specialAttributes.IsEmpty)
@@ -95,7 +94,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                     }
                                 }
 
-                                unreferencedPrivateFields.Add(field);
+                                lock (unreferencedPrivateFields)
+                                {
+                                    unreferencedPrivateFields.Add(field);
+                                }
                             }
                         },
                         SymbolKind.Field);
@@ -106,8 +108,15 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             IFieldSymbol field = ((IFieldReferenceOperation)operationContext.Operation).Field;
                             if (field.DeclaredAccessibility == Accessibility.Private)
                             {
-                                referencedPrivateFields.Add(field);
-                                unreferencedPrivateFields.Remove(field);
+                                lock (referencedPrivateFields)
+                                {
+                                    referencedPrivateFields.Add(field);
+                                }
+
+                                lock (unreferencedPrivateFields)
+                                {
+                                    unreferencedPrivateFields.Remove(field);
+                                }
                             }
                         },
                         OperationKind.FieldReference);
@@ -121,6 +130,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
                         });
                 });
+        }
+
+        private static bool SynchronizedContains<T>(HashSet<T> set, T item)
+        {
+            lock (set)
+            {
+                return set.Contains(item);
+            }
         }
 
         private static ImmutableHashSet<INamedTypeSymbol> GetSpecialAttributes(Compilation compilation)

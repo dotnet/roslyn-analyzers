@@ -8,6 +8,11 @@
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
+  <PropertyGroup>
+    <LangVersion Condition="'$(Language)' == 'C#'">7.2</LangVersion>
+    <LangVersion Condition="'$(Language)' == 'VB'">15.5</LangVersion>
+  </PropertyGroup>
+
   <!-- Workaround to enable .editorconfig based analyzer configuration until dotnet compilers support .editorconfig based configuration -->
   <PropertyGroup>
     <SkipDefaultEditorConfigAsAdditionalFile>true</SkipDefaultEditorConfigAsAdditionalFile>

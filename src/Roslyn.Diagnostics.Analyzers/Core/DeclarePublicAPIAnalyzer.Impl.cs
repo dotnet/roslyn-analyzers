@@ -529,7 +529,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
                 // We don't consider properties to be public APIs. Instead, property getters and setters
                 // (which are IMethodSymbols) are considered as public APIs.
-                // Unless property is an auto-property.
+                // Unless property is an auto-property, which have implicitly declated getters / setters.
                 if (symbol is IPropertySymbol propertySymbol)
                 {
                     if (symbol.Language != LanguageNames.VisualBasic) return false;

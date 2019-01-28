@@ -37,6 +37,21 @@
         <target state="translated">Имена асинхронных методов должны заканчиваться на Async</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
+        <source>General exceptions should not be caught.</source>
+        <target state="new">General exceptions should not be caught.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
+        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause such as catch() is used.</source>
+        <target state="new">A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause such as catch() is used.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
+        <source>Do not catch general exception types</source>
+        <target state="new">Do not catch general exception types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">Не передавайте асинхронные лямбда-выражения как Void, возвращающие типы делегатов</target>

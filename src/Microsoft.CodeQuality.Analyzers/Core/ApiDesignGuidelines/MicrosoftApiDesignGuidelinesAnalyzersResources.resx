@@ -1007,4 +1007,13 @@
     <value>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</value>
     <comment>1 is a comma-separated list</comment>
   </data>
+  <data name="DoNotCatchGeneralExceptionTypesDescription" xml:space="preserve">
+    <value>General exceptions should not be caught.</value>
+  </data>
+  <data name="DoNotCatchGeneralExceptionTypesMessage" xml:space="preserve">
+    <value>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause such as catch() is used.</value>
+  </data>
+  <data name="DoNotCatchGeneralExceptionTypesTitle" xml:space="preserve">
+    <value>Do not catch general exception types</value>
+  </data>
 </root>

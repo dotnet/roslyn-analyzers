@@ -468,6 +468,50 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
+        public void CA2153TestCatchWithFilterInMethodWithHpcseAttribute()
+        {
+            VerifyCSharp(@"
+            using System;
+            using System.IO;
+            using System.Runtime.ExceptionServices;
+
+            namespace TestNamespace
+            {
+                class TestClass
+                {
+                    [HandleProcessCorruptedStateExceptions] 
+                    public static void TestMethod()
+                    {
+                        try 
+                        {
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
+                        }
+                        catch when (true)
+                        {
+                        }
+                    }
+                }
+            }");
+
+            VerifyBasic(@"
+            Imports System.IO
+            Imports System.Runtime.ExceptionServices
+
+            Namespace TestNamespace
+                Class TestClass
+                    <HandleProcessCorruptedStateExceptions> _
+                    Public Shared Sub TestMethod()
+                        Try
+                            Dim fileStream As New FileStream(""name"", FileMode.Create)
+                        Catch When True
+                        End Try
+                    End Sub
+                End Class
+            End Namespace
+            ");
+        }
+
+        [Fact]
         public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassScopeEverythingAttributes()
         {
             VerifyCSharp(@"

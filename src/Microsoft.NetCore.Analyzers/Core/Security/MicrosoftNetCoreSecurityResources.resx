@@ -201,4 +201,10 @@
   <data name="NetDataContractSerializerMethodUsedTitle" xml:space="preserve">
     <value>Do not use insecure deserializer NetDataContractSerializer</value>
   </data>
+  <data name="ObjectStateFormatterMethodUsedMessage" xml:space="preserve">
+    <value>The method '{0}' is insecure when deserializing untrusted data.</value>
+  </data>
+  <data name="ObjectStateFormatterMethodUsedTitle" xml:space="preserve">
+    <value>Do not use insecure deserializer ObjectStateFormatter</value>
+  </data>
 </root>

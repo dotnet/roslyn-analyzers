@@ -27,6 +27,25 @@ public class TestClass
     }
 }",
             GetCSharpResultAt(15, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        <OnDeserializing()>
+        Sub OnDeserializingMethod(ByVal context As StreamingContext)
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(14, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
         }
 
         [Fact]
@@ -93,6 +112,26 @@ public class TestClass
     }
 }",
             GetCSharpResultAt(16, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        <OnDeserialized()>
+        <OnSerialized()>
+        Sub OnDeserializedMethod(ByVal context As StreamingContext)
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(15, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
@@ -124,6 +163,32 @@ public class TestClass
 }",
             GetCSharpResultAt(16, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllText"),
             GetCSharpResultAt(22, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        <OnDeserialized()>
+        Sub OnDeserializedMethod(ByVal context As StreamingContext)
+            Dim obj As New TestClass()
+            obj.TestMethod()
+            File.WriteAllText(""C:\\"", ""contents"")
+        End Sub
+
+        Sub TestMethod()
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(15, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllText"),
+            GetBasicResultAt(20, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
@@ -225,6 +290,26 @@ public class TestClass
     {
     }
 }");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        <OnDeserializing()>
+        Sub OnDeserializedMethod(ByVal context As StreamingContext)
+            Dim obj As New TestClass()
+            obj.TestMethod()
+        End Sub
+
+        Sub TestMethod()
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -295,6 +380,25 @@ public class TestClass
     {
     }
 }");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        Sub OnDeserialization(ByVal context As StreamingContext)
+            Dim obj As New TestClass()
+            obj.TestMethod()
+        End Sub
+
+        Sub TestMethod()
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -316,6 +420,25 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        Sub OnDeserialization()
+            Dim obj As New TestClass()
+            obj.TestMethod()
+        End Sub
+
+        Sub TestMethod()
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -337,6 +460,23 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }");
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    Class TestClass
+        Private member As String
+        
+        <OnDeserializing()>
+        Sub OnDeserializingMethod(ByVal context As StreamingContext)
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -357,6 +497,22 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }");
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    Class TestClass
+        Private member As String
+        
+        Sub OnDeserialization(ByVal context As StreamingContext)
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -376,6 +532,22 @@ public class TestClass
     {
     }
 }");
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        <OnDeserialized()>
+        Sub OnDeserialized(ByVal context As StreamingContext)
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -397,6 +569,23 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }");
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        Sub OnDeserializingMethod(ByVal context As StreamingContext)
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+    End Class
+End Namespace");
         }
 
         [Fact]
@@ -419,6 +608,23 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }");
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()>
+    Class TestClass
+        Private member As String
+        
+        Sub OnDeserializedMethod(ByVal context As StreamingContext)
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+    End Class
+End Namespace");
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

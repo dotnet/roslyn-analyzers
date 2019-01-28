@@ -113,6 +113,11 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var dangerousMethodSymbols = builder.ToImmutable();
 
+                    if (dangerousMethodSymbols.Length == 0)
+                    {
+                        return;
+                    }
+
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
@@ -189,7 +194,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 var invocationOperation = operation as IInvocationOperation;
                                 var invokedMethodSymbol = invocationOperation.TargetMethod;
 
-                                // If it calls a dengerous method, add the invocation operation to the result.
+                                // If it calls a dangerous method, add the invocation operation to the result.
                                 if (dangerousMethodSymbols.Contains(invokedMethodSymbol))
                                 {
                                     result.Add(invocationOperation);

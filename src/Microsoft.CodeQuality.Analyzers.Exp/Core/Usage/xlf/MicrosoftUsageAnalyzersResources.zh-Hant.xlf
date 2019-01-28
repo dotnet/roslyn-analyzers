@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftUsageAnalyzersResources.resx">
+    <body>
+      <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
+        <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
+        <target state="translated">實作 System.IDisposable 之類型所宣告的欄位，其類型也會實作 IDisposable。此欄位的 Dispose 方法並不是由宣告類型的 Dispose 方法呼叫。若您負責配置及發行欄位所保留之未受控的資源，可以對實作 IDisposable 之類型的欄位，呼叫 Dispose 來修正此規則的衝突。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposableFieldsShouldBeDisposedTitle">
+        <source>Disposable fields should be disposed</source>
+        <target state="translated">可處置的欄位應受到處置</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
+        <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
+        <target state="translated">'{0}' 包含 IDisposable 類型為 '{2}' 的欄位 '{1}'，但其從未處置。變更 '{0}' 的處置方法可關閉或處置此欄位。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
+        <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
+        <target state="translated">從同樣實作 IDisposable 的類型繼承實作 System.IDisposable 的類型。繼承而來之類型的 Dispose 方法，不會呼叫父類型的 Dispose 方法。若要修正此規則的衝突，請在您的 Dispose 方法中呼叫基底.Dispose。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
+        <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
+        <target state="translated">請確定所有可能控制流路徑中的方法 '{0}' 皆會呼叫 '{1}'。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
+        <source>Dispose methods should call base class dispose</source>
+        <target state="translated">Dispose 方法應呼叫基底類別 Dispose</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

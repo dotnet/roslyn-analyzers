@@ -138,14 +138,8 @@
   <data name="ReviewUnusedParametersMessage" xml:space="preserve">
     <value>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</value>
   </data>
-  <data name="RemoveUnusedLocalsTitle" xml:space="preserve">
-    <value>Remove unused locals</value>
-  </data>
-  <data name="RemoveUnusedLocalsDescription" xml:space="preserve">
-    <value>Unused local variables and unnecessary assignments increase the size of an assembly and decrease performance.</value>
-  </data>
-  <data name="RemoveUnusedLocalsMessage" xml:space="preserve">
-    <value>Remove unused locals</value>
+  <data name="RemoveUnusedParameterMessage" xml:space="preserve">
+    <value>Remove unused parameter</value>
   </data>
   <data name="DoNotIgnoreMethodResultsTitle" xml:space="preserve">
     <value>Do not ignore method results</value>
@@ -183,10 +177,66 @@
   <data name="AvoidUnusedPrivateFieldsMessage" xml:space="preserve">
     <value>Unused field '{0}'.</value>
   </data>
-  <data name="CategoryMaintainability" xml:space="preserve">
-    <value>Maintainability</value>
+  <data name="DoNotIgnoreMethodResultsMessagePureMethod" xml:space="preserve">
+    <value>{0} calls {1} but does not use the value the method returns. Because {1} is marked as a Pure method, it cannot have side effects. Use the result in a conditional statement, assign the result to a variable, or pass it as an argument to another method.</value>
   </data>
-  <data name="CategoryPerformance" xml:space="preserve">
-    <value>Performance</value>
+  <data name="UseNameOfInPlaceOfStringDescription" xml:space="preserve">
+    <value>Using nameof helps keep your code valid when refactoring.</value>
+  </data>
+  <data name="UseNameOfInPlaceOfStringMessage" xml:space="preserve">
+    <value>Use nameof in place of string literal '{0}'</value>
+  </data>
+  <data name="UseNameOfInPlaceOfStringTitle" xml:space="preserve">
+    <value>Use nameof to express symbol names</value>
+  </data>
+  <data name="AvoidExcessiveClassCouplingDescription" xml:space="preserve">
+    <value>This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</value>
+  </data>
+  <data name="AvoidExcessiveClassCouplingMessage" xml:space="preserve">
+    <value>'{0}' is coupled with '{1}' different types from '{2}' different namespaces. Rewrite or refactor the code to decrease its class coupling below '{3}'.</value>
+  </data>
+  <data name="AvoidExcessiveClassCouplingTitle" xml:space="preserve">
+    <value>Avoid excessive class coupling</value>
+  </data>
+  <data name="AvoidExcessiveComplexityDescription" xml:space="preserve">
+    <value>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
+
+cyclomatic complexity = the number of edges - the number of nodes + 1
+
+where a node represents a logic branch point and an edge represents a line between nodes.</value>
+  </data>
+  <data name="AvoidExcessiveComplexityMessage" xml:space="preserve">
+    <value>'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</value>
+  </data>
+  <data name="AvoidExcessiveComplexityTitle" xml:space="preserve">
+    <value>Avoid excessive complexity</value>
+  </data>
+  <data name="AvoidExcessiveInheritanceDescription" xml:space="preserve">
+    <value>Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.</value>
+  </data>
+  <data name="AvoidExcessiveInheritanceMessage" xml:space="preserve">
+    <value>'{0}' has an object hierarchy '{1}' levels deep within the defining module. If possible, eliminate base classes within the hierarchy to decrease its hierarchy level below '{2}': '{3}'</value>
+  </data>
+  <data name="AvoidExcessiveInheritanceTitle" xml:space="preserve">
+    <value>Avoid excessive inheritance</value>
+  </data>
+  <data name="AvoidUnmantainableCodeDescription" xml:space="preserve">
+    <value>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
+A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</value>
+  </data>
+  <data name="AvoidUnmantainableCodeMessage" xml:space="preserve">
+    <value>'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</value>
+  </data>
+  <data name="AvoidUnmantainableCodeTitle" xml:space="preserve">
+    <value>Avoid unmaintainable code</value>
+  </data>
+  <data name="InvalidEntryInCodeMetricsConfigFileDescription" xml:space="preserve">
+    <value>Invalid entry in code metrics rule specification file</value>
+  </data>
+  <data name="InvalidEntryInCodeMetricsConfigFileMessage" xml:space="preserve">
+    <value>Invalid entry '{0}' in code metrics rule specification file '{1}'</value>
+  </data>
+  <data name="InvalidEntryInCodeMetricsConfigFileTitle" xml:space="preserve">
+    <value>Invalid entry in code metrics rule specification file</value>
   </data>
 </root>

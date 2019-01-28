@@ -8,9 +8,9 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2234: Pass system uri objects instead of strings
@@ -29,10 +29,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182360.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2234-pass-system-uri-objects-instead-of-strings",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -57,25 +57,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 var analyzer = new PerCompilationAnalyzer(c.Compilation, @string, uri, GetInvocationExpression);
 
                 // REVIEW: I need to do this thing because OperationAnalysisContext doesn't give me OwningSymbol
-                c.RegisterOperationBlockStartActionInternal(sc =>
+                c.RegisterOperationBlockStartAction(sc =>
                 {
-                    sc.RegisterOperationActionInternal(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.InvocationExpression);
+                    sc.RegisterOperationAction(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.Invocation);
                 });
             });
         }
 
         protected abstract SyntaxNode GetInvocationExpression(SyntaxNode invocationNode);
 
-        private struct PerCompilationAnalyzer
+        private sealed class PerCompilationAnalyzer
         {
             // this type will be created per compilation 
-            // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
-#pragma warning disable RS1008 
             private readonly Compilation _compilation;
             private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _uri;
             private readonly Func<SyntaxNode, SyntaxNode> _expressionGetter;
-#pragma warning restore RS1008
 
             public PerCompilationAnalyzer(
                 Compilation compilation,
@@ -91,13 +88,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             public void Analyze(OperationAnalysisContext context, ISymbol owningSymbol)
             {
-                if (context.Operation.IsInvalid)
+                var invocation = (IInvocationOperation)context.Operation;
+                if (invocation.TargetMethod == null)
                 {
-                    // not interested in invalid expression
                     return;
                 }
-
-                var invocation = (IInvocationExpression)context.Operation;
                 var method = invocation.TargetMethod;
 
                 // check basic stuff that FxCop checks. 
@@ -109,9 +104,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                if (method.GetResultantVisibility() != SymbolVisibility.Public)
+                if (!method.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
                 {
-                    // only apply to methods that are exposed outside
+                    // only apply to methods that are exposed outside by default
                     return;
                 }
 

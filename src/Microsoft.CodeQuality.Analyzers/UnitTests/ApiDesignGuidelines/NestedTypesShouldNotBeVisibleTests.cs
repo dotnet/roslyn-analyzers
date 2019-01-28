@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class NestedTypesShouldNotBeVisibleTests : DiagnosticAnalyzerTestBase
     {
@@ -100,7 +101,7 @@ End Module
             VerifyBasic(code, GetBasicCA1034ModuleResultAt(3, 18, "Inner"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
         public void CSharpDiagnosticPublicNestedDelegate()
         {
             var code = @"
@@ -109,10 +110,10 @@ public class Outer
     public delegate void Inner();
 }
 ";
-            VerifyCSharp(code, GetCSharpCA1034ResultAt(4, 26, "Inner"));
+            VerifyCSharp(code);
         }
 
-        [Fact]
+        [Fact, WorkItem(1347, "https://github.com/dotnet/roslyn-analyzers/issues/1347")]
         public void BasicDiagnosticPublicNestedDelegate()
         {
             var code = @"
@@ -120,7 +121,7 @@ Public Class Outer
     Delegate Sub Inner()
 End Class
 ";
-            VerifyBasic(code, GetBasicCA1034ResultAt(3, 18, "Inner"));
+            VerifyBasic(code);
         }
 
         [Fact]

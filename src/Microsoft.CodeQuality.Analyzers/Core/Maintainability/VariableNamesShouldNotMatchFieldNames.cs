@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1500: Variable names should not match field names
@@ -27,8 +27,8 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1500-variable-names-should-not-match-field-names",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor ParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageParameter,
@@ -36,10 +36,11 @@ namespace Microsoft.Maintainability.Analyzers
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1500-variable-names-should-not-match-field-names",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LocalRule, ParameterRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
+            //ImmutableArray.Create(LocalRule, ParameterRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

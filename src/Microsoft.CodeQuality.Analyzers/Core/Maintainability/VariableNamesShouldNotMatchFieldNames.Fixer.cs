@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1500: Variable names should not match field names
@@ -24,7 +24,7 @@ namespace Microsoft.Maintainability.Analyzers
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

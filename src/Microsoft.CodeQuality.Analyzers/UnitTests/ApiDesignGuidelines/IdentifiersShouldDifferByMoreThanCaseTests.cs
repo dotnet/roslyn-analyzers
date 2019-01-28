@@ -3,10 +3,11 @@
 using System;
 using System.Linq;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class IdentifiersShouldDifferByMoreThanCaseTests : DiagnosticAnalyzerTestBase
     {

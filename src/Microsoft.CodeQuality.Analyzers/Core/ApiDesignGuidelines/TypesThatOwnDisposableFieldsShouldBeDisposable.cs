@@ -9,7 +9,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1001: Types that own disposable fields should be disposable
@@ -25,12 +25,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
                                                                          DiagnosticCategory.Design,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          description: new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182172.aspx",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1001-types-that-own-disposable-fields-should-be-disposable",
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -69,7 +69,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     IEnumerable<IFieldSymbol> disposableFields = from member in namedType.GetMembers()
                                                                  where member.Kind == SymbolKind.Field && !member.IsStatic
                                                                  let field = member as IFieldSymbol
-                                                                 where field.Type != null && field.Type.AllInterfaces.Contains(_disposableTypeSymbol)
+                                                                 where field.Type != null && field.Type.IsDisposable(_disposableTypeSymbol)
                                                                  select field;
 
                     if (disposableFields.Any())
@@ -86,7 +86,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                     symbolContext.CancellationToken));
                             if (syntaxNodes.Any())
                             {
-                                symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, namedType.Name));
+                                // Type '{0}' owns disposable field(s) '{1}' but is not disposable
+                                var arg1 = namedType.Name;
+                                var arg2 = string.Join(", ", disposableFieldsHashSet.Select(f => f.Name).Order());
+                                symbolContext.ReportDiagnostic(namedType.CreateDiagnostic(Rule, arg1, arg2));
                                 return;
                             }
                         }
@@ -94,7 +97,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }
 
-            private IEnumerable<TTypeDeclarationSyntax> GetClassDeclarationNodes(INamedTypeSymbol namedType, CancellationToken cancellationToken)
+            private static IEnumerable<TTypeDeclarationSyntax> GetClassDeclarationNodes(INamedTypeSymbol namedType, CancellationToken cancellationToken)
             {
                 foreach (SyntaxNode syntax in namedType.DeclaringSyntaxReferences.Select(s => s.GetSyntax(cancellationToken)))
                 {

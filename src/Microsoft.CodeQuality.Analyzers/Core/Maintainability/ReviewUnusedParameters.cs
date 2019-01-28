@@ -1,16 +1,20 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
+    using UnusedParameterDictionary = IDictionary<IMethodSymbol, ISet<IParameterSymbol>>;
+
     /// <summary>
     /// CA1801: Review unused parameters
     /// </summary>
@@ -27,12 +31,12 @@ namespace Microsoft.Maintainability.Analyzers
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
-                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182268.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1801-review-unused-parameters",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -55,10 +59,28 @@ namespace Microsoft.Maintainability.Analyzers
                 INamedTypeSymbol onDeserializedAttribute = WellKnownTypes.OnDeserializedAttribute(compilationStartContext.Compilation);
                 INamedTypeSymbol onSerializingAttribute = WellKnownTypes.OnSerializingAttribute(compilationStartContext.Compilation);
                 INamedTypeSymbol onSerializedAttribute = WellKnownTypes.OnSerializedAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol obsoleteAttribute = WellKnownTypes.ObsoleteAttribute(compilationStartContext.Compilation);
 
-                ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(conditionalAttributeSymbol, onDeserializedAttribute, onDeserializingAttribute, onSerializedAttribute, onSerializingAttribute);
+                ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(
+                    conditionalAttributeSymbol,
+                    onDeserializedAttribute,
+                    onDeserializingAttribute,
+                    onSerializedAttribute,
+                    onSerializingAttribute,
+                    obsoleteAttribute);
+                
+                UnusedParameterDictionary unusedMethodParameters = new ConcurrentDictionary<IMethodSymbol, ISet<IParameterSymbol>>();
+                ISet<IMethodSymbol> methodsUsedAsDelegates = new HashSet<IMethodSymbol>();
 
-                compilationStartContext.RegisterOperationBlockStartActionInternal(startOperationBlockContext =>
+                // Create a list of functions to exclude from analysis. We assume that any function that is used in an IMethodBindingExpression
+                // cannot have its signature changed, and add it to the list of methods to be excluded from analysis.
+                compilationStartContext.RegisterOperationAction(operationContext =>
+                {
+                    var methodBinding = (IMethodReferenceOperation)operationContext.Operation;
+                    methodsUsedAsDelegates.Add(methodBinding.Method.OriginalDefinition);
+                }, OperationKind.MethodReference);
+
+                compilationStartContext.RegisterOperationBlockStartAction(startOperationBlockContext =>
                 {
                     // We only care about methods.
                     if (startOperationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
@@ -73,13 +95,20 @@ namespace Microsoft.Maintainability.Analyzers
                         return;
                     }
 
-                    // Ignore implicitly declared methods, abstract methods, virtual methods, interface implementations and finalizers (FxCop compat).
+                    // Ignore implicitly declared methods, extern methods, abstract methods, virtual methods, interface implementations and finalizers (FxCop compat).
                     if (method.IsImplicitlyDeclared ||
+                        method.IsExtern ||
                         method.IsAbstract ||
                         method.IsVirtual ||
                         method.IsOverride ||
                         method.IsImplementationOfAnyInterfaceMember() ||
                         method.IsFinalizer())
+                    {
+                        return;
+                    }
+
+                    // Ignore property accessors.
+                    if (method.IsPropertyAccessor())
                     {
                         return;
                     }
@@ -99,14 +128,33 @@ namespace Microsoft.Maintainability.Analyzers
                         return;
                     }
 
+                    // Ignore methods that were used as delegates
+                    if (methodsUsedAsDelegates.Contains(method))
+                    {
+                        return;
+                    }
+
                     // Initialize local mutable state in the start action.
-                    var analyzer = new UnusedParametersAnalyzer(method);
+                    var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
 
                     // Register an intermediate non-end action that accesses and modifies the state.
-                    startOperationBlockContext.RegisterOperationActionInternal(analyzer.AnalyzeOperation, OperationKind.ParameterReferenceExpression);
+                    startOperationBlockContext.RegisterOperationAction(analyzer.AnalyzeOperation, OperationKind.ParameterReference);
 
-                    // Register an end action to report diagnostics based on the final state.
+                    // Register an end action to add unused parameters to the unusedMethodParameters dictionary
                     startOperationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
+                });
+
+                // Register a compilation end action to filter all methods used as delegates and report any diagnostics
+                compilationStartContext.RegisterCompilationEndAction(compilationAnalysisContext =>
+                {
+                    // Report diagnostics for unused parameters.
+                    var unusedParameters = unusedMethodParameters.Where(kvp => !methodsUsedAsDelegates.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
+                    foreach (var parameter in unusedParameters)
+                    {
+                        var diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
+                        compilationAnalysisContext.ReportDiagnostic(diagnostic);
+                    }
+
                 });
             });
         }
@@ -114,17 +162,21 @@ namespace Microsoft.Maintainability.Analyzers
         private class UnusedParametersAnalyzer
         {
             #region Per-CodeBlock mutable state
-
+                       
             private readonly HashSet<IParameterSymbol> _unusedParameters;
+            private readonly UnusedParameterDictionary _finalUnusedParameters;
+            private readonly IMethodSymbol _method;
 
             #endregion
 
             #region State intialization
 
-            public UnusedParametersAnalyzer(IMethodSymbol method)
+            public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters)
             {
                 // Initialization: Assume all parameters are unused.
-                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);
+                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);                
+                _finalUnusedParameters = finalUnusedParameters;
+                _method = method;
             }
 
             #endregion
@@ -140,7 +192,7 @@ namespace Microsoft.Maintainability.Analyzers
                 }
 
                 // Mark this parameter as used.
-                IParameterSymbol parameter = ((IParameterReferenceExpression)context.Operation).Parameter;
+                IParameterSymbol parameter = ((IParameterReferenceOperation)context.Operation).Parameter;
                 _unusedParameters.Remove(parameter);
             }
 
@@ -150,12 +202,21 @@ namespace Microsoft.Maintainability.Analyzers
 
             public void OperationBlockEndAction(OperationBlockAnalysisContext context)
             {
-                // Report diagnostics for unused parameters.
-                foreach (IParameterSymbol parameter in _unusedParameters)
+                // Check to see if the method just throws a NotImplementedException/NotSupportedException
+                // We shouldn't warn about parameters in that case
+                if (context.IsMethodNotImplementedOrSupported())
                 {
-                    Diagnostic diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
-                    context.ReportDiagnostic(diagnostic);
+                    return;
                 }
+
+                // Do not raise warning for unused 'this' parameter of an extension method.
+                if (_method.IsExtensionMethod)
+                {
+                    var thisParamter = _unusedParameters.Where(p => p.Ordinal == 0).FirstOrDefault();
+                    _unusedParameters.Remove(thisParamter);
+                }
+
+                _finalUnusedParameters.Add(_method, _unusedParameters);
             }
 
             #endregion

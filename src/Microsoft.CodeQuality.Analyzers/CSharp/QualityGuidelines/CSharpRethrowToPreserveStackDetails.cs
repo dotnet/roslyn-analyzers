@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.QualityGuidelines.Analyzers;
+using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
 
-namespace Microsoft.QualityGuidelines.CSharp.Analyzers
+namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpRethrowToPreserveStackDetailsAnalyzer : RethrowToPreserveStackDetailsAnalyzer

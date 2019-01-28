@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1056: Uri properties should not be strings
@@ -26,10 +26,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182175.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1056-uri-properties-should-not-be-strings",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -80,9 +80,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                if (property.GetResultantVisibility() != SymbolVisibility.Public)
+                if (!property.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
                 {
-                    // only apply to methods that are exposed outside
+                    // only apply to methods that are exposed outside by default
                     return;
                 }
 

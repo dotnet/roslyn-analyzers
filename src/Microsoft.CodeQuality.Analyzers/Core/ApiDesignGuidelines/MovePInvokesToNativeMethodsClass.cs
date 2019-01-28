@@ -8,7 +8,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1060 - Move P/Invokes to native methods class
@@ -28,14 +28,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: false,
                                                                          description: s_localizableDescription,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182161.aspx",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1060-move-p-invokes-to-nativemethods-class",
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private const string NativeMethodsText = "NativeMethods";
         private const string SafeNativeMethodsText = "SafeNativeMethods";
         private const string UnsafeNativeMethodsText = "UnsafeNativeMethods";
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext context)
         {

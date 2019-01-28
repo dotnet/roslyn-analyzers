@@ -15,7 +15,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2226: Operators should have symmetrical overloads
@@ -41,7 +41,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return Task.FromResult(true);
         }
 
-        private async Task<Document> CreateChangedDocument(
+        private static async Task<Document> CreateChangedDocument(
             CodeFixContext context, CancellationToken cancellationToken)
         {
             var document = context.Document;
@@ -69,13 +69,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return editor.GetChangedDocument();
         }
 
-        private IEnumerable<SyntaxNode> GetInvertedStatements(
+        private static IEnumerable<SyntaxNode> GetInvertedStatements(
             SyntaxGenerator generator, IMethodSymbol containingOperator, Compilation compilation)
         {
             yield return GetInvertedStatement(generator, containingOperator, compilation);
         }
 
-        private SyntaxNode GetInvertedStatement(
+        private static SyntaxNode GetInvertedStatement(
             SyntaxGenerator generator, IMethodSymbol containingOperator, Compilation compilation)
         {
             if (containingOperator.Name == WellKnownMemberNames.EqualityOperatorName)
@@ -104,9 +104,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private OperatorKind GetInvertedOperatorKind(IMethodSymbol containingOperator)
+        private static OperatorKind GetInvertedOperatorKind(IMethodSymbol containingOperator)
         {
-            switch(containingOperator.Name)
+            switch (containingOperator.Name)
             {
                 case WellKnownMemberNames.EqualityOperatorName: return OperatorKind.Inequality;
                 case WellKnownMemberNames.InequalityOperatorName: return OperatorKind.Equality;

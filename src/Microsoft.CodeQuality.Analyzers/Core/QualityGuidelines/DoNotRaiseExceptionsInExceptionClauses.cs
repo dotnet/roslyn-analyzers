@@ -6,9 +6,9 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2219: Do not raise exceptions in exception clauses
@@ -28,17 +28,17 @@ namespace Microsoft.QualityGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesMessageFinally), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotRaiseExceptionsInExceptionClausesDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
-        private const string HelpLinkUrl = "https://msdn.microsoft.com/en-us/library/bb386041.aspx";
+        private const string HelpLinkUrl = "https://docs.microsoft.com/visualstudio/code-quality/ca2219-do-not-raise-exceptions-in-exception-clauses";
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUrl,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -47,14 +47,14 @@ namespace Microsoft.QualityGuidelines.Analyzers
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockActionInternal(operationBlockContext =>
+            analysisContext.RegisterOperationBlockAction(operationBlockContext =>
             {
                 foreach (var block in operationBlockContext.OperationBlocks)
                 {
                     var walker = new ThrowInsideFinallyWalker();
                     walker.Visit(block);
 
-                    foreach (var throwStatement in walker.ThrowStatements)
+                    foreach (var throwStatement in walker.ThrowExpressions)
                     {
                         operationBlockContext.ReportDiagnostic(throwStatement.Syntax.CreateDiagnostic(Rule));
                     }
@@ -63,15 +63,15 @@ namespace Microsoft.QualityGuidelines.Analyzers
         }
 
         /// <summary>
-        /// Walks an IOperation tree to find throw statements inside finally blocks.
+        /// Walks an IOperation tree to find throw expressions inside finally blocks.
         /// </summary>
         private class ThrowInsideFinallyWalker : OperationWalker
         {
             private int _finallyBlockNestingDepth;
 
-            public List<IThrowStatement> ThrowStatements { get; private set; } = new List<IThrowStatement>();
+            public List<IThrowOperation> ThrowExpressions { get; private set; } = new List<IThrowOperation>();
 
-            public override void VisitTryStatement(ITryStatement operation)
+            public override void VisitTry(ITryOperation operation)
             {
                 Visit(operation.Body);
                 foreach (var catchClause in operation.Catches)
@@ -80,18 +80,18 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 }
 
                 _finallyBlockNestingDepth++;
-                Visit(operation.FinallyHandler);
+                Visit(operation.Finally);
                 _finallyBlockNestingDepth--;
             }
 
-            public override void VisitThrowStatement(IThrowStatement operation)
+            public override void VisitThrow(IThrowOperation operation)
             {
                 if (_finallyBlockNestingDepth > 0)
                 {
-                    ThrowStatements.Add(operation);
+                    ThrowExpressions.Add(operation);
                 }
 
-                base.VisitThrowStatement(operation);
+                base.VisitThrow(operation);
             }
         }
     }

@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Rename;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1725: Parameter names should match base declaration
@@ -52,7 +52,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private async Task<Document> GetUpdatedDocumentForParameterRenameAsync(Document document, ISymbol parameter, string newName, CancellationToken cancellationToken)
+        private static async Task<Document> GetUpdatedDocumentForParameterRenameAsync(Document document, ISymbol parameter, string newName, CancellationToken cancellationToken)
         {
             Solution newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, parameter, newName, null, cancellationToken).ConfigureAwait(false);
             return newSolution.GetDocument(document.Id);

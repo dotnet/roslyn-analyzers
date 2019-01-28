@@ -7,14 +7,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
-using Microsoft.ApiDesignGuidelines.Analyzers;
+using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.CSharp.Analyzers
+namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
 {
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public class CSharpStaticHolderTypesFixer : CodeFixProvider
@@ -36,13 +36,15 @@ namespace Microsoft.ApiDesignGuidelines.CSharp.Analyzers
             ClassDeclarationSyntax classDeclaration = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             if (classDeclaration != null)
             {
-                var codeAction = new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic,
-                                                  async ct => await MakeClassStatic(document, classDeclaration, ct).ConfigureAwait(false));
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic;
+                var codeAction = new MyCodeAction(title,
+                                                  async ct => await MakeClassStatic(document, classDeclaration, ct).ConfigureAwait(false),
+                                                  equivalenceKey: title);
                 context.RegisterCodeFix(codeAction, context.Diagnostics);
             }
         }
 
-        private async Task<Document> MakeClassStatic(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken ct)
+        private static async Task<Document> MakeClassStatic(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken ct)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, ct).ConfigureAwait(false);
             DeclarationModifiers modifiers = editor.Generator.GetModifiers(classDeclaration);
@@ -58,14 +60,16 @@ namespace Microsoft.ApiDesignGuidelines.CSharp.Analyzers
             return editor.GetChangedDocument();
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public override string EquivalenceKey => nameof(CSharpStaticHolderTypesFixer);
-
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument) :
-                base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+
+            // Workaround for https://github.com/dotnet/roslyn-analyzers/issues/1413
+            public override string EquivalenceKey => base.EquivalenceKey;
         }
     }
 

@@ -1,13 +1,14 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2227: Collection properties should be read only
@@ -41,10 +42,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                     s_localizableMessage,
                                                                     DiagnosticCategory.Usage,
                                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                    isEnabledByDefault: true,
+                                                                    isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                     description: s_localizableDescription,
-                                                                    helpLinkUri: "https://msdn.microsoft.com/library/ms182327.aspx",
-                                                                    customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                    helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2227-collection-properties-should-be-read-only",
+                                                                    customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -57,31 +58,61 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 (context) =>
                 {
                     INamedTypeSymbol iCollectionType = WellKnownTypes.ICollection(context.Compilation);
+                    INamedTypeSymbol genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
                     INamedTypeSymbol arrayType = WellKnownTypes.Array(context.Compilation);
                     INamedTypeSymbol dataMemberAttribute = WellKnownTypes.DataMemberAttribute(context.Compilation);
+                    ImmutableHashSet<INamedTypeSymbol> immutableInterfaces = WellKnownTypes.IImmutableInterfaces(context.Compilation);
 
-                    if (iCollectionType == null || arrayType == null)
+                    if (iCollectionType == null ||
+                        genericICollectionType == null ||
+                        arrayType == null)
                     {
                         return;
                     }
 
-                    context.RegisterSymbolAction(c => AnalyzeSymbol(c, iCollectionType, arrayType, dataMemberAttribute), SymbolKind.Property);
+                    context.RegisterSymbolAction(c => AnalyzeSymbol(c, iCollectionType, genericICollectionType, arrayType, dataMemberAttribute, immutableInterfaces), SymbolKind.Property);
                 });
         }
 
-        public static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol iCollectionType, INamedTypeSymbol arrayType, INamedTypeSymbol dataMemberAttribute)
+        public static void AnalyzeSymbol(
+            SymbolAnalysisContext context,
+            INamedTypeSymbol iCollectionType,
+            INamedTypeSymbol genericICollectionType,
+            INamedTypeSymbol arrayType,
+            INamedTypeSymbol dataMemberAttribute,
+            ImmutableHashSet<INamedTypeSymbol> immutableInterfaces)
         {
             var property = (IPropertySymbol)context.Symbol;
 
             // check whether it has a public setter
             IMethodSymbol setter = property.SetMethod;
-            if (setter == null || setter.DeclaredAccessibility != Accessibility.Public)
+            if (setter == null || !setter.IsExternallyVisible())
             {
                 return;
             }
 
-            // make sure this property is NOT indexer, return type is NOT array but implement ICollection
-            if (property.IsIndexer || Inherits(property.Type, arrayType) || !Inherits(property.Type, iCollectionType))
+            // make sure this property is NOT an indexer
+            if (property.IsIndexer)
+            {
+                return;
+            }
+
+            // make sure return type is NOT array
+            if (Inherits(property.Type, arrayType))
+            {
+                return;
+            }
+
+            // make sure property type implements ICollection or ICollection<T>
+            if (!Inherits(property.Type, iCollectionType) && !Inherits(property.Type, genericICollectionType))
+            {
+                return;
+            }
+            
+            // exclude Immutable collections
+            // see https://github.com/dotnet/roslyn-analyzers/issues/1900 for details
+            if (!immutableInterfaces.IsEmpty &&
+                property.Type.AllInterfaces.Any(i => immutableInterfaces.Contains(i.OriginalDefinition)))
             {
                 return;
             }
@@ -96,12 +127,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
             }
 
-            context.ReportDiagnostic(property.CreateDiagnostic(Rule));
+            context.ReportDiagnostic(property.CreateDiagnostic(Rule, property.Name));
         }
 
         private static bool Inherits(ITypeSymbol symbol, ITypeSymbol baseType)
         {
-            return symbol == null ? false : symbol.Inherits(baseType);
+            Debug.Assert(baseType.Equals(baseType.OriginalDefinition));
+            return symbol?.OriginalDefinition.Inherits(baseType) ?? false;
         }
     }
 }

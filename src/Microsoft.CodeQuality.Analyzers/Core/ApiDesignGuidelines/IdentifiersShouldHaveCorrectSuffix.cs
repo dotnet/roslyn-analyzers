@@ -8,8 +8,9 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
+using System.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1710: Identifiers should have correct suffix
@@ -18,7 +19,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     public sealed class IdentifiersShouldHaveCorrectSuffixAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1710";
-        internal const string Uri = "https://msdn.microsoft.com/en-us/library/ms182244.aspx";
+        internal const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -30,19 +31,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor SpecialCollectionRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSpecialCollection,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SpecialCollectionRule);
 
@@ -108,10 +109,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 context.RegisterSymbolAction((saContext) =>
                 {
                     var namedTypeSymbol = (INamedTypeSymbol)saContext.Symbol;
-                    if (namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+                    if (!namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, DefaultRule, saContext.CancellationToken))
                     {
+                        Debug.Assert(!namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, SpecialCollectionRule, saContext.CancellationToken));
                         return;
                     }
+
+                    Debug.Assert(namedTypeSymbol.MatchesConfiguredVisibility(saContext.Options, SpecialCollectionRule, saContext.CancellationToken));
 
                     var baseType = namedTypeSymbol.GetBaseTypes().FirstOrDefault(bt => baseTypeSuffixMap.ContainsKey(bt.OriginalDefinition));
                     if (baseType != null)
@@ -143,16 +147,23 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
                 , SymbolKind.NamedType);
 
-                context.RegisterSymbolAction((saContext) =>
+                var eventArgsType = WellKnownTypes.EventArgs(context.Compilation);
+                if (eventArgsType != null)
                 {
-                    const string eventHandlerString = "EventHandler";
-                    var eventSymbol = saContext.Symbol as IEventSymbol;
-                    if (!eventSymbol.Type.Name.EndsWith(eventHandlerString, StringComparison.Ordinal))
+                    context.RegisterSymbolAction((saContext) =>
                     {
-                        saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, eventHandlerString));
-                    }
-                },
-                SymbolKind.Event);
+                        const string eventHandlerString = "EventHandler";
+                        var eventSymbol = (IEventSymbol)saContext.Symbol;
+                        if (!eventSymbol.Type.Name.EndsWith(eventHandlerString, StringComparison.Ordinal) &&
+                            eventSymbol.Type.IsInSource() &&
+                            eventSymbol.Type.TypeKind == TypeKind.Delegate &&
+                            ((INamedTypeSymbol)eventSymbol.Type).DelegateInvokeMethod?.HasEventHandlerSignature(eventArgsType) == true)
+                        {
+                            saContext.ReportDiagnostic(eventSymbol.CreateDiagnostic(DefaultRule, eventSymbol.Type.Name, eventHandlerString));
+                        }
+                    },
+                    SymbolKind.Event);
+                }
             }
         }
     }

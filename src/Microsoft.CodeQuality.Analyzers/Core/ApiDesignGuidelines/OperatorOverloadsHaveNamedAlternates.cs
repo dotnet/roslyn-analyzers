@@ -9,7 +9,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2225: Operator overloads have named alternates
@@ -24,7 +24,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         internal const string IsTrueText = "IsTrue";
         private const string OpTrueText = "op_True";
         private const string OpFalseText = "op_False";
-        private const string MsdnUrl = "https://msdn.microsoft.com/en-us/library/ms182355.aspx";
+        private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
@@ -39,37 +39,37 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: MsdnUrl,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: HelpLinkUri,
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor PropertyRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageProperty,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: MsdnUrl,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: HelpLinkUri,
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MultipleRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMultiple,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: MsdnUrl,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: HelpLinkUri,
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor VisibilityRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageVisibility,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: MsdnUrl,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: HelpLinkUri,
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, PropertyRule, MultipleRule, VisibilityRule);
 
@@ -84,6 +84,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
         {
             var methodSymbol = (IMethodSymbol)symbolContext.Symbol;
+
+            // FxCop compat: only analyze externally visible symbols by default.
+            // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+            // will always have identical configured visibility.
+            if (!methodSymbol.MatchesConfiguredVisibility(symbolContext.Options, DefaultRule, symbolContext.CancellationToken))
+            {
+                return;
+            }
+
             if (methodSymbol.ContainingSymbol is ITypeSymbol typeSymbol && (methodSymbol.MethodKind == MethodKind.UserDefinedOperator || methodSymbol.MethodKind == MethodKind.Conversion))
             {
                 string operatorName = methodSymbol.Name;
@@ -104,7 +113,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
                 else
                 {
-                    ExpectedAlternateMethodGroup expectedGroup = GetExpectedAlternateMethodGroup(operatorName, methodSymbol.ReturnType);
+                    ExpectedAlternateMethodGroup expectedGroup = GetExpectedAlternateMethodGroup(operatorName, methodSymbol.ReturnType, methodSymbol.Parameters.FirstOrDefault()?.Type);
                     if (expectedGroup == null)
                     {
                         // no alternate methods required
@@ -183,9 +192,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        internal static ExpectedAlternateMethodGroup GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType)
+        internal static ExpectedAlternateMethodGroup GetExpectedAlternateMethodGroup(string operatorName, ITypeSymbol returnType, ITypeSymbol parameterType)
         {
-            // list of operator alternate names: https://msdn.microsoft.com/en-us/library/ms182355.aspx
+            // list of operator alternate names: https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates
 
             // the most common case; create a static method with the already specified types
             Func<string, ExpectedAlternateMethodGroup> createSingle = methodName => new ExpectedAlternateMethodGroup(methodName);
@@ -250,7 +259,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return createSingle("Plus");
                 case "op_Implicit":
                 case "op_Explicit":
-                    return new ExpectedAlternateMethodGroup(alternateMethod1: $"To{returnType.Name}", alternateMethod2: $"From{returnType.Name}");
+                    return new ExpectedAlternateMethodGroup(alternateMethod1: $"To{returnType.Name}", alternateMethod2: parameterType != null ? $"From{parameterType.Name}" : null);
                 default:
                     return null;
             }

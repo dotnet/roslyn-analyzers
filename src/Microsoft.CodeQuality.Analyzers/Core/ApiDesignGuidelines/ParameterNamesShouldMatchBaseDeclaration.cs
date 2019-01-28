@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1725: Parameter names should match base declaration
@@ -30,8 +30,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: null,     // TODO: add MSDN url
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1725-parameter-names-should-match-base-declaration",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
@@ -47,9 +47,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static void AnalyzeMethodSymbol(SymbolAnalysisContext analysisContext)
         {
-            var methodSymbol = analysisContext.Symbol as IMethodSymbol;
+            var methodSymbol = (IMethodSymbol)analysisContext.Symbol;
 
-            if (!(methodSymbol.CanBeReferencedByName || methodSymbol.IsImplementationOfAnyExplicitInterfaceMember())
+            if (!methodSymbol.MatchesConfiguredVisibility(analysisContext.Options, Rule, analysisContext.CancellationToken) ||
+                !(methodSymbol.CanBeReferencedByName || methodSymbol.IsImplementationOfAnyExplicitInterfaceMember())
                 || !methodSymbol.Locations.Any(x => x.IsInSource)
                 || string.IsNullOrWhiteSpace(methodSymbol.Name))
             {

@@ -1,19 +1,15 @@
 ﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
-<Project>
-  <ImportGroup Label="Settings">
-    <Import Project="..\..\..\build\Targets\Analyzers.Settings.targets" />
-  </ImportGroup>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <SetupProject>true</SetupProject>
-    <AssemblyName>MetaCompilation.Analyzers.Setup</AssemblyName>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
     <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
     <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
-    <VSSDKTargetPlatformRegRootSuffix>Roslyn</VSSDKTargetPlatformRegRootSuffix>
     <ImportVSSDKTargets>true</ImportVSSDKTargets>
+    <PublishWindowsPdb>false</PublishWindowsPdb>
   </PropertyGroup>
+  
   <ItemGroup>
     <Content Include="ProjectTemplates\AnalyzerTutorialTemplate.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -21,14 +17,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\MetaCompilation.Analyzers.Core.csproj">
-      <Name>MetaCompilation.Analyzers.Core</Name>
+    <ProjectReference Include="..\Core\MetaCompilation.Analyzers.csproj">
+      <Name>MetaCompilation.Analyzers</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
     </ProjectReference>
   </ItemGroup>
-  <ImportGroup Label="Targets">
-    <Import Project="..\..\..\build\Targets\Analyzers.Imports.targets" />
-  </ImportGroup>
 </Project>

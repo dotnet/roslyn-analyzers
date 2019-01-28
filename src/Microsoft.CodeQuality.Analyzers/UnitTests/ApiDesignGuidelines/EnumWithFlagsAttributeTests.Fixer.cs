@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class EnumWithFlagsAttributeFixerTests : CodeFixTestBase
     {
@@ -177,6 +177,25 @@ End Enum
         public void CSharp_EnumWithFlagsAttributes_MissingPowerOfTwo()
         {
             string code = @"
+public enum MissingPowerOfTwoEnumClass
+{
+    Zero = 0,
+    One = 1,
+    Two = 2,
+    Four = 4,
+    Sixteen = 16
+}
+
+public enum MultipleMissingPowerOfTwoEnumClass
+{
+    Zero = 0,
+    One = 1,
+    Two = 2,
+    Four = 4,
+    ThirtyTwo = 32
+}";
+
+            var expected = @"
 [System.Flags]
 public enum MissingPowerOfTwoEnumClass
 {
@@ -195,8 +214,16 @@ public enum MultipleMissingPowerOfTwoEnumClass
     Two = 2,
     Four = 4,
     ThirtyTwo = 32
-}
+}";
 
+            // Verify fixes for CA1027
+            VerifyCSharpFix(code, expected);
+        }
+
+        [Fact]
+        public void CSharp_EnumWithFlagsAttributes_IncorrectNumbers()
+        {
+            string code = @"
 [System.Flags]
 public enum AnotherTestValue
 {
@@ -207,24 +234,6 @@ public enum AnotherTestValue
 }";
 
             var expected = @"
-public enum MissingPowerOfTwoEnumClass
-{
-    Zero = 0,
-    One = 1,
-    Two = 2,
-    Four = 4,
-    Sixteen = 16
-}
-
-public enum MultipleMissingPowerOfTwoEnumClass
-{
-    Zero = 0,
-    One = 1,
-    Two = 2,
-    Four = 4,
-    ThirtyTwo = 32
-}
-
 public enum AnotherTestValue
 {
     Value1 = 0,
@@ -241,6 +250,24 @@ public enum AnotherTestValue
         public void VisualBasic_EnumWithFlagsAttributes_MissingPowerOfTwo()
         {
             string code = @"
+Public Enum MissingPowerOfTwoEnumClass
+	Zero = 0
+	One = 1
+	Two = 2
+	Four = 4
+	Sixteen = 16
+End Enum
+
+Public Enum MultipleMissingPowerOfTwoEnumClass
+	Zero = 0
+	One = 1
+	Two = 2
+	Four = 4
+	ThirtyTwo = 32
+End Enum
+";
+
+            string expected = @"
 <System.Flags>
 Public Enum MissingPowerOfTwoEnumClass
 	Zero = 0
@@ -258,7 +285,16 @@ Public Enum MultipleMissingPowerOfTwoEnumClass
 	Four = 4
 	ThirtyTwo = 32
 End Enum
+";
 
+            // Verify fixes for CA1027
+            VerifyBasicFix(code, expected);
+        }
+
+        [Fact]
+        public void VisualBasic_EnumWithFlagsAttributes_IncorrectNumber()
+        {
+            string code = @"
 <System.Flags>
 Public Enum AnotherTestValue
 	Value1 = 0
@@ -269,22 +305,6 @@ End Enum
 ";
 
             string expected = @"
-Public Enum MissingPowerOfTwoEnumClass
-	Zero = 0
-	One = 1
-	Two = 2
-	Four = 4
-	Sixteen = 16
-End Enum
-
-Public Enum MultipleMissingPowerOfTwoEnumClass
-	Zero = 0
-	One = 1
-	Two = 2
-	Four = 4
-	ThirtyTwo = 32
-End Enum
-
 Public Enum AnotherTestValue
 	Value1 = 0
 	Value2 = 1

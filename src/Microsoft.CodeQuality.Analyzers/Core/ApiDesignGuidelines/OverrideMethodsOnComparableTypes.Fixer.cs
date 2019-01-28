@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class OverrideMethodsOnComparableTypesFixer : CodeFixProvider
@@ -41,13 +41,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-
+            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementComparable;
             context.RegisterCodeFix(
-                new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementComparable,
-                    async ct => await ImplementComparableAsync(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false)), diagnostic);
+                new MyCodeAction(title,
+                    async ct => await ImplementComparableAsync(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false),
+                    equivalenceKey: title), diagnostic);
         }
 
-        private async Task<Document> ImplementComparableAsync(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
+        private static async Task<Document> ImplementComparableAsync(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
@@ -111,12 +112,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return editor.GetChangedDocument();
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

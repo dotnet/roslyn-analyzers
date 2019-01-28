@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -13,6 +14,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
+
+#pragma warning disable CA1820 // Test for empty strings using string length
 
 namespace MetaCompilation.Analyzers
 {
@@ -167,7 +170,7 @@ namespace MetaCompilation.Analyzers
                         if (parameterDeclarations.Count() != 0)
                         {
                             MethodDeclarationSyntax declaration = parameterDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take one parameter of type SyntaxNodeAnalysisContext", c => IncorrectAnalysisParameterAsync(context.Document, declaration), "Have this method take one parameter of type SyntaxNodeAnalysisContext"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take one parameter of type SyntaxNodeAnalysisContext", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c), "Have this method take one parameter of type SyntaxNodeAnalysisContext"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.InternalAndStaticError:
@@ -553,7 +556,7 @@ namespace MetaCompilation.Analyzers
                         if (titleDeclarations.Count() != 0)
                         {
                             LiteralExpressionSyntax declaration = titleDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceTitle(context.Document, declaration), "Replace the title"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceTitle(context.Document, declaration, c), "Replace the title"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.Message:
@@ -561,7 +564,7 @@ namespace MetaCompilation.Analyzers
                         if (messageDeclarations.Count() != 0)
                         {
                             LiteralExpressionSyntax declaration = messageDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceMessage(context.Document, declaration), "Replace the title"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceMessage(context.Document, declaration, c), "Replace the title"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.Category:
@@ -569,7 +572,7 @@ namespace MetaCompilation.Analyzers
                         if (categoryDeclarations.Count() != 0)
                         {
                             LiteralExpressionSyntax declaration = categoryDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceCategory(context.Document, declaration), "Replace the title"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceCategory(context.Document, declaration, c), "Replace the title"), diagnostic);
                         }
                         break;
                 }
@@ -577,33 +580,33 @@ namespace MetaCompilation.Analyzers
         }
 
         // replace the category string
-        private async Task<Document> ReplaceCategory(Document document, LiteralExpressionSyntax declaration)
+        private async Task<Document> ReplaceCategory(Document document, LiteralExpressionSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode newString = generator.LiteralExpression("Formatting");
-            return await ReplaceNode(declaration, newString, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newString, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the messageFormat string
-        private async Task<Document> ReplaceMessage(Document document, LiteralExpressionSyntax declaration)
+        private async Task<Document> ReplaceMessage(Document document, LiteralExpressionSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode newString = generator.LiteralExpression("The trivia between 'if' and '(' should be a single space");
-            return await ReplaceNode(declaration, newString, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newString, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the title string
-        private async Task<Document> ReplaceTitle(Document document, LiteralExpressionSyntax declaration)
+        private async Task<Document> ReplaceTitle(Document document, LiteralExpressionSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode newString = generator.LiteralExpression("If-statement spacing");
-            return await ReplaceNode(declaration, newString, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newString, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces a node in the document
-        private async Task<Document> ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode, Document document)
+        private async Task<Document> ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode, Document document, CancellationToken cancellationToken)
         {
-            SyntaxNode root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode newRoot = root.ReplaceNode(oldNode, newNode);
             Document newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
@@ -611,35 +614,35 @@ namespace MetaCompilation.Analyzers
 
         #region analysis method fixes
         // sets the analysis method to take a parameter of type SyntaxNodeAnalysisContext
-        private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration)
+        private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             SyntaxNode newDeclaration = CodeFixHelper.CreateMethodWithContextParameter(generator, declaration);
 
-            return await ReplaceNode(declaration, newDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // sets the return type of the method to void
-        private async Task<Document> IncorrectAnalysisReturnTypeAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> IncorrectAnalysisReturnTypeAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxNode newDeclaration = CodeFixHelper.MethodReturnType(declaration, "void");
 
-            return await ReplaceNode(declaration, newDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // sets the method accessibility to private
-        private async Task<Document> IncorrectAnalysisAccessibilityAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> IncorrectAnalysisAccessibilityAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             SyntaxNode newDeclaration = CodeFixHelper.MethodAccessibility(generator, declaration, Accessibility.Private);
 
-            return await ReplaceNode(declaration, newDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds an analysis method to the enclosing class
-        private async Task<Document> MissingAnalysisMethodAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> MissingAnalysisMethodAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -650,11 +653,11 @@ namespace MetaCompilation.Analyzers
 
             ClassDeclarationSyntax classDeclaration = declaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
 
-            return await ReplaceNode(classDeclaration, classDeclaration.AddMembers(newAnalysisMethod), document).ConfigureAwait(false);
+            return await ReplaceNode(classDeclaration, classDeclaration.AddMembers(newAnalysisMethod), document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the if statement variable
-        private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -662,11 +665,11 @@ namespace MetaCompilation.Analyzers
             string name = CodeFixHelper.GetContextParameter(methodDeclaration);
             SyntaxNode ifStatement = CodeFixHelper.IfHelper(generator, name);
 
-            return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the if statement variable
-        private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -676,22 +679,22 @@ namespace MetaCompilation.Analyzers
             var oldBlock = declaration.Body as BlockSyntax;
             BlockSyntax newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the incorrect statement with the keyword statement
-        private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var block = declaration.Parent as BlockSyntax;
             SyntaxNode ifKeyword = CodeFixHelper.KeywordHelper(generator, block);
 
-            return await ReplaceNode(declaration, ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the keyword statement
-        private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -699,11 +702,11 @@ namespace MetaCompilation.Analyzers
             var ifKeyword = CodeFixHelper.KeywordHelper(generator, methodBlock) as StatementSyntax;
             BlockSyntax newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            return await ReplaceNode(methodBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(methodBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the trailing trivia check
-        private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -722,11 +725,11 @@ namespace MetaCompilation.Analyzers
             BlockSyntax oldBlock = declaration.Body;
             BlockSyntax newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the trailing trivia check
-        private async Task<Document> TrailingCheckMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingCheckMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -737,11 +740,11 @@ namespace MetaCompilation.Analyzers
             BlockSyntax oldBlock = declaration.Body;
             BlockSyntax newBlock = oldBlock.WithStatements(declaration.Body.Statements.Add(ifStatement));
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the trivia count check
-        private async Task<Document> TriviaCountMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TriviaCountMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -755,11 +758,11 @@ namespace MetaCompilation.Analyzers
             var oldBlock = ifStatement.Statement as BlockSyntax;
             BlockSyntax newBlock = oldBlock.WithStatements(localDeclaration);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the trivia count check
-        private async Task<Document> TriviaCountIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TriviaCountIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -787,11 +790,11 @@ namespace MetaCompilation.Analyzers
             SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
             BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the trailing trivia variable
-        private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -801,11 +804,11 @@ namespace MetaCompilation.Analyzers
             var oldBlock = declaration.Statement as BlockSyntax;
             BlockSyntax newBlock = oldBlock.WithStatements(localDeclaration);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the trailing trivia variable
-        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -826,11 +829,11 @@ namespace MetaCompilation.Analyzers
             SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
             BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the trailing trivia kind check
-        private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -856,11 +859,11 @@ namespace MetaCompilation.Analyzers
             SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
             BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the trailing trivia kind check
-        private async Task<Document> TrailingKindCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingKindCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -871,11 +874,11 @@ namespace MetaCompilation.Analyzers
             var oldBlock = declaration.Statement as BlockSyntax;
             BlockSyntax newBlock = oldBlock.AddStatements(newIfStatement);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the whitespace check
-        private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -902,11 +905,11 @@ namespace MetaCompilation.Analyzers
             SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
             BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the whitespace check
-        private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -917,11 +920,11 @@ namespace MetaCompilation.Analyzers
             var oldBlock = declaration.Statement as BlockSyntax;
             BlockSyntax newBlock = oldBlock.WithStatements(newIfStatement);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the return statement
-        private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -941,11 +944,11 @@ namespace MetaCompilation.Analyzers
             SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the return statement
-        private async Task<Document> ReturnMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReturnMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -954,11 +957,11 @@ namespace MetaCompilation.Analyzers
             var oldBlock = declaration.Statement as BlockSyntax;
             BlockSyntax newBlock = oldBlock.WithStatements(returnStatements);
 
-            return await ReplaceNode(oldBlock, newBlock, document).ConfigureAwait(false);
+            return await ReplaceNode(oldBlock, newBlock, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the open paren statement
-        private async Task<Document> ReplaceOpenParenAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReplaceOpenParenAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -967,11 +970,11 @@ namespace MetaCompilation.Analyzers
 
             SyntaxNode openParen = CodeFixHelper.CreateOpenParen(generator, expressionString);
 
-            return await ReplaceNode(declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the open paren statement
-        private async Task<Document> AddOpenParenAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddOpenParenAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -979,11 +982,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode openParen = CodeFixHelper.CreateOpenParen(generator, expressionString);
             SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            return await ReplaceNode(declaration, newMethod, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newMethod, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the start span statement
-        private async Task<Document> ReplaceStartSpanAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReplaceStartSpanAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -991,11 +994,11 @@ namespace MetaCompilation.Analyzers
             string identifierString = CodeFixHelper.GetIfKeywordName(methodDeclaration.Body);
             SyntaxNode startSpan = CodeFixHelper.CreateEndOrStartSpan(generator, identifierString, "startDiagnosticSpan");
 
-            return await ReplaceNode(declaration, startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the start span statement
-        private async Task<Document> AddStartSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddStartSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1003,11 +1006,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode startSpan = CodeFixHelper.CreateEndOrStartSpan(generator, identifierString, "startDiagnosticSpan");
             SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            return await ReplaceNode(declaration, newMethod, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newMethod, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the end span statement
-        private async Task<Document> ReplaceEndSpanAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReplaceEndSpanAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1016,11 +1019,11 @@ namespace MetaCompilation.Analyzers
 
             SyntaxNode endSpan = CodeFixHelper.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
 
-            return await ReplaceNode(declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the end span statement
-        private async Task<Document> AddEndSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddEndSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1028,11 +1031,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode endSpan = CodeFixHelper.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
             SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            return await ReplaceNode(declaration, newMethod, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newMethod, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the span statement
-        private async Task<Document> ReplaceSpanAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReplaceSpanAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1042,11 +1045,11 @@ namespace MetaCompilation.Analyzers
 
             SyntaxNode span = CodeFixHelper.CreateSpan(generator, startIdentifier, endIdentifier);
 
-            return await ReplaceNode(declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the span statement
-        private async Task<Document> AddSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1055,11 +1058,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode span = CodeFixHelper.CreateSpan(generator, startIdentifier, endIdentifier);
             SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            return await ReplaceNode(declaration, newMethod, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newMethod, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the location statement
-        private async Task<Document> ReplaceLocationAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReplaceLocationAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1068,11 +1071,11 @@ namespace MetaCompilation.Analyzers
             string spanIdentifier = CodeFixHelper.GetSpanName(methodDeclaration);
             SyntaxNode location = CodeFixHelper.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
 
-            return await ReplaceNode(declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the location statement
-        private async Task<Document> AddLocationAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddLocationAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1081,11 +1084,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode location = CodeFixHelper.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
             SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            return await ReplaceNode(declaration, newMethod, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newMethod, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replace the diagnostic creation statement
-        private async Task<Document> ReplaceDiagnosticAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReplaceDiagnosticAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             MethodDeclarationSyntax methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
             ClassDeclarationSyntax classDeclaration = methodDeclaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
@@ -1101,11 +1104,11 @@ namespace MetaCompilation.Analyzers
 
             SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
 
-            return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the diagnostic creation statement
-        private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1126,11 +1129,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
             SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, analysis, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" \r\n"))));
 
-            return await ReplaceNode(analysis, newMethod, document).ConfigureAwait(false);
+            return await ReplaceNode(analysis, newMethod, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the diagnostic report statement
-        private async Task<Document> ReplaceDiagnosticReportAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReplaceDiagnosticReportAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             MethodDeclarationSyntax methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
 
@@ -1141,11 +1144,11 @@ namespace MetaCompilation.Analyzers
 
             SyntaxNode diagnosticReport = CodeFixHelper.CreateDiagnosticReport(generator, argumentName, contextName);
 
-            return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the diagnostic report statement
-        private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1154,13 +1157,13 @@ namespace MetaCompilation.Analyzers
             SyntaxNode diagnosticReport = CodeFixHelper.CreateDiagnosticReport(generator, argumentName, contextName);
             SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            return await ReplaceNode(declaration, newMethod, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newMethod, document, cancellationToken).ConfigureAwait(false);
         }
         #endregion
 
         #region id code fixes
         // adds an id to the class
-        private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1168,13 +1171,13 @@ namespace MetaCompilation.Analyzers
             var newClass = generator.InsertMembers(declaration, 0, newField) as ClassDeclarationSyntax;
             ClassDeclarationSyntax triviaClass = newClass.ReplaceNode(newClass.Members[0], newField);
 
-            return await ReplaceNode(declaration, triviaClass, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, triviaClass, document, cancellationToken).ConfigureAwait(false);
         }
         #endregion
 
         #region initialize code fixes
         // adds the Initialize method
-        private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1186,11 +1189,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode initializeDeclaration = CodeFixHelper.BuildInitialize(generator, notImplementedException, statements, name);
             SyntaxNode newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
 
-            return await ReplaceNode(declaration, newClassDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newClassDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds a register statement and analysis method if necessary
-        private async Task<Document> MissingRegisterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> MissingRegisterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1217,11 +1220,11 @@ namespace MetaCompilation.Analyzers
                 newClassDecl = generator.AddMembers(newClassDecl, newAnalysisMethod) as ClassDeclarationSyntax;
             }
 
-            return await ReplaceNode(classDeclaration, newClassDecl, document).ConfigureAwait(false);
+            return await ReplaceNode(classDeclaration, newClassDecl, document, cancellationToken).ConfigureAwait(false);
         }
 
         // gets ride of multiple statement inside Initialize, keeping one correct statement
-        private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
             SyntaxList<StatementSyntax> initializeStatements = declaration.Body.Statements;
@@ -1241,18 +1244,18 @@ namespace MetaCompilation.Analyzers
             newBlock = newBlock.WithStatements(statements);
             MethodDeclarationSyntax newDeclaration = declaration.WithBody(newBlock);
 
-            return await ReplaceNode(declaration, newDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // removes the invalid statement from the method
-        private async Task<Document> InvalidStatementAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> InvalidStatementAsync(Document document, StatementSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxNode newInitializeDeclaration = CodeFixHelper.RemoveStatement(declaration);
-            return await ReplaceNode(declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), newInitializeDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), newInitializeDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // replaces the old Initialize declaration with one with a correct signature
-        private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1260,11 +1263,11 @@ namespace MetaCompilation.Analyzers
             SyntaxList<StatementSyntax> statements = declaration.Body.Statements;
             SyntaxNode initializeDeclaration = CodeFixHelper.BuildInitialize(generator, null, statements, name);
 
-            return await ReplaceNode(declaration, initializeDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, initializeDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // puts the correct arguments in the register statement
-        private async Task<Document> CorrectArgumentsAsync(Document document, InvocationExpressionSyntax declaration, CancellationToken c)
+        private async Task<Document> CorrectArgumentsAsync(Document document, InvocationExpressionSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1279,11 +1282,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode statement = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
             SyntaxNode expression = generator.ExpressionStatement(statement);
 
-            return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // corrects the register statement to be RegisterSyntaxNodeAction
-        private async Task<Document> CorrectRegisterAsync(Document document, IdentifierNameSyntax declaration, CancellationToken c)
+        private async Task<Document> CorrectRegisterAsync(Document document, IdentifierNameSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1296,11 +1299,11 @@ namespace MetaCompilation.Analyzers
             }
 
             SyntaxNode newExpression = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
-            return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document, cancellationToken).ConfigureAwait(false);
         }
 
         // corrects the kind argument of the register statement to be SyntaxKind.IfStatement
-        private async Task<Document> CorrectKindAsync(Document document, ArgumentListSyntax declaration, CancellationToken c)
+        private async Task<Document> CorrectKindAsync(Document document, ArgumentListSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1319,32 +1322,32 @@ namespace MetaCompilation.Analyzers
             string contextParameter = (((declaration.Parent as InvocationExpressionSyntax).Expression as MemberAccessExpressionSyntax).Expression as IdentifierNameSyntax).Identifier.Text;
             SyntaxNode newExpr = CodeFixHelper.BuildRegister(generator, contextParameter, "RegisterSyntaxNodeAction", argList);
 
-            return await ReplaceNode(declaration.Ancestors().OfType<InvocationExpressionSyntax>().First(), newExpr.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            "), SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("            "))), document).ConfigureAwait(false);
+            return await ReplaceNode(declaration.Ancestors().OfType<InvocationExpressionSyntax>().First(), newExpr.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            "), SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("            "))), document, cancellationToken).ConfigureAwait(false);
         }
         #endregion
 
         #region rule code fixes
         // adds the internal and static modifiers to the property
-        private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode newFieldDecl = generator.FieldDeclaration(declaration.Declaration.Variables[0].Identifier.Text, generator.IdentifierName("DiagnosticDescriptor"), accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: declaration.Declaration.Variables[0].Initializer.Value as SyntaxNode).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
-            return await ReplaceNode(declaration, newFieldDecl, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newFieldDecl, document, cancellationToken).ConfigureAwait(false);
         }
 
         // sets the isEnabledByDefault parameter to true
-        private async Task<Document> EnabledByDefaultAsync(Document document, ArgumentSyntax argument, CancellationToken c)
+        private async Task<Document> EnabledByDefaultAsync(Document document, ArgumentSyntax argument, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             FieldDeclarationSyntax rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             FieldDeclarationSyntax newRule = rule.ReplaceNode(argument.Expression, generator.LiteralExpression(true));
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document).ConfigureAwait(false);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document, cancellationToken).ConfigureAwait(false);
         }
 
         // sets the diagnosticSeverity parameter to warning
-        private async Task<Document> DiagnosticSeverityWarning(Document document, ArgumentSyntax argument, CancellationToken c)
+        private async Task<Document> DiagnosticSeverityWarning(Document document, ArgumentSyntax argument, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1353,11 +1356,11 @@ namespace MetaCompilation.Analyzers
             FieldDeclarationSyntax rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             FieldDeclarationSyntax newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document).ConfigureAwait(false);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document, cancellationToken).ConfigureAwait(false);
         }
 
         // sets the diagnosticSeverity parameter to error
-        private async Task<Document> DiagnosticSeverityError(Document document, ArgumentSyntax argument, CancellationToken c)
+        private async Task<Document> DiagnosticSeverityError(Document document, ArgumentSyntax argument, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1366,11 +1369,11 @@ namespace MetaCompilation.Analyzers
             FieldDeclarationSyntax rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             FieldDeclarationSyntax newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document).ConfigureAwait(false);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds a declaration for the id
-        private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken c)
+        private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken cancellationToken)
         {
             var classDeclaration = ruleDeclarationField.Parent.Parent.Parent as ClassDeclarationSyntax;
             var objectCreationSyntax = ruleDeclarationField.Initializer.Value as ObjectCreationExpressionSyntax;
@@ -1396,11 +1399,11 @@ namespace MetaCompilation.Analyzers
             var newClass = generator.InsertMembers(classDeclaration, 0, newField) as ClassDeclarationSyntax;
             ClassDeclarationSyntax triviaClass = newClass.ReplaceNode(newClass.Members[0], newField);
 
-            return await ReplaceNode(classDeclaration, triviaClass, document).ConfigureAwait(false);
+            return await ReplaceNode(classDeclaration, triviaClass, document, cancellationToken).ConfigureAwait(false);
         }
 
         // corrects the id declaration
-        private async Task<Document> IdDeclTypeAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken c)
+        private async Task<Document> IdDeclTypeAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1472,11 +1475,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode newArg = generator.Argument("id", RefKind.None, newIdName).WithLeadingTrivia(SyntaxFactory.Whitespace("            "));
             FieldDeclarationSyntax newRule = rule.ReplaceNode(oldIdName.Ancestors().OfType<ArgumentSyntax>().First(), newArg);
 
-            return await ReplaceNode(rule, newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// id: Identifies each rule. Same as the public constant declared above").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(rule.GetLeadingTrivia()), document).ConfigureAwait(false);
+            return await ReplaceNode(rule, newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// id: Identifies each rule. Same as the public constant declared above").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(rule.GetLeadingTrivia()), document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds a DiagnosticDescriptor rule to the class
-        private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1504,7 +1507,7 @@ namespace MetaCompilation.Analyzers
             var newNodes = new SyntaxList<SyntaxNode>();
             newNodes = newNodes.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseLeadingTrivia("// If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "))));
 
-            SyntaxNode root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (insertPointNode != null)
             {
                 SyntaxNode newRoot = root.InsertNodesBefore(insertPointNode, newNodes);
@@ -1522,7 +1525,7 @@ namespace MetaCompilation.Analyzers
 
         #region supported diagnostics code fixes
         // fixes the signature of the SupportedDiagnostics property
-        private async Task<Document> IncorrectSigSuppDiagAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> IncorrectSigSuppDiagAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1540,11 +1543,11 @@ namespace MetaCompilation.Analyzers
             SyntaxNode newPropertyDecl = generator.PropertyDeclaration("SupportedDiagnostics", type, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, getAccessorStatements: getAccessorStatements).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
             newPropertyDecl = newPropertyDecl.RemoveNode((newPropertyDecl as PropertyDeclarationSyntax).AccessorList.Accessors[1], 0);
 
-            return await ReplaceNode(declaration, newPropertyDecl, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newPropertyDecl, document, cancellationToken).ConfigureAwait(false);
         }
 
         // adds the get accessor
-        private async Task<Document> MissingAccessorAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> MissingAccessorAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1556,11 +1559,11 @@ namespace MetaCompilation.Analyzers
             PropertyDeclarationSyntax newPropertyDeclaration = generator.PropertyDeclaration("SupportedDiagnostics", type, Accessibility.Public, DeclarationModifiers.Override, throwStatement) as PropertyDeclarationSyntax;
             newPropertyDeclaration = newPropertyDeclaration.RemoveNode(newPropertyDeclaration.AccessorList.Accessors[1], 0);
 
-            return await ReplaceNode(declaration, newPropertyDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newPropertyDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // removes all unnecessary accessors
-        private async Task<Document> TooManyAccessorsAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TooManyAccessorsAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1583,7 +1586,7 @@ namespace MetaCompilation.Analyzers
                 }
             }
 
-            BlockSyntax block = SyntaxFactory.Block(new StatementSyntax[0]);
+            BlockSyntax block = SyntaxFactory.Block(Array.Empty<StatementSyntax>());
             if (accessorToKeep == null)
             {
                 accessorToKeep = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, block);
@@ -1594,11 +1597,11 @@ namespace MetaCompilation.Analyzers
             PropertyDeclarationSyntax newPropertyDeclaration = declaration.WithAccessorList(null);
             newPropertyDeclaration = generator.AddAccessors(newPropertyDeclaration, accessorsToAdd) as PropertyDeclarationSyntax;
 
-            return await ReplaceNode(declaration, newPropertyDeclaration, document).ConfigureAwait(false);
+            return await ReplaceNode(declaration, newPropertyDeclaration, document, cancellationToken).ConfigureAwait(false);
         }
 
         // inserts ImmutableArray.Create()
-        private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
@@ -1630,7 +1633,7 @@ namespace MetaCompilation.Analyzers
 
             var oldStatementDeclaration = oldStatement as LocalDeclarationStatementSyntax;
 
-            SyntaxNode root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode newRoot;
 
             if (oldStatement == null)
@@ -1654,7 +1657,7 @@ namespace MetaCompilation.Analyzers
         }
 
         // inserts ImmutableArray.Create(all rules)
-        private async Task<Document> AccessorWithRulesAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AccessorWithRulesAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             List<string> ruleNames = CodeFixHelper.GetAllRuleNames(declaration);
 
@@ -1675,7 +1678,7 @@ namespace MetaCompilation.Analyzers
 
                 if (getAccessor.Body.Statements.Count == 0)
                 {
-                    return await ReplaceNode(getAccessor, getAccessor.AddBodyStatements(newReturnStatement as ReturnStatementSyntax), document).ConfigureAwait(false);
+                    return await ReplaceNode(getAccessor, getAccessor.AddBodyStatements(newReturnStatement as ReturnStatementSyntax), document, cancellationToken).ConfigureAwait(false);
                 }
 
                 var localDeclaration = getAccessor.Body.Statements.First() as LocalDeclarationStatementSyntax;
@@ -1684,15 +1687,15 @@ namespace MetaCompilation.Analyzers
 
                 if (localDeclaration != null)
                 {
-                    return await ReplaceNode(localDeclaration, generator.LocalDeclarationStatement(localDeclaration.Declaration.Variables[0].Identifier.Text, newInvocationExpression).WithLeadingTrivia(leadingTrivia), document).ConfigureAwait(false);
+                    return await ReplaceNode(localDeclaration, generator.LocalDeclarationStatement(localDeclaration.Declaration.Variables[0].Identifier.Text, newInvocationExpression).WithLeadingTrivia(leadingTrivia), document, cancellationToken).ConfigureAwait(false);
                 }
                 else if (returnStatement != null)
                 {
-                    return await ReplaceNode(returnStatement, newReturnStatement, document).ConfigureAwait(false);
+                    return await ReplaceNode(returnStatement, newReturnStatement, document, cancellationToken).ConfigureAwait(false);
                 }
                 else if (otherStatement != null)
                 {
-                    return await ReplaceNode(otherStatement, newReturnStatement, document).ConfigureAwait(false);
+                    return await ReplaceNode(otherStatement, newReturnStatement, document, cancellationToken).ConfigureAwait(false);
                 }
             }
 
@@ -1700,7 +1703,7 @@ namespace MetaCompilation.Analyzers
         }
 
         // adds a SupportedDiagnostics property to the class
-        private async Task<Document> AddSuppDiagAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> AddSuppDiagAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken cancellationToken)
         {
             SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
             MethodDeclarationSyntax insertPoint = null;
@@ -1722,14 +1725,14 @@ namespace MetaCompilation.Analyzers
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
             PropertyDeclarationSyntax propertyDeclaration = CodeFixHelper.CreateSupportedDiagnostics(generator, notImplementedException);
 
             var newNodes = new SyntaxList<SyntaxNode>();
             newNodes = newNodes.Add(propertyDeclaration);
 
-            SyntaxNode root = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             if (insertPoint != null)
             {
                 SyntaxNode newRoot = root.InsertNodesBefore(insertPointNode, newNodes);
@@ -1745,10 +1748,10 @@ namespace MetaCompilation.Analyzers
         }
         #endregion
 
-        private class CodeFixHelper
+        private static class CodeFixHelper
         {
             // removes the provided statement from the method that it is in
-            protected internal static SyntaxNode RemoveStatement(StatementSyntax statement)
+            internal static SyntaxNode RemoveStatement(StatementSyntax statement)
             {
                 MethodDeclarationSyntax initializeDeclaration = statement.Ancestors().OfType<MethodDeclarationSyntax>().First();
                 MethodDeclarationSyntax newInitializeDeclaration = initializeDeclaration.RemoveNode(statement, 0);
@@ -1756,7 +1759,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // checks if the statement is a correct regsiter statement
-            protected internal static bool IsCorrectRegister(ExpressionStatementSyntax statement)
+            internal static bool IsCorrectRegister(ExpressionStatementSyntax statement)
             {
                 var expression = statement.Expression as InvocationExpressionSyntax;
                 if (expression == null)
@@ -1797,42 +1800,42 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the span variable
-            protected internal static string GetSpanName(MethodDeclarationSyntax methodDecl)
+            internal static string GetSpanName(MethodDeclarationSyntax methodDecl)
             {
                 string spanName = (methodDecl.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return spanName;
             }
 
             // gets the name of the start span variable
-            protected internal static string GetStartSpanName(MethodDeclarationSyntax methodDecl)
+            internal static string GetStartSpanName(MethodDeclarationSyntax methodDecl)
             {
                 string startIdentifier = (methodDecl.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return startIdentifier;
             }
 
             // gets the name of the end span variable
-            protected internal static string GetEndSpanName(MethodDeclarationSyntax methodDecl)
+            internal static string GetEndSpanName(MethodDeclarationSyntax methodDecl)
             {
                 string endIdentifier = (methodDecl.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return endIdentifier;
             }
 
             // gets the name of the open paren variable
-            protected internal static string GetOpenParenName(MethodDeclarationSyntax methodDecl)
+            internal static string GetOpenParenName(MethodDeclarationSyntax methodDecl)
             {
                 string openParenName = (methodDecl.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return openParenName;
             }
 
             // gets the name of the location variable
-            protected internal static string GetLocationName(MethodDeclarationSyntax methodDecl)
+            internal static string GetLocationName(MethodDeclarationSyntax methodDecl)
             {
                 string locationName = (methodDecl.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return locationName;
             }
 
             // adds a statement to the provided method
-            protected internal static SyntaxNode AddStatementToMethod(SyntaxGenerator generator, MethodDeclarationSyntax methodDecl, SyntaxNode statement)
+            internal static SyntaxNode AddStatementToMethod(SyntaxGenerator generator, MethodDeclarationSyntax methodDecl, SyntaxNode statement)
             {
                 var oldStatements = (SyntaxList<SyntaxNode>)methodDecl.Body.Statements;
                 SyntaxList<SyntaxNode> newStatements = oldStatements.Add(statement);
@@ -1841,21 +1844,21 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the diagnostic variable
-            protected internal static string GetDiagnosticName(MethodDeclarationSyntax methodDecl)
+            internal static string GetDiagnosticName(MethodDeclarationSyntax methodDecl)
             {
                 string diagnosticName = (methodDecl.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return diagnosticName;
             }
 
             // gets the context parameter of the analysis method
-            protected internal static string GetContextParameter(MethodDeclarationSyntax methodDecl)
+            internal static string GetContextParameter(MethodDeclarationSyntax methodDecl)
             {
                 string contextName = methodDecl.ParameterList.Parameters[0].Identifier.Text;
                 return contextName;
             }
 
             // builds a register statement
-            protected internal static SyntaxNode BuildRegister(SyntaxGenerator generator, string context, string register, ArgumentListSyntax argumentList)
+            internal static SyntaxNode BuildRegister(SyntaxGenerator generator, string context, string register, ArgumentListSyntax argumentList)
             {
                 SyntaxNode registerIdentifier = generator.IdentifierName(register);
                 SyntaxNode contextIdentifier = generator.IdentifierName(context);
@@ -1865,7 +1868,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the method registered, null if none found
-            protected internal static string GetRegisterMethodName(InvocationExpressionSyntax invocationExpression)
+            internal static string GetRegisterMethodName(InvocationExpressionSyntax invocationExpression)
             {
                 string methodName = null;
                 ArgumentListSyntax argList = invocationExpression.ArgumentList;
@@ -1889,7 +1892,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the analysis method
-            protected internal static string AnalysisMethodName(MethodDeclarationSyntax methodDeclaration)
+            internal static string AnalysisMethodName(MethodDeclarationSyntax methodDeclaration)
             {
                 var statements = methodDeclaration.Body.Statements.First() as ExpressionStatementSyntax;
                 var invocationExpression = statements.Expression as InvocationExpressionSyntax;
@@ -1899,14 +1902,14 @@ namespace MetaCompilation.Analyzers
             }
 
             // set method accessibility to accessibility
-            protected internal static SyntaxNode MethodAccessibility(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration, Accessibility accessibility)
+            internal static SyntaxNode MethodAccessibility(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration, Accessibility accessibility)
             {
                 SyntaxNode newMethod = generator.WithAccessibility(methodDeclaration, accessibility);
                 return newMethod;
             }
 
             // set method return type to returnType
-            protected internal static SyntaxNode MethodReturnType(MethodDeclarationSyntax methodDeclaration, string returnType)
+            internal static SyntaxNode MethodReturnType(MethodDeclarationSyntax methodDeclaration, string returnType)
             {
                 TypeSyntax voidType = SyntaxFactory.ParseTypeName(returnType).WithTrailingTrivia(SyntaxFactory.Whitespace(" "));
                 methodDeclaration = methodDeclaration.WithReturnType(voidType);
@@ -1914,7 +1917,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the if-statement variable
-            protected internal static string GetIfStatementName(BlockSyntax methodBlock)
+            internal static string GetIfStatementName(BlockSyntax methodBlock)
             {
                 var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
                 string variableName = firstStatement.Declaration.Variables[0].Identifier.ValueText;
@@ -1922,7 +1925,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the if-keyword variable
-            protected internal static string GetIfKeywordName(BlockSyntax methodBlock)
+            internal static string GetIfKeywordName(BlockSyntax methodBlock)
             {
                 var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
                 string variableName = secondStatement.Declaration.Variables[0].Identifier.ValueText;
@@ -1930,7 +1933,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the trailing trivia variable
-            protected internal static string GetTrailingTriviaName(BlockSyntax ifBlock)
+            internal static string GetTrailingTriviaName(BlockSyntax ifBlock)
             {
                 var trailingTriviaDeclaration = ifBlock.Statements[0] as LocalDeclarationStatementSyntax;
                 string variableName = trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText;
@@ -1938,7 +1941,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the first parameter of the method
-            protected internal static string GetFirstParameterName(MethodDeclarationSyntax methodDeclaration)
+            internal static string GetFirstParameterName(MethodDeclarationSyntax methodDeclaration)
             {
                 ParameterSyntax firstParameter = methodDeclaration.ParameterList.Parameters[0];
                 string name = firstParameter.Identifier.Text;
@@ -1946,7 +1949,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates an if-statement checking the count of trailing trivia
-            protected internal static SyntaxNode TriviaCountHelper(SyntaxGenerator generator, string name, SyntaxList<StatementSyntax> ifBlockStatements)
+            internal static SyntaxNode TriviaCountHelper(SyntaxGenerator generator, string name, SyntaxList<StatementSyntax> ifBlockStatements)
             {
                 SyntaxNode variableName = generator.IdentifierName(name);
                 SyntaxNode memberAccess = generator.MemberAccessExpression(variableName, "TrailingTrivia");
@@ -1959,7 +1962,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a statement casting context.Node to if-statement
-            protected internal static SyntaxNode IfHelper(SyntaxGenerator generator, string name)
+            internal static SyntaxNode IfHelper(SyntaxGenerator generator, string name)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
                 SyntaxNode expression = generator.IdentifierName(name);
@@ -1971,7 +1974,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the if-keyword statement
-            protected internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, BlockSyntax methodBlock)
+            internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, BlockSyntax methodBlock)
             {
                 string variableName = GetIfStatementName(methodBlock);
                 SyntaxNode identifierName = generator.IdentifierName(variableName);
@@ -1982,7 +1985,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the HasTrailingTrivia check
-            protected internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, BlockSyntax methodBlock, SyntaxList<StatementSyntax> ifBlockStatements)
+            internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, BlockSyntax methodBlock, SyntaxList<StatementSyntax> ifBlockStatements)
             {
                 string variableName = GetIfKeywordName(methodBlock);
                 SyntaxNode identifierName = generator.IdentifierName(variableName);
@@ -1993,7 +1996,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the first trailing trivia variable
-            protected internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
+            internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
             {
                 MethodDeclarationSyntax methodDecl = declaration.Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                 var methodBlock = methodDecl.Body as BlockSyntax;
@@ -2011,7 +2014,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the trivia kind check
-            protected internal static SyntaxNode TriviaKindCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+            internal static SyntaxNode TriviaKindCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
             {
                 var ifBlock = ifStatement.Statement as BlockSyntax;
                 string variableName = GetTrailingTriviaName(ifBlock);
@@ -2030,7 +2033,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the whitespace check
-            protected internal static SyntaxNode WhitespaceCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+            internal static SyntaxNode WhitespaceCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
             {
                 var ifBlock = ifStatement.Parent as BlockSyntax;
                 string variableName = GetTrailingTriviaName(ifBlock);
@@ -2047,7 +2050,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // builds an Initialize method
-            protected internal static SyntaxNode BuildInitialize(SyntaxGenerator generator, INamedTypeSymbol notImplementedException, SyntaxList<StatementSyntax> statements, string name)
+            internal static SyntaxNode BuildInitialize(SyntaxGenerator generator, INamedTypeSymbol notImplementedException, SyntaxList<StatementSyntax> statements, string name)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("AnalysisContext");
                 SyntaxNode[] parameters = new[] { generator.ParameterDeclaration(name, type) };
@@ -2062,7 +2065,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a new id with the provided name as a literal expression
-            protected internal static SyntaxNode NewIdCreator(SyntaxGenerator generator, string fieldName, string idName)
+            internal static SyntaxNode NewIdCreator(SyntaxGenerator generator, string fieldName, string idName)
             {
                 SyntaxNode initializer = generator.LiteralExpression(idName);
                 SyntaxNode newField = generator.FieldDeclaration(fieldName, generator.TypeExpression(SpecialType.System_String), Accessibility.Public, DeclarationModifiers.Const, initializer);
@@ -2071,7 +2074,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable creating a location for the diagnostic
-            protected internal static SyntaxNode CreateLocation(SyntaxGenerator generator, string ifStatementIdentifier, string spanIdentifier)
+            internal static SyntaxNode CreateLocation(SyntaxGenerator generator, string ifStatementIdentifier, string spanIdentifier)
             {
                 string name = "diagnosticLocation";
 
@@ -2098,7 +2101,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable creating a span for the diagnostic
-            protected internal static SyntaxNode CreateSpan(SyntaxGenerator generator, string startIdentifier, string endIdentifier)
+            internal static SyntaxNode CreateSpan(SyntaxGenerator generator, string startIdentifier, string endIdentifier)
             {
                 string name = "diagnosticSpan";
 
@@ -2121,7 +2124,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable of the form var variableName = identifierString.SpanStart;
-            protected internal static SyntaxNode CreateEndOrStartSpan(SyntaxGenerator generator, string identifierString, string variableName)
+            internal static SyntaxNode CreateEndOrStartSpan(SyntaxGenerator generator, string identifierString, string variableName)
             {
                 SyntaxNode identifier = generator.IdentifierName(identifierString);
                 SyntaxNode initializer = generator.MemberAccessExpression(identifier, "SpanStart");
@@ -2131,7 +2134,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable of the form var openParen = expressionString.OpenParentToken
-            protected internal static SyntaxNode CreateOpenParen(SyntaxGenerator generator, string expressionString)
+            internal static SyntaxNode CreateOpenParen(SyntaxGenerator generator, string expressionString)
             {
                 string name = "openParen";
                 SyntaxNode expression = generator.IdentifierName(expressionString);
@@ -2142,7 +2145,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a variable that creates a diagnostic
-            protected internal static SyntaxNode CreateDiagnostic(SyntaxGenerator generator, string locationName, string ruleName)
+            internal static SyntaxNode CreateDiagnostic(SyntaxGenerator generator, string locationName, string ruleName)
             {
                 SyntaxNode identifier = generator.IdentifierName("Diagnostic");
                 SyntaxNode expression = generator.MemberAccessExpression(identifier, "Create");
@@ -2166,7 +2169,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of the first rule, or null if none is found
-            protected internal static string GetFirstRuleName(ClassDeclarationSyntax declaration)
+            internal static string GetFirstRuleName(ClassDeclarationSyntax declaration)
             {
                 SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
                 FieldDeclarationSyntax rule = null;
@@ -2192,7 +2195,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the analysis method
-            protected internal static MethodDeclarationSyntax GetAnalysis(ClassDeclarationSyntax declaration)
+            internal static MethodDeclarationSyntax GetAnalysis(ClassDeclarationSyntax declaration)
             {
                 SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
                 MethodDeclarationSyntax analysisMethod = null;
@@ -2210,7 +2213,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // check if the member is the SyntaxNodeAnalysis method, returns the MethodDeclarationSyntax if it is, null if not
-            protected internal static MethodDeclarationSyntax IsSyntaxNodeAnalysisMethod(MemberDeclarationSyntax member)
+            internal static MethodDeclarationSyntax IsSyntaxNodeAnalysisMethod(MemberDeclarationSyntax member)
             {
                 MethodDeclarationSyntax analysisMethod = member as MethodDeclarationSyntax;
                 if (analysisMethod == null)
@@ -2245,7 +2248,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a statement that reports a diagnostic
-            protected internal static SyntaxNode CreateDiagnosticReport(SyntaxGenerator generator, string argumentName, string contextName)
+            internal static SyntaxNode CreateDiagnosticReport(SyntaxGenerator generator, string argumentName, string contextName)
             {
                 SyntaxNode argumentExpression = generator.IdentifierName(argumentName);
                 SyntaxNode argument = generator.Argument(argumentExpression);
@@ -2260,7 +2263,7 @@ namespace MetaCompilation.Analyzers
 
             // creates a variable holding a DiagnosticDescriptor
             // uses SyntaxFactory for formatting
-            protected internal static FieldDeclarationSyntax CreateEmptyRule(SyntaxGenerator generator, string idName = "", string titleDefault = "Enter a title for this diagnostic", string messageDefault = "Enter a message to be displayed with this diagnostic",
+            internal static FieldDeclarationSyntax CreateEmptyRule(SyntaxGenerator generator, string idName = "", string titleDefault = "Enter a title for this diagnostic", string messageDefault = "Enter a message to be displayed with this diagnostic",
                                                                     string categoryDefault = "Enter a category for this diagnostic (e.g. Formatting)", ExpressionSyntax severityDefault = null, ExpressionSyntax enabledDefault = null)
             {
                 if (severityDefault == null)
@@ -2329,7 +2332,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the SupportedDiagnostics property with a get accessor with a not implemented exception
-            protected internal static PropertyDeclarationSyntax CreateSupportedDiagnostics(SyntaxGenerator generator, INamedTypeSymbol notImplementedException)
+            internal static PropertyDeclarationSyntax CreateSupportedDiagnostics(SyntaxGenerator generator, INamedTypeSymbol notImplementedException)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("ImmutableArray<DiagnosticDescriptor>");
                 DeclarationModifiers modifiers = DeclarationModifiers.Override;
@@ -2346,7 +2349,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a SyntaxKind.IfStatement argument
-            protected internal static ArgumentSyntax CreateSyntaxKindIfStatement(SyntaxGenerator generator)
+            internal static ArgumentSyntax CreateSyntaxKindIfStatement(SyntaxGenerator generator)
             {
                 SyntaxNode syntaxKind = generator.IdentifierName("SyntaxKind");
                 SyntaxNode expression = generator.MemberAccessExpression(syntaxKind, "IfStatement");
@@ -2356,7 +2359,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a correct register statement
-            protected internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName)
+            internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName)
             {
                 var argument1 = generator.Argument(generator.IdentifierName(methodName)) as ArgumentSyntax;
                 var argument2 = generator.Argument(generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement")) as ArgumentSyntax;
@@ -2371,7 +2374,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates the SyntaxNode analysis method
-            protected internal static SyntaxNode CreateAnalysisMethod(SyntaxGenerator generator, string methodName, SemanticModel semanticModel)
+            internal static SyntaxNode CreateAnalysisMethod(SyntaxGenerator generator, string methodName, SemanticModel semanticModel)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
                 SyntaxNode[] parameters = new[] { generator.ParameterDeclaration("context", type) };
@@ -2384,7 +2387,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // gets the name of an existing analysis method, or null if none is found
-            protected internal static string GetExistingAnalysisMethodName(ClassDeclarationSyntax classDeclaration)
+            internal static string GetExistingAnalysisMethodName(ClassDeclarationSyntax classDeclaration)
             {
                 IEnumerable<MethodDeclarationSyntax> methods = classDeclaration.Members.OfType<MethodDeclarationSyntax>();
 
@@ -2408,7 +2411,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // creates a method keeping everything except for the parameters, and inserting a parameter of type SyntaxNodeAnalysisContext
-            protected internal static SyntaxNode CreateMethodWithContextParameter(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration)
+            internal static SyntaxNode CreateMethodWithContextParameter(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
                 SyntaxNode[] parameters = new[] { generator.ParameterDeclaration("context", type) };
@@ -2420,7 +2423,7 @@ namespace MetaCompilation.Analyzers
                 return newDeclaration;
             }
 
-            protected internal static List<string> GetAllRuleNames(ClassDeclarationSyntax declaration)
+            internal static List<string> GetAllRuleNames(ClassDeclarationSyntax declaration)
             {
                 List<string> ruleNames = new List<string>();
                 IEnumerable<FieldDeclarationSyntax> fieldMembers = declaration.Members.OfType<FieldDeclarationSyntax>();
@@ -2435,7 +2438,7 @@ namespace MetaCompilation.Analyzers
                 return ruleNames;
             }
 
-            protected internal static SyntaxList<SyntaxNode> CreateRuleList(Document document, List<string> ruleNames)
+            internal static SyntaxList<SyntaxNode> CreateRuleList(Document document, List<string> ruleNames)
             {
                 string argumentListString = "";
                 foreach (string ruleName in ruleNames)

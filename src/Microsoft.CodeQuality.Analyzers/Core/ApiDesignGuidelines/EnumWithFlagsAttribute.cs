@@ -7,11 +7,11 @@ using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.ApiDesignGuidelines.Analyzers.Helpers;
+using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// Implements CA1027 and CA2217
@@ -44,10 +44,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageCA1027,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
                                                                              description: s_localizableDescriptionCA1027,
-                                                                             helpLinkUri: "http://msdn.microsoft.com/library/ms182159.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1027-mark-enums-with-flagsattribute",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly LocalizableString s_localizableTitleCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageCA2217 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -57,10 +57,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageCA2217,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
                                                                              description: s_localizableDescriptionCA2217,
-                                                                             helpLinkUri: "http://msdn.microsoft.com/library/ms182335.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2217-do-not-mark-enums-with-flagsattribute",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule1027, Rule2217);
 
@@ -79,39 +79,46 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 compilationStartContext.RegisterSymbolAction(symbolContext =>
                 {
-                    AnalyzeSymbol((INamedTypeSymbol)symbolContext.Symbol, flagsAttributeType, symbolContext.ReportDiagnostic);
+                    AnalyzeSymbol(symbolContext, flagsAttributeType);
                 }, SymbolKind.NamedType);
             });
-            
+
         }
 
-        private static void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol flagsAttributeType, Action<Diagnostic> addDiagnostic)
+        private static void AnalyzeSymbol(SymbolAnalysisContext symbolContext, INamedTypeSymbol flagsAttributeType)
         {
+            var symbol = (INamedTypeSymbol)symbolContext.Symbol;
             if (symbol != null &&
-                symbol.TypeKind == TypeKind.Enum &&
-                symbol.DeclaredAccessibility == Accessibility.Public)
+                symbol.TypeKind == TypeKind.Enum)
             {
+                var reportCA1027 = symbol.MatchesConfiguredVisibility(symbolContext.Options, Rule1027, symbolContext.CancellationToken);
+                var reportCA2217 = symbol.MatchesConfiguredVisibility(symbolContext.Options, Rule2217, symbolContext.CancellationToken);
+                if (!reportCA1027 && !reportCA2217)
+                {
+                    return;
+                }
+
                 if (EnumHelpers.TryGetEnumMemberValues(symbol, out IList<ulong> memberValues))
                 {
                     bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass == flagsAttributeType);
                     if (hasFlagsAttribute)
                     {
                         // Check "CA2217: Do not mark enums with FlagsAttribute"
-                        if (!ShouldBeFlags(memberValues, out IEnumerable<ulong> missingValues))
+                        if (reportCA2217 && !ShouldBeFlags(memberValues, out IEnumerable<ulong> missingValues))
                         {
                             Debug.Assert(missingValues != null);
 
                             string missingValuesString = missingValues.Select(v => v.ToString()).Aggregate((i, j) => i + ", " + j);
-                            addDiagnostic(symbol.CreateDiagnostic(Rule2217, symbol.Name, missingValuesString));
+                            symbolContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule2217, symbol.Name, missingValuesString));
                         }
                     }
                     else
                     {
                         // Check "CA1027: Mark enums with FlagsAttribute"
                         // Ignore contiguous value enums to reduce noise.
-                        if (!IsContiguous(memberValues) && ShouldBeFlags(memberValues))
+                        if (reportCA1027 && !IsContiguous(memberValues) && ShouldBeFlags(memberValues))
                         {
-                            addDiagnostic(symbol.CreateDiagnostic(Rule1027, symbol.Name));
+                            symbolContext.ReportDiagnostic(symbol.CreateDiagnostic(Rule1027, symbol.Name));
                         }
                     }
                 }
@@ -192,15 +199,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 return missingBits;
-            }
-            else if (!IsPowerOfTwo(powersOfTwo + 1))
-            {
-                // All values are powers of two, but one of the powers of two in the sequence is missing.
-                // Example: { 1, 2, 4, 16 }, value missing is "8".
-                // Compute the missing powers of two.
-                var highestSetBit = (ulong)Math.Log(powersOfTwo, 2);
-                var nextPowerOfTwo = (ulong)Math.Pow(2, highestSetBit + 1);
-                return nextPowerOfTwo - (powersOfTwo + 1);
             }
 
             return 0;

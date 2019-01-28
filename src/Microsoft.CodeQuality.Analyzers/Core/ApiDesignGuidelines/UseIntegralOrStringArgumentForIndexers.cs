@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1043: Use Integral Or String Argument For Indexers
@@ -27,10 +27,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182180.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1043-use-integral-or-string-argument-for-indexers",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly SpecialType[] s_allowedTypes = new[] {
                         SpecialType.System_String,
@@ -56,7 +56,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var symbol = (IPropertySymbol)context.Symbol;
-            if (symbol.IsIndexer && !symbol.IsOverride)
+            if (symbol.IsIndexer &&
+                !symbol.IsOverride &&
+                symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 if (symbol.GetParameters().Length == 1)
                 {

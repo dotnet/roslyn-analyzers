@@ -1,0 +1,82 @@
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>  
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NuspecFile>$(IntermediateOutputPath)$(NuspecPackageId).nuspec</NuspecFile>
+    <NuspecBasePath>$(ArtifactsBinDir)</NuspecBasePath>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <!-- 
+    Projects in this directory do not produce useful binaries, they are only used to generate packages. 
+    Build target only needs to build their project dependencies (via ResolveProjectReferences).
+  -->
+  <Target Name="Build" DependsOnTargets="ResolveProjectReferences">
+    <MakeDir Directories="$(IntermediateOutputPath)" ContinueOnError="True"/>
+  </Target>
+
+  <Target Name="GenerateAnalyzerRulesets"
+          DependsOnTargets="InitializeSourceControlInformation" 
+          Condition="'@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerRulesetAssembly)' != ''">
+
+    <PropertyGroup>
+      <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
+      <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
+      <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">
+      <PackagePropsFileDir>$(IntermediateOutputPath)Build</PackagePropsFileDir>
+      <PackagePropsFileName>$(NuspecPackageId).props</PackagePropsFileName>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(GeneratePackagePropsFile)' == 'true'" >
+      <AnalyzerNupkgFile Include="$(PackagePropsFileDir)\$(PackagePropsFileName)"/>
+    </ItemGroup>
+    
+    <MSBuild Projects="$(RepoRoot)src\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj" Targets="Build">
+      <Output TaskParameter="TargetOutputs" PropertyName="_GenerateAnalyzerRulesetsPath"/>
+    </MSBuild>
+
+    <ItemGroup>
+      <AnalyzerRulesetAssembly Condition="'@(AnalyzerNupkgAssembly)' != '' and '@(AnalyzerRulesetAssembly)' == ''" Include="@(AnalyzerNupkgAssembly)"/>
+    </ItemGroup>
+    
+    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(_GeneratedRulesetsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "$(TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" $(ContainsPortedFxCopRules)' />
+  </Target>
+  
+  <Target Name="GenerateAnalyzerNuspecFile"
+          BeforeTargets="GenerateNuspec"
+          DependsOnTargets="InitializeSourceControlInformation;GenerateAnalyzerRulesets" 
+          Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgFolder)' != '' or '@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != ''">
+    <ItemGroup>
+      <_NuspecMetadata Include="version=$(PackageVersion)" />
+      <_NuspecMetadata Include="id=$(NuspecPackageId)" />
+      <_NuspecMetadata Include="authors=$(Authors)" />
+      <_NuspecMetadata Include="owners=$(Authors)" />
+      <_NuspecMetadata Include="requireLicenseAcceptance=$(PackageRequireLicenseAcceptance)" />
+      <_NuspecMetadata Include="description=$(Description)" />
+      <_NuspecMetadata Include="copyright=$(Copyright)" />
+      <_NuspecMetadata Include="licenseUrl=$(PackageLicenseUrl)" />
+      <_NuspecMetadata Include="projectUrl=$(PackageProjectUrl)" />
+      <_NuspecMetadata Include="iconUrl=$(PackageIconUrl)" />
+      <_NuspecMetadata Include="releaseNotes=$(PackageReleaseNotes)" />
+      <_NuspecMetadata Include="tags=$(PackageTags)" />
+      <_NuspecMetadata Include="serviceable=$(Serviceable)" />
+      <_NuspecMetadata Include="developmentDependency=true" />
+      <_NuspecMetadata Include="repositoryType=$(RepositoryType)" />
+      <_NuspecMetadata Include="repositoryCommit=$(SourceRevisionId)" />
+      <_NuspecMetadata Include="repositoryUrl=$(PrivateRepositoryUrl)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+      <_CscToolPath>$(CscToolPath)</_CscToolPath>
+      <_CscToolPath Condition="'$(_CscToolPath)' == ''">$(MSBuildBinPath)\Roslyn</_CscToolPath>
+      <_CscToolPath Condition="!HasTrailingSlash('$(_CscToolPath)')">$(_CscToolPath)\</_CscToolPath>
+    </PropertyGroup>
+
+    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "$(_GeneratedRulesetsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\"' />
+  </Target>
+</Project>

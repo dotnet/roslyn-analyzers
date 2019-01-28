@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public partial class OverrideMethodsOnComparableTypesTests : CodeFixTestBase
     {
@@ -114,7 +115,88 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             return true;
         }
     }
-", GetCA1036CSharpResultAt(4, 18, "A"));
+", GetCA1036CSharpBothResultAt(4, 18, "A", "<=, >="));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1036ClassWrongEqualsCSharp_Internal()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    internal class A : IComparable
+    {    
+        public override int GetHashCode()
+        {
+            return 1234;
+        }
+
+        public int CompareTo(object obj)
+        {
+            return 1;
+        }
+
+        public bool Equals;
+
+        public static bool operator ==(A objLeft, A objRight)
+        {
+            return true;
+        }
+
+        public static bool operator !=(A objLeft, A objRight)
+        {
+            return true;
+        }
+
+        public static bool operator <(A objLeft, A objRight)
+        {
+            return true;
+        }
+
+        public static bool operator >(A objLeft, A objRight)
+        {
+            return true;
+        }
+    }
+
+    public class OuterClass
+    {
+        private class A : IComparable
+        {    
+            public override int GetHashCode()
+            {
+                return 1234;
+            }
+
+            public int CompareTo(object obj)
+            {
+                return 1;
+            }
+
+            public bool Equals;
+
+            public static bool operator ==(A objLeft, A objRight)
+            {
+                return true;
+            }
+
+            public static bool operator !=(A objLeft, A objRight)
+            {
+                return true;
+            }
+
+            public static bool operator <(A objLeft, A objRight)
+            {
+                return true;
+            }
+
+            public static bool operator >(A objLeft, A objRight)
+            {
+                return true;
+            }
+        }
+    }
+");
         }
 
         [Fact]
@@ -352,7 +434,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18, "A"));
+            GetCA1036CSharpBothResultAt(4, 18, "A", "<=, >="));
         }
 
         [Fact]
@@ -389,7 +471,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18, "A"));
+            GetCA1036CSharpOperatorsResultAt(4, 18, "A", "==, !=, <=, >="));
         }
 
         [Fact]
@@ -426,7 +508,74 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 19, "A"));
+            GetCA1036CSharpOperatorsResultAt(4, 19, "A", "<, <=, >, >="));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1036StructNoOpLessThanOperatorCSharp_Internal()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    internal struct A : IComparable
+    {    
+        public override int GetHashCode()
+        {
+            return 1234;
+        }
+
+        public int CompareTo(object obj)
+        {
+            return 1;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return true;
+        }
+
+        public static bool operator ==(A objLeft, A objRight)
+        {
+            return true;
+        }
+
+        public static bool operator !=(A objLeft, A objRight)
+        {
+            return true;
+        }
+    }
+
+    public class OuterClass
+    {
+        private struct A : IComparable
+        {    
+            public override int GetHashCode()
+            {
+                return 1234;
+            }
+
+            public int CompareTo(object obj)
+            {
+                return 1;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return true;
+            }
+
+            public static bool operator ==(A objLeft, A objRight)
+            {
+                return true;
+            }
+
+            public static bool operator !=(A objLeft, A objRight)
+            {
+                return true;
+            }
+        }
+    }
+");
         }
 
         [Fact]
@@ -463,7 +612,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(4, 18, "A"));
+            GetCA1036CSharpOperatorsResultAt(4, 18, "A", "==, !=, <=, >="));
         }
 
         [Fact]
@@ -502,7 +651,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
     }
 ",
-            GetCA1036CSharpResultAt(6, 18, "A"));
+            GetCA1036CSharpOperatorsResultAt(6, 18, "A", "==, !=, <=, >="));
         }
 
         [Fact]
@@ -589,7 +738,77 @@ Public Structure A : Implements IComparable
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18, "A"));
+            GetCA1036BasicBothResultAt(4, 18, "A", "<=, >="));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1036StructWrongEqualsBasic_Internal()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Structure A : Implements IComparable
+
+    Public Overrides Function GetHashCode() As Integer
+        Return 1234
+    End Function
+
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
+        Return 1
+    End Function
+
+    Public Shadows Property Equals
+
+    Public Shared Operator =(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator <>(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator <(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator >(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+End Structure
+
+Public Class OuterClass
+    Private Structure A : Implements IComparable
+
+        Public Overrides Function GetHashCode() As Integer
+            Return 1234
+        End Function
+
+        Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
+            Return 1
+        End Function
+
+        Public Shadows Property Equals
+
+        Public Shared Operator =(objLeft As A, objRight As A) As Boolean
+            Return True
+        End Operator
+
+        Public Shared Operator <>(objLeft As A, objRight As A) As Boolean
+            Return True
+        End Operator
+
+        Public Shared Operator <(objLeft As A, objRight As A) As Boolean
+            Return True
+        End Operator
+
+        Public Shared Operator >(objLeft As A, objRight As A) As Boolean
+            Return True
+        End Operator
+
+    End Structure
+End Class
+");
         }
 
         [Fact]
@@ -786,7 +1005,75 @@ Public Class A : Implements IComparable
 
 End Class
 ",
-            GetCA1036BasicResultAt(4, 14, "A"));
+            GetCA1036BasicBothResultAt(4, 14, "A", "<=, >="));
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1036ClassNoEqualsOperatorBasic_Internal()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend Class A 
+    Implements IComparable
+
+    Public Overrides Function GetHashCode() As Integer
+        Return 1234
+    End Function
+
+    Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
+        Return 1
+    End Function
+
+    Public Shared Operator =(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator <>(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator <(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+    Public Shared Operator >(objLeft As A, objRight As A) As Boolean
+        Return True
+    End Operator
+
+End Class
+
+Public Class OuterClass
+    Private Class A 
+        Implements IComparable
+
+        Public Overrides Function GetHashCode() As Integer
+            Return 1234
+        End Function
+
+        Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
+            Return 1
+        End Function
+
+        Public Shared Operator =(objLeft As A, objRight As A) As Boolean
+            Return True
+        End Operator
+
+        Public Shared Operator <>(objLeft As A, objRight As A) As Boolean
+            Return True
+        End Operator
+
+        Public Shared Operator <(objLeft As A, objRight As A) As Boolean
+            Return True
+        End Operator
+
+        Public Shared Operator >(objLeft As A, objRight As A) As Boolean
+            Return True
+        End Operator
+
+    End Class
+End Class
+");
         }
 
         [Fact]
@@ -819,7 +1106,7 @@ Public Class A : Implements IComparable
 
 End Class
 ",
-            GetCA1036BasicResultAt(4, 14, "A"));
+            GetCA1036BasicOperatorsResultAt(4, 14, "A", "=, <>, <=, >="));
         }
 
         [Fact]
@@ -852,7 +1139,7 @@ Public Structure A : Implements IComparable
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18, "A"));
+            GetCA1036BasicOperatorsResultAt(4, 18, "A", "<, <=, >, >="));
         }
 
         [Fact]
@@ -885,7 +1172,7 @@ Public Structure A : Implements IComparable(Of Integer)
 
 End Structure
 ",
-            GetCA1036BasicResultAt(4, 18, "A"));
+            GetCA1036BasicOperatorsResultAt(4, 18, "A", "<, <=, >, >="));
         }
 
         [Fact]
@@ -922,7 +1209,7 @@ Public Structure A : Implements IDerived
 
 End Structure
 ",
-            GetCA1036BasicResultAt(8, 18, "A"));
+            GetCA1036BasicOperatorsResultAt(8, 18, "A", "<, <=, >, >="));
         }
 
         [Fact]
@@ -941,15 +1228,110 @@ Enum MyEnum
 End Enum");
         }
 
-        private static DiagnosticResult GetCA1036CSharpResultAt(int line, int column, string typeName)
+        [Fact, WorkItem(1671, "https://github.com/dotnet/roslyn-analyzers/issues/1671")]
+        public void CA1036BaseTypeComparable_NoWarningOnDerived_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class BaseClass : IComparable
+{
+    public int CompareTo(object obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override bool Equals(object obj)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class DerivedClass : BaseClass
+{
+}
+",
+            // Test0.cs(4,14): warning CA1036: BaseClass should define operator(s) '==, !=, <, <=, >, >=' since it implements IComparable.
+            GetCA1036CSharpOperatorsResultAt(4, 14, "BaseClass", @"==, !=, <, <=, >, >="));
+        }
+
+        [Fact, WorkItem(1671, "https://github.com/dotnet/roslyn-analyzers/issues/1671")]
+        public void CA1036BaseTypeGenericComparable_NoWarningOnDerived_CSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class BaseClass<T> : IComparable<T>
+     where T : IComparable<T>
+{
+    public T Value { get; set; }
+
+
+    public int CompareTo(T other)
+    {
+        return Value.CompareTo(other);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is BaseClass<T> other)
+        {
+            return Value.Equals(other.Value);
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode() => Value?.GetHashCode() ?? 0;
+}
+
+public class DerivedClass<T> : BaseClass<T>
+    where T : IComparable<T>
+{
+}
+",
+            // Test0.cs(4,14): warning CA1036: BaseClass should define operator(s) '==, !=, <, <=, >, >=' since it implements IComparable.
+            GetCA1036CSharpOperatorsResultAt(4, 14, "BaseClass", @"==, !=, <, <=, >, >="));
+        }
+
+        private static DiagnosticResult GetCA1036CSharpEqualsResultAt(int line, int column, string typeName)
         {
             var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);
             return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
 
-        private static DiagnosticResult GetCA1036BasicResultAt(int line, int column, string typeName)
+        private static DiagnosticResult GetCA1036BasicEqualsResultAt(int line, int column, string typeName)
         {
             var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);
+            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1036CSharpOperatorsResultAt(int line, int column, string typeName, string operators)
+        {
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
+            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1036BasicOperatorsResultAt(int line, int column, string typeName, string operators)
+        {
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
+            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1036CSharpBothResultAt(int line, int column, string typeName, string operators)
+        {
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
+            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
+        }
+
+        private static DiagnosticResult GetCA1036BasicBothResultAt(int line, int column, string typeName, string operators)
+        {
+            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
             return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
     }

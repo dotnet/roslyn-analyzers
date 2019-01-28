@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class DefineAccessorsForAttributeArgumentsFixer : CodeFixProvider
@@ -28,14 +28,17 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             Diagnostic diagnostic = context.Diagnostics.Single();
             if (diagnostic.Properties.TryGetValue("case", out string fixCase))
             {
+                string title;
                 switch (fixCase)
                 {
                     case DefineAccessorsForAttributeArgumentsAnalyzer.AddAccessorCase:
                         SyntaxNode parameter = generator.GetDeclaration(node, DeclarationKind.Parameter);
                         if (parameter != null)
                         {
-                            context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.CreatePropertyAccessorForParameter,
-                                                         async ct => await AddAccessor(context.Document, parameter, ct).ConfigureAwait(false)),
+                            title = MicrosoftApiDesignGuidelinesAnalyzersResources.CreatePropertyAccessorForParameter;
+                            context.RegisterCodeFix(new MyCodeAction(title,
+                                                         async ct => await AddAccessor(context.Document, parameter, ct).ConfigureAwait(false),
+                                                         equivalenceKey: title),
                                                     diagnostic);
                         }
                         return;
@@ -44,15 +47,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         SyntaxNode property = generator.GetDeclaration(node, DeclarationKind.Property);
                         if (property != null)
                         {
-                            context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeGetterPublic,
-                                                             async ct => await MakePublic(context.Document, node, property, ct).ConfigureAwait(false)),
+                            title = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeGetterPublic;
+                            context.RegisterCodeFix(new MyCodeAction(title,
+                                                             async ct => await MakePublic(context.Document, node, property, ct).ConfigureAwait(false),
+                                                             equivalenceKey: title),
                                                     diagnostic);
                         }
                         return;
 
                     case DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterCase:
-                        context.RegisterCodeFix(new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeSetterNonPublic,
-                                                     async ct => await RemoveSetter(context.Document, node, ct).ConfigureAwait(false)),
+                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeSetterNonPublic;
+                        context.RegisterCodeFix(new MyCodeAction(title,
+                                                     async ct => await RemoveSetter(context.Document, node, ct).ConfigureAwait(false),
+                                                     equivalenceKey: title),
                                                 diagnostic);
                         return;
 
@@ -62,7 +69,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private async Task<Document> AddAccessor(Document document, SyntaxNode parameter, CancellationToken cancellationToken)
+        private static async Task<Document> AddAccessor(Document document, SyntaxNode parameter, CancellationToken cancellationToken)
         {
             SymbolEditor symbolEditor = SymbolEditor.Create(document);
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
@@ -109,7 +116,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return symbolEditor.GetChangedDocuments().First();
         }
 
-        private async Task<Document> MakePublic(Document document, SyntaxNode getMethod, SyntaxNode property, CancellationToken cancellationToken)
+        private static async Task<Document> MakePublic(Document document, SyntaxNode getMethod, SyntaxNode property, CancellationToken cancellationToken)
         {
             // Clear the accessibility on the getter.
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
@@ -137,19 +144,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return editor.GetChangedDocument();
         }
 
-        private async Task<Document> RemoveSetter(Document document, SyntaxNode setMethod, CancellationToken cancellationToken)
+        private static async Task<Document> RemoveSetter(Document document, SyntaxNode setMethod, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             editor.SetAccessibility(setMethod, Accessibility.Internal);
             return editor.GetChangedDocument();
         }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

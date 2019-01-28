@@ -10,14 +10,14 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using System;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1028: Enum Storage should be Int32
     /// </summary>
     public abstract class EnumStorageShouldBeInt32Fixer : CodeFixProvider
     {
-        protected abstract SyntaxNode GetTargetNode (SyntaxNode node);
+        protected abstract SyntaxNode GetTargetNode(SyntaxNode node);
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(EnumStorageShouldBeInt32Analyzer.RuleId);
 
@@ -39,7 +39,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             // Register fixer
             context.RegisterCodeFix(new MyCodeAction(title,
-                     c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c)), context.Diagnostics.First());
+                     c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c),
+                     equivalenceKey: title), context.Diagnostics.First());
         }
 
         private async Task<Document> ChangeEnumTypeToInt32Async(Document document, Diagnostic diagnostic, SyntaxNode root, CancellationToken cancellationToken)
@@ -59,12 +60,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             editor.RemoveNode(targetNode, SyntaxRemoveOptions.KeepLeadingTrivia | SyntaxRemoveOptions.KeepTrailingTrivia | SyntaxRemoveOptions.KeepExteriorTrivia | SyntaxRemoveOptions.KeepEndOfLine);
 
             return editor.GetChangedDocument();
-         }
+        }
 
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

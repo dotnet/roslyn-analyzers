@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class EquatableAnalyzerTests : DiagnosticAnalyzerTestBase
     {
@@ -312,6 +312,27 @@ struct C : B
             VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
                 GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage2));
+        }
+
+        [Fact, WorkItem(1914, "https://github.com/dotnet/roslyn-analyzers/issues/1914")]
+        public void NoDiagnosticForParentClassWithIEquatableImplementation()
+        {
+            var code = @"
+using System;
+
+public interface IValueObject<T> : IEquatable<T> { }
+
+public struct S : IValueObject<S>
+{
+    private readonly int value;
+
+    public override bool Equals(object obj) => obj is S other && Equals(other);
+
+    public bool Equals(S other) => value == other.value;
+
+    public override int GetHashCode() => value;
+}";
+            VerifyCSharp(code);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

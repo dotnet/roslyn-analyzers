@@ -4,16 +4,13 @@ using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
-using System.Threading.Tasks;     
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-// disable equivalence key warning because it cannot tell that equivalence key is overridden in the base class
-#pragma warning disable RS1011
-
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2119: Seal methods that satisfy private interfaces
@@ -82,7 +79,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             }
         }
 
-        private abstract class ChangeSymbolAction :  CodeAction
+        private abstract class ChangeSymbolAction : CodeAction
         {
             public ChangeSymbolAction(string title, string equivalenceKey, Solution solution, ISymbol symbol)
             {

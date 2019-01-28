@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="cs" original="../MicrosoftReliabilityAnalyzersResources.resx">
+    <body>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
+        <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
+        <target state="translated">Pokud uvolnitelný objekt explicitně neuvolníte před tím, než se všechny odkazy na něj dostanou mimo rozsah, uvolní se objekt v nedefinovanou dobu, jakmile systém uvolňování spustí finalizační metodu objektu. Vzhledem k tomu, že může dojít k výjimečné události, která zabrání finalizační metodě objektu ve spuštění, je třeba objekt explicitně uvolnit.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
+        <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
+        <target state="translated">V metodě {0} zavolejte System.IDisposable.Dispose u objektu vytvořeného pomocí {1} dříve, než budou všechny odkazy na něj mimo rozsah.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
+        <source>Dispose objects before losing scope</source>
+        <target state="translated">Uvolnění objektů před ztrátou rozsahu</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

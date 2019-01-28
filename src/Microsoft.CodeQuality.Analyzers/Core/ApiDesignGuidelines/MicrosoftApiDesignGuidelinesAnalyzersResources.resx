@@ -177,23 +177,29 @@
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableDescription" xml:space="preserve">
     <value>A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.</value>
   </data>
-  <data name="TypesThatOwnDisposableFieldsShouldBeDisposableMessageDependsOnFix" xml:space="preserve">
-    <value>Implement IDisposable on {0} because it creates members of the following IDisposable types: {1}. If {0} has previously shipped, adding new members that implement IDisposable to this type is considered a breaking change to existing consumers.</value>
-  </data>
   <data name="TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking" xml:space="preserve">
-    <value>Type '{0}' owns disposable fields but is not disposable</value>
+    <value>Type '{0}' owns disposable field(s) '{1}' but is not disposable</value>
   </data>
   <data name="UseGenericEventHandlerInstancesTitle" xml:space="preserve">
     <value>Use generic event handler instances</value>
   </data>
-  <data name="UseGenericEventHandlerInstancesDescription" xml:space="preserve">
+  <data name="UseGenericEventHandlerInstancesForDelegateMessage" xml:space="preserve">
+    <value>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</value>
+  </data>
+  <data name="UseGenericEventHandlerInstancesForDelegateDescription" xml:space="preserve">
     <value>A type contains a delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</value>
   </data>
-  <data name="UseGenericEventHandlerInstancesMessageVB" xml:space="preserve">
-    <value>Visual Basic generates EventHandler delegates for events that use the following pattern: Event MyEvent(ByVal Sender As Object, ByVal e as MyEventArgs). Change the event that defines EventHandler {0} to use EventHandler&lt;T&gt; by defining the event type explicitly, e.g. Event MyEvent As EventHandler(Of MyEventArgs).</value>
+  <data name="UseGenericEventHandlerInstancesForEventMessage" xml:space="preserve">
+    <value>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</value>
   </data>
-  <data name="UseGenericEventHandlerInstancesMessageDefault" xml:space="preserve">
-    <value>Remove {0} and replace its usage with EventHandler&lt;T&gt;</value>
+  <data name="UseGenericEventHandlerInstancesForEventDescription" xml:space="preserve">
+    <value>A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.</value>
+  </data>
+  <data name="UseGenericEventHandlerInstancesForEvent2Message" xml:space="preserve">
+    <value>Change the event '{0}' to use a generic EventHandler by defining the event type explicitly, for e.g. Event MyEvent As EventHandler(Of MyEventArgs).</value>
+  </data>
+  <data name="UseGenericEventHandlerInstancesForEvent2Description" xml:space="preserve">
+    <value>A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.</value>
   </data>
   <data name="EnumsShouldHaveZeroValueTitle" xml:space="preserve">
     <value>Enums should have zero value</value>
@@ -301,7 +307,7 @@
     <value>An unsealed externally visible type provides an explicit method implementation of a public interface and does not provide an alternative externally visible method that has the same name.</value>
   </data>
   <data name="InterfaceMethodsShouldBeCallableByChildTypesMessage" xml:space="preserve">
-    <value>Interface methods should be callable by child types</value>
+    <value>Make '{0}' sealed (a breaking change if this class has previously shipped), implement the method non-explicitly, or implement a new method that exposes the functionality of '{1}' and is visible to derived classes.</value>
   </data>
   <data name="OverrideMethodsOnComparableTypesTitle" xml:space="preserve">
     <value>Override methods on comparable types</value>
@@ -313,7 +319,8 @@
     <value>{0} should override Equals since it implements IComparable.</value>
   </data>
   <data name="OverrideMethodsOnComparableTypesMessageOperator" xml:space="preserve">
-    <value>{0} should define operator '{1}' since it implements IComparable.</value>
+    <value>{0} should define operator(s) '{1}' since it implements IComparable.</value>
+    <comment>1 is a comma-separated list</comment>
   </data>
   <data name="MovePInvokesToNativeMethodsClassTitle" xml:space="preserve">
     <value>Move pinvokes to native methods class</value>
@@ -363,15 +370,6 @@
   <data name="DoNotMarkEnumsWithFlagsMessage" xml:space="preserve">
     <value>Do not mark enums with FlagsAttribute</value>
   </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityTitle" xml:space="preserve">
-    <value>Do not decrease inherited member visibility</value>
-  </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityDescription" xml:space="preserve">
-    <value>You should not change the access modifier for inherited members. Changing an inherited member to private does not prevent callers from accessing the base class implementation of the method.</value>
-  </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityMessage" xml:space="preserve">
-    <value>Do not decrease inherited member visibility</value>
-  </data>
   <data name="OperatorOverloadsHaveNamedAlternatesTitle" xml:space="preserve">
     <value>Operator overloads have named alternates</value>
   </data>
@@ -406,7 +404,7 @@
     <value>A writable collection property allows a user to replace the collection with a different collection. A read-only property stops the collection from being replaced but still allows the individual members to be set.</value>
   </data>
   <data name="CollectionPropertiesShouldBeReadOnlyMessage" xml:space="preserve">
-    <value>Collection properties should be read only</value>
+    <value>Change '{0}' to be read-only by removing the property setter.</value>
   </data>
   <data name="OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle" xml:space="preserve">
     <value>Overload operator equals on overriding value type Equals</value>
@@ -451,8 +449,7 @@
     <value>Identifier contains type name</value>
   </data>
   <data name="IdentifiersShouldNotContainTypeNamesDescription" xml:space="preserve">
-    <value>
-Names of parameters and members are better used to communicate their meaning than to describe their type, which is expected to be provided by development tools. For names of members, if a data type name must be used, use a language-independent name instead of a language-specific one.</value>
+    <value>Names of parameters and members are better used to communicate their meaning than to describe their type, which is expected to be provided by development tools. For names of members, if a data type name must be used, use a language-independent name instead of a language-specific one.</value>
   </data>
   <data name="IdentifiersShouldNotContainTypeNamesMessage" xml:space="preserve">
     <value>Identifier '{0}' contains type name</value>
@@ -474,6 +471,9 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="ImplementComparable" xml:space="preserve">
     <value>Implement Equality and Comparison methods and operators</value>
+  </data>
+  <data name="ImplementEquatable" xml:space="preserve">
+    <value>Implement IEquatable</value>
   </data>
   <data name="ImplementIDisposableInterface" xml:space="preserve">
     <value>Implement IDisposable Interface</value>
@@ -512,7 +512,7 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>To broaden the usability of a collection, implement one of the generic collection interfaces. Then the collection can be used to populate generic collection types.</value>
   </data>
   <data name="CollectionsShouldImplementGenericInterfaceMessage" xml:space="preserve">
-    <value>Collections should implement generic interface</value>
+    <value>Collection '{0}' directly or indirectly inherits '{1}' without implementing '{2}'. Publicly-visible collections should implement the generic version to broaden usability.</value>
   </data>
   <data name="EnumStorageShouldBeInt32Title" xml:space="preserve">
     <value>Enum Storage should be Int32</value>
@@ -638,31 +638,31 @@ Names of parameters and members are better used to communicate their meaning tha
     <value>All IDisposable types should implement the Dispose pattern correctly.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageIDisposableReimplementation" xml:space="preserve">
-    <value>Remove IDisposable from the list of interfaces implemented by {0} and override the base class Dispose implementation instead.</value>
+    <value>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageFinalizeOverride" xml:space="preserve">
-    <value>Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.</value>
+    <value>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageDisposeOverride" xml:space="preserve">
-    <value>Remove {0}, override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</value>
+    <value>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageDisposeSignature" xml:space="preserve">
-    <value>Ensure that {0} is declared as public and sealed.</value>
+    <value>Ensure that '{0}' is declared as public and sealed.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageRenameDispose" xml:space="preserve">
-    <value>Rename {0} to 'Dispose' and ensure that it is declared as public and sealed.</value>
+    <value>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageDisposeBoolSignature" xml:space="preserve">
-    <value>Ensure that {0} is declared as protected, virtual, and unsealed.</value>
+    <value>Ensure that '{0}' is declared as protected, virtual, and unsealed.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageDisposeImplementation" xml:space="preserve">
-    <value>Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</value>
+    <value>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageFinalizeImplementation" xml:space="preserve">
-    <value>Modify {0} so that it calls Dispose(false) and then returns.</value>
+    <value>Modify '{0}' so that it calls Dispose(false) and then returns.</value>
   </data>
   <data name="ImplementIDisposableCorrectlyMessageProvideDisposeBool" xml:space="preserve">
-    <value>Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</value>
+    <value>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</value>
   </data>
   <data name="ExceptionsShouldBePublicTitle" xml:space="preserve">
     <value>Exceptions should be public</value>
@@ -928,6 +928,9 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle" xml:space="preserve">
     <value>Override object.Equals</value>
   </data>
+  <data name="OverrideEqualsOnImplementingIEquatableCodeActionTitle" xml:space="preserve">
+    <value>Override object.Equals</value>
+  </data>
   <data name="OverrideGetHashCodeOnOverridingEqualsCodeActionTitle" xml:space="preserve">
     <value>Override object.GetHashCode</value>
   </data>
@@ -979,8 +982,8 @@ Names of parameters and members are better used to communicate their meaning tha
   <data name="AppendConfigureAwaitFalse" xml:space="preserve">
     <value>Append .ConfigureAwait(false)</value>
   </data>
-  <data name="DoNotDecreaseInheritedMemberVisibilityCodeFix" xml:space="preserve">
-    <value>Increase visibility for '{0}'</value>
+  <data name="AppendConfigureAwaitTrue" xml:space="preserve">
+    <value>Append .ConfigureAwait(true)</value>
   </data>
   <data name="ImplementIEquatableWhenOverridingObjectEqualsDescription" xml:space="preserve">
     <value>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</value>
@@ -990,5 +993,18 @@ Names of parameters and members are better used to communicate their meaning tha
   </data>
   <data name="RenameToTitle" xml:space="preserve">
     <value>Rename to '{0}'</value>
+  </data>
+  <data name="DoNotHideBaseClassMethodsDescription" xml:space="preserve">
+    <value>A method in a base type is hidden by an identically named method in a derived type when the parameter signature of the derived method differs only by types that are more weakly derived than the corresponding types in the parameter signature of the base method.</value>
+  </data>
+  <data name="DoNotHideBaseClassMethodsMessage" xml:space="preserve">
+    <value>Change or remove '{0}' because it hides a more specific base class method: '{1}'.</value>
+  </data>
+  <data name="DoNotHideBaseClassMethodsTitle" xml:space="preserve">
+    <value>Do not hide base class methods</value>
+  </data>
+  <data name="OverrideMethodsOnComparableTypesMessageBoth" xml:space="preserve">
+    <value>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</value>
+    <comment>1 is a comma-separated list</comment>
   </data>
 </root>

@@ -1,12 +1,15 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1010: Collections should implement generic interface
@@ -22,7 +25,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
                 typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage =
+        private static readonly LocalizableString s_localizableStandardMessage =
             new LocalizableResourceString(
                 nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
                 MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
@@ -38,13 +41,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             new DiagnosticDescriptor(
                 RuleId,
                 s_localizableTitle,
-                s_localizableMessage,
+                s_localizableStandardMessage,
                 DiagnosticCategory.Design,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: true,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription,
-                helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182132.aspx",
-                customTags: WellKnownDiagnosticTags.Telemetry);
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1010-collections-should-implement-generic-interface",
+                customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -88,18 +91,102 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             INamedTypeSymbol gListType)
         {
             var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-            var allInterfaces = namedTypeSymbol.AllInterfaces.Select(t => t.OriginalDefinition).ToImmutableHashSet();
 
-            foreach (INamedTypeSymbol @interface in allInterfaces)
+            // FxCop compat: only fire on externally visible types by default.
+            if (!namedTypeSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
-                if ((@interface.Equals(iCollectionType) && !allInterfaces.Contains(gCollectionType)) ||
-                     (@interface.Equals(iEnumerableType) && !allInterfaces.Contains(gEnumerableType)) ||
-                      (@interface.Equals(iListType) && !allInterfaces.Contains(gListType)))
+                return;
+            }
+
+            var allInterfacesStatus = default(CollectionsInterfaceStatus);
+            foreach (var @interface in namedTypeSymbol.AllInterfaces)
+            {
+                var originalDefinition = @interface.OriginalDefinition;
+                if (originalDefinition.Equals(iCollectionType))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, namedTypeSymbol.Locations.First(), namedTypeSymbol.Name, @interface.Name));
-                    break;
+                    allInterfacesStatus.ICollectionPresent = true;
+                }
+                else if (originalDefinition.Equals(iEnumerableType))
+                {
+                    allInterfacesStatus.IEnumerablePresent = true;
+                }
+                else if (originalDefinition.Equals(iListType))
+                {
+                    allInterfacesStatus.IListPresent = true;
+                }
+                else if (originalDefinition.Equals(gCollectionType))
+                {
+                    allInterfacesStatus.GenericICollectionPresent = true;
+                }
+                else if (originalDefinition.Equals(gEnumerableType))
+                {
+                    allInterfacesStatus.GenericIEnumerablePresent = true;
+                }
+                else if (originalDefinition.Equals(gListType))
+                {
+                    allInterfacesStatus.GenericIListPresent = true;
                 }
             }
+
+            INamedTypeSymbol missingInterface;
+            INamedTypeSymbol implementedInterface;
+            if (allInterfacesStatus.GenericIListPresent)
+            {
+                // Implemented IList<T>, meaning has all 3 generic interfaces. Nothing can be wrong.
+                return;
+            }
+            else if (allInterfacesStatus.IListPresent)
+            {
+                // Implemented IList but not IList<T>.
+                missingInterface = gListType;
+                implementedInterface = iListType;
+            }
+            else if (allInterfacesStatus.GenericICollectionPresent)
+            {
+                // Implemented ICollection<T>, and doesn't have an inherit of IList. Nothing can be wrong
+                return;
+            }
+            else if (allInterfacesStatus.ICollectionPresent)
+            {
+                // Implemented ICollection but not ICollection<T>
+                missingInterface = gCollectionType;
+                implementedInterface = iCollectionType;
+            }
+            else if (allInterfacesStatus.GenericIEnumerablePresent)
+            {
+                // Implemented IEnumerable<T>, and doesn't have an inherit of ICollection. Nothing can be wrong
+                return;
+            }
+            else if (allInterfacesStatus.IEnumerablePresent)
+            {
+                // Implemented IEnumerable, but not IEnumerable<T>
+                missingInterface = gEnumerableType;
+                implementedInterface = iEnumerableType;
+            }
+            else
+            {
+                // No collections implementation, nothing can be wrong.
+                return;
+            }
+
+            Debug.Assert(missingInterface != null && implementedInterface != null);
+            context.ReportDiagnostic(Diagnostic.Create(Rule,
+                                                       namedTypeSymbol.Locations.First(),
+                                                       namedTypeSymbol.Name,
+                                                       implementedInterface.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                                                       missingInterface.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+        }
+
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+        private struct CollectionsInterfaceStatus
+#pragma warning restore CA1815 // Override equals and operator equals on value types
+        {
+            public bool IListPresent { get; set; }
+            public bool GenericIListPresent { get; set; }
+            public bool ICollectionPresent { get; set; }
+            public bool GenericICollectionPresent { get; set; }
+            public bool IEnumerablePresent { get; set; }
+            public bool GenericIEnumerablePresent { get; set; }
         }
     }
 }

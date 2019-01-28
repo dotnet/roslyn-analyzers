@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1012: Abstract classes should not have public constructors
@@ -25,10 +25,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Design,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: false,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182126.aspx",
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultOnlyIfBuildingVSIX,
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1012-abstract-types-should-not-have-constructors",
                                                                          description: s_localizableDescription,
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -43,7 +43,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var symbol = context.Symbol as INamedTypeSymbol;
-            if (symbol.IsAbstract)
+            if (symbol.IsAbstract &&
+                symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 bool hasAnyPublicConstructors =
                     symbol.InstanceConstructors.Any(

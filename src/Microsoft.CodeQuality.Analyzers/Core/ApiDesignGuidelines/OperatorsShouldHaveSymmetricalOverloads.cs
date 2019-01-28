@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2226: Operators should have symmetrical overloads
@@ -29,10 +29,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182356.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2226-operators-should-have-symmetrical-overloads",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -44,9 +44,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
                 var namedType = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
+                
+                // FxCop compat: only analyze externally visible symbols by default.
+                if (!namedType.MatchesConfiguredVisibility(symbolAnalysisContext.Options, Rule, symbolAnalysisContext.CancellationToken))
+                {
+                    return;
+                }
 
                 // NOTE(cyrusn): We use the C# syntax when reporting diagnostics for these issues.
-                // That's what the old FxCop rule did so it doesn't seem like a bug deal.
+                // That's what the old FxCop rule did so it doesn't seem like a big deal.
                 CheckOperators(symbolAnalysisContext, namedType, WellKnownMemberNames.EqualityOperatorName, WellKnownMemberNames.InequalityOperatorName, "==", "!=");
                 CheckOperators(symbolAnalysisContext, namedType, WellKnownMemberNames.GreaterThanOperatorName, WellKnownMemberNames.LessThanOperatorName, ">", "<");
                 CheckOperators(symbolAnalysisContext, namedType, WellKnownMemberNames.GreaterThanOrEqualOperatorName, WellKnownMemberNames.LessThanOrEqualOperatorName, ">=", "<=");
@@ -71,6 +77,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             foreach (var operator1 in operators1)
             {
+                // FxCop compat: only analyze externally visible symbols by default.
+                if (!operator1.MatchesConfiguredVisibility(analysisContext.Options, Rule, analysisContext.CancellationToken))
+                {
+                    return;
+                }
+
                 if (!operator1.IsUserDefinedOperator())
                 {
                     continue;

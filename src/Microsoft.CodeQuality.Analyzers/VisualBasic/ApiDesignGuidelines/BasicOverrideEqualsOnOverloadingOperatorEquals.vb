@@ -1,13 +1,14 @@
 ' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Collections.Immutable
+Imports System.Diagnostics
 Imports Analyzer.Utilities
 Imports Analyzer.Utilities.Extensions
-Imports Microsoft.ApiDesignGuidelines.Analyzers
+Imports Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
 
-Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
+Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
     ''' <summary>
     ''' CA2224: Override Equals on overloading operator equals
     ''' </summary>
@@ -31,10 +32,10 @@ Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
             s_localizableMessage,
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            True,
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             s_localizableDescription,
-            "https://msdn.microsoft.com/en-us/library/ms182357.aspx",
-            WellKnownDiagnosticTags.Telemetry)
+            "https://docs.microsoft.com/visualstudio/code-quality/ca2224-override-equals-on-overloading-operator-equals",
+            FxCopWellKnownDiagnosticTags.PortedFxCopRule)
 
         Public Overrides ReadOnly Property SupportedDiagnostics As ImmutableArray(Of DiagnosticDescriptor) = ImmutableArray.Create(Rule)
 

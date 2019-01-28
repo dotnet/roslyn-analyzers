@@ -9,6 +9,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
+#pragma warning disable CA1820 // Test for empty strings using string length
+
 namespace MetaCompilation.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -1337,7 +1339,7 @@ namespace MetaCompilation.Analyzers
 
                                     if (statementCount > 9)
                                     {
-                                        bool reportCorrect = DiagnosticReportCheck(context, diagnosticToken, contextParameter, statements);
+                                        bool reportCorrect = DiagnosticReportCheck(diagnosticToken, contextParameter, statements);
                                         if (!reportCorrect)
                                         {
                                             IfDiagnostic(context, statements[9], DiagnosticReportIncorrectRule, contextParameter.Identifier.Text, diagnosticToken.Text);
@@ -1846,7 +1848,7 @@ namespace MetaCompilation.Analyzers
             }
 
             // Checks the reporting of the diagnostic, returns a bool representing whether or not analysis failed
-            private bool DiagnosticReportCheck(CompilationAnalysisContext context, SyntaxToken diagnosticToken, ParameterSyntax contextParameter, SyntaxList<StatementSyntax> statements)
+            private bool DiagnosticReportCheck(SyntaxToken diagnosticToken, ParameterSyntax contextParameter, SyntaxList<StatementSyntax> statements)
             {
                 var statement = statements[9] as ExpressionStatementSyntax;
                 if (statement == null)

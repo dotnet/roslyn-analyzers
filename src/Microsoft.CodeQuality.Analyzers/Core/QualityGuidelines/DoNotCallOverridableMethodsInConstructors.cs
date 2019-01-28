@@ -5,9 +5,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2214: Do not call overridable methods in constructors
@@ -30,12 +30,12 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                          s_localizableMessageAndTitle,
                                                                          DiagnosticCategory.Usage,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          description: s_localizableDescription,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182331.aspx",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2214-do-not-call-overridable-methods-in-constructors",
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -45,33 +45,34 @@ namespace Microsoft.QualityGuidelines.Analyzers
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
-                INamedTypeSymbol windowsFormsControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Windows.Forms.Control");
+                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName("System.ComponentModel.Component");
 
-                compilationContext.RegisterOperationBlockStartActionInternal(context =>
+                compilationContext.RegisterOperationBlockStartAction(context =>
                 {
-                    if (ShouldOmitThisDiagnostic(context.OwningSymbol, webUiControlType, windowsFormsControlType))
+                    if (ShouldOmitThisDiagnostic(context.OwningSymbol, webUiControlType, componentModelComponentType))
                     {
                         return;
                     }
 
-                    context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.InvocationExpression);
+                    context.RegisterOperationAction(oc => AnalyzeOperation(oc, context.OwningSymbol.ContainingType), OperationKind.Invocation);
                 });
             });
         }
 
         private static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol containingType)
         {
-            var operation = context.Operation as IInvocationExpression;
+            var operation = context.Operation as IInvocationOperation;
             IMethodSymbol method = operation.TargetMethod;
             if (method != null &&
                 (method.IsAbstract || method.IsVirtual) &&
-                method.ContainingType == containingType)
+                method.ContainingType == containingType &&
+                !operation.IsInsideAnonymousFunction())
             {
                 context.ReportDiagnostic(operation.Syntax.CreateDiagnostic(Rule));
             }
         }
 
-        private static bool ShouldOmitThisDiagnostic(ISymbol symbol, INamedTypeSymbol webUiControlType, INamedTypeSymbol windowsFormsControlType)
+        private static bool ShouldOmitThisDiagnostic(ISymbol symbol, INamedTypeSymbol webUiControlType, INamedTypeSymbol componentModelComponentType)
         {
             // This diagnostic is only relevant in constructors.
             // TODO: should this apply to instance field initializers for VB?
@@ -87,13 +88,13 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 return true;
             }
 
-            // special case ASP.NET and WinForms constructors
+            // special case ASP.NET and Components constructors
             if (containingType.Inherits(webUiControlType))
             {
                 return true;
             }
 
-            if (containingType.Inherits(windowsFormsControlType))
+            if (containingType.Inherits(componentModelComponentType))
             {
                 return true;
             }

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<RuleSet Name="Microsoft SDL 7.1 Required" Description="This rule set contains all Microsoft SDL 7.1 required rules." ToolsVersion="10.0">
+  <Include Path="..\AllRulesDisabled.ruleset" Action="Default" />
+  <Rules AnalyzerId="Microsoft.NetCore.Analyzers" RuleNamespace="Microsoft.NetCore.Analyzers">
+    <Rule Id="CA5358" Action="Warning" />          <!-- Do Not Use Unsafe Cipher Modes -->
+  </Rules>
+  <Rules AnalyzerId="Microsoft.NetCore.CSharp.Analyzers" RuleNamespace="Microsoft.NetCore.CSharp.Analyzers">
+    <Rule Id="CA5350" Action="Warning" />          <!-- Do Not Use Weak Cryptographic Algorithms -->
+    <Rule Id="CA5351" Action="Warning" />          <!-- Do Not Use Broken Cryptographic Algorithms -->
+  </Rules>
+  <Rules AnalyzerId="Microsoft.NetCore.VisualBasic.Analyzers" RuleNamespace="Microsoft.NetCore.VisualBasic.Analyzers">
+    <Rule Id="CA5350" Action="Warning" />          <!-- Do Not Use Weak Cryptographic Algorithms -->
+    <Rule Id="CA5351" Action="Warning" />          <!-- Do Not Use Broken Cryptographic Algorithms -->
+  </Rules>
+  <Rules AnalyzerId="Microsoft.NetFramework.Analyzers" RuleNamespace="Microsoft.NetFramework.Analyzers">
+    <Rule Id="CA2153" Action="Warning" />          <!-- Do Not Catch Corrupted State Exceptions -->
+    <Rule Id="CA3075" Action="Warning" />          <!-- Insecure DTD processing in XML -->
+    <Rule Id="CA3147" Action="Warning" />          <!-- Mark verb handlers with ValidateAntiforgeryToken -->
+  </Rules>
+  <Rules AnalyzerId="Microsoft.NetFramework.CSharp.Analyzers" RuleNamespace="Microsoft.NetFramework.CSharp.Analyzers">
+    <Rule Id="CA3076" Action="Warning" />          <!-- Insecure XSLT script processing. -->
+    <Rule Id="CA3077" Action="Warning" />          <!-- Insecure Processing in API Design, XmlDocument and XmlTextReader -->
+    <Rule Id="CA5350" Action="Warning" />          <!-- Do Not Use Weak Cryptographic Algorithms -->
+    <Rule Id="CA5351" Action="Warning" />          <!-- Do Not Use Broken Cryptographic Algorithms -->
+  </Rules>
+  <Rules AnalyzerId="Microsoft.NetFramework.VisualBasic.Analyzers" RuleNamespace="Microsoft.NetFramework.VisualBasic.Analyzers">
+    <Rule Id="CA3076" Action="Warning" />          <!-- Insecure XSLT script processing. -->
+    <Rule Id="CA3077" Action="Warning" />          <!-- Insecure Processing in API Design, XmlDocument and XmlTextReader -->
+    <Rule Id="CA5350" Action="Warning" />          <!-- Do Not Use Weak Cryptographic Algorithms -->
+    <Rule Id="CA5351" Action="Warning" />          <!-- Do Not Use Broken Cryptographic Algorithms -->
+  </Rules>
+</RuleSet>

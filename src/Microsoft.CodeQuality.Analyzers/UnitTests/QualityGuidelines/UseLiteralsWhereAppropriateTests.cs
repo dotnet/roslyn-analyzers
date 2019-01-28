@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
     public class UseLiteralsWhereAppropriateTests : DiagnosticAnalyzerTestBase
     {
@@ -32,12 +33,12 @@ public class Class1
     static readonly int f7 = 8 + f6;
     internal static readonly int f8 = 8 + f6;
 }",
-        GetCSharpEmptyStringResultAt(line: 4, column: 28, symbolName: "f1"),
-        GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2"),
-        GetCSharpDefaultResultAt(line: 6, column: 31, symbolName: "f4"),
-        GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5"),
-        GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7"),
-        GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8"));
+                GetCSharpEmptyStringResultAt(line: 4, column: 28, symbolName: "f1"),
+                GetCSharpDefaultResultAt(line: 5, column: 28, symbolName: "f2"),
+                GetCSharpDefaultResultAt(line: 6, column: 31, symbolName: "f4"),
+                GetCSharpDefaultResultAt(line: 7, column: 25, symbolName: "f5"),
+                GetCSharpDefaultResultAt(line: 9, column: 25, symbolName: "f7"),
+                GetCSharpDefaultResultAt(line: 10, column: 34, symbolName: "f8"));
         }
 
         [Fact]
@@ -74,12 +75,12 @@ Public Class Class1
     Shared ReadOnly f7 As Integer = 8 + f6
     Friend Shared ReadOnly f8 As Integer = 8 + f6
 End Class",
-        GetBasicEmptyStringResultAt(line: 3, column: 21, symbolName: "f1"),
-        GetBasicDefaultResultAt(line: 4, column: 21, symbolName: "f2"),
-        GetBasicDefaultResultAt(line: 5, column: 35, symbolName: "f4"),
-        GetBasicDefaultResultAt(line: 6, column: 21, symbolName: "f5"),
-        GetBasicDefaultResultAt(line: 8, column: 21, symbolName: "f7"),
-        GetBasicDefaultResultAt(line: 9, column: 28, symbolName: "f8"));
+                GetBasicEmptyStringResultAt(line: 3, column: 21, symbolName: "f1"),
+                GetBasicDefaultResultAt(line: 4, column: 21, symbolName: "f2"),
+                GetBasicDefaultResultAt(line: 5, column: 35, symbolName: "f4"),
+                GetBasicDefaultResultAt(line: 6, column: 21, symbolName: "f5"),
+                GetBasicDefaultResultAt(line: 8, column: 21, symbolName: "f7"),
+                GetBasicDefaultResultAt(line: 9, column: 28, symbolName: "f8"));
         }
 
         [Fact]

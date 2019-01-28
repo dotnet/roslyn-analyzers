@@ -1,21 +1,24 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class DoNotRaiseExceptionsInUnexpectedLocationsTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
+            return new BasicDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
+            return new CSharpDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer();
         }
 
         #region Property and Event Tests
@@ -37,6 +40,20 @@ public class C
 class NonPublic
 {
     public int PropWithException { get { throw new Exception(); } set { throw new NotSupportedException(); } }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact]
+        public void CSharpPropertyWithDerivedExceptionNoDiagnostics()
+        {
+            var code = @"
+using System;
+
+public class C
+{
+    public int this[int x] { get { throw new ArgumentOutOfRangeException(); } set { throw new ArgumentOutOfRangeException(); } }
 }
 ";
             VerifyCSharp(code);
@@ -88,6 +105,26 @@ Class NonPublic
            Throw New Exception() 'Doesn't fire because it's not visible outside assembly
         End Get
         Set 
+        End Set
+    End Property
+End Class
+";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void BasicPropertyWithDerivedExceptionNoDiagnostics()
+        {
+            var code = @"
+Imports System
+
+Public Class C
+    Default Public Property Item(x As Integer) As Integer
+        Get
+           Throw New ArgumentOutOfRangeException()
+        End Get
+        Set
+            Throw New ArgumentOutOfRangeException()
         End Set
     End Property
 End Class
@@ -160,6 +197,19 @@ End Class
                         GetBasicPropertyResultAt(15, 12, "get_Item", "Exception"),
                         GetBasicAllowedExceptionsResultAt(24, 13, "add_Event1", "Exception"),
                         GetBasicAllowedExceptionsResultAt(28, 13, "remove_Event1", "Exception"));
+        }
+
+        [Fact, WorkItem(1842, "https://github.com/dotnet/roslyn-analyzers/issues/1842")]
+        public void CSharpIndexer_KeyNotFoundException_NoDiagnostics()
+        {
+            var code = @"
+using System.Collections.Generic;
+
+public class C
+{
+    public int this[int x] { get { throw new KeyNotFoundException(); } }
+}";
+            VerifyCSharp(code);
         }
 
         #endregion
@@ -494,7 +544,7 @@ End Class
                         GetBasicNoExceptionsResultAt(6, 9, ".cctor", "Exception"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CSharpFinalizerWithExceptions()
         {
             var code = @"
@@ -555,7 +605,7 @@ public class C
                          GetCSharpNoExceptionsResultAt(12, 9, "op_Inequality", "Exception"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void BasicEqualityOperatorWithExceptions()
         {
             var code = @"
@@ -599,7 +649,7 @@ public class C
                          GetCSharpNoExceptionsResultAt(8, 9, "op_Implicit", "Exception"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void BasicImplicitOperatorWithExceptions()
         {
             var code = @"

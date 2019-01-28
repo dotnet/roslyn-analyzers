@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1000: Do not declare static members on generic types
@@ -25,10 +25,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182139.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1000-do-not-declare-static-members-on-generic-types",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -40,19 +40,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(
                 symbolAnalysisContext =>
                 {
+                    // Fxcop compat: fire only on public static members within externally visible generic types by default.
                     ISymbol symbol = symbolAnalysisContext.Symbol;
-                    if (!symbol.ContainingType.IsGenericType ||
+                    if (!symbol.IsStatic ||
                         symbol.DeclaredAccessibility != Accessibility.Public ||
-                        !symbol.IsStatic)
+                        !symbol.ContainingType.IsGenericType ||
+                        !symbol.ContainingType.MatchesConfiguredVisibility(symbolAnalysisContext.Options, Rule, symbolAnalysisContext.CancellationToken))
                     {
                         return;
                     }
 
+                    // Do not flag non-ordinary methods, such as conversions, operator overloads, etc.
                     if (symbol is IMethodSymbol methodSymbol &&
-    (methodSymbol.IsAccessorMethod() ||
-     (methodSymbol.MethodKind == MethodKind.UserDefinedOperator &&
-      (methodSymbol.Name == WellKnownMemberNames.EqualityOperatorName ||
-       methodSymbol.Name == WellKnownMemberNames.InequalityOperatorName))))
+                        methodSymbol.MethodKind != MethodKind.Ordinary)
                     {
                         return;
                     }

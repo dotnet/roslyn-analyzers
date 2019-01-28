@@ -6,9 +6,9 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1063: Implement IDisposable Correctly
@@ -18,7 +18,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     {
         internal const string RuleId = "CA1063";
 
-        private const string HelpLinkUri = "https://msdn.microsoft.com/library/ms244737.aspx";
+        private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1063-implement-idisposable-correctly";
         private const string DisposeMethodName = "Dispose";
         private const string GarbageCollectorTypeName = "System.GC";
         private const string SuppressFinalizeMethodName = "SuppressFinalize";
@@ -41,84 +41,85 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageIDisposableReimplementation,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor FinalizeOverrideRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageFinalizeOverride,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor DisposeOverrideRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposeOverride,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor DisposeSignatureRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposeSignature,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor RenameDisposeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageRenameDispose,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor DisposeBoolSignatureRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposeBoolSignature,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor DisposeImplementationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDisposeImplementation,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor FinalizeImplementationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageFinalizeImplementation,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor ProvideDisposeBoolRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageProvideDisposeBool,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(IDisposableReimplementationRule, FinalizeOverrideRule, DisposeOverrideRule, DisposeSignatureRule, RenameDisposeRule, DisposeBoolSignatureRule, DisposeImplementationRule, FinalizeImplementationRule, ProvideDisposeBoolRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+            ImmutableArray.Create(IDisposableReimplementationRule, FinalizeOverrideRule, DisposeOverrideRule, DisposeSignatureRule, RenameDisposeRule, DisposeBoolSignatureRule, DisposeImplementationRule, FinalizeImplementationRule, ProvideDisposeBoolRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -157,21 +158,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 });
         }
 
-        private static bool IsDisposeBoolMethod(IMethodSymbol method)
-        {
-            if (method.Name == DisposeMethodName && method.MethodKind == MethodKind.Ordinary &&
-                method.ReturnsVoid && method.Parameters.Length == 1)
-            {
-                IParameterSymbol parameter = method.Parameters[0];
-                if (parameter.Type != null && parameter.Type.SpecialType == SpecialType.System_Boolean && parameter.RefKind == RefKind.None)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         /// <summary>
         /// Analyzes single instance of compilation.
         /// </summary>
@@ -191,31 +177,35 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             public void Initialize(CompilationStartAnalysisContext context)
             {
                 context.RegisterSymbolAction(AnalyzeNamedTypeSymbol, SymbolKind.NamedType);
-                context.RegisterOperationBlockActionInternal(AnalyzeOperationBlock);
+                context.RegisterOperationBlockAction(AnalyzeOperationBlock);
             }
 
             private void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context)
             {
-                if (context.Symbol is INamedTypeSymbol type && type.TypeKind == TypeKind.Class)
+                // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                // will always have identical configured visibility.
+                if (context.Symbol is INamedTypeSymbol type &&
+                    type.TypeKind == TypeKind.Class &&
+                    type.MatchesConfiguredVisibility(context.Options, IDisposableReimplementationRule, context.CancellationToken))
                 {
                     bool implementsDisposableInBaseType = ImplementsDisposableInBaseType(type);
 
                     if (ImplementsDisposableDirectly(type))
                     {
+                        if (type.Interfaces.Contains(_disposableType))
+                        {
+                            // This differs from FxCop implementation
+                            // Reports violation when type redundantly declares IDisposable as implemented interface
+                            CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
+                        }
+
                         IMethodSymbol disposeMethod = FindDisposeMethod(type);
                         if (disposeMethod != null)
                         {
-                            // This is difference from FxCop implementation
-                            // IDisposable Reimplementation Rule is violated only if type re-implements Dispose method, not just interface
-                            // For example see unit tests:
-                            // CSharp_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
-                            // Basic_CA1063_IDisposableReimplementation_NoDiagnostic_ImplementingInheritedInterfaceWithNoDisposeReimplementation
-                            CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
-
                             CheckDisposeSignatureRule(disposeMethod, type, context);
                             CheckRenameDisposeRule(disposeMethod, type, context);
 
-                            if (!type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
+                            if (!type.IsSealed)
                             {
                                 IMethodSymbol disposeBoolMethod = FindDisposeBoolMethod(type);
                                 if (disposeBoolMethod != null)
@@ -228,17 +218,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                 }
                             }
                         }
-                        else if (type.Interfaces.Contains(_disposableType))
-                        {
-                            // Reports violation, when type mentions IDisposable as implemented interface,
-                            // even when Dispose method is not implemented, but inherited from base type
-                            // For example see unit test:
-                            // CSharp_CA1063_IDisposableReimplementation_Diagnostic_ReImplementingIDisposableWithNoDisposeMethod
-                            CheckIDisposableReimplementationRule(type, context, implementsDisposableInBaseType);
-                        }
                     }
 
-                    if (implementsDisposableInBaseType)
+                    if (implementsDisposableInBaseType && FindInheritedDisposeBoolMethod(type) != null)
                     {
                         foreach (IMethodSymbol method in type.GetMembers().OfType<IMethodSymbol>())
                         {
@@ -262,40 +244,46 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 bool isDisposeMethod = method.Name == DisposeMethodName;
                 if (isFinalizerMethod || isDisposeMethod)
                 {
+                    // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                    // will always have identical configured visibility.
                     INamedTypeSymbol type = method.ContainingType;
                     if (type != null && type.TypeKind == TypeKind.Class &&
-                        !type.IsSealed && type.DeclaredAccessibility != Accessibility.Private)
+                        !type.IsSealed && type.MatchesConfiguredVisibility(context.Options, IDisposableReimplementationRule, context.CancellationToken))
                     {
                         if (ImplementsDisposableDirectly(type))
                         {
                             IMethodSymbol disposeMethod = FindDisposeMethod(type);
                             if (disposeMethod != null)
                             {
-                                if (method == disposeMethod)
+                                if (method.Equals(disposeMethod))
                                 {
                                     CheckDisposeImplementationRule(method, type, context.OperationBlocks, context);
                                 }
                                 else if (isFinalizerMethod)
                                 {
-                                    // Check implementation of finalizer only if the class explicitly implements IDisposable
-                                    // If class implements interface inherited from IDisposable and IDisposable is implemented in base class
-                                    // then implementation of finalizer is ignored
                                     CheckFinalizeImplementationRule(method, type, context.OperationBlocks, context);
                                 }
                             }
+                        }
+                        else if (isFinalizerMethod &&
+                            ImplementsDisposableInBaseType(type) &&
+                            FindInheritedDisposeBoolMethod(type) != null)
+                        {
+                            // Finalizer must invoke Dispose(false) if any of its base type has a Dispose(bool) implementation.
+                            CheckFinalizeImplementationRule(method, type, context.OperationBlocks, context);
                         }
                     }
                 }
             }
 
             /// <summary>
-            /// Check rule: Remove IDisposable from the list of interfaces implemented by {0} and override the base class Dispose implementation instead.
+            /// Check rule: Remove IDisposable from the list of interfaces implemented by {0} as it is already implemented by base type {1}.
             /// </summary>
             private static void CheckIDisposableReimplementationRule(INamedTypeSymbol type, SymbolAnalysisContext context, bool implementsDisposableInBaseType)
             {
                 if (implementsDisposableInBaseType)
                 {
-                    context.ReportDiagnostic(type.CreateDiagnostic(IDisposableReimplementationRule, type.Name));
+                    context.ReportDiagnostic(type.CreateDiagnostic(IDisposableReimplementationRule, type.Name, type.BaseType.Name));
                 }
             }
 
@@ -347,13 +335,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             /// <summary>
-            /// Checks rule: Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false.
+            /// Checks rule: Remove the finalizer from type {0}, override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.
             /// </summary>
             private static void CheckFinalizeOverrideRule(INamedTypeSymbol type, SymbolAnalysisContext context)
             {
                 if (type.HasFinalizer())
                 {
-                    context.ReportDiagnostic(type.CreateDiagnostic(FinalizeOverrideRule, type.Name));
+                    // Flag the finalizer if there is any base type with a finalizer, this can cause duplicate Dispose(false) invocations.
+                    var baseTypeWithFinalizerOpt = GetFirstBaseTypeWithFinalizerOrDefault(type);
+                    if (baseTypeWithFinalizerOpt != null)
+                    {
+                        context.ReportDiagnostic(type.CreateDiagnostic(FinalizeOverrideRule, type.Name, baseTypeWithFinalizerOpt.Name));
+                    }
                 }
             }
 
@@ -394,8 +387,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// </summary>
             private static void CheckFinalizeImplementationRule(IMethodSymbol method, INamedTypeSymbol type, ImmutableArray<IOperation> operationBlocks, OperationBlockAnalysisContext context)
             {
-                // TODO: Implement check of Finalize
+                // Bail out if any base type also provides a finalizer - we will fire CheckFinalizeOverrideRule for that case.
+                if (GetFirstBaseTypeWithFinalizerOrDefault(type) != null)
+                {
+                    return;
+                }
+
+                var validator = new FinalizeImplementationValidator(type);
+                if (!validator.Validate(operationBlocks))
+                {
+                    context.ReportDiagnostic(method.CreateDiagnostic(FinalizeImplementationRule, $"{type.Name}.{method.Name}"));
+                }
             }
+
+            private static INamedTypeSymbol GetFirstBaseTypeWithFinalizerOrDefault(INamedTypeSymbol type)
+                => type.GetBaseTypes().FirstOrDefault(baseType => baseType.SpecialType != SpecialType.System_Object && baseType.HasFinalizer());
 
             /// <summary>
             /// Checks if type implements IDisposable interface or an interface inherited from IDisposable.
@@ -433,16 +439,70 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             /// </summary>
             private static IMethodSymbol FindDisposeBoolMethod(INamedTypeSymbol type)
             {
-                return type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>().FirstOrDefault(IsDisposeBoolMethod);
+                return type.GetMembers(DisposeMethodName).OfType<IMethodSymbol>().FirstOrDefault(m => m.HasDisposeBoolMethodSignature());
             }
+
+            /// <summary>
+            /// Returns method defined in the nearest ancestor: void Dispose(bool)
+            /// </summary>
+            private IMethodSymbol FindInheritedDisposeBoolMethod(INamedTypeSymbol type)
+            {
+                IMethodSymbol method = null;
+
+                while (type != null && method == null && ImplementsDisposableInBaseType(type))
+                {
+                    type = type.BaseType;
+                    method = FindDisposeBoolMethod(type);
+                }
+
+                return method;
+            }
+        }
+
+        private static bool IsDisposeBoolCall(IInvocationOperation invocationExpression, INamedTypeSymbol type, bool expectedValue)
+        {
+            if (invocationExpression.TargetMethod == null ||
+                !invocationExpression.TargetMethod.HasDisposeBoolMethodSignature())
+            {
+                return false;
+            }
+
+            if (invocationExpression.Instance.Kind != OperationKind.InstanceReference)
+            {
+                return false;
+            }
+
+            if (!type.Equals(invocationExpression.Instance.Type))
+            {
+                return false;
+            }
+
+            if (invocationExpression.Arguments.Length != 1)
+            {
+                return false;
+            }
+
+            IArgumentOperation argument = invocationExpression.Arguments[0];
+            if (argument.Value.Kind != OperationKind.Literal)
+            {
+                return false;
+            }
+
+            var literal = (ILiteralOperation)argument.Value;
+            if (!literal.ConstantValue.HasValue || !expectedValue.Equals(literal.ConstantValue.Value))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
         /// Validates implementation of Dispose method. The method must call Dispose(true) and then GC.SuppressFinalize(this).
         /// </summary>
-        private struct DisposeImplementationValidator
+        private sealed class DisposeImplementationValidator
         {
-            // this type will be created per compilation 
+            // this type will be created per compilation
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
 #pragma warning disable RS1008
             private readonly IMethodSymbol _suppressFinalizeMethod;
@@ -466,7 +526,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                 if (ValidateOperations(operations))
                 {
-                    return _callsDisposeBool && _callsSuppressFinalize;
+                    return _callsDisposeBool && (_callsSuppressFinalize || !_type.HasFinalizer());
                 }
 
                 return false;
@@ -476,7 +536,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 foreach (IOperation operation in operations)
                 {
-                    if (!ValidateOperation(operation))
+                    if (!operation.IsImplicit && !ValidateOperation(operation))
                     {
                         return false;
                     }
@@ -489,31 +549,32 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 switch (operation.Kind)
                 {
-                    case OperationKind.EmptyStatement:
-                    case OperationKind.LabelStatement:
+                    case OperationKind.Empty:
+                    case OperationKind.Labeled:
                         return true;
-                    case OperationKind.BlockStatement:
-                        var blockStatement = (IBlockStatement)operation;
-                        return ValidateOperations(blockStatement.Statements);
+                    case OperationKind.Block:
+                        var blockStatement = (IBlockOperation)operation;
+                        return ValidateOperations(blockStatement.Operations);
                     case OperationKind.ExpressionStatement:
-                        var expressionStatement = (IExpressionStatement)operation;
+                        var expressionStatement = (IExpressionStatementOperation)operation;
                         return ValidateExpression(expressionStatement);
                     default:
-                        return false;
+                        // Ignore operation roots with no IOperation API support (OperationKind.None) 
+                        return operation.IsOperationNoneRoot();
                 }
             }
 
-            private bool ValidateExpression(IExpressionStatement expressionStatement)
+            private bool ValidateExpression(IExpressionStatementOperation expressionStatement)
             {
-                if (expressionStatement.Expression == null || expressionStatement.Expression.Kind != OperationKind.InvocationExpression)
+                if (expressionStatement.Operation == null || expressionStatement.Operation.Kind != OperationKind.Invocation)
                 {
                     return false;
                 }
 
-                var invocationExpression = (IInvocationExpression)expressionStatement.Expression;
+                var invocationExpression = (IInvocationOperation)expressionStatement.Operation;
                 if (!_callsDisposeBool)
                 {
-                    bool result = IsDisposeBoolCall(invocationExpression);
+                    bool result = IsDisposeBoolCall(invocationExpression, _type, expectedValue: true);
                     if (result)
                     {
                         _callsDisposeBool = true;
@@ -535,84 +596,156 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return false;
             }
 
-            private bool IsDisposeBoolCall(IInvocationExpression invocationExpression)
-            {
-                if (invocationExpression.TargetMethod == null ||
-                    invocationExpression.TargetMethod.ContainingType != _type ||
-                    !IsDisposeBoolMethod(invocationExpression.TargetMethod))
-                {
-                    return false;
-                }
-
-                if (invocationExpression.Instance.Kind != OperationKind.InstanceReferenceExpression)
-                {
-                    return false;
-                }
-
-                var instanceReferenceExpression = (IInstanceReferenceExpression)invocationExpression.Instance;
-                if (instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Implicit &&
-                    instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Explicit)
-                {
-                    return false;
-                }
-
-                if (invocationExpression.ArgumentsInParameterOrder.Length != 1)
-                {
-                    return false;
-                }
-
-                IArgument argument = invocationExpression.ArgumentsInParameterOrder[0];
-                if (argument.Value.Kind != OperationKind.LiteralExpression)
-                {
-                    return false;
-                }
-
-                var literal = (ILiteralExpression)argument.Value;
-                if (!literal.ConstantValue.HasValue || !true.Equals(literal.ConstantValue.Value))
-                {
-                    return false;
-                }
-
-                return true;
-            }
-
-            private bool IsSuppressFinalizeCall(IInvocationExpression invocationExpression)
+            private bool IsSuppressFinalizeCall(IInvocationOperation invocationExpression)
             {
                 if (invocationExpression.TargetMethod != _suppressFinalizeMethod)
                 {
                     return false;
                 }
 
-                if (invocationExpression.ArgumentsInParameterOrder.Length != 1)
+                if (invocationExpression.Arguments.Length != 1)
                 {
                     return false;
                 }
 
-                IOperation argumentValue = invocationExpression.ArgumentsInParameterOrder[0].Value;
-                if (argumentValue.Kind != OperationKind.ConversionExpression)
+                IOperation argumentValue = invocationExpression.Arguments[0].Value;
+                if (argumentValue.Kind != OperationKind.Conversion)
                 {
                     return false;
                 }
 
-                var conversion = (IConversionExpression)argumentValue;
-                if (conversion.ConversionKind != ConversionKind.Cast && conversion.ConversionKind != ConversionKind.CSharp && conversion.ConversionKind != ConversionKind.Basic)
+                var conversion = (IConversionOperation)argumentValue;
+                if (conversion.Operand == null || conversion.Operand.Kind != OperationKind.InstanceReference)
                 {
                     return false;
                 }
 
-                if (conversion.Operand == null || conversion.Operand.Kind != OperationKind.InstanceReferenceExpression)
-                {
-                    return false;
-                }
-
-                var instanceReferenceExpression = (IInstanceReferenceExpression)conversion.Operand;
-                if (instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Implicit &&
-                    instanceReferenceExpression.InstanceReferenceKind != InstanceReferenceKind.Explicit)
+                if (!_type.Equals(conversion.Operand.Type))
                 {
                     return false;
                 }
 
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// Validates implementation of the finalizer. This method must call Dispose(false) and then return
+        /// </summary>
+        private sealed class FinalizeImplementationValidator
+        {
+            // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
+            // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
+#pragma warning disable RS1008
+            private INamedTypeSymbol _type;
+#pragma warning restore RS1008
+            private bool _callDispose;
+
+            public FinalizeImplementationValidator(INamedTypeSymbol type)
+            {
+                _type = type;
+                _callDispose = false;
+            }
+
+            public bool Validate(ImmutableArray<IOperation> operations)
+            {
+                _callDispose = false;
+
+                if (ValidateOperations(operations))
+                {
+                    return _callDispose;
+                }
+
+                return false;
+            }
+
+            private bool ValidateOperations(ImmutableArray<IOperation> operations)
+            {
+                foreach (var operation in operations)
+                {
+                    // We need to analyze implicit try statements. This is because if the base type has
+                    // a finalizer, C# will create a try/finally statement to wrap the finalizer, with a
+                    // call to the base finalizer in the finally section. We need to validate the contents
+                    // of the try block
+                    // Also analyze the implicit expression statement created for expression bodied implementation.
+                    var shouldAnalyze = !operation.IsImplicit || operation.Kind == OperationKind.Try || operation.Kind == OperationKind.ExpressionStatement;
+                    if (shouldAnalyze && !ValidateOperation(operation))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            private bool ValidateOperation(IOperation operation)
+            {
+                switch (operation.Kind)
+                {
+                    case OperationKind.Empty:
+                    case OperationKind.Labeled:
+                        return true;
+                    case OperationKind.Block:
+                        return ValidateOperations(((IBlockOperation)operation).Operations);
+                    case OperationKind.ExpressionStatement:
+                        return ValidateExpression((IExpressionStatementOperation)operation);
+                    case OperationKind.Try:
+                        return ValidateTryOperation((ITryOperation)operation);
+                    default:
+                        // Ignore operation roots with no IOperation API support (OperationKind.None) 
+                        return operation.IsOperationNoneRoot();
+                }
+            }
+
+            private bool ValidateExpression(IExpressionStatementOperation expressionStatement)
+            {
+                if (expressionStatement.Operation?.Kind != OperationKind.Invocation)
+                {
+                    return false;
+                }
+
+                var invocation = (IInvocationOperation)expressionStatement.Operation;
+
+                // Valid calls are either to Dispose(false), or to the Finalize method of the base type
+                if (!_callDispose)
+                {
+                    bool result = IsDisposeBoolCall(invocation, _type, expectedValue: false);
+                    if (result)
+                    {
+                        _callDispose = true;
+                    }
+
+                    return result;
+                }
+                else if (_type.BaseType != null && invocation.Instance != null && invocation.Instance.Kind == OperationKind.InstanceReference)
+                {
+                    IMethodSymbol methodSymbol = invocation.TargetMethod;
+                    IInstanceReferenceOperation receiver = (IInstanceReferenceOperation)invocation.Instance;
+
+                    return methodSymbol.IsFinalizer() && receiver.Type.OriginalDefinition == _type.BaseType.OriginalDefinition;
+                }
+
+                return false;
+            }
+
+            private bool ValidateTryOperation(ITryOperation tryOperation)
+            {
+                // The try operation must have been implicit, as we still analyze it if it isn't implicit
+                if (!tryOperation.IsImplicit)
+                {
+                    return false;
+                }
+
+                // There is no way to pass this check without the finally block being correct,
+                // as this try-finally is generated by the compiler. No need to verify
+                // the contents of the finally.
+                if (tryOperation.Finally == null || !tryOperation.Finally.IsImplicit)
+                {
+                    return false;
+                }
+
+                // The try statement is otherwise correct, so validate the main body
+                return Validate(tryOperation.Body.Operations);
             }
         }
     }

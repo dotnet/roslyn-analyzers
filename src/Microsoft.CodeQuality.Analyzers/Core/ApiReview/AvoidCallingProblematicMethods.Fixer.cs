@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
-namespace ApiReview.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiReview
 {
     /// <summary>
     /// CA2001: Avoid calling problematic methods
@@ -24,7 +24,7 @@ namespace ApiReview.Analyzers
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

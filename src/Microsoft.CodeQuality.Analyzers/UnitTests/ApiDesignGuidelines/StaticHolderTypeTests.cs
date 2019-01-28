@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class CA1052Tests : DiagnosticAnalyzerTestBase
+    public class StaticHolderTypeTests : DiagnosticAnalyzerTestBase
     {
         #region Verifiers
 
@@ -63,28 +64,56 @@ public static class C2
 ");
         }
 
-        [Fact]
-        public void CA1052DiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharp()
+        [Fact, WorkItem(1320, "https://github.com/dotnet/roslyn-analyzers/issues/1320")]
+        public void CA1052NoDiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharp()
         {
             VerifyCSharp(@"
 public sealed class C3
 {
     public static void Foo() { }
 }
-",
-                CSharpResult(2, 21, "C3"));
+");
         }
 
-        [Fact]
-        public void CA1052DiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasic()
+        [Fact, WorkItem(1320, "https://github.com/dotnet/roslyn-analyzers/issues/1320")]
+        public void CA1052NoDiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasic()
         {
             VerifyBasic(@"
 Public NotInheritable Class B3
     Public Shared Sub Foo()
     End Sub
 End Class
-",
-                BasicResult(2, 29, "B3"));
+");
+        }
+
+        [Fact, WorkItem(1292, "https://github.com/dotnet/roslyn-analyzers/issues/1292")]
+        public void CA1052NoDiagnosticForSealedClassWithPublicConstructorAndStaticMembers()
+        {
+            VerifyCSharp(@"
+using System.Threading;
+
+public sealed class ConcurrentCreationDummy
+{
+    private static int creationAttempts;
+
+    public ConcurrentCreationDummy()
+    {
+        if (IsCreatingFirstInstance())
+        {
+            CreatingFirstInstance.Set();
+            CreatedSecondInstance.Wait();
+        }
+    }
+
+    public static ManualResetEventSlim CreatingFirstInstance { get; } = new ManualResetEventSlim();
+
+    public static ManualResetEventSlim CreatedSecondInstance { get; } = new ManualResetEventSlim();
+
+    private static bool IsCreatingFirstInstance()
+    {
+        return Interlocked.Increment(ref creationAttempts) == 1;
+    }
+}");
         }
 
         [Fact]
@@ -137,7 +166,6 @@ End Class
 ");
         }
 
-
         [Fact]
         public void CA1052NoDiagnosticForInternalClassWithOnlyStaticDeclaredMembersCSharp()
         {
@@ -149,6 +177,20 @@ internal class C6
 ");
         }
 
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1052NoDiagnosticForEffectivelyInternalClassWithOnlyStaticDeclaredMembersCSharp()
+        {
+            VerifyCSharp(@"
+internal class C6
+{
+    public class Inner
+    {
+        public static void Foo() { }
+    }
+}
+");
+        }
+
         [Fact]
         public void CA1052NoDiagnosticForFriendClassWithOnlySharedDeclaredMembersBasic()
         {
@@ -156,6 +198,19 @@ internal class C6
 Friend Class B6
     Public Shared Sub Foo()
     End Sub
+End Class
+");
+        }
+
+        [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
+        public void CA1052NoDiagnosticForEffectivelyFriendClassWithOnlySharedDeclaredMembersBasic()
+        {
+            VerifyBasic(@"
+Friend Class B6
+    Public Class InnerClass
+        Public Shared Sub Foo()
+        End Sub
+    End Class
 End Class
 ");
         }
@@ -407,27 +462,25 @@ public static class C15
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithStaticConstructorCSharp()
+        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorCSharp()
         {
             VerifyCSharp(@"
 public class C16
 {
     static C16() { }
 }
-",
-                CSharpResult(2, 14, "C16"));
+");
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithStaticConstructorBasic()
+        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorBasic()
         {
             VerifyBasic(@"
 Public Class B16
     Shared Sub New()
     End Sub
 End Class
-",
-                BasicResult(2, 14, "B16"));
+");
         }
 
         [Fact]
@@ -442,7 +495,7 @@ public static class C17
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
+        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
         {
             VerifyCSharp(@"
 public class C18
@@ -450,12 +503,11 @@ public class C18
     public C18() { }
     static C18() { }
 }
-",
-                CSharpResult(2, 14, "C18"));
+");
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasic()
+        public void CA1052NoDiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasic()
         {
             VerifyBasic(@"
 Public Class B18
@@ -465,8 +517,7 @@ Public Class B18
     Shared Sub New()
     End Sub
 End Class
-",
-                BasicResult(2, 14, "B18"));
+");
         }
 
         [Fact]
@@ -603,7 +654,7 @@ End Class
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceCSharp()
         {
             VerifyCSharp(@"
 public interface IC24Base
@@ -613,12 +664,11 @@ public class C24 : IC24Base
 {
     public static void Foo() { }
 }
-",
-                CSharpResult(5, 14, "C24"));
+");
         }
 
         [Fact]
-        public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersAndEmptyBaseInterfaceBasic()
         {
             VerifyBasic(@"
 Public Interface IB24Base
@@ -628,8 +678,7 @@ Public Class B24
 	Public Shared Sub Foo()
 	End Sub
 End Class
-",
-                BasicResult(4, 14, "B24"));
+");
         }
 
         [Fact]
@@ -706,6 +755,77 @@ Public Class B27
 	Inherits
 End Class
 ", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsCSharp()
+        {
+            VerifyCSharp(@"
+public class C28
+{
+    private static void Foo() {}
+    protected static void Bar() {}
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyPrivateAndProtectedStaticMethodsBasic()
+        {
+            VerifyBasic(@"
+Public Class B28
+	Private Shared Sub Foo()
+	End Sub
+	Protected Shared Sub Bar()
+	End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsCSharp()
+        {
+            VerifyCSharp(@"
+public class C29
+{
+    public static explicit operator C29(int foo) => new C29();
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyImplicitConversionOperatorsCSharp()
+        {
+            VerifyCSharp(@"
+public class C29
+{
+    public static implicit operator C29(int foo) => new C29();
+}
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForNonStaticClassWithOnlyExplicitConversionOperatorsBasic()
+        {
+            VerifyBasic(@"
+Public Class B29
+    Public Shared Widening Operator CType(ByVal foo As Integer) As B29
+        Return New B29()
+    End Operator
+End Class
+");
+        }
+
+        [Fact]
+        public void CA1052NoDiagnosticForAbstractNonStaticClassCSharp()
+        {
+            VerifyCSharp(@"
+public abstract class C1
+{
+    internal class C2 : C1 {
+    }
+}
+");
         }
     }
 }

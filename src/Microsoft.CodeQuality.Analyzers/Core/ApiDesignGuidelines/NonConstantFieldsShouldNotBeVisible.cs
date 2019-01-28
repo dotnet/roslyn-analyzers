@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2211: Non-constant fields should not be visible
@@ -26,10 +26,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182353.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2211-non-constant-fields-should-not-be-visible",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -42,8 +42,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 var field = (IFieldSymbol)obj.Symbol;
 
-                // Only report diagnostic on public non-readonly static fields
-                if(field.IsPublic() && !field.IsConst && field.IsStatic && !field.IsReadOnly)
+                // Only report diagnostic on externally visible non-readonly static fields
+                if (field.IsExternallyVisible() && !field.IsConst && field.IsStatic && !field.IsReadOnly)
                 {
                     obj.ReportDiagnostic(field.CreateDiagnostic(Rule));
                 }

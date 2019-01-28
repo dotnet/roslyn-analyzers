@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Composition;
-using Microsoft.ApiDesignGuidelines.Analyzers;
+using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Microsoft.ApiDesignGuidelines.CSharp.Analyzers
+namespace Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines
 {
     /// <summary> 
     /// CA1028: Enum Storage should be Int32
@@ -18,7 +18,7 @@ namespace Microsoft.ApiDesignGuidelines.CSharp.Analyzers
         {
             var enumDecl = (EnumDeclarationSyntax)node;
             var baseTypeNode = (enumDecl.BaseList.Types.FirstOrDefault() as SimpleBaseTypeSyntax)?.Type;
-            return baseTypeNode; 
+            return baseTypeNode;
         }
     }
-} 
+}

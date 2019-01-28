@@ -5,9 +5,9 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1823: Avoid unused private fields
@@ -27,10 +27,10 @@ namespace Microsoft.Maintainability.Analyzers
                                                                                       s_localizableMessage,
                                                                                       DiagnosticCategory.Performance,
                                                                                       DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                      isEnabledByDefault: true,
+                                                                                      isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                       description: s_localizableDescription,
-                                                                                      helpLinkUri: "http://msdn.microsoft.com/library/ms245042.aspx",
-                                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                      helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1823-avoid-unused-private-fields",
+                                                                                      customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -48,28 +48,69 @@ namespace Microsoft.Maintainability.Analyzers
                     HashSet<IFieldSymbol> unreferencedPrivateFields = new HashSet<IFieldSymbol>();
                     HashSet<IFieldSymbol> referencedPrivateFields = new HashSet<IFieldSymbol>();
 
+                    ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
+                    var structLayoutAttribute = WellKnownTypes.StructLayoutAttribute(compilationContext.Compilation);
+
                     compilationContext.RegisterSymbolAction(
                         (symbolContext) =>
                         {
                             IFieldSymbol field = (IFieldSymbol)symbolContext.Symbol;
+
+                            // Fields of types marked with StructLayoutAttribute with LayoutKind.Sequential should never be flagged as unused as their removal can change the runtime behavior.
+                            if (structLayoutAttribute != null && field.ContainingType != null)
+                            {
+                                foreach (var attribute in field.ContainingType.GetAttributes())
+                                {
+                                    if (structLayoutAttribute.Equals(attribute.AttributeClass.OriginalDefinition) &&
+                                        attribute.ConstructorArguments.Length == 1)
+                                    {
+                                        var argument = attribute.ConstructorArguments[0];
+                                        if (argument.Type != null)
+                                        {
+                                            SpecialType specialType = argument.Type.TypeKind == TypeKind.Enum ?
+                                                ((INamedTypeSymbol)argument.Type).EnumUnderlyingType.SpecialType :
+                                                argument.Type.SpecialType;
+
+                                            if (DiagnosticHelpers.TryConvertToUInt64(argument.Value, specialType, out ulong convertedLayoutKindValue) &&
+                                                convertedLayoutKindValue == (ulong)System.Runtime.InteropServices.LayoutKind.Sequential)
+                                            {
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             if (field.DeclaredAccessibility == Accessibility.Private && !referencedPrivateFields.Contains(field))
                             {
+                                // Fields with certain special attributes should never be considered unused.
+                                if (!specialAttributes.IsEmpty)
+                                {
+                                    foreach (var attribute in field.GetAttributes())
+                                    {
+                                        if (specialAttributes.Contains(attribute.AttributeClass.OriginalDefinition))
+                                        {
+                                            return;
+                                        }
+                                    }
+                                }
+
                                 unreferencedPrivateFields.Add(field);
                             }
                         },
                         SymbolKind.Field);
 
-                    compilationContext.RegisterOperationActionInternal(
+                    compilationContext.RegisterOperationAction(
                         (operationContext) =>
                         {
-                            IFieldSymbol field = ((IFieldReferenceExpression)operationContext.Operation).Field;
+                            IFieldSymbol field = ((IFieldReferenceOperation)operationContext.Operation).Field;
                             if (field.DeclaredAccessibility == Accessibility.Private)
                             {
                                 referencedPrivateFields.Add(field);
                                 unreferencedPrivateFields.Remove(field);
                             }
                         },
-                        OperationKind.FieldReferenceExpression);
+                        OperationKind.FieldReference);
 
                     compilationContext.RegisterCompilationEndAction(
                         (compilationEndContext) =>
@@ -80,6 +121,31 @@ namespace Microsoft.Maintainability.Analyzers
                             }
                         });
                 });
+        }
+
+        private static ImmutableHashSet<INamedTypeSymbol> GetSpecialAttributes(Compilation compilation)
+        {
+            var specialAttributes = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+
+            var fieldOffsetAttribute = WellKnownTypes.FieldOffsetAttribute(compilation);
+            if (fieldOffsetAttribute != null)
+            {
+                specialAttributes.Add(fieldOffsetAttribute);
+            }
+
+            var mefV1Attribute = WellKnownTypes.MEFV1ExportAttribute(compilation);
+            if (mefV1Attribute != null)
+            {
+                specialAttributes.Add(mefV1Attribute);
+            }
+
+            var mefV2Attribute = WellKnownTypes.MEFV2ExportAttribute(compilation);
+            if (mefV2Attribute != null)
+            {
+                specialAttributes.Add(mefV2Attribute);
+            }
+
+            return specialAttributes.ToImmutable();
         }
     }
 }

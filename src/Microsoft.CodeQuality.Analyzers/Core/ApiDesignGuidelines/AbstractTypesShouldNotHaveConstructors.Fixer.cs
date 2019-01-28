@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
@@ -10,7 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1012: Abstract classes should not have public constructors
@@ -28,8 +29,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
 
-            context.RegisterCodeFix(new DocumentChangeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.AbstractTypesShouldNotHavePublicConstructorsCodeFix,
-                                        async ct => await ChangeAccessibilityCodeFix(context.Document, root, node, ct).ConfigureAwait(false)),
+            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.AbstractTypesShouldNotHavePublicConstructorsCodeFix;
+            context.RegisterCodeFix(new MyCodeAction(title,
+                                        async ct => await ChangeAccessibilityCodeFix(context.Document, root, node, ct).ConfigureAwait(false),
+                                        equivalenceKey: title),
                                     diagnostic);
         }
 
@@ -38,7 +41,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return (symbol.DeclaringSyntaxReferences.Length > 0) ? symbol.DeclaringSyntaxReferences[0].GetSyntax() : null;
         }
 
-        private async Task<Document> ChangeAccessibilityCodeFix(Document document, SyntaxNode root, SyntaxNode nodeToFix, CancellationToken cancellationToken)
+        private static async Task<Document> ChangeAccessibilityCodeFix(Document document, SyntaxNode root, SyntaxNode nodeToFix, CancellationToken cancellationToken)
         {
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var classSymbol = (INamedTypeSymbol)model.GetDeclaredSymbol(nodeToFix, cancellationToken);
@@ -46,6 +49,20 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode newRoot = root.ReplaceNodes(instanceConstructors, (original, rewritten) => generator.WithAccessibility(original, Accessibility.Protected));
             return document.WithSyntaxRoot(newRoot);
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
+            {
+            }
         }
     }
 }

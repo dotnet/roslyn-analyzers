@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2225: Operator overloads have named alternates
@@ -35,7 +35,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             SyntaxGenerator generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
             if (semanticModel != null && generator != null)
             {
-                context.RegisterCodeFix(new MyCodeAction(ct => Fix(context, root, generator, semanticModel, ct)), context.Diagnostics.First());
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
+                context.RegisterCodeFix(new MyCodeAction(title, ct => Fix(context, root, generator, semanticModel, ct), equivalenceKey: title), context.Diagnostics.First());
             }
         }
 
@@ -85,7 +86,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                     generator.ReturnStatement(generator.LiteralExpression(1))
                                 });
 
-                            bodyStatements = new[] {nullCheck}.Concat(bodyStatements);
+                            bodyStatements = new[] { nullCheck }.Concat(bodyStatements);
                         }
 
                         addedMember = generator.MethodDeclaration(
@@ -117,7 +118,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             var containingType = (ITypeSymbol)operatorOverloadSymbol.ContainingType;
             ITypeSymbol returnType = operatorOverloadSymbol.ReturnType;
-            string expectedName = OperatorOverloadsHaveNamedAlternatesAnalyzer.GetExpectedAlternateMethodGroup(operatorOverloadSymbol.Name, returnType).AlternateMethod1;
+            ITypeSymbol parameterType = operatorOverloadSymbol.Parameters.FirstOrDefault()?.Type;
+            string expectedName = OperatorOverloadsHaveNamedAlternatesAnalyzer.GetExpectedAlternateMethodGroup(operatorOverloadSymbol.Name, returnType, parameterType).AlternateMethod1;
             switch (operatorOverloadSymbol.Name)
             {
                 case "op_GreaterThan":
@@ -160,10 +162,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public override string EquivalenceKey => MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
-
-            public MyCodeAction(Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

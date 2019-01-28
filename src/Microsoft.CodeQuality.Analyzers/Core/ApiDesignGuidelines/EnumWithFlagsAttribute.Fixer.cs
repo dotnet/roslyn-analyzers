@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1027: Mark enums with FlagsAttribute
@@ -41,11 +41,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                     MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsCodeFix :
                                                     MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
             context.RegisterCodeFix(new MyCodeAction(fixTitle,
-                                         async ct => await AddOrRemoveFlagsAttribute(context.Document, context.Span, diagnostic.Id, flagsAttributeType, ct).ConfigureAwait(false)),
+                                         async ct => await AddOrRemoveFlagsAttribute(context.Document, context.Span, diagnostic.Id, flagsAttributeType, ct).ConfigureAwait(false),
+                                         equivalenceKey: fixTitle),
                         diagnostic);
         }
 
-        private async Task<Document> AddOrRemoveFlagsAttribute(Document document, TextSpan span, string diagnosticId, INamedTypeSymbol flagsAttributeType, CancellationToken cancellationToken)
+        private static async Task<Document> AddOrRemoveFlagsAttribute(Document document, TextSpan span, string diagnosticId, INamedTypeSymbol flagsAttributeType, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
@@ -78,10 +79,15 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
+        }
+
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
         }
     }
 }

@@ -5,9 +5,9 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA1814: Prefer jagged arrays over multidimensional
@@ -24,35 +24,35 @@ namespace Microsoft.QualityGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessageBody = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.PreferJaggedArraysOverMultidimensionalMessageBody), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.PreferJaggedArraysOverMultidimensionalDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
-        private const string helpLink = "https://msdn.microsoft.com/en-us/library/ms182277.aspx";
+        private const string helpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca1814-prefer-jagged-arrays-over-multidimensional";
 
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLink,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor ReturnRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageReturn,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLink,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor BodyRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageBody,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLink,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, ReturnRule, BodyRule);
 
@@ -64,7 +64,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
             analysisContext.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
             analysisContext.RegisterSymbolAction(AnalyzeMethod, SymbolKind.Method);
-            analysisContext.RegisterOperationActionInternal(AnalyzeObjectCreation, OperationKind.ArrayCreationExpression);
+            analysisContext.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ArrayCreation);
         }
 
         private static void AnalyzeField(SymbolAnalysisContext context)
@@ -112,7 +112,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
         private static void AnalyzeObjectCreation(OperationAnalysisContext context)
         {
-            var arrayCreationExpression = (IArrayCreationExpression)context.Operation;
+            var arrayCreationExpression = (IArrayCreationOperation)context.Operation;
 
             if (IsMultiDimensionalArray(arrayCreationExpression.Type))
             {

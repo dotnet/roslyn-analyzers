@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1815: Override equals and operator equals on value types
@@ -46,15 +46,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
 
             Diagnostic diagnostic = context.Diagnostics.First();
-
+            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
-                    MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesTitle,
-                    async ct => await ImplementMissingMembersAsync(declaration, typeSymbol, context.Document, context.CancellationToken).ConfigureAwait(false)),
+                    title,
+                    async ct => await ImplementMissingMembersAsync(declaration, typeSymbol, context.Document, context.CancellationToken).ConfigureAwait(false),
+                    equivalenceKey: title),
                 diagnostic);
         }
 
-        private async Task<Document> ImplementMissingMembersAsync(
+        private static async Task<Document> ImplementMissingMembersAsync(
             SyntaxNode declaration,
             INamedTypeSymbol typeSymbol,
             Document document,
@@ -98,8 +99,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

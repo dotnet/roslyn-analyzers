@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class InterfaceMethodsShouldBeCallableByChildTypesFixerTests : CodeFixTestBase
     {
@@ -583,7 +583,7 @@ public class NestedExplicitInterfaceImplementation
         }
 
         [WorkItem(2654, "https://github.com/dotnet/roslyn/issues/2654")]
-        [Fact(Skip = "2654")]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesCSharp_Property()
         {
             var code = @"
@@ -609,6 +609,7 @@ public class NestedExplicitInterfaceImplementation
 
         internal string Name
         {
+            // Cannot have accessibility on an accessor unless you have both get and set
             private get
             {
                 Console.WriteLine(this);
@@ -641,6 +642,7 @@ public class NestedExplicitInterfaceImplementation
 
         protected string Name
         {
+            // Cannot have accessibility on an accessor unless you have both get and set
             get
             {
                 Console.WriteLine(this);
@@ -650,7 +652,7 @@ public class NestedExplicitInterfaceImplementation
     }
 }
 ";
-            VerifyCSharpFix(code, expectedFixedCode);
+            VerifyCSharpFix(code, expectedFixedCode, validationMode: TestValidationMode.AllowCompileErrors);
         }
 
         #endregion
@@ -1124,7 +1126,7 @@ End Class
         }
 
         [WorkItem(2654, "https://github.com/dotnet/roslyn/issues/2654")]
-        [Fact(Skip = "2654")]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic_Property()
         {
             var code = @"

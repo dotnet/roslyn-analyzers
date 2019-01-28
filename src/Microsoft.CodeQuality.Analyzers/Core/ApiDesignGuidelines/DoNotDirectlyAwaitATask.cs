@@ -6,9 +6,9 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2007: Do not directly await a Task in libraries. Append ConfigureAwait(false) to the task.
@@ -28,7 +28,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             s_localizableMessage,
             DiagnosticCategory.Reliability,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true,
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -41,25 +41,49 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             analysisContext.RegisterCompilationStartAction(context =>
             {
+                if (!context.Options.GetOutputKindsOption(Rule, context.CancellationToken).Contains(context.Compilation.Options.OutputKind))
+                {
+                    // Configured to skip analysis for the compilation's output kind
+                    return;
+                }
+
                 ImmutableArray<INamedTypeSymbol> taskTypes = GetTaskTypes(context.Compilation);
                 if (taskTypes.Any(t => t == null))
                 {
                     return;
                 }
 
-                context.RegisterOperationActionInternal(oc => AnalyzeOperation(oc, taskTypes), OperationKind.AwaitExpression);
+                context.RegisterOperationBlockStartAction(operationBlockStartContext =>
+                {
+                    if (operationBlockStartContext.OwningSymbol is IMethodSymbol method &&
+                        method.IsAsync)
+                    {
+                        if (method.ReturnsVoid &&
+                            operationBlockStartContext.Options.GetBoolOptionValue(
+                                optionName: EditorConfigOptionNames.SkipAsyncVoidMethods,
+                                rule: Rule,
+                                defaultValue: false,
+                                cancellationToken: operationBlockStartContext.CancellationToken))
+                        {
+                            // Configured to skip this analysis in async void methods.
+                            return;
+                        }
+
+                        operationBlockStartContext.RegisterOperationAction(oc => AnalyzeOperation(oc, taskTypes), OperationKind.Await);
+                    }
+                });
             });
         }
 
         private static void AnalyzeOperation(OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> taskTypes)
         {
-            IAwaitExpression awaitExpression = context.Operation as IAwaitExpression;
+            IAwaitOperation awaitExpression = context.Operation as IAwaitOperation;
 
             // Get the type of the expression being awaited and check it's a task type.
-            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.AwaitedValue?.Type;
+            ITypeSymbol typeOfAwaitedExpression = awaitExpression?.Operation?.Type;
             if (typeOfAwaitedExpression != null && taskTypes.Contains(typeOfAwaitedExpression.OriginalDefinition))
             {
-                context.ReportDiagnostic(awaitExpression.AwaitedValue.Syntax.CreateDiagnostic(Rule));
+                context.ReportDiagnostic(awaitExpression.Operation.Syntax.CreateDiagnostic(Rule));
             }
         }
 

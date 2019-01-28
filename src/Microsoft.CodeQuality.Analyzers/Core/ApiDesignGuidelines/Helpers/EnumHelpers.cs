@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.Helpers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.Helpers
 {
     internal static class EnumHelpers
     {

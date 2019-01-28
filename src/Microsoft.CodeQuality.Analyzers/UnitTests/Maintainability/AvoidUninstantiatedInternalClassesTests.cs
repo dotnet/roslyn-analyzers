@@ -5,7 +5,7 @@ using Test.Utilities;
 
 using Xunit;
 
-namespace Microsoft.Maintainability.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class AvoidUninstantiatedInternalClassesTests : DiagnosticAnalyzerTestBase
     {
@@ -216,45 +216,75 @@ Friend Class MyOtherAttribute
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyCSharp(
 @"internal class C
 {
     private static void Main() {}
-}");
+}",
+            compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_TypeContainingAssemblyEntryPointReturningVoid()
         {
             VerifyBasic(
 @"Friend Class C
-    Private Shared Sub Main()
+    Public Shared Sub Main()
     End Sub
-End Class");
+End Class",
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyCSharp(
 @"internal class C
 {
     private static int Main() { return 1; }
-}");
+}",
+            compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()
         {
             VerifyBasic(
 @"Friend Class C
-    Private Shared Function Main() As Integer
+    Public Shared Function Main() As Integer
         Return 1
-    End Sub
-End Class");
+    End Function
+End Class",
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
+        }
+
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningTask()
+        {
+            VerifyCSharp(
+@" using System.Threading.Tasks;
+internal static class C
+{
+    private static async Task Main() { await Task.Delay(1); }
+}",
+                parseOptions: CodeAnalysis.CSharp.CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp7_1),
+                compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
+        }
+ 
+        [Fact]
+        public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningTaskInt()
+        {
+            VerifyCSharp(
+@" using System.Threading.Tasks;
+internal static class C
+{
+    private static async Task<int> Main() { await Task.Delay(1); return 1; }
+}",
+                parseOptions: CodeAnalysis.CSharp.CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp7_1),
+                compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
         [Fact]
@@ -279,14 +309,16 @@ End Class",
                 GetBasicResultAt(1, 14, AvoidUninstantiatedInternalClassesAnalyzer.Rule, "C"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/881")]
+        [Fact]
         public void CA1812_Basic_NoDiagnostic_MainMethodIsDifferentlyCased()
         {
             VerifyBasic(
 @"Friend Class C
     Private Shared Sub mAiN()
     End Sub
-End Class");
+End Class",
+            validationMode: TestValidationMode.AllowCompileErrors, // No Main method
+            compilationOptions: s_visualBasicDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
 
         // The following tests are just to ensure that the messages are formatted properly
@@ -430,7 +462,7 @@ internal class C : IConfigurationSectionHandler
         return null;
     }
 }");
-         }
+        }
 
         [Fact]
         public void CA1812_Basic_NoDiagnostic_ImplementsIConfigurationSectionHandler()
@@ -665,6 +697,76 @@ End Class",
 }");
         }
 
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_CSharp_NoDiagnostic_ImplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyCSharp(
+@"
+internal class A
+{
+    public A()
+    {
+    }
+}
+
+internal class B : A
+{
+    public B()
+    {
+    }
+}
+
+internal class C<T>
+{
+}
+
+internal class D : C<int>
+{
+    static void M()
+    {
+        var x = new B();
+        var y = new D();
+    }
+}");
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_CSharp_NoDiagnostic_ExplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyCSharp(
+@"
+internal class A
+{
+    public A(int x)
+    {
+    }
+}
+
+internal class B : A
+{
+    public B(int x): base (x)
+    {
+    }
+}
+
+internal class C<T>
+{
+}
+
+internal class D : C<int>
+{
+    public D(): base()
+    {
+    }
+
+    static void M()
+    {
+        var x = new B(0);
+        var y = new D();
+    }
+}");
+        }
+
         [Fact]
         public void CA1812_Basic_NoDiagnostic_StaticHolderClass()
         {
@@ -712,6 +814,421 @@ internal class C { }"
 Friend Class C
 End Class"
                 );
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_Basic_NoDiagnostic_ImplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyBasic(
+@"
+Friend Class A
+    Public Sub New()
+    End Sub
+End Class
+
+Friend Class B
+    Inherits A
+    Public Sub New()
+    End Sub
+End Class
+
+Friend Class C(Of T)
+End Class
+
+Friend Class D
+    Inherits C(Of Integer)
+    Private Shared Sub M()
+        Dim x = New B()
+        Dim y = New D()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1370, "https://github.com/dotnet/roslyn-analyzers/issues/1370")]
+        public void CA1812_Basic_NoDiagnostic_ExplicitlyInstantiatedFromSubTypeConstructor()
+        {
+            VerifyBasic(
+@"
+Friend Class A
+    Public Sub New(ByVal x As Integer)
+    End Sub
+End Class
+
+Friend Class B
+    Inherits A
+
+    Public Sub New(ByVal x As Integer)
+        MyBase.New(x)
+    End Sub
+End Class
+
+Friend Class C(Of T)
+End Class
+
+Friend Class D
+    Inherits C(Of Integer)
+    Public Sub New()
+        MyBase.New()
+    End Sub
+
+    Private Shared Sub M()
+        Dim x = New B(0)
+        Dim y = New D()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1154, "https://github.com/dotnet/roslyn-analyzers/issues/1154")]
+        public void CA1812_CSharp_GenericInternalClass_InstanciatedNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public static class X
+{
+    public static IEnumerable<T> OrderBy<T>(this IEnumerable<T> source, Comparison<T> compare)
+    {
+        return source.OrderBy(new ComparisonComparer<T>(compare));
+    }
+
+    public static IEnumerable<T> OrderBy<T>(this IEnumerable<T> source, IComparer<T> comparer)
+    {
+        return source.OrderBy(t => t, comparer);
+    }
+
+    private class ComparisonComparer<T> : Comparer<T>
+    {
+        private readonly Comparison<T> _compare;
+
+        public ComparisonComparer(Comparison<T> compare)
+        {
+            _compare = compare;
+        }
+
+        public override int Compare(T x, T y)
+        {
+            return _compare(x, y);
+        }
+    }
+}
+");
+        }
+
+        [Fact, WorkItem(1154, "https://github.com/dotnet/roslyn-analyzers/issues/1154")]
+        public void CA1812_Basic_GenericInternalClass_InstanciatedNoDiagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Collections.Generic
+Imports System.Linq
+Imports System.Runtime.CompilerServices
+
+Module M
+    <Extension()>
+    Public Function OrderBy(Of T)(ByVal source As IEnumerable(Of T), compare As Comparison(Of T)) As IEnumerable(Of T)
+        Return source.OrderBy(New ComparisonCompare(Of T)(compare))
+    End Function
+
+    <Extension()>
+    Public Function OrderBy(Of T)(ByVal source As IEnumerable(Of T), comparer As IComparer(Of T)) As IEnumerable(Of T)
+        Return source.OrderBy(Function(i) i, comparer)
+    End Function
+
+    Private Class ComparisonCompare(Of T)
+        Inherits Comparer(Of T)
+
+        Private _compare As Comparison(Of T)
+
+        Public Sub New(compare As Comparison(Of T))
+            _compare = compare
+        End Sub
+
+        Public Overrides Function Compare(x As T, y As T) As Integer
+            Throw New NotImplementedException()
+        End Function
+    End Class
+End Module
+");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_CSharp_NoDiagnostic_GenericMethodWithNewConstraint()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal class InstantiatedType
+{
+}
+
+internal static class Factory
+{
+    internal static T Create<T>()
+        where T : new()
+    {
+        return new T();
+    }
+}
+
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        Console.WriteLine(Factory.Create<InstantiatedType>());
+    }
+}");
+        }
+
+        [Fact, WorkItem(1447, "https://github.com/dotnet/roslyn-analyzers/issues/1447")]
+        public void CA1812_CSharp_NoDiagnostic_GenericMethodWithNewConstraintInvokedFromGenericMethod()
+        {
+            VerifyCSharp(@"
+internal class InstantiatedClass
+{
+    public InstantiatedClass()
+    {
+    }
+}
+
+internal class InstantiatedClass2
+{
+    public InstantiatedClass2()
+    {
+    }
+}
+
+internal class InstantiatedClass3
+{
+    public InstantiatedClass3()
+    {
+    }
+}
+
+internal static class C
+{
+    private static T Create<T>()
+        where T : new()
+    {
+        return new T();
+    }
+
+    public static void M<T>()
+        where T : InstantiatedClass, new()
+    {
+        Create<T>();
+    }
+
+    public static void M2<T, T2>()
+        where T : T2, new()
+        where T2 : InstantiatedClass2
+    {
+        Create<T>();
+    }
+
+    public static void M3<T, T2, T3>()
+        where T : T2, new()
+        where T2 : T3
+        where T3: InstantiatedClass3
+    {
+        Create<T>();
+    }
+
+    public static void M3()
+    {
+        M<InstantiatedClass>();
+        M2<InstantiatedClass2, InstantiatedClass2>();
+        M3<InstantiatedClass3, InstantiatedClass3, InstantiatedClass3>();
+    }
+}");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_Basic_NoDiagnostic_GenericMethodWithNewConstraint()
+        {
+            VerifyBasic(@"
+Imports System
+
+Module Module1
+    Sub Main()
+        Console.WriteLine(Create(Of InstantiatedType)())
+    End Sub
+
+    Friend Class InstantiatedType
+    End Class
+
+    Friend Function Create(Of T As New)() As T
+        Return New T
+    End Function
+End Module");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_CSharp_NoDiagnostic_GenericTypeWithNewConstraint()
+        {
+            VerifyCSharp(@"
+internal class InstantiatedType
+{
+}
+
+internal class Factory<T> where T : new()
+{
+}
+
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        var factory = new Factory<InstantiatedType>();
+    }
+}");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_Basic_NoDiagnostic_GenericTypeWithNewConstraint()
+        {
+            VerifyBasic(@"
+Imports System
+
+Module Module1
+    Sub Main()
+        Console.WriteLine(New Factory(Of InstantiatedType))
+    End Sub
+
+    Friend Class InstantiatedType
+    End Class
+
+    Friend Class Factory(Of T As New)
+    End Class
+End Module");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_CSharp_Diagnostic_NestedGenericTypeWithNoNewConstraint()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+internal class InstantiatedType
+{
+}
+
+internal class Factory<T> where T : new()
+{
+}
+
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        var list = new List<Factory<InstantiatedType>>();
+    }
+}",
+                GetCSharpResultAt(
+                    4, 16,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "InstantiatedType"),
+                GetCSharpResultAt(
+                    8, 16,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "Factory<T>"));
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_Basic_Diagnostic_NestedGenericTypeWithNoNewConstraint()
+        {
+            VerifyBasic(@"
+Imports System.Collections.Generic
+
+Module Library
+    Friend Class InstantiatedType
+    End Class
+
+    Friend Class Factory(Of T As New)
+    End Class
+
+    Sub Main()
+        Dim a = New List(Of Factory(Of InstantiatedType))
+    End Sub
+End Module",
+                GetBasicResultAt(
+                    5, 18,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "Library.InstantiatedType"),
+                GetBasicResultAt(
+                    8, 18,
+                    AvoidUninstantiatedInternalClassesAnalyzer.Rule,
+                    "Library.Factory(Of T)"));
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_CSharp_NoDiagnostic_NestedGenericTypeWithNewConstraint()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+internal class InstantiatedType
+{
+}
+
+internal class Factory1<T> where T : new()
+{
+}
+
+internal class Factory2<T> where T : new()
+{
+}
+
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        var factory = new Factory1<Factory2<InstantiatedType>>();
+    }
+}");
+        }
+
+        [Fact, WorkItem(1158, "https://github.com/dotnet/roslyn-analyzers/issues/1158")]
+        public void CA1812_Basic_NoDiagnostic_NestedGenericTypeWithNewConstraint()
+        {
+            VerifyBasic(@"
+Imports System.Collections.Generic
+
+Module Library
+    Friend Class InstantiatedType
+    End Class
+
+    Friend Class Factory1(Of T As New)
+    End Class
+
+    Friend Class Factory2(Of T As New)
+    End Class
+
+    Sub Main()
+        Dim a = New Factory1(Of Factory2(Of InstantiatedType))
+    End Sub
+End Module");
+        }
+
+        [Fact, WorkItem(1739, "https://github.com/dotnet/roslyn-analyzers/issues/1739")]
+        public void CA1812_CSharp_NoDiagnostic_GenericTypeWithRecursiveConstraint()
+        {
+            VerifyCSharp(@"
+public abstract class JobStateBase<TState>
+    where TState : JobStateBase<TState>, new()
+{
+    public void SomeFunction ()
+    {
+        new JobStateChangeHandler<TState>();
+    }
+}
+
+public class JobStateChangeHandler<TState>
+    where TState : JobStateBase<TState>, new()
+{
+}
+");
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

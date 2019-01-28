@@ -8,8 +8,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using System.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1008: Enums should have zero value
@@ -51,8 +52,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                        isEnabledByDefault: false,
                                                                        description: s_localizableDescription,
-                                                                       helpLinkUri: "http://msdn.microsoft.com/library/ms182149.aspx",
-                                                                       customTags: new[] { WellKnownDiagnosticTags.Telemetry, RuleRenameCustomTag });
+                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value",
+                                                                       customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule.Concat(RuleRenameCustomTag).ToArray());
 
         private static readonly LocalizableString s_localizableMessageRuleMultipleZero = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         internal static DiagnosticDescriptor RuleMultipleZero = new DiagnosticDescriptor(RuleId,
@@ -62,8 +63,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                isEnabledByDefault: false,
                                                                description: s_localizableDescription,
-                                                               helpLinkUri: "http://msdn.microsoft.com/library/ms182149.aspx",
-                                                               customTags: new[] { WellKnownDiagnosticTags.Telemetry, RuleMultipleZeroCustomTag });
+                                                               helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value",
+                                                               customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule.Concat(RuleMultipleZeroCustomTag).ToArray());
 
         private static readonly LocalizableString s_localizableMessageRuleNoZero = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         internal static DiagnosticDescriptor RuleNoZero = new DiagnosticDescriptor(RuleId,
@@ -73,8 +74,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                isEnabledByDefault: false,
                                                                description: s_localizableDescription,
-                                                               helpLinkUri: "http://msdn.microsoft.com/library/ms182149.aspx",
-                                                               customTags: new[] { WellKnownDiagnosticTags.Telemetry, RuleNoZeroCustomTag });
+                                                               helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value",
+                                                               customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule.Concat(RuleNoZeroCustomTag).ToArray());
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleRename, RuleMultipleZero, RuleNoZero);
 
@@ -103,6 +104,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
+            // FxCop compat: only fire on externally visible types by default.
+            if (!symbol.MatchesConfiguredVisibility(context.Options, RuleMultipleZero, context.CancellationToken))
+            {
+                return;
+            }
+
+            Debug.Assert(symbol.MatchesConfiguredVisibility(context.Options, RuleNoZero, context.CancellationToken));
+            Debug.Assert(symbol.MatchesConfiguredVisibility(context.Options, RuleRename, context.CancellationToken));
 
             ImmutableArray<IFieldSymbol> zeroValuedFields = GetZeroValuedFields(symbol).ToImmutableArray();
 

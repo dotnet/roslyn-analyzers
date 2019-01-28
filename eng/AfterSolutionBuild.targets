@@ -1,0 +1,25 @@
+<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project>
+
+  <Target Name="ReportCodeCoverage" AfterTargets="Test" Condition="'$(Configuration)' == 'Debug' and '$(CODECOV_TOKEN)' != ''">
+    <PropertyGroup>
+      <_CodecovPath>$(NuGetPackageRoot)codecov\$(CodecovVersion)\tools\Codecov.exe</_CodecovPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <_CoverageReports Include="$(ArtifactsTestResultsDir)*.coverage" />
+
+      <_CodecovArgs Include="-f;@(_CoverageReports)" />
+      <_CodecovArgs Include="-r;$(QualifiedRepoName)" Condition="'$(QualifiedRepoName)' != ''" />
+      <_CodecovArgs Include="--pr;$(ghprbPullId)" Condition="'$(ghprbPullId)' != ''" />
+      <_CodecovArgs Include="-b;$(BUILD_NUMBER)" Condition="'$(BUILD_NUMBER)' != ''" />
+      <_CodecovArgs Include="--branch;$(ghprbTargetBranch)" Condition="'$(ghprbTargetBranch)' != ''" />
+      <_CodecovArgs Include="-c;$(ghprbActualCommit)" Condition="'$(ghprbActualCommit)' != ''" />
+      <_CodecovArgs Include="-n;$(JOB_NAME)" Condition="'$(JOB_NAME)' != ''" />
+      <_CodecovArgs Include="--flag;$(Configuration)" Condition="'$(Configuration)' != ''" />
+    </ItemGroup>
+
+    <Exec Command="&quot;$(_CodecovPath)&quot; @(_CodecovArgs, ' ')" />
+  </Target>
+
+</Project>

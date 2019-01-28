@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1024: Use properties where appropriate
@@ -24,7 +24,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             // Fixer not yet implemented.
             return Task.CompletedTask;
-            
+
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1711: Identifiers should not have incorrect suffix
@@ -26,7 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessageMemberWithAlternate = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotHaveIncorrectSuffixMessageMemberWithAlternate), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldNotHaveIncorrectSuffixDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-        private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182247.aspx";
+        private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1711-identifiers-should-not-have-incorrect-suffix";
 
         internal static DiagnosticDescriptor TypeNoAlternateRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -36,7 +36,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MemberNewerVersionRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberNewerVersion,
@@ -45,7 +45,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor TypeNewerVersionRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTypeNewerVersion,
@@ -54,7 +54,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MemberWithAlternateRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberWithAlternate,
@@ -63,7 +63,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              isEnabledByDefault: false,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
             TypeNoAlternateRule,
@@ -95,7 +95,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 [AttributeSuffix] = ImmutableArray.CreateRange(new[] { "System.Attribute" }),
                 [CollectionSuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.IEnumerable" }),
-                [DictionarySuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.IDictionary", "System.Collections.Generic.IReadOnlyDictionary`2" }),
+                [DictionarySuffix] = ImmutableArray.CreateRange(new[] { "System.Collections.IDictionary", "System.Collections.Generic.IDictionary`2", "System.Collections.Generic.IReadOnlyDictionary`2" }),
                 [EventArgsSuffix] = ImmutableArray.CreateRange(new[] { "System.EventArgs" }),
                 [ExceptionSuffix] = ImmutableArray.CreateRange(new[] { "System.Exception" }),
                 [PermissionSuffix] = ImmutableArray.CreateRange(new[] { "System.Security.IPermission" }),
@@ -141,7 +141,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
                             var namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                            if (namedTypeSymbol.GetResultantVisibility()!= SymbolVisibility.Public)
+                            
+                            // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                            // will always have identical configured visibility.
+                            if (!namedTypeSymbol.MatchesConfiguredVisibility(symbolAnalysisContext.Options, TypeNoAlternateRule, symbolAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -201,7 +204,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 (SymbolAnalysisContext context) =>
                 {
                     var memberSymbol = context.Symbol;
-                    if (memberSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+
+                    // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                    // will always have identical configured visibility.
+                    if (!memberSymbol.MatchesConfiguredVisibility(context.Options, TypeNoAlternateRule, context.CancellationToken))
                     {
                         return;
                     }
@@ -273,7 +279,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return false;
             }
 
-            return namedTypeSymbol.Name.HasSuffix(suffix)               
+            return namedTypeSymbol.Name.HasSuffix(suffix)
                 && !parentTypes.Any(parentType => namedTypeSymbol.DerivesFromOrImplementsAnyConstructionOf(parentType));
         }
     }

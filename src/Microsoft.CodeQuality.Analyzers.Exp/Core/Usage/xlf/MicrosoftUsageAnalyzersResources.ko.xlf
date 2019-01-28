@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../MicrosoftUsageAnalyzersResources.resx">
+    <body>
+      <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
+        <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
+        <target state="translated">System.IDisposable을 구현하는 형식이 IDisposable도 구현하는 형식의 필드를 선언합니다. 필드의 Dispose 메서드가 선언 형식의 Dispose 메서드에서 호출되지 않습니다. 이 규칙 위반을 수정하려면 필드에서 보유한 관리되지 않는 리소스를 할당하고 릴리스할 책임이 있는 경우 IDisposable을 구현하는 형식인 필드에서 Dispose를 호출합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposableFieldsShouldBeDisposedTitle">
+        <source>Disposable fields should be disposed</source>
+        <target state="translated">삭제 가능한 필드는 삭제해야 합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
+        <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
+        <target state="translated">'{0}'에 IDisposable 형식 '{2}'인 '{1}' 필드가 포함되지만, 삭제되지 않습니다. '{0}'의 Dispose 메서드를 변경하여 이 필드에서 Close 또는 Dispose를 호출하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
+        <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
+        <target state="translated">System.IDisposable을 구현하는 형식이 IDisposable도 구현하는 형식에서 상속됩니다. 상속 형식의 Dispose 메서드는 부모 형식의 Dispose 메서드를 호출하지 않습니다. 이 규칙 위반을 수정하려면 Dispose 메서드에서 base.Dispose를 호출하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
+        <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
+        <target state="translated">'{0}' 메서드가 모든 가능한 제어 흐름 경로에서 '{1}'을(를) 호출하는지 확인하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
+        <source>Dispose methods should call base class dispose</source>
+        <target state="translated">Dispose 메서드는 기본 클래스 Dispose를 호출해야 합니다.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

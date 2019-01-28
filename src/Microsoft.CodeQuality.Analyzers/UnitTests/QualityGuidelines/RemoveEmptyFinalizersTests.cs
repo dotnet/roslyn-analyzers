@@ -1,24 +1,27 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
     public partial class RemoveEmptyFinalizersTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new RemoveEmptyFinalizersAnalyzer();
+            return new BasicRemoveEmptyFinalizersAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new RemoveEmptyFinalizersAnalyzer();
+            return new CSharpRemoveEmptyFinalizersAnalyzer();
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821CSharpTestNoWarning()
         {
             VerifyCSharp(@"
@@ -87,7 +90,7 @@ public class Class7
 	// Violation will not occur because the finalizer's body is not empty.
 	~Class7()
 	{
-        if (true) 
+        if (true)
         {
 		    Debug.Fail(""Finalizer called!"");
         }
@@ -170,6 +173,28 @@ public class Class1
             GetCA1821CSharpResultAt(11, 3));
         }
 
+        // Unskip the test once we move to Microsoft.CodeAnalysis version >= 2.7
+        // as we need the fix for https://github.com/dotnet/roslyn/issues/26520
+        // for the analyzer to report a diagnostic here.
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1788"), WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFail_ExpressionBody()
+        {
+            VerifyCSharp(@"
+using System.Diagnostics;
+
+public class Class1
+{
+	// Violation occurs because Debug.Fail is a conditional method. 
+	// The finalizer will contain code only if the DEBUG directive 
+	// symbol is present at compile time. When the DEBUG 
+	// directive is not present, the finalizer will still exist, but 
+	// it will be empty.
+	~Class1() => Debug.Fail(""Finalizer called!"");
+}
+",
+            GetCA1821CSharpResultAt(11, 3));
+        }
+
         [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirective()
         {
@@ -190,7 +215,7 @@ public class Class1
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirectiveAroundStatements()
         {
             VerifyCSharp(@"
@@ -223,7 +248,7 @@ public class Class2
         }
 
         [WorkItem(820941, "DevDiv")]
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithNonInvocationBody()
         {
             VerifyCSharp(@"
@@ -242,6 +267,7 @@ public class Class2
 ");
         }
 
+        [Fact]
         public void CA1821BasicTestNoWarning()
         {
             VerifyBasic(@"
@@ -283,12 +309,13 @@ Public Class Class5
     Protected Overrides Sub Finalize()
         If True Then
             Debug.Fail(""Finalizer called!"")
-        End If    End Sub
+        End If
+    End Sub
 End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821BasicTestRemoveEmptyFinalizers()
         {
             VerifyBasic(@"
@@ -350,7 +377,7 @@ End Class
                 GetCA1821BasicResultAt(13, 29));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/7428")]
+        [Fact]
         public void CA1821BasicTestRemoveEmptyFinalizersWithDebugFail()
         {
             VerifyBasic(@"
@@ -374,14 +401,123 @@ End Class
                 GetCA1821BasicResultAt(6, 29));
         }
 
+        [Fact]
+        public void CA1821CSharpTestRemoveEmptyFinalizersWithThrowStatement()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    ~Class1()
+    {
+        throw new System.Exception();
+    }
+}",
+                GetCA1821CSharpResultAt(4, 6));
+        }
+
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1788"), WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CA1821CSharpTestRemoveEmptyFinalizersWithThrowExpression()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    ~Class1() => throw new System.Exception();
+}",
+                GetCA1821CSharpResultAt(4, 6));
+        }
+
+        [Fact]
+        public void CA1821BasicTestRemoveEmptyFinalizersWithThrowStatement()
+        {
+            VerifyBasic(@"
+Public Class Class1
+	' Violation occurs because Debug.Fail is a conditional method.
+    Protected Overrides Sub Finalize()
+        Throw New System.Exception()
+    End Sub
+End Class
+",
+                GetCA1821BasicResultAt(4, 29));
+        }
+
+        [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
+        public void CA1821CSharpRemoveEmptyFinalizersInvalidInvocationExpression()
+        {
+            VerifyCSharp(@"
+public class C1
+{
+    ~C1()
+    {
+        a
+    }
+}
+",
+                TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CA1821CSharpRemoveEmptyFinalizers_ErrorCodeWithBothBlockAndExpressionBody()
+        {
+            VerifyCSharp(@"
+public class C1
+{
+    ~C1() { }
+    => ;
+}
+",
+                TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1211, "https://github.com/dotnet/roslyn-analyzers/issues/1211")]
+        public void CA1821BasicRemoveEmptyFinalizersInvalidInvocationExpression()
+        {
+            VerifyBasic(@"
+Public Class Class1
+    Protected Overrides Sub Finalize()
+        a
+    End Sub
+End Class
+",
+                TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        public void CA1821CSharpRemoveEmptyFinalizers_ExpressionBodiedImpl()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+public class SomeTestClass : IDisposable
+{
+    private readonly Stream resource = new MemoryStream(1024);
+
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool dispose)
+    {
+        if (dispose)
+        {
+            this.resource.Dispose();
+        }
+    }
+
+    ~SomeTestClass() => this.Dispose(false);
+}");
+        }
+
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, RemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
+            return GetCSharpResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
         }
 
         private static DiagnosticResult GetCA1821BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, RemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
+            return GetBasicResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
         }
     }
 }

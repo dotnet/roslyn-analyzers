@@ -3,9 +3,11 @@
 using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.QualityGuidelines.Analyzers;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
 
-namespace Microsoft.QualityGuidelines.CSharp.Analyzers
+namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA1802: Use literals where appropriate
@@ -13,5 +15,41 @@ namespace Microsoft.QualityGuidelines.CSharp.Analyzers
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpUseLiteralsWhereAppropriateFixer : UseLiteralsWhereAppropriateFixer
     {
+        protected override SyntaxNode GetFieldDeclaration(SyntaxNode syntaxNode)
+        {
+            while (syntaxNode != null && !(syntaxNode is FieldDeclarationSyntax))
+            {
+                syntaxNode = syntaxNode.Parent;
+            }
+
+            return syntaxNode as FieldDeclarationSyntax;
+        }
+
+        protected override bool IsStaticKeyword(SyntaxToken syntaxToken)
+        {
+            return syntaxToken.IsKind(SyntaxKind.StaticKeyword);
+        }
+
+        protected override bool IsReadonlyKeyword(SyntaxToken syntaxToken)
+        {
+            return syntaxToken.IsKind(SyntaxKind.ReadOnlyKeyword);
+        }
+
+        protected override SyntaxToken GetConstKeywordToken()
+        {
+            return SyntaxFactory.Token(SyntaxKind.ConstKeyword);
+        }
+
+        protected override SyntaxTokenList GetModifiers(SyntaxNode fieldSyntax)
+        {
+            var field = (FieldDeclarationSyntax)fieldSyntax;
+            return field.Modifiers;
+        }
+
+        protected override SyntaxNode WithModifiers(SyntaxNode fieldSyntax, SyntaxTokenList modifiers)
+        {
+            var field = (FieldDeclarationSyntax)fieldSyntax;
+            return field.WithModifiers(modifiers);
+        }
     }
 }

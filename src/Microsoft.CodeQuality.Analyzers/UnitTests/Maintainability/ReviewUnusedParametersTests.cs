@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.Maintainability.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     public class ReviewUnusedParametersTests : DiagnosticAnalyzerTestBase
     {
@@ -108,7 +109,7 @@ End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticDelegateTest2_CSharp()
         {
@@ -125,7 +126,7 @@ public class NeatCode
             a();
         });
     }
-");
+}");
         }
 
         [Fact]
@@ -146,7 +147,7 @@ End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticUsingTest_CSharp()
         {
@@ -166,7 +167,7 @@ class C
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticUsingTest_VB()
         {
@@ -183,7 +184,7 @@ End Class
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticLinqTest_CSharp()
         {
@@ -205,7 +206,7 @@ class C
         }
 
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/8884")]
+        [Fact]
         [WorkItem(8884, "https://github.com/dotnet/roslyn/issues/8884")]
         public void NoDiagnosticLinqTest_VB()
         {
@@ -229,6 +230,7 @@ End Class
         {
             VerifyCSharp(@"
 using System;
+using System.Runtime.InteropServices;
 
 public abstract class Derived : Base, I
 {
@@ -275,10 +277,19 @@ public interface I
     void Method1(int param);
     void Method2(int param);
 }
+
+public class ClassWithExtern
+{
+    [DllImport(""Dependency.dll"")]
+    public static extern void DllImportMethod(int param);
+
+    public static extern void ExternalMethod(int param);
+}
 ");
 
             VerifyBasic(@"
 Imports System
+Imports System.Runtime.InteropServices
 
 Public MustInherit Class Derived
     Inherits Base
@@ -320,6 +331,14 @@ Public Interface I
     Sub Method1(param As Integer)
     Sub Method2(param As Integer)
 End Interface
+
+Public Class ClassWithExtern
+    <DllImport(""Dependency.dll"")>
+    Public Shared Sub DllImportMethod(param As Integer)
+    End Sub
+
+    Public Declare Function DeclareFunction Lib ""Dependency.dll"" (param As Integer) As Integer    
+End Class
 ");
         }
 
@@ -420,15 +439,333 @@ End Class
 ");
         }
 
-        #endregion
-
-        #region Unit tests for analyzer diagnostic(s)
-
-        [Fact]
-        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
-        public void DiagnosticForSimpleCasesTest()
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticForMethodsUsedAsDelegatesCSharp()
         {
             VerifyCSharp(@"
+using System;
+
+public class C1
+{
+    private Action<object> _handler;
+
+    public void Handler(object o1)
+    {
+    }
+
+    public void SetupHandler()
+    {
+        _handler = Handler;
+    }
+}
+
+public class C2
+{
+    public void Handler(object o1)
+    {
+    }
+
+    public void TakesHandler(Action<object> handler)
+    {
+        handler(null);
+    }
+
+    public void SetupHandler()
+    {
+        TakesHandler(Handler);
+    }
+}
+
+public class C3
+{
+    private Action<object> _handler;
+
+    public C3()
+    {
+        _handler = Handler;
+    }
+
+    public void Handler(object o1)
+    {
+    }
+}");
+        }
+
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticForMethodsUsedAsDelegatesBasic()
+        {
+            VerifyBasic(@"
+Imports System
+Public Class C1
+    Private _handler As Action(Of Object)
+
+    Public Sub Handler(o As Object)
+    End Sub
+
+    Public Sub SetupHandler()
+        _handler = AddressOf Handler
+    End Sub
+End Class
+
+Module M2
+    Sub Handler(o As Object)
+    End Sub
+
+    Sub TakesHandler(handler As Action(Of Object))
+        handler(Nothing)
+    End Sub
+
+    Sub SetupHandler()
+        TakesHandler(AddressOf Handler)
+    End Sub
+End Module
+
+Class C3
+    Private _handler As Action(Of Object)
+
+    Sub New()
+        _handler = AddressOf Handler
+    End Sub
+
+    Sub Handler(o As Object)
+    End Sub
+End Class
+");
+        }
+
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticForObsoleteMethods()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C1
+{
+    [Obsolete]
+    public void ObsoleteMethod(object o1)
+    {
+    }
+}");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C1
+    <Obsolete>
+    Public Sub ObsoleteMethod(o1 as Object)
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticMethodJustThrowsNotImplemented()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class MyAttribute: Attribute
+{
+    public int X;
+
+    public MyAttribute(int x)
+    {
+        X = x;
+    }
+}
+public class C1
+{
+    public int Prop1
+    {
+        get
+        {
+            throw new NotImplementedException();
+        }
+        set
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public void Method1(object o1)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Method2(object o1) => throw new NotImplementedException();
+
+    [MyAttribute(0)]
+    public void Method3(object o1)
+    {
+        throw new NotImplementedException();
+    }
+}");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C1
+    Property Prop1 As Integer
+        Get
+            Throw New NotImplementedException()
+        End Get
+        Set(ByVal value As Integer)
+            Throw New NotImplementedException()
+        End Set
+    End Property
+
+    Public Sub Method1(o1 As Object)
+        Throw New NotImplementedException()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1218, "https://github.com/dotnet/roslyn-analyzers/issues/1218")]
+        public void NoDiagnosticMethodJustThrowsNotSupported()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C1
+{
+    public int Prop1
+    {
+        get
+        {
+            throw new NotSupportedException();
+        }
+        set
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public void Method1(object o1)
+    {
+        throw new NotSupportedException();
+    }
+
+    public void Method2(object o1) => throw new NotSupportedException();
+}");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C1
+    Property Prop1 As Integer
+        Get
+            Throw New NotSupportedException()
+        End Get
+        Set(ByVal value As Integer)
+            Throw New NotSupportedException()
+        End Set
+    End Property
+
+    Public Sub Method1(o1 As Object)
+        Throw New NotSupportedException()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public void NoDiagnosticsForIndexer()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public int this[int i]
+    {
+        get { return 0; }
+        set { }
+    }
+}
+");
+   
+        VerifyBasic(@"
+Class C
+    Public Property Item(i As Integer) As Integer
+        Get
+            Return 0
+        End Get
+
+        Set
+        End Set
+    End Property
+End Class
+");
+    }
+
+    [Fact]
+    public void NoDiagnosticsForPropertySetter()
+    {
+        VerifyCSharp(@"
+class C
+{
+    public int Property
+    {
+        get { return 0; }
+        set { }
+    }
+}
+");
+
+        VerifyBasic(@"
+Class C
+    Public Property Property1 As Integer
+        Get
+            Return 0
+        End Get
+
+        Set
+        End Set
+    End Property
+End Class
+");
+    }
+        [Fact]
+        public void NoDiagnosticsForFirstParameterOfExtensionMethod()
+        {
+            VerifyCSharp(@"
+static class C
+{
+    static void ExtensionMethod(this int i) { }
+    static int ExtensionMethod(this int i, int anotherParam) { return anotherParam; }
+}
+");
+    }
+
+        [Fact]
+        public void NoDiagnosticsForSingleStatementMethodsWithDefaultParameters()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void Foo(string bar, string baz = null)
+    {
+        throw new NotImplementedException();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Public Class C
+    Public Sub Test(bar As String, Optional baz As String = Nothing)
+        Throw New NotImplementedException()
+    End Sub
+End Class");
+        }
+
+    #endregion
+
+    #region Unit tests for analyzer diagnostic(s)
+
+    [Fact]
+    [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+    public void CSharp_DiagnosticForSimpleCasesTest()
+    {
+        VerifyCSharp(@"
 using System;
 
 class C
@@ -484,7 +821,12 @@ class C
       GetCSharpUnusedParameterResultAt(30, 47, "param1", "UnusedRefParamMethod"),
       // Test0.cs(34,58): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetCSharpUnusedParameterResultAt(34, 58, "param1", "UnusedErrorTypeParamMethod"));
+        }
 
+        [Fact]
+        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+        public void Basic_DiagnosticForSimpleCasesTest()
+        {
             VerifyBasic(@"
 Class C
     Public Sub New(param As Integer)
@@ -530,6 +872,19 @@ End Class
       GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
       // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
+    }
+
+        [Fact]
+        public void DiagnosticsForNonFirstParameterOfExtensionMethod()
+        {
+            VerifyCSharp(@"
+static class C
+{
+    static void ExtensionMethod(this int i, int anotherParam) { }
+}
+",
+    // Test0.cs(4,49): warning CA1801: Parameter anotherParam of method ExtensionMethod is never used. Remove the parameter or use it in the method body.
+    GetCSharpUnusedParameterResultAt(4, 49, "anotherParam", "ExtensionMethod"));
         }
 
         #endregion

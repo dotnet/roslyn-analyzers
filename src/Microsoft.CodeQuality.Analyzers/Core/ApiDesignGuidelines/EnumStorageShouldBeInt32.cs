@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1028: Enum Storage should be Int32
@@ -31,10 +31,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageNotInt32,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182147.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1028-enum-storage-should-be-int32",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -70,8 +70,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            // If accessibility of enum is not public exit
-            if (symbol.GetResultantVisibility() != SymbolVisibility.Public)
+            // Check accessibility of enum matches configuration or is public if not configured
+            if (!symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 return;
             }

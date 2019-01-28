@@ -1,15 +1,15 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using Microsoft.ApiDesignGuidelines.CSharp.Analyzers;
+using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class CA1052FixerTests : CodeFixTestBase
+    public class StaticHolderTypeFixerTests : CodeFixTestBase
     {
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
@@ -29,26 +29,6 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new StaticHolderTypesAnalyzer();
-        }
-
-        [Fact]
-        public void CA1052FixesSealedClassWithOnlyStaticDeclaredMembersCSharp()
-        {
-            const string Code = @"
-public sealed class C
-{
-    public static void Foo() { }
-}
-";
-
-            const string FixedCode = @"
-public static class C
-{
-    public static void Foo() { }
-}
-";
-
-            VerifyCSharpFix(Code, FixedCode);
         }
 
         [Fact]
@@ -159,46 +139,6 @@ public class C
     {
         public static void Foo() { }
     }
-}
-";
-
-            VerifyCSharpFix(Code, FixedCode);
-        }
-
-        [Fact]
-        public void CA1052FixesNonStaticClassWithStaticConstructorCSharp()
-        {
-            const string Code = @"
-public class C
-{
-    static C() { }
-}
-";
-
-            const string FixedCode = @"
-public static class C
-{
-    static C() { }
-}
-";
-
-            VerifyCSharpFix(Code, FixedCode);
-        }
-
-        [Fact]
-        public void CA1052FixesNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
-        {
-            const string Code = @"
-public class C
-{
-    public C() { }
-    static C() { }
-}
-";
-            const string FixedCode = @"
-public static class C
-{
-    static C() { }
 }
 ";
 

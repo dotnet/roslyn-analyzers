@@ -1,13 +1,16 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Humanizer;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1714: Flags enums should have plural names
@@ -44,10 +47,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 s_localizableMessage_CA1714,
                 DiagnosticCategory.Naming,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: true,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription_CA1714,
-                helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264486.aspx",
-                customTags: WellKnownDiagnosticTags.Telemetry);
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1714-flags-enums-should-have-plural-names",
+                customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         #endregion
 
@@ -79,10 +82,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 s_localizableMessage_CA1717,
                 DiagnosticCategory.Naming,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: true,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription_CA1717,
-                helpLinkUri: "https://msdn.microsoft.com/en-us/library/bb264487.aspx",
-                customTags: WellKnownDiagnosticTags.Telemetry);
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1717-only-flagsattribute-enums-should-have-plural-names",
+                customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         #endregion
 
@@ -90,6 +93,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            if (!CultureInfo.CurrentCulture.Name.Equals("en", StringComparison.Ordinal) &&
+				!CultureInfo.CurrentCulture.Parent.Name.Equals("en", StringComparison.Ordinal))
+            {
+                // FxCop compat: Skip for non-English cultures.
+                return;
+            }
+
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
@@ -113,22 +123,45 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
+            var reportCA1714 = symbol.MatchesConfiguredVisibility(context.Options, Rule_CA1714, context.CancellationToken);
+            var reportCA1717 = symbol.MatchesConfiguredVisibility(context.Options, Rule_CA1717, context.CancellationToken);
+            if (!reportCA1714 && !reportCA1717)
+            {
+                return;
+            }
+
+            if (symbol.Name.EndsWith("i", StringComparison.OrdinalIgnoreCase) || symbol.Name.EndsWith("ae", StringComparison.OrdinalIgnoreCase))
+            {
+                // Skip words ending with 'i' and 'ae' to avoid flagging irregular plurals.
+                // Humanizer does not recognize these as plurals, such as 'formulae', 'trophi', etc.
+                return;
+            }
+
+            if (!symbol.Name.IsASCII())
+            {
+                // Skip non-ASCII names.
+                return;
+            }
+
             bool hasFlagsAttribute = symbol.GetAttributes().Any(a => a.AttributeClass.Equals(flagsAttribute));
             if (hasFlagsAttribute)
             {
-                if (!symbol.Name.IsPlural()) // Checking Rule CA1714
+                if (reportCA1714 && !IsPlural(symbol.Name)) // Checking Rule CA1714
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule_CA1714, symbol.OriginalDefinition.Locations.First(), symbol.Name));
                 }
             }
             else
             {
-                if (symbol.Name.IsPlural()) // Checking Rule CA1717
+                if (reportCA1717 && IsPlural(symbol.Name)) // Checking Rule CA1717
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule_CA1717, symbol.OriginalDefinition.Locations.First(), symbol.Name));
                 }
             }
         }
+
+        private static bool IsPlural(string word)
+            => word.Equals(word.Pluralize(inputIsKnownToBeSingular: false), StringComparison.OrdinalIgnoreCase);
     }
 }
 

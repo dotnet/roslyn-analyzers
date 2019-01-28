@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../MicrosoftReliabilityAnalyzersResources.resx">
+    <body>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
+        <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
+        <target state="translated">Si un objeto que admite el método Dispose no se elimina de forma explícita con este método antes de que todas las referencias a él estén fuera del ámbito, el objeto se eliminará con Dispose en algún momento intermedio cuando el recolector de elementos no utilizados ejecute el finalizador del objeto. Puesto que puede producirse un evento excepcional que impida que el finalizador del objeto se ejecute, el objeto debe eliminarse de forma explícita con Dispose.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeMessage">
+        <source>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</source>
+        <target state="translated">En el método “{0}”, llame a System.IDisposable.Dispose en el objeto creado por “{1}” antes de que todas las referencias a él estén fuera de ámbito.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
+        <source>Dispose objects before losing scope</source>
+        <target state="translated">Utilice Dispose en los objetos antes de que pierdan el ámbito</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

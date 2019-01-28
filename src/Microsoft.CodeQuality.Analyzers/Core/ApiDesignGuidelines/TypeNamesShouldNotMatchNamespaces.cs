@@ -9,7 +9,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1724: Type names should not match namespaces
@@ -30,19 +30,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182257.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1724-type-names-should-not-match-namespaces",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor SystemRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageSystem,
                                                                              DiagnosticCategory.Naming,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182257.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1724-type-names-should-not-match-namespaces",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, SystemRule);
 
@@ -52,18 +52,21 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
             analysisContext.RegisterCompilationStartAction(
                 compilationStartAnalysisContext =>
                 {
-                    var namedTypesInCompilation = new ConcurrentBag<INamedTypeSymbol>();
+                    var externallyVisibleNamedTypes = new ConcurrentBag<INamedTypeSymbol>();
 
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         symbolAnalysisContext =>
                         {
                             var namedType = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                            namedTypesInCompilation.Add(namedType);
+                            if (namedType.IsExternallyVisible())
+                            {
+                                externallyVisibleNamedTypes.Add(namedType);
+                            }
                         }, SymbolKind.NamedType);
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -89,7 +92,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             UpdateNamespaceTable(namespaceComponentToNamespaceNameDictionary, namespaceNamesInCompilation.ToImmutableSortedSet());
 
                             InitializeWellKnownSystemNamespaceTable();
-                            foreach (INamedTypeSymbol symbol in namedTypesInCompilation)
+                            foreach (INamedTypeSymbol symbol in externallyVisibleNamedTypes)
                             {
                                 string symbolName = symbol.Name;
                                 if (s_wellKnownSystemNamespaceTable.ContainsKey(symbolName))
@@ -105,14 +108,37 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 });
         }
 
-        private static void AddNamespacesFromCompilation(ConcurrentBag<string> namespaceNamesInCompilation, INamespaceSymbol @namespace)
+        private static bool AddNamespacesFromCompilation(ConcurrentBag<string> namespaceNamesInCompilation, INamespaceSymbol @namespace)
         {
-            namespaceNamesInCompilation.Add(@namespace.ToDisplayString());
+            bool hasExternallyVisibleType = false;
 
             foreach (INamespaceSymbol namespaceMember in @namespace.GetNamespaceMembers())
             {
-                AddNamespacesFromCompilation(namespaceNamesInCompilation, namespaceMember);
+                if (AddNamespacesFromCompilation(namespaceNamesInCompilation, namespaceMember))
+                {
+                    hasExternallyVisibleType = true;
+                }
             }
+
+            if (!hasExternallyVisibleType)
+            {
+                foreach (var type in @namespace.GetTypeMembers())
+                {
+                    if (type.IsExternallyVisible())
+                    {
+                        hasExternallyVisibleType = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasExternallyVisibleType)
+            {
+                namespaceNamesInCompilation.Add(@namespace.ToDisplayString());
+                return true;
+            }
+
+            return false;
         }
 
         private static void InitializeWellKnownSystemNamespaceTable()

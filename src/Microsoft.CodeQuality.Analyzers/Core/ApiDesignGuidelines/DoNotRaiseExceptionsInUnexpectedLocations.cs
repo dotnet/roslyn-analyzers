@@ -8,15 +8,14 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1065: Do not raise exceptions in unexpected locations
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer : DiagnosticAnalyzer
+    public abstract class DoNotRaiseExceptionsInUnexpectedLocationsAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1065";
 
@@ -26,37 +25,39 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         private static readonly LocalizableString s_localizableMessageHasAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageNoAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private const string helpLinkUri = "https://msdn.microsoft.com/en-us/library/bb386039.aspx";
+        private const string helpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1065-do-not-raise-exceptions-in-unexpected-locations";
 
         internal static DiagnosticDescriptor PropertyGetterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessagePropertyGetter,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor HasAllowedExceptionsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageHasAllowedExceptions,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor NoAllowedExceptionsRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageNoAllowedExceptions,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: helpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(PropertyGetterRule, HasAllowedExceptionsRule, NoAllowedExceptionsRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ?
+            ImmutableArray.Create(PropertyGetterRule, HasAllowedExceptionsRule, NoAllowedExceptionsRule) :
+            ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -75,7 +76,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 // Get a list of interesting categories of methods to analyze.
                 List<MethodCategory> methodCategories = GetMethodCategories(compilation);
 
-                compilationStartContext.RegisterOperationBlockStartActionInternal(operationBlockContext =>
+                compilationStartContext.RegisterOperationBlockStartAction(operationBlockContext =>
                 {
                     var methodSymbol = operationBlockContext.OwningSymbol as IMethodSymbol;
                     if (methodSymbol == null)
@@ -93,22 +94,25 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
                     // For the interesting methods, register an operation action to catch all
                     // Throw statements.
-                    operationBlockContext.RegisterOperationActionInternal(operationContext =>
+                    operationBlockContext.RegisterOperationAction(operationContext =>
                     {
-                        IThrowStatement operation = operationContext.Operation as IThrowStatement;
-                        if (operation.ThrownObject?.Type is INamedTypeSymbol type && type.DerivesFrom(exceptionType))
+                        // Get ThrowOperation's ExceptionType
+                        var thrownExceptionType = ((IThrowOperation)operationContext.Operation).Exception?.Type as INamedTypeSymbol;
+                        if (thrownExceptionType != null && thrownExceptionType.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
-                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Contains(type))
+                            if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Any(n => IsAssignableTo(thrownExceptionType, n, compilation)))
                             {
                                 operationContext.ReportDiagnostic(
-                                    operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, type.Name));
+                                    operationContext.Operation.Syntax.CreateDiagnostic(methodCategory.Rule, methodSymbol.Name, thrownExceptionType.Name));
                             }
                         }
-                    }, OperationKind.ThrowStatement);
+                    }, OperationKind.Throw);
                 });
             });
         }
+
+        protected abstract bool IsAssignableTo(ITypeSymbol fromSymbol, ITypeSymbol toSymbol, Compilation compilation);
 
         /// <summary>
         /// This object describes a class of methods where exception throwing statements should be analyzed.
@@ -151,8 +155,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 // If we are supposed to analyze only public methods get the resultant visibility
                 // i.e public method inside an internal class is not considered public.
-                if (_analyzeOnlyPublicMethods &&
-                    method.GetResultantVisibility() != SymbolVisibility.Public)
+                if (_analyzeOnlyPublicMethods && !method.IsExternallyVisible())
                 {
                     return false;
                 }
@@ -227,7 +230,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static bool IsEqualsOverrideOrInterfaceImplementation(IMethodSymbol method, Compilation compilation)
         {
-            return method.IsEqualsOverride() || IsEqualsInterfaceImplementation(method, compilation);
+            return method.IsObjectEqualsOverride() || IsEqualsInterfaceImplementation(method, compilation);
         }
 
         /// <summary>

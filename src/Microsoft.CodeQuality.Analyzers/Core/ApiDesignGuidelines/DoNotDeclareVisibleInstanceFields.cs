@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1051: Do not declare visible instance fields
@@ -26,10 +26,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182141.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1051-do-not-declare-visible-instance-fields",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -38,14 +38,18 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(obj =>
+            analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
-                var field = (IFieldSymbol)obj.Symbol;
+                var field = (IFieldSymbol)symbolAnalysisContext.Symbol;
 
-                // Only report diagnostic on non-static, non-const, public fields
-                if (!field.IsStatic && !field.IsConst && field.IsPublic())
+                // Only report diagnostic on non-static, non-const, non-private fields.
+                // Additionally, by default only report externally visible fields for FxCop compat.
+                if (!field.IsStatic &&
+                    !field.IsConst &&
+                    field.DeclaredAccessibility != Accessibility.Private && 
+                    field.MatchesConfiguredVisibility(symbolAnalysisContext.Options, Rule, symbolAnalysisContext.CancellationToken))
                 {
-                    obj.ReportDiagnostic(field.CreateDiagnostic(Rule));
+                    symbolAnalysisContext.ReportDiagnostic(field.CreateDiagnostic(Rule));
                 }
             }, SymbolKind.Field);
         }

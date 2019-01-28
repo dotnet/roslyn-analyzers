@@ -8,8 +8,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using System.Threading;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class IdentifiersShouldDifferByMoreThanCaseAnalyzer : DiagnosticAnalyzer
@@ -27,8 +28,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                       DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                       isEnabledByDefault: false,
                                                                                       description: new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
-                                                                                      helpLinkUri: "http://msdn.microsoft.com/library/ms182242.aspx",
-                                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                      helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case",
+                                                                                      customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -48,26 +49,30 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             IEnumerable<INamedTypeSymbol> globalTypes = context.Compilation.GlobalNamespace.GetTypeMembers().Where(item =>
                     item.ContainingAssembly == context.Compilation.Assembly &&
-                    IsExternallyVisible(item));
+                    MatchesConfiguredVisibility(item, context.Options, context.CancellationToken));
 
             CheckTypeNames(globalTypes, context.ReportDiagnostic);
-            CheckNamespaceMembers(globalNamespaces, context.Compilation, context.ReportDiagnostic);
+            CheckNamespaceMembers(globalNamespaces, context);
         }
 
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var namedTypeSymbol = context.Symbol as INamedTypeSymbol;
-            // Do not descent into non-publicly visible types
+            
+            // Do not descent into non-publicly visible types by default
             // Note: This is the behavior of FxCop, it might be more correct to descend into internal but not private
             // types because "InternalsVisibleTo" could be set. But it might be bad for users to start seeing warnings
             // where they previously did not from FxCop.
-            if (namedTypeSymbol.GetResultantVisibility() != SymbolVisibility.Public)
+            // Note that end user can now override this default behavior via options.
+            if (!namedTypeSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
             {
                 return;
             }
 
             // Get externally visible members in the given type
-            IEnumerable<ISymbol> members = namedTypeSymbol.GetMembers().Where(item => !item.IsAccessorMethod() && IsExternallyVisible(item));
+            IEnumerable<ISymbol> members = namedTypeSymbol.GetMembers()
+                                                          .Where(item => !item.IsAccessorMethod() &&
+                                                                         MatchesConfiguredVisibility(item, context.Options, context.CancellationToken));
 
             if (members.Any())
             {
@@ -79,19 +84,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private static void CheckNamespaceMembers(IEnumerable<INamespaceSymbol> namespaces, Compilation compilation, Action<Diagnostic> addDiagnostic)
+        private static void CheckNamespaceMembers(IEnumerable<INamespaceSymbol> namespaces, CompilationAnalysisContext context)
         {
             HashSet<INamespaceSymbol> excludedNamespaces = new HashSet<INamespaceSymbol>();
             foreach (INamespaceSymbol @namespace in namespaces)
             {
                 // Get all the potentially externally visible types in the namespace
                 IEnumerable<INamedTypeSymbol> typeMembers = @namespace.GetTypeMembers().Where(item =>
-                    item.ContainingAssembly == compilation.Assembly &&
-                    IsExternallyVisible(item));
+                    item.ContainingAssembly == context.Compilation.Assembly &&
+                    MatchesConfiguredVisibility(item, context.Options, context.CancellationToken));
 
                 if (typeMembers.Any())
                 {
-                    CheckTypeNames(typeMembers, addDiagnostic);
+                    CheckTypeNames(typeMembers, context.ReportDiagnostic);
                 }
                 else
                 {
@@ -102,7 +107,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 IEnumerable<INamespaceSymbol> namespaceMembers = @namespace.GetNamespaceMembers();
                 if (namespaceMembers.Any())
                 {
-                    CheckNamespaceMembers(namespaceMembers, compilation, addDiagnostic);
+                    CheckNamespaceMembers(namespaceMembers, context);
 
                     // If there is a child namespace that has externally visible types, then remove the parent namespace from exclusion list
                     if (namespaceMembers.Any(item => !excludedNamespaces.Contains(item)))
@@ -115,7 +120,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             // Before name check, remove all namespaces that don't contain externally visible types in current scope
             namespaces = namespaces.Where(item => !excludedNamespaces.Contains(item));
 
-            CheckNamespaceNames(namespaces, addDiagnostic);
+            CheckNamespaceNames(namespaces, context);
         }
 
         private static void CheckTypeMembers(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
@@ -203,7 +208,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private static void CheckNamespaceNames(IEnumerable<INamespaceSymbol> namespaces, Action<Diagnostic> addDiagnostic)
+        private static void CheckNamespaceNames(IEnumerable<INamespaceSymbol> namespaces, CompilationAnalysisContext context)
         {
             // If there is only one namespace, then return
             if (!namespaces.Skip(1).Any())
@@ -215,7 +220,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             foreach (IGrouping<string, INamespaceSymbol> group in namespaceList)
             {
-                addDiagnostic(Diagnostic.Create(Rule, Location.None, Namespace, GetSymbolDisplayString(group)));
+                context.ReportDiagnostic(Diagnostic.Create(Rule, Location.None, Namespace, GetSymbolDisplayString(group)));
             }
         }
 
@@ -228,10 +233,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return string.Join(", ", group.Select(s => s.ToDisplayString()).OrderBy(k => k, StringComparer.Ordinal));
         }
 
-        public static bool IsExternallyVisible(ISymbol symbol)
+        public static bool MatchesConfiguredVisibility(ISymbol symbol, AnalyzerOptions options, CancellationToken cancellationToken)
         {
-            SymbolVisibility visibility = symbol.GetResultantVisibility();
-            return visibility == SymbolVisibility.Public || visibility == SymbolVisibility.Internal;
+            var defaultAllowedVisibilties = SymbolVisibilityGroup.Public | SymbolVisibilityGroup.Internal;
+            var allowedVisibilities = options.GetSymbolVisibilityGroupOption(Rule, defaultAllowedVisibilties, cancellationToken);
+            return allowedVisibilities.Contains(symbol.GetResultantVisibility());
         }
 
         #endregion

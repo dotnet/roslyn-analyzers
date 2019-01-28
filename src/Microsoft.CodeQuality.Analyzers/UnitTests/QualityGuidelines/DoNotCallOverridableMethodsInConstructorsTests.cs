@@ -3,10 +3,11 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.QualityGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
     public partial class DoNotCallOverridableMethodsInConstructorsTests : DiagnosticAnalyzerTestBase
     {
@@ -248,7 +249,7 @@ abstract class D : System.Windows.Forms.Control
 {
     D()
     {
-        // no diagnostics because we inherit from System.Web.UI.Control
+        // no diagnostics because we inherit from System.Windows.Forms.Control
         Foo();
         OnPaint(null);
     }
@@ -266,6 +267,17 @@ class E : ControlBase
     {
         OnGotFocus(null); // no diagnostics when we're not an immediate descendant of a special class
     }
+}
+
+abstract class F : System.ComponentModel.Component
+{
+    F()
+    {
+        // no diagnostics because we inherit from System.ComponentModel.Component
+        Foo();
+    }
+
+    protected abstract void Foo();
 }
 ";
             Document document = CreateDocument(source, LanguageNames.CSharp);
@@ -292,7 +304,7 @@ End Class
 MustInherit Class D
     Inherits System.Windows.Forms.Control
     Public Sub New()
-        ' no diagnostics because we inherit from System.Web.UI.Control
+        ' no diagnostics because we inherit from System.Windows.Forms.Control
         Foo()
         OnPaint(Nothing)
     End Sub
@@ -308,6 +320,15 @@ Class E
     Public Sub New()
         OnGotFocus(Nothing) ' no diagnostics when we're not an immediate descendant of a special class
     End Sub
+End Class
+
+MustInherit Class F
+    Inherits System.ComponentModel.Component
+    Public Sub New()
+        ' no diagnostics because we inherit from System.ComponentModel.Component
+        Foo()
+    End Sub
+    MustOverride Sub Foo()
 End Class
 ";
             Document document = CreateDocument(source, LanguageNames.VisualBasic);
@@ -354,6 +375,43 @@ Class C
             d.Foo()
         End If
     End Sub
+End Class
+");
+        }
+
+        [Fact, WorkItem(1652, "https://github.com/dotnet/roslyn-analyzers/issues/1652")]
+        public void CA2214VirtualInvocationsInLambdaCSharp()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal abstract class A
+{
+    private readonly Lazy<int> _lazyField;
+    protected A()
+    {
+        _lazyField = new Lazy<int>(() => M());
+    }
+
+    protected abstract int M();
+}
+");
+        }
+
+        [Fact, WorkItem(1652, "https://github.com/dotnet/roslyn-analyzers/issues/1652")]
+        public void CA2214VirtualInvocationsInLambdaBasic()
+        {
+            VerifyBasic(@"
+Imports System
+
+Friend MustInherit Class A
+    Private ReadOnly _lazyField As Lazy(Of Integer)
+
+    Protected Sub New()
+        _lazyField = New Lazy(Of Integer)(Function() M())
+    End Sub
+
+    Protected MustOverride Function M() As Integer
 End Class
 ");
         }

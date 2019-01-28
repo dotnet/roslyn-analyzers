@@ -5,14 +5,14 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 
-namespace XmlDocumentationComments.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Documentation
 {
     /// <summary>
     /// RS0010: Avoid using cref tags with a prefix
     /// </summary>
     public abstract class AvoidUsingCrefTagsWithAPrefixAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "RS0010";
+        internal const string RuleId = "CA1200";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixTitle), XmlDocumentationCommentsAnalyzersResources.ResourceManager, typeof(XmlDocumentationCommentsAnalyzersResources));
 
@@ -24,7 +24,7 @@ namespace XmlDocumentationComments.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Documentation,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: null,
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);

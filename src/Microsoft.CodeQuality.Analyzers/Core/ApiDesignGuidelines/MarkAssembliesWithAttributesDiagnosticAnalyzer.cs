@@ -5,7 +5,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class MarkAssembliesWithAttributesDiagnosticAnalyzer : DiagnosticAnalyzer
@@ -21,10 +21,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          s_localizableMessageCA1016,
                                                                          DiagnosticCategory.Design,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                          description: s_localizableDescriptionCA1016,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182155.aspx",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1016-mark-assemblies-with-assemblyversionattribute",
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly LocalizableString s_localizableMessageCA1014 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithClsCompliantTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableDescriptionCA1014 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithClsCompliantDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -35,10 +35,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: false,
                                                                          description: s_localizableDescriptionCA1014,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182156.aspx",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1014-mark-assemblies-with-clscompliantattribute",
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CA1016Rule, CA1014Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(CA1016Rule, CA1014Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public override void Initialize(AnalysisContext analysisContext)
         {

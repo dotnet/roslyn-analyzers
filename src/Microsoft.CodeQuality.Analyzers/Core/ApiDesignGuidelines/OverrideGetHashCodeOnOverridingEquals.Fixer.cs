@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2218: Override GetHashCode on overriding Equals
@@ -37,15 +37,16 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-
+            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
-                    MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsCodeActionTitle,
-                    cancellationToken => OverrideObjectGetHashCode(context.Document, typeDeclaration, cancellationToken)),
+                    title,
+                    cancellationToken => OverrideObjectGetHashCode(context.Document, typeDeclaration, cancellationToken),
+                    equivalenceKey: title),
                 diagnostic);
         }
 
-        private async Task<Document> OverrideObjectGetHashCode(Document document, SyntaxNode typeDeclaration, CancellationToken cancellationToken)
+        private static async Task<Document> OverrideObjectGetHashCode(Document document, SyntaxNode typeDeclaration, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
@@ -56,14 +57,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             return editor.GetChangedDocument();
         }
 
-        /// <remarks>
-        /// This type exists for telemetry purposes - it has the same functionality as 
-        /// <see cref="DocumentChangeAction"/> but different metadata.
-        /// </remarks>
-        private sealed class MyCodeAction : DocumentChangeAction
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
         }

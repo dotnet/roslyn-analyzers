@@ -1,18 +1,19 @@
 ﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+Imports System
 Imports System.Collections.Immutable
 Imports System.Composition
 Imports System.Threading
 Imports System.Threading.Tasks
 Imports Analyzer.Utilities
-Imports Microsoft.ApiDesignGuidelines.Analyzers
+Imports Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Formatting
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
-Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
+Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
 
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public Class BasicStaticHolderTypesFixer
@@ -43,30 +44,32 @@ Namespace Microsoft.ApiDesignGuidelines.VisualBasic.Analyzers
             Dim root = Await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(False)
             Dim classStatement = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf(Of ClassStatementSyntax)
             If classStatement IsNot Nothing Then
-                Dim title As String = String.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic, classStatement.Identifier.Text)
-                Dim fix = New MyCodeAction(title, Async Function(ct) Await AddNotInheritableKeyword(document, root, classStatement).ConfigureAwait(False))
+                Dim title As String = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic
+                Dim fix = New MyCodeAction(title, Async Function(ct) Await AddNotInheritableKeyword(document, root, classStatement).ConfigureAwait(False), equivalenceKey:=title)
                 context.RegisterCodeFix(fix, context.Diagnostics)
             End If
         End Function
 
-        Private Function AddNotInheritableKeyword(document As Document, root As SyntaxNode, classStatement As ClassStatementSyntax) As Task(Of Document)
+        Private Shared Function AddNotInheritableKeyword(document As Document, root As SyntaxNode, classStatement As ClassStatementSyntax) As Task(Of Document)
             Dim notInheritableKeyword = SyntaxFactory.Token(SyntaxKind.NotInheritableKeyword).WithAdditionalAnnotations(Formatter.Annotation)
             Dim newClassStatement = classStatement.AddModifiers(notInheritableKeyword)
             Dim newRoot = root.ReplaceNode(classStatement, newClassStatement)
             Return Task.FromResult(document.WithSyntaxRoot(newRoot))
         End Function
 
+        ' Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
         Private Class MyCodeAction
             Inherits DocumentChangeAction
 
+            ' Workaround for https://github.com/dotnet/roslyn-analyzers/issues/1413
             Public Overrides ReadOnly Property EquivalenceKey As String
                 Get
-                    Return NameOf(BasicStaticHolderTypesFixer)
+                    Return MyBase.EquivalenceKey
                 End Get
             End Property
 
-            Public Sub New(title As String, createChangedDocument As Func(Of CancellationToken, Task(Of Document)))
-                MyBase.New(title, createChangedDocument)
+            Public Sub New(title As String, createChangedDocument As Func(Of CancellationToken, Task(Of Document)), equivalenceKey As String)
+                MyBase.New(title, createChangedDocument, equivalenceKey)
             End Sub
         End Class
     End Class

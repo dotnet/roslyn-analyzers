@@ -7,7 +7,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1068: CancellationToken parameters must come last.
@@ -26,7 +26,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             s_localizableMessage,
             DiagnosticCategory.Design,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: true);
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -74,21 +74,35 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                             }
                         }
 
+                        // Ignore multiple cancellation token parameters at the end of the parameter list.
+                        while (last >= 0 && methodSymbol.Parameters[last].Type.Equals(cancellationTokenType))
+                        {
+                            last--;
+                        }
+
+                        // Ignore parameters passed by reference when they appear at the end of the parameter list.
                         while (last >= 0 && methodSymbol.Parameters[last].RefKind != RefKind.None)
                         {
                             last--;
                         }
 
-                        for (int i = last; i >= 0; i--)
+                        for (int i = last - 1; i >= 0; i--)
                         {
                             ITypeSymbol parameterType = methodSymbol.Parameters[i].Type;
-                            if (parameterType.Equals(cancellationTokenType)
-                                && i != last)
+                            if (!parameterType.Equals(cancellationTokenType))
                             {
-                                symbolContext.ReportDiagnostic(Diagnostic.Create(
-                                    Rule, methodSymbol.Locations.First(), methodSymbol.ToDisplayString()));
-                                break;
+                                continue;
                             }
+
+                            // Bail if the CancellationToken is the first parameter of an extension method.
+                            if (i == 0 && methodSymbol.IsExtensionMethod)
+                            {
+                                continue;
+                            }
+
+                            symbolContext.ReportDiagnostic(Diagnostic.Create(
+                                Rule, methodSymbol.Locations.First(), methodSymbol.ToDisplayString()));
+                            break;
                         }
                     },
                     SymbolKind.Method);

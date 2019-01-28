@@ -1,10 +1,14 @@
 #### Analyzer package
 
-Example: Microsoft.ApiDesignGuidelines.Analyzers
+Example: [Microsoft.CodeAnalysis.FxCopAnalyzers](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
-#### Analyzer
+#### Package Version
 
-Example: IdentifiersShouldNotMatchKeywords
+Example: v2.6.2
+
+#### Diagnostic ID
+
+Example: [CA1716](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords)
 
 #### Repro steps
 

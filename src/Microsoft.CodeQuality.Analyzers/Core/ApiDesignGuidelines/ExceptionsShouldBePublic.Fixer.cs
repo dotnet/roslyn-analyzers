@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.CodeActions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1064: Exceptions should be public
@@ -45,7 +45,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             context.RegisterCodeFix(action, diagnostic);
         }
 
-        private async Task<Document> MakePublic(Document document, SyntaxNode classDecl, CancellationToken cancellationToken)
+        private static async Task<Document> MakePublic(Document document, SyntaxNode classDecl, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
 

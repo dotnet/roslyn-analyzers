@@ -5,8 +5,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using System.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1044: Properties should not be write only
@@ -15,7 +16,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
     public sealed class PropertiesShouldNotBeWriteOnlyAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1044";
-        private const string HelpLinkUri = "https://msdn.microsoft.com/en-us/library/ms182165.aspx";
+        private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1044-properties-should-not-be-write-only";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageAddGetter = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageAddGetter), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -27,19 +28,19 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessageAddGetter,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor MakeMoreAccessibleRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMakeMoreAccessible,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: HelpLinkUri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(AddGetterRule, MakeMoreAccessibleRule);
 
@@ -61,7 +62,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 return;
             }
-            
+
             // not raising a violation for when: 
             //     property is overridden because the issue can only be fixed in the base type 
             //     property is the implementaton of any interface member 
@@ -70,11 +71,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 return;
             }
 
-            // If property is not visible outside the assembly
-            if (property.GetResultantVisibility() != SymbolVisibility.Public)
+            // Only analyze externally visible properties by default
+            if (!property.MatchesConfiguredVisibility(context.Options, AddGetterRule, context.CancellationToken))
             {
+                Debug.Assert(!property.MatchesConfiguredVisibility(context.Options, MakeMoreAccessibleRule, context.CancellationToken));
                 return;
             }
+
+            Debug.Assert(property.MatchesConfiguredVisibility(context.Options, MakeMoreAccessibleRule, context.CancellationToken));
 
             // We handled the non-CA1044 cases earlier.  Now, we handle CA1044 cases
             // If there is no getter then it is not accessible

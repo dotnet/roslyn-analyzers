@@ -2,12 +2,15 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1806: Do not ignore method results
@@ -41,117 +44,254 @@ namespace Microsoft.Maintainability.Analyzers
                 "Substring",
             });
 
+        private static readonly ImmutableHashSet<string> s_nUnitMethodNames = ImmutableHashSet.CreateRange(
+            new[] {
+                "Throws",
+                "Catch",
+                "DoesNotThrow",
+                "ThrowsAsync",
+                "CatchAsync",
+                "DoesNotThrowAsync"
+            });
+
+        private static readonly ImmutableHashSet<string> s_xUnitMethodNames = ImmutableHashSet.Create(
+            new[] {
+                "Throws",
+                "ThrowsAsync",
+                "ThrowsAny",
+                "ThrowsAnyAsync",
+            });
+
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageObjectCreation = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageObjectCreation), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageStringCreation = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageStringCreation), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageHResultOrErrorCode = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageHResultOrErrorCode), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessagePureMethod = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessagePureMethod), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableMessageTryParse = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsMessageTryParse), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.DoNotIgnoreMethodResultsDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
 
         internal static DiagnosticDescriptor ObjectCreationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageObjectCreation,
-                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor StringCreationRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageStringCreation,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor HResultOrErrorCodeRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageHResultOrErrorCode,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
+
+        internal static DiagnosticDescriptor PureMethodRule = new DiagnosticDescriptor(RuleId,
+                                                                             s_localizableTitle,
+                                                                             s_localizableMessagePureMethod,
+                                                                             DiagnosticCategory.Performance,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             description: s_localizableDescription,
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
+
 
         internal static DiagnosticDescriptor TryParseRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageTryParse,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182273.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ObjectCreationRule, StringCreationRule, HResultOrErrorCodeRule, TryParseRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ObjectCreationRule, StringCreationRule, HResultOrErrorCodeRule, TryParseRule, PureMethodRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockStartActionInternal(osContext =>
+            analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                var method = osContext.OwningSymbol as IMethodSymbol;
-                if (method == null)
+                INamedTypeSymbol expectedExceptionType = WellKnownTypes.ExpectedException(compilationContext.Compilation);
+                INamedTypeSymbol nunitAssertType = WellKnownTypes.NunitAssert(compilationContext.Compilation);
+                INamedTypeSymbol xunitAssertType = WellKnownTypes.XunitAssert(compilationContext.Compilation);
+
+                compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
-                    return;
+                    var method = osContext.OwningSymbol as IMethodSymbol;
+                    if (method == null)
+                    {
+                        return;
+                    }
+
+                    osContext.RegisterOperationAction(opContext =>
+                    {
+                        IOperation expression = ((IExpressionStatementOperation)opContext.Operation).Operation;
+                        DiagnosticDescriptor rule = null;
+                        string targetMethodName = null;
+                        switch (expression.Kind)
+                        {
+                            case OperationKind.ObjectCreation:
+                                IMethodSymbol ctor = ((IObjectCreationOperation)expression).Constructor;
+                                if (ctor != null)
+                                {
+                                    rule = ObjectCreationRule;
+                                    targetMethodName = ctor.ContainingType.Name;
+                                }
+                                break;
+
+                            case OperationKind.Invocation:
+                                IInvocationOperation invocationExpression = ((IInvocationOperation)expression);
+                                IMethodSymbol targetMethod = invocationExpression.TargetMethod;
+                                if (targetMethod == null)
+                                {
+                                    break;
+                                }
+
+                                if (IsStringCreatingMethod(targetMethod))
+                                {
+                                    rule = StringCreationRule;
+                                }
+                                else if (IsTryParseMethod(targetMethod))
+                                {
+                                    rule = TryParseRule;
+                                }
+                                else if (IsHResultOrErrorCodeReturningMethod(targetMethod))
+                                {
+                                    rule = HResultOrErrorCodeRule;
+                                }
+                                else if (IsPureMethod(targetMethod, opContext.Compilation))
+                                {
+                                    rule = PureMethodRule;
+                                }
+
+                                targetMethodName = targetMethod.Name;
+                                break;
+                        }
+
+                        if (rule != null)
+                        {
+                            if (ShouldSkipAnalyzing(opContext, expectedExceptionType, xunitAssertType, nunitAssertType))
+                            {
+                                return;
+                            }
+
+                            Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
+                            opContext.ReportDiagnostic(diagnostic);
+                        }
+                    }, OperationKind.ExpressionStatement);
+                });
+            });
+        }
+
+        private static bool ShouldSkipAnalyzing(OperationAnalysisContext operationContext, INamedTypeSymbol expectedExceptionType, INamedTypeSymbol xunitAssertType, INamedTypeSymbol nunitAssertType)
+        {
+            bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, INamedTypeSymbol assertSymbol)
+            {
+                return parameterSymbol.Name == argumentName &&
+                       parameterSymbol.ContainingSymbol is IMethodSymbol methodSymbol &&
+                       methodNames.Contains(methodSymbol.Name) &&
+                       methodSymbol.ContainingSymbol == assertSymbol;
+            }
+
+            bool IsNUnitThrowsArgument(IParameterSymbol parameterSymbol)
+            {
+                return IsThrowsArgument(parameterSymbol, "code", s_nUnitMethodNames, nunitAssertType);
+            }
+
+            bool IsXunitThrowsArgument(IParameterSymbol parameterSymbol)
+            {
+                return IsThrowsArgument(parameterSymbol, "testCode", s_xUnitMethodNames, xunitAssertType);
+            }
+
+            // We skip analysis for the last statement in a lambda passed to Assert.Throws/ThrowsAsync (xUnit and NUnit), or the last
+            // statement in a method annotated with [ExpectedException] (MSTest)
+
+            if (expectedExceptionType == null && xunitAssertType == null && nunitAssertType == null)
+            {
+                return false;
+            }
+
+            // Note: We do not attempt to account for a synchronously-running ThrowsAsync with something like return Task.CompletedTask;
+            // as the last line.
+
+            // We only skip analysis if we're in a method
+            if (operationContext.ContainingSymbol.Kind != SymbolKind.Method)
+            {
+                return false;
+            }
+
+            // Get the enclosing block. If that block's parent isn't null (MSTest case) or an IAnonymousFunctionOperation (xUnit/NUnit), then
+            // we bail immediately
+            if (!(operationContext.Operation.Parent is IBlockOperation enclosingBlock))
+            {
+                return false;
+            }
+
+            if (enclosingBlock.Parent != null && enclosingBlock.Parent.Kind != OperationKind.AnonymousFunction)
+            {
+                return false;
+            }
+
+            // Only skip analyzing the last non-implicit statement in the function
+            bool foundBlock = false;
+            foreach (var statement in enclosingBlock.Operations)
+            {
+                if (statement == operationContext.Operation)
+                {
+                    foundBlock = true;
+                }
+                else if (foundBlock)
+                {
+                    if (!statement.IsImplicit)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // If the parent is Null, we're in the MSTest case. Otherwise, we're in the xUnit/NUnit case.
+            if (enclosingBlock.Parent == null)
+            {
+                if (expectedExceptionType == null)
+                {
+                    return false;
                 }
 
-                osContext.RegisterOperationActionInternal(opContext =>
+                IMethodSymbol methodSymbol = (IMethodSymbol)operationContext.ContainingSymbol;
+
+                return methodSymbol.GetAttributes().Any(attr => attr.AttributeClass == expectedExceptionType);
+            }
+            else
+            {
+                IArgumentOperation argumentOperation = enclosingBlock.GetAncestor<IArgumentOperation>(OperationKind.Argument);
+
+                if (argumentOperation == null)
                 {
-                    IOperation expression = ((IExpressionStatement)opContext.Operation).Expression;
-                    DiagnosticDescriptor rule = null;
-                    string targetMethodName = null;
-                    switch (expression.Kind)
-                    {
-                        case OperationKind.ObjectCreationExpression:
-                            IMethodSymbol ctor = ((IObjectCreationExpression)expression).Constructor;
-                            if (ctor != null)
-                            {
-                                rule = ObjectCreationRule;
-                                targetMethodName = ctor.ContainingType.Name;
-                            }
-                            break;
+                    return false;
+                }
 
-                        case OperationKind.InvocationExpression:
-                            IInvocationExpression invocationExpression = ((IInvocationExpression)expression);
-                            IMethodSymbol targetMethod = invocationExpression.TargetMethod;
-                            if (targetMethod == null)
-                            {
-                                break;
-                            }
-
-                            if (IsStringCreatingMethod(targetMethod))
-                            {
-                                rule = StringCreationRule;
-                            }
-                            else if (IsTryParseMethod(targetMethod))
-                            {
-                                rule = TryParseRule;
-                            }
-                            else if (IsHResultOrErrorCodeReturningMethod(targetMethod))
-                            {
-                                rule = HResultOrErrorCodeRule;
-                            }
-
-                            targetMethodName = targetMethod.Name;
-                            break;
-                    }
-
-                    if (rule != null)
-                    {
-                        Diagnostic diagnostic = Diagnostic.Create(rule, expression.Syntax.GetLocation(), method.Name, targetMethodName);
-                        opContext.ReportDiagnostic(diagnostic);
-                    }
-                }, OperationKind.ExpressionStatement);
-            });
+                return IsNUnitThrowsArgument(argumentOperation.Parameter) || IsXunitThrowsArgument(argumentOperation.Parameter);
+            }
         }
 
         private static bool IsStringCreatingMethod(IMethodSymbol method)
@@ -174,6 +314,11 @@ namespace Microsoft.Maintainability.Analyzers
             return method.GetDllImportData() != null &&
                 (method.ReturnType.SpecialType == SpecialType.System_Int32 ||
                 method.ReturnType.SpecialType == SpecialType.System_UInt32);
+        }
+
+        private static bool IsPureMethod(IMethodSymbol method, Compilation compilation)
+        {
+            return method.GetAttributes().Any(attr => attr.AttributeClass.Equals(WellKnownTypes.PureAttribute(compilation)));
         }
     }
 }

@@ -8,7 +8,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1018: Custom attributes should have AttributeUsage attribute defined.
@@ -25,9 +25,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                     s_localizableMessage,
                                                                     DiagnosticCategory.Design,
                                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                    isEnabledByDefault: true,
-                                                                    helpLinkUri: "http://msdn.microsoft.com/library/ms182158.aspx",
-                                                                    customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                    isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                    helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1018-mark-attributes-with-attributeusageattribute",
+                                                                    customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -55,7 +55,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private static void AnalyzeSymbol(INamedTypeSymbol symbol, INamedTypeSymbol attributeType, INamedTypeSymbol attributeUsageAttributeType, Action<Diagnostic> addDiagnostic)
         {
-            if (symbol.IsAbstract || !symbol.GetBaseTypesAndThis().Contains(attributeType))
+            if (symbol.IsAbstract || symbol.BaseType == null || !symbol.BaseType.Equals(attributeType))
             {
                 return;
             }

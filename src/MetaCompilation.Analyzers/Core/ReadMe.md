@@ -36,7 +36,7 @@ Instructions
 * Then type `powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1`
 * Restart Visual Studio
 * Clone the [roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers) repository on your local machine
-* Open src/Analyzers.sln
+* Open RoslynAnalyzers.sln in the repository root
 * Build the solution
 * Close Visual Studio
 * Navigate to roslyn-analyzers/Binaries. There may be multiple folders here. You want the one that has the same name as your configuration in Visual Studio (probably either Debug or Release)

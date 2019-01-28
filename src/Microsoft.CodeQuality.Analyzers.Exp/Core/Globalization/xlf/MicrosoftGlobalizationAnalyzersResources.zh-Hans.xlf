@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../MicrosoftGlobalizationAnalyzersResources.resx">
+    <body>
+      <trans-unit id="DoNotPassLiteralsAsLocalizedParametersDescription">
+        <source>A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</source>
+        <target state="translated">方法可以参数的形式将字符串传递到 .NET Framework 类库中的构造函数或方法中，且该字符串应为可本地化。若要解决此规则冲突，将字符串替换为通过 ResourceManager 类的实例检索的字符串。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassLiteralsAsLocalizedParametersMessage">
+        <source>Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</source>
+        <target state="translated">方法“{0}”以“{2}”调用的参数“{1}”的形式传递字符串。请改为从资源表中检索以下字符串:“{3}”。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPassLiteralsAsLocalizedParametersTitle">
+        <source>Do not pass literals as localized parameters</source>
+        <target state="translated">不要以已本地化参数形式传递字符串</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

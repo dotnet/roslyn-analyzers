@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1819: Properties should not return arrays
@@ -26,10 +26,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/0fss9skc.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1819-properties-should-not-return-arrays",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -46,7 +46,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             var symbol = (IPropertySymbol)context.Symbol;
             if (symbol.Type.TypeKind == TypeKind.Array && !symbol.IsOverride)
             {
-                if (symbol.GetResultantVisibility() == SymbolVisibility.Public && !symbol.ContainingType.IsAttribute())
+                if (symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) &&
+                    !symbol.ContainingType.IsAttribute())
                 {
                     context.ReportDiagnostic(symbol.CreateDiagnostic(Rule));
                 }

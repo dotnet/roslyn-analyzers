@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ru" original="../MicrosoftMaintainabilityAnalyzersResources.resx">
+    <body>
+      <trans-unit id="AvoidDeadConditionalCodeTitle">
+        <source>Avoid dead conditional code</source>
+        <target state="translated">Избегать неиспользуемого условного кода</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
+        <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
+        <target state="translated">"{0}" всегда является "{1}". Удалите эти условия или выполните их рефакторинг, чтобы избежать неиспользуемого кода.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
+        <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
+        <target state="translated">"{0}" никогда не является "{1}". Удалите эти условия или выполните их рефакторинг, чтобы устранить неиспользуемый код.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

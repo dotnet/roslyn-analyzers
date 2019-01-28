@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class PropertiesShouldNotBeWriteOnlyTests : DiagnosticAnalyzerTestBase
     {
@@ -15,7 +16,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new  PropertiesShouldNotBeWriteOnlyAnalyzer();
+            return new PropertiesShouldNotBeWriteOnlyAnalyzer();
         }
 
         // Valid C# Tests that should not be flagged based on CA1044 (good tests)
@@ -41,7 +42,8 @@ namespace CS_DesignLibrary
 
         [Fact]
         public void CS_CA1044Good_Read_Write1()
-        { var code = @"
+        {
+            var code = @"
 using System;
 namespace CS_GoodPropertiesShouldNotBeWriteOnlyTests1
 {
@@ -298,9 +300,9 @@ End Namespace
             VerifyBasic(code);
         }
 
-         [Fact]
-         public void VB_CA1044Good_public_Read_private_Write()
-         {
+        [Fact]
+        public void VB_CA1044Good_public_Read_private_Write()
+        {
             var code = @"
 Imports System
 Namespace VB_GoodPropertiesShouldNotBeWriteOnlyTests2
@@ -897,10 +899,10 @@ End NameSpace
 ";
             VerifyBasic(code, GetCA1044BasicResultAt(6, 25, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty3"));
         }
-                
+
         private static readonly string CA1044MessageAddGetter = MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageAddGetter;
         private static readonly string CA1044MessageMakeMoreAccessible = MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible;
-        
+
         private static DiagnosticResult GetCA1044CSharpResultAt(int line, int column, string CA1044Message, string objectName)
         {
             return GetCSharpResultAt(line, column, PropertiesShouldNotBeWriteOnlyAnalyzer.RuleId, string.Format(CA1044Message, objectName));

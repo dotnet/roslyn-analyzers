@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="ko" original="../MicrosoftMaintainabilityAnalyzersResources.resx">
+    <body>
+      <trans-unit id="AvoidDeadConditionalCodeTitle">
+        <source>Avoid dead conditional code</source>
+        <target state="translated">데드 조건부 코드 방지</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
+        <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
+        <target state="translated">'{0}'이(가) 항상 '{1}'입니다. 조건을 제거하거나 리팩터링하여 데드 코드를 방지하세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
+        <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
+        <target state="translated">'{0}'이(가) '{1}'이(가) 아닙니다. 조건을 제거하거나 리팩터링하여 데드 코드를 방지하세요.</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

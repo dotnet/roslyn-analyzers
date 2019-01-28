@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Analyzer.Utilities;
 
-namespace Microsoft.Maintainability.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.Maintainability
 {
     /// <summary>
     /// CA1823: Avoid unused private fields
@@ -39,16 +39,18 @@ namespace Microsoft.Maintainability.Analyzers
 
             // We cannot have multiple overlapping diagnostics of this id. 
             Diagnostic diagnostic = context.Diagnostics.Single();
+            string title = MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsTitle;
             context.RegisterCodeFix(
-                new RemoveFieldAction(
-                    MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage,
-                    async ct => await RemoveField(context.Document, node, ct).ConfigureAwait(false)),
+                new MyCodeAction(
+                    title,
+                    async ct => await RemoveField(context.Document, node, ct).ConfigureAwait(false),
+                    equivalenceKey: title),
                 diagnostic);
 
             return;
         }
 
-        private async Task<Document> RemoveField(Document document, SyntaxNode node, CancellationToken cancellationToken)
+        private static async Task<Document> RemoveField(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             node = editor.Generator.GetDeclaration(node);
@@ -56,14 +58,13 @@ namespace Microsoft.Maintainability.Analyzers
             return editor.GetChangedDocument();
         }
 
-        private class RemoveFieldAction : DocumentChangeAction
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
         {
-            public RemoveFieldAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument)
-                : base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
             {
             }
-
-            public override string EquivalenceKey => null;
         }
     }
 }

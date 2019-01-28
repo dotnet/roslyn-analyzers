@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     public abstract class RethrowToPreserveStackDetailsAnalyzer : DiagnosticAnalyzer
     {
@@ -19,11 +19,11 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                          s_localizableMessage,
                                                                          DiagnosticCategory.Usage,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182363.aspx",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         protected static Diagnostic CreateDiagnostic(SyntaxNode node)
         {

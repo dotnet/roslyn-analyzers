@@ -10,10 +10,12 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA2007: Do not directly await a Task in libraries. Append ConfigureAwait(false) to the task.
+    /// CA2007: Do not directly await a Task in libraries.
+    ///     1. Append ConfigureAwait(false) to the task.
+    ///     2. Append ConfigureAwait(true) to the task.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public sealed class DoNotDirectlyAwaitATaskFixer : CodeFixProvider
@@ -27,22 +29,31 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
             if (expression != null)
             {
+                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.AppendConfigureAwaitFalse;
                 context.RegisterCodeFix(
-                    new MyCodeAction(MicrosoftApiDesignGuidelinesAnalyzersResources.AppendConfigureAwaitFalse,
-                        async ct => await GetFix(context.Document, expression, ct).ConfigureAwait(false)),
+                    new MyCodeAction(title,
+                        async ct => await GetFix(context.Document, expression, argument: false, cancellationToken: ct).ConfigureAwait(false),
+                        equivalenceKey: title),
+                    context.Diagnostics);
+
+                title = MicrosoftApiDesignGuidelinesAnalyzersResources.AppendConfigureAwaitTrue;
+                context.RegisterCodeFix(
+                    new MyCodeAction(title,
+                        async ct => await GetFix(context.Document, expression, argument: true, cancellationToken: ct).ConfigureAwait(false),
+                        equivalenceKey: title),
                     context.Diagnostics);
             }
         }
 
-        private async Task<Document> GetFix(Document document, SyntaxNode expression, CancellationToken cancellationToken)
+        private static async Task<Document> GetFix(Document document, SyntaxNode expression, bool argument, CancellationToken cancellationToken)
         {
             // Rewrite the expression to include a .ConfigureAwait() after it. We reattach trailing trivia to the end.
             // This is especially important for VB, as the end-of-line may be in the trivia
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;
             SyntaxNode memberAccess = generator.MemberAccessExpression(expression.WithoutTrailingTrivia(), "ConfigureAwait");
-            SyntaxNode falseLiteral = generator.FalseLiteralExpression();
-            SyntaxNode invocation = generator.InvocationExpression(memberAccess, falseLiteral);
+            SyntaxNode argumentLiteral = argument ? generator.TrueLiteralExpression() : generator.FalseLiteralExpression();
+            SyntaxNode invocation = generator.InvocationExpression(memberAccess, argumentLiteral);
             invocation = invocation.WithLeadingTrivia(expression.GetLeadingTrivia()).WithTrailingTrivia(expression.GetTrailingTrivia());
 
             editor.ReplaceNode(expression, invocation);
@@ -56,8 +67,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
 
         private class MyCodeAction : DocumentChangeAction
         {
-            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument) :
-                base(title, createChangedDocument)
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey) :
+                base(title, createChangedDocument, equivalenceKey)
             {
             }
 

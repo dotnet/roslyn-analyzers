@@ -6,9 +6,9 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA1802: Use literals where appropriate
@@ -17,7 +17,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
     public sealed class UseLiteralsWhereAppropriateAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1802";
-        internal const string Uri = @"https://msdn.microsoft.com/en-us/library/ms182280.aspx";
+        internal const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1802-use-literals-where-appropriate";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.UseLiteralsWhereAppropriateTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
@@ -30,19 +30,19 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableMessageDefault,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         internal static DiagnosticDescriptor EmptyStringRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageEmptyString,
                                                                              DiagnosticCategory.Performance,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: Uri,
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyStringRule);
 
@@ -51,17 +51,19 @@ namespace Microsoft.QualityGuidelines.Analyzers
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationActionInternal(saContext =>
+            analysisContext.RegisterOperationAction(saContext =>
             {
-                var fieldInitializer = saContext.Operation as IFieldInitializer;
+                var fieldInitializer = saContext.Operation as IFieldInitializerOperation;
 
                 // Diagnostics are reported on the last initialized field to retain the previous FxCop behavior
-                var lastField = fieldInitializer.InitializedFields.LastOrDefault();
-                var fieldInitializerValue = fieldInitializer.Value;
-                if (fieldInitializerValue == null||
-                    lastField.IsConst ||
-                    lastField.GetResultantVisibility() == SymbolVisibility.Public ||!lastField.IsStatic || !lastField.IsReadOnly ||
-                    !fieldInitializerValue.ConstantValue.HasValue)
+                // Note all the descriptors/rules for this analyzer have the same ID and category and hence
+                // will always have identical configured visibility.
+                var lastField = fieldInitializer?.InitializedFields.LastOrDefault();
+                var fieldInitializerValue = fieldInitializer?.Value;
+                if (fieldInitializerValue == null || lastField.IsConst ||
+                    !lastField.MatchesConfiguredVisibility(saContext.Options, DefaultRule, saContext.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.Internal | SymbolVisibilityGroup.Private) ||
+                    !lastField.IsStatic ||
+                    !lastField.IsReadOnly || !fieldInitializerValue.ConstantValue.HasValue)
                 {
                     return;
                 }
@@ -72,7 +74,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                 if (initializerValue != null)
                 {
                     if (fieldInitializerValue.Type?.SpecialType == SpecialType.System_String &&
-                        ((string)initializerValue)?.Length == 0)
+                        ((string)initializerValue).Length == 0)
                     {
                         saContext.ReportDiagnostic(lastField.CreateDiagnostic(EmptyStringRule, lastField.Name));
                         return;
@@ -81,7 +83,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
                     saContext.ReportDiagnostic(lastField.CreateDiagnostic(DefaultRule, lastField.Name));
                 }
             },
-            OperationKind.FieldInitializerAtDeclaration);
+            OperationKind.FieldInitializer);
         }
     }
 }

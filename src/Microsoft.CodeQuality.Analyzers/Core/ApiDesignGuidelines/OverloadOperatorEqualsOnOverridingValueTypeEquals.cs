@@ -6,7 +6,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2231: Complain if the type implements Equals without overloading the equality operator.
@@ -23,10 +23,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          s_localizableMessageAndTitle,
                                                                          DiagnosticCategory.Usage,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                         isEnabledByDefault: true,
+                                                                         isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescription,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182359.aspx",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2231-overload-operator-equals-on-overriding-valuetype-equals",
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -38,7 +38,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(context =>
             {
                 var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
-                if (namedTypeSymbol.IsValueType && namedTypeSymbol.OverridesEquals() && !namedTypeSymbol.ImplementsEqualityOperators())
+                if (namedTypeSymbol.IsValueType &&
+                    namedTypeSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) &&
+                    namedTypeSymbol.OverridesEquals() && 
+                    !namedTypeSymbol.ImplementsEqualityOperators())
                 {
                     context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));
                 }

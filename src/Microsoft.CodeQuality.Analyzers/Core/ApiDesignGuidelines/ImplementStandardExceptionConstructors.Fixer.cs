@@ -13,7 +13,7 @@ using Analyzer.Utilities;
 using System.Composition;
 using System.Collections.Generic;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1032: Implement standard exception constructors
@@ -50,7 +50,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             context.RegisterCodeFix(CodeAction.Create(title, c => AddConstructorsAsync(context.Document, context.Diagnostics, root, c), equivalenceKey: title), context.Diagnostics.First());
         }
 
-        private async Task<Document> AddConstructorsAsync(Document document, IEnumerable<Diagnostic> diagnostics, SyntaxNode root, CancellationToken cancellationToken)
+        private static async Task<Document> AddConstructorsAsync(Document document, IEnumerable<Diagnostic> diagnostics, SyntaxNode root, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxGenerator generator = editor.Generator;

@@ -7,7 +7,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.QualityGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2119: Seal methods that satisfy private interfaces
@@ -27,10 +27,10 @@ namespace Microsoft.QualityGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Security,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182313.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2119-seal-methods-that-satisfy-private-interfaces",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -41,7 +41,7 @@ namespace Microsoft.QualityGuidelines.Analyzers
 
             analysisContext.RegisterSymbolAction(CheckTypes, SymbolKind.NamedType);
         }
-        
+
         private static void CheckTypes(SymbolAnalysisContext context)
         {
             var type = (INamedTypeSymbol)context.Symbol;

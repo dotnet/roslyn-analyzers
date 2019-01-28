@@ -6,8 +6,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using System.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class IdentifiersShouldHaveCorrectPrefixAnalyzer : DiagnosticAnalyzer
@@ -23,10 +24,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                     s_localizableMessageInterfaceRule,
                                                                                     DiagnosticCategory.Naming,
                                                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                    isEnabledByDefault: true,
+                                                                                    isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                     description: s_localizableDescription,
-                                                                                    helpLinkUri: "http://msdn.microsoft.com/library/ms182243.aspx",
-                                                                                    customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                    helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix",
+                                                                                    customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         private static readonly LocalizableString s_localizableMessageTypeParameterRule = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageTypeParameter), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         public static readonly DiagnosticDescriptor TypeParameterRule = new DiagnosticDescriptor(RuleId,
@@ -34,10 +35,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                       s_localizableMessageTypeParameterRule,
                                                                                       DiagnosticCategory.Naming,
                                                                                       DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                      isEnabledByDefault: true,
+                                                                                      isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                       description: s_localizableDescription,
-                                                                                      helpLinkUri: "http://msdn.microsoft.com/library/ms182243.aspx",
-                                                                                      customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                      helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix",
+                                                                                      customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(InterfaceRule, TypeParameterRule);
 
@@ -49,14 +50,29 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.RegisterSymbolAction(
                 (context) =>
             {
+                // FxCop compat: only analyze externally visible symbols by default.
+                if (!context.Symbol.MatchesConfiguredVisibility(context.Options, InterfaceRule, context.CancellationToken))
+                {
+                    Debug.Assert(!context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.CancellationToken));
+                    return;
+                }
+
+                Debug.Assert(context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.CancellationToken));
+
+                bool allowSingleLetterTypeParameters = context.Options.GetBoolOptionValue(
+                    optionName: EditorConfigOptionNames.AllowSingleLetterTypeParameters,
+                    rule: TypeParameterRule,
+                    defaultValue: false,
+                    cancellationToken: context.CancellationToken);
+
                 switch (context.Symbol.Kind)
                 {
                     case SymbolKind.NamedType:
-                        AnalyzeNamedTypeSymbol((INamedTypeSymbol)context.Symbol, context.ReportDiagnostic);
+                        AnalyzeNamedTypeSymbol((INamedTypeSymbol)context.Symbol, allowSingleLetterTypeParameters, context.ReportDiagnostic);
                         break;
 
                     case SymbolKind.Method:
-                        AnalyzeMethodSymbol((IMethodSymbol)context.Symbol, context.ReportDiagnostic);
+                        AnalyzeMethodSymbol((IMethodSymbol)context.Symbol, allowSingleLetterTypeParameters, context.ReportDiagnostic);
                         break;
                 }
             },
@@ -64,15 +80,9 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 SymbolKind.NamedType);
         }
 
-        private static void AnalyzeNamedTypeSymbol(INamedTypeSymbol symbol, Action<Diagnostic> addDiagnostic)
+        private static void AnalyzeNamedTypeSymbol(INamedTypeSymbol symbol, bool allowSingleLetterTypeParameters, Action<Diagnostic> addDiagnostic)
         {
-            foreach (ITypeParameterSymbol parameter in symbol.TypeParameters)
-            {
-                if (parameter.Name.Length > 1 && !HasCorrectPrefix(parameter, 'T'))
-                {
-                    addDiagnostic(parameter.CreateDiagnostic(TypeParameterRule, parameter.Name));
-                }
-            }
+            AnalyzeTypeParameters(symbol.TypeParameters, allowSingleLetterTypeParameters, addDiagnostic);
 
             if (symbol.TypeKind == TypeKind.Interface &&
                 symbol.IsPublic() &&
@@ -82,13 +92,22 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             }
         }
 
-        private static void AnalyzeMethodSymbol(IMethodSymbol symbol, Action<Diagnostic> addDiagnostic)
+        private static void AnalyzeMethodSymbol(IMethodSymbol symbol, bool allowSingleLetterTypeParameters, Action<Diagnostic> addDiagnostic)
+            => AnalyzeTypeParameters(symbol.TypeParameters, allowSingleLetterTypeParameters, addDiagnostic);
+
+        private static void AnalyzeTypeParameters(ImmutableArray<ITypeParameterSymbol> typeParameters, bool allowSingleLetterTypeParameters, Action<Diagnostic> addDiagnostic)
         {
-            foreach (ITypeParameterSymbol parameter in symbol.TypeParameters)
+            foreach (var typeParameter in typeParameters)
             {
-                if (parameter.Name.Length > 1 && !HasCorrectPrefix(parameter, 'T'))
+                if (!HasCorrectPrefix(typeParameter, 'T'))
                 {
-                    addDiagnostic(parameter.CreateDiagnostic(TypeParameterRule, parameter.Name));
+                    // Check if single letter type parameters are allowed through configuration.
+                    if (allowSingleLetterTypeParameters && typeParameter.Name.Length == 1)
+                    {
+                        continue;
+                    }
+
+                    addDiagnostic(typeParameter.CreateDiagnostic(TypeParameterRule, typeParameter.Name));
                 }
             }
         }

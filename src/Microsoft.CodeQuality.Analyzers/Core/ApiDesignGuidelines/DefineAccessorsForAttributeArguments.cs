@@ -9,7 +9,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1019: Define accessors for attribute arguments
@@ -35,8 +35,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                     DiagnosticCategory.Design,
                                                                                     DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                     isEnabledByDefault: false,
-                                                                                    helpLinkUri: "http://msdn.microsoft.com/library/ms182136.aspx",
-                                                                                    customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                    helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
+                                                                                    customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor IncreaseVisibilityRule = new DiagnosticDescriptor(RuleId,
                                                                                                s_localizableTitle,
@@ -44,8 +44,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                                DiagnosticCategory.Design,
                                                                                                DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                                isEnabledByDefault: false,
-                                                                                               helpLinkUri: "http://msdn.microsoft.com/library/ms182136.aspx",
-                                                                                               customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                               helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
+                                                                                               customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static DiagnosticDescriptor RemoveSetterRule = new DiagnosticDescriptor(RuleId,
                                                                                          s_localizableTitle,
@@ -53,8 +53,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                          DiagnosticCategory.Design,
                                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                          isEnabledByDefault: false,
-                                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182136.aspx",
-                                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
+                                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, IncreaseVisibilityRule, RemoveSetterRule);
 

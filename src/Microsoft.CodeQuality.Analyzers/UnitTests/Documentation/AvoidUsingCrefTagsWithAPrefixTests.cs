@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
+using Microsoft.CodeQuality.CSharp.Analyzers.Documentation;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.Documentation;
 using Test.Utilities;
-using XmlDocumentationComments.CSharp.Analyzers;
-using XmlDocumentationComments.VisualBasic.Analyzers;
 using Xunit;
 
-namespace XmlDocumentationComments.Analyzers.UnitTests
+namespace Microsoft.CodeQuality.Analyzers.Documentation.UnitTests
 {
     public class AvoidUsingCrefTagsWithAPrefixTests : DiagnosticAnalyzerTestBase
     {

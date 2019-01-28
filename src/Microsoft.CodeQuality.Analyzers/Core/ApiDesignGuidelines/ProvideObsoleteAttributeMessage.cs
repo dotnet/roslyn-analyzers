@@ -7,7 +7,7 @@ using Analyzer.Utilities;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1041: Provide ObsoleteAttribute message
@@ -27,10 +27,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182166.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1041-provide-obsoleteattribute-message",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -56,8 +56,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             });
         }
 
-        private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol obsoleteAttributeType)
+        private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol obsoleteAttributeType)
         {
+            // FxCop compat: only analyze externally visible symbols by default
+            if (!context.Symbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken))
+            {
+                return;
+            }
+
             ImmutableArray<AttributeData> attributes = context.Symbol.GetAttributes();
             foreach (AttributeData attribute in attributes)
             {

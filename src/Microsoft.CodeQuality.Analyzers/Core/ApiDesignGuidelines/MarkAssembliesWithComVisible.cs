@@ -6,7 +6,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class MarkAssembliesWithComVisibleAnalyzer : DiagnosticAnalyzer
@@ -25,8 +25,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                        isEnabledByDefault: false,
                                                                                        description: s_localizableDescription,
-                                                                                       helpLinkUri: "http://msdn.microsoft.com/library/ms182157.aspx",
-                                                                                       customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1017-mark-assemblies-with-comvisibleattribute",
+                                                                                       customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         internal static readonly DiagnosticDescriptor RuleB = new DiagnosticDescriptor(RuleId,
                                                                                        s_localizableTitle,
@@ -35,8 +35,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                                        DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                        isEnabledByDefault: false,
                                                                                        description: s_localizableDescription,
-                                                                                       helpLinkUri: "http://msdn.microsoft.com/library/ms182157.aspx",
-                                                                                       customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1017-mark-assemblies-with-comvisibleattribute",
+                                                                                       customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleA, RuleB);
 

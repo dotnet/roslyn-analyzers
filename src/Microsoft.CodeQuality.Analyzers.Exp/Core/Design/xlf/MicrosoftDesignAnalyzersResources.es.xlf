@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../MicrosoftDesignAnalyzersResources.resx">
+    <body>
+      <trans-unit id="ValidateArgumentsOfPublicMethodsDescription">
+        <source>An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument. If the method is designed to be called only by known assemblies, you should make the method internal.</source>
+        <target state="translated">Un método visible externamente quita la referencia a uno de sus argumentos de referencia sin verificar si ese argumento es nulo (Nothing en Visual Basic). Se deben comprobar todos los argumentos de referencia que se transfieren a métodos visibles externamente para verificar que no son nulos. Si corresponde, lance ArgumentNullException cuando el argumento sea nulo o agregue una condición previa de Contrato de código que declare un argumento no nulo. Si el método está diseñado para que lo llamen solo ensamblajes conocidos, debe hacer que el método sea interno.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ValidateArgumentsOfPublicMethodsMessage">
+        <source>In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.</source>
+        <target state="translated">En el método visible externamente "{0}", compruebe que el parámetro "\ {1 \}" no es nulo antes de usarlo. Si corresponde, lance ArgumentNullException cuando el argumento sea nulo o agregue una condición previa de Contrato de código que declare un argumento no nulo.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ValidateArgumentsOfPublicMethodsTitle">
+        <source>Validate arguments of public methods</source>
+        <target state="translated">Validar argumentos de métodos públicos</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

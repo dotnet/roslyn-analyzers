@@ -6,6 +6,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
+/*
+Unit tests disabled with https://github.com/dotnet/roslyn-analyzers/issues/1307
+
 namespace MetaCompilation.Analyzers.UnitTests
 {
     public class UnitTest : CodeFixVerifier
@@ -18480,7 +18483,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
 
         // If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(
-            id: /* The ID here should be the public constant declared above */,
+            id:  ,// The ID here should be the public constant declared above
             title: ""Enter a title for this diagnostic"",
             messageFormat: ""Enter a message to be displayed with this diagnostic"",
             category: ""Enter a category for this diagnostic (e.g. Formatting)"",
@@ -19663,7 +19666,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisReturnType,
                 Message = s_incorrectAnalysisReturnTypeMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 36, 46) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -22935,3 +22938,4 @@ namespace SyntaxNodeAnalyzerAnalyzer
         }
     }
 }
+*/

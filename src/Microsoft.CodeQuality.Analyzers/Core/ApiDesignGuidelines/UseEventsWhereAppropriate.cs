@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics;
 using Analyzer.Utilities.Extensions;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1030: Use events where appropriate
@@ -34,10 +34,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: true,
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
-                                                                             helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182177.aspx",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1030-use-events-where-appropriate",
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -55,12 +55,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                // Bail out for implicitly declared methods, overridden methods, interface implementations, constructors and finalizers (FxCop compat).
+                // FxCop compat: bail out for implicitly declared methods, overridden methods, interface implementations,
+                // constructors and finalizers and non-externally visible methods by default.
                 if (method.IsImplicitlyDeclared ||
                     method.IsOverride ||
                     method.IsImplementationOfAnyInterfaceMember() ||
                     method.IsConstructor() ||
-                    method.IsFinalizer())
+                    method.IsFinalizer() ||
+                    !method.MatchesConfiguredVisibility(symbolContext.Options, Rule, symbolContext.CancellationToken))
                 {
                     return;
                 }

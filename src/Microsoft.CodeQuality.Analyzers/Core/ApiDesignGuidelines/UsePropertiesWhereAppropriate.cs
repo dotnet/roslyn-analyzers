@@ -7,7 +7,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1024: Use properties where appropriate
@@ -30,8 +30,8 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: false,
                                                                          description: s_localizableDescription,
-                                                                         helpLinkUri: "http://msdn.microsoft.com/library/ms182181.aspx",
-                                                                         customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1024-use-properties-where-appropriate",
+                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         private const string GetHashCodeName = "GetHashCode";
         private const string GetEnumeratorName = "GetEnumerator";
 
@@ -42,7 +42,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterOperationBlockStartActionInternal(context =>
+            analysisContext.RegisterOperationBlockStartAction(context =>
             {
                 var methodSymbol = context.OwningSymbol as IMethodSymbol;
 
@@ -50,7 +50,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     methodSymbol.ReturnsVoid ||
                     methodSymbol.ReturnType.Kind == SymbolKind.ArrayType ||
                     methodSymbol.Parameters.Length > 0 ||
-                    !(methodSymbol.DeclaredAccessibility == Accessibility.Public || methodSymbol.DeclaredAccessibility == Accessibility.Protected) ||
+                    !methodSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) ||
                     methodSymbol.IsAccessorMethod() ||
                     !IsPropertyLikeName(methodSymbol.Name))
                 {
@@ -71,10 +71,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 bool hasInvocations = false;
-                context.RegisterOperationActionInternal(operationContext =>
+                context.RegisterOperationAction(operationContext =>
                 {
                     hasInvocations = true;
-                }, OperationKind.InvocationExpression);
+                }, OperationKind.Invocation);
 
                 context.RegisterOperationBlockEndAction(endContext =>
                 {

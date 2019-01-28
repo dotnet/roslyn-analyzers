@@ -6,9 +6,9 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.CodeAnalysis.Semantics;
+using Microsoft.CodeAnalysis.Operations;
 
-namespace Microsoft.ApiDesignGuidelines.Analyzers
+namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1033: Interface methods should be callable by child types
@@ -38,10 +38,10 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                                                                           DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                           isEnabledByDefault: false,
                                                                           description: s_localizableDescription,
-                                                                          helpLinkUri: "https://msdn.microsoft.com/library/ms182153.aspx",
-                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1033-interface-methods-should-be-callable-by-child-types",
+                                                                          customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public sealed override void Initialize(AnalysisContext analysisContext)
         {
@@ -56,7 +56,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                     return;
                 }
 
-                compilationContext.RegisterOperationBlockActionInternal(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
+                compilationContext.RegisterOperationBlockAction(operationBlockContext => AnalyzeOperationBlock(operationBlockContext, iDisposableTypeSymbol));
             });
         }
 
@@ -64,18 +64,31 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
         {
             if (operationBlocks != null && operationBlocks.Length == 1)
             {
-                IBlockStatement block = operationBlocks[0] as IBlockStatement;
+                IBlockOperation block = operationBlocks[0] as IBlockOperation;
 
-                // An operation block that's not even a block - don't analyze the error cases.
+                // Analyze IBlockOperation blocks.
                 if (block == null)
                 {
                     return true;
                 }
 
-                if (block.Statements.Length == 0 ||
-                    (block.Statements.Length == 1 && block.Statements[0].Kind == OperationKind.ThrowStatement))
+                var operations = block.Operations.GetOperations();
+
+                if (operations.Length == 0 ||
+                    (operations.Length == 1 &&
+                     operations[0].Kind == OperationKind.Throw))
                 {
                     // Empty body OR body that just throws.
+                    return true;
+                }
+
+                // Expression-bodied can be an implicit return and conversion on top of the throw operation
+                if (operations.Length == 1 &&
+                    operations[0] is IReturnOperation returnOp &&
+                    returnOp.IsImplicit &&
+                    returnOp.ReturnedValue is IConversionOperation conversionOp &&
+                    conversionOp.IsImplicit && conversionOp.Operand.Kind == OperationKind.Throw)
+                {
                     return true;
                 }
             }
@@ -96,7 +109,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             if (method.ExplicitInterfaceImplementations.Length == 0 ||
                 method.GetResultantVisibility() != SymbolVisibility.Private ||
                 method.ContainingType.IsSealed ||
-                method.ContainingType.GetResultantVisibility() != SymbolVisibility.Public)
+                !method.ContainingType.IsExternallyVisible())
             {
                 return;
             }
@@ -117,7 +130,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 }
 
                 hasPublicInterfaceImplementation = hasPublicInterfaceImplementation ||
-                    interfaceMethod.ContainingType.GetResultantVisibility() == SymbolVisibility.Public;
+                    interfaceMethod.ContainingType.IsExternallyVisible();
             }
 
             // Even if none of the interface methods have alternates, there's only an issue if at least one of the interfaces is public.
@@ -133,7 +146,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
             {
                 foreach (IMethodSymbol method in type.GetMembers(interfaceMethod.Name).OfType<IMethodSymbol>())
                 {
-                    if (method.GetResultantVisibility() == SymbolVisibility.Public)
+                    if (method.IsExternallyVisible())
                     {
                         return true;
                     }
@@ -145,7 +158,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers
                 interfaceMethod.ContainingType.Equals(iDisposableTypeSymbol) &&
                 namedType.GetBaseTypesAndThis().Any(t =>
                     t.GetMembers("Close").OfType<IMethodSymbol>().Any(m =>
-                        m.GetResultantVisibility() == SymbolVisibility.Public));
+                        m.IsExternallyVisible()));
         }
 
         private static void ReportDiagnostic(OperationBlockAnalysisContext context, params object[] messageArgs)

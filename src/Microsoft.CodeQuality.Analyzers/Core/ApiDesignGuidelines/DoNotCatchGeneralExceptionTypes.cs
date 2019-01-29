@@ -30,7 +30,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182137.aspx",
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
-        public DoNotCatchGeneralExceptionTypesAnalyzer() : base(true)
+
+        public DoNotCatchGeneralExceptionTypesAnalyzer() : base(shouldCheckLambdas: true)
         {
         }
 

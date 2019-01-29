@@ -32,7 +32,8 @@ namespace Microsoft.NetFramework.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public DoNotCatchCorruptedStateExceptionsAnalyzer() : base(false, MethodAttributeTypeName)
+        // for now there doesn't seem to be any way to annotate lambdas with attributes, so there is no way for them to catch corrupted state exceptions
+        public DoNotCatchCorruptedStateExceptionsAnalyzer() : base(shouldCheckLambdas: false, enablingMethodAttributeFullyQualifiedName: MethodAttributeTypeName)
         {
         }
 

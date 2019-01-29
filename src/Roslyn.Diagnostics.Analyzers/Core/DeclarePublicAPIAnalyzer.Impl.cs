@@ -361,31 +361,37 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 string publicApiName = symbol.ToDisplayString(s_publicApiFormat);
                 ITypeSymbol memberType = null;
-                if (symbol is IPropertySymbol property)
+                if (symbol is IMethodSymbol method)
                 {
+                    memberType = method.ReturnType;
+                    var theActualPropertySymbol = method.AssociatedSymbol;
+                    // Is the method a Setter Or Getter method?
+                    if (theActualPropertySymbol != null && theActualPropertySymbol is IPropertySymbol property)
+                    {
+                        // If so the use the property symbol instead, by doing so this make it
+                        // irrevalent if it an implemented property or auto-implemented property.
+                        // The entry in the PublicAPI file is the same.
+                        // Additionally it would also alert us to changes of readonly / writeonly.
+                        // eg;
+                        // Public Property [Property]() As Integer
+                        // to
+                        // Public ReadOnly Property [Property]() As Integer
+                        //
+                        // Note: Any property that is in the file prior to this change will report issue with the getter and setters.
+                        //
+                        memberType = property.Type;
+                        publicApiName = property.ToDisplayString(s_publicApiFormat);
+                    }
+                }
+                else if( symbol is IPropertySymbol property)
+                {
+                    // This is access via an auto-implemenby property.
+                    // Since they don't have user implement getter / setter methods, the IMethodSymbol condition previous to this isn't true.
+                    //
                     memberType = property.Type;
-
-                    //
-                    // Use the name of compiler generateed auto implemented getter, rather than the property.
-                    // As to preserve compatibility with existing PublicAPI.txt, otherwise by using the property
-                    // symbol would produce diagnostics against semantically equivalent code, due to how the
-                    // symbol is represented via the .ToDisplayString() method.
-                    // eg;
-                    //  Microsoft.CodeAnalysis.VisualBasic.VisualBasicParseOptions.SpecifiedLanguageVersion() -> Microsoft.CodeAnalysis.VisualBasic.Language.LanguageVersion
-                    //  ReadOnly Microsoft.CodeAnalysis.VisualBasic.VisualBasicParseOptions.SpecifiedLanguageVersion->Microsoft.CodeAnalysis.VisualBasic.Language.LanguageVersion
-                    // Additionally it would also alert us to changes of readonly / writeonly.
-                    // eg;
-                    // Public Property [Property]() As Integer
-                    // to
-                    // Public ReadOnly Property [Property]() As Integer
-                    //
-                    publicApiName = property.GetMethod.ToDisplayString(s_publicApiFormat);
+                    publicApiName = property.ToDisplayString(s_publicApiFormat);
                 }
-                else if (symbol is IMethodSymbol)
-                {
-                    memberType = ((IMethodSymbol)symbol).ReturnType;
-                }
-                else  if (symbol is IEventSymbol)
+                else if (symbol is IEventSymbol)
                 {
                     memberType = ((IEventSymbol)symbol).Type;
                 }
@@ -526,23 +532,30 @@ namespace Roslyn.Diagnostics.Analyzers
                 {
                     return false;
                 }
-
-                // We don't consider properties to be public APIs. Instead, property getters and setters
-                // (which are IMethodSymbols) are considered as public APIs.
-                // Unless property is an auto-property, which have implicitly declated getters / setters.
+                // Handle Auto Implemented Property
                 if (symbol is IPropertySymbol propertySymbol)
                 {
-                    if (symbol.Language != LanguageNames.VisualBasic) return false;
+                    if (symbol.Language != LanguageNames.VisualBasic)
+                    {
+                        return false;
+                    }
                     // Write-Only auto-properties are not allowed. (as of VB 15.0)
-                    if (propertySymbol.IsWriteOnly) return false;
-                    if (!propertySymbol.GetMethod.IsImplicitlyDeclared)
-                    { 
-                        if (propertySymbol.IsReadOnly) return false;
-                        if (!propertySymbol.SetMethod.IsImplicitlyDeclared) return false;
+                    if (propertySymbol.IsWriteOnly)
+                    {
+                        if (propertySymbol.SetMethod == null)
+                        {
+                            return false;
+                        }
+                        if (propertySymbol.SetMethod.IsImplicitlyDeclared)
+                        {
+                            return false;
+                        }
+                    }
+                    else if ( propertySymbol.GetMethod == null || !propertySymbol.GetMethod.IsImplicitlyDeclared)
+                    {
+                        return false;
                     }
                 }
-
-
                 return IsPublicApiCore(symbol);
             }
 

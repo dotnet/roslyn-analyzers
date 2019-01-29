@@ -151,6 +151,7 @@ Imports System
 Public Class C
     Public Field As Integer
     
+    Private m_Property As Integer
     Public Property [Property]() As Integer
         Get
             Return m_Property
@@ -159,13 +160,23 @@ Public Class C
             m_Property = Value
         End Set
     End Property
-    Private m_Property As Integer
+    Public ReadOnly Property ReadOnlyProperty0() As Integer
+        Get
+            Return m_Property
+        End Get
+    End Property
+    Public WriteOnly Property WriteOnlyProperty0() As Integer
+        Set
+           m_Property = Value
+        End Set
+    End Property
+
 
     Public Sub Method()
     End Sub
 
-    Public ReadOnly Property ReadOnlyProperty As Integer = 0
-    Public ReadOnly Property ReadOnlyProperty1 As Integer
+    Public ReadOnly Property ReadOnlyProperty1 As Integer = 0
+    Public ReadOnly Property ReadOnlyProperty2 As Integer
     Public Property Property1 As Integer
 ' Write-Only properties as not allowed (as upto VB15.0)
 '   Public WriteOnly Property WriteOnlyProperty As Integer
@@ -177,23 +188,63 @@ End Class
             var unshippedText = @"";
 
             VerifyBasic(source, shippedText, unshippedText,
-                // Test0.vb(4,14): warning RS0016: Symbol 'C' is not part of the declared API.
-                GetBasicResultAt(4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "C"),
-                GetBasicResultAt(4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "implicit constructor for C"),
-                // Test0.vb(5,12): warning RS0016: Symbol 'Field' is not part of the declared API.
-                GetBasicResultAt(5, 12, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Field"),
-                // Test0.vb(8,9): warning RS0016: Symbol 'Property' is not part of the declared API.
-                GetBasicResultAt(8, 9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property"),
-                // Test0.vb(11,9): warning RS0016: Symbol 'Property' is not part of the declared API.
-                GetBasicResultAt(11, 9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property"),
-                // Test0.vb(17,16): warning RS0016: Symbol 'Method' is not part of the declared API.
-                GetBasicResultAt(17, 16, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Method"),
-                // Test0.vb(21,30): warning RS0016: Symbol 'ReadOnlyProperty' is not part of the declared API.
-                GetBasicResultAt(20, 30, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty"),
-                // Test0.vb(21,30): warning RS0016: Symbol 'ReadOnlyProperty1' is not part of the declared API.
-                GetBasicResultAt(21, 30, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty1"),
-                // Test0.vb(21,21): warning RS0016: Symbol 'ReadOnlyProperty1' is not part of the declared API.
-                GetBasicResultAt(22, 21, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property1"));
+                GetBasicResultAt( 4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "C"),
+                GetBasicResultAt( 4, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "implicit constructor for C"),
+                GetBasicResultAt( 5, 12, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Field"),
+                GetBasicResultAt( 9,  9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property"),
+                GetBasicResultAt(12,  9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property"),
+                GetBasicResultAt(17,  9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty0"),
+                GetBasicResultAt(21, 31, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "WriteOnlyProperty0"),
+                GetBasicResultAt(22,  9, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "WriteOnlyProperty0"),
+                GetBasicResultAt(28, 16, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Method"),
+                GetBasicResultAt(31, 30, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty1"),
+                GetBasicResultAt(32, 30, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "ReadOnlyProperty2"),
+                GetBasicResultAt(33, 21, DeclarePublicAPIAnalyzer.DeclareNewApiRule, "Property1"));
+        }
+
+        [Fact(), WorkItem(821, "https://github.com/dotnet/roslyn-analyzers/issues/821")]
+        public void SimpleMissingMember_Basic1()
+        {
+            var source = @"
+Imports System
+Public Class C
+    Private m_Property As Integer
+    Public Property [Property]() As Integer
+    '   Get
+    '      Return m_Property
+    '   End Get
+    '   Set
+    '       m_Property = Value
+    '  End Set
+    ' End Property
+    Public ReadOnly Property ReadOnlyProperty0() As Integer
+        Get
+            Return m_Property
+        End Get
+    End Property
+    Public WriteOnly Property WriteOnlyProperty0() As Integer
+        Set
+           m_Property = Value
+        End Set
+    End Property
+    Public ReadOnly Property ReadOnlyProperty1 As Integer = 0
+    Public ReadOnly Property ReadOnlyProperty2 As Integer
+    Public Property Property1 As Integer
+End Class
+";
+
+            var shippedText = @"
+C
+C.New() -> Void
+C.Property -> Integer
+WriteOnly C.WriteOnlyProperty0 -> Integer
+ReadOnly C.ReadOnlyProperty0 -> Integer
+ReadOnly C.ReadOnlyProperty1 -> Integer
+ReadOnly C.ReadOnlyProperty2 -> Integer
+C.Property1 -> Integer
+";
+            var unshippedText = @"";
+            VerifyBasic(source, shippedText, unshippedText);
         }
 
         [Fact, WorkItem(806, "https://github.com/dotnet/roslyn-analyzers/issues/806")]

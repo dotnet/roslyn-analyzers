@@ -491,7 +491,8 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                         }
                     }
                 }
-            }");
+            }",
+            GetCA2153CSharpResultAt(17, 25, "TestNamespace.TestClass.TestMethod()", "System.SystemException"));
 
             VerifyBasic(@"
             Imports System.IO
@@ -504,6 +505,51 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                         Try
                             Dim fileStream As New FileStream(""name"", FileMode.Create)
                         Catch When True
+                        End Try
+                    End Sub
+                End Class
+            End Namespace
+            ",
+            GetCA2153BasicResultAt(11, 25, "Public Shared Sub TestMethod()", "System.SystemException"));
+        }
+
+        [Fact]
+        public void CA2153TestCatchVariableWithFilterInMethodWithHpcseAttribute()
+        {
+            VerifyCSharp(@"
+            using System;
+            using System.IO;
+            using System.Runtime.ExceptionServices;
+
+            namespace TestNamespace
+            {
+                class TestClass
+                {
+                    [HandleProcessCorruptedStateExceptions] 
+                    public static void TestMethod()
+                    {
+                        try 
+                        {
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
+                        }
+                        catch (Exception e) when (true)
+                        {
+                        }
+                    }
+                }
+            }");
+
+            VerifyBasic(@"
+            Imports System.IO
+            Imports System.Runtime.ExceptionServices
+
+            Namespace TestNamespace
+                Class TestClass
+                    <HandleProcessCorruptedStateExceptions> _
+                    Public Shared Sub TestMethod()
+                        Try
+                            Dim fileStream As New FileStream(""name"", FileMode.Create)
+                        Catch e As System.Exception When True
                         End Try
                     End Sub
                 End Class

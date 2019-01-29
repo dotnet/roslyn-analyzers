@@ -375,6 +375,118 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
+        public void CSharp_Diagnostic_GeneralCatchWithFilter()
+        {
+            VerifyCSharp(@"
+            using System;
+            using System.IO;
+            namespace TestNamespace
+            {
+                class TestClass
+                {
+                    public static void TestMethod()
+                    {
+                        try 
+                        {
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
+                        }
+                        catch when (true)
+                        {
+                        }
+                    }
+                }
+            }",
+            GetCA1031CSharpResultAt(14, 25, "TestNamespace.TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void Basic_Diagnostic_GeneralCatchWithFilter()
+        {
+            VerifyBasic(@"
+            Imports System.IO
+            Namespace TestNamespace
+                Class TestClass
+                    Public Shared Sub TestMethod()
+                        Try
+                            Dim fileStream As New FileStream(""name"", FileMode.Create)
+                        Catch When True
+                        End Try
+                    End Sub
+                End Class
+            End Namespace
+            ",
+            GetCA1031BasicResultAt(8, 25, "Public Shared Sub TestMethod()"));
+        }
+
+        [Fact]
+        public void CSharp_Diagnostic_GenericExceptionWithoutVariableWithFilter()
+        {
+            VerifyCSharp(@"
+            using System;
+            using System.IO;
+            namespace TestNamespace
+            {
+                class TestClass
+                {
+                    public static void TestMethod()
+                    {
+                        try 
+                        {
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
+                        }
+                        catch (Exception) when (true)
+                        {
+                        }
+                    }
+                }
+            }",
+            GetCA1031CSharpResultAt(14, 25, "TestNamespace.TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void CSharp_NoDiagnostic_GenericExceptionWithVariableWithFilter()
+        {
+            VerifyCSharp(@"
+            using System;
+            using System.IO;
+            namespace TestNamespace
+            {
+                class TestClass
+                {
+                    public static void TestMethod()
+                    {
+                        try 
+                        {
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
+                        }
+                        catch (Exception e) when (true)
+                        {
+                        }
+                    }
+                }
+            }");
+        }
+
+        [Fact]
+        public void Basic_NoDiagnostic_GenericExceptionWithVariableWithFilter()
+        {
+            VerifyBasic(@"
+            Imports System
+            Imports System.IO
+            Namespace TestNamespace
+                Class TestClass
+                    Public Shared Sub TestMethod()
+                        Try
+                            Dim fileStream As New FileStream(""name"", FileMode.Create)
+                        Catch e As Exception When True
+                        End Try
+                    End Sub
+                End Class
+            End Namespace
+            ");
+        }
+
+        [Fact]
         public void CSharp_Diagnostic_GeneralCatchInLambdaExpression()
         {
             VerifyCSharp(@"

@@ -4,32 +4,47 @@
     <body>
       <trans-unit id="ApprovedCipherMode">
         <source>Do Not Use Unsafe Cipher Modes</source>
-        <target state="new">Do Not Use Unsafe Cipher Modes</target>
+        <target state="translated">不要使用不安全的 Cipher 模式</target>
         <note />
       </trans-unit>
       <trans-unit id="ApprovedCipherModeDescription">
         <source>These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).</source>
-        <target state="new">These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).</target>
+        <target state="translated">這些模式容易受到攻擊。請只使用經過核准的模式 (CBC，CTS)。</target>
         <note />
       </trans-unit>
       <trans-unit id="ApprovedCipherModeMessage">
         <source>It uses an unsafe Cipher Mode {0}</source>
-        <target state="new">It uses an unsafe Cipher Mode {0}</target>
+        <target state="translated">它會使用不安全的 Cipher 模式 {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidation">
+        <source>Do Not Disable Certification Validation</source>
+        <target state="new">Do Not Disable Certification Validation</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidationDescription">
+        <source>A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</source>
+        <target state="new">A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidationMessage">
+        <source>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</source>
+        <target state="new">The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
         <source>Do Not Use Broken Cryptographic Algorithms</source>
-        <target state="new">Do Not Use Broken Cryptographic Algorithms</target>
+        <target state="translated">請勿使用損壞的密碼編譯演算法</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsDescription">
         <source>An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.</source>
-        <target state="new">An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.</target>
+        <target state="translated">目前出現可用運算方式中斷此演算法的攻擊。如此會讓攻擊者能破壞原設計保證提供的密碼編譯。視此密碼編譯演算法的類型及應用方式之不同，會讓攻擊者能讀取加密的訊息、竄改加密的訊息、偽造數位簽章、竄改雜湊內容，或危害任何以此演算法為基礎的密碼系統。以長度大於或等於 128 位元的金鑰，取代搭配 AES (可接受 AES-256、AES-192 和 AES-128) 演算法的加密。以 SHA512、SHA384 或 SHA256 等 SHA-2 系列中的雜湊函數，取代雜湊用法。以長度大於或等於 2048 位元的金鑰，或金鑰長度大於或等於 256 位元的 ECDSA，取代搭配 RSA 的數位簽章。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsMessage">
         <source>{0} uses a broken cryptographic algorithm {1}</source>
-        <target state="new">{0} uses a broken cryptographic algorithm {1}</target>
+        <target state="translated">{0} 使用損壞的密碼編譯演算法 {1}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5">
@@ -54,17 +69,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithms">
         <source>Do Not Use Weak Cryptographic Algorithms</source>
-        <target state="new">Do Not Use Weak Cryptographic Algorithms</target>
+        <target state="translated">請勿使用弱式密碼編譯演算法</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsDescription">
         <source>Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</source>
-        <target state="new">Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</target>
+        <target state="translated">因為攻擊者取得更多的運算存取，讓攻擊升級，以致密碼編譯演算法隨著時間減弱。視此密碼編譯演算法的類型及應用方式之不同，密碼編譯強度日益減弱，會讓攻擊者能讀取加密的訊息、竄改加密的訊息、偽造數位簽章、竄改雜湊內容，或危害任何以此演算法為基礎的密碼系統。以長度大於或等於 128 位元的金鑰，取代搭配 AES (可接受 AES-256、AES-192 和 AES-128) 演算法的加密。以 SHA-2 512、SHA-2 384 或 SHA-2 256 等 SHA-2 系列中的雜湊函數，取代雜湊用途。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsMessage">
         <source>{0} uses a weak cryptographic algorithm {1}</source>
-        <target state="new">{0} uses a weak cryptographic algorithm {1}</target>
+        <target state="translated">{0} 使用弱式密碼編譯演算法 {1}</target>
         <note />
       </trans-unit>
     </body>

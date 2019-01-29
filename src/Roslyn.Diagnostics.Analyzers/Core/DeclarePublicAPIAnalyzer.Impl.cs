@@ -364,26 +364,29 @@ namespace Roslyn.Diagnostics.Analyzers
                 if (symbol is IMethodSymbol method)
                 {
                     memberType = method.ReturnType;
-                    var theActualPropertySymbol = method.AssociatedSymbol;
-                    // Is the method a Setter Or Getter method?
-                    if (theActualPropertySymbol != null && theActualPropertySymbol is IPropertySymbol property)
+                    if (symbol.Language == LanguageNames.VisualBasic)
                     {
-                        // If so the use the property symbol instead, by doing so this make it
-                        // irrevalent if it an implemented property or auto-implemented property.
-                        // The entry in the PublicAPI file is the same.
-                        // Additionally it would also alert us to changes of readonly / writeonly.
-                        // eg;
-                        // Public Property [Property]() As Integer
-                        // to
-                        // Public ReadOnly Property [Property]() As Integer
-                        //
-                        // Note: Any property that is in the file prior to this change will report issue with the getter and setters.
-                        //
-                        memberType = property.Type;
-                        publicApiName = property.ToDisplayString(s_publicApiFormat);
+                       var theActualPropertySymbol = method.AssociatedSymbol;
+                       // Is the method a VB Setter Or Getter method?
+                        if (theActualPropertySymbol != null && theActualPropertySymbol is IPropertySymbol property)
+                        {
+                            // If so the use the property symbol instead, by doing so this make it
+                            // irrevalent if it an implemented property or auto-implemented property.
+                            // The entry in the PublicAPI file is the same.
+                            // Additionally it would also alert us to changes of readonly / writeonly.
+                            // eg;
+                            // Public Property [Property]() As Integer
+                            // to
+                            // Public ReadOnly Property [Property]() As Integer
+                            //
+                            // Note: Any property that is in the file prior to this change will report issue with the getter and setters.
+                            //
+                            memberType = property.Type;
+                            publicApiName = property.ToDisplayString(s_publicApiFormat);
+                        }
                     }
                 }
-                else if( symbol is IPropertySymbol property)
+                else if (symbol.Language == LanguageNames.VisualBasic && symbol is IPropertySymbol property)
                 {
                     // This is access via an auto-implemenby property.
                     // Since they don't have user implement getter / setter methods, the IMethodSymbol condition previous to this isn't true.
@@ -542,11 +545,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     // Write-Only auto-properties are not allowed. (as of VB 15.0)
                     if (propertySymbol.IsWriteOnly)
                     {
-                        if (propertySymbol.SetMethod == null)
-                        {
-                            return false;
-                        }
-                        if (propertySymbol.SetMethod.IsImplicitlyDeclared)
+                        if (propertySymbol.SetMethod == null || propertySymbol.SetMethod.IsImplicitlyDeclared)
                         {
                             return false;
                         }

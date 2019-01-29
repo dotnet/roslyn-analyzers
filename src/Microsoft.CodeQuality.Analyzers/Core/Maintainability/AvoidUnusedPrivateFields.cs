@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -44,8 +44,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             analysisContext.RegisterCompilationStartAction(
                 (compilationContext) =>
                 {
-                    HashSet<IFieldSymbol> unreferencedPrivateFields = new HashSet<IFieldSymbol>();
-                    HashSet<IFieldSymbol> referencedPrivateFields = new HashSet<IFieldSymbol>();
+                    ConcurrentDictionary<IFieldSymbol, UnusedValue> unreferencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
+                    ConcurrentDictionary<IFieldSymbol, UnusedValue> referencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
 
                     ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
                     var structLayoutAttribute = WellKnownTypes.StructLayoutAttribute(compilationContext.Compilation);
@@ -80,7 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                 }
                             }
 
-                            if (field.DeclaredAccessibility == Accessibility.Private && !SynchronizedContains(referencedPrivateFields, field))
+                            if (field.DeclaredAccessibility == Accessibility.Private && !referencedPrivateFields.ContainsKey(field))
                             {
                                 // Fields with certain special attributes should never be considered unused.
                                 if (!specialAttributes.IsEmpty)
@@ -94,10 +94,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                     }
                                 }
 
-                                lock (unreferencedPrivateFields)
-                                {
-                                    unreferencedPrivateFields.Add(field);
-                                }
+                                unreferencedPrivateFields.TryAdd(field, default);
                             }
                         },
                         SymbolKind.Field);
@@ -108,15 +105,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             IFieldSymbol field = ((IFieldReferenceOperation)operationContext.Operation).Field;
                             if (field.DeclaredAccessibility == Accessibility.Private)
                             {
-                                lock (referencedPrivateFields)
-                                {
-                                    referencedPrivateFields.Add(field);
-                                }
-
-                                lock (unreferencedPrivateFields)
-                                {
-                                    unreferencedPrivateFields.Remove(field);
-                                }
+                                referencedPrivateFields.TryAdd(field, default);
+                                unreferencedPrivateFields.TryRemove(field, out _);
                             }
                         },
                         OperationKind.FieldReference);
@@ -124,20 +114,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     compilationContext.RegisterCompilationEndAction(
                         (compilationEndContext) =>
                         {
-                            foreach (IFieldSymbol unreferencedPrivateField in unreferencedPrivateFields)
+                            foreach (IFieldSymbol unreferencedPrivateField in unreferencedPrivateFields.Keys)
                             {
                                 compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, unreferencedPrivateField.Locations[0], unreferencedPrivateField.Name));
                             }
                         });
                 });
-        }
-
-        private static bool SynchronizedContains<T>(HashSet<T> set, T item)
-        {
-            lock (set)
-            {
-                return set.Contains(item);
-            }
         }
 
         private static ImmutableHashSet<INamedTypeSymbol> GetSpecialAttributes(Compilation compilation)

@@ -60,7 +60,9 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         StateUnknown = 2
                     };
                 }",
-                GetCSharpResultAt(4, 26, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+                GetCSharpResultAt(6, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
+                GetCSharpResultAt(7, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
+                GetCSharpResultAt(8, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
         }
 
         [Fact]
@@ -75,7 +77,9 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                     End Enum
                 End Class
                 ",
-                GetBasicResultAt(3, 34, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+                GetBasicResultAt(4, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
+                GetBasicResultAt(5, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
+                GetBasicResultAt(6, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
         }
 
         [Fact]
@@ -108,7 +112,9 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         Invalid = 3
                     };
                 }",
-                GetCSharpResultAt(4, 26, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+                GetCSharpResultAt(6, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
+                GetCSharpResultAt(7, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"),
+                GetCSharpResultAt(8, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
         }
 
         [Fact]
@@ -122,7 +128,7 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                         stateOk = 0
                     };
                 }",
-                GetCSharpResultAt(4, 26, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+                GetCSharpResultAt(6, 25, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
         }
 
         [Fact]

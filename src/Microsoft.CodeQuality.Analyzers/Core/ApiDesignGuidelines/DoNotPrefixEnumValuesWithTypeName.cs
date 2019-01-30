@@ -55,11 +55,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            int numPrefixed = enumValues.Count(m => m.Name.StartsWith(symbol.Name, StringComparison.OrdinalIgnoreCase));
-            int percentPrefixed = 100 * numPrefixed / enumValues.Count();
+            var prefixedValues = enumValues.Where(m => m.Name.StartsWith(symbol.Name, StringComparison.OrdinalIgnoreCase));
+            int percentPrefixed = 100 * prefixedValues.Count() / enumValues.Count();
             if (percentPrefixed >= PercentValuesPrefixedThreshold)
             {
-                context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
+                foreach (var value in prefixedValues)
+                {
+                    context.ReportDiagnostic(value.CreateDiagnostic(Rule, symbol.Name));
+                }
             }
         }
     }

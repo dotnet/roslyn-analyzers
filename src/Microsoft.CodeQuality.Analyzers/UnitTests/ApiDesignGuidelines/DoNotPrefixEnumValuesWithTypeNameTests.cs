@@ -48,37 +48,6 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
         }
 
         [Fact]
-        public void CSharp_Diagnostic_OneValuePrefixed()
-        {
-            VerifyCSharp(@"
-                class A
-                {
-                    enum State
-                    {
-                        Ok = 0,
-                        StateError = 1,
-                        Unknown = 2
-                    };
-                }",
-                GetCSharpResultAt(4, 26, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
-        }
-
-        [Fact]
-        public void Basic_Diagnostic_OneValuePrefixed()
-        {
-            VerifyBasic(@"
-                Class A
-                    Private Enum State
-                        Ok = 0
-                        StateErr = 1
-                        Unknown = 2
-                    End Enum
-                End Class
-                ",
-                GetBasicResultAt(3, 34, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
-        }
-
-        [Fact]
         public void CSharp_Diagnostic_EachValuePrefixed()
         {
             VerifyCSharp(@"
@@ -95,6 +64,54 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
         }
 
         [Fact]
+        public void Basic_Diagnostic_EachValuePrefixed()
+        {
+            VerifyBasic(@"
+                Class A
+                    Private Enum State
+                        StateOk = 0
+                        StateErr = 1
+                        StateUnknown = 2
+                    End Enum
+                End Class
+                ",
+                GetBasicResultAt(3, 34, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+        }
+
+        [Fact]
+        public void CSharp_NoDiagnostic_HalfOfValuesPrefixed()
+        {
+            VerifyCSharp(@"
+                class A
+                {
+                    enum State
+                    {
+                        Ok = 0,
+                        StateError = 1,
+                        StateUnknown = 2,
+                        Invalid = 3
+                    };
+                }");
+        }
+
+        [Fact]
+        public void CSharp_Diagnostic_ThreeOfFourValuesPrefixed()
+        {
+            VerifyCSharp(@"
+                class A
+                {
+                    enum State
+                    {
+                        StateOk = 0,
+                        StateError = 1,
+                        StateUnknown = 2,
+                        Invalid = 3
+                    };
+                }",
+                GetCSharpResultAt(4, 26, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+        }
+
+        [Fact]
         public void CSharp_Diagnostic_PrefixCaseDiffers()
         {
             VerifyCSharp(@"
@@ -102,12 +119,22 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.ApiDesignGuidelines
                 {
                     enum State
                     {
-                        stateOk = 0,
-                        Error = 1,
-                        Unknown = 2
+                        stateOk = 0
                     };
                 }",
                 GetCSharpResultAt(4, 26, DoNotPrefixEnumValuesWithTypeNameAnalyzer.Rule, "State"));
+        }
+
+        [Fact]
+        public void CSharp_NoDiagnostic_EmptyEnum()
+        {
+            VerifyCSharp(@"
+                class A
+                {
+                    enum State
+                    {
+                    };
+                }");
         }
     }
 }

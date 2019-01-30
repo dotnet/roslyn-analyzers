@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using static Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MicrosoftApiDesignGuidelinesAnalyzersResources;
+using System.Collections.Generic;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -18,6 +19,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     public sealed class DoNotPrefixEnumValuesWithTypeNameAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1712";
+        private const int PercentValuesPrefixedThreshold = 75; // The percent of an enum's values that must appear to be prefixed in order for a diagnostic to be reported on the enum. This value comes from the original FxCop rule's implementation.
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DoNotPrefixEnumValuesWithTypeNameTitle), ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(DoNotPrefixEnumValuesWithTypeNameMessage), ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
@@ -47,8 +49,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeNamedType(SymbolAnalysisContext context)
         {
             var symbol = (INamedTypeSymbol)context.Symbol;
-            if (symbol.TypeKind == TypeKind.Enum && 
-                symbol.GetMembers().Any(m => m.Kind == SymbolKind.Field && m.Name.StartsWith(symbol.Name, StringComparison.OrdinalIgnoreCase)))
+            IEnumerable<ISymbol> enumValues;
+            if (symbol.TypeKind != TypeKind.Enum || !(enumValues = symbol.GetMembers().Where(m => m.Kind == SymbolKind.Field)).Any())
+            {
+                return;
+            }
+
+            int numPrefixed = enumValues.Count(m => m.Name.StartsWith(symbol.Name, StringComparison.OrdinalIgnoreCase));
+            int percentPrefixed = 100 * numPrefixed / enumValues.Count();
+            if (percentPrefixed >= PercentValuesPrefixedThreshold)
             {
                 context.ReportDiagnostic(symbol.CreateDiagnostic(Rule, symbol.Name));
             }

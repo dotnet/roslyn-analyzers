@@ -46,7 +46,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(18, 25, "TestNamespace.TestClass.TestMethod()"));
+            GetCA1031CSharpResultAt(18, 25, "TestMethod"));
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(10, 25, "Public Shared Sub TestMethod()"));
+            GetCA1031BasicResultAt(10, 25, "TestMethod"));
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(20, 29, "TestNamespace.TestClass.TestProperty.get"));
+            GetCA1031CSharpResultAt(20, 29, "get_TestProperty"));
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(11, 29, "Public Property Get X() As Integer"));
+            GetCA1031BasicResultAt(11, 29, "get_X"));
         }
 
         [Fact]
@@ -204,7 +204,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(18, 25, "TestNamespace.TestClass.TestMethod()"));
+            GetCA1031CSharpResultAt(18, 25, "TestMethod"));
         }
 
         [Fact]
@@ -226,7 +226,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(10, 25, "Public Shared Sub TestMethod()"));
+            GetCA1031BasicResultAt(10, 25, "TestMethod"));
         }
 
         [Fact]
@@ -256,7 +256,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()"));
+            GetCA1031CSharpResultAt(19, 25, "TestMethod"));
         }
 
         [Fact]
@@ -278,7 +278,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(11, 25, "Public Shared Sub TestMethod()"));
+            GetCA1031BasicResultAt(11, 25, "TestMethod"));
         }
 
         [Fact]
@@ -304,7 +304,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(15, 25, "TestNamespace.TestClass.TestMethod()"));
+            GetCA1031CSharpResultAt(15, 25, "TestMethod"));
         }
 
         [Fact]
@@ -325,7 +325,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(10, 25, "Public Shared Sub TestMethod()"));
+            GetCA1031BasicResultAt(10, 25, "TestMethod"));
         }
 
         [Fact]
@@ -351,7 +351,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(15, 25, "TestNamespace.TestClass.TestMethod()"));
+            GetCA1031CSharpResultAt(15, 25, "TestMethod"));
         }
 
         [Fact]
@@ -371,7 +371,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(9, 25, "Public Shared Sub TestMethod()"));
+            GetCA1031BasicResultAt(9, 25, "TestMethod"));
         }
 
         [Fact]
@@ -396,7 +396,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(14, 25, "TestNamespace.TestClass.TestMethod()"));
+            GetCA1031CSharpResultAt(14, 25, "TestMethod"));
         }
 
         [Fact]
@@ -415,7 +415,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(8, 25, "Public Shared Sub TestMethod()"));
+            GetCA1031BasicResultAt(8, 25, "TestMethod"));
         }
 
         [Fact]
@@ -440,7 +440,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(14, 25, "TestNamespace.TestClass.TestMethod()"));
+            GetCA1031CSharpResultAt(14, 25, "TestMethod"));
         }
 
         [Fact]
@@ -512,7 +512,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }",
-            GetCA1031CSharpResultAt(17, 29, "TestNamespace.TestClass.TestMethod()"));
+            GetCA1031CSharpResultAt(17, 29, "TestMethod"));
         }
 
         [Fact]
@@ -535,7 +535,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(11, 29, "Public Shared Sub TestMethod()"));
+            GetCA1031BasicResultAt(11, 29, "TestMethod"));
 
             VerifyBasic(@"
             Imports System
@@ -555,7 +555,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 End Class
             End Namespace
             ",
-            GetCA1031BasicResultAt(11, 29, "Public Shared Function TestMethod() As Double"));
+            GetCA1031BasicResultAt(11, 29, "TestMethod"));
         }
 
         private static DiagnosticResult GetCA1031CSharpResultAt(int line, int column, string signature)

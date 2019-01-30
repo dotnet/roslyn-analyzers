@@ -37,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         protected override Diagnostic CreateDiagnostic(IMethodSymbol containingMethod, SyntaxNode catchNode)
         {
-            return catchNode.CreateDiagnostic(Rule, containingMethod.ToDisplayString());
+            return catchNode.CreateDiagnostic(Rule, containingMethod.Name);
         }
     }
 }

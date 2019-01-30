@@ -67,6 +67,21 @@
         <target state="translated">Temsilci Türlerini Döndüren Void Olarak Async Lambdaları Geçirme</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
+        <source>An enumeration's values should not start with the type name of the enumeration.</source>
+        <target state="new">An enumeration's values should not start with the type name of the enumeration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameMessage">
+        <source>Do not prefix enum values with the name of the enum type '{0}'. </source>
+        <target state="new">Do not prefix enum values with the name of the enum type '{0}'. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameTitle">
+        <source>Do not prefix enum values with type name</source>
+        <target state="new">Do not prefix enum values with type name</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">Temsilci Türlerini Döndüren Void Olarak Async Lambdaları Depolamayın</target>

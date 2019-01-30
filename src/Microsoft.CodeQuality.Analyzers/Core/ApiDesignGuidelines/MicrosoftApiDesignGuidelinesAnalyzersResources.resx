@@ -1016,4 +1016,13 @@
   <data name="DoNotCatchGeneralExceptionTypesTitle" xml:space="preserve">
     <value>Do not catch general exception types</value>
   </data>
+  <data name="DoNotPrefixEnumValuesWithTypeNameDescription" xml:space="preserve">
+    <value>An enumeration's values should not start with the type name of the enumeration.</value>
+  </data>
+  <data name="DoNotPrefixEnumValuesWithTypeNameMessage" xml:space="preserve">
+    <value>Do not prefix enum values with the name of the enum type '{0}'. </value>
+  </data>
+  <data name="DoNotPrefixEnumValuesWithTypeNameTitle" xml:space="preserve">
+    <value>Do not prefix enum values with type name</value>
+  </data>
 </root>

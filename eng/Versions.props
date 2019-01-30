@@ -20,8 +20,8 @@
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.9.0-beta8-63117-09</MicrosoftCodeAnalysisVersion>
     <MicrosoftNetCompilersVersion>2.6.1</MicrosoftNetCompilersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.6.2</MicrosoftCodeAnalysisFXCopAnalyersVersion>
-    <MicrosoftCodeAnalysisAnalyersVersion>2.6.2</MicrosoftCodeAnalysisAnalyersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.6.4-beta1.19067.1+c6049bf9</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftCodeAnalysisAnalyersVersion>2.6.4-beta1.19067.1+c6049bf9</MicrosoftCodeAnalysisAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- Roslyn Testing -->
@@ -32,6 +32,7 @@
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
     <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
     <MicrosoftBuildLocatorVersion>1.1.2</MicrosoftBuildLocatorVersion>
+    <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
     <HumanizerVersion>2.2.0</HumanizerVersion>
   </PropertyGroup>
 

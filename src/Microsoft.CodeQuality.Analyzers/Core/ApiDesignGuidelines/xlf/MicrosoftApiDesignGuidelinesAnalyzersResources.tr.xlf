@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
-        <target state="new">Append .ConfigureAwait(true)</target>
+        <target state="translated">Ekle .ConfigureAwait(true)</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <target state="translated">'{0}' türünden sonlandırıcıyı kaldırın, Dispose(bool disposing) metodunu geçersiz kılın ve sonlandırma mantığını 'disposing' değerinin false olduğu kod yoluna yerleştirin. Aksi takdirde, '{1}' Temel türü de bir sonlandırıcı sağladığından yinelenen Dispose çağrılarına yol açabilir.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -494,7 +494,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">{0} türü Equals’ı geçersiz kıldığından IEquatable&lt;T&gt; uygulamalıdır</target>
+        <target state="translated">{0} türü Equals metodunu geçersiz kıldığından IEquatable&lt;T&gt; uygulamalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -849,42 +849,42 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
-        <target state="needs-review-translation">IDisposable zaten {1} temel türü tarafından uygulandığından, {0} tarafından uygulanan arabirim listesinden bunu kaldırın.</target>
+        <target state="translated">IDisposable zaten '{1}' temel türü tarafından uygulandığından, bunu '{0}' tarafından uygulanan arabirimler listesinden kaldırın.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="needs-review-translation">{0} türünü kaldırın, Dispose(bool disposing) öğesini geçersiz kılın ve atma mantığını 'disposing' değerinin true olduğu kod yoluna koyun.</target>
+        <target state="translated">'{0}' öğesini kaldırın, Dispose(bool disposing) metodunu geçersiz kılın ve atma mantığını 'disposing' değerininm true olduğu kod yoluna yerleştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed.</source>
-        <target state="needs-review-translation">{0} öğesinin genel ve mühürlü olarak bildirildiğinden emin olun.</target>
+        <target state="translated">'{0}' öğesinin genel ve mühürlü olarak bildirildiğinden emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
         <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="needs-review-translation">{0} yöntemini 'Dispose' olarak yeniden adlandırıp genel ve mühürlü olarak bildirildiğinden emin olun.</target>
+        <target state="translated">'{0}' öğesini 'Dispose' olarak yeniden adlandırıp genel ve mühürlü olarak bildirildiğinden emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
-        <target state="needs-review-translation">{0} türünün korumalı, sanal ve mühürsüz olarak bildirildiğinden emin olun.</target>
+        <target state="translated">'{0}' öğesinin korumalı, sanal ve mühürsüz olarak bildirildiğinden emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="needs-review-translation">{0} öğesini önce Dispose(true) yöntemini, sonra geçerli nesne örneğinde ('this' veya Visual Basic'te 'Me') GC.SuppressFinalize'ı çağıracak ve sonra dönecek biçimde değiştirin.</target>
+        <target state="translated">'{0}' öğesini Dispose(true) çağrısı yapacak, sonra geçerli nesne örneğinde (Visual Basic'te 'this' veya 'Me') GC.SuppressFinalize çağrısı yapacak ve sonra dönecek şekilde değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
-        <target state="needs-review-translation">{0} öğesini Dispose(false) yöntemini çağıracak ve sonra dönecek şekilde değiştirin.</target>
+        <target state="translated">'{0}' öğesini Dispose(false) çağrısı yapacak ve sonra dönecek şekilde değiştirin.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="needs-review-translation">{0} türünde Dispose(bool) yönteminin geçersiz kılınabilecek bir uygulamasını sağlayın veya türü mühürlü olarak işaretleyin. Dispose(false) yöntemine yapılan bir çağrı yalnızca yerel kaynakları temizlemelidir. Dispose(true) yöntemine yapılan bir çağrı hem yönetilen hem yerel kaynakları temizlemelidir.</target>
+        <target state="translated">'{0}' üzerinde geçersiz kılınabilen bir Dispose(bool) uygulaması sağlayın veya türü mühürlü olarak işaretleyin. Bir Dispose(false) çağrısı yalnızca yerel kaynakları temizlemelidir. Bir Dispose(true) çağrısı hem yönetilen hem yerel kaynakları temizlemelidir.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1374,12 +1374,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">{0} türü IEquatable&lt;T&gt; uyguladığından Equals’ı geçersiz kılmalıdır</target>
+        <target state="translated">{0} türü IEquatable&lt;T&gt; uyguladığından Equals öğesini geçersiz kılmalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">IEquatable&lt;T&gt; uygularken Object.Equals(object)’i geçersiz kılın</target>
+        <target state="translated">IEquatable&lt;T&gt; uygularken Object.Equals(object) öğesini kaldır</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1419,12 +1419,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Bir T türü tarafından Object.Equals(object) geçersiz kılındığında, uygulamanın karşılaştırmayı gerçekleştirmeden önce nesne bağımsız değişkenini doğru T türüne yayınlaması gerekir. Tür tarafından IEquatable&lt;T&gt; uygulanıyor, sonuç olarak da T.Equals(T) yöntemi sunuluyorsa ve derleme zamanında bağımsız değişkenin T türünde olduğu biliniyorsa, derleyici Object.Equals(object) yerine IEquatable&lt;T&gt;.Equals(T) çağrısı yapabilir ve yayın gerekmediğinden performans artar.</target>
+        <target state="translated">Bir T türü tarafından Object.Equals(object) geçersiz kılındığında, uygulama karşılaştırmayı gerçekleştirmeden önce nesne bağımsız değişkenini doğru T türüne dönüştürmelidir. Tür tarafından IEquatable&lt;T&gt; uygulanıyorsa ve dolayısıyla T.Equals(T) metodu sunuluyorsa, ayrıca derleme zamanında bağımsız değişkenin T türünde olduğu biliniyorsa derleyici Object.Equals(object) yerine IEquatable&lt;T&gt;.Equals(T) çağrısı yapabilir ve tür dönüştürme gerekmez, bu sayede de performans artar.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Bir T türü IEquatable&lt;T&gt; arabirimini uyguladığında, kaynak kodunda Equals yöntemine çağrı yapıldığını gören bir kullanıcıya türün bir örneğinin başka herhangi bir türün örneğiyle eşitlenebileceğini belirtir. Türü başka bir türün örneğiyle eşitleme girişimi derlenemezse kullanıcının kafası karışabilir. Bu da "en az sürpriz prensibini" ihlal eder.</target>
+        <target state="translated">Bir T türü IEquatable&lt;T&gt; uygularken, kaynak kodunda Equals metoduna yönelik bir çağrı gören kullanıcıya türün bir örneğinin başka herhangi bir türdeki bir örnekle eşitlenebileceğini önerir. Türü başka bir türdeki bir örnekle eşitleme girişimi derlenemezse kullanıcının kafası karışabilir. Bu, "en az sürpriz" ilkesini ihlal eder.</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1449,7 +1449,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}' öğesini kaldırın ve kullanımını genel bir EventHandler ile değiştirin; örneğin EventHandler&lt;T&gt; (burada T geçerli bir EventArgs’dir)</target>
+        <target state="translated">'{0}' öğesini kaldırıp bunun kullanımını genel bir EventHandler ile değiştirin (ör. T'nin geçerli bir EventArgs olduğu EventHandler&lt;T&gt;)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1459,7 +1459,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{1}' türünü genel bir EventHandler ile değiştirmek için '{0}' olayını değiştirin; örneğin EventHandler&lt;T&gt; (burada T geçerli bir EventArgs’dir)</target>
+        <target state="translated">'{0}' olayını değiştirerek '{1}' türünü genel bir EventHandler ile değiştirin (ör. T'nin geçerli bir EventArgs olduğu EventHandler&lt;T&gt;)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

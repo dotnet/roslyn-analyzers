@@ -39,7 +39,7 @@
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageCoSetProxyBlanket">
         <source>{0} is a P/Invoke declaration to an OLE32 API that cannot be reliably called against a runtime callable wrapper (a managed object wrapping a COM object). Runtime callable wrappers dynamically fetch interface pointers so the effect of the call might be arbitrarily lost. Runtime callable wrappers for a given COM object are also shared across an application domain so the call could possibly affect other users. Replace this call with a native wrapper COM object for the interface pointer that does the appropriate CoSetProxyBlanket calls.</source>
-        <target state="translated">{0}은(는) 런타임 호출 가능 래퍼(COM 개체를 래핑하는 관리되는 개체)에 대해 안정적으로 호출할 수 없는 OLE32 API에 대한 P/Invoke 선언입니다. 런타임 호출 가능 래퍼는 인터페이스 포인터를 동적으로 페치하므로 호출 결과가 임의적으로 손실될 수 있습니다. 또한 지정된 COM 개체에 대한 런타임 호출 가능 래퍼는 응용 프로그램 도메인 전체에서 공유되므로 호출이 다른 사용자에게 영향을 줄 수 있습니다. 이 호출을 적절한 CoSetProxyBlanket 호출을 수행하는 인터페이스 포인터에 대한 네이티브 래퍼 COM 개체로 바꾸세요.</target>
+        <target state="translated">{0}는 런타임 호출 가능 래퍼 (COM 개체를 래핑하는 관리 되는 개체)에 대 한 안정적으로 호출 될 수 없습니다 OLE32 API에는 P/Invoke 선언 이다. 런타임 호출 가능 래퍼는 동적으로 호출의 효과 임의로 손실 될 수 있습니다 그래서 인터페이스 포인터를 가져옵니다. 통화 가능 하 게 다른 사용자에 영향을 미칠 수 있도록 지정된 된 COM 개체에 대 한 런타임 호출 가능 래퍼 또한 응용 프로그램 도메인에 걸쳐 공유 됩니다. 이 호출을 적절 한 CoSetProxyBlanket 호출을 수행 하는 인터페이스 포인터에 대 한 네이티브 래퍼 COM 개체를 바꿉니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidCallingProblematicMethodsMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle">

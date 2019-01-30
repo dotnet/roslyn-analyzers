@@ -28,8 +28,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationMessage">
-        <source>In the deserialization process of Class {0}, function {1} calls a dangerous method {2}.</source>
-        <target state="new">In the deserialization process of Class {0}, function {1} calls a dangerous method {2}.</target>
+        <source>When deserializing an instance of class {0}, method {1} can call dangerous method {2}.</source>
+        <target state="new">When deserializing an instance of class {0}, method {1} can call dangerous method {2}.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">

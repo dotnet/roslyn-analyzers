@@ -79,25 +79,21 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var attributeTypeSymbols = ImmutableArray.Create(
-                        WellKnownTypes.OnDeserializingAttribute(compilation),
-                        WellKnownTypes.OnDeserializedAttribute(compilation));
                     var serializableAttributeTypeSymbol = WellKnownTypes.SerializableAttribute(compilation);
-                    var streamingContextTypeSymbol = WellKnownTypes.StreamingContext(compilation);
 
-                    if (serializableAttributeTypeSymbol == null || streamingContextTypeSymbol == null)
+                    if (serializableAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var builder = ImmutableArray.CreateBuilder<IMethodSymbol>();
+                    var dangerousMethodSymbolsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
                     var systemIOFileTypeSymbol = WellKnownTypes.SystemIOFile(compilation);
 
                     if (systemIOFileTypeSymbol != null)
                     {
                         foreach (var targetMethodName in SystemIOFileMethodMetadataNames)
                         {
-                            builder.AddRange(systemIOFileTypeSymbol.GetMembers(targetMethodName).Cast<IMethodSymbol>());
+                            dangerousMethodSymbolsBuilder.AddRange(systemIOFileTypeSymbol.GetMembers(targetMethodName).Where(s => s is IMethodSymbol).Cast<IMethodSymbol>());
                         }
                     }
 
@@ -107,16 +103,34 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         foreach (var targetMethodName in SystemReflectionAssemblyMethodMetadataNames)
                         {
-                            builder.AddRange(systemReflectionAssemblyTypeSymbol.GetMembers(targetMethodName).Cast<IMethodSymbol>());
+                            dangerousMethodSymbolsBuilder.AddRange(systemReflectionAssemblyTypeSymbol.GetMembers(targetMethodName).Where(s => s is IMethodSymbol).Cast<IMethodSymbol>());
                         }
                     }
 
-                    var dangerousMethodSymbols = builder.ToImmutable();
+                    var dangerousMethodSymbols = dangerousMethodSymbolsBuilder.ToImmutable();
 
                     if (dangerousMethodSymbols.Length == 0)
                     {
                         return;
                     }
+
+                    var attributeTypeSymbolsBuilder = ImmutableArray.CreateBuilder<INamedTypeSymbol>();
+                    var onDeserializingAttributeTypeSymbol = WellKnownTypes.OnDeserializingAttribute(compilation);
+
+                    if (onDeserializingAttributeTypeSymbol != null)
+                    {
+                        attributeTypeSymbolsBuilder.Add(onDeserializingAttributeTypeSymbol);
+                    }
+
+                    var onDeserializedAttributeTypeSymbol = WellKnownTypes.OnDeserializedAttribute(compilation);
+
+                    if (onDeserializedAttributeTypeSymbol != null)
+                    {
+                        attributeTypeSymbolsBuilder.Add(onDeserializedAttributeTypeSymbol);
+                    }
+
+                    var attributeTypeSymbols = attributeTypeSymbolsBuilder.ToImmutable();
+                    var visitedMethodSymbols = new HashSet<IMethodSymbol>();
 
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
@@ -133,31 +147,31 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 if (member.Kind == SymbolKind.Method)
                                 {
                                     var methodSymbol = member as IMethodSymbol;
+                                    var parameters = methodSymbol.GetParameters();
+                                    var flag1 = attributeTypeSymbols.Length != 0
+                                        && attributeTypeSymbols.Any(s => methodSymbol.HasAttribute(s))
+                                        && parameters.Length == 1
+                                        && parameters[0].Type.Equals(WellKnownTypes.StreamingContext(compilation));
+                                    var flag2 = methodSymbol.IsOnDeserializationImplementation(compilation);
+                                    var flag3 = methodSymbol.IsDisposeImplementation(compilation);
+                                    var flag4 = methodSymbol.IsFinalizer();
 
-                                    if (methodSymbol.GetAttributes().Any(s => attributeTypeSymbols.Contains(s.AttributeClass))
-                                        || methodSymbol.MetadataName == "OnDeserialization")
+                                    if (!flag1 && !flag2 && !flag3 && !flag4)
                                     {
-                                        var parameters = methodSymbol.GetParameters();
+                                        continue;
+                                    }
+                                    
+                                    var result = new HashSet<IInvocationOperation>();
+                                    FindDangerousMethodInvocationOperation(methodSymbol, compilation, dangerousMethodSymbols, visitedMethodSymbols, result);
 
-                                        if (parameters == null
-                                            || parameters.Length != 1
-                                            || !parameters[0].Type.Equals(streamingContextTypeSymbol))
-                                        {
-                                            return;
-                                        }
-
-                                        var visitedMethodSymbols = new List<IMethodSymbol>();
-                                        var invocationOperations = FindDangerousMethodInvocatioinOperation(methodSymbol, compilation, dangerousMethodSymbols, ref visitedMethodSymbols);
-
-                                        foreach (var item in invocationOperations)
-                                        {
-                                            symbolAnalysisContext.ReportDiagnostic(
-                                                item.CreateDiagnostic(
-                                                    Rule,
-                                                    classSymbol.MetadataName,
-                                                    methodSymbol.MetadataName,
-                                                    item.TargetMethod.MetadataName));
-                                        }
+                                    foreach (var item in result)
+                                    {
+                                        symbolAnalysisContext.ReportDiagnostic(
+                                            item.CreateDiagnostic(
+                                                Rule,
+                                                classSymbol.MetadataName,
+                                                methodSymbol.MetadataName,
+                                                item.TargetMethod.MetadataName));
                                     }
                                 }
                             }
@@ -172,48 +186,46 @@ namespace Microsoft.NetCore.Analyzers.Security
             /// <param name="compilation">Compilation context</param>
             /// <param name="dangerousMethodSymbols">Symbols reprensent dangerous methods</param>
             /// <param name="visitedMethodSymbols">Methods that have been analyzed</param>
-            IEnumerable<IInvocationOperation> FindDangerousMethodInvocatioinOperation(
+            /// <param name="result">The result set of dangerous invocation operations found in the method</param>
+            void FindDangerousMethodInvocationOperation(
                 IMethodSymbol methodSymbol,
                 Compilation compilation,
                 ImmutableArray<IMethodSymbol> dangerousMethodSymbols,
-                ref List<IMethodSymbol> visitedMethodSymbols)
+                HashSet<IMethodSymbol> visitedMethodSymbols,
+                HashSet<IInvocationOperation> result)
             {
-                var result = new List<IInvocationOperation>();
-
                 // Every method in the source just needs to be analyzed once.
-                if (visitedMethodSymbols.Find((IMethodSymbol m) => m.Equals(methodSymbol)) == null)
+                if (!visitedMethodSymbols.Add(methodSymbol))
                 {
-                    var blockOperation = methodSymbol.GetTopmostOperationBlock(compilation);
+                    return;
+                }
+                
+                var blockOperation = methodSymbol.GetTopmostOperationBlock(compilation);
 
-                    if (blockOperation != null)
+                if (blockOperation != null)
+                {
+                    foreach (var operation in blockOperation.Descendants())
                     {
-                        foreach (var operation in blockOperation.Descendants())
+                        if (operation.Kind.Equals(OperationKind.Invocation))
                         {
-                            if (operation.Kind.Equals(OperationKind.Invocation))
+                            var invocationOperation = operation as IInvocationOperation;
+                            var invokedMethodSymbol = invocationOperation.TargetMethod;
+
+                            // If it calls a dangerous method, add the invocation operation to the result.
+                            if (dangerousMethodSymbols.Contains(invokedMethodSymbol))
                             {
-                                var invocationOperation = operation as IInvocationOperation;
-                                var invokedMethodSymbol = invocationOperation.TargetMethod;
+                                result.Add(invocationOperation);
+                            }
 
-                                // If it calls a dangerous method, add the invocation operation to the result.
-                                if (dangerousMethodSymbols.Contains(invokedMethodSymbol))
-                                {
-                                    result.Add(invocationOperation);
-                                }
-
-                                // If it calls a method which is reachable, analyze that method recursively.
-                                if (invokedMethodSymbol.IsInSource())
-                                {
-                                    result.AddRange(FindDangerousMethodInvocatioinOperation(invokedMethodSymbol, compilation, dangerousMethodSymbols, ref visitedMethodSymbols));
-                                }
+                            // If it calls a method which is reachable, analyze that method recursively.
+                            if (invokedMethodSymbol.IsInSource())
+                            {
+                                FindDangerousMethodInvocationOperation(invokedMethodSymbol, compilation, dangerousMethodSymbols, visitedMethodSymbols, result);
                             }
                         }
                     }
                 }
-
-                visitedMethodSymbols.Add(methodSymbol);
-                return result;
             }
         }
     }
 }
-

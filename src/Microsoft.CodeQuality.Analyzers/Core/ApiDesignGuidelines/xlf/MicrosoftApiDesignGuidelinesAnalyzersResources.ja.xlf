@@ -68,8 +68,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
-        <source>An enumeration should not contain a member whose name starts with the type name of the enumeration.</source>
-        <target state="new">An enumeration should not contain a member whose name starts with the type name of the enumeration.</target>
+        <source>An enumeration's values should not start with the type name of the enumeration.</source>
+        <target state="new">An enumeration's values should not start with the type name of the enumeration.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPrefixEnumValuesWithTypeNameMessage">

@@ -1017,7 +1017,7 @@
     <value>Do not catch general exception types</value>
   </data>
   <data name="DoNotPrefixEnumValuesWithTypeNameDescription" xml:space="preserve">
-    <value>An enumeration should not contain a member whose name starts with the type name of the enumeration.</value>
+    <value>An enumeration's values should not start with the type name of the enumeration.</value>
   </data>
   <data name="DoNotPrefixEnumValuesWithTypeNameMessage" xml:space="preserve">
     <value>Do not prefix enum values with the name of the enum type '{0}'. </value>

@@ -117,9 +117,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
                 ISymbol symbol = node.GetDeclaredOrReferencedSymbol(model);
-                IMethodSymbol method = symbol as IMethodSymbol;
 
-                if (method == null)
+                if (!(symbol is IMethodSymbol method))
                 {
                     return;
                 }

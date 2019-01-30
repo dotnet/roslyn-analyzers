@@ -71,8 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             }
 
                             var fieldReference = (IFieldReferenceOperation)target;
-                            var field = fieldReference.Member as IFieldSymbol;
-                            if (field == null || field.Kind != SymbolKind.Field || field.IsStatic)
+                            if (!(fieldReference.Member is IFieldSymbol field) || field.Kind != SymbolKind.Field || field.IsStatic)
                             {
                                 return;
                             }

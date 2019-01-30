@@ -76,8 +76,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         {
             // This diagnostic is only relevant in constructors.
             // TODO: should this apply to instance field initializers for VB?
-            var m = symbol as IMethodSymbol;
-            if (m == null || m.MethodKind != MethodKind.Constructor)
+            if (!(symbol is IMethodSymbol m) || m.MethodKind != MethodKind.Constructor)
             {
                 return true;
             }

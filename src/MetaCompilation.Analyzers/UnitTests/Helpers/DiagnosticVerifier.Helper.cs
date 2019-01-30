@@ -118,11 +118,6 @@ namespace MetaCompilation.Analyzers.UnitTests
                 throw new ArgumentException("Unsupported Language");
             }
 
-            for (int i = 0; i < sources.Length; i++)
-            {
-                string fileName = language == LanguageNames.CSharp ? "Test" + i + ".cs" : "Test" + i + ".vb";
-            }
-
             Project project = CreateProject(sources, language);
             Document[] documents = project.Documents.ToArray();
 

@@ -67,6 +67,21 @@
         <target state="translated">비동기 람다를 Void 반환 대리자 형식으로 전달하지 마세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
+        <source>An enumeration should not contain a member whose name starts with the type name of the enumeration.</source>
+        <target state="new">An enumeration should not contain a member whose name starts with the type name of the enumeration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameMessage">
+        <source>Do not prefix enum values with the name of the enum type '{0}'. </source>
+        <target state="new">Do not prefix enum values with the name of the enum type '{0}'. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameTitle">
+        <source>Do not prefix enum values with type name</source>
+        <target state="new">Do not prefix enum values with type name</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">비동기 람다를 Void 반환 대리자 형식으로 저장하지 마세요.</target>

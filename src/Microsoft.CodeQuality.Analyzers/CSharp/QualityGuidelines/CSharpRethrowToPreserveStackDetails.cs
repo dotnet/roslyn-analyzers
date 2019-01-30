@@ -34,8 +34,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                 {
                     case SyntaxKind.CatchClause:
                         {
-                            var local = context.SemanticModel.GetSymbolInfo(expr).Symbol as ILocalSymbol;
-                            if (local == null || local.Locations.Length == 0)
+                            if (!(context.SemanticModel.GetSymbolInfo(expr).Symbol is ILocalSymbol local) || local.Locations.Length == 0)
                             {
                                 return;
                             }

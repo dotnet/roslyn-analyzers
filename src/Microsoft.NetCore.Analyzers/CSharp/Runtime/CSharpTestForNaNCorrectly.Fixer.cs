@@ -17,8 +17,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     {
         protected override SyntaxNode GetBinaryExpression(SyntaxNode node)
         {
-            var argumentSyntax = node as ArgumentSyntax;
-            return argumentSyntax != null ? argumentSyntax.Expression : node;
+            return node is ArgumentSyntax argumentSyntax ? argumentSyntax.Expression : node;
         }
 
         protected override bool IsEqualsOperator(SyntaxNode node)

@@ -66,8 +66,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             switch (type.TypeKind)
             {
                 case TypeKind.Array:
-                    var arrayType = type as IArrayTypeSymbol;
-                    return arrayType != null && IsPrimitiveType(arrayType.ElementType);
+                    return type is IArrayTypeSymbol arrayType && IsPrimitiveType(arrayType.ElementType);
                 case TypeKind.Class:
                 case TypeKind.TypeParameter:
                     INamedTypeSymbol marshalByRefObjectTypeSymbol = compilation.GetTypeByMetadataName("System.MarshalByRefObject");

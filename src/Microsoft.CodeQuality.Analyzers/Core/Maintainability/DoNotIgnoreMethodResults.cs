@@ -137,8 +137,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
-                    var method = osContext.OwningSymbol as IMethodSymbol;
-                    if (method == null)
+                    if (!(osContext.OwningSymbol is IMethodSymbol method))
                     {
                         return;
                     }

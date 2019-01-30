@@ -90,8 +90,8 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
 
         #endregion
 
-        private IList<BasicBlock> _blocks;
-        private IDictionary<ILabelSymbol, BasicBlock> _labeledBlocks;
+        private readonly IList<BasicBlock> _blocks;
+        private readonly IDictionary<ILabelSymbol, BasicBlock> _labeledBlocks;
         private BasicBlock _currentBlock;
         private ControlFlowGraph _graph;
 

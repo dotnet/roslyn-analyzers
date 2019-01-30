@@ -98,9 +98,7 @@ namespace Microsoft.NetFramework.Analyzers
 
                                     foreach (TypedConstant tc in a.ConstructorArguments[0].Values)
                                     {
-                                        string s = tc.Value as string;
-                                        MvcHttpVerbs v;
-                                        if (s != null && Enum.TryParse(s, true /* ignoreCase */, out v))
+                                        if (tc.Value is string s && Enum.TryParse(s, true /* ignoreCase */, out MvcHttpVerbs v))
                                         {
                                             verbs |= v;
                                         }

@@ -52,7 +52,7 @@ namespace Microsoft.NetFramework.Analyzers
                 out bool antiforgeryTokenDefined,
                 out bool isAction)
             {
-                verbs = default(MvcHttpVerbs);
+                verbs = default;
                 antiforgeryTokenDefined = false;
                 isAction = true;    // Presumed an MVC controller action until proven otherwise.
 

@@ -7,7 +7,7 @@
       Restore would conclude that there is a cyclic dependency between us and the Microsoft.CodeQuality.Analyzers nuget package.
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
-    <NoWarn>$(NoWarn);IDE0018;IDE0019;IDE0059;IDE0060</NoWarn>
+    <NoWarn>$(NoWarn);IDE0018;IDE0019;IDE0059;IDE0060;IDE0034</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeQuality.CSharp.Analyzers.Exp" />

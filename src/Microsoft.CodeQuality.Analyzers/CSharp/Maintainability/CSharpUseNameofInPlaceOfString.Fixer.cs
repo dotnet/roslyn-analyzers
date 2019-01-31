@@ -20,8 +20,8 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.Maintainability
             // Workaround for https://github.com/dotnet/roslyn/issues/24212
             // Once the above Roslyn bug is fixed, we can remove this override and make UseNameOfInPlaceOfStringFixer language agnostic.
             string nameofString = SyntaxFacts.GetText(SyntaxKind.NameOfKeyword);
-            SyntaxToken nameofIdentifierToken = SyntaxFactory.Identifier(leading: default(SyntaxTriviaList), contextualKind: SyntaxKind.NameOfKeyword,
-                text: nameofString, valueText: nameofString, trailing: default(SyntaxTriviaList));
+            SyntaxToken nameofIdentifierToken = SyntaxFactory.Identifier(leading: default, contextualKind: SyntaxKind.NameOfKeyword,
+                text: nameofString, valueText: nameofString, trailing: default);
             var nameofIdentifierNode = SyntaxFactory.IdentifierName(nameofIdentifierToken);
             var nameofArgumentNode = SyntaxFactory.IdentifierName(identifierNameArgument);
             return generator.InvocationExpression(expression: nameofIdentifierNode, arguments: nameofArgumentNode);

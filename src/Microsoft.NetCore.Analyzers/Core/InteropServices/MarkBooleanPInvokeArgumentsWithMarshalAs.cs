@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
-            //ImmutableArray.Create(DefaultRule, ReturnRule);
+        //ImmutableArray.Create(DefaultRule, ReturnRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

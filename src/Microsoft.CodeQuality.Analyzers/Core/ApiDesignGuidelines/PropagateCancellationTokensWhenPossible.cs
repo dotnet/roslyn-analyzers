@@ -32,7 +32,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
-            //ImmutableArray.Create(Rule);
+        //ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

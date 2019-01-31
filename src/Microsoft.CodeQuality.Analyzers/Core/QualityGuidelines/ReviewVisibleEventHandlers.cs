@@ -40,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
-            //ImmutableArray.Create(SecurityRule, DefaultRule);
+        //ImmutableArray.Create(SecurityRule, DefaultRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

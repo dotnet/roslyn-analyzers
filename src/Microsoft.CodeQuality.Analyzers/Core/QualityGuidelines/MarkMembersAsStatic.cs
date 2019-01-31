@@ -258,6 +258,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             Add(WellKnownTypes.NunitTearDown(compilation));
 
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
-        }       
+        }
     }
 }

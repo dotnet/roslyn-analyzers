@@ -47,7 +47,7 @@ namespace Microsoft.NetFramework.Analyzers
             /// <param name="antiforgeryTokenDefined">Indicates that the ValidateAntiforgeryToken attribute was specified.</param>
             /// <param name="isAction">Indicates that the MVC controller method doesn't have an attribute saying it's not really an action.</param>
             public void ComputeAttributeInfo(
-                ImmutableArray<AttributeData> attributeDatas, 
+                ImmutableArray<AttributeData> attributeDatas,
                 out MvcHttpVerbs verbs,
                 out bool antiforgeryTokenDefined,
                 out bool isAction)
@@ -90,7 +90,7 @@ namespace Microsoft.NetFramework.Analyzers
                             if (a.AttributeConstructor.Parameters[0].IsParams
                                 && parameterType.TypeKind == TypeKind.Array)
                             {
-                                IArrayTypeSymbol parameterArrayType = (IArrayTypeSymbol) parameterType;
+                                IArrayTypeSymbol parameterArrayType = (IArrayTypeSymbol)parameterType;
                                 if (parameterArrayType.Rank == 1
                                     && parameterArrayType.ElementType.SpecialType == SpecialType.System_String)
                                 {
@@ -112,13 +112,13 @@ namespace Microsoft.NetFramework.Analyzers
                             {
                                 // The [AcceptVerbs(HttpVerbs.Delete)] case.
 
-                                int i = (int) a.ConstructorArguments[0].Value;
-                                verbs |= (MvcHttpVerbs) i;
+                                int i = (int)a.ConstructorArguments[0].Value;
+                                verbs |= (MvcHttpVerbs)i;
 
                                 continue;
                             }
                         }
-                        
+
                         // If we reach here, then we didn't handle the [AcceptVerbs] constructor overload.
                     }
                     else if (IsAttributeClass(a, this.NonActionAttributeSymbol)

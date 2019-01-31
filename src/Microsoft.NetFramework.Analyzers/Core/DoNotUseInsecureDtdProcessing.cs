@@ -255,7 +255,7 @@ namespace Microsoft.NetFramework.Analyzers
 
                     if (xmlReaderSettingsIndex < 0)
                     {
-                        if (method.Parameters.Length == 1 
+                        if (method.Parameters.Length == 1
                             && method.Parameters[0].RefKind == RefKind.None
                             && method.Parameters[0].Type.SpecialType == SpecialType.System_String)
                         {

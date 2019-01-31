@@ -2281,7 +2281,7 @@ namespace MetaCompilation.Analyzers
                 var arguments = new ArgumentSyntax[6];
                 string whitespace = "            ";
                 SyntaxNode id = idName != ""
-                    ? generator.LiteralExpression(idName) 
+                    ? generator.LiteralExpression(idName)
                     : generator.IdentifierName("").WithTrailingTrivia(SyntaxFactory.ParseTrailingTrivia("/* The ID here should be the public constant declared above */"));
 
                 var idArg = generator.Argument("id", RefKind.None, id).WithLeadingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;

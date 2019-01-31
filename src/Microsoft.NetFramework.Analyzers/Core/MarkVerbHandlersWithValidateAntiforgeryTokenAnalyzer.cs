@@ -46,10 +46,10 @@ namespace Microsoft.NetFramework.Analyzers
 
         private static readonly DiagnosticDescriptor NoVerbsRule = new DiagnosticDescriptor(
             RuleId,
-            Title, 
-            NoVerbsMessage, 
+            Title,
+            NoVerbsMessage,
             DiagnosticCategory.Security,
-            DiagnosticHelpers.DefaultDiagnosticSeverity, 
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: true,
             helpLinkUri: HelpLinkUri);
 

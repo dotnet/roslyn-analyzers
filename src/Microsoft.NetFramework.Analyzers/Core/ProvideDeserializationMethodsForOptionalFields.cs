@@ -39,8 +39,8 @@ namespace Microsoft.NetFramework.Analyzers
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2239-provide-deserialization-methods-for-optional-fields",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>  ImmutableArray<DiagnosticDescriptor>.Empty;
-            //ImmutableArray.Create(OnDeserializedRule, OnDeserializingRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
+        //ImmutableArray.Create(OnDeserializedRule, OnDeserializingRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {

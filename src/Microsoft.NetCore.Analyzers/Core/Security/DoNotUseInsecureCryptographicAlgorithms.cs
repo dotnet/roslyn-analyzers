@@ -19,10 +19,10 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsTitle = new LocalizableResourceString(
             nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithms),
-            SystemSecurityCryptographyResources.ResourceManager, 
+            SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsMessage = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithmsMessage), 
+            nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithmsMessage),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsDescription = new LocalizableResourceString(
@@ -172,7 +172,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     messageArgs[1] = _cryptTypes.DES.Name;
                 }
                 else if ((method.ContainingType.DerivesFrom(_cryptTypes.DSA)
-                          && method.MetadataName == SecurityMemberNames.CreateSignature) 
+                          && method.MetadataName == SecurityMemberNames.CreateSignature)
                     || (type == _cryptTypes.DSASignatureFormatter
                         && method.ContainingType.DerivesFrom(_cryptTypes.DSASignatureFormatter)
                         && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))

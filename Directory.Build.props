@@ -13,6 +13,11 @@
     <LangVersion Condition="'$(Language)' == 'VB'">15.5</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- We generate per-project assembly attributes files, so we can safely delete them when cleaning the project -->
+    <TargetFrameworkMonikerAssemblyAttributesFileClean>true</TargetFrameworkMonikerAssemblyAttributesFileClean>
+  </PropertyGroup>
+
   <!-- Workaround to enable .editorconfig based analyzer configuration until dotnet compilers support .editorconfig based configuration -->
   <PropertyGroup>
     <SkipDefaultEditorConfigAsAdditionalFile>true</SkipDefaultEditorConfigAsAdditionalFile>

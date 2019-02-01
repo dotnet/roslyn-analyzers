@@ -44,7 +44,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterSymbolAction(symbolAnalysisContext =>
             {
                 var namedType = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                
+
                 // FxCop compat: only analyze externally visible symbols by default.
                 if (!namedType.MatchesConfiguredVisibility(symbolAnalysisContext.Options, Rule, symbolAnalysisContext.CancellationToken))
                 {

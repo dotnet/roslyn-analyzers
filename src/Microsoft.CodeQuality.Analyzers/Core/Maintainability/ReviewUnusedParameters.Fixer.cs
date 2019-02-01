@@ -36,7 +36,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             context.RegisterCodeFix(
                 new MyCodeAction(
                     MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage,
-                    async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false), 
+                    async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false),
                     equivalenceKey: MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage),
                 diagnostic);
 
@@ -76,7 +76,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             return solution;
         }
-        
+
         private ImmutableArray<IArgumentOperation>? GetOperationArguments(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             // For a given reference symbol node, find an object creration parent or an invocation parent. Then, return arguments of the parent found.

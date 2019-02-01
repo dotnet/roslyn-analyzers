@@ -68,7 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     onSerializedAttribute,
                     onSerializingAttribute,
                     obsoleteAttribute);
-                
+
                 UnusedParameterDictionary unusedMethodParameters = new ConcurrentDictionary<IMethodSymbol, ISet<IParameterSymbol>>();
                 ISet<IMethodSymbol> methodsUsedAsDelegates = new HashSet<IMethodSymbol>();
 
@@ -162,7 +162,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         private class UnusedParametersAnalyzer
         {
             #region Per-CodeBlock mutable state
-                       
+
             private readonly HashSet<IParameterSymbol> _unusedParameters;
             private readonly UnusedParameterDictionary _finalUnusedParameters;
             private readonly IMethodSymbol _method;
@@ -174,7 +174,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters)
             {
                 // Initialization: Assume all parameters are unused.
-                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);                
+                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);
                 _finalUnusedParameters = finalUnusedParameters;
                 _method = method;
             }

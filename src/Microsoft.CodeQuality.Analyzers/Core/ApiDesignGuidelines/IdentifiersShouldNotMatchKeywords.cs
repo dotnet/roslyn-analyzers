@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         // Properties common to all DiagnosticDescriptors for this rule:
         private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords";
-        
+
         internal static DiagnosticDescriptor MemberParameterRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageMemberParameter,

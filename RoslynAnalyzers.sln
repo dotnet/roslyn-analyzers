@@ -122,7 +122,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metrics", "src\Tools\Metric
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestReferenceAssembly", "TestReferenceAssembly", "{4F3DD6F3-121C-4D38-9B8E-5065783EA832}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestReferenceAssembly", "src\TestReferenceAssembly\TestReferenceAssembly.csproj", "{774B5DF6-D14F-4839-95F3-D3632B754765}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestReferenceAssembly", "src\TestReferenceAssembly\TestReferenceAssembly.csproj", "{774B5DF6-D14F-4839-95F3-D3632B754765}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateAnalyzerRulesets", "src\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj", "{CC0DB31C-87B7-4ABF-A95A-B12526F3056D}"
 EndProject

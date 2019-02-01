@@ -44,9 +44,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterOperationBlockStartAction(context =>
             {
-                var methodSymbol = context.OwningSymbol as IMethodSymbol;
 
-                if (methodSymbol == null ||
+                if (!(context.OwningSymbol is IMethodSymbol methodSymbol) ||
                     methodSymbol.ReturnsVoid ||
                     methodSymbol.ReturnType.Kind == SymbolKind.ArrayType ||
                     methodSymbol.Parameters.Length > 0 ||

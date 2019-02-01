@@ -141,7 +141,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
                             var namedTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                            
+
                             // Note all the descriptors/rules for this analyzer have the same ID and category and hence
                             // will always have identical configured visibility.
                             if (!namedTypeSymbol.MatchesConfiguredVisibility(symbolAnalysisContext.Options, TypeNoAlternateRule, symbolAnalysisContext.CancellationToken))

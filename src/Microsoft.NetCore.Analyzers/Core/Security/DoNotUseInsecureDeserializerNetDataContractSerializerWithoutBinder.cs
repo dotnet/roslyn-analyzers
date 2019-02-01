@@ -30,12 +30,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                 isEnabledByDefault: false,
                 helpLinkUri: null);
 
-        protected override string DeserializerTypeMetadataName => 
+        protected override string DeserializerTypeMetadataName =>
             WellKnownTypes.SystemRuntimeSerializationNetDataContractSerializer;
 
         protected override string SerializationBinderPropertyMetadataName => "Binder";
 
-        protected override ImmutableHashSet<string> DeserializationMethodNames => 
+        protected override ImmutableHashSet<string> DeserializationMethodNames =>
             SecurityHelpers.NetDataContractSerializerDeserializationMethods;
 
         protected override DiagnosticDescriptor BinderDefinitelyNotSetDescriptor => RealBinderDefinitelyNotSetDescriptor;

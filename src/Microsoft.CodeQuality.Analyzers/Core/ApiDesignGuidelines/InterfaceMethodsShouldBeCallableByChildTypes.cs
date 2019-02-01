@@ -64,10 +64,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (operationBlocks != null && operationBlocks.Length == 1)
             {
-                IBlockOperation block = operationBlocks[0] as IBlockOperation;
 
                 // Analyze IBlockOperation blocks.
-                if (block == null)
+                if (!(operationBlocks[0] is IBlockOperation block))
                 {
                     return true;
                 }

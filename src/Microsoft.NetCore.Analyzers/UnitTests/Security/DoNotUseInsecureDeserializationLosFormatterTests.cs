@@ -67,9 +67,9 @@ namespace System.Web.UI
         }
     }
 }
-";            this.VerifyCSharp(
-                new[] { source, losFormatterCSharpSourceCode }.ToFileAndSource(),
-                expected);
+"; this.VerifyCSharp(
+     new[] { source, losFormatterCSharpSourceCode }.ToFileAndSource(),
+     expected);
         }
 
 

@@ -190,7 +190,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     foreach (var index in IformatProviderParameterIndices)
                     {
                         var argument = invocationExpression.Arguments[index];
-                        
+
                         if (argument != null && currentUICultureProperty != null &&
                             installedUICultureProperty != null && currentThreadCurrentUICultureProperty != null)
                         {

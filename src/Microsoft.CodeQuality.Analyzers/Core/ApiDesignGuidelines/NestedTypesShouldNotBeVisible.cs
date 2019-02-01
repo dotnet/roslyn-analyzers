@@ -25,7 +25,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         // Properties common to the descriptors defined by this analyzer.
         private const string HelpLinkUrl = "https://docs.microsoft.com/visualstudio/code-quality/ca1034-nested-types-should-not-be-visible";
-        
+
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessageDefault,

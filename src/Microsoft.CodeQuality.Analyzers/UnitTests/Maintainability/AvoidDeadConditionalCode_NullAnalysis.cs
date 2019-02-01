@@ -3636,7 +3636,7 @@ class Test
             GetCSharpResultAt(44, 13, "d4 is null", "false"),
             // Test0.cs(54,13): warning CA1508: 'd5 is C c5_2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(54, 13, "d5 is C c5_2", "true"));
-            
+
             // VB does not support patterns.
         }
 

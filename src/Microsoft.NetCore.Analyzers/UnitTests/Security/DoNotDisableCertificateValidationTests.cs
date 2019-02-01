@@ -191,7 +191,7 @@ class TestClass
         ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(AcceptAllCertificationsClass.AcceptAllCertifications);
     }
 }";
-            
+
             VerifyCSharpAcrossTwoAssemblies(source1, source2);
         }
 

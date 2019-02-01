@@ -32,7 +32,7 @@ namespace Microsoft.NetFramework.Analyzers
             }
 
             Diagnostic diagnostic = context.Diagnostics.Single();
-            
+
             // Fix 1: Add a NonSerialized attribute to the field
             context.RegisterCodeFix(new MyCodeAction(MicrosoftNetFrameworkAnalyzersResources.AddNonSerializedAttributeCodeActionTitle,
                                         async ct => await AddNonSerializedAttribute(context.Document, fieldNode, ct).ConfigureAwait(false),

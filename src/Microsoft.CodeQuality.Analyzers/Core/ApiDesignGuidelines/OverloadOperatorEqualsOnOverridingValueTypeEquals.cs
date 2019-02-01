@@ -40,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
                 if (namedTypeSymbol.IsValueType &&
                     namedTypeSymbol.MatchesConfiguredVisibility(context.Options, Rule, context.CancellationToken) &&
-                    namedTypeSymbol.OverridesEquals() && 
+                    namedTypeSymbol.OverridesEquals() &&
                     !namedTypeSymbol.ImplementsEqualityOperators())
                 {
                     context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(Rule));

@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         /// See CA1509 unit tests for more examples.
         /// </summary>
         private const string CodeMetricsConfigurationFile = "CodeMetricsConfig.txt";
-        
+
         // New rule for invalid entries in CodeMetricsConfigurationFile.
         internal const string CA1509RuleId = "CA1509";
 

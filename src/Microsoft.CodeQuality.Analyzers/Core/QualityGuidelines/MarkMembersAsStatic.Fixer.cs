@@ -92,7 +92,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             cancellationToken.ThrowIfCancellationRequested();
 
             var references = await SymbolFinder.FindReferencesAsync(symbol, solution, cancellationToken).ConfigureAwait(false);
-            
+
             // Filter out cascaded symbol references. For example, accessor references for property symbol.
             references = references.Where(r => symbol.Equals(r.Definition));
 
@@ -102,7 +102,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             var allReferencesFixed = true;
-            
+
             // Group references by document and fix references in each document.
             foreach (var referenceLocationGroup in references.Single().Locations.GroupBy(r => r.Document))
             {

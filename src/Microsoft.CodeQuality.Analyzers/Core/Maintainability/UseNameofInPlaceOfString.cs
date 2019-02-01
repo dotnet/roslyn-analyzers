@@ -54,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             var argument = (IArgumentOperation)context.Operation;
-            if ((argument.Value.Kind != OperationKind.Literal 
+            if ((argument.Value.Kind != OperationKind.Literal
                 || argument.ArgumentKind != ArgumentKind.Explicit
                 || argument.Value.Type.SpecialType != SpecialType.System_String))
             {
@@ -77,7 +77,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     if (HasAMatchInScope(stringText, parametersInScope))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(
-                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), stringText ));
+                            RuleWithSuggestion, argument.Value.Syntax.GetLocation(), stringText));
                     }
                     return;
                 case PropertyName:

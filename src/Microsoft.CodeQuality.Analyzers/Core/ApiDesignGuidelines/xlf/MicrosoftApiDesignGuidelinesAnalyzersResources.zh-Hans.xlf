@@ -37,6 +37,21 @@
         <target state="translated">异步方法名称应以 Async 结尾</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
+        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
+        <target state="new">A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
+        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
+        <target state="new">Modify '{0}' to catch a more specific exception type, or rethrow the exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
+        <source>Do not catch general exception types</source>
+        <target state="new">Do not catch general exception types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">不要将异步 Lambda 作为 Void 返回委托类型传递</target>
@@ -50,6 +65,21 @@
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">不要将异步 Lambda 作为 Void 返回委托类型传递</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
+        <source>An enumeration's values should not start with the type name of the enumeration.</source>
+        <target state="new">An enumeration's values should not start with the type name of the enumeration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameMessage">
+        <source>Do not prefix enum values with the name of the enum type '{0}'. </source>
+        <target state="new">Do not prefix enum values with the name of the enum type '{0}'. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameTitle">
+        <source>Do not prefix enum values with type name</source>
+        <target state="new">Do not prefix enum values with type name</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">

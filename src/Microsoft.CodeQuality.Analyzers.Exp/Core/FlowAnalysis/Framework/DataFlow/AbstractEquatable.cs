@@ -29,9 +29,9 @@ namespace Microsoft.CodeAnalysis.Operations.DataFlow
 
         public static bool operator ==(CacheBasedEquatable<T> value1, CacheBasedEquatable<T> value2)
         {
-            if ((object)value1 == null)
+            if (value1 is null)
             {
-                return (object)value2 == null;
+                return value2 is null;
             }
 
             return value1.Equals(value2);

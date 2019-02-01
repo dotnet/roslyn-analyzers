@@ -1007,4 +1007,22 @@
     <value>{0} should define operator(s) '{1}' and Equals since it implements IComparable.</value>
     <comment>1 is a comma-separated list</comment>
   </data>
+  <data name="DoNotCatchGeneralExceptionTypesDescription" xml:space="preserve">
+    <value>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</value>
+  </data>
+  <data name="DoNotCatchGeneralExceptionTypesMessage" xml:space="preserve">
+    <value>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</value>
+  </data>
+  <data name="DoNotCatchGeneralExceptionTypesTitle" xml:space="preserve">
+    <value>Do not catch general exception types</value>
+  </data>
+  <data name="DoNotPrefixEnumValuesWithTypeNameDescription" xml:space="preserve">
+    <value>An enumeration's values should not start with the type name of the enumeration.</value>
+  </data>
+  <data name="DoNotPrefixEnumValuesWithTypeNameMessage" xml:space="preserve">
+    <value>Do not prefix enum values with the name of the enum type '{0}'. </value>
+  </data>
+  <data name="DoNotPrefixEnumValuesWithTypeNameTitle" xml:space="preserve">
+    <value>Do not prefix enum values with type name</value>
+  </data>
 </root>

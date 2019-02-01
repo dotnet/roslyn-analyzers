@@ -22,7 +22,7 @@ class TestClass {
         rijn.Mode  = CipherMode.ECB;
     }
 }",
-            GetCSharpResultAt(9, 22, ApprovedCipherModeAnalyzer.Rule,  "ECB"));
+            GetCSharpResultAt(9, 22, ApprovedCipherModeAnalyzer.Rule, "ECB"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -33,7 +33,7 @@ Public Module SecurityCenter
         encripter.Mode = CipherMode.ECB
     End Sub
 End Module",
-            GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule,  "ECB"));
+            GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule, "ECB"));
         }
 
         [Fact]
@@ -61,7 +61,7 @@ Public Module SecurityCenter
         encripter.Mode = CipherMode.OFB
     End Sub
 End Module",
-            GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule,  "OFB"));
+            GetBasicResultAt(7, 26, ApprovedCipherModeAnalyzer.Rule, "OFB"));
         }
 
         [Fact]

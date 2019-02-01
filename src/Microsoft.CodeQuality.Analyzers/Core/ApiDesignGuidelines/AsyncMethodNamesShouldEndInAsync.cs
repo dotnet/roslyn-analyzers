@@ -35,6 +35,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
         }
     }
 }

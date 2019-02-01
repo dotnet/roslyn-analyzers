@@ -12,9 +12,9 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
     [DebuggerDisplay("{Kind} ({Statements.Length} statements)")]
     internal class BasicBlock
     {
-        private ImmutableArray<IOperation>.Builder _statements;
-        private ImmutableHashSet<BasicBlock>.Builder _successors;
-        private ImmutableHashSet<BasicBlock>.Builder _predecessors;
+        private readonly ImmutableArray<IOperation>.Builder _statements;
+        private readonly ImmutableHashSet<BasicBlock>.Builder _successors;
+        private readonly ImmutableHashSet<BasicBlock>.Builder _predecessors;
 
         public BasicBlock(BasicBlockKind kind)
         {

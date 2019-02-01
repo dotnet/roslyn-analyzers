@@ -17,8 +17,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         protected override bool InitialiesStaticField(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var assignmentNode = (AssignmentExpressionSyntax)node;
-            var leftSymbol = semanticModel.GetSymbolInfo(assignmentNode.Left, cancellationToken).Symbol as IFieldSymbol;
-            return leftSymbol != null && leftSymbol.IsStatic;
+            return semanticModel.GetSymbolInfo(assignmentNode.Left, cancellationToken).Symbol is IFieldSymbol leftSymbol && leftSymbol.IsStatic;
         }
     }
 }

@@ -26,7 +26,7 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(15, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
+            GetCSharpResultAt(12, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
 
             VerifyBasic(@"
 Imports System
@@ -45,7 +45,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(14, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
+            GetBasicResultAt(12, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializingMethod", "WriteAllBytes"));
         }
 
         [Fact]
@@ -68,7 +68,7 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(15, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetCSharpResultAt(12, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
 
             VerifyBasic(@"
 Imports System
@@ -87,7 +87,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(14, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetBasicResultAt(12, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
@@ -111,7 +111,7 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(16, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetCSharpResultAt(13, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
 
             VerifyBasic(@"
 Imports System
@@ -131,7 +131,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(15, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetBasicResultAt(13, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
@@ -152,7 +152,8 @@ public class TestClass
     {
         var obj = new TestClass();
         obj.TestMethod();
-        File.WriteAllText(""C:\\"", ""contents"");
+        byte[] bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(""C:\\"", bytes);
     }
     
     private void TestMethod()
@@ -161,8 +162,7 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(16, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllText"),
-            GetCSharpResultAt(22, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetCSharpResultAt(12, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
 
             VerifyBasic(@"
 Imports System
@@ -177,8 +177,8 @@ Namespace TestNamespace
         <OnDeserialized()>
         Sub OnDeserializedMethod(ByVal context As StreamingContext)
             Dim obj As New TestClass()
-            obj.TestMethod()
-            File.WriteAllText(""C:\\"", ""contents"")
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
         End Sub
 
         Sub TestMethod()
@@ -187,8 +187,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(15, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllText"),
-            GetBasicResultAt(20, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetBasicResultAt(12, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
@@ -224,7 +223,7 @@ public class TestClass
         }
     }
 }",
-            GetCSharpResultAt(22, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetCSharpResultAt(12, 19, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
 
             VerifyBasic(@"
 Imports System
@@ -254,11 +253,11 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(19, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
+            GetBasicResultAt(12, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializedMethod", "WriteAllBytes"));
         }
 
         [Fact]
-        public void TestOnDeserializationDiagnostic()
+        public void TestOnDeserializationWriteAllBytesDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -274,63 +273,12 @@ public class TestClass : IDeserializationCallback
 
     void IDeserializationCallback.OnDeserialization(Object sender) 
     {
-        //File
         var path = ""C:\\"";
         var bytes = new byte[] {0x20, 0x20, 0x20};
-        var strings = new string[]{""111"", ""222""};
-        var contents = ""This is the contents."";
-        var sourceFileName = ""source file"";
-        var destFileName = ""dest file"";
         File.WriteAllBytes(path, bytes);
-        File.WriteAllLines(path, strings, Encoding.ASCII);
-        File.WriteAllText(path, contents);
-        File.Copy(sourceFileName, destFileName);
-        File.Move(sourceFileName, destFileName);
-        File.AppendAllLines(path, strings);
-        File.AppendAllText(path, contents);
-        File.AppendText(path);
-        File.Delete(path);
-
-        //Assembly
-        var fileName = ""C:\\test.txt"";
-        var assemblyName = ""assembly file"";
-        var moduleName = ""module name"";
-        var partialName = ""partial name"";
-        var fullName = ""sysglobl, Version = 4.0.0.0, Culture = neutral, "" +
-                       ""PublicKeyToken=b03f5f7f11d50a3a, processor architecture=MSIL"";
-        var rawModule = new byte[] {0x20, 0x20, 0x20};
-        var rawAssembly = new byte[] {0x20, 0x20, 0x20};
-        var assem = typeof(TestClass).Assembly;
-        var modules = assem.GetLoadedModules();
-        var an = new AssemblyName(fullName);
-        var assem2 = Assembly.Load(an);
-        var assem3 = Assembly.LoadFile(fileName);
-        var assem4 = Assembly.LoadFrom(assemblyName);
-        var module = assem.LoadModule(moduleName, rawModule);
-        var assem5 = Assembly.LoadWithPartialName(partialName);
-        var assem6 = Assembly.ReflectionOnlyLoad(rawAssembly);
-        var assem7 = Assembly.ReflectionOnlyLoadFrom(assemblyName);
-        var assem8 = Assembly.UnsafeLoadFrom(assemblyName);
     }
 }",
-            GetCSharpResultAt(22, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"),
-            GetCSharpResultAt(23, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllLines"),
-            GetCSharpResultAt(24, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllText"),
-            GetCSharpResultAt(25, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Copy"),
-            GetCSharpResultAt(26, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Move"),
-            GetCSharpResultAt(27, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendAllLines"),
-            GetCSharpResultAt(28, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendAllText"),
-            GetCSharpResultAt(29, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendText"),
-            GetCSharpResultAt(30, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"),
-            GetCSharpResultAt(42, 23, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "GetLoadedModules"),
-            GetCSharpResultAt(44, 22, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Load"),
-            GetCSharpResultAt(45, 22, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadFile"),
-            GetCSharpResultAt(46, 22, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadFrom"),
-            GetCSharpResultAt(47, 22, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadModule"),
-            GetCSharpResultAt(48, 22, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadWithPartialName"),
-            GetCSharpResultAt(49, 22, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "ReflectionOnlyLoad"),
-            GetCSharpResultAt(50, 22, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "ReflectionOnlyLoadFrom"),
-            GetCSharpResultAt(51, 22, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "UnsafeLoadFrom"));
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
 
             VerifyBasic(@"
 Imports System
@@ -349,7 +297,787 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(14, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllBytes"));
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationWriteAllLinesDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        var strings = new string[]{""111"", ""222""};
+        File.WriteAllLines(path, strings, Encoding.ASCII);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllLines"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+Imports System.Text
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            Dim strings(9) As String
+            File.WriteAllLines(path, strings, Encoding.ASCII)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllLines"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationWriteAllTextDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        var contents = ""This is the contents."";
+        File.WriteAllText(path, contents);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllText"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            Dim contents As String
+            contents = ""This is the contents.""
+            File.WriteAllText(path, contents)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllText"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationCopyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var sourceFileName = ""source file"";
+        var destFileName = ""dest file"";
+        File.Copy(sourceFileName, destFileName);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Copy"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim sourceFileName As String
+            sourceFileName = ""source file""
+            Dim destFileName As String
+            destFileName = ""dest file""
+            File.Copy(sourceFileName, destFileName)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Copy"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationMoveDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var sourceFileName = ""source file"";
+        var destFileName = ""dest file"";
+        File.Move(sourceFileName, destFileName);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Move"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim sourceFileName As String
+            sourceFileName = ""source file""
+            Dim destFileName As String
+            destFileName = ""dest file""
+            Dim bytes(9) As Byte
+            File.Move(sourceFileName, destFileName)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Move"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationAppendAllLinesDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        var strings = new string[]{""111"", ""222""};
+        File.AppendAllLines(path, strings);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendAllLines"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            Dim strings(9) As String
+            File.AppendAllLines(""C:\\"", strings)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "AppendAllLines"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationAppendAllTextDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        var contents = ""This is the contents."";
+        File.AppendAllText(path, contents);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendAllText"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            Dim contents As String
+            File.AppendAllText(path, contents)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "AppendAllText"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationAppendTextDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        File.AppendText(path);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "AppendText"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            File.AppendText(path)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "AppendText"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationDeleteDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        File.Delete(path);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            File.Delete(path)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationGetLoadedModulesDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var assem = typeof(TestClass).Assembly;
+        var modules = assem.GetLoadedModules();
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "GetLoadedModules"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim assem As Assembly = GetType(TestClass).Assembly
+            assem.GetLoadedModules()
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "GetLoadedModules"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationLoadDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var fullName = ""sysglobl, Version = 4.0.0.0, Culture = neutral, "" +
+                       ""PublicKeyToken=b03f5f7f11d50a3a, processor architecture=MSIL"";
+        var an = new AssemblyName(fullName);
+        var assem = Assembly.Load(an);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Load"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim fullName As String
+            fullName = ""sysglobl, Version = 4.0.0.0, Culture = neutral, _
+                       PublicKeyToken=b03f5f7f11d50a3a, processor architecture=MSIL""
+            Dim an As new AssemblyName(fullName)
+            Assembly.Load(an)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Load"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationLoadFileDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var fileName = ""C:\\test.txt"";
+        var assem = Assembly.LoadFile(fileName);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadFile"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim fileName As String
+            fileName = ""C:\\test.txt""
+            Assembly.LoadFile(fileName)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "LoadFile"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationLoadFromDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var assemblyName = ""assembly file"";
+        var assem = Assembly.LoadFrom(assemblyName);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadFrom"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim assemblyName As String
+            assemblyName = ""assembly file""
+            Assembly.LoadFrom(assemblyName)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "LoadFrom"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationLoadModuleDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        Assembly assem = typeof(TestClass).Assembly;
+        var moduleName = ""module name"";
+        var rawModule = new byte[] {0x20, 0x20, 0x20};
+        var module = assem.LoadModule(moduleName, rawModule);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadModule"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim assem As Assembly = GetType(TestClass).Assembly
+            Dim moduleName As String
+            moduleName = ""module name""
+            Dim rawModule(9) As Byte
+            assem.LoadModule(moduleName, rawModule)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "LoadModule"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationLoadWithPartialNameDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var partialName = ""partial name"";
+        var assem = Assembly.LoadWithPartialName(partialName);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "LoadWithPartialName"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim partialName As String
+            partialName = ""partial name""
+            Assembly.LoadWithPartialName(partialName)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "LoadWithPartialName"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationReflectionOnlyLoadDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var rawAssembly = new byte[] {0x20, 0x20, 0x20};
+        var assem = Assembly.ReflectionOnlyLoad(rawAssembly);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "ReflectionOnlyLoad"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim rawAssembly(9) As Byte
+            Assembly.ReflectionOnlyLoad(rawAssembly)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "ReflectionOnlyLoad"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationReflectionOnlyLoadFromDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var assemblyName = ""assembly file"";
+        var assem = Assembly.ReflectionOnlyLoadFrom(assemblyName);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "ReflectionOnlyLoadFrom"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim assemblyName As String
+            assemblyName = ""assembly file""
+            Assembly.ReflectionOnlyLoadFrom(assemblyName)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "ReflectionOnlyLoadFrom"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationUnsafeLoadFromDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var assemblyName = ""assembly file"";
+        var assem = Assembly.UnsafeLoadFrom(assemblyName);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "UnsafeLoadFrom"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Reflection
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim assemblyName As String
+            assemblyName = ""assembly file""
+            Assembly.UnsafeLoadFrom(assemblyName)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "UnsafeLoadFrom"));
         }
 
         [Fact]
@@ -371,7 +1099,7 @@ public class TestClass
         File.WriteAllBytes(""C:\\"", bytes);
     }
 }",
-            GetCSharpResultAt(14, 9, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
+            GetCSharpResultAt(11, 6, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
 
             VerifyBasic(@"
 Imports System
@@ -389,7 +1117,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(13, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
+            GetBasicResultAt(11, 33, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
         }
 
         [Fact]
@@ -406,7 +1134,7 @@ public class TestClass : IDisposable
 {
     private string member;
     bool disposed = false;
-
+    
     public void Dispose()
     {
         Dispose(true);
@@ -434,7 +1162,8 @@ public class TestClass : IDisposable
         Dispose(false);
     }
 }",
-            GetCSharpResultAt(29, 13, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Dispose", "WriteAllBytes"));
+            GetCSharpResultAt(13, 17, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Dispose", "WriteAllBytes"),
+            GetCSharpResultAt(35, 6, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
 
             VerifyBasic(@"
 Imports System
@@ -462,9 +1191,14 @@ Namespace TestNamespace
             Dispose(True)
             GC.SuppressFinalize(Me)
         End Sub
+
+        Protected Overrides Sub Finalize()
+            Dispose(False)
+        End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(17, 21, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Dispose", "WriteAllBytes"));
+            GetBasicResultAt(23, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Dispose", "WriteAllBytes"),
+            GetBasicResultAt(28, 33, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "Finalize", "WriteAllBytes"));
         }
 
         [Fact]

@@ -206,9 +206,8 @@ namespace Microsoft.NetFramework.Analyzers
 
             private void AnalyzeInvocation(OperationAnalysisContext context)
             {
-                IInvocationOperation invocationExpression = context.Operation as IInvocationOperation;
 
-                if (invocationExpression == null)
+                if (!(context.Operation is IInvocationOperation invocationExpression))
                 {
                     return;
                 }
@@ -256,12 +255,11 @@ namespace Microsoft.NetFramework.Analyzers
 
                     if (xmlReaderSettingsIndex < 0)
                     {
-                        if (method.Parameters.Length == 1 
+                        if (method.Parameters.Length == 1
                             && method.Parameters[0].RefKind == RefKind.None
                             && method.Parameters[0].Type.SpecialType == SpecialType.System_String)
                         {
                             // inputUri can load be a URL.  Should further investigate if this is worth flagging.
-                            DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessing;
                             Diagnostic diag = Diagnostic.Create(
                                     RuleDoNotUseInsecureDtdProcessing,
                                     expressionSyntax.GetLocation(),
@@ -329,14 +327,12 @@ namespace Microsoft.NetFramework.Analyzers
 
             private void AnalyzeFieldDeclaration(OperationAnalysisContext context)
             {
-                var assign = context.Operation as IAssignmentOperation;
-                if (assign == null)
+                if (!(context.Operation is IAssignmentOperation assign))
                 {
                     return;
                 }
 
-                IFieldSymbol field = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol as IFieldSymbol;
-                if (field == null)
+                if (!(context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol is IFieldSymbol field))
                 {
                     return;
                 }
@@ -346,9 +342,8 @@ namespace Microsoft.NetFramework.Analyzers
 
             private void AnalyzeObjectCreationInternal(OperationAnalysisContext context, ISymbol variable, IOperation valueOpt)
             {
-                IObjectCreationOperation objCreation = valueOpt as IObjectCreationOperation;
 
-                if (objCreation == null)
+                if (!(valueOpt is IObjectCreationOperation objCreation))
                 {
                     return;
                 }
@@ -382,9 +377,7 @@ namespace Microsoft.NetFramework.Analyzers
 
             private void AnalyzeObjectCreationForXmlDocument(OperationAnalysisContext context, ISymbol variable, IObjectCreationOperation objCreation)
             {
-                XmlDocumentEnvironment xmlDocumentEnvironment;
-
-                if (variable == null || !_xmlDocumentEnvironments.TryGetValue(variable, out xmlDocumentEnvironment))
+                if (variable == null || !_xmlDocumentEnvironments.TryGetValue(variable, out var xmlDocumentEnvironment))
                 {
                     xmlDocumentEnvironment = new XmlDocumentEnvironment
                     {
@@ -411,17 +404,15 @@ namespace Microsoft.NetFramework.Analyzers
                         if (init is IAssignmentOperation assign)
                         {
                             var propValue = assign.Value;
-                            IPropertySymbol prop = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol as IPropertySymbol;
-                            if (prop == null)
+                            if (!(context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol is IPropertySymbol prop))
                             {
                                 continue;
                             }
 
                             if (prop.MatchPropertyDerivedByName(_xmlTypes.XmlDocument, "XmlResolver"))
                             {
-                                IConversionOperation operation = propValue as IConversionOperation;
 
-                                if (operation == null)
+                                if (!(propValue is IConversionOperation operation))
                                 {
                                     return;
                                 }
@@ -486,8 +477,7 @@ namespace Microsoft.NetFramework.Analyzers
                         if (init is IAssignmentOperation assign)
                         {
                             var propValue = assign.Value;
-                            IPropertySymbol prop = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol as IPropertySymbol;
-                            if (prop == null)
+                            if (!(context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol is IPropertySymbol prop))
                             {
                                 continue;
                             }
@@ -569,8 +559,7 @@ namespace Microsoft.NetFramework.Analyzers
                         if (init is IAssignmentOperation assign)
                         {
                             var propValue = assign.Value;
-                            IPropertySymbol prop = context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol as IPropertySymbol;
-                            if (prop == null)
+                            if (!(context.Compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree)?.GetSymbolInfo(assign.Target.Syntax).Symbol is IPropertySymbol prop))
                             {
                                 continue;
                             }
@@ -580,9 +569,8 @@ namespace Microsoft.NetFramework.Analyzers
                                     _xmlTypes)
                                 )
                             {
-                                IConversionOperation operation = propValue as IConversionOperation;
 
-                                if (operation == null)
+                                if (!(propValue is IConversionOperation operation))
                                 {
                                     return;
                                 }
@@ -704,9 +692,8 @@ namespace Microsoft.NetFramework.Analyzers
                 }
 
                 SemanticModel model = context.Compilation.GetSemanticModel(expression.Syntax.SyntaxTree);
-                var propRef = expression.Target as IPropertyReferenceOperation;
 
-                if (propRef == null) // A variable/field assignment
+                if (!(expression.Target is IPropertyReferenceOperation propRef)) // A variable/field assignment
                 {
                     ISymbol symbolAssignedTo = expression.Target.Syntax.GetDeclaredOrReferencedSymbol(model);
 

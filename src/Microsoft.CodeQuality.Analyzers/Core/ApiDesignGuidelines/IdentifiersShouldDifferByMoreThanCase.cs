@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             var namedTypeSymbol = context.Symbol as INamedTypeSymbol;
-            
+
             // Do not descent into non-publicly visible types by default
             // Note: This is the behavior of FxCop, it might be more correct to descend into internal but not private
             // types because "InternalsVisibleTo" could be set. But it might be bad for users to start seeing warnings

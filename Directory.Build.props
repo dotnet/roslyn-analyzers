@@ -8,6 +8,16 @@
 
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
+  <PropertyGroup>
+    <LangVersion Condition="'$(Language)' == 'C#'">7.2</LangVersion>
+    <LangVersion Condition="'$(Language)' == 'VB'">15.5</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- We generate per-project assembly attributes files, so we can safely delete them when cleaning the project -->
+    <TargetFrameworkMonikerAssemblyAttributesFileClean>true</TargetFrameworkMonikerAssemblyAttributesFileClean>
+  </PropertyGroup>
+
   <!-- Workaround to enable .editorconfig based analyzer configuration until dotnet compilers support .editorconfig based configuration -->
   <PropertyGroup>
     <SkipDefaultEditorConfigAsAdditionalFile>true</SkipDefaultEditorConfigAsAdditionalFile>

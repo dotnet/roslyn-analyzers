@@ -29,7 +29,7 @@ namespace Metrics
             {
                 return (int)RunAsync(args, tokenSource.Token).GetAwaiter().GetResult();
             }
-            catch(OperationCanceledException)
+            catch (OperationCanceledException)
             {
                 Console.WriteLine("Operation Cancelled.");
                 return -1;

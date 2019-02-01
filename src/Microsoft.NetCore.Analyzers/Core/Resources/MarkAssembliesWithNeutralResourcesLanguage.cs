@@ -44,12 +44,12 @@ namespace Microsoft.NetCore.Analyzers.Resources
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            // this analyzer is safe from running concurrently.
+            analysisContext.EnableConcurrentExecution();
+
             // set generated file mode to analyze since I only analyze generated files and doesn't report
             // any diagnostics from it.
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
-
-            // this analyzer is safe from running concurrently.
-            analysisContext.EnableConcurrentExecution();
 
             analysisContext.RegisterCompilationStartAction(cc =>
             {
@@ -108,8 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Resources
                 return false;
             }
 
-            var stringValue = constValue.Value as string;
-            if (stringValue == null)
+            if (!(constValue.Value is string stringValue))
             {
                 return false;
             }

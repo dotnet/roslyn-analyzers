@@ -99,7 +99,7 @@ public class Sdk
                 .Verify(analyzer, GetDefaultPath(LanguageNames.CSharp), CSharpDefaultResultAt(2, 14, "Sdk", "Xunit.Sdk"));
         }
 
-        [Fact, WorkItem(1673,"https://github.com/dotnet/roslyn-analyzers/issues/1673")]
+        [Fact, WorkItem(1673, "https://github.com/dotnet/roslyn-analyzers/issues/1673")]
         public void CA1724CSharp_NoDiagnostic_NamespaceWithNoTypes()
         {
             VerifyCSharp(@"

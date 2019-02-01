@@ -305,7 +305,7 @@ namespace N
             // Should the analyzer even be invoked for compiler generated code?
             VerifyCSharp(source + arrayEmptySource, referenceFlags: ReferenceFlags.None);
         }
-        
+
         [WorkItem(1209, "https://github.com/dotnet/roslyn-analyzers/issues/1209")]
         [Fact]
         public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInIndexerAccess()

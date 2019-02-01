@@ -17,9 +17,44 @@
     <None Include="$(MSBuildThisFileDirectory)Common\Test\App.config" CopyToOutputDirectory="PreserveNewest" Condition="'$(IsUnitTestProject)' == 'true'" />
   </ItemGroup>
 
+  <!-- Code Style analyzers -->
+  <ItemGroup Condition="'$(Language)' == 'C#'">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="$(CodeStyleAnalyersVersion)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Language)' == 'VB'">
+    <!-- https://github.com/dotnet/roslyn-analyzers/issues/2095 tracks uncommenting the below -->
+    <!-- <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.CodeStyle" Version="$(CodeStyleAnalyersVersion)" /> -->
+  </ItemGroup>
+
   <!-- Setup the correct code analysis rulesets -->
-  <PropertyGroup>
-    <CodeAnalysisRuleSet Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true'">$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset</CodeAnalysisRuleSet>
-    <CodeAnalysisRuleSet Condition="'$(CodeAnalysisRuleSet)' == ''">$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true'">
+      <Choose>
+        <When Condition="'$(DesignTimeBuild)' == 'true'">
+          <PropertyGroup>
+            <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset</CodeAnalysisRuleSet>
+          </PropertyGroup>
+        </When>
+        <Otherwise>
+          <PropertyGroup>
+            <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules_Build.ruleset</CodeAnalysisRuleSet>
+          </PropertyGroup>
+        </Otherwise>
+      </Choose>
+    </When>
+    <Otherwise>
+      <Choose>
+        <When Condition="'$(DesignTimeBuild)' == 'true'">
+          <PropertyGroup>
+            <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset</CodeAnalysisRuleSet>
+          </PropertyGroup>
+        </When>
+        <Otherwise>
+          <PropertyGroup>
+            <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules_Build.ruleset</CodeAnalysisRuleSet>
+          </PropertyGroup>
+        </Otherwise>
+      </Choose>
+    </Otherwise>
+  </Choose>
 </Project>

@@ -679,8 +679,8 @@ class C
     }
 }
 ");
-   
-        VerifyBasic(@"
+
+            VerifyBasic(@"
 Class C
     Public Property Item(i As Integer) As Integer
         Get
@@ -692,12 +692,12 @@ Class C
     End Property
 End Class
 ");
-    }
+        }
 
-    [Fact]
-    public void NoDiagnosticsForPropertySetter()
-    {
-        VerifyCSharp(@"
+        [Fact]
+        public void NoDiagnosticsForPropertySetter()
+        {
+            VerifyCSharp(@"
 class C
 {
     public int Property
@@ -708,7 +708,7 @@ class C
 }
 ");
 
-        VerifyBasic(@"
+            VerifyBasic(@"
 Class C
     Public Property Property1 As Integer
         Get
@@ -720,7 +720,7 @@ Class C
     End Property
 End Class
 ");
-    }
+        }
         [Fact]
         public void NoDiagnosticsForFirstParameterOfExtensionMethod()
         {
@@ -731,7 +731,7 @@ static class C
     static int ExtensionMethod(this int i, int anotherParam) { return anotherParam; }
 }
 ");
-    }
+        }
 
         [Fact]
         public void NoDiagnosticsForSingleStatementMethodsWithDefaultParameters()
@@ -757,15 +757,15 @@ Public Class C
 End Class");
         }
 
-    #endregion
+        #endregion
 
-    #region Unit tests for analyzer diagnostic(s)
+        #region Unit tests for analyzer diagnostic(s)
 
-    [Fact]
-    [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
-    public void CSharp_DiagnosticForSimpleCasesTest()
-    {
-        VerifyCSharp(@"
+        [Fact]
+        [WorkItem(459, "https://github.com/dotnet/roslyn-analyzers/issues/459")]
+        public void CSharp_DiagnosticForSimpleCasesTest()
+        {
+            VerifyCSharp(@"
 using System;
 
 class C
@@ -803,24 +803,24 @@ class C
     }
 }
 ", TestValidationMode.AllowCompileErrors,
-      // Test0.cs(6,18): warning CA1801: Parameter param of method .ctor is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(6, 18, "param", ".ctor"),
-      // Test0.cs(10,39): warning CA1801: Parameter param of method UnusedParamMethod is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(10, 39, "param", "UnusedParamMethod"),
-      // Test0.cs(14,52): warning CA1801: Parameter param1 of method UnusedParamStaticMethod is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(14, 52, "param1", "UnusedParamStaticMethod"),
-      // Test0.cs(18,46): warning CA1801: Parameter defaultParam of method UnusedDefaultParamMethod is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(18, 46, "defaultParam", "UnusedDefaultParamMethod"),
-      // Test0.cs(22,59): warning CA1801: Parameter paramsArr of method UnusedParamsArrayParamMethod is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(22, 59, "paramsArr", "UnusedParamsArrayParamMethod"),
-      // Test0.cs(26,48): warning CA1801: Parameter param1 of method MultipleUnusedParamsMethod is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(26, 48, "param1", "MultipleUnusedParamsMethod"),
-      // Test0.cs(26,60): warning CA1801: Parameter param2 of method MultipleUnusedParamsMethod is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(26, 60, "param2", "MultipleUnusedParamsMethod"),
-      // Test0.cs(30,47): warning CA1801: Parameter param1 of method UnusedRefParamMethod is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(30, 47, "param1", "UnusedRefParamMethod"),
-      // Test0.cs(34,58): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
-      GetCSharpUnusedParameterResultAt(34, 58, "param1", "UnusedErrorTypeParamMethod"));
+          // Test0.cs(6,18): warning CA1801: Parameter param of method .ctor is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(6, 18, "param", ".ctor"),
+          // Test0.cs(10,39): warning CA1801: Parameter param of method UnusedParamMethod is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(10, 39, "param", "UnusedParamMethod"),
+          // Test0.cs(14,52): warning CA1801: Parameter param1 of method UnusedParamStaticMethod is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(14, 52, "param1", "UnusedParamStaticMethod"),
+          // Test0.cs(18,46): warning CA1801: Parameter defaultParam of method UnusedDefaultParamMethod is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(18, 46, "defaultParam", "UnusedDefaultParamMethod"),
+          // Test0.cs(22,59): warning CA1801: Parameter paramsArr of method UnusedParamsArrayParamMethod is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(22, 59, "paramsArr", "UnusedParamsArrayParamMethod"),
+          // Test0.cs(26,48): warning CA1801: Parameter param1 of method MultipleUnusedParamsMethod is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(26, 48, "param1", "MultipleUnusedParamsMethod"),
+          // Test0.cs(26,60): warning CA1801: Parameter param2 of method MultipleUnusedParamsMethod is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(26, 60, "param2", "MultipleUnusedParamsMethod"),
+          // Test0.cs(30,47): warning CA1801: Parameter param1 of method UnusedRefParamMethod is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(30, 47, "param1", "UnusedRefParamMethod"),
+          // Test0.cs(34,58): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
+          GetCSharpUnusedParameterResultAt(34, 58, "param1", "UnusedErrorTypeParamMethod"));
         }
 
         [Fact]
@@ -872,7 +872,7 @@ End Class
       GetBasicUnusedParameterResultAt(21, 44, "param1", "UnusedRefParamMethod"),
       // Test0.vb(24,43): warning CA1801: Parameter param1 of method UnusedErrorTypeParamMethod is never used. Remove the parameter or use it in the method body.
       GetBasicUnusedParameterResultAt(24, 43, "param1", "UnusedErrorTypeParamMethod"));
-    }
+        }
 
         [Fact]
         public void DiagnosticsForNonFirstParameterOfExtensionMethod()

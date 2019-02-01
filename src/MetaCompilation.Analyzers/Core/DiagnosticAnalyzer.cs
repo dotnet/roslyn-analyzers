@@ -332,14 +332,14 @@ namespace MetaCompilation.Analyzers
         // Performs stateful analysis
         private class CompilationAnalyzer
         {
-            private List<IMethodSymbol> _analyzerMethodSymbols = new List<IMethodSymbol>();
-            private List<IPropertySymbol> _analyzerPropertySymbols = new List<IPropertySymbol>();
-            private List<IFieldSymbol> _analyzerFieldSymbols = new List<IFieldSymbol>();
-            private List<INamedTypeSymbol> _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
+            private readonly List<IMethodSymbol> _analyzerMethodSymbols = new List<IMethodSymbol>();
+            private readonly List<IPropertySymbol> _analyzerPropertySymbols = new List<IPropertySymbol>();
+            private readonly List<IFieldSymbol> _analyzerFieldSymbols = new List<IFieldSymbol>();
+            private readonly List<INamedTypeSymbol> _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
             private IMethodSymbol _initializeSymbol;
             private IPropertySymbol _propertySymbol;
             private INamedTypeSymbol _analyzerClassSymbol;
-            private Dictionary<string, string> _branchesDict = new Dictionary<string, string>();
+            private readonly Dictionary<string, string> _branchesDict = new Dictionary<string, string>();
             private readonly List<IMethodSymbol> _codeFixMethodSymbols = new List<IMethodSymbol>();
 
             //"main" method, performs the analysis once state has been collected
@@ -2037,9 +2037,7 @@ namespace MetaCompilation.Analyzers
                 }
 
                 Location getAccessorKeywordLocation = propertyDeclaration.AccessorList.Accessors.First().Keyword.GetLocation();
-
-
-                if (statements.First() is ThrowStatementSyntax throwStatement)
+                if (statements.First() is ThrowStatementSyntax)
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation);
                     return false;
@@ -2539,7 +2537,6 @@ namespace MetaCompilation.Analyzers
                 }
                 else
                 {
-                    var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
                     Location idLocation = null;
                     foreach (IFieldSymbol field in _analyzerFieldSymbols)
                     {

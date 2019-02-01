@@ -1669,7 +1669,7 @@ namespace MetaCompilation.Analyzers
                     continue;
                 }
 
-                SyntaxList<SyntaxNode> nodeArgs = CodeFixHelper.CreateRuleList(document, ruleNames);
+                SyntaxList<SyntaxNode> nodeArgs = CodeFixHelper.CreateRuleList(ruleNames);
                 SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
                 SyntaxNode newInvocationExpression = (generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs));
                 SyntaxTriviaList leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
@@ -2281,7 +2281,7 @@ namespace MetaCompilation.Analyzers
                 var arguments = new ArgumentSyntax[6];
                 string whitespace = "            ";
                 SyntaxNode id = idName != ""
-                    ? generator.LiteralExpression(idName) 
+                    ? generator.LiteralExpression(idName)
                     : generator.IdentifierName("").WithTrailingTrivia(SyntaxFactory.ParseTrailingTrivia("/* The ID here should be the public constant declared above */"));
 
                 var idArg = generator.Argument("id", RefKind.None, id).WithLeadingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
@@ -2438,7 +2438,7 @@ namespace MetaCompilation.Analyzers
                 return ruleNames;
             }
 
-            internal static SyntaxList<SyntaxNode> CreateRuleList(Document document, List<string> ruleNames)
+            internal static SyntaxList<SyntaxNode> CreateRuleList(List<string> ruleNames)
             {
                 string argumentListString = "";
                 foreach (string ruleName in ruleNames)
@@ -2454,8 +2454,6 @@ namespace MetaCompilation.Analyzers
                 }
 
                 ArgumentListSyntax argumentListSyntax = SyntaxFactory.ParseArgumentList("(" + argumentListString + ")");
-                SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
                 SeparatedSyntaxList<ArgumentSyntax> args = argumentListSyntax.Arguments;
                 var nodeArgs = new SyntaxList<SyntaxNode>();
                 foreach (ArgumentSyntax arg in args)

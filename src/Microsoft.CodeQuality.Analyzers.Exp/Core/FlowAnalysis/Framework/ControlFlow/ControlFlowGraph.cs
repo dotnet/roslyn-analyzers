@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.Operations.ControlFlow
     [DebuggerDisplay("CFG ({_blocks.Count} blocks)")]
     internal class ControlFlowGraph
     {
-        private ImmutableHashSet<BasicBlock>.Builder _blocks;
+        private readonly ImmutableHashSet<BasicBlock>.Builder _blocks;
 
         public static ControlFlowGraph Create(IOperation body)
         {

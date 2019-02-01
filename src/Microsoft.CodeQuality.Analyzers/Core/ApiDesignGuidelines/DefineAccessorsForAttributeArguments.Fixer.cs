@@ -74,8 +74,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SymbolEditor symbolEditor = SymbolEditor.Create(document);
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            var parameterSymbol = model.GetDeclaredSymbol(parameter, cancellationToken) as IParameterSymbol;
-            if (parameterSymbol == null)
+            if (!(model.GetDeclaredSymbol(parameter, cancellationToken) is IParameterSymbol parameterSymbol))
             {
                 return document;
             }

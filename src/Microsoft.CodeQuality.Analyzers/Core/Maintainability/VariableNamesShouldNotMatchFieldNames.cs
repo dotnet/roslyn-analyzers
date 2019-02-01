@@ -40,12 +40,11 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
-            //ImmutableArray.Create(LocalRule, ParameterRule);
+        //ImmutableArray.Create(LocalRule, ParameterRule);
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO: Enable concurrent execution of analyzer actions.
-            //analysisContext.EnableConcurrentExecution();
+            analysisContext.EnableConcurrentExecution();
 
             // TODO: Configure generated code analysis.
             //analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);

@@ -77,7 +77,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         private static ImmutableArray<object> GetConstantArgumentValues(ImmutableArray<IArgumentOperation> arguments)
         {
             var result = new object[arguments.Length];
-            foreach(var argument in arguments)
+            foreach (var argument in arguments)
             {
                 var parameter = argument.Parameter;
                 if (parameter == null ||

@@ -67,8 +67,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            // TODO: Make analyzer thread safe.
-            //analysisContext.EnableConcurrentExecution();
+            analysisContext.EnableConcurrentExecution();
 
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
@@ -160,8 +159,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    var parameterSymbol = _semanticModel.GetSymbolInfo(invocationExpression.Arguments.Single().Value.Syntax).Symbol as IParameterSymbol;
-                    if (parameterSymbol == null || !parameterSymbol.IsThis)
+                    if (!(_semanticModel.GetSymbolInfo(invocationExpression.Arguments.Single().Value.Syntax).Symbol is IParameterSymbol parameterSymbol) || !parameterSymbol.IsThis)
                     {
                         analysisContext.ReportDiagnostic(invocationExpression.Syntax.CreateDiagnostic(
                             NotPassedThisRule,

@@ -57,8 +57,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// </summary>
         private static void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            var property = context.Symbol as IPropertySymbol;
-            if (property == null)
+            if (!(context.Symbol is IPropertySymbol property))
             {
                 return;
             }

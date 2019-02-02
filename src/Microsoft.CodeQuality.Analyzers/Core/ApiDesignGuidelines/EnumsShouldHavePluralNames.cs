@@ -94,7 +94,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public override void Initialize(AnalysisContext analysisContext)
         {
             if (!CultureInfo.CurrentCulture.Name.Equals("en", StringComparison.Ordinal) &&
-				!CultureInfo.CurrentCulture.Parent.Name.Equals("en", StringComparison.Ordinal))
+                !CultureInfo.CurrentCulture.Parent.Name.Equals("en", StringComparison.Ordinal))
             {
                 // FxCop compat: Skip for non-English cultures.
                 return;

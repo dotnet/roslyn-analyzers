@@ -221,7 +221,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Note all the descriptors/rules for this analyzer have the same ID and category and hence
             // will always have identical configured visibility.
             var matchesConfiguration = symbol.MatchesConfiguredVisibility(context.Options, AssemblyRule, context.CancellationToken);
-            
+
             return (!(matchesConfiguration && !symbol.IsOverride)) ||
                 symbol.IsAccessorMethod() || symbol.IsImplementationOfAnyInterfaceMember();
         }

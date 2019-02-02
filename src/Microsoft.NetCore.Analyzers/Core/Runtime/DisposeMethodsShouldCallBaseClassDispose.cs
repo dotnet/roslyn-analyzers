@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
-            //ImmutableArray.Create(Rule);
+        //ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)
         {

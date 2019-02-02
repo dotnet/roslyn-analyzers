@@ -57,8 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCodeBlockStartAction<TLanguageKindEnum>(codeBlockStartContext =>
             {
-                var methodSym = codeBlockStartContext.OwningSymbol as IMethodSymbol;
-                if (methodSym == null ||
+                if (!(codeBlockStartContext.OwningSymbol is IMethodSymbol methodSym) ||
                     !methodSym.IsStatic ||
                     methodSym.MethodKind != MethodKind.SharedConstructor)
                 {

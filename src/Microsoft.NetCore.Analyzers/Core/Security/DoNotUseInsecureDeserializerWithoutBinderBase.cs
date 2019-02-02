@@ -160,7 +160,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             allResults = new Dictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue>();
                                         }
 
-                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> kvp 
+                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> kvp
                                             in dfaResult)
                                         {
                                             allResults.Add(kvp.Key, kvp.Value);

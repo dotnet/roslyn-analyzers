@@ -149,21 +149,18 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
 
         public static bool IsExpressionEqualsNull(IOperation operation)
         {
-            ILiteralOperation literal = operation as ILiteralOperation;
-            return literal != null && literal.HasNullConstantValue();
+            return operation is ILiteralOperation literal && literal.HasNullConstantValue();
         }
 
         public static bool IsExpressionEqualsDtdProcessingParse(IOperation operation)
         {
-            IFieldReferenceOperation enumRef = operation as IFieldReferenceOperation;
-            return enumRef != null && enumRef.HasConstantValue(2); // DtdProcessing.Parse
+            return operation is IFieldReferenceOperation enumRef && enumRef.HasConstantValue(2); // DtdProcessing.Parse
         }
 
         public static bool IsExpressionEqualsIntZero(IOperation operation)
         {
-            ILiteralOperation literal = operation as ILiteralOperation;
 
-            if (literal == null || !literal.ConstantValue.HasValue)
+            if (!(operation is ILiteralOperation literal) || !literal.ConstantValue.HasValue)
             {
                 return false;
             }

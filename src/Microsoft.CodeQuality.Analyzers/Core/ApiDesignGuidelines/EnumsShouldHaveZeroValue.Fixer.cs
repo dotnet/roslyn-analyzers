@@ -40,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             ISymbol declaredSymbol = model.GetDeclaredSymbol(node, context.CancellationToken);
             Debug.Assert(declaredSymbol != null);
             string title;
-            
+
             foreach (string customTag in diagnostic.Descriptor.CustomTags)
             {
                 switch (customTag)

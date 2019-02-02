@@ -219,7 +219,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     }
 
                     shifted++;
-                    current = current >> 1;
+                    current >>= 1;
                 }
             }
         }

@@ -40,13 +40,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             Debug.Assert(nodeToReplace != null);
             var stringText = nodeToReplace.FindToken(diagnosticSpan.Start).ValueText;
             context.RegisterCodeFix(CodeAction.Create(
-                    MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringTitle, 
-                    c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c), 
+                    MicrosoftMaintainabilityAnalyzersResources.UseNameOfInPlaceOfStringTitle,
+                    c => ReplaceWithNameOf(context.Document, nodeToReplace, stringText, c),
                     equivalenceKey: nameof(UseNameOfInPlaceOfStringFixer)),
                 context.Diagnostics);
         }
 
-        private async Task<Document> ReplaceWithNameOf(Document document, SyntaxNode nodeToReplace, 
+        private async Task<Document> ReplaceWithNameOf(Document document, SyntaxNode nodeToReplace,
             string stringText, CancellationToken cancellationToken)
         {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);

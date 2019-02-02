@@ -1299,18 +1299,6 @@ public class DerivedClass<T> : BaseClass<T>
             GetCA1036CSharpOperatorsResultAt(4, 14, "BaseClass", @"==, !=, <, <=, >, >="));
         }
 
-        private static DiagnosticResult GetCA1036CSharpEqualsResultAt(int line, int column, string typeName)
-        {
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);
-            return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
-        }
-
-        private static DiagnosticResult GetCA1036BasicEqualsResultAt(int line, int column, string typeName)
-        {
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals, typeName);
-            return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
-        }
-
         private static DiagnosticResult GetCA1036CSharpOperatorsResultAt(int line, int column, string typeName, string operators)
         {
             var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);

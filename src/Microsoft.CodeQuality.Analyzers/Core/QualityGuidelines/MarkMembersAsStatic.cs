@@ -65,8 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                 compilationContext.RegisterOperationBlockStartAction(blockStartContext =>
                 {
-                    var methodSymbol = blockStartContext.OwningSymbol as IMethodSymbol;
-                    if (methodSymbol == null || !ShouldAnalyze(methodSymbol, blockStartContext.Compilation, skippedAttributes))
+                    if (!(blockStartContext.OwningSymbol is IMethodSymbol methodSymbol) || !ShouldAnalyze(methodSymbol, blockStartContext.Compilation, skippedAttributes))
                     {
                         return;
                     }
@@ -262,6 +261,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             Add(WellKnownTypes.NunitTearDown(compilation));
 
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
-        }       
+        }
     }
 }

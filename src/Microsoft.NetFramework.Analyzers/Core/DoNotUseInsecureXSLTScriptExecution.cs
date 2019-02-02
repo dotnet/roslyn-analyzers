@@ -269,8 +269,6 @@ namespace Microsoft.NetFramework.Analyzers
                             _xsltSettingsEnvironments[lhsExpressionSymbol] = env;
                         }
 
-                        ITypeSymbol rhsType = model.GetTypeInfo(rhs).Type;
-
                         if (isXlstSettingsEnableDocumentFunctionProperty)
                         {
                             env.IsDocumentFunctionDisabled = SyntaxNodeHelper.NodeHasConstantValueBoolFalse(rhs, model);

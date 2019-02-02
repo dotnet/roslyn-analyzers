@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28315.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.NetFramework.Analyzers", "Microsoft.NetFramework.Analyzers", "{AB503AAC-EE72-4DD4-A339-C7DD545494DB}"
 EndProject
@@ -114,10 +114,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.Package", "nuget\MetaCompilation.Analyzers\MetaCompilation.Analyzers.Package.csproj", "{722141A2-91FE-411A-A64F-A2A2A7150122}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.Net.RoslynDiagnostics", "Microsoft.Net.RoslynDiagnostics", "{7CBF63F7-C0A0-4023-9575-B08CDCCD3AFC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Net.RoslynDiagnostics.Package", "nuget\Microsoft.Net.RoslynDiagnostics\Microsoft.Net.RoslynDiagnostics.Package.csproj", "{923A69C8-83DE-46FF-92DF-7CA79438FB02}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.Utilities", "src\Utilities\Analyzer.Utilities.shproj", "{EC946164-1E17-410B-B7D9-7DE7E6268D63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{C0B86774-8307-444F-9EE4-98D62C3424F9}"
@@ -126,9 +122,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metrics", "src\Tools\Metric
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestReferenceAssembly", "TestReferenceAssembly", "{4F3DD6F3-121C-4D38-9B8E-5065783EA832}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestReferenceAssembly", "src\TestReferenceAssembly\TestReferenceAssembly.csproj", "{774B5DF6-D14F-4839-95F3-D3632B754765}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestReferenceAssembly", "src\TestReferenceAssembly\TestReferenceAssembly.csproj", "{774B5DF6-D14F-4839-95F3-D3632B754765}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateAnalyzerRulesets", "src\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj", "{CC0DB31C-87B7-4ABF-A95A-B12526F3056D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metrics.Legacy", "src\Tools\Metrics.Legacy.csproj", "{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Metrics.Package", "nuget\Microsoft.CodeAnalysis.Metrics\Microsoft.CodeAnalysis.Metrics.Package.csproj", "{36359863-556D-4C16-940A-36592BB3DC72}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -485,14 +485,6 @@ Global
 		{722141A2-91FE-411A-A64F-A2A2A7150122}.Release|Any CPU.Build.0 = Release|Any CPU
 		{722141A2-91FE-411A-A64F-A2A2A7150122}.Release|x86.ActiveCfg = Release|Any CPU
 		{722141A2-91FE-411A-A64F-A2A2A7150122}.Release|x86.Build.0 = Release|Any CPU
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02}.Debug|x86.Build.0 = Debug|Any CPU
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02}.Release|Any CPU.Build.0 = Release|Any CPU
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02}.Release|x86.ActiveCfg = Release|Any CPU
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02}.Release|x86.Build.0 = Release|Any CPU
 		{EEF553EA-1D3D-44A1-A334-1F9220698FB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EEF553EA-1D3D-44A1-A334-1F9220698FB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEF553EA-1D3D-44A1-A334-1F9220698FB8}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -517,6 +509,22 @@ Global
 		{CC0DB31C-87B7-4ABF-A95A-B12526F3056D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CC0DB31C-87B7-4ABF-A95A-B12526F3056D}.Release|x86.ActiveCfg = Release|Any CPU
 		{CC0DB31C-87B7-4ABF-A95A-B12526F3056D}.Release|x86.Build.0 = Release|Any CPU
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}.Debug|x86.Build.0 = Debug|Any CPU
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}.Release|x86.ActiveCfg = Release|Any CPU
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A}.Release|x86.Build.0 = Release|Any CPU
+		{36359863-556D-4C16-940A-36592BB3DC72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36359863-556D-4C16-940A-36592BB3DC72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36359863-556D-4C16-940A-36592BB3DC72}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{36359863-556D-4C16-940A-36592BB3DC72}.Debug|x86.Build.0 = Debug|Any CPU
+		{36359863-556D-4C16-940A-36592BB3DC72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36359863-556D-4C16-940A-36592BB3DC72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36359863-556D-4C16-940A-36592BB3DC72}.Release|x86.ActiveCfg = Release|Any CPU
+		{36359863-556D-4C16-940A-36592BB3DC72}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -565,11 +573,12 @@ Global
 		{D70D8CBB-1AD0-49DE-83A8-07990915A843} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
 		{390DBE36-C8AF-4882-BB5D-87EFBF06B8A8} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
 		{722141A2-91FE-411A-A64F-A2A2A7150122} = {7FEEECAE-4EC2-469C-868A-0B38435C756C}
-		{923A69C8-83DE-46FF-92DF-7CA79438FB02} = {7CBF63F7-C0A0-4023-9575-B08CDCCD3AFC}
 		{EC946164-1E17-410B-B7D9-7DE7E6268D63} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
 		{EEF553EA-1D3D-44A1-A334-1F9220698FB8} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 		{774B5DF6-D14F-4839-95F3-D3632B754765} = {4F3DD6F3-121C-4D38-9B8E-5065783EA832}
 		{CC0DB31C-87B7-4ABF-A95A-B12526F3056D} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
+		{CC9AB5FC-F63C-40D7-B809-9FCA5ACC5C8A} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
+		{36359863-556D-4C16-940A-36592BB3DC72} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

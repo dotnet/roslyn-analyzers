@@ -135,8 +135,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    var disposeInterfaceMethod = disposableType.GetMembers(DisposeMethodName).Single() as IMethodSymbol;
-                    if (disposeInterfaceMethod == null)
+                    if (!(disposableType.GetMembers(DisposeMethodName).Single() is IMethodSymbol disposeInterfaceMethod))
                     {
                         return;
                     }
@@ -147,8 +146,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    var suppressFinalizeMethod = garbageCollectorType.GetMembers(SuppressFinalizeMethodName).Single() as IMethodSymbol;
-                    if (suppressFinalizeMethod == null)
+                    if (!(garbageCollectorType.GetMembers(SuppressFinalizeMethodName).Single() is IMethodSymbol suppressFinalizeMethod))
                     {
                         return;
                     }
@@ -234,8 +232,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             private void AnalyzeOperationBlock(OperationBlockAnalysisContext context)
             {
-                var method = context.OwningSymbol as IMethodSymbol;
-                if (method == null)
+                if (!(context.OwningSymbol is IMethodSymbol method))
                 {
                     return;
                 }
@@ -500,7 +497,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// <summary>
         /// Validates implementation of Dispose method. The method must call Dispose(true) and then GC.SuppressFinalize(this).
         /// </summary>
-        private struct DisposeImplementationValidator
+        private sealed class DisposeImplementationValidator
         {
             // this type will be created per compilation
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
@@ -632,12 +629,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// <summary>
         /// Validates implementation of the finalizer. This method must call Dispose(false) and then return
         /// </summary>
-        private struct FinalizeImplementationValidator
+        private sealed class FinalizeImplementationValidator
         {
             // Avoid storing per-compilation data into the fields of a diagnostic analyzer.
             // this is actually a bug - https://github.com/dotnet/roslyn-analyzers/issues/845
 #pragma warning disable RS1008
-            private INamedTypeSymbol _type;
+            private readonly INamedTypeSymbol _type;
 #pragma warning restore RS1008
             private bool _callDispose;
 

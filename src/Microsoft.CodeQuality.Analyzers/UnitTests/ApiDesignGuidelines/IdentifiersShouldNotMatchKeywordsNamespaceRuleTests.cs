@@ -162,10 +162,5 @@ End Namespace
 ",
                 GetBasicResultAt(2, 11, IdentifiersShouldNotMatchKeywordsAnalyzer.NamespaceRule, "Namespace", "Namespace"));
         }
-
-        private DiagnosticResult GetResultNoLocation(DiagnosticDescriptor rule, params object[] messageArguments)
-        {
-            return new DiagnosticResult(rule).WithArguments(messageArguments);
-        }
     }
 }

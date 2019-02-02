@@ -273,7 +273,7 @@ internal static class C
                 parseOptions: CodeAnalysis.CSharp.CSharpParseOptions.Default.WithLanguageVersion(CodeAnalysis.CSharp.LanguageVersion.CSharp7_1),
                 compilationOptions: s_CSharpDefaultOptions.WithOutputKind(CodeAnalysis.OutputKind.ConsoleApplication));
         }
- 
+
         [Fact]
         public void CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningTaskInt()
         {

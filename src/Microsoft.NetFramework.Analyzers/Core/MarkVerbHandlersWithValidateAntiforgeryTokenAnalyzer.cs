@@ -46,10 +46,10 @@ namespace Microsoft.NetFramework.Analyzers
 
         private static readonly DiagnosticDescriptor NoVerbsRule = new DiagnosticDescriptor(
             RuleId,
-            Title, 
-            NoVerbsMessage, 
+            Title,
+            NoVerbsMessage,
             DiagnosticCategory.Security,
-            DiagnosticHelpers.DefaultDiagnosticSeverity, 
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: true,
             helpLinkUri: HelpLinkUri);
 
@@ -115,9 +115,8 @@ namespace Microsoft.NetFramework.Analyzers
                         (SymbolAnalysisContext symbolContext) =>
                         {
                             // TODO enhancements: Consider looking at non-ActionResult-derived return types as well.
-                            IMethodSymbol methodSymbol = symbolContext.Symbol as IMethodSymbol;
-                            if (methodSymbol == null
-                                || methodSymbol.MethodKind != MethodKind.Ordinary 
+                            if (!(symbolContext.Symbol is IMethodSymbol methodSymbol)
+                                || methodSymbol.MethodKind != MethodKind.Ordinary
                                 || methodSymbol.IsStatic
                                 || !methodSymbol.IsPublic()
                                 || !methodSymbol.ReturnType.Inherits(actionResultSymbol)  // FxCop implementation only looks at ActionResult-derived return types.
@@ -128,10 +127,7 @@ namespace Microsoft.NetFramework.Analyzers
                             }
 
                             ImmutableArray<AttributeData> methodAttributes = methodSymbol.GetAttributes();
-                            MvcHttpVerbs verbs;
-                            bool isAntiforgeryTokenDefined;
-                            bool isAction;
-                            mvcAttributeSymbols.ComputeAttributeInfo(methodAttributes, out verbs, out isAntiforgeryTokenDefined, out isAction);
+                            mvcAttributeSymbols.ComputeAttributeInfo(methodAttributes, out var verbs, out var isAntiforgeryTokenDefined, out var isAction);
 
                             if (!isAction)
                             {

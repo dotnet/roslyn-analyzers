@@ -167,6 +167,16 @@ function GetBuildCommand() {
     
     # Presence of vswhere.version indicates the repo needs to build using VS msbuild:
     $buildDriver = Join-Path $vsInstallDir "MSBuild\15.0\Bin\msbuild.exe"
+    if (!(Test-Path $buildDriver)) {
+        # MSBuild has been moved to "MSBuild\Current\Bin" in Dev16
+        $buildDriver = Join-Path $vsInstallDir "MSBuild\Current\Bin\msbuild.exe"
+
+        if (!(Test-Path $buildDriver)) {
+            Write-Host "Unable to find msbuild.exe under 'MSBuild\15.0\Bin' or 'MSBuild\Current\Bin'" -ForegroundColor Red
+            exit 1
+        }
+    }
+
     $buildArgs = "/nodeReuse:$(!$ci)"
   }
 

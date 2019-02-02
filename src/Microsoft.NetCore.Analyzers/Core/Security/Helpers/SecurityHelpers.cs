@@ -3,6 +3,8 @@ using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 
+#pragma warning disable CA1054 // Uri parameters should not be strings
+
 namespace Microsoft.NetCore.Analyzers.Security.Helpers
 {
     internal static class SecurityHelpers

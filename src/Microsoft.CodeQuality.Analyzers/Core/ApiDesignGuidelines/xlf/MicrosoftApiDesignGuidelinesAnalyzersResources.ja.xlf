@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
-        <target state="new">Append .ConfigureAwait(true)</target>
+        <target state="translated">.ConfigureAwait(true) を追加します</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -37,6 +37,21 @@
         <target state="translated">非同期メソッド名は Async で終わる必要があります</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
+        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
+        <target state="new">A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
+        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
+        <target state="new">Modify '{0}' to catch a more specific exception type, or rethrow the exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
+        <source>Do not catch general exception types</source>
+        <target state="new">Do not catch general exception types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">デリゲート型を返す Void として非同期ラムダを渡さないでください</target>
@@ -50,6 +65,21 @@
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">デリゲート型を返す Void として非同期ラムダを渡さないでください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
+        <source>An enumeration's values should not start with the type name of the enumeration.</source>
+        <target state="new">An enumeration's values should not start with the type name of the enumeration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameMessage">
+        <source>Do not prefix enum values with the name of the enum type '{0}'. </source>
+        <target state="new">Do not prefix enum values with the name of the enum type '{0}'. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameTitle">
+        <source>Do not prefix enum values with type name</source>
+        <target state="new">Do not prefix enum values with type name</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">
@@ -69,7 +99,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <target state="translated">型 '{0}' からファイナライザーを削除し、Dispose(bool disposing) をオーバーライドします。その後、'disposing' が false のコード パスに finalization 論理を配置します。その他の場合、基本型 '{1}' でもファイナライザーが提供されるため、Dispose 呼び出しが重複する可能性があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -494,7 +524,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">型 {0} は、Equals をオーバーライドするため、IEquatable&lt;T&gt; を実装する必要があります</target>
+        <target state="translated">型 {0} は Equals をオーバーライドするので IEquatable&lt;T&gt; を実装する必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -849,42 +879,42 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
-        <target state="needs-review-translation">IDisposable は、基本型 {1} で既に実装されているため、{0} によって実装されたインターフェイスのリストから削除します。</target>
+        <target state="translated">'{0}' によって実行されたインターフェイスの一覧から IDisposable を削除します。基本型 '{1}' によって既に実装されているためです。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="needs-review-translation">{0} を削除し、Dispose(bool disposing) をオーバーライドして、'disposing' が true であるコード パスに dispose 論理を入れます。</target>
+        <target state="translated">'{0}' を削除し、Dispose(bool disposing) をオーバーライドします。その後、'disposing' が true のコード パスで dispose 論理を配置します。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed.</source>
-        <target state="needs-review-translation">{0} が public および sealed として宣言されていることを確認してください。</target>
+        <target state="translated">'{0}' が public および sealed.として宣言されていることを確認します。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
         <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="needs-review-translation">{0} の名前を 'Dispose' に変更し、public および sealed として宣言されていることを確認してください。</target>
+        <target state="translated">名前を '{0}' から 'Dispose' に変更し、public および sealed として宣言されていることを確認します。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
-        <target state="needs-review-translation">{0} が protected、virtual、および unsealed として宣言されていることを確認してください。</target>
+        <target state="translated">'{0}' が protected、virtual、unsealed として宣言されていることを確認します。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="needs-review-translation">Dispose(true) を呼び出してから、現在のオブジェクトのインスタンス (Visual Basic では 'this' または 'Me') で GC.SuppressFinalize を呼び出し、その後戻り値を返すように、{0} を変更してください。</target>
+        <target state="translated">'{0}' を変更し、Dispose(true) を呼び出したのちに現在のオブジェクト インスタンスで GC.SuppressFinalize (Visual Basic の 'this' または 'Me') を呼び出して、結果を戻すようにします。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
-        <target state="needs-review-translation">Dispose(false) を呼び出してから、戻り値を返すように、{0} を変更してください。</target>
+        <target state="translated">'{0}' を変更し、Dispose(false) を呼び出して結果を返すようにします。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="needs-review-translation">Dispose(bool) のオーバーライド可能な実装を {0} で指定するか、または型をシールドに設定します。Dispose(false) への呼び出しは、ネイティブ リソースのみをクリーンアップしなければなりません。Dispose(true) への呼び出しは、マネージおよびネイティブの両方のリソースをクリーンアップしなければなりません。</target>
+        <target state="translated">'{0}' で Dispose(bool) のオーバーライド可能な実装を提供するか、型を sealed としてマークします。Dispose(false) を呼び出す場合は、ネイティブ リソースのみがクリーンアップされます。Dispose(true) を呼び出す場合には、マネージド リソースとネイティブ リソースの両方がクリーンアップされます。</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1374,12 +1404,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">型 {0} は、IEquatable&lt;T&gt; を実装するため、Equals をオーバーライドする必要があります</target>
+        <target state="translated">型 {0} は IEquatable&lt;T&gt; を実装するため、Equals をオーバライドする必要があります</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">IEquatable&lt;T&gt; を実装するときに、Object.Equals(object) をオーバーライドします</target>
+        <target state="translated">IEquatable&lt;T&gt; を実装する場合は、Object.Equals(object) をオーバーライドします</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1419,12 +1449,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">型 T が Object.Equals(object) をオーバーライドする場合、実装では、比較を実行する前に、オブジェクト引数を正しい型 T にキャストする必要があります。型が IEquatable&lt;T&gt; を実装し、メソッド T.Equals(T) を提供する場合、および引数がコンパイル時に型 T であることがわかる場合、コンパイラは、Object.Equals(object) の代わりに IEquatable&lt;T&gt;.Equals(T) を呼び出すことができます。この場合、キャストが不要になり、パフォーマンスが向上します。</target>
+        <target state="translated">型 T が Object.Equals(object) をオーバーライドすると、実装では、比較を実行する前に object 引数を適切な型 T にキャストしなければなりません。型が IEquatable&lt;T&gt; を実装する場合、メソッド T.Equals(T) を提供します。引数がコンパイル時に型 T であることを認識すると、コンパイラーは Object.Equals(object) ではなく IEquatable&lt;T&gt;.Equals(T) を呼び出せるので、キャストは必要なく、パフォーマンスが向上します。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">型 T がインターフェイス IEquatable&lt;T&gt; を実装した場合、ユーザーにとって、ソース コード内の Equals メソッドへの呼び出しは、この型のインスタンスが他の任意の型のインスタンスと等価と見なすことができることを示唆します。この型を別の型のインスタンスと等価と見なしたコードのコンパイルが失敗した場合は、ユーザーの混乱を招く可能性があります。これは、"驚き最小の原則" に反します。</target>
+        <target state="translated">型 T がインターフェイス IEquatable&lt;T&gt; を実装する場合、ソース コードに Equals メソッドがあるユーザーに対して、対象型のインスタンスが他の型のインスタンスと等しくなるようにすることが提案されます。対象型が他の型のインスタンスと等しくなるようにする試行でコンパイルが失敗すると、ユーザーが混乱する可能性があります。これは、「驚き最小の原則」に違反します。</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1449,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}' を削除し、その使用を汎用 EventHandler で置き換えます。例: EventHandler&lt;T&gt; (T は有効な EventArgs)</target>
+        <target state="translated">'{0}' を削除し、ジェネリック EventHandler を使用するように置き換えます。例: EventHandler&lt;T&gt;。ここで T は有効な EventArgs です</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1459,7 +1489,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">イベント '{0}' を変更し、型 '{1}' を汎用 EventHandler で置き換えます。例: EventHandler&lt;T&gt; (T は有効な EventArgs)</target>
+        <target state="translated">イベント '{0}' を、ジェネリック EventHandler が含まれる型 '{1}' に変更します (例: EventHandler&lt;T&gt;。この場合 T は有効な EventArgs です)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

@@ -52,7 +52,7 @@ namespace Blah
             ";
 
             this.VerifyCSharp(
-                new[] { source, myBinderCSharpSourceCode }.ToFileAndSource(), 
+                new[] { source, myBinderCSharpSourceCode }.ToFileAndSource(),
                 expected);
         }
 

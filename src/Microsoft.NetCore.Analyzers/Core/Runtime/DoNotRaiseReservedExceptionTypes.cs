@@ -133,9 +133,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var objectCreationNode = (TObjectCreationExpressionSyntax)context.Node;
             SyntaxNode targetType = GetTypeSyntaxNode(objectCreationNode);
 
-            var typeSymbol = context.SemanticModel.GetSymbolInfo(targetType).Symbol as INamedTypeSymbol;
             // GetSymbolInfo().Symbol might return an error type symbol 
-            if (typeSymbol == null)
+            if (!(context.SemanticModel.GetSymbolInfo(targetType).Symbol is INamedTypeSymbol typeSymbol))
             {
                 return;
             }

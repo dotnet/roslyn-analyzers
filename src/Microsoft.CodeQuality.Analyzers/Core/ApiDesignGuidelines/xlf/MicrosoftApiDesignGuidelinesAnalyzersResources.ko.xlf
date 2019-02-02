@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
-        <target state="new">Append .ConfigureAwait(true)</target>
+        <target state="translated">.ConfigureAwait(true) 추가</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -37,6 +37,21 @@
         <target state="translated">비동기 메서드 이름은 Async로 끝나야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
+        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
+        <target state="new">A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
+        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
+        <target state="new">Modify '{0}' to catch a more specific exception type, or rethrow the exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
+        <source>Do not catch general exception types</source>
+        <target state="new">Do not catch general exception types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">비동기 람다를 Void 반환 대리자 형식으로 전달하지 마세요.</target>
@@ -50,6 +65,21 @@
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">비동기 람다를 Void 반환 대리자 형식으로 전달하지 마세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
+        <source>An enumeration's values should not start with the type name of the enumeration.</source>
+        <target state="new">An enumeration's values should not start with the type name of the enumeration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameMessage">
+        <source>Do not prefix enum values with the name of the enum type '{0}'. </source>
+        <target state="new">Do not prefix enum values with the name of the enum type '{0}'. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameTitle">
+        <source>Do not prefix enum values with type name</source>
+        <target state="new">Do not prefix enum values with type name</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">
@@ -69,7 +99,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <target state="translated">'{0}' 형식에서 종료자를 제거하고 Dispose(bool disposing)를 재정의한 후 종료 논리를 'disposing'이 false인 코드 경로에 추가하세요. 그렇지 않으면, 기본 형식 '{1}'도 종료자를 제공할 때 중복된 Dispose 호출이 발생할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -184,7 +214,7 @@
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionDescription">
         <source>The .NET Framework uses the version number to uniquely identify an assembly, and to bind to types in strongly named assemblies. The version number is used together with version and publisher policy. By default, applications run only with the assembly version with which they were built.</source>
-        <target state="translated">.NET Framework에서는 어셈블리를 고유하게 식별하고 강력한 이름의 어셈블리에서 형식에 바인딩하기 위해 버전 번호를 사용합니다. 버전 번호는 버전 및 게시자 정책과 함께 사용됩니다. 기본적으로 응용 프로그램은 빌드 시 사용된 어셈블리 버전에서만 실행됩니다.</target>
+        <target state="translated">.NET Framework에서는 어셈블리를 고유하게 식별하고 강력한 이름의 어셈블리에서 형식에 바인딩하기 위해 버전 번호를 사용합니다. 버전 번호는 버전 및 게시자 정책과 함께 사용됩니다. 기본적으로 애플리케이션은 빌드 시 사용된 어셈블리 버전에서만 실행됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAssembliesWithAssemblyVersionMessage">
@@ -494,7 +524,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">형식 {0}은(는) Equals를 재정의하므로 IEquatable&lt;T&gt;를 구현해야 합니다.</target>
+        <target state="translated">{0} 형식은 Equals를 재정의하므로 IEquatable&lt;T&gt;를 구현해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -644,7 +674,7 @@
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Title">
         <source>Enum Storage should be Int32</source>
-        <target state="translated">열거형 저장소는 Int32여야 합니다.</target>
+        <target state="translated">열거형 스토리지는 Int32여야 합니다</target>
         <note />
       </trans-unit>
       <trans-unit id="EnumStorageShouldBeInt32Description">
@@ -849,42 +879,42 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
-        <target state="needs-review-translation">기본 형식 {1}에서 이미 구현되었으므로 {0}에서 구현된 인터페이스 목록의 IDisposable을 제거하세요.</target>
+        <target state="translated">기본 형식 '{1}'에서 이미 구현되었으므로 '{0}'에서 구현된 인터페이스 목록의 IDisposable을 제거하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="needs-review-translation">{0}을(를) 제거하고 Dispose(bool disposing)를 재정의한 후 삭제 논리를 'disposing'이 true인 코드 경로에 추가하세요.</target>
+        <target state="translated">'{0}'을(를) 제거하고 Dispose(bool disposing)를 재정의한 후 삭제 논리를 'disposing'이 true인 코드 경로에 추가하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed.</source>
-        <target state="needs-review-translation">{0}이(가) public 및 sealed로 선언되었는지 확인하세요.</target>
+        <target state="translated">'{0}'이(가) public 및 sealed로 선언되었는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
         <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="needs-review-translation">{0}의 이름을 'Dispose'로 바꾸고 public 및 sealed로 선언되었는지 확인하세요.</target>
+        <target state="translated">'{0}'의 이름을 'Dispose'로 바꾸고 public 및 sealed로 선언되었는지 확인합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
-        <target state="needs-review-translation">{0}이(가) protected, virtual 및 unsealed로 선언되었는지 확인하세요.</target>
+        <target state="translated">'{0}'이(가) protected, virtual 및 unsealed로 선언되었는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="needs-review-translation">Dispose(true)를 호출한 다음 현재 개체 인스턴스(Visual Basic의 경우 'this' 또는 'Me')에서 GC.SuppressFinalize를 호출한 후 반환하도록 {0}을(를) 수정하세요.</target>
+        <target state="translated">Dispose(true)를 호출한 다음, 현재 개체 인스턴스(Visual Basic의 경우 'this' 또는 'Me')에서 GC.SuppressFinalize를 호출한 후 반환하도록 '{0}'을(를) 수정하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
-        <target state="needs-review-translation">Dispose(false)를 호출한 다음 반환하도록 {0}을(를) 수정하세요.</target>
+        <target state="translated">Dispose(false)를 호출한 후 반환하도록 '{0}'을(를) 수정하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="needs-review-translation">{0}에 Dispose(bool)의 재정의 가능한 구현을 제거하거나 형식을 sealed로 표시하세요. Dispose(false)에 대한 호출은 네이티브 리소스만 정리해야 합니다. Dispose(true)에 대한 호출은 관리되는 리소스와 네이티브 리소스를 모두 정리해야 합니다.</target>
+        <target state="translated">'{0}'에 Dispose(bool)의 재정의 가능한 구현을 제공하거나 형식을 sealed로 표시합니다. Dispose(false)에 대한 호출은 네이티브 리소스만 정리해야 하지만 Dispose(true)에 대한 호출은 관리되는 리소스와 네이티브 리소스 모두를 정리해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1379,7 +1409,7 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">IEquatable&lt;T&gt;를 구현할 때 Object.Equals(개체)를 재정의하세요.</target>
+        <target state="translated">IEquatable&lt;T&gt;를 구현할 때 Object.Equals(개체)를 재정의</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1419,7 +1449,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">형식 T가 Object.Equals(개체)를 재정의하면 비교 작업을 수행하기 전에 구현에서 개체 인수를 올바른 형식 T로 캐스팅해야 합니다. 형식이 IEquatable&lt;T&gt;를 구현하여 메서드 T.Equals(T)를 제공하고, 인수가 컴파일 시간에 형식 T라고 알려진 경우 컴파일러가 Object.Equals(개체) 대신 IEquatable&lt;T&gt;.Equals(T)를 호출할 수 있으며 성능을 향상하는 캐스팅이 요구되지 않습니다.</target>
+        <target state="translated">형식 T가 Object.Equals(개체)를 재정의하면 비교 작업을 수행하기 전에 구현에서 개체 인수를 올바른 형식 T로 캐스트해야 합니다. 형식이 IEquatable&lt;T&gt;를 구현하여 메서드 T.Equals(T)를 제공하고, 인수가 컴파일 시간에 형식 T라고 알려진 경우 컴파일러가 Object.Equals(개체) 대신 IEquatable&lt;T&gt;.Equals(T)를 호출할 수 있고, 캐스트가 필요하지 않으며, 성능이 향상됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">

@@ -19,10 +19,10 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsTitle = new LocalizableResourceString(
             nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithms),
-            SystemSecurityCryptographyResources.ResourceManager, 
+            SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsMessage = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithmsMessage), 
+            nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithmsMessage),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsDescription = new LocalizableResourceString(
@@ -42,35 +42,33 @@ namespace Microsoft.NetCore.Analyzers.Security
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 
-        internal static DiagnosticDescriptor DoNotUseBrokenCryptographyRule = CreateDiagnosticDescriptor(DoNotUseBrokenCryptographyRuleId,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsTitle,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseBrokenAlgorithmsDescription,
-                                                                                          CA5351HelpLink);
+        internal static DiagnosticDescriptor DoNotUseBrokenCryptographyRule =
+            new DiagnosticDescriptor(
+                DoNotUseBrokenCryptographyRuleId,
+                s_localizableDoNotUseBrokenAlgorithmsTitle,
+                s_localizableDoNotUseBrokenAlgorithmsMessage,
+                DiagnosticCategory.Security,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                description: s_localizableDoNotUseBrokenAlgorithmsDescription,
+                helpLinkUri: CA5351HelpLink,
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
-        internal static DiagnosticDescriptor DoNotUseWeakCryptographyRule = CreateDiagnosticDescriptor(DoNotUseWeakCryptographyRuleId,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsTitle,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsMessage,
-                                                                                          s_localizableDoNotUseWeakAlgorithmsDescription,
-                                                                                          CA5350HelpLink);
+        internal static DiagnosticDescriptor DoNotUseWeakCryptographyRule =
+            new DiagnosticDescriptor(
+                DoNotUseWeakCryptographyRuleId,
+                s_localizableDoNotUseWeakAlgorithmsTitle,
+                s_localizableDoNotUseWeakAlgorithmsMessage,
+                DiagnosticCategory.Security,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                description: s_localizableDoNotUseWeakAlgorithmsDescription,
+                helpLinkUri: CA5350HelpLink,
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
         protected abstract SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseBrokenCryptographyRule, DoNotUseWeakCryptographyRule);
-
-        private static DiagnosticDescriptor CreateDiagnosticDescriptor(string ruleId, LocalizableString title, LocalizableString message, LocalizableString description, string uri = null)
-        {
-            return new DiagnosticDescriptor(
-                ruleId,
-                title,
-                message,
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                description: description,
-                helpLinkUri: uri,
-                customTags: WellKnownDiagnosticTags.Telemetry);
-        }
 
         public override void Initialize(AnalysisContext analysisContext)
         {
@@ -119,9 +117,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 SyntaxNode node = context.Node;
                 SemanticModel model = context.SemanticModel;
                 ISymbol symbol = node.GetDeclaredOrReferencedSymbol(model);
-                IMethodSymbol method = symbol as IMethodSymbol;
 
-                if (method == null)
+                if (!(symbol is IMethodSymbol method))
                 {
                     return;
                 }
@@ -175,7 +172,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     messageArgs[1] = _cryptTypes.DES.Name;
                 }
                 else if ((method.ContainingType.DerivesFrom(_cryptTypes.DSA)
-                          && method.MetadataName == SecurityMemberNames.CreateSignature) 
+                          && method.MetadataName == SecurityMemberNames.CreateSignature)
                     || (type == _cryptTypes.DSASignatureFormatter
                         && method.ContainingType.DerivesFrom(_cryptTypes.DSASignatureFormatter)
                         && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))

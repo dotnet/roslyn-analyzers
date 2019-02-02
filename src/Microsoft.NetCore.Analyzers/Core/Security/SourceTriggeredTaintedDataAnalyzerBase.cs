@@ -76,7 +76,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
                                 {
-                                    IInvocationOperation invocationOperation = (IInvocationOperation) operationAnalysisContext.Operation;
+                                    IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
                                     if (sourceInfoSymbolMap.IsSourceMethod(invocationOperation.TargetMethod))
                                     {
                                         rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());

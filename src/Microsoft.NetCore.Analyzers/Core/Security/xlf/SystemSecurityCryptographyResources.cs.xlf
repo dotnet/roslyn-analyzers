@@ -4,32 +4,47 @@
     <body>
       <trans-unit id="ApprovedCipherMode">
         <source>Do Not Use Unsafe Cipher Modes</source>
-        <target state="new">Do Not Use Unsafe Cipher Modes</target>
+        <target state="translated">Nepoužívat nezabezpečené režimy šifrování</target>
         <note />
       </trans-unit>
       <trans-unit id="ApprovedCipherModeDescription">
         <source>These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).</source>
-        <target state="new">These modes are vulnerable to attacks. Use only approved modes (CBC, CTS).</target>
+        <target state="translated">Tyto režimy jsou zranitelné vůči útokům. Používejte jenom schválené režimy (CBC, CTS).</target>
         <note />
       </trans-unit>
       <trans-unit id="ApprovedCipherModeMessage">
         <source>It uses an unsafe Cipher Mode {0}</source>
-        <target state="new">It uses an unsafe Cipher Mode {0}</target>
+        <target state="translated">Používá nezabezpečený režim šifrování {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidation">
+        <source>Do Not Disable Certification Validation</source>
+        <target state="new">Do Not Disable Certification Validation</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidationDescription">
+        <source>A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</source>
+        <target state="new">A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableCertificateValidationMessage">
+        <source>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</source>
+        <target state="new">The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
         <source>Do Not Use Broken Cryptographic Algorithms</source>
-        <target state="new">Do Not Use Broken Cryptographic Algorithms</target>
+        <target state="translated">Nepoužívejte prolomené kryptografické algoritmy</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsDescription">
         <source>An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.</source>
-        <target state="new">An attack making it computationally feasible to break this algorithm exists. This allows attackers to break the cryptographic guarantees it is designed to provide. Depending on the type and application of this cryptographic algorithm, this may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA512, SHA384, or SHA256. Replace digital signature uses with RSA with a key length greater than or equal to 2048-bits, or ECDSA with a key length greater than or equal to 256 bits.</target>
+        <target state="translated">Existuje útok, který je výpočetně dostatečně výkonný na to, aby prolomil tento algoritmus. Díky tomu můžou útočníci překonat kryptografické zabezpečení, které má algoritmus poskytovat. Podle typu aplikace a kryptografického algoritmu to může útočníkovi umožnit číst šifrované zprávy, upravovat je, falšovat digitální podpisy, upravovat hodnotu hash obsahu nebo jinak útočit na kryptografický systém založený na tomto algoritmu. Nahraďte místa, kde se používá šifrování, algoritmem AES (přípustné jsou varianty AES-256, AES-192 a AES-128) s délkou klíče alespoň 128 bitů. Nahraďte místa, kde se používá algoritmus hash, hashovací funkcí řady SHA-2, třeba SHA512, SHA384 nebo SHA256. Nahraďte místa, kde se používá digitální podpis, šifrováním RSA s délkou klíče alespoň 2048 bitů nebo algoritmem ECDSA s délkou klíče alespoň 256 bitů.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsMessage">
         <source>{0} uses a broken cryptographic algorithm {1}</source>
-        <target state="new">{0} uses a broken cryptographic algorithm {1}</target>
+        <target state="translated">{0} používá prolomený kryptografický algoritmus {1}.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5">
@@ -54,17 +69,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithms">
         <source>Do Not Use Weak Cryptographic Algorithms</source>
-        <target state="new">Do Not Use Weak Cryptographic Algorithms</target>
+        <target state="translated">Nepoužívejte slabé kryptografické algoritmy</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsDescription">
         <source>Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</source>
-        <target state="new">Cryptographic algorithms degrade over time as attacks become for advances to attacker get access to more computation. Depending on the type and application of this cryptographic algorithm, further degradation of the cryptographic strength of it may allow attackers to read enciphered messages, tamper with enciphered  messages, forge digital signatures, tamper with hashed content, or otherwise compromise any cryptosystem based on this algorithm. Replace encryption uses with the AES algorithm (AES-256, AES-192 and AES-128 are acceptable) with a key length greater than or equal to 128 bits. Replace hashing uses with a hashing function in the SHA-2 family, such as SHA-2 512, SHA-2 384, or SHA-2 256.</target>
+        <target state="translated">Výkonnost kryptografických algoritmů časem klesá, protože útoky se stávají stále sofistikovanější a útočníci získávají přístup k vyššímu výpočetnímu výkonu. Podle typu aplikace a kryptografického algoritmu může další snižování jeho kryptografické síly umožnit útočníkovi číst šifrované zprávy, upravovat je, falšovat digitální podpisy, upravovat hodnotu hash obsahu nebo jinak útočit na kryptografický systém založený na tomto algoritmu. Nahraďte místa, kde se používá šifrování, algoritmem AES (přípustné jsou varianty AES-256, AES-192 a AES-128) s délkou klíče alespoň 128 bitů. Nahraďte místa, kde se používá algoritmus hash, hashovací funkcí řady SHA-2, třeba SHA-2 512, SHA-2 384 nebo SHA-2 256.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsMessage">
         <source>{0} uses a weak cryptographic algorithm {1}</source>
-        <target state="new">{0} uses a weak cryptographic algorithm {1}</target>
+        <target state="translated">{0} používá slabý kryptografický algoritmus {1}.</target>
         <note />
       </trans-unit>
     </body>

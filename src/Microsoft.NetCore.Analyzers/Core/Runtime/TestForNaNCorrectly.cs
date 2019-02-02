@@ -47,6 +47,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override void Initialize(AnalysisContext analysisContext)
         {
+            analysisContext.EnableConcurrentExecution();
+
             analysisContext.RegisterOperationAction(
                 operationAnalysisContext =>
                 {

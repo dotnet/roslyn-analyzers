@@ -48,10 +48,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DefaultRule, EmptyRule);
 
-        private static List<ValueValidator> s_tokensToValueValidator =
+        private static readonly List<ValueValidator> s_tokensToValueValidator =
             new List<ValueValidator>(
-                new[] { new ValueValidator(new[] { "guid" }, "Guid", GuidValueValidator),
-                        new ValueValidator(new[] { "url", "uri", "urn" }, "Uri", UrlValueValidator, "UriTemplate")});
+                new[] { new ValueValidator(ImmutableArray.Create("guid"), "Guid", GuidValueValidator),
+                        new ValueValidator(ImmutableArray.Create("url", "uri", "urn"), "Uri", UrlValueValidator, "UriTemplate")});
 
         private static bool GuidValueValidator(string value)
         {
@@ -244,9 +244,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
     internal class ValueValidator
     {
-        private string _ignoredName;
+        private readonly string _ignoredName;
 
-        public string[] AcceptedTokens { get; }
+        public ImmutableArray<string> AcceptedTokens { get; }
         public string TypeName { get; }
         public Func<string, bool> IsValidValue { get; }
 
@@ -255,7 +255,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return _ignoredName != null && string.Equals(_ignoredName, name, StringComparison.OrdinalIgnoreCase);
         }
 
-        public ValueValidator(string[] acceptedTokens, string typeName, Func<string, bool> isValidValue, string ignoredName = null)
+        public ValueValidator(ImmutableArray<string> acceptedTokens, string typeName, Func<string, bool> isValidValue, string ignoredName = null)
         {
             _ignoredName = ignoredName;
 

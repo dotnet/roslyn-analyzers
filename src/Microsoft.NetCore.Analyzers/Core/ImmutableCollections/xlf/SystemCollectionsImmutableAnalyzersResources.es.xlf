@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="CategoryReliability">
         <source>Reliability</source>
-        <target state="translated">Confiabilidad</target>
+        <target state="translated">Fiabilidad</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle">

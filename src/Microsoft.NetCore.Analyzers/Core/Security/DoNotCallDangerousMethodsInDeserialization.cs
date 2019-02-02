@@ -132,7 +132,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var attributeTypeSymbols = attributeTypeSymbolsBuilder.ToImmutable();
                     var streamingContextTypeSymbol = WellKnownTypes.StreamingContext(compilation);
-                    var IDeserializationCallback = WellKnownTypes.IDeserializationCallback(compilation);
+                    var IDeserializationCallbackTypeSymbol = WellKnownTypes.IDeserializationCallback(compilation);
                     // A dictionary from method symbol to set of methods invoked by it directly.
                     // The bool value in the sub ConcurrentDictionary is not used, use ConcurrentDictionary rather than HashSet just for the concurrency security.
                     var callGraph = new ConcurrentDictionary<IMethodSymbol, ConcurrentDictionary<IMethodSymbol, bool>>();
@@ -150,7 +150,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             var methodSymbol = (IMethodSymbol)owningSymbol;
                             var classSymbol = methodSymbol.ContainingType;
 
-                            if (!classSymbol.GetAttributes().Any(s => s.AttributeClass.Equals(serializableAttributeTypeSymbol)))
+                            if (!classSymbol.HasAttribute(serializableAttributeTypeSymbol))
                             {
                                 return;
                             }
@@ -173,8 +173,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                             foreach (var kvp in callGraph)
                             {
                                 var methodSymbol = kvp.Key;
-                                FindCalledDangerousMethod(methodSymbol, visited, results);
-
                                 // Determine if the method is called automatically when an object is deserialized.
                                 // This includes methods with OnDeserializing attribute, method with OnDeserialized attribute, deserialization callbacks as well as cleanup/dispose calls.
                                 var parameters = methodSymbol.GetParameters();
@@ -182,7 +180,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     && attributeTypeSymbols.Any(s => methodSymbol.HasAttribute(s))
                                     && parameters.Length == 1
                                     && parameters[0].Type.Equals(streamingContextTypeSymbol);
-                                var flagImplementOnDeserializationMethod = methodSymbol.IsOnDeserializationImplementation(IDeserializationCallback);
+                                var flagImplementOnDeserializationMethod = methodSymbol.IsOnDeserializationImplementation(IDeserializationCallbackTypeSymbol);
                                 var flagImplementDisposeMethod = methodSymbol.IsDisposeImplementation(compilation);
                                 var flagIsFinalizer = methodSymbol.IsFinalizer();
 
@@ -190,6 +188,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     continue;
                                 }
+
+                                FindCalledDangerousMethod(methodSymbol, visited, results);
 
                                 foreach (var result in results[methodSymbol])
                                 {
@@ -221,8 +221,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     results[methodSymbol].Add(child);
                                 }
-
-                                if (child.IsInSource())
+                                else if (child.IsInSource())
                                 {
                                     if (results.TryGetValue(child, out var result))
                                     {

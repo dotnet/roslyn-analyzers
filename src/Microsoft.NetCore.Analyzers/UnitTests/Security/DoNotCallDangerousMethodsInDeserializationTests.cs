@@ -1,4 +1,6 @@
-﻿using Microsoft.CodeAnalysis.Diagnostics;
+﻿// Copyright (c) Microsoft. All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
@@ -277,6 +279,13 @@ public class TestClass : IDeserializationCallback
         var bytes = new byte[] {0x20, 0x20, 0x20};
         File.WriteAllBytes(path, bytes);
     }
+    
+    void OnDeserialization(Object sender)
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
 }",
             GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
 
@@ -291,13 +300,18 @@ Namespace TestNamespace
         Implements IDeserializationCallback
         Private member As String
         
-        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+        Public Sub OnDeserializationExplictlyImplemented(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+
+        Public Sub OnDeserialization(ByVal sender As Object)
             Dim bytes(9) As Byte
             File.WriteAllBytes(""C:\\"", bytes)
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllBytes"));
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserializationExplictlyImplemented", "WriteAllBytes"));
         }
 
         [Fact]
@@ -1202,6 +1216,65 @@ End Namespace",
         }
 
         [Fact]
+        public void TestFinalizeWhenSubClassWithSerializableDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+[Serializable()]
+public class TestClass
+{
+    private string member;
+
+    ~TestClass()
+    {
+    }
+}
+
+[Serializable()]
+public class SubTestClass : TestClass
+{
+    private string member;
+
+    ~SubTestClass()
+    {
+        byte[] bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(""C:\\"", bytes);
+    }
+}",
+            GetCSharpResultAt(21, 6, DoNotCallDangerousMethodsInDeserialization.Rule, "SubTestClass", "Finalize", "WriteAllBytes"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Private member As String
+        
+        Protected Overrides Sub Finalize()
+        End Sub
+    End Class
+
+    <Serializable()> _
+    Class SubTestClass 
+        Inherits TestClass
+        Private member As String
+        
+        Protected Overrides Sub Finalize()
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(20, 33, DoNotCallDangerousMethodsInDeserialization.Rule, "SubTestClass", "Finalize", "WriteAllBytes"));
+        }
+
+        [Fact]
         public void TestOnDeserializingNoDiagnostic()
         {
             VerifyCSharp(@"
@@ -1584,6 +1657,61 @@ Namespace TestNamespace
         End Sub
 
         Sub TestMethod()
+        End Sub
+    End Class
+End Namespace");
+        }
+
+        [Fact]
+        public void TestFinalizeWhenSubClassWithoutSerializableNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+[Serializable()]
+public class TestClass
+{
+    private string member;
+
+    ~TestClass()
+    {
+    }
+}
+
+public class SubTestClass : TestClass
+{
+    private string member;
+
+    ~SubTestClass()
+    {
+        byte[] bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(""C:\\"", bytes);
+    }
+}");
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Private member As String
+        
+        Protected Overrides Sub Finalize()
+        End Sub
+    End Class
+
+    Class SubTestClass 
+        Inherits TestClass
+        Private member As String
+        
+        Protected Overrides Sub Finalize()
+            Dim bytes(9) As Byte
+            File.WriteAllBytes(""C:\\"", bytes)
         End Sub
     End Class
 End Namespace");

@@ -85,8 +85,8 @@ public partial class WebForm : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         string input = Request.Form[""in""];
-        string integer = Int32.Parse(input).ToString();
-        Response.Write(""<HTML>"" + integer + ""</HTML>"");
+        string encoded = Server.HtmlEncode(input);
+        Response.Write(""<HTML>"" + encoded + ""</HTML>"");
     }
 }");
         }

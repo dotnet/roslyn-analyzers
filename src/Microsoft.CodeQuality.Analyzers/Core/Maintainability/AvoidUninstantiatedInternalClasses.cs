@@ -353,8 +353,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            ITypeSymbol parameterType = method.Parameters.Single().Type;
-
             return true;
         }
 

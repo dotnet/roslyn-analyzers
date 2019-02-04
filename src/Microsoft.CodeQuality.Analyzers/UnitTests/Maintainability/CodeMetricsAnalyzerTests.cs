@@ -274,7 +274,7 @@ CA1502(Method): 2
         #endregion
 
         #region CA1505: Avoid unmaintainable code
-        
+
         [Fact]
         public void CA1505_Configuration_CSharp_VerifyDiagnostic()
         {

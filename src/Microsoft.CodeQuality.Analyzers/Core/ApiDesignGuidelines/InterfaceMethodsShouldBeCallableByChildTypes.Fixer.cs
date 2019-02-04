@@ -38,8 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            var methodSymbol = semanticModel.GetDeclaredSymbol(nodeToFix, context.CancellationToken) as IMethodSymbol;
-            if (methodSymbol == null)
+            if (!(semanticModel.GetDeclaredSymbol(nodeToFix, context.CancellationToken) is IMethodSymbol methodSymbol))
             {
                 return;
             }

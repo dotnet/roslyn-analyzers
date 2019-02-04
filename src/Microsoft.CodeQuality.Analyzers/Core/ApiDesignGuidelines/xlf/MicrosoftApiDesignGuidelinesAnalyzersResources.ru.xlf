@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
-        <target state="new">Append .ConfigureAwait(true)</target>
+        <target state="translated">Добавить .ConfigureAwait(true)</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
@@ -37,6 +37,21 @@
         <target state="translated">Имена асинхронных методов должны заканчиваться на Async</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
+        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
+        <target state="new">A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
+        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
+        <target state="new">Modify '{0}' to catch a more specific exception type, or rethrow the exception.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
+        <source>Do not catch general exception types</source>
+        <target state="new">Do not catch general exception types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">Не передавайте асинхронные лямбда-выражения как Void, возвращающие типы делегатов</target>
@@ -50,6 +65,21 @@
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Pass Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">Не передавайте асинхронные лямбда-выражения как Void, возвращающие типы делегатов</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
+        <source>An enumeration's values should not start with the type name of the enumeration.</source>
+        <target state="new">An enumeration's values should not start with the type name of the enumeration.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameMessage">
+        <source>Do not prefix enum values with the name of the enum type '{0}'. </source>
+        <target state="new">Do not prefix enum values with the name of the enum type '{0}'. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotPrefixEnumValuesWithTypeNameTitle">
+        <source>Do not prefix enum values with type name</source>
+        <target state="new">Do not prefix enum values with type name</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">
@@ -69,7 +99,7 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">
         <source>Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</source>
-        <target state="new">Remove the finalizer from type '{0}', override Dispose(bool disposing), and put the finalization logic in the code path where 'disposing' is false. Otherwise, it might lead to duplicate Dispose invocations as the Base type '{1}' also provides a finalizer.</target>
+        <target state="translated">Удалите метод завершения из типа '{0}', переопределите Dispose(bool disposing) и поместите логику завершения в путь кода, туда где 'disposing' имеет значение false. В противном случае это может привести к дублированию вызовов метода Dispose, так как базовый тип '{1}' также предоставляет метод завершения.</target>
         <note />
       </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
@@ -494,7 +524,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">Тип {0} должен реализовывать IEquatable&lt;T&gt;, так как он переопределяет Equals</target>
+        <target state="translated">Тип {0} должен реализовать интерфейс IEquatable&lt;T&gt;, так как он переопределяет Equals</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -849,42 +879,42 @@
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageIDisposableReimplementation">
         <source>Remove IDisposable from the list of interfaces implemented by '{0}' as it is already implemented by base type '{1}'.</source>
-        <target state="needs-review-translation">Удалите IDisposable из списка интерфейсов, реализованных с помощью {0}, так как он уже реализован базовым типом {1}.</target>
+        <target state="translated">Удалите IDisposable из списка интерфейсов, реализованных в "{0}", так как он уже реализован базовым типом "{1}".</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeOverride">
         <source>Remove '{0}', override Dispose(bool disposing), and put the dispose logic in the code path where 'disposing' is true.</source>
-        <target state="needs-review-translation">Удалите метод {0}, переопределите Dispose(bool disposing) и поместите логику высвобождения в путь кода, где значение "disposing" равно true.</target>
+        <target state="translated">Удалите '{0}', переопределите Dispose(bool disposing) и поместите логику метода dispose в пути кода, там где 'disposing' имеет значение true.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeSignature">
         <source>Ensure that '{0}' is declared as public and sealed.</source>
-        <target state="needs-review-translation">Убедитесь, что {0} объявлен как общий и запечатанный.</target>
+        <target state="translated">Убедитесь, что тип "{0}" объявлен как открытый и запечатанный.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageRenameDispose">
         <source>Rename '{0}' to 'Dispose' and ensure that it is declared as public and sealed.</source>
-        <target state="needs-review-translation">Измените имя {0} на "Dispose" и убедитесь, что он объявлен как общий и запечатанный.</target>
+        <target state="translated">Переименуйте "{0}" в "Dispose" и убедитесь, что он объявлен как открытый и запечатанный.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeBoolSignature">
         <source>Ensure that '{0}' is declared as protected, virtual, and unsealed.</source>
-        <target state="needs-review-translation">Убедитесь, что {0} объявлен как защищенный, виртуальный и незапечатанный.</target>
+        <target state="translated">Убедитесь, что тип "{0}" объявлен как защищенный, виртуальный и незапечатанный.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageDisposeImplementation">
         <source>Modify '{0}' so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in Visual Basic), and then returns.</source>
-        <target state="needs-review-translation">Измените {0}, чтобы он вызывал Dispose(true), затем вызывал GC.SuppressFinalize для текущего экземпляра объекта ("this" или "Me" в Visual Basic), а затем возвращал результат.</target>
+        <target state="translated">Измените '{0}', так чтобы он вызывал Dispose(true), затем вызывал GC.SuppressFinalize для экземпляра текущего объекта ('this' или 'Me' в Visual Basic) и затем выполнял возврат.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeImplementation">
         <source>Modify '{0}' so that it calls Dispose(false) and then returns.</source>
-        <target state="needs-review-translation">Измените {0}, чтобы он вызывал Dispose(false) и затем возвращал результат.</target>
+        <target state="translated">Измените '{0}', так чтобы он вызывал Dispose(false) и затем выполнял возврат.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageProvideDisposeBool">
         <source>Provide an overridable implementation of Dispose(bool) on '{0}' or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</source>
-        <target state="needs-review-translation">Предоставьте перегружаемую реализацию Dispose(bool) для {0} или отметьте тип как запечатанный. При вызове Dispose(false) должны очищаться только машинные ресурсы. При вызове Dispose(true) должны очищаться и управляемые, и машинные ресурсы.</target>
+        <target state="translated">Предоставьте переопределяемую реализацию Dispose(bool) в '{0}' или пометьте тип как запечатанный. При вызове Dispose(false) должны удаляться только собственные ресурсы. При вызове Dispose(true) должны удаляться как управляемые, так и собственные ресурсы.</target>
         <note />
       </trans-unit>
       <trans-unit id="ExceptionsShouldBePublicTitle">
@@ -1374,7 +1404,7 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">Тип {0} должен переопределять Equals, так как он реализует IEquatable&lt;T&gt;</target>
+        <target state="translated">Тип {0} должен переопределять Equals, так как он реализует интерфейс IEquatable&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
@@ -1419,12 +1449,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Когда тип T переопределяет Object.Equals(object), реализация должна привести аргумент объекта к правильному типу T, прежде чем проводить сравнение. Если тип реализует IEquatable&lt;T&gt; и поэтому предлагает метод T.Equals(T), а также известно, что во время компиляции этот аргумент имеет тип T, компилятор может вызвать IEquatable&lt;T&gt;.Equals(T) вместо Object.Equals(object). В этом случае приведение не требуется, что повышает производительность.</target>
+        <target state="translated">Если тип T переопределяет Object.Equals(object), то в реализации необходимо привести аргумент к соответствующему типу T перед сравнением. Если тип реализует IEquatable&lt;T&gt; и поэтому предлагает метод T.Equals(T) и аргумент на момент компиляции имеет тип T, то компилятор может вызвать IEquatable&lt;T&gt;.Equals(T) вместо Object.Equals(object). В этом случае приведение типов не требуется, что позволяет повысить производительность.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Когда тип T реализует интерфейс IEquatable&lt;T&gt;, он указывает пользователю, видящему вызов метода Equals в исходном коде, что экземпляр этого типа можно проверить на равенство с экземпляром любого другого типа. Пользователь может запутаться, если при попытке сравнить равенство этого типа с экземпляром другого типа возникает ошибка компиляции. Это противоречит принципу наименьшего удивления.</target>
+        <target state="translated">Если тип T реализует интерфейс IEquatable&lt;T&gt;, то пользователь, который видит вызов метода Equals в исходном коде, предполагает, что экземпляр этого типа можно сравнить на равенство с экземпляром любого другого типа. Если попытка сравнить экземпляр этого типа с экземпляром другого типа приведет к ошибке компиляции, это может запутать пользователя. При этом нарушается "принцип наименьшего удивления".</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1449,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Удалите "{0}" и замените его использование универсальным обработчиком событий, например: EventHandler&lt;T&gt;, где T — допустимые аргументы события (EventArgs).</target>
+        <target state="translated">Удалите '{0}' и замените его на универсальный обработчик EventHandler, например, EventHandler&lt;T&gt;, где T представляет собой допустимый EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1459,7 +1489,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Измените событие "{0}", заменив тип "{1}" универсальным обработчиком событий, например: EventHandler&lt;T&gt;, где T — допустимые аргументы события (EventArgs).</target>
+        <target state="translated">Измените событие '{0}', заменив тип '{1}' на универсальный тип EventHandler, например, EventHandler&lt;T&gt;, где T представляет собой допустимый тип EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

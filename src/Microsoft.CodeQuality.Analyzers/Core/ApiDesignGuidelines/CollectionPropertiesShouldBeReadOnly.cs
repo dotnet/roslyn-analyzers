@@ -108,7 +108,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 return;
             }
-            
+
             // exclude Immutable collections
             // see https://github.com/dotnet/roslyn-analyzers/issues/1900 for details
             if (!immutableInterfaces.IsEmpty &&

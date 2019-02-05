@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace GenerateAnalyzerRulesets
 {
-    class Program
+    public static class Program
     {
         public static int Main(string[] args)
         {

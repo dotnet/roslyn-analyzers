@@ -149,10 +149,6 @@ public enum E2
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZero_Internal()
         {
-            // Remove all members that have the value zero from {0} except for one member that is named 'None'.
-            string expectedMessage1 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E");
-            string expectedMessage2 = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros, "E2");
-
             var code = @"// Some comment
 public class Outer
 {

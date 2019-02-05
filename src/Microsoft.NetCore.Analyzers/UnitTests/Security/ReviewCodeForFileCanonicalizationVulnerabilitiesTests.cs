@@ -38,7 +38,7 @@ public partial class WebForm : System.Web.UI.Page
         File.ReadAllText(input);
     }
 }",
-                GetCSharpResultAt(12, 9, 11, 24, "string File.ReadAllText(string path)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)")); 
+                GetCSharpResultAt(12, 9, 11, 24, "string File.ReadAllText(string path)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]

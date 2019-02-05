@@ -39,8 +39,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext analysisContext)
         {
-            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             analysisContext.EnableConcurrentExecution();
+            analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
             analysisContext.RegisterSymbolAction(AnalyzeMethodSymbol, SymbolKind.Method);
         }

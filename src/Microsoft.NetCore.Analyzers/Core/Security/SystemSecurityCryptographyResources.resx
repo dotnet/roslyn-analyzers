@@ -126,6 +126,15 @@
   <data name="ApprovedCipherModeMessage" xml:space="preserve">
     <value>It uses an unsafe Cipher Mode {0}</value>
   </data>
+  <data name="DoNotDisableCertificateValidation" xml:space="preserve">
+    <value>Do Not Disable Certification Validation</value>
+  </data>
+  <data name="DoNotDisableCertificateValidationDescription" xml:space="preserve">
+    <value>A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</value>
+  </data>
+  <data name="DoNotDisableCertificateValidationMessage" xml:space="preserve">
+    <value>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>

@@ -1573,5 +1573,38 @@ class Test
 
             // VB does not support patterns.
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_GotoLoop()
+        {
+            // Ensure we bound the number of value content literals
+            // and avoid infinite analysis iterations.
+            VerifyCSharp(@"
+class C
+{
+    internal static uint ComputeStringHash(string text)
+    {
+        uint hashCode = 0;
+        if (text != null)
+        {
+            hashCode = unchecked((uint)2166136261);
+ 
+            int i = 0;
+            goto start;
+
+again:
+            hashCode = unchecked((text[i] ^ hashCode) * 16777619);
+            i = i + 1;
+
+start:
+            if (i < text.Length)
+                goto again;
+        }
+        return hashCode;
+    }
+}");
+        }
     }
 }

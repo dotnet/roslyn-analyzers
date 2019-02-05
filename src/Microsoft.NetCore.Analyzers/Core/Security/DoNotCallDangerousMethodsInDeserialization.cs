@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         foreach (var targetMethodName in SystemIOFileMethodMetadataNames)
                         {
-                            dangerousMethodSymbolsBuilder.AddRange(systemIOFileTypeSymbol.GetMembers(targetMethodName).Where(s => s is IMethodSymbol).Cast<IMethodSymbol>());
+                            dangerousMethodSymbolsBuilder.AddRange(systemIOFileTypeSymbol.GetMembers(targetMethodName).OfType<IMethodSymbol>());
                         }
                     }
 
@@ -104,7 +104,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         foreach (var targetMethodName in SystemReflectionAssemblyMethodMetadataNames)
                         {
-                            dangerousMethodSymbolsBuilder.AddRange(systemReflectionAssemblyTypeSymbol.GetMembers(targetMethodName).Where(s => s is IMethodSymbol).Cast<IMethodSymbol>());
+                            dangerousMethodSymbolsBuilder.AddRange(systemReflectionAssemblyTypeSymbol.GetMembers(targetMethodName).OfType<IMethodSymbol>());
                         }
                     }
 
@@ -133,6 +133,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var attributeTypeSymbols = attributeTypeSymbolsBuilder.ToImmutable();
                     var streamingContextTypeSymbol = WellKnownTypes.StreamingContext(compilation);
                     var IDeserializationCallbackTypeSymbol = WellKnownTypes.IDeserializationCallback(compilation);
+
                     // A dictionary from method symbol to set of methods invoked by it directly.
                     // The bool value in the sub ConcurrentDictionary is not used, use ConcurrentDictionary rather than HashSet just for the concurrency security.
                     var callGraph = new ConcurrentDictionary<IMethodSymbol, ConcurrentDictionary<IMethodSymbol, bool>>();
@@ -160,7 +161,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
                             {
-                                callGraph[methodSymbol].TryAdd((operationContext.Operation as IInvocationOperation).TargetMethod, true);
+                                calledMethods.TryAdd((operationContext.Operation as IInvocationOperation).TargetMethod, true);
                             }, OperationKind.Invocation);
                         });
 
@@ -173,6 +174,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             foreach (var kvp in callGraph)
                             {
                                 var methodSymbol = kvp.Key;
+
                                 // Determine if the method is called automatically when an object is deserialized.
                                 // This includes methods with OnDeserializing attribute, method with OnDeserialized attribute, deserialization callbacks as well as cleanup/dispose calls.
                                 var parameters = methodSymbol.GetParameters();
@@ -196,7 +198,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     compilationAnalysisContext.ReportDiagnostic(
                                         methodSymbol.CreateDiagnostic(
                                             Rule,
-                                            methodSymbol.ContainingType.MetadataName,
+                                            methodSymbol.ContainingType.Name,
                                             methodSymbol.MetadataName,
                                             result.MetadataName));
                                 }
@@ -221,17 +223,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     results[methodSymbol].Add(child);
                                 }
-                                else if (child.IsInSource())
+
+                                if (child.IsInSource())
                                 {
-                                    if (results.TryGetValue(child, out var result))
-                                    {
-                                        results[methodSymbol].UnionWith(result);
-                                    }
-                                    else
-                                    {
-                                        FindCalledDangerousMethod(child, visited, results);
-                                        results[methodSymbol].UnionWith(results[child]);
-                                    }
+                                    FindCalledDangerousMethod(child, visited, results);
+                                    results[methodSymbol].UnionWith(results[child]);
                                 }
                             }
                         }

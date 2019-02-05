@@ -2,24 +2,23 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotUseInsecureDeserializerLosFormatterTests : DiagnosticAnalyzerTestBase
+    public class DoNotUseInsecureDeserializerObjectStateFormatterTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly DiagnosticDescriptor Rule = DoNotUseInsecureDeserializerLosFormatter.RealMethodUsedDescriptor;
+        private static readonly DiagnosticDescriptor Rule = DoNotUseInsecureDeserializerObjectStateFormatter.RealMethodUsedDescriptor;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DoNotUseInsecureDeserializerLosFormatter();
+            return new DoNotUseInsecureDeserializerObjectStateFormatter();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DoNotUseInsecureDeserializerLosFormatter();
+            return new DoNotUseInsecureDeserializerObjectStateFormatter();
         }
 
         [Fact]
@@ -35,12 +34,12 @@ namespace Blah
     {
         public object Deserialize(byte[] bytes)
         {
-            LosFormatter formatter = new LosFormatter();
+            ObjectStateFormatter formatter = new ObjectStateFormatter();
             return formatter.Deserialize(new MemoryStream(bytes));
         }
     }
 }",
-            GetCSharpResultAt(12, 20, Rule, "object LosFormatter.Deserialize(Stream stream)"));
+            GetCSharpResultAt(12, 20, Rule, "object ObjectStateFormatter.Deserialize(Stream inputStream)"));
         }
 
         [Fact]
@@ -56,33 +55,12 @@ namespace Blah
     {
         public object Deserialize(string input)
         {
-            LosFormatter formatter = new LosFormatter();
+            ObjectStateFormatter formatter = new ObjectStateFormatter();
             return formatter.Deserialize(input);
         }
     }
 }",
-            GetCSharpResultAt(12, 20, Rule, "object LosFormatter.Deserialize(string input)"));
-        }
-
-        [Fact]
-        public void DeserializeTextReader_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System.IO;
-using System.Web.UI;
-
-namespace Blah
-{
-    public class Program
-    {
-        public object Deserialize(TextReader tr)
-        {
-            LosFormatter formatter = new LosFormatter();
-            return formatter.Deserialize(tr);
-        }
-    }
-}",
-            GetCSharpResultAt(12, 20, Rule, "object LosFormatter.Deserialize(TextReader input)"));
+            GetCSharpResultAt(12, 20, Rule, "object ObjectStateFormatter.Deserialize(string inputString)"));
         }
 
         [Fact]
@@ -99,12 +77,12 @@ namespace Blah
         public delegate object Des(string s);
         public Des GetDeserializer()
         {
-            LosFormatter formatter = new LosFormatter();
+            ObjectStateFormatter formatter = new ObjectStateFormatter();
             return formatter.Deserialize;
         }
     }
 }",
-                GetCSharpResultAt(13, 20, Rule, "object LosFormatter.Deserialize(string input)"));
+                GetCSharpResultAt(13, 20, Rule, "object ObjectStateFormatter.Deserialize(string inputString)"));
         }
 
         [Fact]
@@ -120,7 +98,7 @@ namespace Blah
     {
         public byte[] Serialize(object o)
         {
-            LosFormatter formatter = new LosFormatter();
+            ObjectStateFormatter formatter = new ObjectStateFormatter();
             MemoryStream stream = new MemoryStream();
             formatter.Serialize(stream, o);
             return stream.ToArray();
@@ -143,7 +121,7 @@ namespace Blah
         public delegate void Ser(Stream s, object o);
         public Ser GetSerializer()
         {
-            LosFormatter formatter = new LosFormatter();
+            ObjectStateFormatter formatter = new ObjectStateFormatter();
             return formatter.Serialize;
         }
     }

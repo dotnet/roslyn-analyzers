@@ -5101,5 +5101,29 @@ namespace MyComments
 }
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void CopyAnalysisAssert_AddressSharedOutParam()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(C c)
+    {
+        M(out c);
+
+        if (c == default(C))
+        {
+        }
+    }
+
+    private void M<T>(out T t)
+    {
+        t = default(T);
+    }
+}");
+        }
     }
 }

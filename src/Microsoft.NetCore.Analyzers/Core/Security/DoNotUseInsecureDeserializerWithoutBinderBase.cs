@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -58,6 +59,35 @@ namespace Microsoft.NetCore.Analyzers.Security
                 this.BinderDefinitelyNotSetDescriptor,
                 this.BinderMaybeNotSetDescriptor);
 
+        /// <summary>
+        /// For PropertySetAnalysis dataflow analysis; new instances always start out as flagged.
+        /// </summary>
+        private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(ImmutableArray.Create(PropertySetAbstractValueKind.Flagged));
+
+        /// <summary>
+        /// For PropertySetAnalysis dataflow analysis; only tracking one property, the <see cref="SerializationBinderPropertyMetadataName"/>.
+        /// </summary>
+        private const int SerializationBinderIndex = 0;
+
+        /// <summary>
+        /// For PropertySetAnalysis dataflow analysis; hazardous usage evaluation callback.
+        /// </summary>
+        /// <param name="methodSymbol"></param>
+        /// <param name="propertySetAbstractValue"></param>
+        /// <returns></returns>
+        private static HazardousUsageEvaluationResult HazardousIfNull(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
+        {
+            switch (propertySetAbstractValue[SerializationBinderIndex])
+            {
+                case PropertySetAbstractValueKind.Flagged:
+                    return HazardousUsageEvaluationResult.Flagged;
+                case PropertySetAbstractValueKind.Unflagged:
+                    return HazardousUsageEvaluationResult.Unflagged;
+                default:
+                    return HazardousUsageEvaluationResult.MaybeFlagged;
+            }
+        }
+
         public sealed override void Initialize(AnalysisContext context)
         {
             ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
@@ -73,6 +103,31 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             // Security analyzer - analyze and report diagnostics on generated code.
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
+            // For PropertySetAnalysis dataflow analysis.
+            PropertyMapperCollection propertyMappers = new PropertyMapperCollection(
+                new PropertyMapper(
+                    this.SerializationBinderPropertyMetadataName,
+                    (NullAbstractValue nullAbstractValue) =>
+                    {
+                        // A null SerializationBinder is what we want to flag as hazardous.
+                        switch (nullAbstractValue)
+                        {
+                            case NullAbstractValue.Null:
+                                return PropertySetAbstractValueKind.Flagged;
+
+                            case NullAbstractValue.NotNull:
+                                return PropertySetAbstractValueKind.Unflagged;
+
+                            default:
+                                return PropertySetAbstractValueKind.MaybeFlagged;
+                        }
+                    }));
+
+            HazardousUsageEvaluatorCollection hazardousUsageEvaluators =
+                new HazardousUsageEvaluatorCollection(
+                    cachedDeserializationMethodNames.Select(
+                        methodName => new HazardousUsageEvaluator(methodName, DoNotUseInsecureDeserializerWithoutBinderBase.HazardousIfNull)));
 
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
@@ -128,7 +183,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
 
                                     // Only instantiated if there are any results to report.
-                                    Dictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> allResults = null;
+                                    Dictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
                                     List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
 
                                     var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
@@ -139,16 +194,15 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                     foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                     {
-                                        ImmutableDictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> dfaResult =
-                                            PropertySetAnalysis.GetOrComputeHazardousParameterUsages(
+                                        ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
+                                            PropertySetAnalysis.GetOrComputeHazardousUsages(
                                                 rootOperation.GetEnclosingControlFlowGraph(),
                                                 operationBlockAnalysisContext.Compilation,
                                                 operationBlockAnalysisContext.OwningSymbol,
                                                 this.DeserializerTypeMetadataName,
-                                                true /* isNewInstanceFlagged */,
-                                                this.SerializationBinderPropertyMetadataName,
-                                                true /* isNullPropertyFlagged */,
-                                                cachedDeserializationMethodNames,
+                                                DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
+                                                propertyMappers,
+                                                hazardousUsageEvaluators,
                                                 interproceduralAnalysisConfig);
                                         if (dfaResult.IsEmpty)
                                         {
@@ -157,10 +211,10 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                         if (allResults == null)
                                         {
-                                            allResults = new Dictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue>();
+                                            allResults = new Dictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>();
                                         }
 
-                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> kvp
+                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
                                             in dfaResult)
                                         {
                                             allResults.Add(kvp.Key, kvp.Value);
@@ -172,17 +226,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         return;
                                     }
 
-                                    foreach (KeyValuePair<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> kvp
+                                    foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
                                         in allResults)
                                     {
                                         DiagnosticDescriptor descriptor;
                                         switch (kvp.Value)
                                         {
-                                            case PropertySetAbstractValue.Flagged:
+                                            case HazardousUsageEvaluationResult.Flagged:
                                                 descriptor = this.BinderDefinitelyNotSetDescriptor;
                                                 break;
 
-                                            case PropertySetAbstractValue.MaybeFlagged:
+                                            case HazardousUsageEvaluationResult.MaybeFlagged:
                                                 descriptor = this.BinderMaybeNotSetDescriptor;
                                                 break;
 

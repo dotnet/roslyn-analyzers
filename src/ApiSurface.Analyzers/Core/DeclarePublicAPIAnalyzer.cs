@@ -9,8 +9,9 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
+using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
 
-namespace Roslyn.Diagnostics.Analyzers
+namespace ApiSurface.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed partial class DeclarePublicAPIAnalyzer : DiagnosticAnalyzer
@@ -25,56 +26,56 @@ namespace Roslyn.Diagnostics.Analyzers
         internal const string InvalidReasonShippedCantHaveRemoved = "The shipped API file can't have removed members";
 
         internal static readonly DiagnosticDescriptor DeclareNewApiRule = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.DeclarePublicApiRuleId,
-            title: RoslynDiagnosticsAnalyzersResources.DeclarePublicApiTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.DeclarePublicApiMessage,
+            id: DiagnosticIds.DeclarePublicApiRuleId,
+            title: ApiSurfaceAnalyzersResources.DeclarePublicApiTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.DeclarePublicApiMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: RoslynDiagnosticsAnalyzersResources.DeclarePublicApiDescription,
+            description: ApiSurfaceAnalyzersResources.DeclarePublicApiDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor RemoveDeletedApiRule = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.RemoveDeletedApiRuleId,
-            title: RoslynDiagnosticsAnalyzersResources.RemoveDeletedApiTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.RemoveDeletedApiMessage,
+            id: DiagnosticIds.RemoveDeletedApiRuleId,
+            title: ApiSurfaceAnalyzersResources.RemoveDeletedApiTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.RemoveDeletedApiMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: RoslynDiagnosticsAnalyzersResources.RemoveDeletedApiDescription,
+            description: ApiSurfaceAnalyzersResources.RemoveDeletedApiDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor ExposedNoninstantiableType = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.ExposedNoninstantiableTypeRuleId,
-            title: RoslynDiagnosticsAnalyzersResources.ExposedNoninstantiableTypeTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.ExposedNoninstantiableTypeMessage,
+            id: DiagnosticIds.ExposedNoninstantiableTypeRuleId,
+            title: ApiSurfaceAnalyzersResources.ExposedNoninstantiableTypeTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.ExposedNoninstantiableTypeMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor PublicApiFilesInvalid = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.PublicApiFilesInvalid,
-            title: RoslynDiagnosticsAnalyzersResources.PublicApiFilesInvalidTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.PublicApiFilesInvalidMessage,
+            id: DiagnosticIds.PublicApiFilesInvalid,
+            title: ApiSurfaceAnalyzersResources.PublicApiFilesInvalidTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.PublicApiFilesInvalidMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor DuplicateSymbolInApiFiles = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.DuplicatedSymbolInPublicApiFiles,
-            title: RoslynDiagnosticsAnalyzersResources.DuplicateSymbolsInPublicApiFilesTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.DuplicateSymbolsInPublicApiFilesMessage,
+            id: DiagnosticIds.DuplicatedSymbolInPublicApiFiles,
+            title: ApiSurfaceAnalyzersResources.DuplicateSymbolsInPublicApiFilesTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.DuplicateSymbolsInPublicApiFilesMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor AvoidMultipleOverloadsWithOptionalParameters = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.AvoidMultipleOverloadsWithOptionalParameters,
-            title: RoslynDiagnosticsAnalyzersResources.AvoidMultipleOverloadsWithOptionalParametersTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.AvoidMultipleOverloadsWithOptionalParametersMessage,
+            id: DiagnosticIds.AvoidMultipleOverloadsWithOptionalParameters,
+            title: ApiSurfaceAnalyzersResources.AvoidMultipleOverloadsWithOptionalParametersTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.AvoidMultipleOverloadsWithOptionalParametersMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
@@ -82,9 +83,9 @@ namespace Roslyn.Diagnostics.Analyzers
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         internal static readonly DiagnosticDescriptor OverloadWithOptionalParametersShouldHaveMostParameters = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.OverloadWithOptionalParametersShouldHaveMostParameters,
-            title: RoslynDiagnosticsAnalyzersResources.OverloadWithOptionalParametersShouldHaveMostParametersTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.OverloadWithOptionalParametersShouldHaveMostParametersMessage,
+            id: DiagnosticIds.OverloadWithOptionalParametersShouldHaveMostParameters,
+            title: ApiSurfaceAnalyzersResources.OverloadWithOptionalParametersShouldHaveMostParametersTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.OverloadWithOptionalParametersShouldHaveMostParametersMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,

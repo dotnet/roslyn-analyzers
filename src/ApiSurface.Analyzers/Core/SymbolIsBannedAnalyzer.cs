@@ -11,31 +11,32 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
+using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
 
-namespace Roslyn.Diagnostics.Analyzers
+namespace ApiSurface.Analyzers
 {
     internal static class SymbolIsBannedAnalyzer
     {
         public const string BannedSymbolsFileName = "BannedSymbols.txt";
 
         public static readonly DiagnosticDescriptor SymbolIsBannedRule = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.SymbolIsBannedRuleId,
-            title: RoslynDiagnosticsAnalyzersResources.SymbolIsBannedTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.SymbolIsBannedMessage,
+            id: DiagnosticIds.SymbolIsBannedRuleId,
+            title: ApiSurfaceAnalyzersResources.SymbolIsBannedTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.SymbolIsBannedMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: RoslynDiagnosticsAnalyzersResources.SymbolIsBannedDescription,
+            description: ApiSurfaceAnalyzersResources.SymbolIsBannedDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public static readonly DiagnosticDescriptor DuplicateBannedSymbolRule = new DiagnosticDescriptor(
-            id: RoslynDiagnosticIds.DuplicateBannedSymbolRuleId,
-            title: RoslynDiagnosticsAnalyzersResources.DuplicateBannedSymbolTitle,
-            messageFormat: RoslynDiagnosticsAnalyzersResources.DuplicateBannedSymbolMessage,
+            id: DiagnosticIds.DuplicateBannedSymbolRuleId,
+            title: ApiSurfaceAnalyzersResources.DuplicateBannedSymbolTitle,
+            messageFormat: ApiSurfaceAnalyzersResources.DuplicateBannedSymbolMessage,
             category: "ApiDesign",
             defaultSeverity: DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: RoslynDiagnosticsAnalyzersResources.DuplicateBannedSymbolDescription,
+            description: ApiSurfaceAnalyzersResources.DuplicateBannedSymbolDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
     }
 

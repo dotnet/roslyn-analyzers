@@ -4,12 +4,12 @@ using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Roslyn.Diagnostics.CSharp.Analyzers;
-using Roslyn.Diagnostics.VisualBasic.Analyzers;
+using ApiSurface.CSharp.Analyzers;
+using ApiSurface.VisualBasic.Analyzers;
 using Test.Utilities;
 using Xunit;
 
-namespace Roslyn.Diagnostics.Analyzers.UnitTests
+namespace ApiSurface.Analyzers.UnitTests
 {
     // For specification of document comment IDs see https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments#processing-the-documentation-file
 

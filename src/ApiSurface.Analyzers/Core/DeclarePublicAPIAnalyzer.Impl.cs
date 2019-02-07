@@ -13,7 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Roslyn.Diagnostics.Analyzers
+namespace ApiSurface.Analyzers
 {
     public partial class DeclarePublicAPIAnalyzer : DiagnosticAnalyzer
     {
@@ -259,7 +259,7 @@ namespace Roslyn.Diagnostics.Analyzers
             private static string GetErrorMessageName(ISymbol symbol, bool isImplicitlyDeclaredConstructor)
             {
                 return isImplicitlyDeclaredConstructor ?
-                    string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErrorMessageName, symbol.ContainingSymbol.ToDisplayString(ShortSymbolNameFormat)) :
+                    string.Format(ApiSurfaceAnalyzersResources.PublicImplicitConstructorErrorMessageName, symbol.ContainingSymbol.ToDisplayString(ShortSymbolNameFormat)) :
                     symbol.ToDisplayString(ShortSymbolNameFormat);
             }
 

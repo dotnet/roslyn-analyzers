@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Roslyn.Diagnostics.Analyzers.UnitTests
+namespace ApiSurface.Analyzers.UnitTests
 {
     public class DeclarePublicAPIAnalyzerTests : CodeFixTestBase
     {
@@ -253,7 +253,7 @@ public class C
 C";
             var unshippedText = @"";
 
-            var arg = string.Format(RoslynDiagnosticsAnalyzersResources.PublicImplicitConstructorErrorMessageName, "C");
+            var arg = string.Format(ApiSurfaceAnalyzersResources.PublicImplicitConstructorErrorMessageName, "C");
             VerifyCSharp(source, shippedText, unshippedText,
                 // Test0.cs(2,14): warning RS0016: Symbol 'implicit constructor for C' is not part of the declared API.
                 GetCSharpResultAt(2, 14, DeclarePublicAPIAnalyzer.DeclareNewApiRule, arg));

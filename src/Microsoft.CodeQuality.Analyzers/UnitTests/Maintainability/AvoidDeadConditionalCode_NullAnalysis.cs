@@ -6385,5 +6385,74 @@ class C
     }
 }");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void NullCompare_PointsToFlowCaptureAssert()
+        {
+            VerifyCSharp(@"
+class C
+{
+    private C _field;
+    public void M(int[] array, int x)
+    {
+        C c = null;
+        C c2 = null;
+        C c3 = null;
+
+        LocalFunction2();
+        LocalFunction3();
+
+        void LocalFunction()
+        {
+            c = c ?? GetC();
+            c.M2();
+        }
+
+        void LocalFunction2()
+        {
+            LocalFunction();
+            c2 = c2 ?? GetC();
+            c2.M2();
+        }
+
+        void LocalFunction3()
+        {
+            LocalFunction();
+            c3 = c3 ?? GetC();
+            c3.M2();
+        }
+    }
+
+    C GetC() => _field;
+    void M2() { }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void NestedLambdaAndLocalFunctionsWithCaptures()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C
+{
+    public void M(C p, C p1, C p2)
+    {
+        C l1 = p1;
+        LocalFunction();
+        return;
+
+        void LocalFunction()
+        {
+            C l2 = p2;
+            M2(s => s != null && p != null && l1 != null && l2 != null);
+        }
+    }
+
+    void M2(Func<C, bool> f) { }
+}");
+        }
     }
 }

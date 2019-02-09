@@ -6364,5 +6364,26 @@ using System.Linq;
     }
 }");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void NullCompare_Unboxing_InstanceEntityAssert()
+        {
+            VerifyCSharp(@"
+struct S
+{
+    public C C { get; }
+}
+
+class C
+{
+    private object _field;
+    public void M(C c)
+    {
+        var x = (_field as C) ?? ((S)_field).C;
+    }
+}");
+        }
     }
 }

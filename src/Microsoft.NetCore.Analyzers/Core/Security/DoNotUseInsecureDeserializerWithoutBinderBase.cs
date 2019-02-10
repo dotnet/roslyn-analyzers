@@ -155,7 +155,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     if (invocationOperation.Instance?.Type == deserializerTypeSymbol
                                         && cachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        }
                                     }
                                 },
                                 OperationKind.Invocation);
@@ -169,7 +172,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                        && cachedDeserializationMethodNames.Contains(
                                             methodReferenceOperation.Method.MetadataName))
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        }
                                     }
                                 },
                                 OperationKind.MethodReference);
@@ -177,47 +183,50 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartAnalysisContext.RegisterOperationBlockEndAction(
                                 (OperationBlockAnalysisContext operationBlockAnalysisContext) =>
                                 {
-                                    if (!rootOperationsNeedingAnalysis.Any())
-                                    {
-                                        return;
-                                    }
-
-                                    // Only instantiated if there are any results to report.
                                     Dictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
-                                    List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
-
-                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                        operationBlockAnalysisContext.Options, SupportedDiagnostics,
-                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                        cancellationToken: operationBlockAnalysisContext.CancellationToken,
-                                        defaultMaxInterproceduralMethodCallChain: 1); // By default, we only want to track method calls one level down.
-
-                                    foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
+                                    lock (rootOperationsNeedingAnalysis)
                                     {
-                                        ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
-                                            PropertySetAnalysis.GetOrComputeHazardousUsages(
-                                                rootOperation.GetEnclosingControlFlowGraph(),
-                                                operationBlockAnalysisContext.Compilation,
-                                                operationBlockAnalysisContext.OwningSymbol,
-                                                this.DeserializerTypeMetadataName,
-                                                DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
-                                                propertyMappers,
-                                                hazardousUsageEvaluators,
-                                                interproceduralAnalysisConfig);
-                                        if (dfaResult.IsEmpty)
+                                        if (!rootOperationsNeedingAnalysis.Any())
                                         {
-                                            continue;
+                                            return;
                                         }
 
-                                        if (allResults == null)
-                                        {
-                                            allResults = new Dictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>();
-                                        }
+                                        // Only instantiated if there are any results to report.
+                                        List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
 
-                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
-                                            in dfaResult)
+                                        var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                            operationBlockAnalysisContext.Options, SupportedDiagnostics,
+                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
+                                            cancellationToken: operationBlockAnalysisContext.CancellationToken,
+                                            defaultMaxInterproceduralMethodCallChain: 1); // By default, we only want to track method calls one level down.
+
+                                        foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                         {
-                                            allResults.Add(kvp.Key, kvp.Value);
+                                            ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
+                                                PropertySetAnalysis.GetOrComputeHazardousUsages(
+                                                    rootOperation.GetEnclosingControlFlowGraph(),
+                                                    operationBlockAnalysisContext.Compilation,
+                                                    operationBlockAnalysisContext.OwningSymbol,
+                                                    this.DeserializerTypeMetadataName,
+                                                    DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
+                                                    propertyMappers,
+                                                    hazardousUsageEvaluators,
+                                                    interproceduralAnalysisConfig);
+                                            if (dfaResult.IsEmpty)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (allResults == null)
+                                            {
+                                                allResults = new Dictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>();
+                                            }
+
+                                            foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                                in dfaResult)
+                                            {
+                                                allResults.Add(kvp.Key, kvp.Value);
+                                            }
                                         }
                                     }
 
@@ -241,7 +250,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 break;
 
                                             default:
-                                                Debug.Fail($"Unhandled abstract value {kvp.Value}");
+                                                Debug.Fail($"Unhandled result value {kvp.Value}");
                                                 continue;
                                         }
 

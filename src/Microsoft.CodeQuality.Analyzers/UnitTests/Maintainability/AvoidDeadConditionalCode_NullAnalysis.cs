@@ -6454,5 +6454,32 @@ class C
     void M2(Func<C, bool> f) { }
 }");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void CopyAnalysisAssert_IndexerArrayAccessWithCast()
+        {
+            VerifyCSharp(@"
+public struct S
+{
+    public object Value { get; }
+}
+
+public class C
+{
+    public void M(S[] arguments)
+    {
+        for (int i = 0; i < arguments.Length; i++)
+        {
+            if (arguments[i].Value != null)
+            {
+                var value = (string)arguments[i].Value;
+                var value2 = (S)arguments[i + 1].Value;
+            }
+        }
+    }
+}");
+        }
     }
 }

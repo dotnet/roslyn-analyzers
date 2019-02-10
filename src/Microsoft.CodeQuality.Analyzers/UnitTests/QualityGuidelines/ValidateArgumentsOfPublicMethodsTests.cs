@@ -5125,5 +5125,95 @@ public class C
     }
 }");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void CopyAnalysisAssert_ApplyInterproceduralResult()
+        {
+            VerifyCSharp(@"
+public class SyntaxNode
+{
+    public SyntaxNode Parent { get; }
+    private bool _flag;
+    private bool M2() => _flag;
+    public int RawKind { get; }
+
+    public static bool M(SyntaxNode node)
+    {
+        var parent = node.Parent;
+        if (parent == null || !node.M2())
+        {
+            return false;
+        }
+
+        switch (parent.Kind())
+        {
+            case SyntaxKind.Kind1:
+                var d = (QualifiedNameSyntax)parent;
+                return d.Right == node ? M(parent) : false;
+
+            case SyntaxKind.Kind2:
+                var e = (AliasQualifiedNameSyntax)parent;
+                return e.Name == node ? M(parent) : false;
+        }
+
+        var f = node.Parent as AttributeSyntax;
+        return f != null && f.Name == node;
+    }
+}
+
+public static class Extensions
+{
+    public static SyntaxKind Kind(this SyntaxNode node)
+    {
+        var rawKind = node.RawKind;
+        return IsCSharpKind(rawKind) ? (SyntaxKind)rawKind : SyntaxKind.Kind4;
+    }
+
+    private static bool IsCSharpKind(int rawKind)
+        => rawKind > 0;
+}
+
+public enum SyntaxKind
+{
+    Kind1,
+    Kind2,
+    Kind3,
+    Kind4
+}
+
+public class NameSyntax : SyntaxNode
+{
+}
+
+public class SimpleNameSyntax : NameSyntax
+{
+}
+
+public class QualifiedNameSyntax : NameSyntax
+{
+    public SimpleNameSyntax Right { get; }
+}
+
+public class AliasQualifiedNameSyntax : NameSyntax
+{
+    public SimpleNameSyntax Name { get; }
+}
+
+public class AttributeSyntax : CSharpSyntaxNode
+{
+    public SimpleNameSyntax Name { get; }
+}
+
+public class CSharpSyntaxNode : SyntaxNode
+{
+}
+",
+            // Test0.cs(11,22): warning CA1062: In externally visible method 'bool SyntaxNode.M(SyntaxNode node)', validate parameter 'node' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(11, 22, "bool SyntaxNode.M(SyntaxNode node)", "node"),
+            // Test0.cs(37,23): warning CA1062: In externally visible method 'SyntaxKind Extensions.Kind(SyntaxNode node)', validate parameter 'node' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(37, 23, "SyntaxKind Extensions.Kind(SyntaxNode node)", "node"));
+        }
     }
 }

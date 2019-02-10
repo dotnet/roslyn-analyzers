@@ -339,6 +339,44 @@ End Class
         }
 
         [Fact]
+        public void HazardousUsage_ReferenceInConditiona_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public bool X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        if (c.X)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(11,13): warning CA1062: In externally visible method 'void Test.M1(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(11, 13, "void Test.M1(C c)", "c"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Boolean
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        If c.X Then
+        End If
+    End Sub
+End Class
+",
+            // Test0.vb(8,12): warning CA1062: In externally visible method 'Sub Test.M1(c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(8, 12, "Sub Test.M1(c As C)", "c"));
+        }
+
+        [Fact]
         public void MultipleHazardousUsages_OneReportPerParameter_Diagnostic()
         {
             VerifyCSharp(@"
@@ -3489,8 +3527,8 @@ using System.Reflection;
         }
     }
 }",
-            // Test0.cs(14,36): warning CA1062: In externally visible method 'IInterface PropConvert.ToSettings(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetCSharpResultAt(14, 36, "IInterface PropConvert.ToSettings(object o)", "o"));
+            // Test0.cs(12,35): warning CA1062: In externally visible method 'IInterface PropConvert.ToSettings(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(12, 35, "IInterface PropConvert.ToSettings(object o)", "o"));
         }
 
         [Fact, WorkItem(1870, "https://github.com/dotnet/roslyn-analyzers/issues/1870")]
@@ -3714,7 +3752,9 @@ public class Class1
     }
 }",
             // Test0.cs(115,28): warning CA1062: In externally visible method 'void Class1.Method(IContext aContext)', validate parameter 'aContext' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetCSharpResultAt(115, 28, "void Class1.Method(IContext aContext)", "aContext"));
+            GetCSharpResultAt(115, 28, "void Class1.Method(IContext aContext)", "aContext"),
+            // Test0.cs(156,13): warning CA1062: In externally visible method 'bool Class1.HasUrl(IContext filterContext)', validate parameter 'filterContext' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(156, 13, "bool Class1.HasUrl(IContext filterContext)", "filterContext"));
         }
 
         [Fact]
@@ -4757,7 +4797,9 @@ public class C
             return c2;
         }
     }
-}");
+}",
+            // Test0.cs(15,17): warning CA1062: In externally visible method 'object C.M(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(15, 17, "object C.M(C c)", "c"));
         }
 
         [Fact]

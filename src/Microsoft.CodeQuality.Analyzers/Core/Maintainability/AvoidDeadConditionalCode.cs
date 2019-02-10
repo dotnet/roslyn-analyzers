@@ -88,6 +88,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                             foreach (var operation in cfg.DescendantOperations())
                             {
+                                // Skip implicit operations.
+                                // However, 'IsNull' operations are compiler generated operations corresponding to
+                                // non-implicit conditional access operations, so we should not skip them.
+                                if (operation.IsImplicit && operation.Kind != OperationKind.IsNull)
+                                {
+                                    continue;
+                                }
+
                                 switch (operation.Kind)
                                 {
                                     case OperationKind.BinaryOperator:
@@ -128,6 +136,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                                             default:
                                                 continue;
+                                        }
+
+                                        var originalOperation = operationRoot.SemanticModel.GetOperation(operation.Syntax, operationBlockContext.CancellationToken);
+                                        if (originalOperation is IAssignmentOperation)
+                                        {
+                                            // Skip compiler generated IsNull operation for assignment within a using.
+                                            continue;
                                         }
 
                                         var arg1 = operation.Syntax.ToString();

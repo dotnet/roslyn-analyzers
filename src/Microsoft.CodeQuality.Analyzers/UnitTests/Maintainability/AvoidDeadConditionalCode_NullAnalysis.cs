@@ -5369,6 +5369,34 @@ Class Test
 End Class");
         }
 
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void TestCompilerGeneratedNullCheckNotFlagged()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose() { }
+
+    public void M(C c)
+    {
+        if (c == null)
+        {
+            return;
+        }
+
+        // Compiler implicitly generates a null-check for assigned variable here.
+        // We should not flag compiler generate operations as redundant.
+        using (c = new C())
+        {
+        }
+    }
+}");
+        }
+
         [Fact]
         public void StaticObjectReferenceEquals_Diagnostic()
         {

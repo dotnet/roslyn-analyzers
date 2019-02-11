@@ -259,6 +259,31 @@ End Namespace",
         }
 
         [Fact]
+        public void TestOnDeserializationImplicitlyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+    
+    public void OnDeserialization(Object sender)
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
+}",
+            GetCSharpResultAt(13, 17, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
         public void TestOnDeserializationWriteAllBytesDiagnostic()
         {
             VerifyCSharp(@"
@@ -279,13 +304,6 @@ public class TestClass : IDeserializationCallback
         var bytes = new byte[] {0x20, 0x20, 0x20};
         File.WriteAllBytes(path, bytes);
     }
-    
-    void OnDeserialization(Object sender)
-    {
-        var path = ""C:\\"";
-        var bytes = new byte[] {0x20, 0x20, 0x20};
-        File.WriteAllBytes(path, bytes);
-    }
 }",
             GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
 
@@ -301,11 +319,6 @@ Namespace TestNamespace
         Private member As String
         
         Public Sub OnDeserializationExplictlyImplemented(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
-            Dim bytes(9) As Byte
-            File.WriteAllBytes(""C:\\"", bytes)
-        End Sub
-
-        Public Sub OnDeserialization(ByVal sender As Object)
             Dim bytes(9) As Byte
             File.WriteAllBytes(""C:\\"", bytes)
         End Sub
@@ -1497,7 +1510,7 @@ public class TestClass
 {
     private string member;
 
-    void OnDeserialization(Object sender)
+    public void OnDeserialization(Object sender)
     {
         byte[] bytes = new byte[] {0x20, 0x20, 0x20};
         File.WriteAllBytes(""C:\\"", bytes);

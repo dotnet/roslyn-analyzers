@@ -4,6 +4,7 @@ using System;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,9 +17,27 @@ namespace PerformanceSensitive.CSharp.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal sealed class CallSiteImplicitAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
-        internal static DiagnosticDescriptor ParamsParameterRule = new DiagnosticDescriptor("HAA0101", "Array allocation for params parameter", "This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter", "Performance", DiagnosticSeverity.Warning, true);
+        public const string ParamsParameterRuleId = "HAA0101";
+        public const string ValueTypeNonOverridenCallRuleId = "HAA0102";
 
-        internal static DiagnosticDescriptor ValueTypeNonOverridenCallRule = new DiagnosticDescriptor("HAA0102", "Non-overridden virtual method call on value type", "Non-overridden virtual method call on a value type adds a boxing or constrained instruction", "Performance", DiagnosticSeverity.Warning, true);
+        private static readonly LocalizableString s_localizableParamsParameterRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ParamsParameterRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableParamsParameterRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ParamsParameterRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+        internal static DiagnosticDescriptor ParamsParameterRule = new DiagnosticDescriptor(
+            ParamsParameterRuleId,
+            s_localizableParamsParameterRuleTitle,
+            s_localizableParamsParameterRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        internal static DiagnosticDescriptor ValueTypeNonOverridenCallRule = new DiagnosticDescriptor(
+            ValueTypeNonOverridenCallRuleId,
+            "Non-overridden virtual method call on value type",
+            "Non-overridden virtual method call on a value type adds a boxing or constrained instruction",
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ParamsParameterRule, ValueTypeNonOverridenCallRule);
 

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="es" original="../MetaCompilationResources.resx">
+    <body>
+      <trans-unit id="ParamsParameterRuleMessage">
+        <source>This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter</source>
+        <target state="new">This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter</target>
+        <note />
+      </trans-unit>     
+      <trans-unit id="ParamsParameterRuleTitle">
+        <source>Array allocation for params parameter</source>
+        <target state="new">Array allocation for params parameter</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

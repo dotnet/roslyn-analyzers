@@ -12,7 +12,7 @@ using PerformanceSensitive.Analyzers;
 namespace PerformanceSensitive.CSharp.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class ConcatenationAllocationAnalyzer : AbstractAllocationAnalyzer
+    internal sealed class ConcatenationAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
         internal static DiagnosticDescriptor StringConcatenationAllocationRule = new DiagnosticDescriptor("HAA0201", "Implicit string concatenation allocation", "Considering using StringBuilder", "Performance", DiagnosticSeverity.Warning, true, string.Empty, "http://msdn.microsoft.com/en-us/library/2839d5h5(v=vs.110).aspx");
 
@@ -24,7 +24,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
 
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
-        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context, in PerformanceSensitiveInfo info)
         {
             var node = context.Node;
             var semanticModel = context.SemanticModel;

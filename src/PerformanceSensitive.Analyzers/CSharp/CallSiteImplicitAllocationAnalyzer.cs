@@ -14,7 +14,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
 {
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class CallSiteImplicitAllocationAnalyzer : AbstractAllocationAnalyzer
+    internal sealed class CallSiteImplicitAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
         internal static DiagnosticDescriptor ParamsParameterRule = new DiagnosticDescriptor("HAA0101", "Array allocation for params parameter", "This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter", "Performance", DiagnosticSeverity.Warning, true);
 
@@ -26,7 +26,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
 
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
-        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context, in PerformanceSensitiveInfo info)
         {
             var node = context.Node;
             var semanticModel = context.SemanticModel;

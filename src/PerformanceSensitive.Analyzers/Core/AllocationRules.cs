@@ -14,6 +14,8 @@ namespace PerformanceSensitive.Analyzers
             ("System.CodeDom.Compiler", "GeneratedCodeAttribute")
         };
 
+        public const string PerformanceSensitiveAttributeName = "Roslyn.Utilities.PerformanceSensitiveAttribute";
+
         public static bool IsIgnoredFile(string filePath)
         {
             return filePath.EndsWith(".g.cs", StringComparison.OrdinalIgnoreCase);

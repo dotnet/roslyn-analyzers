@@ -13,7 +13,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
 {
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class TypeConversionAllocationAnalyzer : AbstractAllocationAnalyzer
+    internal sealed class TypeConversionAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
         internal static DiagnosticDescriptor ValueTypeToReferenceTypeConversionRule = new DiagnosticDescriptor("HAA0601", "Value type to reference type conversion causing boxing allocation", "Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable", "Performance", DiagnosticSeverity.Warning, true);
 
@@ -42,7 +42,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
 
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
-        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context, in PerformanceSensitiveInfo info)
         {
             var node = context.Node;
             var semanticModel = context.SemanticModel;

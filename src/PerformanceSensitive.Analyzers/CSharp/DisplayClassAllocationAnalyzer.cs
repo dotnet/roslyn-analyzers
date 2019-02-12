@@ -14,7 +14,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
 {
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class DisplayClassAllocationAnalyzer : AbstractAllocationAnalyzer
+    internal sealed class DisplayClassAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
         internal static DiagnosticDescriptor ClosureDriverRule = new DiagnosticDescriptor("HAA0301", "Closure Allocation Source", "Heap allocation of closure Captures: {0}", "Performance", DiagnosticSeverity.Warning, true);
 
@@ -28,7 +28,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
 
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
-        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context, in PerformanceSensitiveInfo info)
         {
             var node = context.Node;
             var semanticModel = context.SemanticModel;

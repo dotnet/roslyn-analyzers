@@ -11,7 +11,7 @@ using PerformanceSensitive.Analyzers;
 namespace PerformanceSensitive.CSharp.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class ExplicitAllocationAnalyzer : AbstractAllocationAnalyzer
+    internal sealed class ExplicitAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
         internal static DiagnosticDescriptor NewArrayRule = new DiagnosticDescriptor("HAA0501", "Explicit new array type allocation", "Explicit new array type allocation", "Performance", DiagnosticSeverity.Info, true);
 
@@ -40,7 +40,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
 
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
-        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context)
+        protected override void AnalyzeNode(SyntaxNodeAnalysisContext context, in PerformanceSensitiveInfo info)
         {
             var node = context.Node;
             var semanticModel = context.SemanticModel;

@@ -146,6 +146,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceSensitive.Analyz
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceSensitive.CSharp.Analyzers", "src\PerformanceSensitive.Analyzers\CSharp\PerformanceSensitive.CSharp.Analyzers.csproj", "{758E1984-3CA1-4CAD-9C2A-4DD16F5CA5AE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceSensitive.Analyzers.Setup", "src\PerformanceSensitive.Analyzers\Setup\PerformanceSensitive.Analyzers.Setup.csproj", "{8D62B22F-C99A-453F-AD97-A55D4549E1BA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceSensitive.Analyzers.Package", "nuget\PerformanceSensitive.Analyzers\PerformanceSensitive.Analyzers.Package.csproj", "{D9762D86-883E-45E5-BC75-C31973190C73}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Analyzer.Utilities.projitems*{ec946164-1e17-410b-b7d9-7de7e6268d63}*SharedItemsImports = 13
@@ -597,6 +601,22 @@ Global
 		{758E1984-3CA1-4CAD-9C2A-4DD16F5CA5AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{758E1984-3CA1-4CAD-9C2A-4DD16F5CA5AE}.Release|x86.ActiveCfg = Release|Any CPU
 		{758E1984-3CA1-4CAD-9C2A-4DD16F5CA5AE}.Release|x86.Build.0 = Release|Any CPU
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA}.Debug|x86.Build.0 = Debug|Any CPU
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA}.Release|x86.ActiveCfg = Release|Any CPU
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA}.Release|x86.Build.0 = Release|Any CPU
+		{D9762D86-883E-45E5-BC75-C31973190C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9762D86-883E-45E5-BC75-C31973190C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9762D86-883E-45E5-BC75-C31973190C73}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D9762D86-883E-45E5-BC75-C31973190C73}.Debug|x86.Build.0 = Debug|Any CPU
+		{D9762D86-883E-45E5-BC75-C31973190C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9762D86-883E-45E5-BC75-C31973190C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9762D86-883E-45E5-BC75-C31973190C73}.Release|x86.ActiveCfg = Release|Any CPU
+		{D9762D86-883E-45E5-BC75-C31973190C73}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -658,6 +678,8 @@ Global
 		{36359863-556D-4C16-940A-36592BB3DC72} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 		{09D98F3B-76DC-45AD-9FAB-E886F4EBC33C} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{758E1984-3CA1-4CAD-9C2A-4DD16F5CA5AE} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
+		{8D62B22F-C99A-453F-AD97-A55D4549E1BA} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
+		{D9762D86-883E-45E5-BC75-C31973190C73} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

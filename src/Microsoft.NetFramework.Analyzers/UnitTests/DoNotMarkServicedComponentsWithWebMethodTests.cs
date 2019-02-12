@@ -3,20 +3,16 @@
 using Microsoft.NetFramework.CSharp.Analyzers;
 using Microsoft.NetFramework.VisualBasic.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpDoNotMarkServicedComponentsWithWebMethodAnalyzer,
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpDoNotMarkServicedComponentsWithWebMethodFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicDoNotMarkServicedComponentsWithWebMethodAnalyzer,
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicDoNotMarkServicedComponentsWithWebMethodFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public class DoNotMarkServicedComponentsWithWebMethodTests : DiagnosticAnalyzerTestBase
+    public class DoNotMarkServicedComponentsWithWebMethodTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicDoNotMarkServicedComponentsWithWebMethodAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpDoNotMarkServicedComponentsWithWebMethodAnalyzer();
-        }
     }
 }

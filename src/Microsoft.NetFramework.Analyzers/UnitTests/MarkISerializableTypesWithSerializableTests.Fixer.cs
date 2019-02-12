@@ -1,42 +1,22 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetFramework.Analyzers.MarkTypesWithSerializableFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetFramework.Analyzers.MarkTypesWithSerializableFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class MarkISerializableTypesWithSerializableFixerTests : CodeFixTestBase
+    public partial class MarkISerializableTypesWithSerializableFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        [WorkItem(858655, "DevDiv")]
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new MarkTypesWithSerializableFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        [WorkItem(858655, "DevDiv")]
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new MarkTypesWithSerializableFixer();
-        }
-
-        #region CA2237
-
         [Fact]
-        public void CA2237SerializableMissingAttrFix()
+        public async Task CA2237SerializableMissingAttrFix()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.Runtime.Serialization;
 public class CA2237SerializableMissingAttr : ISerializable
@@ -57,10 +37,9 @@ public class CA2237SerializableMissingAttr : ISerializable
     {
         throw new NotImplementedException();
     }
-}",
-codeFixIndex: 0);
+}");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.Runtime.Serialization
 Public Class CA2237SerializableMissingAttr
@@ -87,10 +66,7 @@ Public Class CA2237SerializableMissingAttr
     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
         throw new NotImplementedException()
     End Sub
-End Class",
-codeFixIndex: 0);
+End Class");
         }
-
-        #endregion
     }
 }

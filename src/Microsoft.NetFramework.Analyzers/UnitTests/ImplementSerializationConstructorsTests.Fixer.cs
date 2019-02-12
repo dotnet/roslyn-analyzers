@@ -1,41 +1,22 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Xunit;
-using Test.Utilities;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetFramework.Analyzers.ImplementSerializationConstructorsFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetFramework.Analyzers.ImplementSerializationConstructorsFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class ImplementSerializationConstructorsFixerTests : CodeFixTestBase
+    public partial class ImplementSerializationConstructorsFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        [WorkItem(858655, "DevDiv")]
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new ImplementSerializationConstructorsFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new ImplementSerializationConstructorsFixer();
-        }
-
-        #region CA2229
-
         [Fact]
-        public void CA2229NoConstructorFix()
+        public async Task CA2229NoConstructorFix()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.Runtime.Serialization;
 [Serializable]
@@ -62,7 +43,7 @@ public class CA2229NoConstructor : ISerializable
     }
 }");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.Runtime.Serialization
 <Serializable>
@@ -90,9 +71,9 @@ End Class");
         }
 
         [Fact]
-        public void CA2229HasConstructorWrongAccessibilityFix()
+        public async Task CA2229HasConstructorWrongAccessibilityFix()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.Runtime.Serialization;
 [Serializable]
@@ -118,7 +99,7 @@ public class CA2229HasConstructorWrongAccessibility : ISerializable
     }
 }");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.Runtime.Serialization
 <Serializable>
@@ -148,9 +129,9 @@ End Class");
         }
 
         [Fact]
-        public void CA2229HasConstructorWrongAccessibility2Fix()
+        public async Task CA2229HasConstructorWrongAccessibility2Fix()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.Runtime.Serialization;
 [Serializable]
@@ -176,7 +157,7 @@ public sealed class CA2229HasConstructorWrongAccessibility2 : ISerializable
     }
 }");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.Runtime.Serialization
 <Serializable>
@@ -204,7 +185,5 @@ Public NotInheritable Class CA2229HasConstructorWrongAccessibility2
     End Sub
 End Class");
         }
-
-        #endregion
     }
 }

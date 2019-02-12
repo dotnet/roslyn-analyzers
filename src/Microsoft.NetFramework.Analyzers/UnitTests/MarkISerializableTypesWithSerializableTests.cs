@@ -1,30 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetFramework.Analyzers.MarkTypesWithSerializableFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetFramework.Analyzers.MarkTypesWithSerializableFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class MarkISerializableTypesWithSerializableTests : DiagnosticAnalyzerTestBase
+    public partial class MarkISerializableTypesWithSerializableTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        #region CA2237
-
         [Fact]
-        public void CA2237SerializableMissingAttr()
+        public async Task CA2237SerializableMissingAttr()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 public class CA2237SerializableMissingAttr : ISerializable
@@ -36,7 +29,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 }",
                 GetCA2237CSharpResultAt(4, 30, "CA2237SerializableMissingAttr"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 Public Class CA2237SerializableMissingAttr
@@ -53,9 +46,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2237SerializableInternal()
+        public async Task CA2237SerializableInternal()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 class CA2237SerializableInternal : ISerializable
@@ -66,7 +59,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                     }
                 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 Friend Class CA2237SerializableInternal 
@@ -82,9 +75,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2237SerializableProperWithScope()
+        public async Task CA2237SerializableProperWithScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
 
@@ -105,7 +98,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                     }
                 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
 
@@ -131,9 +124,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2237SerializableWithBase()
+        public async Task CA2237SerializableWithBase()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 public class CA2237SerializableWithBase : Base, ISerializable
@@ -145,7 +138,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 }
                 public class Base { }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 Public Class CA2237SerializableWithBase
@@ -164,9 +157,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2237SerializableWithBaseAttr()
+        public async Task CA2237SerializableWithBaseAttr()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 public class CA2237SerializableWithBaseAttr : BaseAttr, ISerializable
@@ -180,7 +173,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 public class BaseAttr { }",
                 GetCA2237CSharpResultAt(4, 30, "CA2237SerializableWithBaseAttr"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 Public Class CA2237SerializableWithBaseAttr
@@ -201,9 +194,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2237_CA2229_NoDiagnosticForInterfaceAndDelegate()
+        public async Task CA2237_CA2229_NoDiagnosticForInterfaceAndDelegate()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.Serialization;
 
@@ -218,7 +211,7 @@ public interface I : ISerializable
     string Name { get; }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Runtime.Serialization
 
@@ -233,18 +226,14 @@ Public Interface I
 End Interface");
         }
 
-        internal static readonly string CA2237Message = MicrosoftNetFrameworkAnalyzersResources.MarkISerializableTypesWithSerializableMessage;
-
         private static DiagnosticResult GetCA2237CSharpResultAt(int line, int column, string objectName)
         {
-            return GetCSharpResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2237Id, string.Format(CA2237Message, objectName));
+            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2237).WithLocation(line, column).WithArguments(objectName);
         }
 
         private static DiagnosticResult GetCA2237BasicResultAt(int line, int column, string objectName)
         {
-            return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2237Id, string.Format(CA2237Message, objectName));
+            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2237).WithLocation(line, column).WithArguments(objectName);
         }
-
-        #endregion
     }
 }

@@ -145,7 +145,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
-                            HashSet<IOperation> rootOperationsNeedingAnalysis = new HashSet<IOperation>();
+                            PooledHashSet<IOperation> rootOperationsNeedingAnalysis = PooledHashSet<IOperation>.GetInstance();
 
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
@@ -183,83 +183,91 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartAnalysisContext.RegisterOperationBlockEndAction(
                                 (OperationBlockAnalysisContext operationBlockAnalysisContext) =>
                                 {
-                                    Dictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
-                                    lock (rootOperationsNeedingAnalysis)
+                                    PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
+                                    try
                                     {
-                                        if (!rootOperationsNeedingAnalysis.Any())
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            if (!rootOperationsNeedingAnalysis.Any())
+                                            {
+                                                return;
+                                            }
+
+                                            // Only instantiated if there are any results to report.
+                                            List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
+
+                                            var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                                operationBlockAnalysisContext.Options, SupportedDiagnostics,
+                                                defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
+                                                cancellationToken: operationBlockAnalysisContext.CancellationToken,
+                                                defaultMaxInterproceduralMethodCallChain: 1); // By default, we only want to track method calls one level down.
+
+                                            foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
+                                            {
+                                                ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
+                                                    PropertySetAnalysis.GetOrComputeHazardousUsages(
+                                                        rootOperation.GetEnclosingControlFlowGraph(),
+                                                        operationBlockAnalysisContext.Compilation,
+                                                        operationBlockAnalysisContext.OwningSymbol,
+                                                        this.DeserializerTypeMetadataName,
+                                                        DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
+                                                        propertyMappers,
+                                                        hazardousUsageEvaluators,
+                                                        interproceduralAnalysisConfig);
+                                                if (dfaResult.IsEmpty)
+                                                {
+                                                    continue;
+                                                }
+
+                                                if (allResults == null)
+                                                {
+                                                    allResults = PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>.GetInstance();
+                                                }
+
+                                                foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                                    in dfaResult)
+                                                {
+                                                    allResults.Add(kvp.Key, kvp.Value);
+                                                }
+                                            }
+                                        }
+
+                                        if (allResults == null)
                                         {
                                             return;
                                         }
 
-                                        // Only instantiated if there are any results to report.
-                                        List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
-
-                                        var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                            operationBlockAnalysisContext.Options, SupportedDiagnostics,
-                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                            cancellationToken: operationBlockAnalysisContext.CancellationToken,
-                                            defaultMaxInterproceduralMethodCallChain: 1); // By default, we only want to track method calls one level down.
-
-                                        foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
+                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                            in allResults)
                                         {
-                                            ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
-                                                PropertySetAnalysis.GetOrComputeHazardousUsages(
-                                                    rootOperation.GetEnclosingControlFlowGraph(),
-                                                    operationBlockAnalysisContext.Compilation,
-                                                    operationBlockAnalysisContext.OwningSymbol,
-                                                    this.DeserializerTypeMetadataName,
-                                                    DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
-                                                    propertyMappers,
-                                                    hazardousUsageEvaluators,
-                                                    interproceduralAnalysisConfig);
-                                            if (dfaResult.IsEmpty)
+                                            DiagnosticDescriptor descriptor;
+                                            switch (kvp.Value)
                                             {
-                                                continue;
+                                                case HazardousUsageEvaluationResult.Flagged:
+                                                    descriptor = this.BinderDefinitelyNotSetDescriptor;
+                                                    break;
+
+                                                case HazardousUsageEvaluationResult.MaybeFlagged:
+                                                    descriptor = this.BinderMaybeNotSetDescriptor;
+                                                    break;
+
+                                                default:
+                                                    Debug.Fail($"Unhandled result value {kvp.Value}");
+                                                    continue;
                                             }
 
-                                            if (allResults == null)
-                                            {
-                                                allResults = new Dictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>();
-                                            }
-
-                                            foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
-                                                in dfaResult)
-                                            {
-                                                allResults.Add(kvp.Key, kvp.Value);
-                                            }
+                                            operationBlockAnalysisContext.ReportDiagnostic(
+                                                Diagnostic.Create(
+                                                    descriptor,
+                                                    kvp.Key.Location,
+                                                    kvp.Key.Method.ToDisplayString(
+                                                        SymbolDisplayFormat.MinimallyQualifiedFormat)));
                                         }
                                     }
-
-                                    if (allResults == null)
+                                    finally
                                     {
-                                        return;
-                                    }
-
-                                    foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
-                                        in allResults)
-                                    {
-                                        DiagnosticDescriptor descriptor;
-                                        switch (kvp.Value)
-                                        {
-                                            case HazardousUsageEvaluationResult.Flagged:
-                                                descriptor = this.BinderDefinitelyNotSetDescriptor;
-                                                break;
-
-                                            case HazardousUsageEvaluationResult.MaybeFlagged:
-                                                descriptor = this.BinderMaybeNotSetDescriptor;
-                                                break;
-
-                                            default:
-                                                Debug.Fail($"Unhandled result value {kvp.Value}");
-                                                continue;
-                                        }
-
-                                        operationBlockAnalysisContext.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                descriptor,
-                                                kvp.Key.Location,
-                                                kvp.Key.Method.ToDisplayString(
-                                                    SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                        rootOperationsNeedingAnalysis.Free();
+                                        allResults?.Free();
                                     }
                                 });
                         });

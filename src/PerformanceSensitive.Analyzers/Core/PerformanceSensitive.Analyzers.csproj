@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="PerformanceSensitive.CSharp.Analyzers" />
+    <InternalsVisibleTo Include="PerformanceSensitive.Analyzers.UnitTests" />
   </ItemGroup>
   <Import Project="..\..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
 </Project>

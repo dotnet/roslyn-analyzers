@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
-namespace ClrHeapAllocationAnalyzer.Test
+namespace PerformanceSensitive.Analyzers.UnitTests
 {
     internal class DiagnosticEqualityComparer : IEqualityComparer<Diagnostic>
     {

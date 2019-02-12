@@ -1,13 +1,15 @@
-﻿using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-namespace ClrHeapAllocationAnalyzer.Test
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.CSharp;
+using PerformanceSensitive.CSharp.Analyzers;
+using Xunit;
+
+namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    [TestClass]
-    public class IgnoreTests : AllocationAnalyzerTests
+    public class IgnoreTests : AllocationAnalyzerTestsBase
     {
-        [TestMethod]
+        [Fact]
         public void AnalyzeProgram_TakesIgnoredAttributesIntoAccount()
         {
             const string sampleProgram =
@@ -30,10 +32,10 @@ namespace ClrHeapAllocationAnalyzer.Test
 
             var analyser = new ExplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression));
-            Assert.AreEqual(1, info.Allocations.Count);
+            Assert.Single(info.Allocations);
         }
 
-        [TestMethod]
+        [Fact]
         public void AnalyzeProgram_TakesIgnoredFilesIntoAccount()
         {
             const string sampleProgram =
@@ -46,7 +48,7 @@ namespace ClrHeapAllocationAnalyzer.Test
             void Check(int expectedCount, string path)
             {
                 var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression), filePath: path);
-                Assert.AreEqual(expectedCount, info.Allocations.Count);
+                Assert.Equal(expectedCount, info.Allocations.Length);
             }
 
             Check(0, "test.g.cs");

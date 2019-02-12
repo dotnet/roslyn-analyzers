@@ -1,13 +1,15 @@
-﻿using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-namespace ClrHeapAllocationAnalyzer.Test
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.CSharp;
+using PerformanceSensitive.CSharp.Analyzers;
+using Xunit;
+
+namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    [TestClass]
-    public class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTests
+    public class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
-        [TestMethod]
+        [Fact]
         public void CallSiteImplicitAllocation_Param()
         {
             var sampleProgram =
@@ -32,7 +34,7 @@ public void ParamsWithObjects(params object[] args)
             var analyser = new CallSiteImplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.InvocationExpression));
 
-            Assert.AreEqual(4, info.Allocations.Count);
+            Assert.Equal(4, info.Allocations.Length);
             // Diagnostic: (3,1): warning HeapAnalyzerImplicitParamsRule: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
             AssertEx.ContainsDiagnostic(info.Allocations, id: CallSiteImplicitAllocationAnalyzer.ParamsParameterRule.Id, line: 3, character: 1);
             // Diagnostic: (4,1): warning HeapAnalyzerImplicitParamsRule: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
@@ -43,8 +45,9 @@ public void ParamsWithObjects(params object[] args)
             AssertEx.ContainsDiagnostic(info.Allocations, id: CallSiteImplicitAllocationAnalyzer.ParamsParameterRule.Id, line: 9, character: 12);
         }
 
-        [TestMethod]
-        public void CallSiteImplicitAllocation_NonOverridenMethodOnStruct() {
+        [Fact]
+        public void CallSiteImplicitAllocation_NonOverridenMethodOnStruct()
+        {
             var sampleProgram =
                 @"using System;
 
@@ -68,23 +71,25 @@ struct OverrideToHashCode
             var analyser = new CallSiteImplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.InvocationExpression));
 
-            Assert.AreEqual(1, info.Allocations.Count);
+            Assert.Single(info.Allocations);
             // Diagnostic: (3,14): warning HeapAnalyzerValueTypeNonOverridenCallRule: Non-overriden virtual method call on a value type adds a boxing or constrained instruction
             AssertEx.ContainsDiagnostic(info.Allocations, id: CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule.Id, line: 3, character: 14);
         }
 
-        [TestMethod]
-        public void CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForStaticCalls() {
+        [Fact]
+        public void CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForStaticCalls()
+        {
             var snippet = @"var t = System.Enum.GetUnderlyingType(typeof(System.StringComparison));";
 
             var analyser = new CallSiteImplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, snippet, ImmutableArray.Create(SyntaxKind.InvocationExpression));
 
-            Assert.AreEqual(0, info.Allocations.Count);
-          }
+            Assert.Empty(info.Allocations);
+        }
 
-        [TestMethod]
-        public void CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForNonVirtualCalls() {
+        [Fact]
+        public void CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForNonVirtualCalls()
+        {
             var snippet = @"
 using System.IO;
 
@@ -95,7 +100,7 @@ attr.HasFlag (FileAttributes.Directory);
             var analyser = new CallSiteImplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, snippet, ImmutableArray.Create(SyntaxKind.InvocationExpression));
 
-            Assert.AreEqual(0, info.Allocations.Count);
-          }
+            Assert.Empty(info.Allocations);
+        }
     }
 }

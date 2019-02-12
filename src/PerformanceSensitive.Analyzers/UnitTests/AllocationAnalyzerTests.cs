@@ -1,15 +1,17 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
-namespace ClrHeapAllocationAnalyzer.Test
+namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public abstract class AllocationAnalyzerTests
+    public abstract class AllocationAnalyzerTestsBase
     {
         protected static readonly List<MetadataReference> references = new List<MetadataReference>
             {
@@ -20,9 +22,9 @@ namespace ClrHeapAllocationAnalyzer.Test
                 MetadataReference.CreateFromFile(typeof(IList<>).Assembly.Location)
             };
 
-        protected IList<SyntaxNode> GetExpectedDescendants(IEnumerable<SyntaxNode> nodes, ImmutableArray<SyntaxKind> expected)
+        protected ImmutableArray<SyntaxNode> GetExpectedDescendants(IEnumerable<SyntaxNode> nodes, ImmutableArray<SyntaxKind> expected)
         {
-            var descendants = new List<SyntaxNode>();
+            var descendants = ImmutableArray.CreateBuilder<SyntaxNode>();
             foreach (var node in nodes)
             {
                 if (expected.Any(e => e == node.Kind()))
@@ -43,7 +45,7 @@ namespace ClrHeapAllocationAnalyzer.Test
                         descendants.AddRange(GetExpectedDescendants(child.ChildNodes(), expected));
                 }
             }
-            return descendants;
+            return descendants.ToImmutable();
         }
 
         protected Info ProcessCode(DiagnosticAnalyzer analyzer, string sampleProgram,
@@ -58,7 +60,7 @@ namespace ClrHeapAllocationAnalyzer.Test
             {
                 var msg = "There were Errors in the sample code\n";
                 if (allowBuildErrors == false)
-                    Assert.Fail(msg + string.Join("\n", diagnostics));
+                    Assert.True(false, msg + string.Join("\n", diagnostics));
                 else
                     Console.WriteLine(msg + string.Join("\n", diagnostics));
             }
@@ -68,7 +70,9 @@ namespace ClrHeapAllocationAnalyzer.Test
 
             // Run the code tree through the analyzer and record the allocations it reports
             var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
-            var allocations = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult().Distinct(DiagnosticEqualityComparer.Instance).ToList();
+            var allocations = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult()
+                .Distinct(DiagnosticEqualityComparer.Instance)
+                .ToImmutableArray();
 
             return new Info
             {
@@ -89,8 +93,8 @@ namespace ClrHeapAllocationAnalyzer.Test
             public CSharpCompilation Compilation { get; set; }
             public ImmutableArray<Diagnostic> Diagnostics { get; set; }
             public SemanticModel SemanticModel { get; set; }
-            public IList<SyntaxNode> Matches { get; set; }
-            public List<Diagnostic> Allocations { get; set; }
+            public ImmutableArray<SyntaxNode> Matches { get; set; }
+            public ImmutableArray<Diagnostic> Allocations { get; set; }
         }
     }
 }

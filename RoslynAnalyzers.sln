@@ -150,6 +150,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceSensitive.Analyz
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceSensitive.Analyzers.Package", "nuget\PerformanceSensitive.Analyzers\PerformanceSensitive.Analyzers.Package.csproj", "{D9762D86-883E-45E5-BC75-C31973190C73}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerformanceSensitive.Analyzers.UnitTests", "src\PerformanceSensitive.Analyzers\UnitTests\PerformanceSensitive.Analyzers.UnitTests.csproj", "{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Analyzer.Utilities.projitems*{ec946164-1e17-410b-b7d9-7de7e6268d63}*SharedItemsImports = 13
@@ -617,6 +619,14 @@ Global
 		{D9762D86-883E-45E5-BC75-C31973190C73}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9762D86-883E-45E5-BC75-C31973190C73}.Release|x86.ActiveCfg = Release|Any CPU
 		{D9762D86-883E-45E5-BC75-C31973190C73}.Release|x86.Build.0 = Release|Any CPU
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}.Debug|x86.Build.0 = Debug|Any CPU
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}.Release|x86.ActiveCfg = Release|Any CPU
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -680,6 +690,7 @@ Global
 		{758E1984-3CA1-4CAD-9C2A-4DD16F5CA5AE} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{8D62B22F-C99A-453F-AD97-A55D4549E1BA} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{D9762D86-883E-45E5-BC75-C31973190C73} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
+		{29FE1B54-F3A8-4827-9BB1-FA709D8DF595} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

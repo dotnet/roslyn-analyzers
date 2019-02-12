@@ -1,13 +1,15 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Immutable;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-namespace ClrHeapAllocationAnalyzer.Test
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.CSharp;
+using PerformanceSensitive.CSharp.Analyzers;
+using Xunit;
+
+namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    [TestClass]
-    public class ExplicitAllocationAnalyzerTests : AllocationAnalyzerTests
+    public class ExplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
-        [TestMethod]
+        [Fact]
         public void ExplicitAllocation_InitializerExpressionSyntax()
         {
             var sampleProgram =
@@ -30,7 +32,7 @@ public class TestClass
             // SyntaxKind.ObjectInitializerExpression IS linked to InitializerExpressionSyntax (naming is a bit confusing)
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression));
 
-            Assert.AreEqual(2, info.Allocations.Count);
+            Assert.Equal(2, info.Allocations.Length);
             // Diagnostic: (4,14): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 4, character: 14);
 
@@ -38,7 +40,7 @@ public class TestClass
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.InitializerCreationRule.Id, line: 4, character: 5);
         }
 
-        [TestMethod]
+        [Fact]
         public void ExplicitAllocation_ImplicitArrayCreationExpressionSyntax()
         {
             var sampleProgram =
@@ -49,12 +51,12 @@ int[] intData = new[] { 123, 32, 4 };";
             var analyser = new ExplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ImplicitArrayCreationExpression));
 
-            Assert.AreEqual(1, info.Allocations.Count);
+            Assert.Single(info.Allocations);
             // Diagnostic: (3,17): info HeapAnalyzerImplicitNewArrayCreationRule: Implicit new array creation allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.ImplicitArrayCreationRule.Id, line: 3, character: 17);
         }
 
-        [TestMethod]
+        [Fact]
         public void ExplicitAllocation_AnonymousObjectCreationExpressionSyntax()
         {
             var sampleProgram =
@@ -65,12 +67,12 @@ var temp = new { A = 123, Name = ""Test"", };";
             var analyser = new ExplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.AnonymousObjectCreationExpression));
 
-            Assert.AreEqual(1, info.Allocations.Count);
+            Assert.Single(info.Allocations);
             // Diagnostic: (3,12): info HeapAnalyzerExplicitNewAnonymousObjectRule: Explicit new anonymous object allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.AnonymousNewObjectRule.Id, line: 3, character: 12);
         }
 
-        [TestMethod]
+        [Fact]
         public void ExplicitAllocation_ArrayCreationExpressionSyntax()
         {
             var sampleProgram =
@@ -81,12 +83,12 @@ int[] intData = new int[] { 123, 32, 4 };";
             var analyser = new ExplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ArrayCreationExpression));
 
-            Assert.AreEqual(1, info.Allocations.Count);
+            Assert.Single(info.Allocations);
             // Diagnostic: (3,17): info HeapAnalyzerExplicitNewArrayRule: Implicit new array creation allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewArrayRule.Id, line: 3, character: 17);
         }
 
-        [TestMethod]
+        [Fact]
         public void ExplicitAllocation_ObjectCreationExpressionSyntax()
         {
             var sampleProgram =
@@ -98,12 +100,12 @@ var noAllocation = new DateTime();";
             var analyser = new ExplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectCreationExpression));
 
-            Assert.AreEqual(1, info.Allocations.Count);
+            Assert.Single(info.Allocations);
             // Diagnostic: (3,18): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 3, character: 18);
         }
 
-        [TestMethod]
+        [Fact]
         public void ExplicitAllocation_LetClauseSyntax()
         {
             var sampleProgram =
@@ -119,7 +121,7 @@ var result = (from a in intData
             var analyser = new ExplicitAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.LetClause));
 
-            Assert.AreEqual(2, info.Allocations.Count);
+            Assert.Equal(2, info.Allocations.Length);
             // Diagnostic: (4,17): info HeapAnalyzerImplicitNewArrayCreationRule: Implicit new array creation allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.ImplicitArrayCreationRule.Id, line: 4, character: 17);
 
@@ -127,7 +129,7 @@ var result = (from a in intData
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.LetCauseRule.Id, line: 6, character: 15);
         }
 
-        [TestMethod]
+        [Fact]
         public void ExplicitAllocation_AllSyntax()
         {
             var sampleProgram =
@@ -164,9 +166,9 @@ public class TestClass
 
             // This test is here so that we use SyntaxKindsOfInterest explicitly, to make sure it works
             var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectCreationExpression, SyntaxKind.AnonymousObjectCreationExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression,SyntaxKind.ComplexElementInitializerExpression, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression, SyntaxKind.LetClause));
+            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectCreationExpression, SyntaxKind.AnonymousObjectCreationExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKind.ComplexElementInitializerExpression, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression, SyntaxKind.LetClause));
 
-            Assert.AreEqual(8, info.Allocations.Count);
+            Assert.Equal(8, info.Allocations.Length);
             // Diagnostic: (6,14): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 6, character: 14);
             // Diagnostic: (6,5): info HeapAnalyzerInitializerCreationRule: Initializer reference type allocation

@@ -6,4 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\PerformanceSensitive.Analyzers.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="PerformanceSensitive.Analyzers.UnitTests" />
+  </ItemGroup>
 </Project>

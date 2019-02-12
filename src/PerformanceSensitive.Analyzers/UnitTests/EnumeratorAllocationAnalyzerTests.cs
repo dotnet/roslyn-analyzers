@@ -1,13 +1,15 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Immutable;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-namespace ClrHeapAllocationAnalyzer.Test
+using Microsoft.CodeAnalysis.CSharp;
+using PerformanceSensitive.CSharp.Analyzers;
+using System.Collections.Immutable;
+using Xunit;
+
+namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    [TestClass]
-    public class EnumeratorAllocationAnalyzerTests : AllocationAnalyzerTests
+    public class EnumeratorAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
-        [TestMethod]
+        [Fact]
         public void EnumeratorAllocation_Basic()
         {
             var sampleProgram =
@@ -42,14 +44,14 @@ foreach (var i in (IEnumerable<int>)intData) // Allocations (line 24)
             var analyser = new EnumeratorAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ForEachStatement));
 
-            Assert.AreEqual(2, info.Allocations.Count);
+            Assert.Equal(2, info.Allocations.Length);
             // Diagnostic: (19,16): warning HeapAnalyzerEnumeratorAllocationRule: Non-ValueType enumerator may result in a heap allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: EnumeratorAllocationAnalyzer.ReferenceTypeEnumeratorRule.Id, line: 19, character: 16);
             // Diagnostic: (24,16): warning HeapAnalyzerEnumeratorAllocationRule: Non-ValueType enumerator may result in a heap allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: EnumeratorAllocationAnalyzer.ReferenceTypeEnumeratorRule.Id, line: 24, character: 16);
         }
 
-        [TestMethod]
+        [Fact]
         public void EnumeratorAllocation_Advanced()
         {
             var sampleProgram =
@@ -75,12 +77,12 @@ foreach (var f in fx2) // NO Allocations
             var analyser = new EnumeratorAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ForEachStatement, SyntaxKind.InvocationExpression));
 
-            Assert.AreEqual(1, info.Allocations.Count);
+            Assert.Single(info.Allocations);
             // Diagnostic: (11,16): warning HeapAnalyzerEnumeratorAllocationRule: Non-ValueType enumerator may result in a heap allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: EnumeratorAllocationAnalyzer.ReferenceTypeEnumeratorRule.Id, line: 11, character: 16);
         }
 
-        [TestMethod]
+        [Fact]
         public void EnumeratorAllocation_Via_InvocationExpressionSyntax()
         {
             var sampleProgram =
@@ -115,12 +117,12 @@ private IEnumerator<int> GetIEnumeratorViaIEnumerable()
             var expectedNodes = ImmutableArray.Create(SyntaxKind.InvocationExpression);
             var info = ProcessCode(analyser, sampleProgram, expectedNodes);
 
-            Assert.AreEqual(1, info.Allocations.Count);
+            Assert.Single(info.Allocations);
             // Diagnostic: (11,35): warning HeapAnalyzerEnumeratorAllocationRule: Non-ValueType enumerator may result in a heap allocation ***
             AssertEx.ContainsDiagnostic(info.Allocations, id: EnumeratorAllocationAnalyzer.ReferenceTypeEnumeratorRule.Id, line: 11, character: 35);
         }
 
-        [TestMethod]
+        [Fact]
         public void EnumeratorAllocation_IterateOverString_NoWarning()
         {
             var sampleProgram = "foreach (char c in \"foo\") { }";
@@ -128,7 +130,7 @@ private IEnumerator<int> GetIEnumeratorViaIEnumerable()
             var analyser = new EnumeratorAllocationAnalyzer();
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ForEachStatement));
 
-            Assert.AreEqual(0, info.Allocations.Count);
+            Assert.Empty(info.Allocations);
         }
     }
 }

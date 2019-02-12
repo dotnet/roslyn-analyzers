@@ -1,12 +1,14 @@
-﻿using Microsoft.CodeAnalysis;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
 using System;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 
-namespace ClrHeapAllocationAnalyzer
+namespace PerformanceSensitive.Analyzers
 {
-    public class AllocationRules
+    internal static class AllocationRules
     {
-        private static readonly HashSet<ValueTuple<string, string>> IgnoredAttributes = new HashSet<(string, string)>
+        private static readonly HashSet<(string, string)> IgnoredAttributes = new HashSet<(string, string)>
         {
             ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute"),
             ("System.CodeDom.Compiler", "GeneratedCodeAttribute")

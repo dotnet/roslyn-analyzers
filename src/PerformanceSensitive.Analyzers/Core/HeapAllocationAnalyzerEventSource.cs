@@ -1,7 +1,9 @@
-﻿namespace ClrHeapAllocationAnalyzer
-{
-    using System.Diagnostics.Tracing;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Diagnostics.Tracing;
+
+namespace PerformanceSensitive.Analyzers
+{
     internal sealed class HeapAllocationAnalyzerEventSource : EventSource
     {
         public static HeapAllocationAnalyzerEventSource Logger = new HeapAllocationAnalyzerEventSource();
@@ -118,8 +120,10 @@
             }
         }
 
-        public void ReadonlyMethodGroupAllocation(string filePath) {
-            if (this.IsEnabled()) {
+        public void ReadonlyMethodGroupAllocation(string filePath)
+        {
+            if (this.IsEnabled())
+            {
                 this.WriteEvent(15, filePath);
             }
         }

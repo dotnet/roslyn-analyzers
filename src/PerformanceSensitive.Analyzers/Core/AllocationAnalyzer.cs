@@ -1,12 +1,15 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
-using System.Linq;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-namespace ClrHeapAllocationAnalyzer
+using System.Collections.Immutable;
+using System.Linq;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace PerformanceSensitive.Analyzers
 {
-    public abstract class AllocationAnalyzer : DiagnosticAnalyzer
+    public abstract class AbstractAllocationAnalyzer : DiagnosticAnalyzer
     {
-        protected abstract SyntaxKind[] Expressions { get; }
+        protected abstract ImmutableArray<SyntaxKind> Expressions { get; }
 
         protected abstract void AnalyzeNode(SyntaxNodeAnalysisContext context);
 

@@ -1,23 +1,27 @@
-﻿namespace ClrHeapAllocationAnalyzer
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
+using System.Collections.Immutable;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using PerformanceSensitive.Analyzers;
+
+namespace PerformanceSensitive.CSharp.Analyzers
 {
-    using System;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class EnumeratorAllocationAnalyzer : AllocationAnalyzer
+    public sealed class EnumeratorAllocationAnalyzer : AbstractAllocationAnalyzer
     {
-        public static DiagnosticDescriptor ReferenceTypeEnumeratorRule = new DiagnosticDescriptor("HAA0401", "Possible allocation of reference type enumerator", "Non-ValueType enumerator may result in a heap allocation", "Performance", DiagnosticSeverity.Warning, true);
+        internal static DiagnosticDescriptor ReferenceTypeEnumeratorRule = new DiagnosticDescriptor("HAA0401", "Possible allocation of reference type enumerator", "Non-ValueType enumerator may result in a heap allocation", "Performance", DiagnosticSeverity.Warning, true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ReferenceTypeEnumeratorRule);
 
-        protected override SyntaxKind[] Expressions => new[] { SyntaxKind.ForEachStatement, SyntaxKind.InvocationExpression };
+        protected override ImmutableArray<SyntaxKind> Expressions => ImmutableArray.Create(SyntaxKind.ForEachStatement, SyntaxKind.InvocationExpression);
 
-        private static readonly object[] EmptyMessageArgs = { };
+        private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
         protected override void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
@@ -26,8 +30,7 @@
             Action<Diagnostic> reportDiagnostic = context.ReportDiagnostic;
             var cancellationToken = context.CancellationToken;
             string filePath = node.SyntaxTree.FilePath;
-            var foreachExpression = node as ForEachStatementSyntax;
-            if (foreachExpression != null)
+            if (node is ForEachStatementSyntax foreachExpression)
             {
                 var typeInfo = semanticModel.GetTypeInfo(foreachExpression.Expression, cancellationToken);
                 if (typeInfo.Type == null)
@@ -59,8 +62,8 @@
 
                 if (enumerator != null && enumerator.Length > 0)
                 {
-                    var methodSymbol = enumerator[0] as IMethodSymbol; // probably should do something better here, hack.
-                    if (methodSymbol != null)
+                    // probably should do something better here, hack.
+                    if (enumerator[0] is IMethodSymbol methodSymbol)
                     {
                         if (methodSymbol.ReturnType.IsReferenceType && methodSymbol.ReturnType.SpecialType != SpecialType.System_Collections_IEnumerator)
                         {
@@ -73,24 +76,23 @@
                 return;
             }
 
-            var invocationExpression = node as InvocationExpressionSyntax;
-            if (invocationExpression != null)
+            if (node is InvocationExpressionSyntax invocationExpression)
             {
                 var methodInfo = semanticModel.GetSymbolInfo(invocationExpression, cancellationToken).Symbol as IMethodSymbol;
-	            if (methodInfo?.ReturnType != null && methodInfo.ReturnType.IsReferenceType)
-	            {
-		            if (methodInfo.ReturnType.AllInterfaces != null)
-		            {
-			            foreach (var @interface in methodInfo.ReturnType.AllInterfaces)
-			            {
-				            if (@interface.SpecialType == SpecialType.System_Collections_Generic_IEnumerator_T || @interface.SpecialType == SpecialType.System_Collections_IEnumerator)
-				            {
-					            reportDiagnostic(Diagnostic.Create(ReferenceTypeEnumeratorRule, invocationExpression.GetLocation(), EmptyMessageArgs));
-					            HeapAllocationAnalyzerEventSource.Logger.EnumeratorAllocation(filePath);
-				            }
-			            }
-		            }
-	            }
+                if (methodInfo?.ReturnType != null && methodInfo.ReturnType.IsReferenceType)
+                {
+                    if (methodInfo.ReturnType.AllInterfaces != null)
+                    {
+                        foreach (var @interface in methodInfo.ReturnType.AllInterfaces)
+                        {
+                            if (@interface.SpecialType == SpecialType.System_Collections_Generic_IEnumerator_T || @interface.SpecialType == SpecialType.System_Collections_IEnumerator)
+                            {
+                                reportDiagnostic(Diagnostic.Create(ReferenceTypeEnumeratorRule, invocationExpression.GetLocation(), EmptyMessageArgs));
+                                HeapAllocationAnalyzerEventSource.Logger.EnumeratorAllocation(filePath);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

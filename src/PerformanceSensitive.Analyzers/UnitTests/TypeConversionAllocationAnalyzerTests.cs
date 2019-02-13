@@ -3,7 +3,9 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
+using Test.Utilities;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
@@ -13,35 +15,31 @@ namespace PerformanceSensitive.Analyzers.UnitTests
         [Fact]
         public void TypeConversionAllocation_ArgumentSyntax()
         {
-            var sampleProgram =
-@"using System;
-
-var result = fooObjCall(10); // Allocation
-var temp = new MyObject(10); // Allocation
-
-private string fooObjCall(object obj)
-{
-    return obj.ToString();
-}
+            VerifyCSharp(@"
+using System;
+using Roslyn.Utilities;
 
 public class MyObject
 {
-    private Object Obj;
-
     public MyObject(object obj)
     {
-        this.Obj = obj;
     }
-}";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.Argument));
+    private void ObjCall(object obj)
+    {
+    }
 
-            Assert.Equal(2, info.Allocations.Length);
-            // Diagnostic: (3,25): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable ***
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 3, character: 25);
-            // Diagnostic: (4,25): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable ***
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 4, character: 25);
+    [PerformanceSensitive(""uri"")]
+    public void Foo()
+    {
+        ObjCall(10); // Allocation
+        _ = new MyObject(10); // Allocation
+    }
+}",
+            withAttribute: true,
+            GetCSharpResultAt(18, 17, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule),
+            GetCSharpResultAt(19, 26, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule)
+            );
         }
 
         [Fact]
@@ -49,9 +47,11 @@ public class MyObject
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
 public class MyClass
 {
+    [PerformanceSensitive(""uri"")]
     public void Testing()
     {
         var @class = new MyClass();
@@ -63,14 +63,12 @@ public class MyClass
     {
     }
 
-    private string fooObjCall(object obj)
-    {
-        return obj.ToString();
-    }
+    private string fooObjCall(object obj) => null;
 }
 
 public struct MyStruct
 {
+    [PerformanceSensitive(""uri"")]
     public void Testing()
     {
         var @struct = new MyStruct();
@@ -82,22 +80,15 @@ public struct MyStruct
     {
     }
 
-    private string fooObjCall(object obj)
-    {
-        return obj.ToString();
-    }
+    private string fooObjCall(object obj) => null;
 }";
-
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.Argument));
-
-            Assert.Equal(3, info.Allocations.Length);
-            // Diagnostic: (8,28): warning HeapAnalyzerMethodGroupAllocationRule: This will allocate a delegate instance
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.MethodGroupAllocationRule.Id, line: 8, character: 28);
-            // Diagnostic: (27,29): warning HeapAnalyzerMethodGroupAllocationRule: This will allocate a delegate instance
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.MethodGroupAllocationRule.Id, line: 27, character: 29);
-            // Diagnostic: (27,29): warning HeapAnalyzerDelegateOnStructRule: Struct instance method being used for delegate creation, this will result in a boxing instruction
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule.Id, line: 27, character: 29);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                // Test0.cs(10,28): warning HAA0603: This will allocate a delegate instance
+                GetCSharpResultAt(10, 28, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                // Test0.cs(27,29): warning HAA0603: This will allocate a delegate instance
+                GetCSharpResultAt(27, 29, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                // Test0.cs(27,29): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                GetCSharpResultAt(27, 29, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
         }
 
         [Fact]
@@ -105,24 +96,50 @@ public struct MyStruct
         {
             var sampleProgram =
 @"using System;
-
-var result1 = new MyObject().Obj; // Allocation
-var result2 = new MyObject().ObjNoAllocation; // Allocation
+using Roslyn.Utilities;
 
 public class MyObject
 {
-    public Object Obj { get { return 0; } }
+    public Object Obj1 
+    { 
+        [PerformanceSensitive(""uri"")]
+        get { return 0; } 
+    }
 
-    public Object ObjNoAllocation { get { return 0.ToString(); } }
+    [PerformanceSensitive(""uri"")]
+    public Object Obj2 
+    { 
+        get { return 0; } 
+    }
 }";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ReturnStatement));
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(9, 22, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule),
+                        // Test0.cs(15,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(15, 22, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+        }
 
-            Assert.Single(info.Allocations);
+        [Fact]
+        public void TypeConversionAllocation_ReturnStatementSyntax_NoAlloc()
+        {
+            var sampleProgram =
+@"using System;
+using Roslyn.Utilities;
 
-            // Diagnostic: (7,38): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 8, character: 38);
+public class MyObject
+{
+    [PerformanceSensitive(""uri"")]
+    public Object ObjNoAllocation1 { get { return 0.ToString(); } }
+
+    public Object ObjNoAllocation2 
+    { 
+        [PerformanceSensitive(""uri"")]
+        get { return 0.ToString(); } 
+    }
+}";
+
+            VerifyCSharp(sampleProgram, withAttribute: true);
         }
 
         [Fact]
@@ -131,36 +148,39 @@ public class MyObject
             var sampleProgram =
 @"using System;
 using System.Collections.Generic;
+using Roslyn.Utilities;
 
-foreach (var item in GetItems())
+public class MyClass
 {
-}
+    public void Foo()
+    {
+        foreach (var item in GetItems())
+        {
+        }
 
-foreach (var item in GetItemsNoAllocation())
-{
-}
+        foreach (var item in GetItemsNoAllocation())
+        {
+        }
+    }
 
-public IEnumerable<object> GetItems()
-{
-    yield return 0; // Allocation
-    yield break;
-}
-
-public IEnumerable<int> GetItemsNoAllocation()
-{
-    yield return 0; // NO Allocation (IEnumerable<int>)
-    yield break;
+    [PerformanceSensitive(""uri"")]
+    public IEnumerable<object> GetItems()
+    {
+        yield return 0; // Allocation
+        yield break;
+    }
+    
+    [PerformanceSensitive(""uri"")]
+    public IEnumerable<int> GetItemsNoAllocation()
+    {
+        yield return 0; // NO Allocation (IEnumerable<int>)
+        yield break;
+    }
 }";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.YieldReturnStatement));
-
-            Assert.Single(info.Allocations);
-
-            // Diagnostic: (14,18): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 14, character: 18);
-            // TODO this is a false positive
-            // Diagnostic: (8,22): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(21,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(21, 22, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
         }
 
         [Fact]
@@ -168,24 +188,27 @@ public IEnumerable<int> GetItemsNoAllocation()
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
-object x = ""blah"";
-object a1 = x ?? 0; // Allocation
-object a2 = x ?? 0.ToString(); // No Allocation
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo()
+    {
+        object x = ""blah"";
+        object a1 = x ?? 0; // Allocation
+        object a2 = x ?? 0.ToString(); // No Allocation
 
-var b1 = 10 as object; // Allocation
-var b2 = 10.ToString() as object; // No Allocation
-";
+        var b1 = 10 as object; // Allocation
+        var b2 = 10.ToString() as object; // No Allocation
+    }
+}";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.CoalesceExpression, SyntaxKind.AsExpression));
-
-            Assert.Equal(2, info.Allocations.Length);
-
-            // Diagnostic: (4,17): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 4, character: 18);
-            // Diagnostic: (7,9): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 7, character: 10);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(10,26): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(10, 26, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule),
+                        // Test0.cs(13,18): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(13, 18, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
         }
 
         [Fact]
@@ -193,9 +216,11 @@ var b2 = 10.ToString() as object; // No Allocation
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
 public class MyClass
 {
+    [PerformanceSensitive(""uri"")]
     public void Testing()
     {
         Func<object, string> temp = null;
@@ -211,6 +236,7 @@ public class MyClass
 
 public struct MyStruct
 {
+    [PerformanceSensitive(""uri"")]
     public void Testing()
     {
         Func<object, string> temp = null;
@@ -224,17 +250,14 @@ public struct MyStruct
     }
 }";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.CoalesceExpression, SyntaxKind.AsExpression));
 
-            Assert.Equal(3, info.Allocations.Length);
-
-            // Diagnostic: (8,31): warning HeapAnalyzerMethodGroupAllocationRule: This will allocate a delegate instance
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.MethodGroupAllocationRule.Id, line: 8, character: 31);
-            // Diagnostic: (23,31): warning HeapAnalyzerMethodGroupAllocationRule: This will allocate a delegate instance
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.MethodGroupAllocationRule.Id, line: 23, character: 31);
-            // Diagnostic: (23,31): warning HeapAnalyzerDelegateOnStructRule: Struct instance method being used for delegate creation, this will result in a boxing instruction
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule.Id, line: 23, character: 31);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(10,31): warning HAA0603: This will allocate a delegate instance
+                        GetCSharpResultAt(10, 31, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                        // Test0.cs(26,31): warning HAA0603: This will allocate a delegate instance
+                        GetCSharpResultAt(26, 31, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                        // Test0.cs(26,31): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                        GetCSharpResultAt(26, 31, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
         }
 
         [Fact]
@@ -243,32 +266,26 @@ public struct MyStruct
             // for (object i = 0;;)
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
-for (object i = 0;;) // Allocation
+public class MyClass
 {
-}
+    [PerformanceSensitive(""uri"")]
+    public void Foo()
+    {
+        for (object i = 0;;) // Allocation
+        {
+        }
 
-for (int i = 0;;) // NO Allocation
-{
+        for (int i = 0;;) // NO Allocation
+        {
+        }
+    }
 }";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(
-                SyntaxKind.SimpleAssignmentExpression,
-                SyntaxKind.ReturnStatement,
-                SyntaxKind.YieldReturnStatement,
-                SyntaxKind.CastExpression,
-                SyntaxKind.AsExpression,
-                SyntaxKind.CoalesceExpression,
-                SyntaxKind.ConditionalExpression,
-                SyntaxKind.ForEachStatement,
-                SyntaxKind.EqualsValueClause,
-                SyntaxKind.Argument));
-
-            Assert.Single(info.Allocations);
-
-            // Diagnostic: (3,17): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 3, character: 17);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,25): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(9, 25, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
         }
 
         [Fact]
@@ -276,9 +293,11 @@ for (int i = 0;;) // NO Allocation
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
 public class MyClass
 {
+    [PerformanceSensitive(""uri"")]
     public void Testing()
     {
         Func<object, string> func2 = fooObjCall; // implicit, so Allocation
@@ -293,6 +312,7 @@ public class MyClass
 
 public struct MyStruct
 {
+    [PerformanceSensitive(""uri"")]
     public void Testing()
     {
         Func<object, string> func2 = fooObjCall; // implicit, so Allocation
@@ -305,30 +325,26 @@ public struct MyStruct
     }
 }";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.CoalesceExpression, SyntaxKind.EqualsValueClause));
-
-            Assert.Equal(3, info.Allocations.Length);
-
-            // Diagnostic: (7,38): warning HeapAnalyzerMethodGroupAllocationRule: This will allocate a delegate instance
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.MethodGroupAllocationRule.Id, line: 7, character: 38);
-            // Diagnostic: (21,38): warning HeapAnalyzerMethodGroupAllocationRule: This will allocate a delegate instance
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.MethodGroupAllocationRule.Id, line: 21, character: 38);
-            // Diagnostic: (21,38): warning HeapAnalyzerDelegateOnStructRule: Struct instance method being used for delegate creation, this will result in a boxing instruction
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule.Id, line: 21, character: 38);
-            // TODO this is a false positive
-            // Diagnostic: (22,63): warning HeapAnalyzerDelegateOnStructRule: Struct instance method being used for delegate creation, this will result in a boxing instruction
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,38): warning HAA0603: This will allocate a delegate instance
+                        GetCSharpResultAt(9, 38, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                        // Test0.cs(24,38): warning HAA0603: This will allocate a delegate instance
+                        GetCSharpResultAt(24, 38, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                        // Test0.cs(24,38): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                        GetCSharpResultAt(24, 38, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
         }
 
         [Fact]
+        [WorkItem(2, "https://github.com/mjsabby/RoslynClrHeapAllocationAnalyzer/issues/2")]
         public void TypeConversionAllocation_EqualsValueClause_ExplicitMethodGroupAllocation_Bug()
         {
-            // See https://github.com/mjsabby/RoslynClrHeapAllocationAnalyzer/issues/2
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
 public class MyClass
 {
+    [PerformanceSensitive(""uri"")]
     public void Testing()
     {
         Action methodGroup = this.Method;
@@ -341,6 +357,7 @@ public class MyClass
 
 public struct MyStruct
 {
+    [PerformanceSensitive(""uri"")]
     public void Testing()
     {
         Action methodGroup = this.Method;
@@ -351,10 +368,13 @@ public struct MyStruct
     }
 }";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.EqualsValueClause));
-
-            Assert.Equal(3, info.Allocations.Length);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,30): warning HAA0603: This will allocate a delegate instance
+                        GetCSharpResultAt(9, 30, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                        // Test0.cs(22,30): warning HAA0603: This will allocate a delegate instance
+                        GetCSharpResultAt(22, 30, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                        // Test0.cs(22,30): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                        GetCSharpResultAt(22, 30, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
         }
 
         [Fact]
@@ -362,19 +382,22 @@ public struct MyStruct
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
-object obj = ""test"";
-object test1 = true ? 0 : obj; // Allocation
-object test2 = true ? 0.ToString() : obj; // NO Allocation
-";
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        object obj = ""test"";
+        object test1 = true ? 0 : obj; // Allocation
+        object test2 = true ? 0.ToString() : obj; // NO Allocation
+    }
+}";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ConditionalExpression));
-
-            Assert.Single(info.Allocations);
-
-            // Diagnostic: (4,23): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 4, character: 23);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(10,31): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(10, 31, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
         }
 
         [Fact]
@@ -382,62 +405,69 @@ object test2 = true ? 0.ToString() : obj; // NO Allocation
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
-var f1 = (object)5; // Allocation
-var f2 = (object)""5""; // NO Allocation
-";
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        var f1 = (object)5; // Allocation
+        var f2 = (object)""5""; // NO Allocation
+    }
+}";
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.CastExpression));
-
-            Assert.Single(info.Allocations);
-
-            // Diagnostic: (3,18): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 3, character: 18);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,26): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(9, 26, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
         }
 
         [Fact]
         public void TypeConversionAllocation_ArgumentWithImplicitStringCastOperator()
         {
             const string programWithoutImplicitCastOperator = @"
-                public struct AStruct
-                {
-                    public static void Dump(AStruct astruct)
-                    {
-                        System.Console.WriteLine(astruct);
-                    }
-                }
-            ";
+using System;
+using Roslyn.Utilities;
+
+public struct AStruct
+{
+    [PerformanceSensitive(""uri"")]
+    public static void Dump(AStruct astruct)
+    {
+        System.Console.WriteLine(astruct);
+    }
+}";
+
+            VerifyCSharp(programWithoutImplicitCastOperator, withAttribute: true,
+                        // Test0.cs(10,34): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(10, 34, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
 
             const string programWithImplicitCastOperator = @"
-                public struct AStruct
-                {
-                    public readonly string WrappedString;
+using System;
+using Roslyn.Utilities;
 
-                    public AStruct(string s)
-                    {
-                        WrappedString = s ?? """";
-                    }
+public struct AStruct
+{
+    public readonly string WrappedString;
 
-                    public static void Dump(AStruct astruct)
-                    {
-                        System.Console.WriteLine(astruct);
-                    }
+    public AStruct(string s)
+    {
+        WrappedString = s ?? """";
+    }
 
-                    public static implicit operator string(AStruct astruct)
-                    {
-                        return astruct.WrappedString;
-                    }
-                }
-            ";
+    [PerformanceSensitive(""uri"")]
+    public static void Dump(AStruct astruct)
+    {
+        System.Console.WriteLine(astruct);
+    }
 
-            var analyzer = new TypeConversionAllocationAnalyzer();
-
-            var info0 = ProcessCode(analyzer, programWithoutImplicitCastOperator, ImmutableArray.Create(SyntaxKind.Argument));
-            AssertEx.ContainsDiagnostic(info0.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 6, character: 50);
-
-            var info1 = ProcessCode(analyzer, programWithImplicitCastOperator, ImmutableArray.Create(SyntaxKind.Argument));
-            Assert.Empty(info1.Allocations);
+    [PerformanceSensitive(""uri"")]
+    public static implicit operator string(AStruct astruct)
+    {
+        return astruct.WrappedString;
+    }
+}";
+            VerifyCSharp(programWithImplicitCastOperator, withAttribute: true);
         }
 
 
@@ -445,49 +475,62 @@ var f2 = (object)""5""; // NO Allocation
         public void TypeConversionAllocation_YieldReturnImplicitStringCastOperator()
         {
             const string programWithoutImplicitCastOperator = @"
-                public struct AStruct
-                {
-                    public System.Collections.Generic.IEnumerator<object> GetEnumerator()
-                    {
-                        yield return this;
-                    }
-                }
-            ";
+using System;
+using Roslyn.Utilities;
+
+public struct AStruct
+{
+    [PerformanceSensitive(""uri"")]
+    public System.Collections.Generic.IEnumerator<object> GetEnumerator()
+    {
+        yield return this;
+    }
+}";
+
+            VerifyCSharp(programWithoutImplicitCastOperator, withAttribute: true,
+                        // Test0.cs(10,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(10, 22, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
 
             const string programWithImplicitCastOperator = @"
-                public struct AStruct
-                {
-                    public System.Collections.Generic.IEnumerator<string> GetEnumerator()
-                    {
-                        yield return this;
-                    }
+using System;
+using Roslyn.Utilities;
 
-                    public static implicit operator string(AStruct astruct)
-                    {
-                        return """";
-                    }
-                }
-            ";
+public struct AStruct
+{
+    [PerformanceSensitive(""uri"")]
+    public System.Collections.Generic.IEnumerator<string> GetEnumerator()
+    {
+        yield return this;
+    }
 
-            var analyzer = new TypeConversionAllocationAnalyzer();
+    public static implicit operator string(AStruct astruct)
+    {
+        return """";
+    }
+}";
 
-            var info0 = ProcessCode(analyzer, programWithoutImplicitCastOperator, ImmutableArray.Create(SyntaxKind.Argument));
-            AssertEx.ContainsDiagnostic(info0.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 6, character: 38);
-
-            var info1 = ProcessCode(analyzer, programWithImplicitCastOperator, ImmutableArray.Create(SyntaxKind.Argument));
-            Assert.Empty(info1.Allocations);
+            VerifyCSharp(programWithImplicitCastOperator, withAttribute: true);
         }
 
         [Fact]
         public void TypeConversionAllocation_InterpolatedStringWithInt_BoxingWarning()
         {
-            var sampleProgram = @"string s = $""{1}"";";
+            var source = @"
+using System;
+using Roslyn.Utilities;
 
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.Interpolation));
+class Program
+{
+    [PerformanceSensitive(""uri"")]
+    void Foo()
+    {
+        string s = $""{1}"";
+    }
+}";
 
-            Assert.Single(info.Allocations);
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 1, character: 15);
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(10,23): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(10, 23, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
         }
 
         [Fact]
@@ -501,94 +544,109 @@ var f2 = (object)""5""; // NO Allocation
             Assert.Empty(info.Allocations);
         }
 
-        [Fact]
-        public void TypeConversionAllocation_DelegateAssignmentToReadonly_DoNotWarn()
+        [Theory]
+        [InlineData(@"private readonly System.Func<string, bool> fileExists =        System.IO.File.Exists;")]
+        [InlineData(@"private System.Func<string, bool> fileExists { get; } =        System.IO.File.Exists;")]
+        [InlineData(@"private static System.Func<string, bool> fileExists { get; } = System.IO.File.Exists;")]
+        [InlineData(@"private static readonly System.Func<string, bool> fileExists = System.IO.File.Exists;")]
+        public void TypeConversionAllocation_DelegateAssignmentToReadonly_DoNotWarn(string snippet)
         {
-            string[] snippets =
-            {
-                @"private readonly System.Func<string, bool> fileExists = System.IO.File.Exists;",
-                @"private static readonly System.Func<string, bool> fileExists = System.IO.File.Exists;",
-                @"private System.Func<string, bool> fileExists { get; } = System.IO.File.Exists;",
-                @"private static System.Func<string, bool> fileExists { get; } = System.IO.File.Exists;"
-            };
+            var source = $@"
+using System;
+using Roslyn.Utilities;
 
-            var analyzer = new TypeConversionAllocationAnalyzer();
-            foreach (var snippet in snippets)
-            {
-                var info = ProcessCode(analyzer, snippet, ImmutableArray.Create(SyntaxKind.Argument));
-                Assert.Equal(1, info.Allocations.Count(x => x.Id == TypeConversionAllocationAnalyzer.ReadonlyMethodGroupAllocationRule.Id));
-            }
+class Program
+{{
+    [PerformanceSensitive(""uri"")]
+    {snippet}
+}}";
+
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(8,68): info HeapAnalyzerReadonlyMethodGroupAllocationRule: This will allocate a delegate instance
+                        GetCSharpResultAt(8, 68, TypeConversionAllocationAnalyzer.ReadonlyMethodGroupAllocationRule));
         }
 
         [Fact]
         public void TypeConversionAllocation_ExpressionBodiedPropertyBoxing_WithBoxing()
         {
             const string snippet = @"
-                class Program
-                {
-                    object Obj => 1;
-                }
-            ";
+using System;
+using Roslyn.Utilities;
 
-            var analyzer = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyzer, snippet, ImmutableArray.Create(
-                SyntaxKind.ArrowExpressionClause));
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 4, character: 35);
+class Program
+{
+    [PerformanceSensitive(""uri"")]
+    object Obj => 1;
+}";
+
+            VerifyCSharp(snippet, withAttribute: true,
+                        // Test0.cs(8,19): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(8, 19, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
         }
 
         [Fact]
         public void TypeConversionAllocation_ExpressionBodiedPropertyBoxing_WithoutBoxing()
         {
             const string snippet = @"
-                class Program
-                {
-                    object Obj => 1.ToString();
-                }
-            ";
+using System;
+using Roslyn.Utilities;
 
-            var analyzer = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyzer, snippet, ImmutableArray.Create(
-                SyntaxKind.ArrowExpressionClause));
-            Assert.Empty(info.Allocations);
+class Program
+{
+    [PerformanceSensitive(""uri"")]
+    object Obj => 1.ToString();
+}";
+
+            VerifyCSharp(snippet, withAttribute: true);
         }
 
         [Fact]
         public void TypeConversionAllocation_ExpressionBodiedPropertyDelegate()
         {
             const string snippet = @"
-                using System;
-                class Program
-                {
-                    void Function(int i) { } 
+using System;
+using Roslyn.Utilities;
 
-                    Action<int> Obj => Function;
-                }
-            ";
+class Program
+{
+    void Function(int i) { } 
 
-            var analyzer = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyzer, snippet, ImmutableArray.Create(
-                SyntaxKind.ArrowExpressionClause));
-            AssertEx.ContainsDiagnostic(info.Allocations, id: TypeConversionAllocationAnalyzer.MethodGroupAllocationRule.Id, line: 7, character: 40);
+    [PerformanceSensitive(""uri"")]
+    Action<int> Obj => Function;
+}";
+
+            VerifyCSharp(snippet, withAttribute: true,
+                        // Test0.cs(10,24): warning HAA0603: This will allocate a delegate instance
+                        GetCSharpResultAt(10, 24, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule));
         }
 
         [Fact]
-        // Tests that an explicit delegate creation does not trigger HAA0603. It should be handled by HAA0502.
         public void TypeConversionAllocation_ExpressionBodiedPropertyExplicitDelegate_NoWarning()
         {
+            // Tests that an explicit delegate creation does not trigger HAA0603. It should be handled by HAA0502.
             const string snippet = @"
-                using System;
-                class Program
-                {
-                    void Function(int i) { } 
+using System;
+using Roslyn.Utilities;
 
-                    Action<int> Obj => new Action<int>(Function);
-                }
-            ";
+class Program
+{
+    void Function(int i) { } 
 
-            var analyzer = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyzer, snippet, ImmutableArray.Create(
-                SyntaxKind.ArrowExpressionClause));
-            Assert.Empty(info.Allocations);
+    [PerformanceSensitive(""uri"")]
+    Action<int> Obj => new Action<int>(Function);
+}";
+
+            VerifyCSharp(snippet, withAttribute: true);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new TypeConversionAllocationAnalyzer();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -18,7 +18,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\DotNetAnalyzers\Core\PublicApiAnalyzer\DotNetAnalyzers.PublicApiAnalyzer.csproj" />
-    <ProjectReference Include="..\..\..\src\DotNetAnalyzers\Core\PublicApiAnalyzer.CodeFixes\DotNetAnalyzers.PublicApiAnalyzer.CodeFixes.csproj" />
+    <ProjectReference Include="..\..\src\DotNetAnalyzers\Core\PublicApiAnalyzer\DotNetAnalyzers.PublicApiAnalyzer.csproj" />
+    <ProjectReference Include="..\..\src\DotNetAnalyzers\Core\PublicApiAnalyzer.CodeFixes\DotNetAnalyzers.PublicApiAnalyzer.CodeFixes.csproj" />
   </ItemGroup>
 </Project>

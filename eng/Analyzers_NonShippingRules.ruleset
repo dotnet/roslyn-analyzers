@@ -6,6 +6,10 @@
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
     <!-- IdentifiersShouldNotContainUnderscores - test names contain underscores and this is fine -->
     <Rule Id="CA1707" Action="None" />
+    <!-- Type names should not match namespaces (not needed for test code) -->
+    <Rule Id="CA1724" Action="None" />
+    <!-- Do not directly await a Task (makes tests unnecessarily noisy) -->
+    <Rule Id="CA2007" Action="None" />
   </Rules>
   
   <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers.Maintainability">

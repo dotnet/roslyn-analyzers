@@ -1,72 +1,96 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
-using System.Linq;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    internal class ConcatenationAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class ConcatenationAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
-        public void ConcatenationAllocation_Basic()
+        public void ConcatenationAllocation_Basic1()
         {
-            var snippet0 = @"string s0 = ""hello"" + 0.ToString() + ""world"" + 1.ToString();";
-            var snippet1 = @"string s2 = ""ohell"" + 2.ToString() + ""world"" + 3.ToString() + 4.ToString();";
+            var sampleProgram =
+@"using System;
+using Roslyn.Utilities;
 
-            var analyser = new ConcatenationAllocationAnalyzer();
-            var info0 = ProcessCode(analyser, snippet0, ImmutableArray.Create(SyntaxKind.AddExpression, SyntaxKind.AddAssignmentExpression));
-            var info1 = ProcessCode(analyser, snippet1, ImmutableArray.Create(SyntaxKind.AddExpression, SyntaxKind.AddAssignmentExpression));
-
-            Assert.Equal(0, info0.Allocations.Count(d => d.Id == ConcatenationAllocationAnalyzer.StringConcatenationAllocationRule.Id));
-            Assert.Equal(1, info1.Allocations.Count(d => d.Id == ConcatenationAllocationAnalyzer.StringConcatenationAllocationRule.Id));
-            AssertEx.ContainsDiagnostic(info1.Allocations, id: ConcatenationAllocationAnalyzer.StringConcatenationAllocationRule.Id, line: 1, character: 13);
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        string s0 = ""hello"" + 0.ToString() + ""world"" + 1.ToString();
+    }
+}";
+            VerifyCSharp(sampleProgram, withAttribute: true);
         }
 
         [Fact]
-        public void ConcatenationAllocation_DoNotWarnForOptimizedValueTypes()
+        public void ConcatenationAllocation_Basic2()
         {
-            var snippets = new[]
-            {
-                @"string s0 = nameof(System.String) + '-';",
-                @"string s0 = nameof(System.String) + true;",
-                @"string s0 = nameof(System.String) + new System.IntPtr();",
-                @"string s0 = nameof(System.String) + new System.UIntPtr();"
-            };
+            var sampleProgram =
+@"using System;
+using Roslyn.Utilities;
 
-            var analyser = new ConcatenationAllocationAnalyzer();
-            foreach (var snippet in snippets)
-            {
-                var info = ProcessCode(analyser, snippet, ImmutableArray.Create(SyntaxKind.AddExpression, SyntaxKind.AddAssignmentExpression));
-                Assert.Equal(0, info.Allocations.Count(x => x.Id == ConcatenationAllocationAnalyzer.ValueTypeToReferenceTypeInAStringConcatenationRule.Id));
-            }
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        string s2 = ""ohell"" + 2.ToString() + ""world"" + 3.ToString() + 4.ToString();
+    }
+}";
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,21): warning HAA0201: Considering using StringBuilder
+                        GetCSharpResultAt(9, 21, ConcatenationAllocationAnalyzer.StringConcatenationAllocationRule));
         }
 
-        [Fact]
-        public void ConcatenationAllocation_DoNotWarnForConst()
+        [Theory]
+        [InlineData("string s0 = nameof(System.String) + '-';")]
+        [InlineData("string s0 = nameof(System.String) + true;")]
+        [InlineData("string s0 = nameof(System.String) + new System.IntPtr();")]
+        [InlineData("string s0 = nameof(System.String) + new System.UIntPtr();")]
+        public void ConcatenationAllocation_DoNotWarnForOptimizedValueTypes(string statement)
         {
-            var snippets = new[]
-            {
-                @"const string s0 = nameof(System.String) + ""."" + nameof(System.String);",
-                @"const string s0 = nameof(System.String) + ""."";",
-                @"string s0 = nameof(System.String) + ""."" + nameof(System.String);",
-                @"string s0 = nameof(System.String) + ""."";"
-            };
+            var source = $@"using System;
+using Roslyn.Utilities;
 
-            var analyser = new ConcatenationAllocationAnalyzer();
-            foreach (var snippet in snippets)
-            {
-                var info = ProcessCode(analyser, snippet, ImmutableArray.Create(SyntaxKind.AddExpression, SyntaxKind.AddAssignmentExpression));
-                Assert.Empty(info.Allocations);
-            }
+public class MyClass
+{{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {{
+        {statement}
+    }}
+}}";
+            VerifyCSharp(source, withAttribute: true);
+        }
+
+        [Theory]
+        [InlineData(@"const string s0 = nameof(System.String) + ""."" + nameof(System.String);")]
+        [InlineData(@"const string s0 = nameof(System.String) + ""."";")]
+        [InlineData(@"string s0 = nameof(System.String) + ""."" + nameof(System.String);")]
+        [InlineData(@"string s0 = nameof(System.String) + ""."";")]
+        public void ConcatenationAllocation_DoNotWarnForConst(string statement)
+        {
+            var source = $@"using System;
+using Roslyn.Utilities;
+
+public class MyClass
+{{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {{
+        {statement}
+    }}
+}}";
+            VerifyCSharp(source, withAttribute: true);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            throw new System.NotImplementedException();
+            return new ConcatenationAllocationAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

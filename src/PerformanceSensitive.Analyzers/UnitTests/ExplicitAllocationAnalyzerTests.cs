@@ -34,8 +34,6 @@ public class TestClass
 {
     public string Name { get; set; }
 }";
-
-
             VerifyCSharp(sampleProgram, withAttribute: true,
                         // Test0.cs(10,13): info HAA0505: Initializer reference type allocation
                         GetCSharpResultAt(10, 13, ExplicitAllocationAnalyzer.InitializerCreationRule),
@@ -58,7 +56,6 @@ public class MyClass
         int[] intData = new[] { 123, 32, 4 };
     }
 }";
-
             VerifyCSharp(sampleProgram, withAttribute: true,
                         // Test0.cs(9,25): info HAA0504: Implicit new array creation allocation
                         GetCSharpResultAt(9, 25, ExplicitAllocationAnalyzer.ImplicitArrayCreationRule));
@@ -79,7 +76,6 @@ public class MyClass
         var temp = new { A = 123, Name = ""Test"", };
     }
 }";
-
             VerifyCSharp(sampleProgram, withAttribute: true,
                         // Test0.cs(9,20): info HAA0503: Explicit new anonymous object allocation
                         GetCSharpResultAt(9, 20, ExplicitAllocationAnalyzer.AnonymousNewObjectRule));
@@ -100,7 +96,6 @@ public class MyClass
         int[] intData = new int[] { 123, 32, 4 };
     }
 }";
-
             VerifyCSharp(sampleProgram, withAttribute: true,
                         // Test0.cs(9,25): info HAA0501: Explicit new array type allocation
                         GetCSharpResultAt(9, 25, ExplicitAllocationAnalyzer.NewArrayRule));
@@ -195,7 +190,6 @@ public class TestClass
 {
     public string Name { get; set; }
 }";
-
             VerifyCSharp(sampleProgram, withAttribute: true,
                         // Test0.cs(12,13): info HAA0505: Initializer reference type allocation
                         GetCSharpResultAt(12, 13, ExplicitAllocationAnalyzer.InitializerCreationRule),

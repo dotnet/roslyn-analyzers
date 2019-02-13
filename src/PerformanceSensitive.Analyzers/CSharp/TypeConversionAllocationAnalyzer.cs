@@ -47,7 +47,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
             var semanticModel = context.SemanticModel;
             var cancellationToken = context.CancellationToken;
             Action<Diagnostic> reportDiagnostic = context.ReportDiagnostic;
-            string filePath = node.SyntaxTree.FilePath;
             bool assignedToReadonlyFieldOrProperty =
                 (context.ContainingSymbol as IFieldSymbol)?.IsReadOnly == true ||
                 (context.ContainingSymbol as IPropertySymbol)?.IsReadOnly == true;
@@ -56,20 +55,20 @@ namespace PerformanceSensitive.CSharp.Analyzers
             // new myobject(10);
             if (node is ArgumentSyntax)
             {
-                ArgumentSyntaxCheck(node, semanticModel, assignedToReadonlyFieldOrProperty, reportDiagnostic, filePath, cancellationToken);
+                ArgumentSyntaxCheck(node, semanticModel, assignedToReadonlyFieldOrProperty, reportDiagnostic, cancellationToken);
             }
 
             // object foo { get { return 0; } }
             if (node is ReturnStatementSyntax)
             {
-                ReturnStatementExpressionCheck(node, semanticModel, reportDiagnostic, filePath, cancellationToken);
+                ReturnStatementExpressionCheck(node, semanticModel, reportDiagnostic, cancellationToken);
                 return;
             }
 
             // yield return 0
             if (node is YieldStatementSyntax)
             {
-                YieldReturnStatementExpressionCheck(node, semanticModel, reportDiagnostic, filePath, cancellationToken);
+                YieldReturnStatementExpressionCheck(node, semanticModel, reportDiagnostic, cancellationToken);
                 return;
             }
 
@@ -77,28 +76,28 @@ namespace PerformanceSensitive.CSharp.Analyzers
             // var a = 10 as object;
             if (node is BinaryExpressionSyntax)
             {
-                BinaryExpressionCheck(node, semanticModel, assignedToReadonlyFieldOrProperty, reportDiagnostic, filePath, cancellationToken);
+                BinaryExpressionCheck(node, semanticModel, assignedToReadonlyFieldOrProperty, reportDiagnostic, cancellationToken);
                 return;
             }
 
             // for (object i = 0;;)
             if (node is EqualsValueClauseSyntax)
             {
-                EqualsValueClauseCheck(node, semanticModel, assignedToReadonlyFieldOrProperty, reportDiagnostic, filePath, cancellationToken);
+                EqualsValueClauseCheck(node, semanticModel, assignedToReadonlyFieldOrProperty, reportDiagnostic, cancellationToken);
                 return;
             }
 
             // object = true ? 0 : obj
             if (node is ConditionalExpressionSyntax)
             {
-                ConditionalExpressionCheck(node, semanticModel, reportDiagnostic, filePath, cancellationToken);
+                ConditionalExpressionCheck(node, semanticModel, reportDiagnostic, cancellationToken);
                 return;
             }
 
             // string a = $"{1}";
             if (node is InterpolationSyntax)
             {
-                InterpolationCheck(node, semanticModel, reportDiagnostic, filePath, cancellationToken);
+                InterpolationCheck(node, semanticModel, reportDiagnostic, cancellationToken);
                 return;
             }
 
@@ -112,44 +111,44 @@ namespace PerformanceSensitive.CSharp.Analyzers
             // object Foo => 1
             if (node is ArrowExpressionClauseSyntax)
             {
-                ArrowExpressionCheck(node, semanticModel, reportDiagnostic, filePath, cancellationToken);
+                ArrowExpressionCheck(node, semanticModel, reportDiagnostic, cancellationToken);
                 return;
             }
         }
 
-        private static void ReturnStatementExpressionCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void ReturnStatementExpressionCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var returnStatementExpression = node as ReturnStatementSyntax;
             if (returnStatementExpression.Expression != null)
             {
                 var returnConversionInfo = semanticModel.GetConversion(returnStatementExpression.Expression, cancellationToken);
-                CheckTypeConversion(returnConversionInfo, reportDiagnostic, returnStatementExpression.Expression.GetLocation(), filePath);
+                CheckTypeConversion(returnConversionInfo, reportDiagnostic, returnStatementExpression.Expression.GetLocation());
             }
         }
 
-        private static void YieldReturnStatementExpressionCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void YieldReturnStatementExpressionCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var yieldExpression = node as YieldStatementSyntax;
             if (yieldExpression.Expression != null)
             {
                 var returnConversionInfo = semanticModel.GetConversion(yieldExpression.Expression, cancellationToken);
-                CheckTypeConversion(returnConversionInfo, reportDiagnostic, yieldExpression.Expression.GetLocation(), filePath);
+                CheckTypeConversion(returnConversionInfo, reportDiagnostic, yieldExpression.Expression.GetLocation());
             }
         }
 
-        private static void ArgumentSyntaxCheck(SyntaxNode node, SemanticModel semanticModel, bool isAssignmentToReadonly, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void ArgumentSyntaxCheck(SyntaxNode node, SemanticModel semanticModel, bool isAssignmentToReadonly, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var argument = node as ArgumentSyntax;
             if (argument.Expression != null)
             {
                 var argumentTypeInfo = semanticModel.GetTypeInfo(argument.Expression, cancellationToken);
                 var argumentConversionInfo = semanticModel.GetConversion(argument.Expression, cancellationToken);
-                CheckTypeConversion(argumentConversionInfo, reportDiagnostic, argument.Expression.GetLocation(), filePath);
-                CheckDelegateCreation(argument.Expression, argumentTypeInfo, semanticModel, isAssignmentToReadonly, reportDiagnostic, argument.Expression.GetLocation(), filePath, cancellationToken);
+                CheckTypeConversion(argumentConversionInfo, reportDiagnostic, argument.Expression.GetLocation());
+                CheckDelegateCreation(argument.Expression, argumentTypeInfo, semanticModel, isAssignmentToReadonly, reportDiagnostic, argument.Expression.GetLocation(), cancellationToken);
             }
         }
 
-        private static void BinaryExpressionCheck(SyntaxNode node, SemanticModel semanticModel, bool isAssignmentToReadonly, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void BinaryExpressionCheck(SyntaxNode node, SemanticModel semanticModel, bool isAssignmentToReadonly, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var binaryExpression = node as BinaryExpressionSyntax;
 
@@ -162,7 +161,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
                 if (leftT.Type?.IsValueType == true && rightT.Type?.IsReferenceType == true)
                 {
                     reportDiagnostic(Diagnostic.Create(ValueTypeToReferenceTypeConversionRule, binaryExpression.Left.GetLocation(), EmptyMessageArgs));
-                    HeapAllocationAnalyzerEventSource.Logger.BoxingAllocation(filePath);
                 }
 
                 return;
@@ -172,20 +170,19 @@ namespace PerformanceSensitive.CSharp.Analyzers
             {
                 var assignmentExprTypeInfo = semanticModel.GetTypeInfo(binaryExpression.Right, cancellationToken);
                 var assignmentExprConversionInfo = semanticModel.GetConversion(binaryExpression.Right, cancellationToken);
-                CheckTypeConversion(assignmentExprConversionInfo, reportDiagnostic, binaryExpression.Right.GetLocation(), filePath);
-                CheckDelegateCreation(binaryExpression.Right, assignmentExprTypeInfo, semanticModel, isAssignmentToReadonly, reportDiagnostic, binaryExpression.Right.GetLocation(), filePath, cancellationToken);
+                CheckTypeConversion(assignmentExprConversionInfo, reportDiagnostic, binaryExpression.Right.GetLocation());
+                CheckDelegateCreation(binaryExpression.Right, assignmentExprTypeInfo, semanticModel, isAssignmentToReadonly, reportDiagnostic, binaryExpression.Right.GetLocation(), cancellationToken);
                 return;
             }
         }
 
-        private static void InterpolationCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void InterpolationCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var interpolation = node as InterpolationSyntax;
             var typeInfo = semanticModel.GetTypeInfo(interpolation.Expression, cancellationToken);
             if (typeInfo.Type?.IsValueType == true)
             {
                 reportDiagnostic(Diagnostic.Create(ValueTypeToReferenceTypeConversionRule, interpolation.Expression.GetLocation(), EmptyMessageArgs));
-                HeapAllocationAnalyzerEventSource.Logger.BoxingAllocation(filePath);
             }
         }
 
@@ -204,7 +201,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
             }
         }
 
-        private static void ConditionalExpressionCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void ConditionalExpressionCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var conditionalExpression = node as ConditionalExpressionSyntax;
 
@@ -213,49 +210,48 @@ namespace PerformanceSensitive.CSharp.Analyzers
 
             if (trueExp != null)
             {
-                CheckTypeConversion(semanticModel.GetConversion(trueExp, cancellationToken), reportDiagnostic, trueExp.GetLocation(), filePath);
+                CheckTypeConversion(semanticModel.GetConversion(trueExp, cancellationToken), reportDiagnostic, trueExp.GetLocation());
             }
 
             if (falseExp != null)
             {
-                CheckTypeConversion(semanticModel.GetConversion(falseExp, cancellationToken), reportDiagnostic, falseExp.GetLocation(), filePath);
+                CheckTypeConversion(semanticModel.GetConversion(falseExp, cancellationToken), reportDiagnostic, falseExp.GetLocation());
             }
         }
 
-        private static void EqualsValueClauseCheck(SyntaxNode node, SemanticModel semanticModel, bool isAssignmentToReadonly, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void EqualsValueClauseCheck(SyntaxNode node, SemanticModel semanticModel, bool isAssignmentToReadonly, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var initializer = node as EqualsValueClauseSyntax;
             if (initializer.Value != null)
             {
                 var typeInfo = semanticModel.GetTypeInfo(initializer.Value, cancellationToken);
                 var conversionInfo = semanticModel.GetConversion(initializer.Value, cancellationToken);
-                CheckTypeConversion(conversionInfo, reportDiagnostic, initializer.Value.GetLocation(), filePath);
-                CheckDelegateCreation(initializer.Value, typeInfo, semanticModel, isAssignmentToReadonly, reportDiagnostic, initializer.Value.GetLocation(), filePath, cancellationToken);
+                CheckTypeConversion(conversionInfo, reportDiagnostic, initializer.Value.GetLocation());
+                CheckDelegateCreation(initializer.Value, typeInfo, semanticModel, isAssignmentToReadonly, reportDiagnostic, initializer.Value.GetLocation(), cancellationToken);
             }
         }
 
 
-        private static void ArrowExpressionCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void ArrowExpressionCheck(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var syntax = node as ArrowExpressionClauseSyntax;
 
             var typeInfo = semanticModel.GetTypeInfo(syntax.Expression, cancellationToken);
             var conversionInfo = semanticModel.GetConversion(syntax.Expression, cancellationToken);
-            CheckTypeConversion(conversionInfo, reportDiagnostic, syntax.Expression.GetLocation(), filePath);
+            CheckTypeConversion(conversionInfo, reportDiagnostic, syntax.Expression.GetLocation());
             CheckDelegateCreation(syntax, typeInfo, semanticModel, false, reportDiagnostic,
-                syntax.Expression.GetLocation(), filePath, cancellationToken);
+                syntax.Expression.GetLocation(), cancellationToken);
         }
 
-        private static void CheckTypeConversion(Conversion conversionInfo, Action<Diagnostic> reportDiagnostic, Location location, string filePath)
+        private static void CheckTypeConversion(Conversion conversionInfo, Action<Diagnostic> reportDiagnostic, Location location)
         {
             if (conversionInfo.IsBoxing)
             {
                 reportDiagnostic(Diagnostic.Create(ValueTypeToReferenceTypeConversionRule, location, EmptyMessageArgs));
-                HeapAllocationAnalyzerEventSource.Logger.BoxingAllocation(filePath);
             }
         }
 
-        private static void CheckDelegateCreation(SyntaxNode node, TypeInfo typeInfo, SemanticModel semanticModel, bool isAssignmentToReadonly, Action<Diagnostic> reportDiagnostic, Location location, string filePath, CancellationToken cancellationToken)
+        private static void CheckDelegateCreation(SyntaxNode node, TypeInfo typeInfo, SemanticModel semanticModel, bool isAssignmentToReadonly, Action<Diagnostic> reportDiagnostic, Location location, CancellationToken cancellationToken)
         {
             // special case: method groups
             if (typeInfo.ConvertedType?.TypeKind == TypeKind.Delegate)
@@ -275,7 +271,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
                         if (semanticModel.GetSymbolInfo(node, cancellationToken).Symbol is IMethodSymbol)
                         {
                             reportDiagnostic(Diagnostic.Create(MethodGroupAllocationRule, location, EmptyMessageArgs));
-                            HeapAllocationAnalyzerEventSource.Logger.MethodGroupAllocation(filePath);
                         }
                     }
                     else if (node.IsKind(SyntaxKind.SimpleMemberAccessExpression))
@@ -286,12 +281,10 @@ namespace PerformanceSensitive.CSharp.Analyzers
                             if (isAssignmentToReadonly)
                             {
                                 reportDiagnostic(Diagnostic.Create(ReadonlyMethodGroupAllocationRule, location, EmptyMessageArgs));
-                                HeapAllocationAnalyzerEventSource.Logger.ReadonlyMethodGroupAllocation(filePath);
                             }
                             else
                             {
                                 reportDiagnostic(Diagnostic.Create(MethodGroupAllocationRule, location, EmptyMessageArgs));
-                                HeapAllocationAnalyzerEventSource.Logger.MethodGroupAllocation(filePath);
                             }
                         }
                     }
@@ -301,7 +294,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
                         if (semanticModel.GetSymbolInfo(arrowClause.Expression, cancellationToken).Symbol is IMethodSymbol)
                         {
                             reportDiagnostic(Diagnostic.Create(MethodGroupAllocationRule, location, EmptyMessageArgs));
-                            HeapAllocationAnalyzerEventSource.Logger.MethodGroupAllocation(filePath);
                         }
                     }
                 }

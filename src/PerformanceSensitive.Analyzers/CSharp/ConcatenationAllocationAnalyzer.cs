@@ -30,7 +30,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
             var semanticModel = context.SemanticModel;
             Action<Diagnostic> reportDiagnostic = context.ReportDiagnostic;
             var cancellationToken = context.CancellationToken;
-            string filePath = node.SyntaxTree.FilePath;
             var binaryExpressions = node.DescendantNodesAndSelf().OfType<BinaryExpressionSyntax>().Reverse(); // need inner most expressions
 
             int stringConcatenationCount = 0;
@@ -49,11 +48,11 @@ namespace PerformanceSensitive.CSharp.Analyzers
 
                 var left = semanticModel.GetTypeInfo(binaryExpression.Left, cancellationToken);
                 var leftConversion = semanticModel.GetConversion(binaryExpression.Left, cancellationToken);
-                CheckTypeConversion(left, leftConversion, reportDiagnostic, binaryExpression.Left.GetLocation(), filePath);
+                CheckTypeConversion(left, leftConversion, reportDiagnostic, binaryExpression.Left.GetLocation());
 
                 var right = semanticModel.GetTypeInfo(binaryExpression.Right, cancellationToken);
                 var rightConversion = semanticModel.GetConversion(binaryExpression.Right, cancellationToken);
-                CheckTypeConversion(right, rightConversion, reportDiagnostic, binaryExpression.Right.GetLocation(), filePath);
+                CheckTypeConversion(right, rightConversion, reportDiagnostic, binaryExpression.Right.GetLocation());
 
                 // regular string allocation
                 if (left.Type?.SpecialType == SpecialType.System_String || right.Type?.SpecialType == SpecialType.System_String)
@@ -65,11 +64,10 @@ namespace PerformanceSensitive.CSharp.Analyzers
             if (stringConcatenationCount > 3)
             {
                 reportDiagnostic(Diagnostic.Create(StringConcatenationAllocationRule, node.GetLocation(), EmptyMessageArgs));
-                HeapAllocationAnalyzerEventSource.Logger.StringConcatenationAllocation(filePath);
             }
         }
 
-        private static void CheckTypeConversion(TypeInfo typeInfo, Conversion conversionInfo, Action<Diagnostic> reportDiagnostic, Location location, string filePath)
+        private static void CheckTypeConversion(TypeInfo typeInfo, Conversion conversionInfo, Action<Diagnostic> reportDiagnostic, Location location)
         {
             bool IsOptimizedValueType(ITypeSymbol type)
             {
@@ -82,7 +80,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
             if (conversionInfo.IsBoxing && !IsOptimizedValueType(typeInfo.Type))
             {
                 reportDiagnostic(Diagnostic.Create(ValueTypeToReferenceTypeInAStringConcatenationRule, location, new[] { typeInfo.Type.ToDisplayString() }));
-                HeapAllocationAnalyzerEventSource.Logger.BoxingAllocationInStringConcatenation(filePath);
             }
         }
     }

@@ -51,7 +51,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
             var semanticModel = context.SemanticModel;
             Action<Diagnostic> reportDiagnostic = context.ReportDiagnostic;
             var cancellationToken = context.CancellationToken;
-            string filePath = node.SyntaxTree.FilePath;
 
             var invocationExpression = node as InvocationExpressionSyntax;
 
@@ -59,7 +58,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
             {
                 if (methodInfo.IsOverride)
                 {
-                    CheckNonOverridenMethodOnStruct(methodInfo, reportDiagnostic, invocationExpression, filePath);
+                    CheckNonOverridenMethodOnStruct(methodInfo, reportDiagnostic, invocationExpression);
                 }
 
                 if (methodInfo.Parameters.Length > 0 && invocationExpression.ArgumentList != null)
@@ -67,20 +66,19 @@ namespace PerformanceSensitive.CSharp.Analyzers
                     var lastParam = methodInfo.Parameters[methodInfo.Parameters.Length - 1];
                     if (lastParam.IsParams)
                     {
-                        CheckParam(invocationExpression, methodInfo, semanticModel, reportDiagnostic, filePath, cancellationToken);
+                        CheckParam(invocationExpression, methodInfo, semanticModel, reportDiagnostic, cancellationToken);
                     }
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void CheckParam(InvocationExpressionSyntax invocationExpression, IMethodSymbol methodInfo, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, string filePath, CancellationToken cancellationToken)
+        private static void CheckParam(InvocationExpressionSyntax invocationExpression, IMethodSymbol methodInfo, SemanticModel semanticModel, Action<Diagnostic> reportDiagnostic, CancellationToken cancellationToken)
         {
             var arguments = invocationExpression.ArgumentList.Arguments;
             if (arguments.Count != methodInfo.Parameters.Length)
             {
                 reportDiagnostic(Diagnostic.Create(ParamsParameterRule, invocationExpression.GetLocation(), EmptyMessageArgs));
-                HeapAllocationAnalyzerEventSource.Logger.ParamsAllocation(filePath);
             }
             else
             {
@@ -89,12 +87,11 @@ namespace PerformanceSensitive.CSharp.Analyzers
                 if (lastArgumentTypeInfo.Type != null && !lastArgumentTypeInfo.Type.Equals(methodInfo.Parameters[lastIndex].Type))
                 {
                     reportDiagnostic(Diagnostic.Create(ParamsParameterRule, invocationExpression.GetLocation(), EmptyMessageArgs));
-                    HeapAllocationAnalyzerEventSource.Logger.ParamsAllocation(filePath);
                 }
             }
         }
 
-        private static void CheckNonOverridenMethodOnStruct(IMethodSymbol methodInfo, Action<Diagnostic> reportDiagnostic, SyntaxNode node, string filePath)
+        private static void CheckNonOverridenMethodOnStruct(IMethodSymbol methodInfo, Action<Diagnostic> reportDiagnostic, SyntaxNode node)
         {
             if (methodInfo.ContainingType != null)
             {
@@ -103,7 +100,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
                 if (string.Equals(containingType, "System.ValueType", StringComparison.OrdinalIgnoreCase) || string.Equals(containingType, "System.Enum", StringComparison.OrdinalIgnoreCase))
                 {
                     reportDiagnostic(Diagnostic.Create(ValueTypeNonOverridenCallRule, node.GetLocation(), EmptyMessageArgs));
-                    HeapAllocationAnalyzerEventSource.Logger.NonOverridenVirtualMethodCallOnValueType(filePath);
                 }
             }
         }

@@ -29,7 +29,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
             var semanticModel = context.SemanticModel;
             Action<Diagnostic> reportDiagnostic = context.ReportDiagnostic;
             var cancellationToken = context.CancellationToken;
-            string filePath = node.SyntaxTree.FilePath;
             if (node is ForEachStatementSyntax foreachExpression)
             {
                 var typeInfo = semanticModel.GetTypeInfo(foreachExpression.Expression, cancellationToken);
@@ -68,7 +67,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
                         if (methodSymbol.ReturnType.IsReferenceType && methodSymbol.ReturnType.SpecialType != SpecialType.System_Collections_IEnumerator)
                         {
                             reportDiagnostic(Diagnostic.Create(ReferenceTypeEnumeratorRule, foreachExpression.InKeyword.GetLocation(), EmptyMessageArgs));
-                            HeapAllocationAnalyzerEventSource.Logger.EnumeratorAllocation(filePath);
                         }
                     }
                 }
@@ -88,7 +86,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
                             if (@interface.SpecialType == SpecialType.System_Collections_Generic_IEnumerator_T || @interface.SpecialType == SpecialType.System_Collections_IEnumerator)
                             {
                                 reportDiagnostic(Diagnostic.Create(ReferenceTypeEnumeratorRule, invocationExpression.GetLocation(), EmptyMessageArgs));
-                                HeapAllocationAnalyzerEventSource.Logger.EnumeratorAllocation(filePath);
                             }
                         }
                     }

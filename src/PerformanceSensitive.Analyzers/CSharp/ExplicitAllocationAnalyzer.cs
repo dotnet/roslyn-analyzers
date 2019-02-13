@@ -46,7 +46,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
             var semanticModel = context.SemanticModel;
             Action<Diagnostic> reportDiagnostic = context.ReportDiagnostic;
             var cancellationToken = context.CancellationToken;
-            string filePath = node.SyntaxTree.FilePath;
 
             // An InitializerExpressionSyntax has an ObjectCreationExpressionSyntax as it's parent, i.e
             // var testing = new TestClass { Name = "Bob" };
@@ -63,7 +62,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
                     objectCreation.Parent?.Parent?.IsKind(SyntaxKind.VariableDeclarator) == true)
                 {
                     reportDiagnostic(Diagnostic.Create(InitializerCreationRule, ((VariableDeclaratorSyntax)objectCreation.Parent.Parent).Identifier.GetLocation(), EmptyMessageArgs));
-                    HeapAllocationAnalyzerEventSource.Logger.NewInitializerExpression(filePath);
                     return;
                 }
             }
@@ -71,21 +69,18 @@ namespace PerformanceSensitive.CSharp.Analyzers
             if (node is ImplicitArrayCreationExpressionSyntax implicitArrayExpression)
             {
                 reportDiagnostic(Diagnostic.Create(ImplicitArrayCreationRule, implicitArrayExpression.NewKeyword.GetLocation(), EmptyMessageArgs));
-                HeapAllocationAnalyzerEventSource.Logger.NewImplicitArrayCreationExpression(filePath);
                 return;
             }
 
             if (node is AnonymousObjectCreationExpressionSyntax newAnon)
             {
                 reportDiagnostic(Diagnostic.Create(AnonymousNewObjectRule, newAnon.NewKeyword.GetLocation(), EmptyMessageArgs));
-                HeapAllocationAnalyzerEventSource.Logger.NewAnonymousObjectCreationExpression(filePath);
                 return;
             }
 
             if (node is ArrayCreationExpressionSyntax newArr)
             {
                 reportDiagnostic(Diagnostic.Create(NewArrayRule, newArr.NewKeyword.GetLocation(), EmptyMessageArgs));
-                HeapAllocationAnalyzerEventSource.Logger.NewArrayExpression(filePath);
                 return;
             }
 
@@ -95,7 +90,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
                 if (typeInfo.ConvertedType != null && typeInfo.ConvertedType.TypeKind != TypeKind.Error && typeInfo.ConvertedType.IsReferenceType)
                 {
                     reportDiagnostic(Diagnostic.Create(NewObjectRule, newObj.NewKeyword.GetLocation(), EmptyMessageArgs));
-                    HeapAllocationAnalyzerEventSource.Logger.NewObjectCreationExpression(filePath);
                 }
                 return;
             }
@@ -103,7 +97,6 @@ namespace PerformanceSensitive.CSharp.Analyzers
             if (node is LetClauseSyntax letKind)
             {
                 reportDiagnostic(Diagnostic.Create(LetCauseRule, letKind.LetKeyword.GetLocation(), EmptyMessageArgs));
-                HeapAllocationAnalyzerEventSource.Logger.LetClauseExpression(filePath);
                 return;
             }
         }

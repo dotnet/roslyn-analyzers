@@ -4,13 +4,15 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
+using Test.Utilities;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    internal class IgnoreTests : AllocationAnalyzerTestsBase
+    public class IgnoreTests : AllocationAnalyzerTestsBase
     {
-        [Fact]
+        [Fact(Skip = "Compiler generated code shouldn't have PerformanceSensitiveAttribute, " +
+            "but this might be needed if we want to use editorconfig to set scope to all code.")]
         public void AnalyzeProgram_TakesIgnoredAttributesIntoAccount()
         {
             const string sampleProgram =
@@ -39,23 +41,24 @@ namespace PerformanceSensitive.Analyzers.UnitTests
         [Fact]
         public void AnalyzeProgram_TakesIgnoredFilesIntoAccount()
         {
-            const string sampleProgram =
-                @"using System;
-                public void CreateString() {
-                    string str = new string('a', 5);
-                }";
+            var source = @"
+using System;
+using Roslyn.Utilities;
 
-            var analyser = new ExplicitAllocationAnalyzer();
-            void Check(int expectedCount, string path)
-            {
-                var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression), filePath: path);
-                Assert.Equal(expectedCount, info.Allocations.Length);
-            }
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        string str = new string('a', 5);
+    }
+}";
+            VerifyCSharp(new FileAndSource() { Source = source, FilePath = "Test0.g.cs" }, withAttribute: true);
+            VerifyCSharp(new FileAndSource() { Source = source, FilePath = "Test0.G.cS" }, withAttribute: true);
 
-            Check(0, "test.g.cs");
-            Check(0, "test.G.cS");
-            Check(1, "test.cs");
-            Check(1, "test.cpp");
+            VerifyCSharp(new FileAndSource() { Source = source, FilePath = "Test0.cs" }, withAttribute: true,
+                                                // test.cs(10,22): info HAA0502: Explicit new reference type allocation
+                                                GetCSharpResultAt(10, 22, ExplicitAllocationAnalyzer.NewObjectRule));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
@@ -65,7 +68,7 @@ namespace PerformanceSensitive.Analyzers.UnitTests
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            throw new System.NotImplementedException();
+            return new ExplicitAllocationAnalyzer();
         }
     }
 }

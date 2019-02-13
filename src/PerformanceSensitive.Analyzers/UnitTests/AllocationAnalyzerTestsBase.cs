@@ -169,5 +169,21 @@ namespace Roslyn.Utilities
                 VerifyCSharp(source, expected);
             }
         }
+
+        protected void VerifyCSharp(FileAndSource fileAndSource, bool withAttribute, params DiagnosticResult[] expected)
+        {
+            if (withAttribute)
+            {
+                VerifyCSharp(new[] 
+                {
+                    fileAndSource,
+                    new FileAndSource() {  Source = PerformanceSensitiveAttributeSource, FilePath = @"c:\temp\PerformanceSensitiveAttribute.cs" }
+                }, expected);
+            }
+            else
+            {
+                VerifyCSharp(new[] { fileAndSource }, expected);
+            }
+        }
     }
 }

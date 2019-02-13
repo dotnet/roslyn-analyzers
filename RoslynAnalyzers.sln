@@ -168,6 +168,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.VersionChec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.UnitTests", "src\DotNetAnalyzers\UnitTests\DotNetAnalyzers.UnitTests.csproj", "{A2F6CD45-C9D1-4F70-9A54-29B318CCF08E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.BannedApiAnalyzer.Package", "nuget\DotNetAnalyzers\DotNetAnalyzers.BannedApiAnalyzer.Package.csproj", "{C3692B14-6833-4C8C-8E37-28D32CF7E884}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.PublicApiAnalyzer.Package", "nuget\DotNetAnalyzers\DotNetAnalyzers.PublicApiAnalyzer.Package.csproj", "{ACDF85E1-9D40-470F-B002-02B1CAE2888F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.VersionCheckAnalyzer.Package", "nuget\DotNetAnalyzers\DotNetAnalyzers.VersionCheckAnalyzer.Package.csproj", "{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Analyzer.Utilities.projitems*{ec946164-1e17-410b-b7d9-7de7e6268d63}*SharedItemsImports = 13
@@ -683,6 +689,30 @@ Global
 		{A2F6CD45-C9D1-4F70-9A54-29B318CCF08E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A2F6CD45-C9D1-4F70-9A54-29B318CCF08E}.Release|x86.ActiveCfg = Release|Any CPU
 		{A2F6CD45-C9D1-4F70-9A54-29B318CCF08E}.Release|x86.Build.0 = Release|Any CPU
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884}.Debug|x86.Build.0 = Debug|Any CPU
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884}.Release|x86.ActiveCfg = Release|Any CPU
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884}.Release|x86.Build.0 = Release|Any CPU
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F}.Debug|x86.Build.0 = Debug|Any CPU
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F}.Release|x86.ActiveCfg = Release|Any CPU
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F}.Release|x86.Build.0 = Release|Any CPU
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}.Debug|x86.Build.0 = Debug|Any CPU
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -755,6 +785,9 @@ Global
 		{1A0B44C4-F752-4A13-99B1-8207828C0682} = {3EFCD8E4-8E52-4C78-9F6C-E9899548FCAB}
 		{C086039F-19DF-488D-AB27-45FB718C3E69} = {AAD29EF6-F120-44A2-851F-0C4923F689B7}
 		{A2F6CD45-C9D1-4F70-9A54-29B318CCF08E} = {E2E56F9F-AD96-4235-9ACE-CBF26CC5C421}
+		{C3692B14-6833-4C8C-8E37-28D32CF7E884} = {09A6899C-9630-4FDF-B02F-79D1C1F6EA94}
+		{ACDF85E1-9D40-470F-B002-02B1CAE2888F} = {3EFCD8E4-8E52-4C78-9F6C-E9899548FCAB}
+		{D6ACDD66-481E-4D37-8B9F-F2DA3F1874BA} = {AAD29EF6-F120-44A2-851F-0C4923F689B7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

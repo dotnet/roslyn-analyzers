@@ -1,23 +1,29 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    internal class ExplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class ExplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void ExplicitAllocation_InitializerExpressionSyntax()
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
-var @struct = new TestStruct { Name = ""Bob"" };
-var @class = new TestClass { Name = ""Bob"" };
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        var @struct = new TestStruct { Name = ""Bob"" };
+        var @class = new TestClass { Name = ""Bob"" };
+    }
+}
 
 public struct TestStruct
 {
@@ -29,16 +35,12 @@ public class TestClass
     public string Name { get; set; }
 }";
 
-            var analyser = new ExplicitAllocationAnalyzer();
-            // SyntaxKind.ObjectInitializerExpression IS linked to InitializerExpressionSyntax (naming is a bit confusing)
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression));
 
-            Assert.Equal(2, info.Allocations.Length);
-            // Diagnostic: (4,14): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 4, character: 14);
-
-            // Diagnostic: (4,5): info HeapAnalyzerInitializerCreationRule: Initializer reference type allocation ***
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.InitializerCreationRule.Id, line: 4, character: 5);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(10,13): info HAA0505: Initializer reference type allocation
+                        GetCSharpResultAt(10, 13, ExplicitAllocationAnalyzer.InitializerCreationRule),
+                        // Test0.cs(10,22): info HAA0502: Explicit new reference type allocation
+                        GetCSharpResultAt(10, 22, ExplicitAllocationAnalyzer.NewObjectRule));
         }
 
         [Fact]
@@ -46,15 +48,20 @@ public class TestClass
         {
             var sampleProgram =
 @"using System.Collections.Generic;
+using Roslyn.Utilities;
 
-int[] intData = new[] { 123, 32, 4 };";
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        int[] intData = new[] { 123, 32, 4 };
+    }
+}";
 
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ImplicitArrayCreationExpression));
-
-            Assert.Single(info.Allocations);
-            // Diagnostic: (3,17): info HeapAnalyzerImplicitNewArrayCreationRule: Implicit new array creation allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.ImplicitArrayCreationRule.Id, line: 3, character: 17);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,25): info HAA0504: Implicit new array creation allocation
+                        GetCSharpResultAt(9, 25, ExplicitAllocationAnalyzer.ImplicitArrayCreationRule));
         }
 
         [Fact]
@@ -62,15 +69,20 @@ int[] intData = new[] { 123, 32, 4 };";
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
-var temp = new { A = 123, Name = ""Test"", };";
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        var temp = new { A = 123, Name = ""Test"", };
+    }
+}";
 
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.AnonymousObjectCreationExpression));
-
-            Assert.Single(info.Allocations);
-            // Diagnostic: (3,12): info HeapAnalyzerExplicitNewAnonymousObjectRule: Explicit new anonymous object allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.AnonymousNewObjectRule.Id, line: 3, character: 12);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,20): info HAA0503: Explicit new anonymous object allocation
+                        GetCSharpResultAt(9, 20, ExplicitAllocationAnalyzer.AnonymousNewObjectRule));
         }
 
         [Fact]
@@ -78,15 +90,20 @@ var temp = new { A = 123, Name = ""Test"", };";
         {
             var sampleProgram =
 @"using System.Collections.Generic;
+using Roslyn.Utilities;
 
-int[] intData = new int[] { 123, 32, 4 };";
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        int[] intData = new int[] { 123, 32, 4 };
+    }
+}";
 
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ArrayCreationExpression));
-
-            Assert.Single(info.Allocations);
-            // Diagnostic: (3,17): info HeapAnalyzerExplicitNewArrayRule: Implicit new array creation allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewArrayRule.Id, line: 3, character: 17);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,25): info HAA0501: Explicit new array type allocation
+                        GetCSharpResultAt(9, 25, ExplicitAllocationAnalyzer.NewArrayRule));
         }
 
         [Fact]
@@ -94,16 +111,20 @@ int[] intData = new int[] { 123, 32, 4 };";
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
-var allocation = new String('a', 10);
-var noAllocation = new DateTime();";
-
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectCreationExpression));
-
-            Assert.Single(info.Allocations);
-            // Diagnostic: (3,18): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 3, character: 18);
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        var allocation = new String('a', 10);
+        var noAllocation = new DateTime();
+    }
+}";
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,26): info HAA0502: Explicit new reference type allocation
+                        GetCSharpResultAt(9, 26, ExplicitAllocationAnalyzer.NewObjectRule));
         }
 
         [Fact]
@@ -112,22 +133,24 @@ var noAllocation = new DateTime();";
             var sampleProgram =
 @"using System.Collections.Generic;
 using System.Linq;
+using Roslyn.Utilities;
 
-int[] intData = new[] { 123, 32, 4 };
-var result = (from a in intData
-              let b = a * 3
-              select b).ToList();
-";
-
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.LetClause));
-
-            Assert.Equal(2, info.Allocations.Length);
-            // Diagnostic: (4,17): info HeapAnalyzerImplicitNewArrayCreationRule: Implicit new array creation allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.ImplicitArrayCreationRule.Id, line: 4, character: 17);
-
-            // Diagnostic: (6,15): info HeapAnalyzerLetClauseRule: Let clause induced allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.LetCauseRule.Id, line: 6, character: 15);
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        int[] intData = new[] { 123, 32, 4 };
+        var result = (from a in intData
+                      let b = a * 3
+                      select b).ToList();
+    }
+}";
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(10,25): info HAA0504: Implicit new array creation allocation
+                        GetCSharpResultAt(10, 25, ExplicitAllocationAnalyzer.ImplicitArrayCreationRule),
+                        // Test0.cs(12,23): info HAA0506: Let clause induced allocation
+                        GetCSharpResultAt(12, 23, ExplicitAllocationAnalyzer.LetCauseRule));
         }
 
         [Fact]
@@ -137,23 +160,31 @@ var result = (from a in intData
 @"using System;
 using System.Collections.Generic;
 using System.Linq;
+using Roslyn.Utilities;
 
-var @struct = new TestStruct { Name = ""Bob"" };
-var @class = new TestClass { Name = ""Bob"" };
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        var @struct = new TestStruct { Name = ""Bob"" };
+        var @class = new TestClass { Name = ""Bob"" };
 
-int[] intDataImplicit = new[] { 123, 32, 4 };
+        int[] intDataImplicit = new[] { 123, 32, 4 };
 
-var temp = new { A = 123, Name = ""Test"", };
+        var temp = new { A = 123, Name = ""Test"", };
 
-int[] intDataExplicit = new int[] { 123, 32, 4 };
+        int[] intDataExplicit = new int[] { 123, 32, 4 };
 
-var allocation = new String('a', 10);
-var noAllocation = new DateTime();
+        var allocation = new String('a', 10);
+        var noAllocation = new DateTime();
 
-int[] intDataLinq = new int[] { 123, 32, 4 };
-var result = (from a in intDataLinq
-              let b = a * 3
-              select b).ToList();
+        int[] intDataLinq = new int[] { 123, 32, 4 };
+        var result = (from a in intDataLinq
+                      let b = a * 3
+                      select b).ToList();
+    }
+}
 
 public struct TestStruct
 {
@@ -165,32 +196,28 @@ public class TestClass
     public string Name { get; set; }
 }";
 
-            // This test is here so that we use SyntaxKindsOfInterest explicitly, to make sure it works
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ObjectCreationExpression, SyntaxKind.AnonymousObjectCreationExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKind.ComplexElementInitializerExpression, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression, SyntaxKind.LetClause));
-
-            Assert.Equal(8, info.Allocations.Length);
-            // Diagnostic: (6,14): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 6, character: 14);
-            // Diagnostic: (6,5): info HeapAnalyzerInitializerCreationRule: Initializer reference type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.InitializerCreationRule.Id, line: 6, character: 5);
-            // Diagnostic: (8,25): info HeapAnalyzerImplicitNewArrayCreationRule: Implicit new array creation allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.ImplicitArrayCreationRule.Id, line: 8, character: 25);
-            // Diagnostic: (10,12): info HeapAnalyzerExplicitNewAnonymousObjectRule: Explicit new anonymous object allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.AnonymousNewObjectRule.Id, line: 10, character: 12);
-            // Diagnostic: (12,25): info HeapAnalyzerExplicitNewArrayRule: Explicit new array type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewArrayRule.Id, line: 12, character: 25);
-            // Diagnostic: (14,18): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 14, character: 18);
-            // Diagnostic: (17,21): info HeapAnalyzerExplicitNewArrayRule: Explicit new array type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewArrayRule.Id, line: 17, character: 21);
-            // Diagnostic: (19,15): info HeapAnalyzerLetClauseRule: Let clause induced allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.LetCauseRule.Id, line: 19, character: 15);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(12,13): info HAA0505: Initializer reference type allocation
+                        GetCSharpResultAt(12, 13, ExplicitAllocationAnalyzer.InitializerCreationRule),
+                        // Test0.cs(12,22): info HAA0502: Explicit new reference type allocation
+                        GetCSharpResultAt(12, 22, ExplicitAllocationAnalyzer.NewObjectRule),
+                        // Test0.cs(14,33): info HAA0504: Implicit new array creation allocation
+                        GetCSharpResultAt(14, 33, ExplicitAllocationAnalyzer.ImplicitArrayCreationRule),
+                        // Test0.cs(16,20): info HAA0503: Explicit new anonymous object allocation
+                        GetCSharpResultAt(16, 20, ExplicitAllocationAnalyzer.AnonymousNewObjectRule),
+                        // Test0.cs(18,33): info HAA0501: Explicit new array type allocation
+                        GetCSharpResultAt(18, 33, ExplicitAllocationAnalyzer.NewArrayRule),
+                        // Test0.cs(20,26): info HAA0502: Explicit new reference type allocation
+                        GetCSharpResultAt(20, 26, ExplicitAllocationAnalyzer.NewObjectRule),
+                        // Test0.cs(23,29): info HAA0501: Explicit new array type allocation
+                        GetCSharpResultAt(23, 29, ExplicitAllocationAnalyzer.NewArrayRule),
+                        // Test0.cs(25,23): info HAA0506: Let clause induced allocation
+                        GetCSharpResultAt(25, 23, ExplicitAllocationAnalyzer.LetCauseRule));
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            throw new System.NotImplementedException();
+            return new ExplicitAllocationAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

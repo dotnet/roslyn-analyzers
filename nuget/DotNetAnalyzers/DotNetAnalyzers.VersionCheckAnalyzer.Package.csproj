@@ -1,0 +1,22 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecPackageId>DotNetAnalyzers.VersionCheckAnalyzer</NuspecPackageId>
+    <Description>Version Check Analyzer</Description>
+    <Summary>Version Check Analyzer</Summary>
+    <ReleaseNotes>Version Check Analyzer</ReleaseNotes>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics VersionCheckAnalyzer</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AnalyzerNupkgAssembly Include="DotNetAnalyzers.VersionCheckAnalyzer.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DotNetAnalyzers\Core\VersionCheckAnalyzer\DotNetAnalyzers.VersionCheckAnalyzer.csproj" />
+  </ItemGroup>
+</Project>

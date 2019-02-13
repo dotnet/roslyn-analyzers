@@ -7,11 +7,13 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
+using Test.Utilities;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public abstract class AllocationAnalyzerTestsBase
+    public abstract class AllocationAnalyzerTestsBase : DiagnosticAnalyzerTestBase
     {
         protected static readonly List<MetadataReference> references = new List<MetadataReference>
             {
@@ -95,6 +97,77 @@ namespace PerformanceSensitive.Analyzers.UnitTests
             public SemanticModel SemanticModel { get; set; }
             public ImmutableArray<SyntaxNode> Matches { get; set; }
             public ImmutableArray<Diagnostic> Allocations { get; set; }
+        }
+
+        public const string PerformanceSensitiveAttributeSource = @"
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
+
+namespace Roslyn.Utilities
+{
+    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true, Inherited = false)]
+    internal sealed class PerformanceSensitiveAttribute : Attribute
+    {
+        public PerformanceSensitiveAttribute(string uri)
+        {
+            Uri = uri;
+        }
+
+        public string Uri
+        {
+            get;
+        }
+
+        public string Constraint
+        {
+            get;
+            set;
+        }
+
+        public bool AllowCaptures
+        {
+            get;
+            set;
+        }
+
+        public bool AllowGenericEnumeration
+        {
+            get;
+            set;
+        }
+
+        public bool AllowLocks
+        {
+            get;
+            set;
+        }
+
+        public bool OftenCompletesSynchronously
+        {
+            get;
+            set;
+        }
+
+        public bool IsParallelEntry
+        {
+            get;
+            set;
+        }
+    }
+}";
+
+        protected void VerifyCSharp(string source, bool withAttribute, params DiagnosticResult[] expected)
+        {
+            if (withAttribute)
+            {
+                VerifyCSharp(new[] { source, PerformanceSensitiveAttributeSource }, expected);
+            }
+            else
+            {
+                VerifyCSharp(source, expected);
+            }
         }
     }
 }

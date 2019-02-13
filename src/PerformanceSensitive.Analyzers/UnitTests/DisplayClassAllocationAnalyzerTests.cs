@@ -2,12 +2,13 @@
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class DisplayClassAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    internal class DisplayClassAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void DisplayClassAllocation_AnonymousMethodExpressionSyntax()
@@ -139,6 +140,16 @@ foreach (string word in words) // <-- captured closure
             Assert.Equal(2, info.Allocations.Length);
             AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureCaptureRule.Id, line: 3, character: 25);
             AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureDriverRule.Id, line: 4, character: 44);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -2,12 +2,13 @@
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class IgnoreTests : AllocationAnalyzerTestsBase
+    internal class IgnoreTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void AnalyzeProgram_TakesIgnoredAttributesIntoAccount()
@@ -55,6 +56,16 @@ namespace PerformanceSensitive.Analyzers.UnitTests
             Check(0, "test.G.cS");
             Check(1, "test.cs");
             Check(1, "test.cpp");
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

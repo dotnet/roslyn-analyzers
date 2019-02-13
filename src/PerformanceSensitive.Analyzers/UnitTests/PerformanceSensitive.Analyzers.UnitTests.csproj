@@ -2,6 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
+    <NoWarn>$(NoWarn);xUnit1000;CA1812</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Test.Utilities\Test.Utilities.csproj" />

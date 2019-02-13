@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using System.Collections.Immutable;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class EnumeratorAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    internal class EnumeratorAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void EnumeratorAllocation_Basic()
@@ -131,6 +132,16 @@ private IEnumerator<int> GetIEnumeratorViaIEnumerable()
             var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ForEachStatement));
 
             Assert.Empty(info.Allocations);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
@@ -10,7 +11,7 @@ namespace PerformanceSensitive.Analyzers.UnitTests
     /// <summary>
     /// Taken from http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp
     /// </summary>
-    public class StackOverflowAnswerTests : AllocationAnalyzerTestsBase
+    internal class StackOverflowAnswerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void Converting_any_value_type_to_System_Object_type()
@@ -125,6 +126,16 @@ namespace PerformanceSensitive.Analyzers.UnitTests
             Assert.Single(info.Allocations);
             // Diagnostic: (2,17): warning HeapAnalyzerValueTypeNonOverridenCallRule: Non-overriden virtual method call on a value type adds a boxing or constrained instruction
             AssertEx.ContainsDiagnostic(info.Allocations, CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule.Id, line: 2, character: 17);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

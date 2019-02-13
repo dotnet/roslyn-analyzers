@@ -2,12 +2,13 @@
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class ExplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    internal class ExplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void ExplicitAllocation_InitializerExpressionSyntax()
@@ -185,6 +186,16 @@ public class TestClass
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.NewArrayRule.Id, line: 17, character: 21);
             // Diagnostic: (19,15): info HeapAnalyzerLetClauseRule: Let clause induced allocation
             AssertEx.ContainsDiagnostic(info.Allocations, id: ExplicitAllocationAnalyzer.LetCauseRule.Id, line: 19, character: 15);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

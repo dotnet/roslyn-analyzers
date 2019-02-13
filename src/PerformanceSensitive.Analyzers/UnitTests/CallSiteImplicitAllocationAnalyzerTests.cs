@@ -2,12 +2,13 @@
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    internal class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void CallSiteImplicitAllocation_Param()
@@ -101,6 +102,16 @@ attr.HasFlag (FileAttributes.Directory);
             var info = ProcessCode(analyser, snippet, ImmutableArray.Create(SyntaxKind.InvocationExpression));
 
             Assert.Empty(info.Allocations);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

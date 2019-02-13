@@ -3,12 +3,13 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class ConcatenationAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    internal class ConcatenationAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void ConcatenationAllocation_Basic()
@@ -61,6 +62,16 @@ namespace PerformanceSensitive.Analyzers.UnitTests
                 var info = ProcessCode(analyser, snippet, ImmutableArray.Create(SyntaxKind.AddExpression, SyntaxKind.AddAssignmentExpression));
                 Assert.Empty(info.Allocations);
             }
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

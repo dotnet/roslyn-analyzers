@@ -1,29 +1,33 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private static readonly string s_CA3075XmlReaderCreateInsecureInputMessage = MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateInsecureInputMessage;
-
         private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, s_CA3075XmlReaderCreateInsecureInputMessage);
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithMessage(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateInsecureInputMessage);
         }
 
         private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, s_CA3075XmlReaderCreateInsecureInputMessage);
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithMessage(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateInsecureInputMessage);
         }
 
         [Fact]
-        public void XmlReaderSettingsDefaultAsFieldShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsDefaultAsFieldShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -42,7 +46,7 @@ namespace TestNamespace
                 GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 26)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -60,9 +64,9 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlReaderSettingsAsFieldSetDtdProcessingToParseWithNoCreateShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsFieldSetDtdProcessingToParseWithNoCreateShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -77,7 +81,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -93,9 +97,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsAsFieldDefaultAndDtdProcessingToIgnoreShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsFieldDefaultAndDtdProcessingToIgnoreShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -114,7 +118,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -130,9 +134,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputSetDtdProcessingToParseShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetDtdProcessingToParseShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -149,7 +153,7 @@ namespace TestNamespace
                 GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(10, 26)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -164,9 +168,9 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputInGetShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInGetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 public class TestClass
@@ -186,7 +190,7 @@ public class TestClass
                 GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 32)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Public Class TestClass
@@ -204,9 +208,9 @@ End Class",
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputInTryShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInTryShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -228,7 +232,7 @@ class TestClass6a
                 GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(13, 26)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -249,9 +253,9 @@ End Class",
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputInCatchShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInCatchShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -272,7 +276,7 @@ class TestClass6a
                 GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(13, 26)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -292,9 +296,9 @@ End Class",
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputInFinallyShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInFinallyShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -315,7 +319,7 @@ class TestClass6a
                 GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(14, 26)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -336,9 +340,9 @@ End Class",
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInAsyncAwaitShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -362,7 +366,7 @@ class TestClass
                 GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 26)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Xml
 
@@ -385,9 +389,9 @@ End Class",
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputInDelegateShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInDelegateShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 class TestClass
@@ -405,7 +409,7 @@ class TestClass
                 GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 22)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Class TestClass
@@ -424,9 +428,9 @@ End Class",
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputSetDtdProcessingToProhibitShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetDtdProcessingToProhibitShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -443,7 +447,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -457,9 +461,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsAsInputSetPropertiesToSecureValuesShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetPropertiesToSecureValuesShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -478,7 +482,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -494,9 +498,9 @@ End Namespace");
         }
 
         [Fact]
-        public void RealCodeSnippitFromCustomerShouldGenerateDiagnostic()
+        public async Task RealCodeSnippitFromCustomerShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.IO;
 using System.Xml;
@@ -545,7 +549,7 @@ namespace TestNamespace
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(15, 38)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Xml

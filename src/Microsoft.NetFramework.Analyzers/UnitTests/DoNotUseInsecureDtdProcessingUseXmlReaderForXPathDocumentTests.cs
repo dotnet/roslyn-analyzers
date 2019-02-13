@@ -1,27 +1,33 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private DiagnosticResult GetCA3075XPathDocumentCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075XPathDocumentCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, ".ctor"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, ".ctor"));
         }
 
-        private DiagnosticResult GetCA3075XPathDocumentBasicResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075XPathDocumentBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, ".ctor"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, ".ctor"));
         }
 
         [Fact]
-        public void UseXPathDocumentWithoutReaderShouldGenerateDiagnostic()
+        public async Task UseXPathDocumentWithoutReaderShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.XPath;
 
@@ -39,7 +45,7 @@ namespace TestNamespace
                 GetCA3075XPathDocumentCSharpResultAt(11, 33)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.XPath
 
@@ -55,9 +61,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXPathDocumentWithoutReaderInGetShouldGenerateDiagnostic()
+        public async Task UseXPathDocumentWithoutReaderInGetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml.XPath;
 
 class TestClass
@@ -75,7 +81,7 @@ class TestClass
                 GetCA3075XPathDocumentCSharpResultAt(11, 33)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml.XPath
 
 Class TestClass
@@ -92,9 +98,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentWithoutReaderInSetShouldGenerateDiagnostic()
+        public async Task UseXPathDocumentWithoutReaderInSetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml.XPath;
 
 class TestClass
@@ -118,7 +124,7 @@ public XPathDocument GetDoc
                 GetCA3075XPathDocumentCSharpResultAt(14, 41)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml.XPath
 
 Class TestClass
@@ -140,9 +146,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentWithoutReaderInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXPathDocumentWithoutReaderInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
   using System;
   using System.Xml.XPath;
 
@@ -162,7 +168,7 @@ End Class",
                 GetCA3075XPathDocumentCSharpResultAt(12, 37)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml.XPath
 
@@ -182,9 +188,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentWithoutReaderInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXPathDocumentWithoutReaderInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
    using System;
    using System.Xml.XPath;
 
@@ -204,7 +210,7 @@ End Class",
                 GetCA3075XPathDocumentCSharpResultAt(13, 37)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml.XPath
 
@@ -223,9 +229,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentWithoutReaderInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXPathDocumentWithoutReaderInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml.XPath;
 
@@ -245,7 +251,7 @@ class TestClass
                 GetCA3075XPathDocumentCSharpResultAt(14, 33)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml.XPath
 
@@ -265,9 +271,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentWithoutReaderInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXPathDocumentWithoutReaderInAsyncAwaitShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 using System.Xml.XPath;
 
@@ -289,7 +295,7 @@ class TestClass
                 GetCA3075XPathDocumentCSharpResultAt(11, 33)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Xml.XPath
 
@@ -311,9 +317,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentWithoutReaderInDelegateShouldGenerateDiagnostic()
+        public async Task UseXPathDocumentWithoutReaderInDelegateShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml.XPath;
 
 class TestClass
@@ -328,7 +334,7 @@ class TestClass
                 GetCA3075XPathDocumentCSharpResultAt(10, 29)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml.XPath
 
 Class TestClass
@@ -345,9 +351,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXPathDocumentWithXmlReaderShouldNotGenerateDiagnostic()
+        public async Task UseXPathDocumentWithXmlReaderShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.XPath;
 

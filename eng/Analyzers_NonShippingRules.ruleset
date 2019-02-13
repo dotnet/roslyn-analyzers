@@ -4,8 +4,16 @@
   <Include Path=".\Analyzers_ShippingRules.ruleset" Action="Default" />
 
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
+    <!-- Do not declare static members on generic types (we use generic static classes in test helpers) -->
+    <Rule Id="CA1000" Action="None" />
+    <!-- Nested types should not be visible (we use nested types as test helpers) -->
+    <Rule Id="CA1034" Action="None" />
     <!-- IdentifiersShouldNotContainUnderscores - test names contain underscores and this is fine -->
     <Rule Id="CA1707" Action="None" />
+    <!-- Type names should not match namespaces (not needed for test code) -->
+    <Rule Id="CA1724" Action="None" />
+    <!-- Do not directly await a Task (makes tests unnecessarily noisy) -->
+    <Rule Id="CA2007" Action="None" />
   </Rules>
   
   <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers.Maintainability">

@@ -1,27 +1,33 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private DiagnosticResult GetCA3075DeserializeCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075DeserializeCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "Deserialize"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "Deserialize"));
         }
 
-        private DiagnosticResult GetCA3075DeserializeBasicResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075DeserializeBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "Deserialize"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "Deserialize"));
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeShouldGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -40,7 +46,7 @@ namespace TestNamespace
                 GetCA3075DeserializeCSharpResultAt(13, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.IO
 Imports System.Xml
 Imports System.Xml.Serialization
@@ -58,9 +64,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeInGetShouldGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeInGetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml.Serialization;
 
@@ -80,7 +86,7 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(13, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -99,9 +105,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeInSetShouldGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeInSetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml.Serialization;
 
@@ -127,7 +133,7 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(16, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -151,9 +157,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeInTryShouldGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeInTryShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml.Serialization;
 using System;
@@ -175,7 +181,7 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(14, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Xml.Serialization
@@ -197,9 +203,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeInCatchShouldGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeInCatchShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml.Serialization;
 using System;
@@ -220,7 +226,7 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(14, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Xml.Serialization
@@ -241,9 +247,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeInFinallyShouldGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeInFinallyShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml.Serialization;
 using System;
@@ -264,7 +270,7 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(15, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.IO
 Imports System.Xml.Serialization
@@ -286,9 +292,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeInDelegateShouldGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeInDelegateShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml.Serialization;
 
@@ -307,7 +313,7 @@ public class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(13, 9)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.IO
 Imports System.Xml.Serialization
 
@@ -327,9 +333,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeInAsyncAwaitShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -352,7 +358,7 @@ class UseXmlReaderForDeserialize
                 GetCA3075DeserializeCSharpResultAt(12, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.IO
 Imports System.Threading.Tasks
 Imports System.Xml.Serialization
@@ -375,9 +381,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlSerializerDeserializeWithXmlReaderShouldNoGenerateDiagnostic()
+        public async Task UseXmlSerializerDeserializeWithXmlReaderShouldNoGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -395,7 +401,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.IO
 Imports System.Xml
 Imports System.Xml.Serialization

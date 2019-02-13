@@ -21,6 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DotNetAnalyzers\Core\BannedApiAnalyzer\DotNetAnalyzers.BannedApiAnalyzer.csproj" />
     <ProjectReference Include="..\..\src\DotNetAnalyzers\CSharp\BannedApiAnalyzer\DotNetAnalyzers.CSharp.BannedApiAnalyzer.csproj" />
-    <ProjectReference Include="..\..\src\DotNetAnalyzers\VisualBasic\BannedApiAnalyzer\DotNetAnalyzers.VisualBasic.BannedApiAnalyzer.csproj" />
+    <ProjectReference Include="..\..\src\DotNetAnalyzers\VisualBasic\BannedApiAnalyzer\DotNetAnalyzers.VisualBasic.BannedApiAnalyzer.vbproj" />
   </ItemGroup>
 </Project>

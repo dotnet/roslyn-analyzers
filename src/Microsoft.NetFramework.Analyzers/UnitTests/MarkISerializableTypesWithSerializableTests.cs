@@ -81,16 +81,16 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 using System;
                 using System.Runtime.Serialization;
 
-                [|class CA2237SerializableInternal : ISerializable
+                class CA2237SerializableInternal : ISerializable
                 {
                     public void GetObjectData(SerializationInfo info, StreamingContext context)
                     {
                         throw new NotImplementedException();
                     }
-                }|]
+                }
 
                 [Serializable]
-                public class CA2237SerializableProper : ISerializable
+                public class {|CA2229:CA2237SerializableProper|} : ISerializable
                 {
                     public void GetObjectData(SerializationInfo info, StreamingContext context)
                     {
@@ -102,7 +102,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 Imports System
                 Imports System.Runtime.Serialization
 
-                [|Friend Class CA2237SerializableInternal 
+                Friend Class CA2237SerializableInternal 
                     Implements ISerializable
                 
                     Protected Sub New(context As StreamingContext, info As SerializationInfo)
@@ -111,10 +111,10 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
-                End Class|]
+                End Class
 
                 <Serializable>
-                Public Class CA2237SerializableProper 
+                Public Class {|CA2229:CA2237SerializableProper|} 
                     Implements ISerializable
 
                     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData

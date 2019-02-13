@@ -261,20 +261,20 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 [Serializable]
                 public class SerializableType { }
     
-                [|[Serializable]
+                [Serializable]
                 public class CA2235WithNonPublicNonSerializableFields
                 {
                     public SerializableType s1;
                     internal NonSerializableType s2;
                     private NonSerializableType s3;
-                }|]
+                }
 
                 [Serializable]
                 public class Sample
                 {
                     public SerializableType s1;
-                    internal NonSerializableType s2;
-                    private NonSerializableType s3;
+                    internal NonSerializableType {|CA2235:s2|};
+                    private NonSerializableType {|CA2235:s3|};
                 }",
                 GetCA2235CSharpResultAt(12, 50, "s2", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"),
                 GetCA2235CSharpResultAt(13, 49, "s3", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"));
@@ -287,18 +287,18 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 Public Class SerializableType
                 End Class
 
-                [|<Serializable>
+                <Serializable>
                 Public Class CA2235WithNonPublicNonSerializableFields 
                     Public s1 As SerializableType
                     Friend s2 As NonSerializableType
                     Private s3 As NonSerializableType
-                End Class|]
+                End Class
 
                 <Serializable>
                 Public Class Sample 
                     Public s1 As SerializableType
-                    Friend s2 As NonSerializableType
-                    Private s3 As NonSerializableType
+                    Friend {|CA2235:s2|} As NonSerializableType
+                    Private {|CA2235:s3|} As NonSerializableType
                 End Class",
                 GetCA2235BasicResultAt(12, 28, "s2", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"),
                 GetCA2235BasicResultAt(13, 29, "s3", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"));

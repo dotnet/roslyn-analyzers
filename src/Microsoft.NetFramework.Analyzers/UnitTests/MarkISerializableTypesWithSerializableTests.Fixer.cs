@@ -19,7 +19,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.Runtime.Serialization;
-public class CA2237SerializableMissingAttr : ISerializable
+public class {|CA2237:CA2237SerializableMissingAttr|} : ISerializable
 {
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
@@ -31,7 +31,7 @@ using System;
 using System.Runtime.Serialization;
 
 [Serializable]
-public class CA2237SerializableMissingAttr : ISerializable
+public class {|CA2229:CA2237SerializableMissingAttr|} : ISerializable
 {
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
@@ -42,7 +42,7 @@ public class CA2237SerializableMissingAttr : ISerializable
             await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.Runtime.Serialization
-Public Class CA2237SerializableMissingAttr
+Public Class {|CA2237:CA2237SerializableMissingAttr|}
     Implements ISerializable
 
     Protected Sub New(context As StreamingContext, info As SerializationInfo)
@@ -57,7 +57,7 @@ Imports System
 Imports System.Runtime.Serialization
 
 <Serializable>
-Public Class CA2237SerializableMissingAttr
+Public Class {|CA2229:CA2237SerializableMissingAttr|}
     Implements ISerializable
 
     Protected Sub New(context As StreamingContext, info As SerializationInfo)

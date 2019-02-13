@@ -28,7 +28,7 @@ public class NonSerializableType { }
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
 {
-    internal NonSerializableType s1;
+    internal NonSerializableType {|CA2235:s1|};
 }",
 @"
 using System;
@@ -48,7 +48,7 @@ End Class
 
 <Serializable>
 Public Class CA2235WithNonPublicNonSerializableFields 
-    Friend s1 As NonSerializableType
+    Friend {|CA2235:s1|} As NonSerializableType
 End Class",
 @"
 Imports System
@@ -74,7 +74,7 @@ public class NonSerializableType { }
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
 {
-    internal NonSerializableType s1;
+    internal NonSerializableType {|CA2235:s1|};
 }",
                 FixedCode = @"
 using System;
@@ -99,7 +99,7 @@ End Class
 
 <Serializable>
 Public Class CA2235WithNonPublicNonSerializableFields
-    Friend s1 As NonSerializableType
+    Friend {|CA2235:s1|} As NonSerializableType
 End Class",
                 FixedCode = @"
 Imports System
@@ -126,7 +126,7 @@ public class NonSerializableType { }
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
 {
-    internal NonSerializableType s1, s2 = new NonSerializableType(), s3;
+    internal NonSerializableType {|CA2235:s1|}, {|CA2235:s2|} = new NonSerializableType(), {|CA2235:s3|};
 }",
 @"
 using System;
@@ -146,7 +146,7 @@ End Class
 
 <Serializable>
 Public Class CA2235WithNonPublicNonSerializableFields 
-    Friend s1, s2, s3 As NonSerializableType
+    Friend {|CA2235:s1|}, {|CA2235:s2|}, {|CA2235:s3|} As NonSerializableType
 End Class",
 @"
 Imports System
@@ -174,7 +174,7 @@ public partial class NonSerializableType { public void baz() { } }
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
 {
-    internal NonSerializableType s1;
+    internal NonSerializableType {|CA2235:s1|};
 }",
                 FixedCode = @"
 using System;
@@ -206,7 +206,7 @@ End Class
 
 <Serializable>
 Public Class CA2235WithNonPublicNonSerializableFields
-    Friend s1 As NonSerializableType
+    Friend {|CA2235:s1|} As NonSerializableType
 End Class",
                 FixedCode = @"
 Imports System

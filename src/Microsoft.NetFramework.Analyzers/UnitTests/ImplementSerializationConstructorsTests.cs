@@ -180,7 +180,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 using System;
                 using System.Runtime.Serialization;
 
-                [|[Serializable]
+                [Serializable]
                 public sealed class CA2229HasConstructor1 : ISerializable
                 {
                     private CA2229HasConstructor1(SerializationInfo info, StreamingContext context) { }
@@ -189,12 +189,12 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                     {
                         throw new NotImplementedException();
                     }
-                }|]
+                }
 
                 [Serializable]
                 public class CA2229HasConstructorWrongAccessibility : ISerializable
                 {
-                    public CA2229HasConstructorWrongAccessibility(SerializationInfo info, StreamingContext context) { }
+                    public {|CA2229:CA2229HasConstructorWrongAccessibility|}(SerializationInfo info, StreamingContext context) { }
 
                     public void GetObjectData(SerializationInfo info, StreamingContext context)
                     {
@@ -206,7 +206,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 Imports System
                 Imports System.Runtime.Serialization
 
-                [|<Serializable>
+                <Serializable>
                 Public NotInheritable Class CA2229HasConstructor1
                     Implements ISerializable
                 
@@ -216,13 +216,13 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
-                End Class|]
+                End Class
 
                 <Serializable>
                 Public Class CA2229HasConstructorWrongAccessibility
                     Implements ISerializable
                 
-                    Public Sub New(info As SerializationInfo, context As StreamingContext)
+                    Public Sub {|CA2229:New|}(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
                     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData

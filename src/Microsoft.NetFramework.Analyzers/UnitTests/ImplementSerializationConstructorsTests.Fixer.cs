@@ -20,7 +20,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
 using System;
 using System.Runtime.Serialization;
 [Serializable]
-public class CA2229NoConstructor : ISerializable
+public class {|CA2229:CA2229NoConstructor|} : ISerializable
 {
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
@@ -47,7 +47,7 @@ public class CA2229NoConstructor : ISerializable
 Imports System
 Imports System.Runtime.Serialization
 <Serializable>
-Public Class CA2229NoConstructor
+Public Class {|CA2229:CA2229NoConstructor|}
     Implements ISerializable
 
     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
@@ -79,7 +79,7 @@ using System.Runtime.Serialization;
 [Serializable]
 public class CA2229HasConstructorWrongAccessibility : ISerializable
 {
-    public CA2229HasConstructorWrongAccessibility(SerializationInfo info, StreamingContext context) { }
+    public {|CA2229:CA2229HasConstructorWrongAccessibility|}(SerializationInfo info, StreamingContext context) { }
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
@@ -106,7 +106,7 @@ Imports System.Runtime.Serialization
 Public Class CA2229HasConstructorWrongAccessibility
     Implements ISerializable
 
-    Public Sub New(info As SerializationInfo, context As StreamingContext)
+    Public Sub {|CA2229:New|}(info As SerializationInfo, context As StreamingContext)
     End Sub
 
     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
@@ -137,7 +137,7 @@ using System.Runtime.Serialization;
 [Serializable]
 public sealed class CA2229HasConstructorWrongAccessibility2 : ISerializable
 {
-    protected internal CA2229HasConstructorWrongAccessibility2(SerializationInfo info, StreamingContext context) { }
+    protected internal {|CA2229:CA2229HasConstructorWrongAccessibility2|}(SerializationInfo info, StreamingContext context) { }
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
@@ -164,7 +164,7 @@ Imports System.Runtime.Serialization
 Public NotInheritable Class CA2229HasConstructorWrongAccessibility2
     Implements ISerializable
 
-    Protected Friend Sub New(info As SerializationInfo, context As StreamingContext)
+    Protected Friend Sub {|CA2229:New|}(info As SerializationInfo, context As StreamingContext)
     End Sub
 
     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData

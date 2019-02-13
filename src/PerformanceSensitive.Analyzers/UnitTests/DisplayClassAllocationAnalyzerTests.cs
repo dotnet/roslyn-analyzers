@@ -8,13 +8,14 @@ using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    internal class DisplayClassAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class DisplayClassAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void DisplayClassAllocation_AnonymousMethodExpressionSyntax()
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
 class Test
 {
@@ -23,6 +24,7 @@ class Test
         Action action = CreateAction<int>(5);
     }
 
+    [PerformanceSensitive(""uri"")]
     static Action CreateAction<T>(T item)
     {
         T test = default(T);
@@ -34,17 +36,13 @@ class Test
         };
     }
 }";
-
-            var analyser = new DisplayClassAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.SimpleLambdaExpression, SyntaxKind.AnonymousMethodExpression));
-
-            Assert.Equal(3, info.Allocations.Length);
-            // Diagnostic: (14,16): warning HeapAnalyzerLambdaInGenericMethodRule: Considering moving this out of the generic method
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.LambaOrAnonymousMethodInGenericMethodRule.Id, line: 14, character: 16);
-            // Diagnostic: (13,13): warning HeapAnalyzerClosureCaptureRule: The compiler will emit a class that will hold this as a field to allow capturing of this closure
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureCaptureRule.Id, line: 13, character: 13);
-            // Diagnostic: (14,16): warning HeapAnalyzerClosureSourceRule: Heap allocation of closure Captures: counter
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureDriverRule.Id, line: 14, character: 16);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(15,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
+                        GetCSharpResultAt(15, 13, DisplayClassAllocationAnalyzer.ClosureCaptureRule),
+                        // Test0.cs(16,16): warning HAA0303: Considering moving this out of the generic method
+                        GetCSharpResultAt(16, 16, DisplayClassAllocationAnalyzer.LambaOrAnonymousMethodInGenericMethodRule),
+                        // Test0.cs(16,16): warning HAA0301: Heap allocation of closure Captures: counter
+                        GetCSharpResultAt(16, 16, DisplayClassAllocationAnalyzer.ClosureDriverRule, "counter"));
         }
 
         [Fact]
@@ -54,9 +52,11 @@ class Test
 @"using System.Collections.Generic;
 using System;
 using System.Linq;
+using Roslyn.Utilities;
 
 public class Testing<T>
 {
+    [PerformanceSensitive(""uri"")]
     public Testing()
     {
         int[] intData = new[] { 123, 32, 4 };
@@ -65,14 +65,11 @@ public class Testing<T>
     }
 }";
 
-            var analyser = new DisplayClassAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.SimpleLambdaExpression));
-
-            Assert.Equal(2, info.Allocations.Length);
-            // Diagnostic: (10,13): warning HeapAnalyzerClosureCaptureRule: The compiler will emit a class that will hold this as a field to allow capturing of this closure
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureCaptureRule.Id, line: 10, character: 13);
-            // Diagnostic: (11,39): warning HeapAnalyzerClosureSourceRule: Heap allocation of closure Captures: min
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureDriverRule.Id, line: 11, character: 39);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(12,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
+                        GetCSharpResultAt(12, 13, DisplayClassAllocationAnalyzer.ClosureCaptureRule),
+                        // Test0.cs(13,39): warning HAA0301: Heap allocation of closure Captures: min
+                        GetCSharpResultAt(13, 39, DisplayClassAllocationAnalyzer.ClosureDriverRule, "min"));
         }
 
         [Fact]
@@ -82,69 +79,90 @@ public class Testing<T>
 @"using System.Collections.Generic;
 using System;
 using System.Linq;
+using Roslyn.Utilities;
 
-var words = new[] { ""foo"", ""bar"", ""baz"", ""beer"" };
-var actions = new List<Action>();
-foreach (string word in words) // <-- captured closure
+public class MyClass
 {
-    actions.Add(() => Console.WriteLine(word)); // <-- reason for closure capture
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        var words = new[] { ""foo"", ""bar"", ""baz"", ""beer"" };
+        var actions = new List<Action>();
+        foreach (string word in words) // <-- captured closure
+        {
+            actions.Add(() => Console.WriteLine(word)); // <-- reason for closure capture
+        }
+    }
 }";
-
-            var analyser = new DisplayClassAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.ParenthesizedLambdaExpression));
-
-            Assert.Equal(2, info.Allocations.Length);
-            // Diagnostic: (7,17): warning HeapAnalyzerClosureCaptureRule: The compiler will emit a class that will hold this as a field to allow capturing of this closure
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureCaptureRule.Id, line: 7, character: 17);
-            // Diagnostic: (9,20): warning HeapAnalyzerClosureSourceRule: Heap allocation of closure Captures: word
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureDriverRule.Id, line: 9, character: 20);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(13,25): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
+                        GetCSharpResultAt(13, 25, DisplayClassAllocationAnalyzer.ClosureCaptureRule),
+                        // Test0.cs(15,28): warning HAA0301: Heap allocation of closure Captures: word
+                        GetCSharpResultAt(15, 28, DisplayClassAllocationAnalyzer.ClosureDriverRule, "word"));
         }
 
         [Fact]
         public void DisplayClassAllocation_DoNotReportForNonCapturingAnonymousMethod()
         {
-            var snippet = @"
-                public static void Sorter(int[] arr) {
-                    System.Array.Sort(arr, delegate(int x, int y) { return x - y; });
-                }";
+            var sampleProgram =
+@"using System;
+using Roslyn.Utilities;
 
-            var analyser = new DisplayClassAllocationAnalyzer();
-            var info = ProcessCode(analyser, snippet, ImmutableArray.Create<SyntaxKind>());
-            Assert.Empty(info.Allocations);
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Sorter(int[] arr) 
+    {
+        System.Array.Sort(arr, delegate(int x, int y) { return x - y; });
+    }
+}";
+            VerifyCSharp(sampleProgram, withAttribute: true);
         }
 
         [Fact]
         public void DisplayClassAllocation_DoNotReportForNonCapturingLambda()
         {
-            var snippet = @"
-                public void Sorter(int[] arr) {
-                    System.Array.Sort(arr, (x, y) => x - y);
-                }";
+            var sampleProgram =
+@"using System;
+using Roslyn.Utilities;
 
-            var analyser = new DisplayClassAllocationAnalyzer();
-            var info = ProcessCode(analyser, snippet, ImmutableArray.Create<SyntaxKind>());
-            Assert.Empty(info.Allocations);
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Sorter(int[] arr) 
+    {
+        System.Array.Sort(arr, (x, y) => x - y);
+    }
+}";
+            VerifyCSharp(sampleProgram, withAttribute: true);
         }
 
         [Fact]
         public void DisplayClassAllocation_ReportForCapturingAnonymousMethod()
         {
-            var snippet = @"
-                public void Sorter(int[] arr) {
-                    int z = 2;
-                    System.Array.Sort(arr, delegate(int x, int y) { return x - z; });
-                }";
+            var sampleProgram =
+@"using System;
+using Roslyn.Utilities;
 
-            var analyser = new DisplayClassAllocationAnalyzer();
-            var info = ProcessCode(analyser, snippet, ImmutableArray.Create<SyntaxKind>());
-            Assert.Equal(2, info.Allocations.Length);
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureCaptureRule.Id, line: 3, character: 25);
-            AssertEx.ContainsDiagnostic(info.Allocations, id: DisplayClassAllocationAnalyzer.ClosureDriverRule.Id, line: 4, character: 44);
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Sorter(int[] arr) 
+    {
+        int z = 2;
+        System.Array.Sort(arr, delegate(int x, int y) { return x - z; });
+    }
+}";
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(9,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
+                        GetCSharpResultAt(9, 13, DisplayClassAllocationAnalyzer.ClosureCaptureRule),
+                        // Test0.cs(10,32): warning HAA0301: Heap allocation of closure Captures: z
+                        GetCSharpResultAt(10, 32, DisplayClassAllocationAnalyzer.ClosureDriverRule, "z"));
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            throw new System.NotImplementedException();
+            return new DisplayClassAllocationAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

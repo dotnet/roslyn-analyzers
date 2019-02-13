@@ -174,7 +174,7 @@ namespace Roslyn.Utilities
         {
             if (withAttribute)
             {
-                VerifyCSharp(new[] 
+                VerifyCSharp(new[]
                 {
                     fileAndSource,
                     new FileAndSource() {  Source = PerformanceSensitiveAttributeSource, FilePath = @"c:\temp\PerformanceSensitiveAttribute.cs" }

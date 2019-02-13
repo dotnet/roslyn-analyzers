@@ -1,141 +1,175 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    /// <summary>
-    /// Taken from http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp
-    /// </summary>
-    internal class StackOverflowAnswerTests : AllocationAnalyzerTestsBase
+    // Taken from http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp
+
+    public partial class ExplicitAllocationAnalyzerTests
     {
         [Fact]
         public void Converting_any_value_type_to_System_Object_type()
         {
-            var @script =
-                    @"struct S { }
-                    object box = new S();";
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, @script, ImmutableArray.Create(SyntaxKind.ObjectCreationExpression, SyntaxKind.AnonymousObjectCreationExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKind.ComplexElementInitializerExpression, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression, SyntaxKind.LetClause));
-            Assert.Single(info.Allocations);
-            // Diagnostic: (2,34): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 2, character: 34);
+            var source = @"
+using Roslyn.Utilities;
+
+public struct S { }
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        object box = new S();
+    }
+}";
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(11,22): info HAA0502: Explicit new reference type allocation
+                        GetCSharpResultAt(11, 22, ExplicitAllocationAnalyzer.NewObjectRule));
         }
 
         [Fact]
         public void Converting_any_value_type_to_System_ValueType_type()
         {
-            var @script =
-                    @"struct S { }
-                    System.ValueType box = new S();";
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, @script, ImmutableArray.Create(SyntaxKind.ObjectCreationExpression, SyntaxKind.AnonymousObjectCreationExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKind.ComplexElementInitializerExpression, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression, SyntaxKind.LetClause));
-            Assert.Single(info.Allocations);
-            // Diagnostic: (2,44): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 2, character: 44);
-        }
+            var source = @"
+using Roslyn.Utilities;
 
-        [Fact]
-        public void Converting_any_enumeration_type_to_System_Enum_type()
-        {
-            var @script =
-                @"enum E { A }
-                System.Enum box = E.A;";
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, @script, ImmutableArray.Create(
-                SyntaxKind.SimpleAssignmentExpression,
-                SyntaxKind.ReturnStatement,
-                SyntaxKind.YieldReturnStatement,
-                SyntaxKind.CastExpression,
-                SyntaxKind.AsExpression,
-                SyntaxKind.CoalesceExpression,
-                SyntaxKind.ConditionalExpression,
-                SyntaxKind.ForEachStatement,
-                SyntaxKind.EqualsValueClause,
-                SyntaxKind.Argument));
-            Assert.Single(info.Allocations);
-            // Diagnostic: (2,35): warning HeapAnalyzerBoxingRule: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-            AssertEx.ContainsDiagnostic(info.Allocations, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule.Id, line: 2, character: 35);
+public struct S { }
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        System.ValueType box = new S();
+    }
+}";
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(11,32): info HAA0502: Explicit new reference type allocation
+                        GetCSharpResultAt(11, 32, ExplicitAllocationAnalyzer.NewObjectRule));
         }
 
         [Fact]
         public void Converting_any_value_type_into_interface_reference()
         {
-            var @script =
-                @"interface I { }
-                struct S : I { }
-                I box = new S();";
-            var analyser = new ExplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, @script, ImmutableArray.Create(SyntaxKind.ObjectCreationExpression, SyntaxKind.AnonymousObjectCreationExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKind.ComplexElementInitializerExpression, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayCreationExpression, SyntaxKind.ImplicitArrayCreationExpression, SyntaxKind.LetClause));
-            Assert.Single(info.Allocations);
-            // Diagnostic: (3,25): info HeapAnalyzerExplicitNewObjectRule: Explicit new reference type allocation
-            AssertEx.ContainsDiagnostic(info.Allocations, ExplicitAllocationAnalyzer.NewObjectRule.Id, line: 3, character: 25);
+            var source = @"
+using Roslyn.Utilities;
+
+interface I { }
+
+public struct S : I { }
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        I box = new S();
+    }
+}";
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(13,17): info HAA0502: Explicit new reference type allocation
+                        GetCSharpResultAt(13, 17, ExplicitAllocationAnalyzer.NewObjectRule));
         }
+    }
+
+    public partial class TypeConversionAllocationAnalyzerTests
+    {
 
         [Fact]
-        public void Non_constant_value_types_in_CSharp_string_concatenation()
+        public void Converting_any_enumeration_type_to_System_Enum_type()
         {
-            var @script =
-                @"System.DateTime c = System.DateTime.Now;;
-                string s1 = ""char value will box"" + c;";
-            var analyser = new ConcatenationAllocationAnalyzer();
-            var info = ProcessCode(analyser, @script, ImmutableArray.Create(SyntaxKind.AddExpression, SyntaxKind.AddAssignmentExpression));
-            Assert.Single(info.Allocations);
-            //Diagnostic: (2,53): warning HeapAnalyzerBoxingRule: Value type (char) is being boxed to a reference type for a string concatenation.
-            AssertEx.ContainsDiagnostic(info.Allocations, ConcatenationAllocationAnalyzer.ValueTypeToReferenceTypeInAStringConcatenationRule.Id, line: 2, character: 53);
+            var source = @"
+using Roslyn.Utilities;
+
+enum E { A }
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        System.Enum box = E.A;
+    }
+}";
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(11,27): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                        GetCSharpResultAt(11, 27, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
         }
 
         [Fact]
         public void Creating_delegate_from_value_type_instance_method()
         {
-            var @script =
-                @"using System;
-                struct S { public void M() {} }
-                Action box = new S().M;";
-            var analyser = new TypeConversionAllocationAnalyzer();
-            var info = ProcessCode(analyser, @script, ImmutableArray.Create(
-                SyntaxKind.SimpleAssignmentExpression,
-                SyntaxKind.ReturnStatement,
-                SyntaxKind.YieldReturnStatement,
-                SyntaxKind.CastExpression,
-                SyntaxKind.AsExpression,
-                SyntaxKind.CoalesceExpression,
-                SyntaxKind.ConditionalExpression,
-                SyntaxKind.ForEachStatement,
-                SyntaxKind.EqualsValueClause,
-                SyntaxKind.Argument));
-            Assert.Equal(2, info.Allocations.Length);
-            // Diagnostic: (3,30): warning HeapAnalyzerMethodGroupAllocationRule: This will allocate a delegate instance
-            AssertEx.ContainsDiagnostic(info.Allocations, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule.Id, line: 3, character: 30);
-            // Diagnostic: (3,30): warning HeapAnalyzerDelegateOnStructRule: Struct instance method being used for delegate creation, this will result in a boxing instruction
-            AssertEx.ContainsDiagnostic(info.Allocations, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule.Id, line: 3, character: 30);
-        }
+            var source = @"
+using System;
+using Roslyn.Utilities;
 
+struct S { public void M() {} }
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        Action box = new S().M;
+    }
+}";
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(12,22): warning HAA0603: This will allocate a delegate instance
+                        GetCSharpResultAt(12, 22, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                        // Test0.cs(12,22): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                        GetCSharpResultAt(12, 22, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
+        }
+    }
+
+    public partial class CallSiteImplicitAllocationAnalyzerTests
+    {
         [Fact]
         public void Calling_non_overridden_virtual_methods_on_value_types()
         {
-            var @script =
-                @"enum E { A }
-                E.A.GetHashCode();";
-            var analyser = new CallSiteImplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, @script, ImmutableArray.Create(SyntaxKind.InvocationExpression));
-            Assert.Single(info.Allocations);
-            // Diagnostic: (2,17): warning HeapAnalyzerValueTypeNonOverridenCallRule: Non-overriden virtual method call on a value type adds a boxing or constrained instruction
-            AssertEx.ContainsDiagnostic(info.Allocations, CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule.Id, line: 2, character: 17);
-        }
+            var source = @"
+using System;
+using Roslyn.Utilities;
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            throw new System.NotImplementedException();
-        }
+enum E { A }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        E.A.GetHashCode();
+    }
+}";
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(12,9): warning HAA0102: Non-overridden virtual method call on a value type adds a boxing or constrained instruction
+                        GetCSharpResultAt(12, 9, CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule));
+        }
+    }
+
+    public partial class ConcatenationAllocationAnalyzerTests
+    {
+        [Fact]
+        public void Non_constant_value_types_in_CSharp_string_concatenation()
         {
-            throw new System.NotImplementedException();
+            var source = @"
+using System;
+using Roslyn.Utilities;
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        System.DateTime c = System.DateTime.Now;
+        string s1 = ""char value will box"" + c;
+    }
+}";
+            VerifyCSharp(source, withAttribute: true,
+                        // Test0.cs(11,45): warning HAA0202: Value type (System.DateTime) is being boxed to a reference type for a string concatenation.
+                        GetCSharpResultAt(11, 45, ConcatenationAllocationAnalyzer.ValueTypeToReferenceTypeInAStringConcatenationRule, "System.DateTime"));
         }
     }
 }

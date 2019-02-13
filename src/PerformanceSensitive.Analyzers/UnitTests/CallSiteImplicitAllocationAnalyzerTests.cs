@@ -6,7 +6,7 @@ using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public partial class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void CallSiteImplicitAllocation_Param()

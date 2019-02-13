@@ -80,7 +80,7 @@ namespace PerformanceSensitive.Analyzers
                 }
 
                 // The attribute might be applied to a property declaration, instead of its accessor declaration.
-                if (symbol is IMethodSymbol methodSymbol && 
+                if (symbol is IMethodSymbol methodSymbol &&
                     (methodSymbol.MethodKind == MethodKind.PropertyGet || methodSymbol.MethodKind == MethodKind.PropertySet) &&
                     TryGet(methodSymbol.AssociatedSymbol, out info))
                 {

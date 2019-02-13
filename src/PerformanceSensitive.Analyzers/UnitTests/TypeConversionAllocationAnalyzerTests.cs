@@ -9,7 +9,7 @@ using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class TypeConversionAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public partial class TypeConversionAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void TypeConversionAllocation_ArgumentSyntax()

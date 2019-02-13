@@ -6,7 +6,7 @@ using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class ConcatenationAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public partial class ConcatenationAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void ConcatenationAllocation_Basic1()

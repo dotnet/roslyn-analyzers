@@ -6,7 +6,7 @@ using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class ExplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public partial class ExplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void ExplicitAllocation_InitializerExpressionSyntax()

@@ -1,15 +1,19 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using PerformanceSensitive.CSharp.Analyzers;
+using Test.Utilities;
 using Xunit;
+using VerifyCS = PerformanceSensitive.Analyzers.UnitTests.CSharpPerformanceCodeFixVerifier<
+    PerformanceSensitive.CSharp.Analyzers.ConcatenationAllocationAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public partial class ConcatenationAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class ConcatenationAllocationAnalyzerTests
     {
         [Fact]
-        public void ConcatenationAllocation_Basic1()
+        public async Task ConcatenationAllocation_Basic1()
         {
             var sampleProgram =
 @"using System;
@@ -23,11 +27,11 @@ public class MyClass
         string s0 = ""hello"" + 0.ToString() + ""world"" + 1.ToString();
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
 
         [Fact]
-        public void ConcatenationAllocation_Basic2()
+        public async Task ConcatenationAllocation_Basic2()
         {
             var sampleProgram =
 @"using System;
@@ -41,9 +45,9 @@ public class MyClass
         string s2 = ""ohell"" + 2.ToString() + ""world"" + 3.ToString() + 4.ToString();
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(9,21): warning HAA0201: Considering using StringBuilder
-                        GetCSharpResultAt(9, 21, ConcatenationAllocationAnalyzer.StringConcatenationAllocationRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(9,21): warning HAA0201: Considering using StringBuilder
+                VerifyCS.Diagnostic(ConcatenationAllocationAnalyzer.StringConcatenationAllocationRule).WithLocation(9, 21));
         }
 
         [Theory]
@@ -51,7 +55,7 @@ public class MyClass
         [InlineData("string s0 = nameof(System.String) + true;")]
         [InlineData("string s0 = nameof(System.String) + new System.IntPtr();")]
         [InlineData("string s0 = nameof(System.String) + new System.UIntPtr();")]
-        public void ConcatenationAllocation_DoNotWarnForOptimizedValueTypes(string statement)
+        public async Task ConcatenationAllocation_DoNotWarnForOptimizedValueTypes(string statement)
         {
             var source = $@"using System;
 using Roslyn.Utilities;
@@ -64,7 +68,7 @@ public class MyClass
         {statement}
     }}
 }}";
-            VerifyCSharp(source, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
         [Theory]
@@ -72,7 +76,7 @@ public class MyClass
         [InlineData(@"const string s0 = nameof(System.String) + ""."";")]
         [InlineData(@"string s0 = nameof(System.String) + ""."" + nameof(System.String);")]
         [InlineData(@"string s0 = nameof(System.String) + ""."";")]
-        public void ConcatenationAllocation_DoNotWarnForConst(string statement)
+        public async Task ConcatenationAllocation_DoNotWarnForConst(string statement)
         {
             var source = $@"using System;
 using Roslyn.Utilities;
@@ -85,17 +89,29 @@ public class MyClass
         {statement}
     }}
 }}";
-            VerifyCSharp(source, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        [Fact]
+        [WorkItem(7995606, "http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp")]
+        public async Task Non_constant_value_types_in_CSharp_string_concatenation()
         {
-            return new ConcatenationAllocationAnalyzer();
-        }
+            var source = @"
+using System;
+using Roslyn.Utilities;
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            throw new System.NotImplementedException();
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        System.DateTime c = System.DateTime.Now;
+        string s1 = ""char value will box"" + c;
+    }
+}";
+            await VerifyCS.VerifyAnalyzerAsync(source,
+                // Test0.cs(11,45): warning HAA0202: Value type (System.DateTime) is being boxed to a reference type for a string concatenation.
+                VerifyCS.Diagnostic(ConcatenationAllocationAnalyzer.ValueTypeToReferenceTypeInAStringConcatenationRule).WithLocation(11, 45).WithArguments("System.DateTime"));
         }
     }
 }

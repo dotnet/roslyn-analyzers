@@ -1,15 +1,18 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
+using VerifyCS = PerformanceSensitive.Analyzers.UnitTests.CSharpPerformanceCodeFixVerifier<
+    PerformanceSensitive.CSharp.Analyzers.DisplayClassAllocationAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class DisplayClassAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class DisplayClassAllocationAnalyzerTests
     {
         [Fact]
-        public void DisplayClassAllocation_AnonymousMethodExpressionSyntax()
+        public async Task DisplayClassAllocation_AnonymousMethodExpressionSyntax()
         {
             var sampleProgram =
 @"using System;
@@ -34,17 +37,17 @@ class Test
         };
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(15,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
-                        GetCSharpResultAt(15, 13, DisplayClassAllocationAnalyzer.ClosureCaptureRule),
-                        // Test0.cs(16,16): warning HAA0303: Considering moving this out of the generic method
-                        GetCSharpResultAt(16, 16, DisplayClassAllocationAnalyzer.LambaOrAnonymousMethodInGenericMethodRule),
-                        // Test0.cs(16,16): warning HAA0301: Heap allocation of closure Captures: counter
-                        GetCSharpResultAt(16, 16, DisplayClassAllocationAnalyzer.ClosureDriverRule, "counter"));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(15,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.ClosureCaptureRule).WithLocation(15, 13),
+                // Test0.cs(16,16): warning HAA0303: Considering moving this out of the generic method
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.LambaOrAnonymousMethodInGenericMethodRule).WithLocation(16, 16),
+                // Test0.cs(16,16): warning HAA0301: Heap allocation of closure Captures: counter
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.ClosureDriverRule).WithLocation(16, 16).WithArguments("counter"));
         }
 
         [Fact]
-        public void DisplayClassAllocation_SimpleLambdaExpressionSyntax()
+        public async Task DisplayClassAllocation_SimpleLambdaExpressionSyntax()
         {
             var sampleProgram =
 @"using System.Collections.Generic;
@@ -63,15 +66,15 @@ public class Testing<T>
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(12,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
-                        GetCSharpResultAt(12, 13, DisplayClassAllocationAnalyzer.ClosureCaptureRule),
-                        // Test0.cs(13,39): warning HAA0301: Heap allocation of closure Captures: min
-                        GetCSharpResultAt(13, 39, DisplayClassAllocationAnalyzer.ClosureDriverRule, "min"));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(12,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.ClosureCaptureRule).WithLocation(12, 13),
+                // Test0.cs(13,39): warning HAA0301: Heap allocation of closure Captures: min
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.ClosureDriverRule).WithLocation(13, 39).WithArguments("min"));
         }
 
         [Fact]
-        public void DisplayClassAllocation_ParenthesizedLambdaExpressionSyntax()
+        public async Task DisplayClassAllocation_ParenthesizedLambdaExpressionSyntax()
         {
             var sampleProgram =
 @"using System.Collections.Generic;
@@ -92,15 +95,15 @@ public class MyClass
         }
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(13,25): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
-                        GetCSharpResultAt(13, 25, DisplayClassAllocationAnalyzer.ClosureCaptureRule),
-                        // Test0.cs(15,28): warning HAA0301: Heap allocation of closure Captures: word
-                        GetCSharpResultAt(15, 28, DisplayClassAllocationAnalyzer.ClosureDriverRule, "word"));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(13,25): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.ClosureCaptureRule).WithLocation(13, 25),
+                // Test0.cs(15,28): warning HAA0301: Heap allocation of closure Captures: word
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.ClosureDriverRule).WithLocation(15, 28).WithArguments("word"));
         }
 
         [Fact]
-        public void DisplayClassAllocation_DoNotReportForNonCapturingAnonymousMethod()
+        public async Task DisplayClassAllocation_DoNotReportForNonCapturingAnonymousMethod()
         {
             var sampleProgram =
 @"using System;
@@ -114,11 +117,11 @@ public class MyClass
         System.Array.Sort(arr, delegate(int x, int y) { return x - y; });
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
 
         [Fact]
-        public void DisplayClassAllocation_DoNotReportForNonCapturingLambda()
+        public async Task DisplayClassAllocation_DoNotReportForNonCapturingLambda()
         {
             var sampleProgram =
 @"using System;
@@ -132,11 +135,11 @@ public class MyClass
         System.Array.Sort(arr, (x, y) => x - y);
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
 
         [Fact]
-        public void DisplayClassAllocation_ReportForCapturingAnonymousMethod()
+        public async Task DisplayClassAllocation_ReportForCapturingAnonymousMethod()
         {
             var sampleProgram =
 @"using System;
@@ -151,21 +154,11 @@ public class MyClass
         System.Array.Sort(arr, delegate(int x, int y) { return x - z; });
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(9,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
-                        GetCSharpResultAt(9, 13, DisplayClassAllocationAnalyzer.ClosureCaptureRule),
-                        // Test0.cs(10,32): warning HAA0301: Heap allocation of closure Captures: z
-                        GetCSharpResultAt(10, 32, DisplayClassAllocationAnalyzer.ClosureDriverRule, "z"));
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DisplayClassAllocationAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            throw new System.NotImplementedException();
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(9,13): warning HAA0302: The compiler will emit a class that will hold this as a field to allow capturing of this closure
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.ClosureCaptureRule).WithLocation(9, 13),
+                // Test0.cs(10,32): warning HAA0301: Heap allocation of closure Captures: z
+                VerifyCS.Diagnostic(DisplayClassAllocationAnalyzer.ClosureDriverRule).WithLocation(10, 32).WithArguments("z"));
         }
     }
 }

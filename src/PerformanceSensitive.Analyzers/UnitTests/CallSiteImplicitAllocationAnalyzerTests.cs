@@ -1,15 +1,19 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using PerformanceSensitive.CSharp.Analyzers;
+using Test.Utilities;
 using Xunit;
+using VerifyCS = PerformanceSensitive.Analyzers.UnitTests.CSharpPerformanceCodeFixVerifier<
+    PerformanceSensitive.CSharp.Analyzers.CallSiteImplicitAllocationAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public partial class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class CallSiteImplicitAllocationAnalyzerTests
     {
         [Fact]
-        public void CallSiteImplicitAllocation_Param()
+        public async Task CallSiteImplicitAllocation_Param()
         {
             var sampleProgram =
 @"using System;
@@ -39,19 +43,19 @@ public class MyClass
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(10,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
-                        GetCSharpResultAt(10, 9, CallSiteImplicitAllocationAnalyzer.ParamsParameterRule),
-                        // Test0.cs(11,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
-                        GetCSharpResultAt(11, 9, CallSiteImplicitAllocationAnalyzer.ParamsParameterRule),
-                        // Test0.cs(13,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
-                        GetCSharpResultAt(13, 9, CallSiteImplicitAllocationAnalyzer.ParamsParameterRule),
-                        // Test0.cs(16,20): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
-                        GetCSharpResultAt(16, 20, CallSiteImplicitAllocationAnalyzer.ParamsParameterRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(10,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ParamsParameterRule).WithLocation(10, 9),
+                // Test0.cs(11,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ParamsParameterRule).WithLocation(11, 9),
+                // Test0.cs(13,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ParamsParameterRule).WithLocation(13, 9),
+                // Test0.cs(16,20): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ParamsParameterRule).WithLocation(16, 20));
         }
 
         [Fact]
-        public void CallSiteImplicitAllocation_NonOverridenMethodOnStruct()
+        public async Task CallSiteImplicitAllocation_NonOverridenMethodOnStruct()
         {
             var sampleProgram = @"
 using System;
@@ -80,13 +84,13 @@ public struct OverrideToHashCode
 }";
 
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(10,22): warning HAA0102: Non-overridden virtual method call on a value type adds a boxing or constrained instruction
-                        GetCSharpResultAt(10, 22, CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(10,22): warning HAA0102: Non-overridden virtual method call on a value type adds a boxing or constrained instruction
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule).WithLocation(10, 22));
         }
 
         [Fact]
-        public void CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForStaticCalls()
+        public async Task CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForStaticCalls()
         {
             var sampleProgram = @"
 using System;
@@ -100,11 +104,11 @@ public class MyClass
         var t = System.Enum.GetUnderlyingType(typeof(System.StringComparison));
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
 
         [Fact]
-        public void CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForNonVirtualCalls()
+        public async Task CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForNonVirtualCallsAsync()
         {
             var sampleProgram = @"
 using System.IO;
@@ -120,17 +124,30 @@ public class MyClass
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        [Fact]
+        [WorkItem(7995606, "http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp")]
+        public async Task Calling_non_overridden_virtual_methods_on_value_types()
         {
-            return new CallSiteImplicitAllocationAnalyzer();
-        }
+            var source = @"
+using System;
+using Roslyn.Utilities;
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            throw new System.NotImplementedException();
+enum E { A }
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        E.A.GetHashCode();
+    }
+}";
+            await VerifyCS.VerifyAnalyzerAsync(source,
+                // Test0.cs(12,9): warning HAA0102: Non-overridden virtual method call on a value type adds a boxing or constrained instruction
+                VerifyCS.Diagnostic(CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule).WithLocation(12, 9));
         }
     }
 }

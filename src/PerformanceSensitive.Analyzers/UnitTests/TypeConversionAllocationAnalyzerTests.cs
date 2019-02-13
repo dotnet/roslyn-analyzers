@@ -1,20 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using PerformanceSensitive.CSharp.Analyzers;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = PerformanceSensitive.Analyzers.UnitTests.CSharpPerformanceCodeFixVerifier<
+    PerformanceSensitive.CSharp.Analyzers.TypeConversionAllocationAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public partial class TypeConversionAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class TypeConversionAllocationAnalyzerTests
     {
         [Fact]
-        public void TypeConversionAllocation_ArgumentSyntax()
+        public async Task TypeConversionAllocation_ArgumentSyntax()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using Roslyn.Utilities;
 
@@ -35,14 +36,13 @@ public class MyObject
         _ = new MyObject(10); // Allocation
     }
 }",
-            withAttribute: true,
-            GetCSharpResultAt(18, 17, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule),
-            GetCSharpResultAt(19, 26, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule)
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(18, 17),
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(19, 26)
             );
         }
 
         [Fact]
-        public void TypeConversionAllocation_ArgumentSyntax_WithDelegates()
+        public async Task TypeConversionAllocation_ArgumentSyntax_WithDelegates()
         {
             var sampleProgram =
 @"using System;
@@ -81,17 +81,17 @@ public struct MyStruct
 
     private string fooObjCall(object obj) => null;
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true,
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
                 // Test0.cs(10,28): warning HAA0603: This will allocate a delegate instance
-                GetCSharpResultAt(10, 28, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(10, 28),
                 // Test0.cs(27,29): warning HAA0603: This will allocate a delegate instance
-                GetCSharpResultAt(27, 29, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(27, 29),
                 // Test0.cs(27,29): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
-                GetCSharpResultAt(27, 29, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule).WithLocation(27, 29));
         }
 
         [Fact]
-        public void TypeConversionAllocation_ReturnStatementSyntax()
+        public async Task TypeConversionAllocation_ReturnStatementSyntaxAsync()
         {
             var sampleProgram =
 @"using System;
@@ -112,15 +112,15 @@ public class MyObject
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(9,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(9, 22, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule),
-                        // Test0.cs(15,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(15, 22, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(9,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(9, 22),
+                // Test0.cs(15,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(15, 22));
         }
 
         [Fact]
-        public void TypeConversionAllocation_ReturnStatementSyntax_NoAlloc()
+        public async Task TypeConversionAllocation_ReturnStatementSyntax_NoAlloc()
         {
             var sampleProgram =
 @"using System;
@@ -138,11 +138,11 @@ public class MyObject
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
 
         [Fact]
-        public void TypeConversionAllocation_YieldStatementSyntax()
+        public async Task TypeConversionAllocation_YieldStatementSyntax()
         {
             var sampleProgram =
 @"using System;
@@ -177,13 +177,13 @@ public class MyClass
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(21,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(21, 22, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(21,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(21, 22));
         }
 
         [Fact]
-        public void TypeConversionAllocation_BinaryExpressionSyntax()
+        public async Task TypeConversionAllocation_BinaryExpressionSyntax()
         {
             var sampleProgram =
 @"using System;
@@ -203,15 +203,15 @@ public class MyClass
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(10,26): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(10, 26, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule),
-                        // Test0.cs(13,18): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(13, 18, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(10,26): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(10, 26),
+                // Test0.cs(13,18): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(13, 18));
         }
 
         [Fact]
-        public void TypeConversionAllocation_BinaryExpressionSyntax_WithDelegates()
+        public async Task TypeConversionAllocation_BinaryExpressionSyntax_WithDelegates()
         {
             var sampleProgram =
 @"using System;
@@ -250,17 +250,17 @@ public struct MyStruct
 }";
 
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(10,31): warning HAA0603: This will allocate a delegate instance
-                        GetCSharpResultAt(10, 31, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
-                        // Test0.cs(26,31): warning HAA0603: This will allocate a delegate instance
-                        GetCSharpResultAt(26, 31, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
-                        // Test0.cs(26,31): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
-                        GetCSharpResultAt(26, 31, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(10,31): warning HAA0603: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(10, 31),
+                // Test0.cs(26,31): warning HAA0603: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(26, 31),
+                // Test0.cs(26,31): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule).WithLocation(26, 31));
         }
 
         [Fact]
-        public void TypeConversionAllocation_EqualsValueClauseSyntax()
+        public async Task TypeConversionAllocation_EqualsValueClauseSyntax()
         {
             // for (object i = 0;;)
             var sampleProgram =
@@ -282,13 +282,13 @@ public class MyClass
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(9,25): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(9, 25, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(9,25): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(9, 25));
         }
 
         [Fact]
-        public void TypeConversionAllocation_EqualsValueClauseSyntax_WithDelegates()
+        public async Task TypeConversionAllocation_EqualsValueClauseSyntax_WithDelegates()
         {
             var sampleProgram =
 @"using System;
@@ -324,18 +324,18 @@ public struct MyStruct
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(9,38): warning HAA0603: This will allocate a delegate instance
-                        GetCSharpResultAt(9, 38, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
-                        // Test0.cs(24,38): warning HAA0603: This will allocate a delegate instance
-                        GetCSharpResultAt(24, 38, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
-                        // Test0.cs(24,38): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
-                        GetCSharpResultAt(24, 38, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(9,38): warning HAA0603: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(9, 38),
+                // Test0.cs(24,38): warning HAA0603: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(24, 38),
+                // Test0.cs(24,38): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule).WithLocation(24, 38));
         }
 
         [Fact]
         [WorkItem(2, "https://github.com/mjsabby/RoslynClrHeapAllocationAnalyzer/issues/2")]
-        public void TypeConversionAllocation_EqualsValueClause_ExplicitMethodGroupAllocation_Bug()
+        public async Task TypeConversionAllocation_EqualsValueClause_ExplicitMethodGroupAllocation_Bug()
         {
             var sampleProgram =
 @"using System;
@@ -367,17 +367,17 @@ public struct MyStruct
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(9,30): warning HAA0603: This will allocate a delegate instance
-                        GetCSharpResultAt(9, 30, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
-                        // Test0.cs(22,30): warning HAA0603: This will allocate a delegate instance
-                        GetCSharpResultAt(22, 30, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule),
-                        // Test0.cs(22,30): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
-                        GetCSharpResultAt(22, 30, TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(9,30): warning HAA0603: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(9, 30),
+                // Test0.cs(22,30): warning HAA0603: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(22, 30),
+                // Test0.cs(22,30): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule).WithLocation(22, 30));
         }
 
         [Fact]
-        public void TypeConversionAllocation_ConditionalExpressionSyntax()
+        public async Task TypeConversionAllocation_ConditionalExpressionSyntax()
         {
             var sampleProgram =
 @"using System;
@@ -394,13 +394,13 @@ public class MyClass
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(10,31): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(10, 31, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(10,31): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(10, 31));
         }
 
         [Fact]
-        public void TypeConversionAllocation_CastExpressionSyntax()
+        public async Task TypeConversionAllocation_CastExpressionSyntax()
         {
             var sampleProgram =
 @"using System;
@@ -416,13 +416,13 @@ public class MyClass
     }
 }";
 
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(9,26): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(9, 26, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(9,26): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(9, 26));
         }
 
         [Fact]
-        public void TypeConversionAllocation_ArgumentWithImplicitStringCastOperator()
+        public async Task TypeConversionAllocation_ArgumentWithImplicitStringCastOperator()
         {
             const string programWithoutImplicitCastOperator = @"
 using System;
@@ -437,9 +437,9 @@ public struct AStruct
     }
 }";
 
-            VerifyCSharp(programWithoutImplicitCastOperator, withAttribute: true,
-                        // Test0.cs(10,34): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(10, 34, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(programWithoutImplicitCastOperator,
+                // Test0.cs(10,34): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(10, 34));
 
             const string programWithImplicitCastOperator = @"
 using System;
@@ -466,12 +466,12 @@ public struct AStruct
         return astruct.WrappedString;
     }
 }";
-            VerifyCSharp(programWithImplicitCastOperator, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(programWithImplicitCastOperator);
         }
 
 
         [Fact]
-        public void TypeConversionAllocation_YieldReturnImplicitStringCastOperator()
+        public async Task TypeConversionAllocation_YieldReturnImplicitStringCastOperator()
         {
             const string programWithoutImplicitCastOperator = @"
 using System;
@@ -486,9 +486,9 @@ public struct AStruct
     }
 }";
 
-            VerifyCSharp(programWithoutImplicitCastOperator, withAttribute: true,
-                        // Test0.cs(10,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(10, 22, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(programWithoutImplicitCastOperator,
+                // Test0.cs(10,22): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(10, 22));
 
             const string programWithImplicitCastOperator = @"
 using System;
@@ -508,11 +508,11 @@ public struct AStruct
     }
 }";
 
-            VerifyCSharp(programWithImplicitCastOperator, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(programWithImplicitCastOperator);
         }
 
         [Fact]
-        public void TypeConversionAllocation_InterpolatedStringWithInt_BoxingWarning()
+        public async Task TypeConversionAllocation_InterpolatedStringWithInt_BoxingWarning()
         {
             var source = @"
 using System;
@@ -527,11 +527,12 @@ class Program
     }
 }";
 
-            VerifyCSharp(source, withAttribute: true,
-                        // Test0.cs(10,23): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(10, 23, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(source,
+                // Test0.cs(10,23): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(10, 23));
         }
 
+#if false
         [Fact]
         public void TypeConversionAllocation_InterpolatedStringWithString_NoWarning()
         {
@@ -542,13 +543,14 @@ class Program
 
             Assert.Empty(info.Allocations);
         }
+#endif
 
         [Theory]
         [InlineData(@"private readonly System.Func<string, bool> fileExists =        System.IO.File.Exists;")]
         [InlineData(@"private System.Func<string, bool> fileExists { get; } =        System.IO.File.Exists;")]
         [InlineData(@"private static System.Func<string, bool> fileExists { get; } = System.IO.File.Exists;")]
         [InlineData(@"private static readonly System.Func<string, bool> fileExists = System.IO.File.Exists;")]
-        public void TypeConversionAllocation_DelegateAssignmentToReadonly_DoNotWarn(string snippet)
+        public async Task TypeConversionAllocation_DelegateAssignmentToReadonly_DoNotWarn(string snippet)
         {
             var source = $@"
 using System;
@@ -560,13 +562,13 @@ class Program
     {snippet}
 }}";
 
-            VerifyCSharp(source, withAttribute: true,
-                        // Test0.cs(8,68): info HeapAnalyzerReadonlyMethodGroupAllocationRule: This will allocate a delegate instance
-                        GetCSharpResultAt(8, 68, TypeConversionAllocationAnalyzer.ReadonlyMethodGroupAllocationRule));
+            await VerifyCS.VerifyAnalyzerAsync(source,
+                // Test0.cs(8,68): info HeapAnalyzerReadonlyMethodGroupAllocationRule: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ReadonlyMethodGroupAllocationRule).WithLocation(8, 68));
         }
 
         [Fact]
-        public void TypeConversionAllocation_ExpressionBodiedPropertyBoxing_WithBoxing()
+        public async Task TypeConversionAllocation_ExpressionBodiedPropertyBoxing_WithBoxing()
         {
             const string snippet = @"
 using System;
@@ -578,13 +580,13 @@ class Program
     object Obj => 1;
 }";
 
-            VerifyCSharp(snippet, withAttribute: true,
-                        // Test0.cs(8,19): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
-                        GetCSharpResultAt(8, 19, TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule));
+            await VerifyCS.VerifyAnalyzerAsync(snippet,
+                // Test0.cs(8,19): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(8, 19));
         }
 
         [Fact]
-        public void TypeConversionAllocation_ExpressionBodiedPropertyBoxing_WithoutBoxing()
+        public async Task TypeConversionAllocation_ExpressionBodiedPropertyBoxing_WithoutBoxing()
         {
             const string snippet = @"
 using System;
@@ -596,11 +598,11 @@ class Program
     object Obj => 1.ToString();
 }";
 
-            VerifyCSharp(snippet, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(snippet);
         }
 
         [Fact]
-        public void TypeConversionAllocation_ExpressionBodiedPropertyDelegate()
+        public async Task TypeConversionAllocation_ExpressionBodiedPropertyDelegate()
         {
             const string snippet = @"
 using System;
@@ -614,13 +616,13 @@ class Program
     Action<int> Obj => Function;
 }";
 
-            VerifyCSharp(snippet, withAttribute: true,
-                        // Test0.cs(10,24): warning HAA0603: This will allocate a delegate instance
-                        GetCSharpResultAt(10, 24, TypeConversionAllocationAnalyzer.MethodGroupAllocationRule));
+            await VerifyCS.VerifyAnalyzerAsync(snippet,
+                // Test0.cs(10,24): warning HAA0603: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(10, 24));
         }
 
         [Fact]
-        public void TypeConversionAllocation_ExpressionBodiedPropertyExplicitDelegate_NoWarning()
+        public async Task TypeConversionAllocation_ExpressionBodiedPropertyExplicitDelegate_NoWarning()
         {
             // Tests that an explicit delegate creation does not trigger HAA0603. It should be handled by HAA0502.
             const string snippet = @"
@@ -635,17 +637,54 @@ class Program
     Action<int> Obj => new Action<int>(Function);
 }";
 
-            VerifyCSharp(snippet, withAttribute: true);
+            await VerifyCS.VerifyAnalyzerAsync(snippet);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        [Fact]
+        [WorkItem(7995606, "http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp")]
+        public async Task Converting_any_enumeration_type_to_System_Enum_type()
         {
-            return new TypeConversionAllocationAnalyzer();
+            var source = @"
+using Roslyn.Utilities;
+
+enum E { A }
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        System.Enum box = E.A;
+    }
+}";
+            await VerifyCS.VerifyAnalyzerAsync(source,
+                // Test0.cs(11,27): warning HAA0601: Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(11, 27));
         }
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        [Fact]
+        [WorkItem(7995606, "http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp")]
+        public async Task Creating_delegate_from_value_type_instance_method()
         {
-            throw new System.NotImplementedException();
+            var source = @"
+using System;
+using Roslyn.Utilities;
+
+struct S { public void M() {} }
+
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Foo() 
+    {
+        Action box = new S().M;
+    }
+}";
+            await VerifyCS.VerifyAnalyzerAsync(source,
+                // Test0.cs(12,22): warning HAA0603: This will allocate a delegate instance
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.MethodGroupAllocationRule).WithLocation(12, 22),
+                // Test0.cs(12,22): warning HAA0602: Struct instance method being used for delegate creation, this will result in a boxing instruction
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.DelegateOnStructInstanceRule).WithLocation(12, 22));
         }
     }
 }

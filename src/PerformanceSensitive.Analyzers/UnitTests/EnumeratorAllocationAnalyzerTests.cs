@@ -1,15 +1,17 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
-using PerformanceSensitive.CSharp.Analyzers;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = PerformanceSensitive.Analyzers.UnitTests.CSharpPerformanceCodeFixVerifier<
+    PerformanceSensitive.CSharp.Analyzers.EnumeratorAllocationAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    public class EnumeratorAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class EnumeratorAllocationAnalyzerTests
     {
         [Fact]
-        public void EnumeratorAllocation_Basic()
+        public async Task EnumeratorAllocation_Basic()
         {
             var sampleProgram =
 @"using System.Collections.Generic;
@@ -47,15 +49,15 @@ public class MyClass
         }
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(25,24): warning HAA0401: Non-ValueType enumerator may result in a heap allocation
-                        GetCSharpResultAt(25, 24, EnumeratorAllocationAnalyzer.ReferenceTypeEnumeratorRule),
-                        // Test0.cs(30,24): warning HAA0401: Non-ValueType enumerator may result in a heap allocation
-                        GetCSharpResultAt(30, 24, EnumeratorAllocationAnalyzer.ReferenceTypeEnumeratorRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(25,24): warning HAA0401: Non-ValueType enumerator may result in a heap allocation
+                VerifyCS.Diagnostic().WithLocation(25, 24),
+                // Test0.cs(30,24): warning HAA0401: Non-ValueType enumerator may result in a heap allocation
+                VerifyCS.Diagnostic().WithLocation(30, 24));
         }
 
         [Fact]
-        public void EnumeratorAllocation_Advanced()
+        public async Task EnumeratorAllocation_Advanced()
         {
             var sampleProgram =
 @"using System.Collections.Generic;
@@ -84,13 +86,13 @@ public class MyClass
         }
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(17,24): warning HAA0401: Non-ValueType enumerator may result in a heap allocation
-                        GetCSharpResultAt(17, 24, EnumeratorAllocationAnalyzer.ReferenceTypeEnumeratorRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(17,24): warning HAA0401: Non-ValueType enumerator may result in a heap allocation
+                VerifyCS.Diagnostic().WithLocation(17, 24));
         }
 
         [Fact]
-        public void EnumeratorAllocation_Via_InvocationExpressionSyntax()
+        public async Task EnumeratorAllocation_Via_InvocationExpressionSyntax()
         {
             var sampleProgram =
 @"using System.Collections.Generic;
@@ -127,13 +129,13 @@ public class MyClass
         return (IEnumerator<int>)intData.GetEnumerator();
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true,
-                        // Test0.cs(17,43): warning HAA0401: Non-ValueType enumerator may result in a heap allocation
-                        GetCSharpResultAt(17, 43, EnumeratorAllocationAnalyzer.ReferenceTypeEnumeratorRule));
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                // Test0.cs(17,43): warning HAA0401: Non-ValueType enumerator may result in a heap allocation
+                VerifyCS.Diagnostic().WithLocation(17, 43));
         }
 
         [Fact]
-        public void EnumeratorAllocation_IterateOverString_NoWarning()
+        public async Task EnumeratorAllocation_IterateOverString_NoWarning()
         {
             var sampleProgram =
 @"using System;
@@ -147,17 +149,7 @@ public class MyClass
         foreach (char c in ""foo"") { };
     }
 }";
-            VerifyCSharp(sampleProgram, withAttribute: true);
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new EnumeratorAllocationAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            throw new System.NotImplementedException();
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
     }
 }

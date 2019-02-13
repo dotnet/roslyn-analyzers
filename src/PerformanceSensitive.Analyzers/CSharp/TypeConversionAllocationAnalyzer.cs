@@ -37,8 +37,7 @@ namespace PerformanceSensitive.CSharp.Analyzers
             SyntaxKind.EqualsValueClause,
             SyntaxKind.Argument,
             SyntaxKind.ArrowExpressionClause,
-            SyntaxKind.Interpolation
-            );
+            SyntaxKind.Interpolation);
 
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 

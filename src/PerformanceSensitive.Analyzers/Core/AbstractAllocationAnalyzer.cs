@@ -74,18 +74,37 @@ namespace PerformanceSensitive.Analyzers
 
             public bool TryGetContainsPerformanceSensitiveInfo(ISymbol symbol, out PerformanceSensitiveInfo info)
             {
-                var attributes = symbol.GetAttributes();
-                foreach (var attribute in attributes)
+                if (TryGet(symbol, out info))
                 {
-                    if (attribute.AttributeClass.Equals(PerfSensitiveAttributeSymbol))
-                    {
-                        info = CreatePerformanceSensitiveInfo(attribute);
-                        return true;
-                    }
+                    return true;
+                }
+
+                // The attribute might be applied to a property declaration, instead of its accessor declaration.
+                if (symbol is IMethodSymbol methodSymbol && 
+                    (methodSymbol.MethodKind == MethodKind.PropertyGet || methodSymbol.MethodKind == MethodKind.PropertySet) &&
+                    TryGet(methodSymbol.AssociatedSymbol, out info))
+                {
+                    return true;
                 }
 
                 info = default;
                 return false;
+
+                bool TryGet(ISymbol s, out PerformanceSensitiveInfo i)
+                {
+                    var attributes = s.GetAttributes();
+                    foreach (var attribute in attributes)
+                    {
+                        if (attribute.AttributeClass.Equals(PerfSensitiveAttributeSymbol))
+                        {
+                            i = CreatePerformanceSensitiveInfo(attribute);
+                            return true;
+                        }
+                    }
+
+                    i = default;
+                    return false;
+                }
             }
 
             private static PerformanceSensitiveInfo CreatePerformanceSensitiveInfo(AttributeData data)

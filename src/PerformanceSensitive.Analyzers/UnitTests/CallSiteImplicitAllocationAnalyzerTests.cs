@@ -1,112 +1,131 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using PerformanceSensitive.CSharp.Analyzers;
 using Xunit;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
 {
-    internal class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
+    public class CallSiteImplicitAllocationAnalyzerTests : AllocationAnalyzerTestsBase
     {
         [Fact]
         public void CallSiteImplicitAllocation_Param()
         {
             var sampleProgram =
 @"using System;
+using Roslyn.Utilities;
 
-Params();
-Params(1, 2);
-Params(new [] { 1, 2}); // explicit, so no warning
-ParamsWithObjects(new [] { 1, 2}); // explicit, but converted to objects, so stil la warning?!
-
-// Only 4 args and above use the params overload of String.Format
-var test = String.Format(""Testing {0}, {1}, {2}, {3}"", 1, ""blah"", 2.0m, 'c');
-
-public void Params(params int[] args)
+public class MyClass
 {
-}
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
 
-public void ParamsWithObjects(params object[] args)
-{
+        Params();
+        Params(1, 2);
+        Params(new [] { 1, 2}); // explicit, so no warning
+        ParamsWithObjects(new [] { 1, 2}); // explicit, but converted to objects, so stil la warning?!
+
+        // Only 4 args and above use the params overload of String.Format
+        var test = String.Format(""Testing {0}, {1}, {2}, {3}"", 1, ""blah"", 2.0m, 'c');
+    }
+
+    public void Params(params int[] args)
+    {
+    }
+
+    public void ParamsWithObjects(params object[] args)
+    {
+    }
 }";
 
-            var analyser = new CallSiteImplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.InvocationExpression));
-
-            Assert.Equal(4, info.Allocations.Length);
-            // Diagnostic: (3,1): warning HeapAnalyzerImplicitParamsRule: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
-            AssertEx.ContainsDiagnostic(info.Allocations, id: CallSiteImplicitAllocationAnalyzer.ParamsParameterRule.Id, line: 3, character: 1);
-            // Diagnostic: (4,1): warning HeapAnalyzerImplicitParamsRule: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
-            AssertEx.ContainsDiagnostic(info.Allocations, id: CallSiteImplicitAllocationAnalyzer.ParamsParameterRule.Id, line: 4, character: 1);
-            // Diagnostic: (6,1): warning HeapAnalyzerImplicitParamsRule: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
-            AssertEx.ContainsDiagnostic(info.Allocations, id: CallSiteImplicitAllocationAnalyzer.ParamsParameterRule.Id, line: 6, character: 1);
-            // Diagnostic: (9,12): warning HeapAnalyzerImplicitParamsRule: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
-            AssertEx.ContainsDiagnostic(info.Allocations, id: CallSiteImplicitAllocationAnalyzer.ParamsParameterRule.Id, line: 9, character: 12);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(10,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
+                        GetCSharpResultAt(10, 9, CallSiteImplicitAllocationAnalyzer.ParamsParameterRule),
+                        // Test0.cs(11,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
+                        GetCSharpResultAt(11, 9, CallSiteImplicitAllocationAnalyzer.ParamsParameterRule),
+                        // Test0.cs(13,9): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
+                        GetCSharpResultAt(13, 9, CallSiteImplicitAllocationAnalyzer.ParamsParameterRule),
+                        // Test0.cs(16,20): warning HAA0101: This call site is calling into a function with a 'params' parameter. This results in an array allocation even if no parameter is passed in for the params parameter
+                        GetCSharpResultAt(16, 20, CallSiteImplicitAllocationAnalyzer.ParamsParameterRule));
         }
 
         [Fact]
         public void CallSiteImplicitAllocation_NonOverridenMethodOnStruct()
         {
-            var sampleProgram =
-                @"using System;
+            var sampleProgram = @"
+using System;
+using Roslyn.Utilities;
 
-var normal = new Normal().GetHashCode();
-var overridden = new OverrideToHashCode().GetHashCode();
-
-struct Normal
+public class MyClass
 {
-
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        var normal = new Normal().GetHashCode();
+        var overridden = new OverrideToHashCode().GetHashCode();
+    }
 }
 
-struct OverrideToHashCode
+public struct Normal
 {
+}
 
+public struct OverrideToHashCode
+{
     public override int GetHashCode()
     {
         return -1;
     }
 }";
 
-            var analyser = new CallSiteImplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.InvocationExpression));
 
-            Assert.Single(info.Allocations);
-            // Diagnostic: (3,14): warning HeapAnalyzerValueTypeNonOverridenCallRule: Non-overriden virtual method call on a value type adds a boxing or constrained instruction
-            AssertEx.ContainsDiagnostic(info.Allocations, id: CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule.Id, line: 3, character: 14);
+            VerifyCSharp(sampleProgram, withAttribute: true,
+                        // Test0.cs(10,22): warning HAA0102: Non-overridden virtual method call on a value type adds a boxing or constrained instruction
+                        GetCSharpResultAt(10, 22, CallSiteImplicitAllocationAnalyzer.ValueTypeNonOverridenCallRule));
         }
 
         [Fact]
         public void CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForStaticCalls()
         {
-            var snippet = @"var t = System.Enum.GetUnderlyingType(typeof(System.StringComparison));";
+            var sampleProgram = @"
+using System;
+using Roslyn.Utilities;
 
-            var analyser = new CallSiteImplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, snippet, ImmutableArray.Create(SyntaxKind.InvocationExpression));
-
-            Assert.Empty(info.Allocations);
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        var t = System.Enum.GetUnderlyingType(typeof(System.StringComparison));
+    }
+}";
+            VerifyCSharp(sampleProgram, withAttribute: true);
         }
 
         [Fact]
         public void CallSiteImplicitAllocation_DoNotReportNonOverriddenMethodCallForNonVirtualCalls()
         {
-            var snippet = @"
+            var sampleProgram = @"
 using System.IO;
+using Roslyn.Utilities;
 
-FileAttributes attr = FileAttributes.System;
-attr.HasFlag (FileAttributes.Directory);
-";
+public class MyClass
+{
+    [PerformanceSensitive(""uri"")]
+    public void Testing()
+    {
+        FileAttributes attr = FileAttributes.System;
+        attr.HasFlag (FileAttributes.Directory);
+    }
+}";
 
-            var analyser = new CallSiteImplicitAllocationAnalyzer();
-            var info = ProcessCode(analyser, snippet, ImmutableArray.Create(SyntaxKind.InvocationExpression));
-
-            Assert.Empty(info.Allocations);
+            VerifyCSharp(sampleProgram, withAttribute: true);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            throw new System.NotImplementedException();
+            return new CallSiteImplicitAllocationAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

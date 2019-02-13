@@ -3,13 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <!--
-      PackageId is used by Restore. If we set it to DotNetAnalyzers.VersionCheckAnalyzer,
-      Restore would conclude that there is a cyclic dependency between us and the DotNetAnalyzers.VersionCheckAnalyzer package.
+      PackageId is used by Restore. If we set it to Microsoft.CodeAnalysis.VersionCheckAnalyzer,
+      Restore would conclude that there is a cyclic dependency between us and the Microsoft.CodeAnalysis.VersionCheckAnalyzer package.
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
   </PropertyGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="DotNetAnalyzers.UnitTests" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.UnitTests" />
   </ItemGroup>
-  <Import Project="..\..\..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
+  <Import Project="..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
 </Project>

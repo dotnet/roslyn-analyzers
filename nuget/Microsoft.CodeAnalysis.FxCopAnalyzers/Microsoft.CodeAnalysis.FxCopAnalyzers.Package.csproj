@@ -17,7 +17,7 @@
     <AnalyzerNupkgDependency Include="Microsoft.NetCore.Analyzers" />
     <AnalyzerNupkgDependency Include="Microsoft.NetFramework.Analyzers" />
     <AnalyzerNupkgDependency Include="Text.Analyzers" />
-    <AnalyzerNupkgDependency Include="DotNetAnalyzers.VersionCheckAnalyzer" />
+    <AnalyzerNupkgDependency Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer" />
   </ItemGroup>
   
   <!-- TODO: Can we figure out the AnalyzerNupkgAssembly items from the referenced projects instead of hardcoding them as AnalyzerRulesetAssembly items here? -->
@@ -34,7 +34,7 @@
     <AnalyzerRulesetAssembly Include="Text.Analyzers.dll" />
     <AnalyzerRulesetAssembly Include="Text.CSharp.Analyzers.dll" />
     <AnalyzerRulesetAssembly Include="Text.VisualBasic.Analyzers.dll" />
-    <AnalyzerRulesetAssembly Include="DotNetAnalyzers.VersionCheckAnalyzer.dll" />
+    <AnalyzerRulesetAssembly Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +56,5 @@
     <ProjectReference Include="..\Microsoft.NetFramework.Analyzers\Microsoft.NetFramework.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Microsoft.NetCore.Analyzers\Microsoft.NetCore.Analyzers.Package.csproj" />
     <ProjectReference Include="..\Text.Analyzers\Text.Analyzers.Package.csproj" />
-    <ProjectReference Include="..\DotNetAnalyzers\DotNetAnalyzers.VersionCheckAnalyzer.Package.csproj" />
   </ItemGroup>
 </Project>

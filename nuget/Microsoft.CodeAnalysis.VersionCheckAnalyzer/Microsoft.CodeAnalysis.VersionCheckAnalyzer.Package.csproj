@@ -5,18 +5,18 @@
 
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <NuspecPackageId>DotNetAnalyzers.VersionCheckAnalyzer</NuspecPackageId>
-    <Description>Version Check Analyzer</Description>
-    <Summary>Version Check Analyzer</Summary>
+    <NuspecPackageId>Microsoft.CodeAnalysis.VersionCheckAnalyzer</NuspecPackageId>
+    <Description>Microsoft.CodeAnalysis Version Check Analyzer</Description>
+    <Summary>Microsoft.CodeAnalysis Version Check Analyzer</Summary>
     <ReleaseNotes>Version Check Analyzer</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics VersionCheckAnalyzer</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <AnalyzerNupkgAssembly Include="DotNetAnalyzers.VersionCheckAnalyzer.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DotNetAnalyzers\Core\VersionCheckAnalyzer\DotNetAnalyzers.VersionCheckAnalyzer.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.VersionCheckAnalyzer\Microsoft.CodeAnalysis.VersionCheckAnalyzer.csproj" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,9 +15,32 @@ namespace PerformanceSensitive.CSharp.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal sealed class ConcatenationAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
-        internal static DiagnosticDescriptor StringConcatenationAllocationRule = new DiagnosticDescriptor("HAA0201", "Implicit string concatenation allocation", "Considering using StringBuilder", "Performance", DiagnosticSeverity.Warning, true, string.Empty, "http://msdn.microsoft.com/en-us/library/2839d5h5(v=vs.110).aspx");
+        public const string StringConcatenationAllocationRuleId = "HAA0201";
+        public const string ValueTypeToReferenceTypeInAStringConcatenationRuleId = "HAA0202";
 
-        internal static DiagnosticDescriptor ValueTypeToReferenceTypeInAStringConcatenationRule = new DiagnosticDescriptor("HAA0202", "Value type to reference type conversion allocation for string concatenation", "Value type ({0}) is being boxed to a reference type for a string concatenation.", "Performance", DiagnosticSeverity.Warning, true, string.Empty, "http://msdn.microsoft.com/en-us/library/yz2be5wk.aspx");
+        private static readonly LocalizableString s_localizableStringConcatenationAllocationRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.StringConcatenationAllocationRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableStringConcatenationAllocationRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.StringConcatenationAllocationRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+        private static readonly LocalizableString s_localizableValueTypeToReferenceTypeInAStringConcatenationRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ValueTypeToReferenceTypeInAStringConcatenationRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableValueTypeToReferenceTypeInAStringConcatenationRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ValueTypeToReferenceTypeInAStringConcatenationRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+        internal static DiagnosticDescriptor StringConcatenationAllocationRule = new DiagnosticDescriptor(
+            StringConcatenationAllocationRuleId,
+            s_localizableStringConcatenationAllocationRuleTitle,
+            s_localizableStringConcatenationAllocationRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            helpLinkUri: "http://msdn.microsoft.com/en-us/library/2839d5h5(v=vs.110).aspx");
+
+        internal static DiagnosticDescriptor ValueTypeToReferenceTypeInAStringConcatenationRule = new DiagnosticDescriptor(
+            ValueTypeToReferenceTypeInAStringConcatenationRuleId,
+            s_localizableValueTypeToReferenceTypeInAStringConcatenationRuleTitle,
+            s_localizableValueTypeToReferenceTypeInAStringConcatenationRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true,
+            helpLinkUri: "http://msdn.microsoft.com/en-us/library/yz2be5wk.aspx");
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(StringConcatenationAllocationRule, ValueTypeToReferenceTypeInAStringConcatenationRule);
 

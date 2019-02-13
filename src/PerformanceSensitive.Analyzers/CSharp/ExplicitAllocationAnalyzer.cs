@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,19 +14,71 @@ namespace PerformanceSensitive.CSharp.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal sealed class ExplicitAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
-        internal static DiagnosticDescriptor NewArrayRule = new DiagnosticDescriptor("HAA0501", "Explicit new array type allocation", "Explicit new array type allocation", "Performance", DiagnosticSeverity.Info, true);
+        public const string NewArrayRuleId = "HAA0501";
+        public const string NewObjectRuleId = "HAA0502";
+        public const string AnonymousNewObjectRuleId = "HAA0503";
+        public const string ImplicitArrayCreationRuleId = "HAA0504";
+        public const string InitializerCreationRuleId = "HAA0505";
+        public const string LetCauseRuleId = "HAA0506";
 
-        internal static DiagnosticDescriptor NewObjectRule = new DiagnosticDescriptor("HAA0502", "Explicit new reference type allocation", "Explicit new reference type allocation", "Performance", DiagnosticSeverity.Info, true);
+        private static readonly LocalizableString s_localizableNewArrayRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.NewArrayRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableNewObjectRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.NewObjectRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableAnonymousNewObjectRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.AnonymousNewObjectRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableImplicitArrayCreationRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ImplicitArrayCreationRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableInitializerCreationRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.InitializerCreationRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableLetCauseRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.LetCauseRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
 
-        internal static DiagnosticDescriptor AnonymousNewObjectRule = new DiagnosticDescriptor("HAA0503", "Explicit new anonymous object allocation", "Explicit new anonymous object allocation", "Performance", DiagnosticSeverity.Info, true, string.Empty, "http://msdn.microsoft.com/en-us/library/bb397696.aspx");
+        internal static DiagnosticDescriptor NewArrayRule = new DiagnosticDescriptor(
+            NewArrayRuleId,
+            s_localizableNewArrayRuleTitleAndMessage,
+            s_localizableNewArrayRuleTitleAndMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true);
 
-        internal static DiagnosticDescriptor ImplicitArrayCreationRule = new DiagnosticDescriptor("HAA0504", "Implicit new array creation allocation", "Implicit new array creation allocation", "Performance", DiagnosticSeverity.Info, true);
+        internal static DiagnosticDescriptor NewObjectRule = new DiagnosticDescriptor(
+            NewObjectRuleId,
+            s_localizableNewObjectRuleTitleAndMessage,
+            s_localizableNewObjectRuleTitleAndMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true);
 
-        internal static DiagnosticDescriptor InitializerCreationRule = new DiagnosticDescriptor("HAA0505", "Initializer reference type allocation", "Initializer reference type allocation", "Performance", DiagnosticSeverity.Info, true);
+        internal static DiagnosticDescriptor AnonymousNewObjectRule = new DiagnosticDescriptor(
+            AnonymousNewObjectRuleId,
+            s_localizableAnonymousNewObjectRuleTitleAndMessage,
+            s_localizableAnonymousNewObjectRuleTitleAndMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true,
+            helpLinkUri: "http://msdn.microsoft.com/en-us/library/bb397696.aspx");
 
-        internal static DiagnosticDescriptor LetCauseRule = new DiagnosticDescriptor("HAA0506", "Let clause induced allocation", "Let clause induced allocation", "Performance", DiagnosticSeverity.Info, true);
+        internal static DiagnosticDescriptor ImplicitArrayCreationRule = new DiagnosticDescriptor(
+            ImplicitArrayCreationRuleId,
+            s_localizableImplicitArrayCreationRuleTitleAndMessage,
+            s_localizableImplicitArrayCreationRuleTitleAndMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true);
+
+        internal static DiagnosticDescriptor InitializerCreationRule = new DiagnosticDescriptor(
+            InitializerCreationRuleId,
+            s_localizableInitializerCreationRuleTitleAndMessage,
+            s_localizableInitializerCreationRuleTitleAndMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true);
+
+        internal static DiagnosticDescriptor LetCauseRule = new DiagnosticDescriptor(
+            LetCauseRuleId,
+            s_localizableLetCauseRuleTitleAndMessage,
+            s_localizableLetCauseRuleTitleAndMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LetCauseRule, InitializerCreationRule, ImplicitArrayCreationRule, AnonymousNewObjectRule, NewObjectRule, NewArrayRule);
+
         protected override ImmutableArray<SyntaxKind> Expressions => ImmutableArray.Create(
             SyntaxKind.ObjectCreationExpression,            // Used
             SyntaxKind.AnonymousObjectCreationExpression,   // Used

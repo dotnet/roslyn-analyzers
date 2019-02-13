@@ -4,6 +4,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,11 +17,43 @@ namespace PerformanceSensitive.CSharp.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal sealed class DisplayClassAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
-        internal static DiagnosticDescriptor ClosureDriverRule = new DiagnosticDescriptor("HAA0301", "Closure Allocation Source", "Heap allocation of closure Captures: {0}", "Performance", DiagnosticSeverity.Warning, true);
+        public const string ClosureDriverRuleId = "HAA0301";
+        public const string ClosureCaptureRuleId = "HAA0302";
+        public const string LambaOrAnonymousMethodInGenericMethodRuleId = "HAA0303";
 
-        internal static DiagnosticDescriptor ClosureCaptureRule = new DiagnosticDescriptor("HAA0302", "Display class allocation to capture closure", "The compiler will emit a class that will hold this as a field to allow capturing of this closure", "Performance", DiagnosticSeverity.Warning, true);
+        private static readonly LocalizableString s_localizableClosureDriverRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ClosureDriverRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableClosureDriverRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ClosureDriverRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
 
-        internal static DiagnosticDescriptor LambaOrAnonymousMethodInGenericMethodRule = new DiagnosticDescriptor("HAA0303", "Lambda or anonymous method in a generic method allocates a delegate instance", "Considering moving this out of the generic method", "Performance", DiagnosticSeverity.Warning, true);
+        private static readonly LocalizableString s_localizableClosureCaptureRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ClosureCaptureRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableClosureCaptureRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ClosureCaptureRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+        private static readonly LocalizableString s_localizableLambaOrAnonymousMethodInGenericMethodRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.LambaOrAnonymousMethodInGenericMethodRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableLambaOrAnonymousMethodInGenericMethodRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.LambaOrAnonymousMethodInGenericMethodRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+
+        internal static DiagnosticDescriptor ClosureDriverRule = new DiagnosticDescriptor(
+            ClosureDriverRuleId,
+            s_localizableClosureDriverRuleTitle,
+            s_localizableClosureDriverRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        internal static DiagnosticDescriptor ClosureCaptureRule = new DiagnosticDescriptor(
+            ClosureCaptureRuleId,
+            s_localizableClosureCaptureRuleTitle,
+            s_localizableClosureCaptureRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        internal static DiagnosticDescriptor LambaOrAnonymousMethodInGenericMethodRule = new DiagnosticDescriptor(
+            LambaOrAnonymousMethodInGenericMethodRuleId,
+            s_localizableLambaOrAnonymousMethodInGenericMethodRuleTitle,
+            s_localizableLambaOrAnonymousMethodInGenericMethodRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ClosureCaptureRule, ClosureDriverRule, LambaOrAnonymousMethodInGenericMethodRule);
 

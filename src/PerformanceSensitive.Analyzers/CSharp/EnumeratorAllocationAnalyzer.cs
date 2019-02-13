@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,7 +16,18 @@ namespace PerformanceSensitive.CSharp.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal sealed class EnumeratorAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
-        internal static DiagnosticDescriptor ReferenceTypeEnumeratorRule = new DiagnosticDescriptor("HAA0401", "Possible allocation of reference type enumerator", "Non-ValueType enumerator may result in a heap allocation", "Performance", DiagnosticSeverity.Warning, true);
+        public const string ReferenceTypeEnumeratorRuleId = "HAA0401";
+
+        private static readonly LocalizableString s_localizableReferenceTypeEnumeratorRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ReferenceTypeEnumeratorRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableReferenceTypeEnumeratorRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ReferenceTypeEnumeratorRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+        internal static DiagnosticDescriptor ReferenceTypeEnumeratorRule = new DiagnosticDescriptor(
+            ReferenceTypeEnumeratorRuleId,
+            s_localizableReferenceTypeEnumeratorRuleTitle,
+            s_localizableReferenceTypeEnumeratorRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ReferenceTypeEnumeratorRule);
 

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Threading;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,13 +16,54 @@ namespace PerformanceSensitive.CSharp.Analyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal sealed class TypeConversionAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
     {
-        internal static DiagnosticDescriptor ValueTypeToReferenceTypeConversionRule = new DiagnosticDescriptor("HAA0601", "Value type to reference type conversion causing boxing allocation", "Value type to reference type conversion causes boxing at call site (here), and unboxing at the callee-site. Consider using generics if applicable", "Performance", DiagnosticSeverity.Warning, true);
+        public const string ValueTypeToReferenceTypeConversionRuleId = "HAA0601";
+        public const string DelegateOnStructInstanceRuleId = "HAA0602";
+        public const string MethodGroupAllocationRuleId = "HAA0603";
+        public const string ReadonlyMethodGroupAllocationRuleId = "HeapAnalyzerReadonlyMethodGroupAllocationRule";
 
-        internal static DiagnosticDescriptor DelegateOnStructInstanceRule = new DiagnosticDescriptor("HAA0602", "Delegate on struct instance caused a boxing allocation", "Struct instance method being used for delegate creation, this will result in a boxing instruction", "Performance", DiagnosticSeverity.Warning, true);
+        private static readonly LocalizableString s_localizableValueTypeToReferenceTypeConversionRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ValueTypeToReferenceTypeConversionRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableValueTypeToReferenceTypeConversionRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ValueTypeToReferenceTypeConversionRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
 
-        internal static DiagnosticDescriptor MethodGroupAllocationRule = new DiagnosticDescriptor("HAA0603", "Delegate allocation from a method group", "This will allocate a delegate instance", "Performance", DiagnosticSeverity.Warning, true);
+        private static readonly LocalizableString s_localizableDelegateOnStructInstanceRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.DelegateOnStructInstanceRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableDelegateOnStructInstanceRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.DelegateOnStructInstanceRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
 
-        internal static DiagnosticDescriptor ReadonlyMethodGroupAllocationRule = new DiagnosticDescriptor("HeapAnalyzerReadonlyMethodGroupAllocationRule", "Delegate allocation from a method group", "This will allocate a delegate instance", "Performance", DiagnosticSeverity.Info, true);
+        private static readonly LocalizableString s_localizableMethodGroupAllocationRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.MethodGroupAllocationRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableMethodGroupAllocationRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.MethodGroupAllocationRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+        private static readonly LocalizableString s_localizableReadonlyMethodGroupAllocationRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ReadonlyMethodGroupAllocationRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableReadonlyMethodGroupAllocationRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ReadonlyMethodGroupAllocationRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+        internal static DiagnosticDescriptor ValueTypeToReferenceTypeConversionRule = new DiagnosticDescriptor(
+            ValueTypeToReferenceTypeConversionRuleId,
+            s_localizableValueTypeToReferenceTypeConversionRuleTitle,
+            s_localizableValueTypeToReferenceTypeConversionRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        internal static DiagnosticDescriptor DelegateOnStructInstanceRule = new DiagnosticDescriptor(
+            DelegateOnStructInstanceRuleId,
+            s_localizableDelegateOnStructInstanceRuleTitle,
+            s_localizableDelegateOnStructInstanceRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        internal static DiagnosticDescriptor MethodGroupAllocationRule = new DiagnosticDescriptor(
+            MethodGroupAllocationRuleId,
+            s_localizableMethodGroupAllocationRuleTitle,
+            s_localizableMethodGroupAllocationRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        internal static DiagnosticDescriptor ReadonlyMethodGroupAllocationRule = new DiagnosticDescriptor(
+            ReadonlyMethodGroupAllocationRuleId,
+            s_localizableReadonlyMethodGroupAllocationRuleTitle,
+            s_localizableReadonlyMethodGroupAllocationRuleMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticSeverity.Info,
+            isEnabledByDefault: true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(ValueTypeToReferenceTypeConversionRule, DelegateOnStructInstanceRule, MethodGroupAllocationRule, ReadonlyMethodGroupAllocationRule);
 

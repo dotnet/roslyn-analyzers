@@ -23,6 +23,10 @@ namespace PerformanceSensitive.CSharp.Analyzers
         private static readonly LocalizableString s_localizableParamsParameterRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ParamsParameterRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
         private static readonly LocalizableString s_localizableParamsParameterRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ParamsParameterRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
 
+        private static readonly LocalizableString s_localizableValueTypeNonOverridenCallRuleTitle = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ValueTypeNonOverridenCallRuleTitle), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+        private static readonly LocalizableString s_localizableValueTypeNonOverridenCallRuleMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ValueTypeNonOverridenCallRuleMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
+
+
         internal static DiagnosticDescriptor ParamsParameterRule = new DiagnosticDescriptor(
             ParamsParameterRuleId,
             s_localizableParamsParameterRuleTitle,
@@ -33,8 +37,8 @@ namespace PerformanceSensitive.CSharp.Analyzers
 
         internal static DiagnosticDescriptor ValueTypeNonOverridenCallRule = new DiagnosticDescriptor(
             ValueTypeNonOverridenCallRuleId,
-            "Non-overridden virtual method call on value type",
-            "Non-overridden virtual method call on a value type adds a boxing or constrained instruction",
+            s_localizableValueTypeNonOverridenCallRuleTitle,
+            s_localizableValueTypeNonOverridenCallRuleMessage,
             DiagnosticCategory.Performance,
             DiagnosticSeverity.Warning,
             isEnabledByDefault: true);

@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace PerformanceSensitive.Analyzers
+namespace Microsoft.PerformanceSensitive.Analyzers
 {
     internal abstract class AbstractAllocationAnalyzer<TLanguageKindEnum>
         : DiagnosticAnalyzer

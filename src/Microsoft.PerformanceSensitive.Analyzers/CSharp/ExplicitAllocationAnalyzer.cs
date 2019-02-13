@@ -7,9 +7,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using PerformanceSensitive.Analyzers;
+using Microsoft.PerformanceSensitive.Analyzers;
 
-namespace PerformanceSensitive.CSharp.Analyzers
+namespace Microsoft.PerformanceSensitive.CSharp.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal sealed class ExplicitAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>

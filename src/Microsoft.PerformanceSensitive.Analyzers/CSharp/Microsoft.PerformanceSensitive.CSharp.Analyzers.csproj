@@ -4,9 +4,9 @@
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\PerformanceSensitive.Analyzers.csproj" />
+    <InternalsVisibleTo Include="Microsoft.PerformanceSensitive.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="PerformanceSensitive.Analyzers.UnitTests" />
+    <ProjectReference Include="..\Core\Microsoft.PerformanceSensitive.Analyzers.csproj" />
   </ItemGroup>
 </Project>

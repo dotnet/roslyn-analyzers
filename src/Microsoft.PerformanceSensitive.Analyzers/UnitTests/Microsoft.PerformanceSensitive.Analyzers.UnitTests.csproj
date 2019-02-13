@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Test.Utilities\Test.Utilities.csproj" />
-    <ProjectReference Include="..\Core\PerformanceSensitive.Analyzers.csproj" />
-    <ProjectReference Include="..\CSharp\PerformanceSensitive.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\Core\Microsoft.PerformanceSensitive.Analyzers.csproj" />
+    <ProjectReference Include="..\CSharp\Microsoft.PerformanceSensitive.CSharp.Analyzers.csproj" />
   </ItemGroup>
 </Project>

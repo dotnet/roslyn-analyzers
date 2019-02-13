@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <!--
-      PackageId is used by Restore. If we set it to PerformanceSensitive.Analyzers,
-      Restore would conclude that there is a cyclic dependency between us and the PerformanceSensitive.Analyzers nuget package.
+      PackageId is used by Restore. If we set it to Microsoft.PerformanceSensitive.Analyzers,
+      Restore would conclude that there is a cyclic dependency between us and the Microsoft.PerformanceSensitive.Analyzers nuget package.
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
   </PropertyGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="PerformanceSensitive.CSharp.Analyzers" />
-    <InternalsVisibleTo Include="PerformanceSensitive.Analyzers.UnitTests" />
+    <InternalsVisibleTo Include="Microsoft.PerformanceSensitive.CSharp.Analyzers" />
+    <InternalsVisibleTo Include="Microsoft.PerformanceSensitive.Analyzers.UnitTests" />
   </ItemGroup>
   <Import Project="..\..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
 </Project>

@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using PerformanceSensitive.CSharp.Analyzers;
+using Microsoft.PerformanceSensitive.CSharp.Analyzers;
 using Test.Utilities;
 using Xunit;
-using VerifyCS = PerformanceSensitive.Analyzers.UnitTests.CSharpPerformanceCodeFixVerifier<
-    PerformanceSensitive.CSharp.Analyzers.CallSiteImplicitAllocationAnalyzer,
+using VerifyCS = Microsoft.PerformanceSensitive.Analyzers.UnitTests.CSharpPerformanceCodeFixVerifier<
+    Microsoft.PerformanceSensitive.CSharp.Analyzers.CallSiteImplicitAllocationAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
-namespace PerformanceSensitive.Analyzers.UnitTests
+namespace Microsoft.PerformanceSensitive.Analyzers.UnitTests
 {
     public class CallSiteImplicitAllocationAnalyzerTests
     {

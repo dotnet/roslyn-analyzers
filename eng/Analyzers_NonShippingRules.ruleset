@@ -19,5 +19,8 @@
   <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers.Maintainability">
     <!-- Mark member as static rule has many violations in non-shipping projects -->
     <Rule Id="CA1822" Action="None" />
+
+    <!-- Do not directly await a task - not useful for tests -->
+    <Rule Id="CA2007" Action="None" />
   </Rules>
 </RuleSet>

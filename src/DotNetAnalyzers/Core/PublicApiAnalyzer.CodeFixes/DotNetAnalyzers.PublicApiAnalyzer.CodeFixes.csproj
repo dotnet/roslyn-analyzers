@@ -12,4 +12,5 @@
     <ProjectReference Include="..\PublicApiAnalyzer\DotNetAnalyzers.PublicApiAnalyzer.csproj" />
     <InternalsVisibleTo Include="DotNetAnalyzers.UnitTests" />
   </ItemGroup>
+  <Import Project="..\..\..\Utilities\Workspaces\Workspaces.Utilities.projitems" Label="Shared" />
 </Project>

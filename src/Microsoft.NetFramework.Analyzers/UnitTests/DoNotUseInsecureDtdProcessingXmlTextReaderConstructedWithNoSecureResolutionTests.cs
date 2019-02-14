@@ -1,30 +1,35 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private static readonly string s_CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage = MicrosoftNetFrameworkAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage;
-
-        private DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, s_CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage);
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(MicrosoftNetFrameworkAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage);
         }
 
-        private DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075XmlTextReaderConstructedWithNoSecureResolutionBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, s_CA3075XmlTextReaderConstructedWithNoSecureResolutionMessage);
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(MicrosoftNetFrameworkAnalyzersResources.XmlTextReaderConstructedWithNoSecureResolutionMessage);
         }
 
         [WorkItem(998, "https://github.com/dotnet/roslyn-analyzers/issues/998")]
         [Fact]
-        public void StaticPropertyAssignmentShouldNotGenerateDiagnostic()
+        public async Task StaticPropertyAssignmentShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 namespace TestNamespace
@@ -42,7 +47,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Namespace TestNamespace
@@ -59,9 +64,9 @@ End Namespace
         }
 
         [Fact]
-        public void ConstructXmlTextReaderShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -78,7 +83,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 36)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -93,9 +98,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderInTryBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -116,7 +121,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 40)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -136,9 +141,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderInCatchBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -159,7 +164,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(12, 40)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -178,9 +183,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderInFinallyBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -201,7 +206,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(13, 40)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -221,9 +226,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderOnlySetResolverToSecureValueShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderOnlySetResolverToSecureValueShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -241,7 +246,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 36)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -257,9 +262,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetResolverToSecureValueInTryBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetResolverToSecureValueInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -281,7 +286,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 40)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -302,9 +307,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetResolverToSecureValueInCatchBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetResolverToSecureValueInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -326,7 +331,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(12, 40)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -346,9 +351,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetResolverToSecureValueInFinallyBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetResolverToSecureValueInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -370,7 +375,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(13, 40)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -391,9 +396,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderOnlySetDtdProcessingToSecureValueShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderOnlySetDtdProcessingToSecureValueShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -410,7 +415,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -425,9 +430,9 @@ End Namespace"
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetDtdProcessingToSecureValueInTryBlockShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetDtdProcessingToSecureValueInTryBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -448,7 +453,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -468,9 +473,9 @@ End Namespace"
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetDtdProcessingToSecureValueInCatchBlockShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetDtdProcessingToSecureValueInCatchBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -491,7 +496,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -510,9 +515,9 @@ End Namespace"
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetDtdProcessingToSecureValueInFinallyBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetDtdProcessingToSecureValueInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -533,7 +538,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -553,9 +558,9 @@ End Namespace"
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetResolverAndDtdProcessingToSecureValuesShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetResolverAndDtdProcessingToSecureValuesShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -573,7 +578,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -588,9 +593,9 @@ End Namespace");
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetSetResolverAndDtdProcessingToSecureValueInTryBlockShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetSetResolverAndDtdProcessingToSecureValueInTryBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -612,7 +617,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -632,9 +637,9 @@ End Namespace");
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetSetResolverAndDtdProcessingToSecureValueInCatchBlockShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetSetResolverAndDtdProcessingToSecureValueInCatchBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -656,7 +661,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -675,9 +680,9 @@ End Namespace");
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetSetResolverAndDtdProcessingToSecureValueInFinallyBlockShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetSetResolverAndDtdProcessingToSecureValueInFinallyBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -697,7 +702,7 @@ namespace TestNamespace
     }
 }
 ");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -719,9 +724,9 @@ End Namespace
         }
 
         [Fact]
-        public void ConstructXmlTextReaderSetResolverAndDtdProcessingToSecureValuesInInitializerShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderSetResolverAndDtdProcessingToSecureValuesInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -738,7 +743,7 @@ namespace TestNamespace
         }
     }
 }");
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -755,9 +760,9 @@ End Namespace
         }
 
         [Fact]
-        public void ConstructXmlTextReaderOnlySetResolverToSecureValueInInitializerShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderOnlySetResolverToSecureValueInInitializerShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -776,7 +781,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(10, 33)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -793,9 +798,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderOnlySetDtdProcessingToSecureValueInInitializerShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderOnlySetDtdProcessingToSecureValueInInitializerShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -813,7 +818,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -829,9 +834,9 @@ End Namespace"
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -844,7 +849,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -857,9 +862,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldSetBothToSecureValuesInInitializerShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldSetBothToSecureValuesInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -875,7 +880,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -889,9 +894,9 @@ End Namespace");
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValuesInInitializerShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValuesInInitializerShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -907,7 +912,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 
 Imports System.Xml
 
@@ -923,9 +928,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldOnlySetDtdProcessingToSecureValuesInInitializerShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldOnlySetDtdProcessingToSecureValuesInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -940,7 +945,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -954,9 +959,9 @@ End Namespace"
         }
 
         [Fact]
-        public void ConstructDefaultXmlTextReaderAsFieldSetBothToSecureValuesInMethodShouldGenerateDiagnostic()
+        public async Task ConstructDefaultXmlTextReaderAsFieldSetBothToSecureValuesInMethodShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -975,7 +980,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -994,9 +999,9 @@ End Namespace
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValueInMethodShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValueInMethodShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -1014,7 +1019,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -1031,9 +1036,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValueInMethodInTryBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValueInMethodInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -1056,7 +1061,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -1078,9 +1083,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValueInMethodInCatchBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValueInMethodInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -1100,7 +1105,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -1121,9 +1126,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValueInMethodInFinallyBlockShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldOnlySetResolverToSecureValueInMethodInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -1143,7 +1148,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -1165,9 +1170,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderAsFieldOnlySetDtdProcessingToSecureValueInMethodShouldGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderAsFieldOnlySetDtdProcessingToSecureValueInMethodShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -1185,7 +1190,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(8, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -1202,9 +1207,9 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeWithNoSecureSettingsShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeWithNoSecureSettingsShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -1222,7 +1227,7 @@ namespace TestNamespace
     
 }"
             );
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -1240,9 +1245,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderCreatedAsTempNoSettingsShouldGenerateDiagnostics()
+        public async Task XmlTextReaderCreatedAsTempNoSettingsShouldGenerateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -1261,7 +1266,7 @@ namespace TestNamespace
                 GetCA3075XmlTextReaderConstructedWithNoSecureResolutionCSharpResultAt(11, 21)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -1280,9 +1285,9 @@ End Namespace",
         }
 
         [Fact]
-        public void ConstructXmlTextReaderOnlySetDtdProcessingProhibitTargetFx46ShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderOnlySetDtdProcessingProhibitTargetFx46ShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Reflection;               
 using System.Xml;   
@@ -1303,7 +1308,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Reflection
 Imports System.Xml
 
@@ -1320,9 +1325,9 @@ End Namespace");
         }
 
         [Fact]
-        public void ConstructXmlTextReaderOnlySetDtdProcessingProhibitTargetFx452ShouldNotGenerateDiagnostic()
+        public async Task ConstructXmlTextReaderOnlySetDtdProcessingProhibitTargetFx452ShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Reflection;               
 using System.Xml;   
@@ -1343,7 +1348,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Reflection
 Imports System.Xml
 

@@ -1,28 +1,24 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.TypesShouldNotExtendCertainBaseTypesAnalyzer,
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpTypesShouldNotExtendCertainBaseTypesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.TypesShouldNotExtendCertainBaseTypesAnalyzer,
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicTypesShouldNotExtendCertainBaseTypesFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public class TypesShouldNotExtendCertainBaseTypesTests : DiagnosticAnalyzerTestBase
+    public class TypesShouldNotExtendCertainBaseTypesTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new TypesShouldNotExtendCertainBaseTypesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new TypesShouldNotExtendCertainBaseTypesAnalyzer();
-        }
-
         [Fact]
-        public void TypesShouldNotExtendCertainBaseTypes_CSharp_NoDiagnostic()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 class C : Attribute
@@ -32,7 +28,7 @@ class C : Attribute
         }
 
         [Fact]
-        public void TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationException()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationException()
         {
             var source = @"
 using System;
@@ -46,11 +42,11 @@ public class C1 : ApplicationException
                 GetCSharpApplicationExceptionResultAt(4, 14, "C1", "System.ApplicationException")
             };
 
-            VerifyCSharp(source, expected);
+            await VerifyCS.VerifyAnalyzerAsync(source, expected);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationException_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_ApplicationException_Internal()
         {
             var source = @"
 using System;
@@ -60,11 +56,11 @@ class C1 : ApplicationException
 }
 ";
 
-            VerifyCSharp(source);
+            await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
         [Fact]
-        public void TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocument()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocument()
         {
             var source = @"
 using System.Xml;
@@ -78,11 +74,11 @@ public class C1 : XmlDocument
                 GetCSharpXmlDocumentResultAt(4, 14, "C1", "System.Xml.XmlDocument")
             };
 
-            VerifyCSharp(source, expected);
+            await VerifyCS.VerifyAnalyzerAsync(source, expected);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocument_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_XmlDocument_Internal()
         {
             var source = @"
 using System.Xml;
@@ -92,11 +88,11 @@ class C1 : XmlDocument
 }
 ";
 
-            VerifyCSharp(source);
+            await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
         [Fact]
-        public void TypesShouldNotExtendCertainBaseTypes_CSharp_Collection()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_Collection()
         {
             var source = @"
 using System.Collections;
@@ -134,11 +130,11 @@ public class C6 : Stack
                 GetCSharpStackResultAt(24, 14, "C6", "System.Collections.Stack")
             };
 
-            VerifyCSharp(source, expected);
+            await VerifyCS.VerifyAnalyzerAsync(source, expected);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TypesShouldNotExtendCertainBaseTypes_CSharp_Collection_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_CSharp_Collection_Internal()
         {
             var source = @"
 using System.Collections;
@@ -170,13 +166,13 @@ public class C6
     }
 }";
 
-            VerifyCSharp(source);
+            await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
         [Fact]
-        public void TypesShouldNotExtendCertainBaseTypes_Basic_NoDiagnostic()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class Class2
@@ -187,7 +183,7 @@ End Class
         }
 
         [Fact]
-        public void TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationException()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationException()
         {
             var source = @"
 Imports System
@@ -203,13 +199,13 @@ End Class
                 GetBasicApplicationExceptionResultAt(4, 14, "C1", "System.ApplicationException")
             };
 
-            VerifyBasic(source, expected);
+            await VerifyVB.VerifyAnalyzerAsync(source, expected);
         }
 
 
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationException_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_ApplicationException_Internal()
         {
             var source = @"
 Imports System
@@ -221,11 +217,11 @@ End Class
 
 ";
 
-            VerifyBasic(source);
+            await VerifyVB.VerifyAnalyzerAsync(source);
         }
 
         [Fact]
-        public void TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument()
         {
             var source = @"
 Imports System.Xml
@@ -240,11 +236,11 @@ End Class
                 GetBasicXmlDocumentResultAt(4, 14, "C1", "System.Xml.XmlDocument")
             };
 
-            VerifyBasic(source, expected);
+            await VerifyVB.VerifyAnalyzerAsync(source, expected);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_XmlDocument_Internal()
         {
             var source = @"
 Imports System.Xml
@@ -255,11 +251,11 @@ Friend Class C1
 End Class
 ";
 
-            VerifyBasic(source);
+            await VerifyVB.VerifyAnalyzerAsync(source);
         }
 
         [Fact]
-        public void TypesShouldNotExtendCertainBaseTypes_Basic_Collection()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_Collection()
         {
             var source = @"
 Imports System.Collections
@@ -304,11 +300,11 @@ End Class
                 GetBasicStackResultAt(29, 14, "C6", "System.Collections.Stack")
             };
 
-            VerifyBasic(source, expected);
+            await VerifyVB.VerifyAnalyzerAsync(source, expected);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TypesShouldNotExtendCertainBaseTypes_Basic_Collection_Internal()
+        public async Task TypesShouldNotExtendCertainBaseTypes_Basic_Collection_Internal()
         {
             var source = @"
 Imports System.Collections
@@ -344,103 +340,103 @@ Public Class C6
     End Class
 End Class
 ";
-            VerifyBasic(source);
+            await VerifyVB.VerifyAnalyzerAsync(source);
         }
 
         private static DiagnosticResult GetCSharpCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
-            return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsCollectionBase, declaredTypeName, badBaseTypeName);
-            return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetCSharpDictionaryBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
-            return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicDictionaryBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsDictionaryBase, declaredTypeName, badBaseTypeName);
-            return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetCSharpQueueResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
-            return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicQueueResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsQueue, declaredTypeName, badBaseTypeName);
-            return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetCSharpReadOnlyCollectionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
-            return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicReadOnlyCollectionBaseResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsReadOnlyCollectionBase, declaredTypeName, badBaseTypeName);
-            return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetCSharpSortedListResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
-            return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicSortedListResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsSortedList, declaredTypeName, badBaseTypeName);
-            return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetCSharpStackResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
-            return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicStackResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemCollectionsStack, declaredTypeName, badBaseTypeName);
-            return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetCSharpApplicationExceptionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
-            return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicApplicationExceptionResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemApplicationException, declaredTypeName, badBaseTypeName);
-            return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetCSharpXmlDocumentResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
-            return GetCSharpResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
 
         private static DiagnosticResult GetBasicXmlDocumentResultAt(int line, int column, string declaredTypeName, string badBaseTypeName)
         {
             string message = string.Format(MicrosoftNetFrameworkAnalyzersResources.TypesShouldNotExtendCertainBaseTypesMessageSystemXmlXmlDocument, declaredTypeName, badBaseTypeName);
-            return GetBasicResultAt(line, column, TypesShouldNotExtendCertainBaseTypesAnalyzer.RuleId, message);
+            return new DiagnosticResult(TypesShouldNotExtendCertainBaseTypesAnalyzer.Rule).WithLocation(line, column).WithArguments(message);
         }
     }
 }

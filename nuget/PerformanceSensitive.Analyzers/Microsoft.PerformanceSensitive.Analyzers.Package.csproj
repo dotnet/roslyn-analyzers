@@ -1,0 +1,23 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecPackageId>Microsoft.PerformanceSensitive.Analyzers</NuspecPackageId>
+    <Description>PerformanceSensitive Analyzers</Description>
+    <Summary>Microsoft.PerformanceSensitive Analyzers</Summary>
+    <ReleaseNotes>PerformanceSensitive Analyzers</ReleaseNotes>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp Diagnostic Analyzers Syntax Semantics Performance</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AnalyzerNupkgAssembly Include="Microsoft.PerformanceSensitive.Analyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.PerformanceSensitive.CSharp.Analyzers.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.PerformanceSensitive.Analyzers\Core\Microsoft.PerformanceSensitive.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.PerformanceSensitive.Analyzers\CSharp\Microsoft.PerformanceSensitive.CSharp.Analyzers.csproj" />
+  </ItemGroup>
+</Project>

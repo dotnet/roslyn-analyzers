@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.VersionCheckAnalyzer
                     {
                         // Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed.
                         var arg1 = RequiredMicrosoftCodeAnalysisVersion;
-                        var arg2 = s_ShouldExecuteAnalyzers;
+                        var arg2 = s_MicrosoftCodeAnalysisVersion;
                         var diagnostic = Diagnostic.Create(Rule, Location.None, arg1, arg2);
                         compilationContext.ReportDiagnostic(diagnostic);
                     }

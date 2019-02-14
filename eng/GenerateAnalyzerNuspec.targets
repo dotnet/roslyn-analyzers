@@ -72,7 +72,8 @@
     </ItemGroup>
 
     <PropertyGroup>
-      <_CscToolPath>$(CscToolPath)</_CscToolPath>
+      <_CscToolPath>$(RoslynTargetsPath)</_CscToolPath>
+      <_CscToolPath Condition="'$(_CscToolPath)' == ''">$(CscToolPath)</_CscToolPath>
       <_CscToolPath Condition="'$(_CscToolPath)' == ''">$(MSBuildBinPath)\Roslyn</_CscToolPath>
       <_CscToolPath Condition="!HasTrailingSlash('$(_CscToolPath)')">$(_CscToolPath)\</_CscToolPath>
     </PropertyGroup>

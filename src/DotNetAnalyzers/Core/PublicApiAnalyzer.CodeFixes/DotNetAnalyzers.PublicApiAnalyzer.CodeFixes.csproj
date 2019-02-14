@@ -7,7 +7,17 @@
       Restore would conclude that there is a cyclic dependency between us and the DotNetAnalyzers.PublicApiAnalyzer.CodeFixes package.
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
+    <MicrosoftCodeAnalysisVersion>1.2.1</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.3'">
+      <PropertyGroup>
+        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
   <ItemGroup>
     <ProjectReference Include="..\PublicApiAnalyzer\DotNetAnalyzers.PublicApiAnalyzer.csproj" />
     <InternalsVisibleTo Include="DotNetAnalyzers.UnitTests" />

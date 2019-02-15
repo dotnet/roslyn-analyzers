@@ -11,13 +11,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class CSharpDoNotUseInsecureCryptographicAlgorithmsAnalyzer : DoNotUseInsecureCryptographicAlgorithmsAnalyzer
     {
-        protected override SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes)
-        {
-            SyntaxNodeAnalyzer analyzer = new SyntaxNodeAnalyzer(cryptTypes);
-            context.RegisterSyntaxNodeAction(analyzer.AnalyzeNode,
-                                             SyntaxKind.InvocationExpression,
-                                             SyntaxKind.ObjectCreationExpression);
-            return analyzer;
-        }
+        // This analyzer just exists in the CSharp assembly so that people don't have to redo their rulesets,
+        // since DoNotUseInsecureCryptographicAlgorithmsAnalyzer started out as separated by C# and VB.
     }
 }

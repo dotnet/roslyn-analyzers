@@ -30,7 +30,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"));
+            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "MD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -40,7 +40,7 @@ Module TestClass
         Dim md5alg As MD5 = MD5.Create()
     End Sub
 End Module",
-            GetBasicResultAt(6, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestSub", "MD5"));
+            GetBasicResultAt(6, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestSub()", "MD5"));
         }
         //NO VB
         [Fact]
@@ -55,7 +55,7 @@ namespace TestNamespace
         public MD5 GetMD5 => MD5.Create();
     }
 }",
-            GetCSharpResultAt(7, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass1", "MD5"));
+            GetCSharpResultAt(7, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "MD5 TestClass1.GetMD5.get", "MD5"));
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetAlg", "MD5"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "HashAlgorithm TestClass1.GetAlg.get", "MD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -86,7 +86,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-         GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetAlg", "MD5"));
+         GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Property Get TestClass1.GetAlg() As HashAlgorithm", "MD5"));
         }
 
         [Fact]
@@ -101,7 +101,7 @@ namespace TestNamespace
         public HashAlgorithm Alg = MD5.Create();  
     }
 }",
-            GetCSharpResultAt(7, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass1", "MD5"));
+            GetCSharpResultAt(7, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "HashAlgorithm TestClass1.Alg", "MD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -110,7 +110,7 @@ Namespace TestNamespace
 		Public Alg As HashAlgorithm = MD5.Create()
 	End Class
 End Namespace",
-         GetBasicResultAt(5, 33, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass1", "MD5"));
+         GetBasicResultAt(5, 33, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass1.Alg As HashAlgorithm", "MD5"));
         }
 
         [Fact]
@@ -129,7 +129,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Run", "MD5"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Task TestClass.TestMethod()", "MD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -143,7 +143,7 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace",
-         GetBasicResultAt(8, 8, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Run", "MD5"));
+         GetBasicResultAt(8, 8, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Function TestClass.TestMethod() As Task", "MD5"));
         }
 
         [Fact]
@@ -159,7 +159,7 @@ namespace TestNamespace
         Del d = delegate () { MD5.Create(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "MD5"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Del TestClass.d", "MD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -169,7 +169,7 @@ Namespace TestNamespace
 		Private d As Del = Sub() MD5.Create()
 	End Class
 End Namespace",
-        GetBasicResultAt(6, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "MD5"));
+        GetBasicResultAt(6, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass.d As Del", "MD5"));
         }
 
         [Fact]
@@ -215,7 +215,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"));
+            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod(byte[] inBytes)", "MD5"));
 
             VerifyBasic(new[] {
 //Test0
@@ -251,7 +251,7 @@ Namespace TestNamespace
 	End Class
 End Namespace"},
 
-        GetBasicResultAt(7, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "MD5"));
+        GetBasicResultAt(7, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod(inBytes As Byte())", "MD5"));
         }
 
         #endregion
@@ -274,7 +274,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
+            GetCSharpResultAt(10, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "SHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -284,7 +284,7 @@ Module TestClass
         Dim sha1alg As SHA1 = SHA1.Create()
     End Sub
 End Module",
-            GetBasicResultAt(6, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestSub", "SHA1"));
+            GetBasicResultAt(6, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestSub()", "SHA1"));
         }
         //NO VB
         [Fact]
@@ -299,7 +299,7 @@ namespace TestNamespace
         public SHA1 GetSHA1 => SHA1.Create();
     }
 }",
-            GetCSharpResultAt(7, 32, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass1", "SHA1"));
+            GetCSharpResultAt(7, 32, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "SHA1 TestClass1.GetSHA1.get", "SHA1"));
         }
 
         [Fact]
@@ -317,7 +317,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetAlg", "SHA1"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "HashAlgorithm TestClass1.GetAlg.get", "SHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -330,7 +330,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-           GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetAlg", "SHA1"));
+           GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Property Get TestClass1.GetAlg() As HashAlgorithm", "SHA1"));
         }
 
         [Fact]
@@ -345,7 +345,7 @@ namespace TestNamespace
         public HashAlgorithm Alg = SHA1.Create();  
     }
 }",
-            GetCSharpResultAt(7, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass1", "SHA1"));
+            GetCSharpResultAt(7, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "HashAlgorithm TestClass1.Alg", "SHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -354,7 +354,7 @@ Namespace TestNamespace
 		Public Alg As HashAlgorithm = SHA1.Create()
 	End Class
 End Namespace",
-             GetBasicResultAt(5, 33, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass1", "SHA1"));
+             GetBasicResultAt(5, 33, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass1.Alg As HashAlgorithm", "SHA1"));
         }
 
         [Fact]
@@ -373,7 +373,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Run", "SHA1"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Task TestClass.TestMethod()", "SHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -387,7 +387,7 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace",
-        GetBasicResultAt(8, 8, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Run", "SHA1"));
+        GetBasicResultAt(8, 8, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Function TestClass.TestMethod() As Task", "SHA1"));
         }
 
         [Fact]
@@ -403,7 +403,7 @@ namespace TestNamespace
         Del d = delegate () { SHA1.Create(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "SHA1"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Del TestClass.d", "SHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -413,7 +413,7 @@ Namespace TestNamespace
 		Private d As Del = Sub() SHA1.Create()
 	End Class
 End Namespace",
-        GetBasicResultAt(6, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "SHA1"));
+        GetBasicResultAt(6, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass.d As Del", "SHA1"));
         }
 
         [Fact]
@@ -459,7 +459,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
+            GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod(byte[] inBytes)", "SHA1"));
 
             VerifyBasic(new[] {
 //Test0
@@ -492,7 +492,7 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace" },
-            GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
+            GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod(inBytes As Byte())", "SHA1"));
         }
 
         [Fact]
@@ -511,7 +511,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
+            GetCSharpResultAt(10, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "SHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -521,7 +521,7 @@ Module TestClass
         Dim SHA1alg As New SHA1CryptoServiceProvider
     End Sub
 End Module",
-            GetBasicResultAt(6, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "SHA1"));
+            GetBasicResultAt(6, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "SHA1"));
         }
 
         [Fact]
@@ -540,7 +540,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1"));
+            GetCSharpResultAt(10, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "HMACSHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -550,7 +550,7 @@ Module TestClass
         Dim hmacsha1 As HMACSHA1 = New HMACSHA1()
     End Sub
 End Module",
-            GetBasicResultAt(6, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestSub", "HMACSHA1"));
+            GetBasicResultAt(6, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestSub()", "HMACSHA1"));
         }
         //No VB
         [Fact]
@@ -565,7 +565,7 @@ namespace TestNamespace
         public HMAC GetHMACSHA1 => new HMACSHA1();
     }
 }",
-            GetCSharpResultAt(7, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass1", "HMACSHA1"));
+            GetCSharpResultAt(7, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "HMAC TestClass1.GetHMACSHA1.get", "HMACSHA1"));
         }
 
         [Fact]
@@ -583,7 +583,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetAlg", "HMACSHA1"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "HMAC TestClass1.GetAlg.get", "HMACSHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -596,7 +596,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-            GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetAlg", "HMACSHA1"));
+            GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Property Get TestClass1.GetAlg() As HMAC", "HMACSHA1"));
         }
 
         [Fact]
@@ -611,7 +611,7 @@ namespace TestNamespace
         public HMAC Alg = new HMACSHA1();  
     }
 }",
-            GetCSharpResultAt(7, 27, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass1", "HMACSHA1"));
+            GetCSharpResultAt(7, 27, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "HMAC TestClass1.Alg", "HMACSHA1"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -620,7 +620,7 @@ Namespace TestNamespace
 		Public Alg As HMAC = New HMACSHA1()
 	End Class
 End Namespace",
-            GetBasicResultAt(5, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass1", "HMACSHA1"));
+            GetBasicResultAt(5, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass1.Alg As HMAC", "HMACSHA1"));
         }
         //No VB
         [Fact]
@@ -639,7 +639,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Run", "HMACSHA1"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Task TestClass.TestMethod()", "HMACSHA1"));
         }
         //No VB
         [Fact]
@@ -655,7 +655,7 @@ namespace TestNamespace
         Del d = delegate () { new HMACSHA1(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "HMACSHA1"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Del TestClass.d", "HMACSHA1"));
         }
 
         [Fact]
@@ -701,7 +701,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1"));
+            GetCSharpResultAt(10, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod(byte[] inBytes)", "HMACSHA1"));
 
             VerifyBasic(new[] {
 //Test0
@@ -736,7 +736,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-            GetBasicResultAt(7, 21, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACSHA1"));
+            GetBasicResultAt(7, 21, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod(inBytes As Byte())", "HMACSHA1"));
         }
         #endregion 
 
@@ -756,7 +756,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "HMACMD5"));
+            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "HMACMD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -768,7 +768,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-           GetBasicResultAt(7, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "HMACMD5"));
+           GetBasicResultAt(7, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "HMACMD5"));
         }
 
         [Fact]
@@ -789,7 +789,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(12, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "HMACMD5"));
+            GetCSharpResultAt(12, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "HMACMD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -804,7 +804,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-           GetBasicResultAt(10, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "HMACMD5"));
+           GetBasicResultAt(10, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "HMACMD5"));
         }
 
         [Fact]
@@ -822,7 +822,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetHMACMD5", "HMACMD5"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "HMACMD5 TestClass1.GetHMACMD5.get", "HMACMD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -835,7 +835,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetHMACMD5", "HMACMD5"));
+GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Property Get TestClass1.GetHMACMD5() As HMACMD5", "HMACMD5"));
         }
 
         [Fact]
@@ -850,7 +850,7 @@ namespace TestNamespace
         HMACMD5 privateMd5 = new HMACMD5();
     }
 }",
-            GetCSharpResultAt(7, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "HMACMD5"));
+            GetCSharpResultAt(7, 30, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "HMACMD5 TestClass.privateMd5", "HMACMD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -859,7 +859,7 @@ Namespace TestNamespace
 		Private privateMd5 As New HMACMD5()
 	End Class
 End Namespace",
-GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "HMACMD5"));
+GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass.privateMd5 As HMACMD5", "HMACMD5"));
         }
 
         [Fact]
@@ -878,7 +878,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Run", "HMACMD5"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Task TestClass.TestMethod()", "HMACMD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -891,7 +891,7 @@ Module TestClass
                        End Function)
     End Sub
 End Module",
-            GetBasicResultAt(8, 35, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Run", "HMACMD5"));
+            GetBasicResultAt(8, 35, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "HMACMD5"));
         }
 
         [Fact]
@@ -907,7 +907,7 @@ namespace TestNamespace
         Del d = delegate () { new HMACMD5(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "HMACMD5"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Del TestClass.d", "HMACMD5"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -916,7 +916,7 @@ Module TestClass
     Delegate Function Del() As HashAlgorithm
     Dim d As Del = Function() New HMACMD5()
 End Module",
-            GetBasicResultAt(6, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "HMACMD5"));
+            GetBasicResultAt(6, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass.d As Del", "HMACMD5"));
         }
 
         [Fact]
@@ -935,7 +935,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
+            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "DES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -945,7 +945,7 @@ Module TestClass
         Dim desalg As DES = DES.Create()
     End Sub
 End Module",
-GetBasicResultAt(6, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
+GetBasicResultAt(6, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "DES"));
         }
 
         [Fact]
@@ -963,7 +963,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetDES", "DES"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "DES TestClass.GetDES.get", "DES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -977,7 +977,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 ",
-GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetDES", "DES"));
+GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Property Get TestClass.GetDES() As DES", "DES"));
         }
 
         [Fact]
@@ -992,7 +992,7 @@ namespace TestNamespace
         DES privateDES = DES.Create();
     }
 }",
-            GetCSharpResultAt(7, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "DES"));
+            GetCSharpResultAt(7, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "DES TestClass.privateDES", "DES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1001,7 +1001,7 @@ Namespace TestNamespace
 		Private privateDES As DES = DES.Create()
 	End Class
 End Namespace",
-GetBasicResultAt(5, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "DES"));
+GetBasicResultAt(5, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass.privateDES As DES", "DES"));
         }
 
         [Fact]
@@ -1020,7 +1020,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Run", "DES"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Task TestClass.TestMethod()", "DES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1034,7 +1034,7 @@ End Function)
 		End Function
 	End Class
 End Namespace",
-GetBasicResultAt(8, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Run", "DES"));
+GetBasicResultAt(8, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Function TestClass.TestMethod() As Task", "DES"));
         }
 
         [Fact]
@@ -1050,7 +1050,7 @@ namespace TestNamespace
         Del d = delegate () { DES.Create(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "DES"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Del TestClass.d", "DES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1060,7 +1060,7 @@ Namespace TestNamespace
 		Private d As Del = Sub() DES.Create()
 	End Class
 End Namespace",
-GetBasicResultAt(6, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "DES"));
+GetBasicResultAt(6, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass.d As Del", "DES"));
         }
 
         [Fact]
@@ -1079,7 +1079,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
+            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "DES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1090,7 +1090,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-            GetBasicResultAt(6, 21, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
+            GetBasicResultAt(6, 21, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "DES"));
         }
 
         [Fact]
@@ -1108,7 +1108,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetDES", "DES"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "DESCryptoServiceProvider TestClass.GetDES.get", "DES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1121,7 +1121,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-           GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetDES", "DES"));
+           GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Property Get TestClass.GetDES() As DESCryptoServiceProvider", "DES"));
         }
 
         [Fact]
@@ -1136,7 +1136,7 @@ namespace TestNamespace
         DESCryptoServiceProvider privateDES = new DESCryptoServiceProvider();
     }
 }",
-            GetCSharpResultAt(7, 47, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "DES"));
+            GetCSharpResultAt(7, 47, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "DESCryptoServiceProvider TestClass.privateDES", "DES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1145,7 +1145,7 @@ Namespace TestNamespace
 		Private privateDES As New DESCryptoServiceProvider()
 	End Class
 End Namespace",
-GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "DES"));
+GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass.privateDES As DESCryptoServiceProvider", "DES"));
         }
         //No VB        
         [Fact]
@@ -1164,7 +1164,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Run", "DES"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Task TestClass.TestMethod()", "DES"));
         }
         //No VB        
         [Fact]
@@ -1180,7 +1180,7 @@ namespace TestNamespace
         Del d = delegate () { new DESCryptoServiceProvider(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "DES"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Del TestClass.d", "DES"));
         }
 
         [Fact]
@@ -1232,8 +1232,8 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
-            GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
+            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "DES"),
+            GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "DES"));
 
             VerifyBasic(new[] {
 //Test0
@@ -1272,8 +1272,8 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-           GetBasicResultAt(6, 15, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"),
-           GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DES"));
+           GetBasicResultAt(6, 15, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "DES"),
+           GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "DES"));
         }
 
         [Fact]
@@ -1292,7 +1292,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"));
+            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "RC2"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1302,7 +1302,7 @@ Module TestClass
         Dim rc2alg As New RC2CryptoServiceProvider
     End Sub
 End Module",
-GetBasicResultAt(6, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"));
+GetBasicResultAt(6, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "RC2"));
         }
 
         [Fact]
@@ -1320,7 +1320,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetRC2", "RC2"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "RC2CryptoServiceProvider TestClass.GetRC2.get", "RC2"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1333,7 +1333,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_GetRC2", "RC2"));
+GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Property Get TestClass.GetRC2() As RC2CryptoServiceProvider", "RC2"));
         }
 
         [Fact]
@@ -1348,7 +1348,7 @@ namespace TestNamespace
         RC2CryptoServiceProvider privateRC2 = new RC2CryptoServiceProvider();
     }
 }",
-            GetCSharpResultAt(7, 47, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "RC2"));
+            GetCSharpResultAt(7, 47, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "RC2CryptoServiceProvider TestClass.privateRC2", "RC2"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1358,7 +1358,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 ",
-GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "RC2"));
+GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass.privateRC2 As RC2CryptoServiceProvider", "RC2"));
         }
         //No VB            
         [Fact]
@@ -1377,7 +1377,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Run", "RC2"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Task TestClass.TestMethod()", "RC2"));
         }
         //No VB        
         [Fact]
@@ -1393,7 +1393,7 @@ namespace TestNamespace
         Del d = delegate () { new RC2CryptoServiceProvider(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestClass", "RC2"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Del TestClass.d", "RC2"));
         }
 
         [Fact]
@@ -1444,7 +1444,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"));
+            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "RC2"));
 
             VerifyBasic(new[] {
 //Test0
@@ -1482,7 +1482,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-           GetBasicResultAt(6, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "RC2"));
+           GetBasicResultAt(6, 14, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "RC2"));
         }
 
         [Fact]
@@ -1501,7 +1501,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
+            GetCSharpResultAt(10, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "TripleDES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1512,7 +1512,7 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-            GetBasicResultAt(6, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
+            GetBasicResultAt(6, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "TripleDES"));
         }
 
         [Fact]
@@ -1530,7 +1530,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetTripleDES", "TripleDES"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TripleDES TestClass.GetTripleDES.get", "TripleDES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1543,7 +1543,7 @@ Namespace TestNamespace
         End Property
     End Class
 End Namespace",
-           GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetTripleDES", "TripleDES"));
+           GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Property Get TestClass.GetTripleDES() As TripleDES", "TripleDES"));
         }
 
         [Fact]
@@ -1558,7 +1558,7 @@ namespace TestNamespace
         TripleDES privateDES = TripleDES.Create(""TripleDES"");
     }
 }",
-            GetCSharpResultAt(7, 32, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "TripleDES"));
+            GetCSharpResultAt(7, 32, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TripleDES TestClass.privateDES", "TripleDES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1567,7 +1567,7 @@ Namespace TestNamespace
 		Private privateDES As TripleDES = TripleDES.Create(""TripleDES"")
     End Class
 End Namespace",
-           GetBasicResultAt(5, 37, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "TripleDES"));
+           GetBasicResultAt(5, 37, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass.privateDES As TripleDES", "TripleDES"));
         }
         //No VB
         [Fact]
@@ -1586,7 +1586,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Run", "TripleDES"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Task TestClass.TestMethod()", "TripleDES"));
         }
 
         [Fact]
@@ -1602,7 +1602,7 @@ namespace TestNamespace
         Del d = delegate () { TripleDES.Create(""TripleDES""); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "TripleDES"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Del TestClass.d", "TripleDES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1612,7 +1612,7 @@ Namespace TestNamespace
 		Private d As Del = Sub() TripleDES.Create(""TripleDES"")
     End Class
 End Namespace",
-GetBasicResultAt(6, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "TripleDES"));
+GetBasicResultAt(6, 28, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass.d As Del", "TripleDES"));
         }
 
         [Fact]
@@ -1631,7 +1631,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 56, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
+            GetCSharpResultAt(10, 56, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "TripleDES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1641,7 +1641,7 @@ Module TestClass
         Dim tDESalg As New TripleDESCryptoServiceProvider
     End Sub
 End Module",
-GetBasicResultAt(6, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
+GetBasicResultAt(6, 24, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "TripleDES"));
         }
 
         [Fact]
@@ -1659,7 +1659,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetDES", "TripleDES"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TripleDESCryptoServiceProvider TestClass.GetDES.get", "TripleDES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1672,7 +1672,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-            GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetDES", "TripleDES"));
+            GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Property Get TestClass.GetDES() As TripleDESCryptoServiceProvider", "TripleDES"));
         }
 
         [Fact]
@@ -1687,7 +1687,7 @@ namespace TestNamespace
         TripleDESCryptoServiceProvider privateDES = new TripleDESCryptoServiceProvider();
     }
 }",
-            GetCSharpResultAt(7, 53, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "TripleDES"));
+            GetCSharpResultAt(7, 53, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TripleDESCryptoServiceProvider TestClass.privateDES", "TripleDES"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1696,7 +1696,7 @@ Namespace TestNamespace
 		Private privateDES As New TripleDESCryptoServiceProvider()
 	End Class
 End Namespace",
-GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "TripleDES"));
+GetBasicResultAt(5, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass.privateDES As TripleDESCryptoServiceProvider", "TripleDES"));
         }
         //No VB       
         [Fact]
@@ -1715,7 +1715,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Run", "TripleDES"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Task TestClass.TestMethod()", "TripleDES"));
         }
         //No VB        
         [Fact]
@@ -1731,7 +1731,7 @@ namespace TestNamespace
         Del d = delegate () { new TripleDESCryptoServiceProvider(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "TripleDES"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Del TestClass.d", "TripleDES"));
         }
 
         [Fact]
@@ -1783,8 +1783,8 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
-            GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
+            GetCSharpResultAt(10, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "TripleDES"),
+            GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "TripleDES"));
 
             VerifyBasic(new[] {
 //Test0
@@ -1825,8 +1825,8 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-            GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"),
-            GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "TripleDES"));
+            GetBasicResultAt(6, 17, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "TripleDES"),
+            GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "TripleDES"));
         }
 
         [Fact]
@@ -1845,7 +1845,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "RIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1855,7 +1855,7 @@ Module TestClass
         Dim md1601alg As New RIPEMD160Managed
     End Sub
 End Module",
-GetBasicResultAt(6, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+GetBasicResultAt(6, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "RIPEMD160"));
         }
 
         [Fact]
@@ -1873,7 +1873,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetRIPEMD160", "RIPEMD160"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "RIPEMD160Managed TestClass1.GetRIPEMD160.get", "RIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1886,7 +1886,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-            GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetRIPEMD160", "RIPEMD160"));
+            GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Property Get TestClass1.GetRIPEMD160() As RIPEMD160Managed", "RIPEMD160"));
         }
 
         [Fact]
@@ -1901,7 +1901,7 @@ namespace TestNamespace
         RIPEMD160Managed privateRIPEMD160 = new RIPEMD160Managed();
     }
 }",
-            GetCSharpResultAt(7, 45, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "RIPEMD160"));
+            GetCSharpResultAt(7, 45, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "RIPEMD160Managed TestClass.privateRIPEMD160", "RIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1911,7 +1911,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 ",
-        GetBasicResultAt(5, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "RIPEMD160"));
+        GetBasicResultAt(5, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass.privateRIPEMD160 As RIPEMD160Managed", "RIPEMD160"));
         }
         //No VB               
         [Fact]
@@ -1930,7 +1930,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Run", "RIPEMD160"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Task TestClass.TestMethod()", "RIPEMD160"));
         }
         //No VB        
         [Fact]
@@ -1946,7 +1946,7 @@ namespace TestNamespace
         Del d = delegate () { new RIPEMD160Managed(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "RIPEMD160"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Del TestClass.d", "RIPEMD160"));
         }
 
         [Fact]
@@ -1965,7 +1965,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+            GetCSharpResultAt(10, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "RIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -1976,7 +1976,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-            GetBasicResultAt(6, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+            GetBasicResultAt(6, 29, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "RIPEMD160"));
         }
 
         [Fact]
@@ -1994,7 +1994,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetRIPEMD160", "RIPEMD160"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "RIPEMD160 TestClass1.GetRIPEMD160.get", "RIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2007,7 +2007,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetRIPEMD160", "RIPEMD160"));
+GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Property Get TestClass1.GetRIPEMD160() As RIPEMD160", "RIPEMD160"));
         }
 
         [Fact]
@@ -2022,7 +2022,7 @@ namespace TestNamespace
         RIPEMD160 privateRIPEMD160 = RIPEMD160.Create();
     }
 }",
-            GetCSharpResultAt(7, 38, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "RIPEMD160"));
+            GetCSharpResultAt(7, 38, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "RIPEMD160 TestClass.privateRIPEMD160", "RIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2031,7 +2031,7 @@ Namespace TestNamespace
 		Private privateRIPEMD160 As RIPEMD160 = RIPEMD160.Create()
 	End Class
 End Namespace",
-            GetBasicResultAt(5, 43, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "RIPEMD160"));
+            GetBasicResultAt(5, 43, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass.privateRIPEMD160 As RIPEMD160", "RIPEMD160"));
         }
         //No VB                
         [Fact]
@@ -2050,7 +2050,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Run", "RIPEMD160"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Task TestClass.TestMethod()", "RIPEMD160"));
         }
 
         [Fact]
@@ -2066,7 +2066,7 @@ namespace TestNamespace
         Del d = delegate () { RIPEMD160.Create(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "RIPEMD160"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Del TestClass.d", "RIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2076,7 +2076,7 @@ Namespace TestNamespace
         Private d As Del = Sub() RIPEMD160.Create()
     End Class
 End Namespace",
-          GetBasicResultAt(6, 34, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "RIPEMD160"));
+          GetBasicResultAt(6, 34, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass.d As Del", "RIPEMD160"));
         }
 
         [Fact]
@@ -2095,7 +2095,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACRIPEMD160"));
+            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "HMACRIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2106,7 +2106,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-            GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACRIPEMD160"));
+            GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "HMACRIPEMD160"));
         }
 
         [Fact]
@@ -2124,7 +2124,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetHMARIPEMD160", "HMACRIPEMD160"));
+            GetCSharpResultAt(9, 26, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "HMACRIPEMD160 TestClass1.GetHMARIPEMD160.get", "HMACRIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2137,7 +2137,7 @@ Namespace TestNamespace
 		End Property
 	End Class
 End Namespace",
-            GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "get_GetHMARIPEMD160", "HMACRIPEMD160"));
+            GetBasicResultAt(7, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Property Get TestClass1.GetHMARIPEMD160() As HMACRIPEMD160", "HMACRIPEMD160"));
         }
 
         [Fact]
@@ -2152,7 +2152,7 @@ namespace TestNamespace
         HMACRIPEMD160 privateHMARIPEMD160 = new HMACRIPEMD160();
     }
 }",
-            GetCSharpResultAt(7, 45, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "HMACRIPEMD160"));
+            GetCSharpResultAt(7, 45, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "HMACRIPEMD160 TestClass.privateHMARIPEMD160", "HMACRIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2161,7 +2161,7 @@ Namespace TestNamespace
 		Private privateHMARIPEMD160 As New HMACRIPEMD160()
 	End Class
 End Namespace",
-           GetBasicResultAt(5, 34, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "HMACRIPEMD160"));
+           GetBasicResultAt(5, 34, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass.privateHMARIPEMD160 As HMACRIPEMD160", "HMACRIPEMD160"));
         }
         //No VB        
         [Fact]
@@ -2180,7 +2180,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Run", "HMACRIPEMD160"));
+            GetCSharpResultAt(10, 36, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Task TestClass.TestMethod()", "HMACRIPEMD160"));
         }
         //No VB        
         [Fact]
@@ -2196,7 +2196,7 @@ namespace TestNamespace
         Del d = delegate () { new HMACRIPEMD160(); };
     }
 }",
-            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestClass", "HMACRIPEMD160"));
+            GetCSharpResultAt(8, 31, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Del TestClass.d", "HMACRIPEMD160"));
         }
 
         [Fact]
@@ -2242,7 +2242,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod(byte[] inBytes)", "RIPEMD160"));
 
             VerifyBasic(new[] {
 //Test0
@@ -2276,7 +2276,7 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace" },
-            GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+            GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod(inBytes As Byte())", "RIPEMD160"));
         }
 
         [Fact]
@@ -2322,7 +2322,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+            GetCSharpResultAt(10, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod(byte[] inBytes)", "RIPEMD160"));
 
             VerifyBasic(new[] {
 //Test0
@@ -2356,7 +2356,7 @@ Namespace TestNamespace
 	End Class
 End Namespace
 " },
-            GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "RIPEMD160"));
+            GetBasicResultAt(6, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod(inBytes As Byte())", "RIPEMD160"));
         }
 
         [Fact]
@@ -2377,7 +2377,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(12, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACRIPEMD160"));
+            GetCSharpResultAt(12, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "void TestClass.TestMethod()", "HMACRIPEMD160"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2392,7 +2392,7 @@ Namespace TestNamespace
 		End Sub
 	End Class
 End Namespace",
-            GetBasicResultAt(10, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "TestMethod", "HMACRIPEMD160"));
+            GetBasicResultAt(10, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule, "Sub TestClass.TestMethod()", "HMACRIPEMD160"));
         }
 
         [Fact]
@@ -2411,7 +2411,7 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
+            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod(DSA dsa, byte[] inBytes)", "DSA"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2422,7 +2422,7 @@ Module TestClass
         Return dsa.CreateSignature(bytes)
     End Function
 End Module",
-GetBasicResultAt(7, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
+GetBasicResultAt(7, 16, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Function TestClass.TestMethod(bytes As Byte()) As Object", "DSA"));
         }
 
         [Fact]
@@ -2443,7 +2443,7 @@ class TestClass
         }
     }
 }",
-            GetCSharpResultAt(12, 20, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"));
+            GetCSharpResultAt(12, 20, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "byte[] TestClass.MyProperty.get", "DSA"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2457,7 +2457,7 @@ Class TestClass
 		End Get
 	End Property
 End Class",
-            GetBasicResultAt(9, 11, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"));
+            GetBasicResultAt(9, 11, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Property Get TestClass.MyProperty() As Byte()", "DSA"));
         }
 
         [Fact]
@@ -2477,8 +2477,8 @@ namespace TestNamespace
         }
     }
 }",
-            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"),
-            GetCSharpResultAt(11, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
+            GetCSharpResultAt(10, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "DSA"),
+            GetCSharpResultAt(11, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod()", "DSA"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2491,8 +2491,8 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace",
-           GetBasicResultAt(7, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"),
-           GetBasicResultAt(8, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
+           GetBasicResultAt(7, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "DSA"),
+           GetBasicResultAt(8, 23, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod()", "DSA"));
         }
 
         [Fact]
@@ -2514,8 +2514,8 @@ class TestClass
         }
     }
 }",
-            GetCSharpResultAt(12, 43, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"),
-            GetCSharpResultAt(13, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"));
+            GetCSharpResultAt(12, 43, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "DSASignatureFormatter TestClass.MyProperty.get", "DSA"),
+            GetCSharpResultAt(13, 25, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "DSASignatureFormatter TestClass.MyProperty.get", "DSA"));
 
             VerifyBasic(@"
 Imports System.Security.Cryptography
@@ -2532,8 +2532,8 @@ Class TestClass
 		End Get
 	End Property
 End Class",
-            GetBasicResultAt(9, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"),
-            GetBasicResultAt(11, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "get_MyProperty", "DSA"));
+            GetBasicResultAt(9, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Property Get TestClass.MyProperty() As DSASignatureFormatter", "DSA"),
+            GetBasicResultAt(11, 12, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Property Get TestClass.MyProperty() As DSASignatureFormatter", "DSA"));
         }
 
         [Fact]
@@ -2601,7 +2601,7 @@ namespace TestNamespace
         }
     }
 }" },
-            GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
+            GetCSharpResultAt(11, 13, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "void TestClass.TestMethod(byte[] inBytes)", "DSA"));
 
             VerifyBasic(new[] {
 //Test0
@@ -2652,7 +2652,7 @@ Namespace TestNamespace
 		End Function
 	End Class
 End Namespace" },
-           GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "TestMethod", "DSA"));
+           GetBasicResultAt(7, 4, DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseBrokenCryptographyRule, "Sub TestClass.TestMethod(inBytes As Byte())", "DSA"));
         }
 
         [Fact]

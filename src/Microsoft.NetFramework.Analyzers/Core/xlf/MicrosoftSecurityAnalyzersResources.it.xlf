@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">
         <source>Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</source>
-        <target state="translated">Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</target>
+        <target state="translated">ValidateAntiForgeryTokenAttribute mancante nell'azione del controller {0}.</target>
         <note />
       </trans-unit>
     </body>

@@ -39,17 +39,17 @@
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="new">A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</target>
+        <target state="translated">Uma exception geral como System.Exception ou System.SystemException foi lançada em uma instrução catch. Exceções gerais não devem ser detectadas.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
         <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="new">Modify '{0}' to catch a more specific exception type, or rethrow the exception.</target>
+        <target state="translated">Modificar '{0}' para capturar um tipo de exceção mais específico ou relançar a exceção.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
         <source>Do not catch general exception types</source>
-        <target state="new">Do not catch general exception types</target>
+        <target state="translated">Não capturar exceptions de tipos genéricos</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
@@ -69,17 +69,17 @@
       </trans-unit>
       <trans-unit id="DoNotPrefixEnumValuesWithTypeNameDescription">
         <source>An enumeration's values should not start with the type name of the enumeration.</source>
-        <target state="new">An enumeration's values should not start with the type name of the enumeration.</target>
+        <target state="translated">Valores de uma enumeração não devem começar com o nome do tipo de enumeração.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPrefixEnumValuesWithTypeNameMessage">
         <source>Do not prefix enum values with the name of the enum type '{0}'. </source>
-        <target state="new">Do not prefix enum values with the name of the enum type '{0}'. </target>
+        <target state="translated">Não adicione prefixos de valores de enum com o mesmo nome do tipo enumerado '{0}'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPrefixEnumValuesWithTypeNameTitle">
         <source>Do not prefix enum values with type name</source>
-        <target state="new">Do not prefix enum values with type name</target>
+        <target state="translated">Não adicionar prefixos de valores enum com nome do tipo</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesTitle">

@@ -1,85 +1,70 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Linq;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public class MarkVerbHandlersWithValidateAntiforgeryTokenTests : DiagnosticAnalyzerTestBase
+    public class MarkVerbHandlersWithValidateAntiforgeryTokenTests
     {
         #region Boilerplate
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer();
-        }
-
         private static DiagnosticResult GetCA3147CSharpNoVerbs(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage, controllerAction);
-            return GetCSharpResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.NoVerbsRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147CSharpNoVerbsNoToken(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage, controllerAction);
-            return GetCSharpResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.NoVerbsNoTokenRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147CSharpGetAndToken(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage, controllerAction);
-            return GetCSharpResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.GetAndTokenRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147CSharpGetAndOtherToken(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage, controllerAction);
-            return GetCSharpResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.GetAndOtherAndTokenRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147CSharpVerbsAndNoToken(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage, controllerAction);
-            return GetCSharpResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.VerbsAndNoTokenRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147BasicNoVerbs(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage, controllerAction);
-            return GetBasicResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.NoVerbsRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147BasicNoVerbsNoToken(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage, controllerAction);
-            return GetBasicResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.NoVerbsNoTokenRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147BasicGetAndToken(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage, controllerAction);
-            return GetBasicResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.GetAndTokenRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147BasicGetAndOtherToken(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage, controllerAction);
-            return GetBasicResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.GetAndOtherAndTokenRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         private static DiagnosticResult GetCA3147BasicVerbsAndNoToken(int line, int column, string controllerAction)
         {
-            string message = string.Format(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage, controllerAction);
-            return GetBasicResultAt(line, column, MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.RuleId, message);
+            return new DiagnosticResult(MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer.VerbsAndNoTokenRule).WithLocation(line, column).WithArguments(controllerAction);
         }
 
         #endregion
@@ -237,9 +222,9 @@ End Namespace
         private static readonly int SystemWebMvcNamespaceBasicLineCount = SystemWebMvcNamespaceBasic.Where(ch => ch == '\n').Count();
 
         [Fact]
-        public void HaveAcceptStringPutAndToken_CSharp_NoDiagnostic()
+        public async Task HaveAcceptStringPutAndToken_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -258,9 +243,9 @@ namespace Blah
         }
 
         [Fact]
-        public void HaveAcceptStringPutAndToken_Basic_NoDiagnostic()
+        public async Task HaveAcceptStringPutAndToken_Basic_NoDiagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -276,9 +261,9 @@ End Namespace"
         }
 
         [Fact]
-        public void ReturnsNonActionResult_CSharp_NoDiagnostic()
+        public async Task ReturnsNonActionResult_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -295,9 +280,9 @@ namespace Blah
         }
 
         [Fact]
-        public void HttpGet_CSharp_NoDiagnostic()
+        public async Task HttpGet_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -315,9 +300,9 @@ namespace Blah
         }
 
         [Fact]
-        public void ReturnsNonActionResult_Basic_NoDiagnostic()
+        public async Task ReturnsNonActionResult_Basic_NoDiagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController 
         Inherits System.Web.Mvc.Controller
@@ -331,9 +316,9 @@ End Namespace"
         }
 
         [Fact]
-        public void HaveAcceptEnumPutAndToken_CSharp_NoDiagnostic()
+        public async Task HaveAcceptEnumPutAndToken_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -352,9 +337,9 @@ namespace Blah
         }
 
         [Fact]
-        public void HaveAcceptEnumPutAndToken_Basic_NoDiagnostic()
+        public async Task HaveAcceptEnumPutAndToken_Basic_NoDiagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -370,9 +355,9 @@ End Namespace"
         }
 
         [Fact]
-        public void NotAController_CSharp_NoDiagnostic()
+        public async Task NotAController_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -389,9 +374,9 @@ namespace Blah
         }
 
         [Fact]
-        public void NotAController_Basic_NoDiagnostic()
+        public async Task NotAController_Basic_NoDiagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class NotAController
         Public Function DoSomething() As System.Web.Mvc.ContentResult
@@ -403,9 +388,9 @@ End Namespace"
         }
 
         [Fact]
-        public void NotAnAction_CSharp_NoDiagnostic()
+        public async Task NotAnAction_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -423,9 +408,9 @@ namespace Blah
         }
 
         [Fact]
-        public void NotAnAction_Basic_NoDiagnostic()
+        public async Task NotAnAction_Basic_NoDiagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -440,9 +425,9 @@ End Namespace"
         }
 
         [Fact]
-        public void HaveHttpPostAndToken_CSharp_NoDiagnostic()
+        public async Task HaveHttpPostAndToken_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -461,9 +446,9 @@ namespace Blah
         }
 
         [Fact]
-        public void HaveHttpPostAndToken_Basic_NoDiagnostic()
+        public async Task HaveHttpPostAndToken_Basic_NoDiagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -479,9 +464,9 @@ End Namespace"
         }
 
         [Fact]
-        public void MissingVerbsAndToken_CSharp_Diagnostic()
+        public async Task MissingVerbsAndToken_CSharp_Diagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -499,9 +484,9 @@ namespace Blah
         }
 
         [Fact]
-        public void MissingVerbsAndToken_Basic_Diagnostic()
+        public async Task MissingVerbsAndToken_Basic_Diagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -515,9 +500,9 @@ End Namespace",
         }
 
         [Fact]
-        public void HttpGetAndToken_CSharp_Diagnostic()
+        public async Task HttpGetAndToken_CSharp_Diagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -537,9 +522,9 @@ namespace Blah
         }
 
         [Fact]
-        public void HttpGetAndToken_Basic_Diagnostic()
+        public async Task HttpGetAndToken_Basic_Diagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -555,9 +540,9 @@ End Namespace",
         }
 
         [Fact]
-        public void AcceptGetPostAndToken_CSharp_Diagnostic()
+        public async Task AcceptGetPostAndToken_CSharp_Diagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -577,9 +562,9 @@ namespace Blah
         }
 
         [Fact]
-        public void AcceptGetPostAndToken_Basic_Diagnostic()
+        public async Task AcceptGetPostAndToken_Basic_Diagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -596,9 +581,9 @@ End Namespace",
         }
 
         [Fact]
-        public void HttpGetHttpPutAndToken_CSharp_Diagnostic()
+        public async Task HttpGetHttpPutAndToken_CSharp_Diagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -620,9 +605,9 @@ namespace Blah
         }
 
         [Fact]
-        public void HttpGetHttpPutAndToken_Basic_Diagnostic()
+        public async Task HttpGetHttpPutAndToken_Basic_Diagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -640,9 +625,9 @@ End Namespace",
         }
 
         [Fact]
-        public void TokenWithoutVerbs_CSharp_Diagnostic()
+        public async Task TokenWithoutVerbs_CSharp_Diagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -661,9 +646,9 @@ namespace Blah
         }
 
         [Fact]
-        public void TokenWithoutVerbs_Basic_Diagnostic()
+        public async Task TokenWithoutVerbs_Basic_Diagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -678,9 +663,9 @@ End Namespace",
         }
 
         [Fact]
-        public void AcceptVerbsNoToken_CSharp_Diagnostic()
+        public async Task AcceptVerbsNoToken_CSharp_Diagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace Blah
 {
     using System.Web.Mvc;
@@ -701,9 +686,9 @@ namespace Blah
         }
 
         [Fact]
-        public void AcceptVerbsNoToken_Basic_Diagnostic()
+        public async Task AcceptVerbsNoToken_Basic_Diagnostic()
         {
-            VerifyBasic(SystemWebMvcNamespaceBasic + @"
+            await VerifyVB.VerifyAnalyzerAsync(SystemWebMvcNamespaceBasic + @"
 Namespace Blah
     Public Class ApiController
         Inherits System.Web.Mvc.Controller
@@ -720,9 +705,9 @@ End Namespace",
         }
 
         [Fact]
-        public void DocumentationViolationPostExample_CSharp_Diagnostic()
+        public async Task DocumentationViolationPostExample_CSharp_Diagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace TestNamespace
 {
     using System.Web.Mvc;
@@ -741,9 +726,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void DocumentationFixPostExample_CSharp_NoDiagnostic()
+        public async Task DocumentationFixPostExample_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace TestNamespace
 {
     using System.Web.Mvc;
@@ -762,9 +747,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void DocumentationViolationGetExample_CSharp_Diagnostic()
+        public async Task DocumentationViolationGetExample_CSharp_Diagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace TestNamespace
 {
     using System.Web.Mvc;
@@ -782,9 +767,9 @@ namespace TestNamespace
         }
 
         [Fact]
-        public void DocumentationFixGetExample_CSharp_NoDiagnostic()
+        public async Task DocumentationFixGetExample_CSharp_NoDiagnostic()
         {
-            VerifyCSharp(SystemWebMvcNamespaceCSharp + @"
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
 namespace TestNamespace
 {
     using System.Web.Mvc;

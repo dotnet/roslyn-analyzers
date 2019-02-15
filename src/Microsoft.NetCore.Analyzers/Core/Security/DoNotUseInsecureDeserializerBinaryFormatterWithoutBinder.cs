@@ -31,7 +31,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 helpLinkUri: null);
 
         protected override string DeserializerTypeMetadataName =>
-            WellKnownTypes.SystemRuntimeSerializationFormattersBinaryBinaryFormatter;
+            WellKnownTypeNames.SystemRuntimeSerializationFormattersBinaryBinaryFormatter;
 
         protected override string SerializationBinderPropertyMetadataName => "Binder";
 

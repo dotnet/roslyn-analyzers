@@ -7,7 +7,17 @@
       Restore would conclude that there is a cyclic dependency between us and the DotNetAnalyzers.PublicApiAnalyzer package.
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
+    <MicrosoftCodeAnalysisVersion>1.2.1</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.3'">
+      <PropertyGroup>
+        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
   <ItemGroup>
     <Compile Include="..\..\..\Roslyn.Diagnostics.Analyzers\Core\RoslynDiagnosticIds.cs" Link="RoslynDiagnosticIds.cs" />
   </ItemGroup>
@@ -15,5 +25,5 @@
     <InternalsVisibleTo Include="DotNetAnalyzers.PublicApiAnalyzer.CodeFixes" />
     <InternalsVisibleTo Include="DotNetAnalyzers.UnitTests" />
   </ItemGroup>
-  <Import Project="..\..\..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
+  <Import Project="..\..\..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
 </Project>

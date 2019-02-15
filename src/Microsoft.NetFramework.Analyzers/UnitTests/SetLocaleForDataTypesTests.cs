@@ -3,20 +3,16 @@
 using Microsoft.NetFramework.CSharp.Analyzers;
 using Microsoft.NetFramework.VisualBasic.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpSetLocaleForDataTypesAnalyzer,
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpSetLocaleForDataTypesFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicSetLocaleForDataTypesAnalyzer,
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicSetLocaleForDataTypesFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public class SetLocaleForDataTypesTests : DiagnosticAnalyzerTestBase
+    public class SetLocaleForDataTypesTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicSetLocaleForDataTypesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpSetLocaleForDataTypesAnalyzer();
-        }
     }
 }

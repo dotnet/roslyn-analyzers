@@ -1,16 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpDoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicDoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests
     {
         [Fact]
-        public void NonXmlTextReaderDerivedTypeWithNoConstructorShouldNotGenerateDiagnostic()
+        public async Task NonXmlTextReaderDerivedTypeWithNoConstructorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -26,7 +32,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -41,9 +47,9 @@ End Namespace");
         }
 
         [Fact]
-        public void NonXmlTextReaderDerivedTypeWithConstructorShouldNotGenerateDiagnostic()
+        public async Task NonXmlTextReaderDerivedTypeWithConstructorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -61,7 +67,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -79,9 +85,9 @@ End Namespace");
         }
 
         [Fact]
-        public void TextReaderDerivedTypeWithNoConstructorShouldNotGenerateDiagnostic()
+        public async Task TextReaderDerivedTypeWithNoConstructorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -91,7 +97,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -103,9 +109,9 @@ End Namespace"
         }
 
         [Fact]
-        public void TextReaderDerivedTypeWithMethodAndNoConstructorShouldNotGenerateDiagnostic()
+        public async Task TextReaderDerivedTypeWithMethodAndNoConstructorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -118,7 +124,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace

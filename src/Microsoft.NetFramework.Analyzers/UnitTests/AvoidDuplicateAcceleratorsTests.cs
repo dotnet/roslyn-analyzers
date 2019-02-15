@@ -3,20 +3,16 @@
 using Microsoft.NetFramework.CSharp.Analyzers;
 using Microsoft.NetFramework.VisualBasic.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpAvoidDuplicateAcceleratorsAnalyzer,
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpAvoidDuplicateAcceleratorsFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicAvoidDuplicateAcceleratorsAnalyzer,
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicAvoidDuplicateAcceleratorsFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public class AvoidDuplicateAcceleratorsTests : DiagnosticAnalyzerTestBase
+    public class AvoidDuplicateAcceleratorsTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicAvoidDuplicateAcceleratorsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpAvoidDuplicateAcceleratorsAnalyzer();
-        }
     }
 }

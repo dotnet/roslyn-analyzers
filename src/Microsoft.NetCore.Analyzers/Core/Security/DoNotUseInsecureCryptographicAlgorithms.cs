@@ -11,7 +11,8 @@ using System.Diagnostics;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
-    public abstract class DoNotUseInsecureCryptographicAlgorithmsAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DoNotUseInsecureCryptographicAlgorithmsAnalyzer : DiagnosticAnalyzer
     {
         internal const string DoNotUseWeakCryptographyRuleId = "CA5350";
         internal const string DoNotUseBrokenCryptographyRuleId = "CA5351";

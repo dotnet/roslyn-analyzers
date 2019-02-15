@@ -1,10 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Analyzer.Utilities;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.CSharp.Analyzers.Security;
-using Microsoft.NetCore.VisualBasic.Analyzers.Security;
 using Test.Utilities;
 using Xunit;
 
@@ -2864,12 +2860,12 @@ End Namespace" }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDoNotUseInsecureCryptographicAlgorithmsAnalyzer();
+            return new DoNotUseInsecureCryptographicAlgorithmsAnalyzer();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDoNotUseInsecureCryptographicAlgorithmsAnalyzer();
+            return new DoNotUseInsecureCryptographicAlgorithmsAnalyzer();
         }
 
         ////private static readonly DiagnosticDescriptor DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule = DoNotUseInsecureCryptographicAlgorithmsAnalyzer.DoNotUseWeakCryptographyRule;

@@ -339,6 +339,44 @@ End Class
         }
 
         [Fact]
+        public void HazardousUsage_ReferenceInConditiona_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public bool X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        if (c.X)
+        {
+        }
+    }
+}
+",
+            // Test0.cs(11,13): warning CA1062: In externally visible method 'void Test.M1(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(11, 13, "void Test.M1(C c)", "c"));
+
+            VerifyBasic(@"
+Public Class C
+    Public X As Boolean
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        If c.X Then
+        End If
+    End Sub
+End Class
+",
+            // Test0.vb(8,12): warning CA1062: In externally visible method 'Sub Test.M1(c As C)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetBasicResultAt(8, 12, "Sub Test.M1(c As C)", "c"));
+        }
+
+        [Fact]
         public void MultipleHazardousUsages_OneReportPerParameter_Diagnostic()
         {
             VerifyCSharp(@"
@@ -3489,8 +3527,8 @@ using System.Reflection;
         }
     }
 }",
-            // Test0.cs(14,36): warning CA1062: In externally visible method 'IInterface PropConvert.ToSettings(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetCSharpResultAt(14, 36, "IInterface PropConvert.ToSettings(object o)", "o"));
+            // Test0.cs(12,35): warning CA1062: In externally visible method 'IInterface PropConvert.ToSettings(object o)', validate parameter 'o' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(12, 35, "IInterface PropConvert.ToSettings(object o)", "o"));
         }
 
         [Fact, WorkItem(1870, "https://github.com/dotnet/roslyn-analyzers/issues/1870")]
@@ -3714,7 +3752,9 @@ public class Class1
     }
 }",
             // Test0.cs(115,28): warning CA1062: In externally visible method 'void Class1.Method(IContext aContext)', validate parameter 'aContext' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetCSharpResultAt(115, 28, "void Class1.Method(IContext aContext)", "aContext"));
+            GetCSharpResultAt(115, 28, "void Class1.Method(IContext aContext)", "aContext"),
+            // Test0.cs(156,13): warning CA1062: In externally visible method 'bool Class1.HasUrl(IContext filterContext)', validate parameter 'filterContext' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(156, 13, "bool Class1.HasUrl(IContext filterContext)", "filterContext"));
         }
 
         [Fact]
@@ -4757,7 +4797,9 @@ public class C
             return c2;
         }
     }
-}");
+}",
+            // Test0.cs(15,17): warning CA1062: In externally visible method 'object C.M(C c)', validate parameter 'c' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(15, 17, "object C.M(C c)", "c"));
         }
 
         [Fact]
@@ -5100,6 +5142,120 @@ namespace MyComments
     }
 }
 ");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void CopyAnalysisAssert_AddressSharedOutParam()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(C c)
+    {
+        M(out c);
+
+        if (c == default(C))
+        {
+        }
+    }
+
+    private void M<T>(out T t)
+    {
+        t = default(T);
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void CopyAnalysisAssert_ApplyInterproceduralResult()
+        {
+            VerifyCSharp(@"
+public class SyntaxNode
+{
+    public SyntaxNode Parent { get; }
+    private bool _flag;
+    private bool M2() => _flag;
+    public int RawKind { get; }
+
+    public static bool M(SyntaxNode node)
+    {
+        var parent = node.Parent;
+        if (parent == null || !node.M2())
+        {
+            return false;
+        }
+
+        switch (parent.Kind())
+        {
+            case SyntaxKind.Kind1:
+                var d = (QualifiedNameSyntax)parent;
+                return d.Right == node ? M(parent) : false;
+
+            case SyntaxKind.Kind2:
+                var e = (AliasQualifiedNameSyntax)parent;
+                return e.Name == node ? M(parent) : false;
+        }
+
+        var f = node.Parent as AttributeSyntax;
+        return f != null && f.Name == node;
+    }
+}
+
+public static class Extensions
+{
+    public static SyntaxKind Kind(this SyntaxNode node)
+    {
+        var rawKind = node.RawKind;
+        return IsCSharpKind(rawKind) ? (SyntaxKind)rawKind : SyntaxKind.Kind4;
+    }
+
+    private static bool IsCSharpKind(int rawKind)
+        => rawKind > 0;
+}
+
+public enum SyntaxKind
+{
+    Kind1,
+    Kind2,
+    Kind3,
+    Kind4
+}
+
+public class NameSyntax : SyntaxNode
+{
+}
+
+public class SimpleNameSyntax : NameSyntax
+{
+}
+
+public class QualifiedNameSyntax : NameSyntax
+{
+    public SimpleNameSyntax Right { get; }
+}
+
+public class AliasQualifiedNameSyntax : NameSyntax
+{
+    public SimpleNameSyntax Name { get; }
+}
+
+public class AttributeSyntax : CSharpSyntaxNode
+{
+    public SimpleNameSyntax Name { get; }
+}
+
+public class CSharpSyntaxNode : SyntaxNode
+{
+}
+",
+            // Test0.cs(11,22): warning CA1062: In externally visible method 'bool SyntaxNode.M(SyntaxNode node)', validate parameter 'node' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(11, 22, "bool SyntaxNode.M(SyntaxNode node)", "node"),
+            // Test0.cs(37,23): warning CA1062: In externally visible method 'SyntaxKind Extensions.Kind(SyntaxNode node)', validate parameter 'node' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(37, 23, "SyntaxKind Extensions.Kind(SyntaxNode node)", "node"));
         }
     }
 }

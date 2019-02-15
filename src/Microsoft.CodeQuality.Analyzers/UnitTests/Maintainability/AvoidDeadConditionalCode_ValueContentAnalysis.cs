@@ -1573,5 +1573,305 @@ class Test
 
             // VB does not support patterns.
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_GotoLoop()
+        {
+            // Ensure we bound the number of value content literals
+            // and avoid infinite analysis iterations.
+            VerifyCSharp(@"
+class C
+{
+    internal static uint ComputeStringHash(string text)
+    {
+        uint hashCode = 0;
+        if (text != null)
+        {
+            hashCode = unchecked((uint)2166136261);
+ 
+            int i = 0;
+            goto start;
+
+again:
+            hashCode = unchecked((text[i] ^ hashCode) * 16777619);
+            i = i + 1;
+
+start:
+            if (i < text.Length)
+                goto again;
+        }
+        return hashCode;
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_MayBeLiteralAssignedInLoop()
+        {
+            VerifyCSharp(@"
+using System.Diagnostics;
+
+class C
+{
+    public int Int { get; }
+    public C[] ArrayOfC { get; }
+    void M(int x)
+    {
+        int lastOffset = -1;
+        foreach (var c in ArrayOfC)
+        {
+            int offset = c.Int;
+            if (offset >= 0)
+            {
+                if (lastOffset != offset)
+                {
+                    Debug.Assert(lastOffset < offset);
+                    Debug.Assert((lastOffset >= 0) || (offset == 0));
+                    lastOffset = offset;
+                }
+                else
+                {
+                    System.Console.Write(offset);
+                }
+            }
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_YieldBreakInTryFinally()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+class C
+{
+    private static IEnumerable<IList<T>> M<T>(List<IEnumerator<T>> enumerators)
+    {
+        try
+        {
+            while (true)
+            {
+                for (int i = 0; i < enumerators.Count; i++)
+                {
+                    var e = enumerators[i];
+                    if (!e.MoveNext())
+                    {
+                        yield break;
+                    }
+                }
+            }
+        }
+        finally
+        {
+            foreach (var enumerator in enumerators)
+            {
+                enumerator.Dispose();
+            }
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_NullableBool()
+        {
+            VerifyCSharp(@"
+class C
+{
+    private object Field;
+    public void M(C c)
+    {
+        bool? status = c.Field?.Equals(c);
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_DefaultExpression()
+        {
+            VerifyCSharp(@"
+struct S
+{
+}
+
+class C
+{
+    public void M(S s)
+    {
+        if (object.Equals(s, default(S)))
+        {
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_Boxing_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public void M(int i)
+    {
+        object o = i;       // Implicit boxing.
+        if ((int)o == i)    // Always true.
+        {
+        }
+        
+        object o2 = (object)i;    // Explicit boxing with direct cast.
+        if ((int)o2 == i)         // Always true.
+        {
+        }
+
+        object o3 = i as object;    // Explicit boxing with try cast.
+        if ((int)o3 == i)           // Always true.
+        {
+        }
+
+        if (o == (object)i)    // Always false, but our current implementation is conservative and does not flag it.
+        {
+        }
+    }
+}",
+    // Test0.cs(7,13): warning CA1508: '(int)o == i' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+    GetCSharpResultAt(7, 13, "(int)o == i", "true"),
+    // Test0.cs(12,13): warning CA1508: '(int)o2 == i' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+    GetCSharpResultAt(12, 13, "(int)o2 == i", "true"),
+    // Test0.cs(17,13): warning CA1508: '(int)o3 == i' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+    GetCSharpResultAt(17, 13, "(int)o3 == i", "true"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_Boxing_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public void M(int i, int i2, int i3, int i4)
+    {
+        object o = i;       // Implicit boxing.
+        i = 1;
+        if ((int)o == i)    // May or may not be true.
+        {
+        }
+        if (o is 1)         // May or may not be true.
+        {
+        }
+        
+        object o2 = (object)i2;    // Explicit boxing with direct cast.
+        i2 = 2;
+        if ((int)o2 == i2)         // May or may not be true.
+        {
+        }
+        if (o2 is 2)               // May or may not be true.
+        {
+        }
+
+        object o3 = i3;       // Implicit boxing.
+        o3 = 3;
+        if ((int)o3 == i3)    // May or may not be true.
+        {
+        }
+        if (i3 == 3)           // May or may not be true.
+        {
+        }
+
+        object o4 = (object)i4;    // Explicit boxing with direct cast.
+        o4 = 4;
+        if ((int)o4 == i4)         // May or may not be true.
+        {
+        }
+        if (i4 == 4)               // May or may not be true.
+        {
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_Unboxing_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public void M(object o, object o2, object o3)
+    {
+        var i = (int)o;         // Explicit unboxing with direct cast.
+        if ((int)o == i)        // Always true.
+        {
+        }
+
+        if (o == (object)i)     // Always false, but our current implementation is conservative and does not flag it.
+        {
+        }
+
+        var i2 = o2 as int?;    // Explicit unboxing with try cast involving nullable types.
+        if ((int)o2 == i2)      // Always true, but our current implementation is conservative and does not flag it.
+        {
+        }
+
+        if (o2 == (object)i2)   // Always false, but our current implementation is conservative and does not flag it.
+        {
+        }
+    }
+}",
+            // Test0.cs(7,13): warning CA1508: '(int)o == i' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(7, 13, "(int)o == i", "true"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void ValueCompare_Unboxing_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+    public void M(object o, object o2, object o3, object o4)
+    {
+        var i = (int)o;         // Explicit unboxing with direct cast.
+        i = 1;
+        if ((int)o == i)        // May or may not be true.
+        {
+        }
+
+        var i2 = (int)o2;         // Explicit unboxing with direct cast.
+        o2 = 2;
+        if ((int)o2 == i2)        // May or may not be true.
+        {
+        }
+
+        var i3 = o3 as int?;    // Explicit unboxing with try cast involving nullable types.
+        i3 = 3;
+        if ((int)o3 == i3)      // May or may not be true.
+        {
+        }
+
+        var i4 = o4 as int?;    // Explicit unboxing with try cast involving nullable types.
+        o4 = 4;
+        if ((int)o4 == i4)      // May or may not be true.
+        {
+        }
+    }
+}");
+        }
     }
 }

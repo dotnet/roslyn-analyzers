@@ -22,61 +22,10 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             return new DoNotUseInsecureDeserializerLosFormatter();
         }
 
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            string losFormatterCSharpSourceCode = @"
-using System.IO;
-
-namespace System.Web.UI
-{
-    public sealed class LosFormatter
-    {
-        public LosFormatter()
-        {
-        }
-
-        public LosFormatter(bool enabledMac, byte[] macKeyModifier)
-        {
-        }
-
-        public LosFormatter(bool enabledMac, string macKeyModifier)
-        {
-        }
-        
-        public object Deserialize(Stream stream)
-        {
-            return null;
-        }
-
-        public object Deserialize(TextReader input)
-        {
-            return null;
-        }
-
-        public object Deserialize(string input)
-        {
-            return null;
-        }
-
-        public void Serialize(Stream stream, object value)
-        {
-        }
-   
-        public void Serialize(TextWriter output, object value)
-        {
-        }
-    }
-}
-"; this.VerifyCSharp(
-     new[] { source, losFormatterCSharpSourceCode }.ToFileAndSource(),
-     expected);
-        }
-
-
         [Fact]
         public void DeserializeStream_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.IO;
 using System.Web.UI;
 
@@ -97,7 +46,7 @@ namespace Blah
         [Fact]
         public void DeserializeString_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.IO;
 using System.Web.UI;
 
@@ -116,9 +65,30 @@ namespace Blah
         }
 
         [Fact]
+        public void DeserializeTextReader_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Web.UI;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object Deserialize(TextReader tr)
+        {
+            LosFormatter formatter = new LosFormatter();
+            return formatter.Deserialize(tr);
+        }
+    }
+}",
+            GetCSharpResultAt(12, 20, Rule, "object LosFormatter.Deserialize(TextReader input)"));
+        }
+
+        [Fact]
         public void Deserialize_Reference_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.IO;
 using System.Web.UI;
 
@@ -140,7 +110,7 @@ namespace Blah
         [Fact]
         public void Serialize_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.IO;
 using System.Web.UI;
 
@@ -162,7 +132,7 @@ namespace Blah
         [Fact]
         public void Serialize_Reference_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.IO;
 using System.Web.UI;
 

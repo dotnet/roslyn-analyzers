@@ -1,16 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         [Fact]
-        public void XmlDocumentNoCtorSetResolverToNullShouldNotGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorSetResolverToNullShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -25,7 +31,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -38,9 +44,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlDocumentNoCtorUseSecureResolverShouldNotGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorUseSecureResolverShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -55,7 +61,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -68,9 +74,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlDocumentNoCtorUseSecureResolverWithPermissionsShouldNotGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorUseSecureResolverWithPermissionsShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Net;
 using System.Security;
 using System.Security.Permissions;
@@ -95,7 +101,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Net
 Imports System.Security
 Imports System.Security.Permissions
@@ -118,9 +124,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlDocumentNoCtorSetResolverToNullInTryClauseShouldNotGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorSetResolverToNullInTryClauseShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -139,7 +145,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -156,9 +162,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlDocumentNoCtorUseNonSecureResolverInCatchClauseShouldGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorUseNonSecureResolverInCatchClauseShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -178,7 +184,7 @@ namespace TestNamespace
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(12, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -197,9 +203,9 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlDocumentNoCtorUseNonSecureResolverInFinallyClauseShouldGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorUseNonSecureResolverInFinallyClauseShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -219,7 +225,7 @@ namespace TestNamespace
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(13, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -239,9 +245,9 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlDocumentNoCtorDoNotSetResolverShouldNotGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorDoNotSetResolverShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -256,7 +262,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -269,9 +275,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlDocumentNoCtorUseNonSecureResolverShouldGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorUseNonSecureResolverShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -287,7 +293,7 @@ namespace TestNamespace
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(10, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -302,9 +308,9 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlDocumentNoCtorUseNonSecureResolverInTryClauseShouldGenerateDiagnostic()
+        public async Task XmlDocumentNoCtorUseNonSecureResolverInTryClauseShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -324,7 +330,7 @@ namespace TestNamespace
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(12, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -343,9 +349,9 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlDocumentDerivedTypeSetInsecureResolverShouldGenerateDiagnostic()
+        public async Task XmlDocumentDerivedTypeSetInsecureResolverShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -365,7 +371,7 @@ namespace TestNamespace
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(13, 40)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -387,9 +393,9 @@ End Namespace",
         }
 
         [Fact]
-        public void XmlDocumentCreatedAsTempSetResolverToNullShouldNotGenerateDiagnostics()
+        public async Task XmlDocumentCreatedAsTempSetResolverToNullShouldNotGenerateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -406,7 +412,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -426,9 +432,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlDocumentCreatedAsTempSetInsecureResolverShouldGenerateDiagnostics()
+        public async Task XmlDocumentCreatedAsTempSetInsecureResolverShouldGenerateDiagnostics()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -447,7 +453,7 @@ namespace TestNamespace
                 GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 39)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace

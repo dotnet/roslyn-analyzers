@@ -1,28 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotCatchCorruptedStateExceptionsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotCatchCorruptedStateExceptionsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public class DoNotCatchCorruptedStateExceptionsTests : DiagnosticAnalyzerTestBase
+    public class DoNotCatchCorruptedStateExceptionsTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotCatchCorruptedStateExceptionsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotCatchCorruptedStateExceptionsAnalyzer();
-        }
-
         [Fact]
-        public void CA2153TestCatchExceptionInMethodWithSecurityCriticalAttribute()
+        public async Task CA2153TestCatchExceptionInMethodWithSecurityCriticalAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -45,7 +40,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 }
             }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
 
@@ -62,7 +57,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             End Namespace
             ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
 
@@ -82,11 +77,11 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInMethodWithHpcseAttribute()
+        public async Task CA2153TestCatchExceptionInMethodWithHpcseAttribute()
         {
             // Note this is a change from FxCop's previous behavior since we no longer consider SystemCritical.
 
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Runtime.ExceptionServices;
@@ -111,7 +106,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(17, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Runtime.ExceptionServices
 
@@ -130,7 +125,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153BasicResultAt(11, 25, "Public Shared Sub TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Runtime.ExceptionServices
 
@@ -152,9 +147,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchRethrowExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
+        public async Task CA2153TestCatchRethrowExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -180,7 +175,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 }
             }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -200,7 +195,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             End Namespace
             ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -223,9 +218,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
+        public async Task CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -252,7 +247,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -273,7 +268,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153BasicResultAt(13, 25, "Public Shared Sub TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -295,7 +290,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153BasicResultAt(13, 25, "Public Shared Function TestMethod() As Double", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
             Imports System.Security
@@ -320,9 +315,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchInMethodWithHpcseAndSecurityCriticalAttributes()
+        public async Task CA2153TestCatchInMethodWithHpcseAndSecurityCriticalAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -349,7 +344,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()", "object")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -370,7 +365,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153BasicResultAt(13, 25, "Public Shared Sub TestMethod()", "Object")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -394,9 +389,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchsystemExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
+        public async Task CA2153TestCatchsystemExceptionInMethodWithHpcseAndSecurityCriticalAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -423,7 +418,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()", "System.SystemException")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -444,7 +439,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153BasicResultAt(13, 25, "Public Shared Sub TestMethod()", "System.SystemException")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -468,9 +463,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchWithFilterInMethodWithHpcseAttribute()
+        public async Task CA2153TestCatchWithFilterInMethodWithHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Runtime.ExceptionServices;
@@ -494,7 +489,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             }",
             GetCA2153CSharpResultAt(17, 25, "TestNamespace.TestClass.TestMethod()", "System.SystemException"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Runtime.ExceptionServices
 
@@ -514,9 +509,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchVariableWithFilterInMethodWithHpcseAttribute()
+        public async Task CA2153TestCatchVariableWithFilterInMethodWithHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Runtime.ExceptionServices;
@@ -539,7 +534,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 }
             }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Runtime.ExceptionServices
 
@@ -558,9 +553,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassScopeEverythingAttributes()
+        public async Task CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassScopeEverythingAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -587,7 +582,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -610,9 +605,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassAttributes()
+        public async Task CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -641,9 +636,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassScopeExcplicitAttributes()
+        public async Task CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalClassScopeExcplicitAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -672,9 +667,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL1Attributes()
+        public async Task CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL1Attributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -704,9 +699,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL2Attributes()
+        public async Task CA2153TestCatchExceptionInMethodWithHpcseAndSecurityCriticalL2Attributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -736,9 +731,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInNestedClassMethodWithOuterHpcseAndSecurityCriticalScopeEverythingAttributes()
+        public async Task CA2153TestCatchExceptionInNestedClassMethodWithOuterHpcseAndSecurityCriticalScopeEverythingAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -770,9 +765,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInNestedClassMethodWithInnerHpcseAndSecurityCriticalScopeEverythingAttributes()
+        public async Task CA2153TestCatchExceptionInNestedClassMethodWithInnerHpcseAndSecurityCriticalScopeEverythingAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -804,9 +799,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInNestedClassMethodwithInnerHpcseAndOuterSecurityCriticalAttributes()
+        public async Task CA2153TestCatchExceptionInNestedClassMethodwithInnerHpcseAndOuterSecurityCriticalAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -838,9 +833,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInGetAccessorWithHpcseAttribute()
+        public async Task CA2153TestCatchExceptionInGetAccessorWithHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -875,7 +870,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(20, 29, "TestNamespace.TestClass.SaveNewFile3.get", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -902,9 +897,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchInGetAccessorWithHpcseAttribute()
+        public async Task CA2153TestCatchInGetAccessorWithHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -941,9 +936,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchSystemExceptionInGetAccessorWithHpcseAttribute()
+        public async Task CA2153TestCatchSystemExceptionInGetAccessorWithHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -980,9 +975,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchInSetAccessorWithHpcseAttribute()
+        public async Task CA2153TestCatchInSetAccessorWithHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1018,9 +1013,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInSetAccessorWithHpcseAttribute()
+        public async Task CA2153TestCatchExceptionInSetAccessorWithHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1056,7 +1051,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(21, 29, "TestNamespace.TestClass.SaveNewFile3.set", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
             Imports System.Security
@@ -1083,9 +1078,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchIOExceptionInMethodHpcseAttribute()
+        public async Task CA2153TestCatchIOExceptionInMethodHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1120,9 +1115,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchIOExceptionSwallowOtherExceptionInMethodHpcseAttribute()
+        public async Task CA2153TestCatchIOExceptionSwallowOtherExceptionInMethodHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1157,9 +1152,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestSwallowAccessViolationExceptionInMethodHpcseAttribute()
+        public async Task CA2153TestSwallowAccessViolationExceptionInMethodHpcseAttribute()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1192,9 +1187,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestSwallowAccessViolationExceptionThenSwallowOtherExceptionInMethodHpcseAttribute()
+        public async Task CA2153TestSwallowAccessViolationExceptionThenSwallowOtherExceptionInMethodHpcseAttribute()
         {
-            VerifyCSharpUnsafeCode(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1232,9 +1227,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionThrowNotImplementedExceptionInMethodHpcseAttribute()
+        public async Task CA2153TestCatchExceptionThrowNotImplementedExceptionInMethodHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1262,7 +1257,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
             Imports System.Security
@@ -1285,7 +1280,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153BasicResultAt(14, 25, "Public Shared Sub TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
             Imports System.Security
@@ -1311,9 +1306,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchExceptionInnerCatchThrowIOExceptionInMethodHpcseAttribute()
+        public async Task CA2153TestCatchExceptionInnerCatchThrowIOExceptionInMethodHpcseAttribute()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1349,7 +1344,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153CSharpResultAt(20, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -1376,7 +1371,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             GetCA2153BasicResultAt(14, 25, "Public Shared Sub TestMethod()", "System.Exception")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -1406,9 +1401,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchGeneralException()
+        public async Task CA2153TestCatchGeneralException()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Security;
@@ -1433,7 +1428,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 }
             }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -1452,7 +1447,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             End Namespace
             ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System.IO
             Imports System.Security
             Imports System.Runtime.ExceptionServices
@@ -1474,9 +1469,9 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CA2153TestCatchInsideLambdaExpression()
+        public async Task CA2153TestCatchInsideLambdaExpression()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
             using System;
             using System.IO;
             using System.Runtime.ExceptionServices;
@@ -1499,7 +1494,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                 }
             }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
             Imports System.Runtime.ExceptionServices
@@ -1519,7 +1514,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             End Namespace
             ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
             Imports System.IO
             Imports System.Runtime.ExceptionServices
@@ -1541,16 +1536,14 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
             ");
         }
 
-        private const string CA2153RuleName = DoNotCatchCorruptedStateExceptionsAnalyzer.RuleId;
-
-        private DiagnosticResult GetCA2153CSharpResultAt(int line, int column, string signature, string typeName)
+        private static DiagnosticResult GetCA2153CSharpResultAt(int line, int column, string signature, string typeName)
         {
-            return GetCSharpResultAt(line, column, CA2153RuleName, string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotCatchCorruptedStateExceptionsMessage, signature, typeName));
+            return new DiagnosticResult(DoNotCatchCorruptedStateExceptionsAnalyzer.Rule).WithLocation(line, column).WithArguments(signature, typeName);
         }
 
-        private DiagnosticResult GetCA2153BasicResultAt(int line, int column, string signature, string typeName)
+        private static DiagnosticResult GetCA2153BasicResultAt(int line, int column, string signature, string typeName)
         {
-            return GetBasicResultAt(line, column, CA2153RuleName, string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotCatchCorruptedStateExceptionsMessage, signature, typeName));
+            return new DiagnosticResult(DoNotCatchCorruptedStateExceptionsAnalyzer.Rule).WithLocation(line, column).WithArguments(signature, typeName);
         }
     }
 }

@@ -1,16 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         [Fact]
-        public void DefaultXmlReaderSettingsShouldNotGenerateDiagnostic()
+        public async Task DefaultXmlReaderSettingsShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -27,7 +33,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -41,9 +47,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseInInitializerShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -60,7 +66,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -76,9 +82,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseInInitializerTargetFx452ShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseInInitializerTargetFx452ShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Reflection;               
 using System.Xml;   
@@ -99,7 +105,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Reflection
 Imports System.Xml
 
@@ -118,9 +124,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsOnlySetMaxCharRoZeroInInitializerShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsOnlySetMaxCharRoZeroInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -137,7 +143,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -153,9 +159,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsSetSecureResolverInInitializerShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetSecureResolverInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -172,7 +178,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -188,9 +194,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseAndMaxCharToNonZeroInInitializerShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseAndMaxCharToNonZeroInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -211,7 +217,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -228,9 +234,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseAndSecureResolverInInitializerShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseAndSecureResolverInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -251,7 +257,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -269,9 +275,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseWithOtherValuesSecureInInitializerShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseWithOtherValuesSecureInInitializerShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -293,7 +299,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -311,9 +317,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -331,7 +337,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -347,9 +353,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseInTryBlockShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseInTryBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System;
 namespace TestNamespace
@@ -371,7 +377,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 Namespace TestNamespace
@@ -392,9 +398,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseInCatchBlockShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseInCatchBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System;
 namespace TestNamespace
@@ -416,7 +422,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 Namespace TestNamespace
@@ -436,9 +442,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseInFinallyBlockShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System;
 namespace TestNamespace
@@ -460,7 +466,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 Namespace TestNamespace
@@ -481,9 +487,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseInUnusedOneShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseInUnusedOneShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -501,7 +507,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -518,9 +524,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlReaderSettingsSetDtdProcessingToParseInUsedOneShouldNotGenerateDiagnostic()
+        public async Task XmlReaderSettingsSetDtdProcessingToParseInUsedOneShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -538,7 +544,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace

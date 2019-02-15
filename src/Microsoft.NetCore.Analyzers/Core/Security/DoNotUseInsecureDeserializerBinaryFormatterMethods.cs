@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodUsedDescription));
 
         protected override string DeserializerTypeMetadataName =>
-            WellKnownTypes.SystemRuntimeSerializationFormattersBinaryBinaryFormatter;
+            WellKnownTypeNames.SystemRuntimeSerializationFormattersBinaryBinaryFormatter;
 
         protected override ImmutableHashSet<string> DeserializationMethodNames =>
             SecurityHelpers.BinaryFormatterDeserializationMethods;

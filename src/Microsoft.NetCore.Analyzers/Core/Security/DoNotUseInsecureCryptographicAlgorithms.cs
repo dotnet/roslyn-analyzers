@@ -106,30 +106,28 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
 
                             INamedTypeSymbol type = method.ContainingType;
-                            string[] messageArgs = new string[2];
                             DiagnosticDescriptor rule = null;
-
-                            messageArgs[0] = operationAnalysisContext.ContainingSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                            string algorithmName = null;
 
                             if (type.DerivesFrom(cryptTypes.MD5))
                             {
                                 rule = DoNotUseBrokenCryptographyRule;
-                                messageArgs[1] = cryptTypes.MD5.Name;
+                                algorithmName = cryptTypes.MD5.Name;
                             }
                             else if (type.DerivesFrom(cryptTypes.SHA1))
                             {
                                 rule = DoNotUseWeakCryptographyRule;
-                                messageArgs[1] = cryptTypes.SHA1.Name;
+                                algorithmName = cryptTypes.SHA1.Name;
                             }
                             else if (type.DerivesFrom(cryptTypes.HMACSHA1))
                             {
                                 rule = DoNotUseWeakCryptographyRule;
-                                messageArgs[1] = cryptTypes.HMACSHA1.Name;
+                                algorithmName = cryptTypes.HMACSHA1.Name;
                             }
                             else if (type.DerivesFrom(cryptTypes.DES))
                             {
                                 rule = DoNotUseBrokenCryptographyRule;
-                                messageArgs[1] = cryptTypes.DES.Name;
+                                algorithmName = cryptTypes.DES.Name;
                             }
                             else if ((method.ContainingType.DerivesFrom(cryptTypes.DSA)
                                       && method.MetadataName == SecurityMemberNames.CreateSignature)
@@ -138,32 +136,32 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
                             {
                                 rule = DoNotUseBrokenCryptographyRule;
-                                messageArgs[1] = cryptTypes.DSA.Name;
+                                algorithmName = cryptTypes.DSA.Name;
                             }
                             else if (type.DerivesFrom(cryptTypes.HMACMD5))
                             {
                                 rule = DoNotUseBrokenCryptographyRule;
-                                messageArgs[1] = cryptTypes.HMACMD5.Name;
+                                algorithmName = cryptTypes.HMACMD5.Name;
                             }
                             else if (type.DerivesFrom(cryptTypes.RC2))
                             {
                                 rule = DoNotUseBrokenCryptographyRule;
-                                messageArgs[1] = cryptTypes.RC2.Name;
+                                algorithmName = cryptTypes.RC2.Name;
                             }
                             else if (type.DerivesFrom(cryptTypes.TripleDES))
                             {
                                 rule = DoNotUseWeakCryptographyRule;
-                                messageArgs[1] = cryptTypes.TripleDES.Name;
+                                algorithmName = cryptTypes.TripleDES.Name;
                             }
                             else if (type.DerivesFrom(cryptTypes.RIPEMD160))
                             {
                                 rule = DoNotUseWeakCryptographyRule;
-                                messageArgs[1] = cryptTypes.RIPEMD160.Name;
+                                algorithmName = cryptTypes.RIPEMD160.Name;
                             }
                             else if (type.DerivesFrom(cryptTypes.HMACRIPEMD160))
                             {
                                 rule = DoNotUseWeakCryptographyRule;
-                                messageArgs[1] = cryptTypes.HMACRIPEMD160.Name;
+                                algorithmName = cryptTypes.HMACRIPEMD160.Name;
                             }
 
                             if (rule != null)
@@ -172,7 +170,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     Diagnostic.Create(
                                         rule,
                                         operationAnalysisContext.Operation.Syntax.GetLocation(),
-                                        messageArgs));
+                                        operationAnalysisContext.ContainingSymbol.Name,
+                                        algorithmName));
                             }
 
                         },

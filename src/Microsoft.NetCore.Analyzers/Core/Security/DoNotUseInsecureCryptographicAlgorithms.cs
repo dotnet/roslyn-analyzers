@@ -131,7 +131,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             else if ((method.ContainingType.DerivesFrom(cryptTypes.DSA)
                                       && method.MetadataName == SecurityMemberNames.CreateSignature)
-                                || (type == cryptTypes.DSASignatureFormatter
+                                || (type.Equals(cryptTypes.DSASignatureFormatter)
                                     && method.ContainingType.DerivesFrom(cryptTypes.DSASignatureFormatter)
                                     && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
                             {
@@ -173,7 +173,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         operationAnalysisContext.ContainingSymbol.Name,
                                         algorithmName));
                             }
-
                         },
                         OperationKind.Invocation,
                         OperationKind.ObjectCreation);

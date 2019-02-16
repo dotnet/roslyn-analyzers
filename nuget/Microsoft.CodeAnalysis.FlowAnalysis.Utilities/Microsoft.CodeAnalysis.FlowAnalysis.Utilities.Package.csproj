@@ -15,12 +15,15 @@
       Restore would conclude that there is a cyclic dependency between Microsoft.CodeAnalysis and Microsoft.CodeAnalysis.FlowAnalysis.Utilities.
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
+    <DevelopmentDependency>false</DevelopmentDependency>
   </PropertyGroup>
   
   <ItemGroup>
-    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.FlowAnalysis.Utilities.dll" />
+    <AnalyzerNupkgLibrary Include="Microsoft.CodeAnalysis.FlowAnalysis.Utilities.dll" />
+    <AnalyzerNupkgLibrary Include="Microsoft.CodeAnalysis.FlowAnalysis.Utilities.xml" />
   </ItemGroup>
+  
   <ItemGroup>
-    <ProjectReference Include="Microsoft.CodeAnalysis.FlowAnalysis.Utilities.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.FlowAnalysis.Utilities\Microsoft.CodeAnalysis.FlowAnalysis.Utilities.csproj" />
   </ItemGroup>
 </Project>

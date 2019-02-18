@@ -31,7 +31,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -51,7 +50,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -73,7 +71,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -85,8 +82,8 @@ class Test
     }
 }
 ",
-            // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"));
+            // Test0.cs(15,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(15, 17, "void Test.M1()", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -94,7 +91,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -103,8 +99,8 @@ Class Test
         Dim a As New A()
     End Sub
 End Class",
-            // Test0.vb(13,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(13, 18, "Sub Test.M1()", "New A()"));
+            // Test0.vb(12,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(12, 18, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -117,7 +113,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -142,7 +137,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -169,7 +163,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -182,8 +175,8 @@ class Test
     }
 }
 ",
-            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"));
+            // Test0.cs(16,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 13, "void Test.M1()", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -191,7 +184,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -201,8 +193,8 @@ Class Test
         a = New A()
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"));
+            // Test0.vb(13,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(13, 13, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -215,7 +207,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -235,7 +226,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -257,7 +247,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -269,8 +258,8 @@ class Test
     }
 }
 ",
-            // Test0.cs(16,13): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 13, "void Test.M1(A a)", "new A()"));
+            // Test0.cs(15,13): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(15, 13, "void Test.M1(A a)", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -278,7 +267,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -287,8 +275,8 @@ Class Test
         a = New A()
     End Sub
 End Class",
-            // Test0.vb(13,13): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(13, 13, "Sub Test.M1(a As A)", "New A()"));
+            // Test0.vb(12,13): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(12, 13, "Sub Test.M1(a As A)", "New A()"));
         }
 
         [Fact]
@@ -301,7 +289,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -321,7 +308,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -342,7 +328,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -397,7 +383,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -450,7 +436,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -480,7 +466,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -496,10 +481,10 @@ class Test
     }
 }
 ",
-            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"),
-            // Test0.cs(20,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(20, 13, "void Test.M1()", "new A()"));
+            // Test0.cs(16,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(16, 13, "void Test.M1()", "new A()"),
+            // Test0.cs(19,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(19, 13, "void Test.M1()", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -507,7 +492,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -520,10 +504,10 @@ Class Test
         a = New A()
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"),
-            // Test0.vb(17,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(17, 13, "Sub Test.M1()", "New A()"));
+            // Test0.vb(13,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(13, 13, "Sub Test.M1()", "New A()"),
+            // Test0.vb(16,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(16, 13, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -536,7 +520,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -561,7 +545,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -588,7 +572,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -613,7 +597,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -640,7 +624,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 
     public void Dispose(bool b)
@@ -669,7 +653,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 
     Public Sub Dispose(b As Boolean)
@@ -699,7 +683,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 
     public void Close()
@@ -728,7 +712,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 
     Public Sub Close()
@@ -816,7 +800,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -835,7 +819,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -857,7 +841,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -877,7 +861,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -900,7 +884,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -920,7 +904,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -943,7 +927,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -964,7 +948,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -988,7 +972,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1007,7 +991,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1028,7 +1012,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1048,7 +1032,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1070,7 +1054,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1090,7 +1074,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1113,7 +1097,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1133,7 +1117,7 @@ Imports System.Collections.Generic
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1155,7 +1139,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1176,7 +1160,7 @@ Imports System.Collections.Generic
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1199,7 +1183,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1220,7 +1204,7 @@ Imports System.Collections.Generic
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1244,7 +1228,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1298,7 +1282,7 @@ Imports System.Collections.Generic
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1366,7 +1350,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1421,7 +1405,7 @@ Imports System.Collections.Immutable
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1478,7 +1462,7 @@ class A : IDisposable
     public int X;
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1500,7 +1484,7 @@ Class A
     Implements IDisposable
     Public X As Integer
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1522,7 +1506,7 @@ struct A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1541,7 +1525,7 @@ Imports System
 Structure A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Structure
 
@@ -1562,7 +1546,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1589,7 +1573,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1618,7 +1602,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1646,7 +1630,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1677,7 +1661,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 
     public static implicit operator A(B value)
@@ -1697,7 +1681,7 @@ class B : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1721,7 +1705,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 
     Public Shared Widening Operator CType(ByVal value As A) As B
@@ -1738,7 +1722,7 @@ End Class
 Class B
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1760,7 +1744,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1786,7 +1770,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1813,7 +1797,7 @@ public class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1842,7 +1826,7 @@ Imports System
 Public Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1873,7 +1857,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1907,7 +1891,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1926,7 +1910,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1947,7 +1931,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -1971,7 +1955,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -1997,7 +1981,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -2014,8 +1997,8 @@ class Test
     }
 }
 ",
-            // Test0.cs(16,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 20, "void Test.M1(A a)", "new A()"));
+            // Test0.cs(15,20): warning CA2000: In method 'void Test.M1(A a)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(15, 20, "void Test.M1(A a)", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -2023,7 +2006,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2037,8 +2019,8 @@ Class Test
         c.Dispose()
     End Sub
 End Class",
-            // Test0.vb(13,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(13, 28, "Sub Test.M1(a As A)", "New A()"));
+            // Test0.vb(12,28): warning CA2000: In method 'Sub Test.M1(a As A)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(12, 28, "Sub Test.M1(a As A)", "New A()"));
         }
 
         [Fact]
@@ -2052,7 +2034,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2080,7 +2062,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2108,7 +2090,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2134,7 +2116,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2161,7 +2143,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2187,7 +2169,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2215,7 +2197,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2243,7 +2225,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2271,7 +2253,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2297,7 +2279,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2324,7 +2306,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2350,7 +2332,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2378,7 +2360,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -2407,7 +2388,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2435,7 +2415,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2461,7 +2441,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2488,7 +2468,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2515,7 +2495,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2542,7 +2522,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2580,7 +2560,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2617,7 +2597,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -2671,7 +2651,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -2717,7 +2697,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -2776,12 +2755,12 @@ class Test
     }
 }
 ",
-            // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
-            GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
-            // Test0.cs(38,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
-            GetCSharpResultAt(38, 17, "void Test.M1(A a, string param, string param2)", "new C()"),
-            // Test0.cs(43,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
-            GetCSharpResultAt(43, 17, "void Test.M1(A a, string param, string param2)", "new D()"));
+            // Test0.cs(32,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+            GetCSharpResultAt(32, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
+            // Test0.cs(37,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+            GetCSharpResultAt(37, 17, "void Test.M1(A a, string param, string param2)", "new C()"),
+            // Test0.cs(42,17): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
+            GetCSharpResultAt(42, 17, "void Test.M1(A a, string param, string param2)", "new D()"));
 
             VerifyBasic(@"
 Imports System
@@ -2789,7 +2768,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2840,12 +2818,12 @@ Class Test
         b.Dispose()         ' b points to either a1 or d.
     End Sub
 End Class",
-            // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
-            GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
-            // Test0.vb(35,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
-            GetBasicResultAt(35, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
-            // Test0.vb(38,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New D()' before all references to it are out of scope.
-            GetBasicResultAt(38, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"));
+            // Test0.vb(29,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
+            GetBasicResultAt(29, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
+            // Test0.vb(34,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
+            GetBasicResultAt(34, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
+            // Test0.vb(37,17): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New D()' before all references to it are out of scope.
+            GetBasicResultAt(37, 17, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"));
         }
 
         [Fact]
@@ -2858,7 +2836,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -2937,12 +2914,12 @@ class Test
     }
 }
 ",
-            // Test0.cs(32,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
-            GetCSharpResultAt(32, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
-            // Test0.cs(33,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
-            GetCSharpResultAt(33, 16, "void Test.M1(A a, string param, string param2)", "new C()"),
-            // Test0.cs(42,21): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
-            GetCSharpResultAt(42, 21, "void Test.M1(A a, string param, string param2)", "new D()"));
+            // Test0.cs(31,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new B()' before all references to it are out of scope.
+            GetCSharpResultAt(31, 16, "void Test.M1(A a, string param, string param2)", "new B()"),
+            // Test0.cs(32,16): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+            GetCSharpResultAt(32, 16, "void Test.M1(A a, string param, string param2)", "new C()"),
+            // Test0.cs(41,21): warning CA2000: In method 'void Test.M1(A a, string param, string param2)', call System.IDisposable.Dispose on object created by 'new D()' before all references to it are out of scope.
+            GetCSharpResultAt(41, 21, "void Test.M1(A a, string param, string param2)", "new D()"));
 
             VerifyBasic(@"
 Imports System
@@ -2950,7 +2927,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -3012,12 +2988,12 @@ Class Test
         b.Dispose()
     End Sub
 End Class",
-                // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
-                GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
-                // Test0.vb(31,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
-                GetBasicResultAt(31, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
-                // Test0.vb(37,21): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New E()' before all references to it are out of scope.
-                GetBasicResultAt(37, 21, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"));
+                // Test0.vb(29,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New B()' before all references to it are out of scope.
+                GetBasicResultAt(29, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New B()"),
+                // Test0.vb(30,23): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New C()' before all references to it are out of scope.
+                GetBasicResultAt(30, 23, "Sub Test.M1(a As A, param As String, param2 As String)", "New C()"),
+                // Test0.vb(36,21): warning CA2000: In method 'Sub Test.M1(a As A, param As String, param2 As String)', call System.IDisposable.Dispose on object created by 'New E()' before all references to it are out of scope.
+                GetBasicResultAt(36, 21, "Sub Test.M1(a As A, param As String, param2 As String)", "New D()"));
         }
 
         [Fact]
@@ -3030,7 +3006,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3069,7 +3045,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -3102,7 +3078,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3142,7 +3118,7 @@ Imports System.Collections.Generic
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -3178,7 +3154,7 @@ class A : I, IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3208,7 +3184,7 @@ Class A
     Implements I, IDisposable
 
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -3237,7 +3213,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3272,7 +3248,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3305,7 +3281,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3340,7 +3316,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3375,7 +3351,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3408,7 +3384,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3442,7 +3418,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3478,7 +3454,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3510,7 +3486,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3548,7 +3524,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3584,7 +3560,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -3607,10 +3582,10 @@ class Test
     }
 }
 ",
-            // Test0.cs(17,25): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
-            GetCSharpResultAt(17, 25, "void Test.M1()", "ref /*1*/a1"),
-            // Test0.cs(17,38): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
-            GetCSharpResultAt(17, 38, "void Test.M1()", "out /*1*/a2"));
+            // Test0.cs(16,25): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
+            GetCSharpResultAt(16, 25, "void Test.M1()", "ref /*1*/a1"),
+            // Test0.cs(16,38): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
+            GetCSharpResultAt(16, 38, "void Test.M1()", "out /*1*/a2"));
 
             // VB has no local functions.
         }
@@ -3625,7 +3600,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3668,7 +3643,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3711,7 +3686,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3739,7 +3714,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -3768,7 +3743,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3795,7 +3770,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -3822,7 +3797,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3851,7 +3826,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -3880,7 +3855,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3908,7 +3883,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -3937,7 +3912,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -3968,7 +3943,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4000,7 +3975,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4034,7 +4009,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4064,7 +4039,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4101,7 +4076,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4136,7 +4111,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -4160,10 +4134,10 @@ class Test
     }
 }
 ",
-            // Test0.cs(24,20): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
-            GetCSharpResultAt(24, 20, "void Test.M1()", "ref /*1*/a1"),
-            // Test0.cs(24,33): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
-            GetCSharpResultAt(24, 33, "void Test.M1()", "out /*1*/a2"));
+            // Test0.cs(23,20): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'ref /*1*/a1' before all references to it are out of scope.
+            GetCSharpResultAt(23, 20, "void Test.M1()", "ref /*1*/a1"),
+            // Test0.cs(23,33): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'out /*1*/a2' before all references to it are out of scope.
+            GetCSharpResultAt(23, 33, "void Test.M1()", "out /*1*/a2"));
         }
 
         [Fact]
@@ -4176,7 +4150,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4217,7 +4191,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4258,7 +4232,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4285,7 +4259,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -4315,7 +4289,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4342,7 +4316,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -4362,14 +4336,9 @@ End Module",
             GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"));
         }
 
-        [Fact]
+        [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
         public void DelegateInvocation_DisposesCapturedValue_NoDiagnostic()
         {
-            // Currently we report a diagnostic as we do not do interprocedural analysis
-            // of method invocations for Dispose analysis.
-            // TODO: https://github.com/dotnet/roslyn-analyzers/issues/1813
-            // Consider interprocedural dispose analysis.
-
             VerifyCSharp(@"
 using System;
 
@@ -4377,7 +4346,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -4389,14 +4357,12 @@ class Test
         a = new A();
 
         System.Action<A> myDelegate = M2;
-        myDelegate(a);    // This should change state of 'a' to be disposed if we did interprocedural analysis.
+        myDelegate(a);    // This should change state of 'a' to be disposed as we perform interprocedural analysis.
     }
 
     void M2(A a) => a.Dispose();
 }
-",
-            // Test0.cs(17,13): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(17, 13, "void Test.M1()", "new A()"));
+");
 
             VerifyBasic(@"
 Imports System
@@ -4404,7 +4370,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -4414,15 +4379,13 @@ Module Test
         a = New A()
 
         Dim myDelegate As System.Action(Of A) = AddressOf M2
-        myDelegate(a)      ' This should change state of 'a' to be disposed if we did interprocedural analysis.
+        myDelegate(a)      ' This should change state of 'a' to be disposed as we perform interprocedural analysis.
     End Sub
 
     Sub M2(a As A)
         a.Dispose()
     End Sub
-End Module",
-            // Test0.vb(14,13): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(14, 13, "Sub Test.M1()", "New A()"));
+End Module");
         }
 
         [Fact]
@@ -4435,7 +4398,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4457,7 +4420,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -4487,7 +4450,7 @@ class A : IDisposable
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4520,7 +4483,7 @@ class A : IDisposable
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4620,7 +4583,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 
     public void M()
@@ -4653,7 +4616,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 
     Public Sub M()
@@ -4685,7 +4648,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -4711,7 +4674,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -4738,7 +4701,7 @@ class A : IDisposable
     public int X;
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 
     public void M()
@@ -4770,7 +4733,7 @@ Class A
     Implements IDisposable
     Public X As Integer
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 
     Public Sub M()
@@ -4798,7 +4761,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -4812,7 +4774,6 @@ class B : IDisposable
 
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -4853,12 +4814,12 @@ class Test
     }
 }
 ",
-            // Test0.cs(30,23): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(30, 23, "void Test.M1()", "new A()"),
-            // Test0.cs(33,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(33, 17, "void Test.M1()", "new A()"),
-            // Test0.cs(47,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(47, 18, "void Test.M1()", "new A()"));
+            // Test0.cs(28,23): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(28, 23, "void Test.M1()", "new A()"),
+            // Test0.cs(31,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(31, 17, "void Test.M1()", "new A()"),
+            // Test0.cs(45,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(45, 18, "void Test.M1()", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -4868,7 +4829,6 @@ Class A
 
     Public X As Integer
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -4881,7 +4841,6 @@ Class B
     End Sub
 
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -4911,12 +4870,12 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(28,23): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(28, 23, "Sub Test.M1()", "New A()"),
-            // Test0.vb(30,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(30, 17, "Sub Test.M1()", "New A()"),
-            // Test0.vb(40,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(40, 18, "Sub Test.M1()", "New A()"));
+            // Test0.vb(26,23): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(26, 23, "Sub Test.M1()", "New A()"),
+            // Test0.vb(28,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(28, 17, "Sub Test.M1()", "New A()"),
+            // Test0.vb(38,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(38, 18, "Sub Test.M1()", "New A()"));
         }
 
         [Fact]
@@ -4947,7 +4906,6 @@ class A : IDisposable
 
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -5061,7 +5019,6 @@ Class A
     End Sub
 
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -5155,7 +5112,7 @@ class A : IDisposable
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -5277,7 +5234,7 @@ Class A
     End Sub
 
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -5361,7 +5318,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -5422,7 +5379,7 @@ Class A
     Implements IDisposable
 
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -5478,7 +5435,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -5548,14 +5504,14 @@ class Test
         throw new NotImplementedException();
     }
 }",
-            // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
-            // Test0.cs(29,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(29, 17, "void Test.M2()", "new A()"),
-            // Test0.cs(42,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(42, 17, "void Test.M3()", "new A()"),
-            // Test0.cs(59,17): warning CA2000: In method 'void Test.M4(bool flag)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(59, 17, "void Test.M4(bool flag)", "new A()"));
+            // Test0.cs(15,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(15, 17, "void Test.M1()", "new A()"),
+            // Test0.cs(28,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(28, 17, "void Test.M2()", "new A()"),
+            // Test0.cs(41,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(41, 17, "void Test.M3()", "new A()"),
+            // Test0.cs(58,17): warning CA2000: In method 'void Test.M4(bool flag)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(58, 17, "void Test.M4(bool flag)", "new A()"));
 
             VerifyBasic(@"
 Imports System
@@ -5564,7 +5520,6 @@ Class A
     Implements IDisposable
 
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -5615,14 +5570,14 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
-            // Test0.vb(24,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(24, 17, "Sub Test.M2()", "New A()"),
-            // Test0.vb(33,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(33, 17, "Sub Test.M3()", "New A()"),
-            // Test0.vb(44,17): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(44, 17, "Sub Test.M4(flag As Boolean)", "New A()"));
+            // Test0.vb(14,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(14, 17, "Sub Test.M1()", "New A()"),
+            // Test0.vb(23,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(23, 17, "Sub Test.M2()", "New A()"),
+            // Test0.vb(32,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(32, 17, "Sub Test.M3()", "New A()"),
+            // Test0.vb(43,17): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+            GetBasicResultAt(43, 17, "Sub Test.M4(flag As Boolean)", "New A()"));
         }
 
         [Fact]
@@ -5635,7 +5590,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -5704,7 +5658,6 @@ Class A
     Implements IDisposable
 
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -5760,7 +5713,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -5789,7 +5742,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -5822,7 +5775,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -5848,7 +5801,7 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -5877,7 +5830,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -5886,7 +5839,7 @@ class B: IDisposable
     public C C { get; }
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -5959,7 +5912,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -5990,7 +5943,7 @@ Imports System.Runtime.InteropServices
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -6021,7 +5974,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -6051,7 +6004,7 @@ Imports System.Runtime.InteropServices
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -6081,7 +6034,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -6148,7 +6101,7 @@ Imports System.Runtime.InteropServices
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -6203,7 +6156,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -6270,7 +6223,7 @@ Imports System.Runtime.InteropServices
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -6325,7 +6278,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -6354,7 +6307,7 @@ Imports System.Runtime.InteropServices
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -6383,7 +6336,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 
@@ -6414,7 +6367,7 @@ Imports System.Runtime.InteropServices
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
+
     End Sub
 End Class
 
@@ -6446,7 +6399,7 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
+
     }
 }
 

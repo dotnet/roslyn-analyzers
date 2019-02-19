@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.NetFramework.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotCatchCorruptedStateExceptionsAnalyzer : DoNotCatchGeneralUnlessRethrownAnalyzer
+    internal sealed class DoNotCatchCorruptedStateExceptionsAnalyzer : DoNotCatchGeneralUnlessRethrownAnalyzer
     {
         internal const string RuleId = "CA2153";
         private const string MethodAttributeTypeName = "System.Runtime.ExceptionServices.HandleProcessCorruptedStateExceptionsAttribute";

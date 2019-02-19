@@ -114,7 +114,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetaCompilation.Analyzers.Package", "nuget\MetaCompilation.Analyzers\MetaCompilation.Analyzers.Package.csproj", "{722141A2-91FE-411A-A64F-A2A2A7150122}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.Utilities", "src\Utilities\Analyzer.Utilities.shproj", "{EC946164-1E17-410B-B7D9-7DE7E6268D63}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Analyzer.Utilities", "src\Utilities\Compiler\Analyzer.Utilities.shproj", "{EC946164-1E17-410B-B7D9-7DE7E6268D63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{C0B86774-8307-444F-9EE4-98D62C3424F9}"
 EndProject
@@ -174,9 +174,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PerformanceSensit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PerformanceSensitive.Analyzers.Setup", "src\Microsoft.PerformanceSensitive.Analyzers\Setup\Microsoft.PerformanceSensitive.Analyzers.Setup.csproj", "{1718D626-A991-4874-A6A5-2136E68152B2}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Workspaces.Utilities", "src\Utilities\Workspaces\Workspaces.Utilities.shproj", "{99F594B1-3916-471D-A761-A6731FC50E9A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FlowAnalysis.Utilities", "src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.shproj", "{FCB56CBA-FA35-46A8-86B7-BAE5433197D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microsoft.CodeAnalysis.FlowAnalysis.Utilities", "Microsoft.CodeAnalysis.FlowAnalysis.Utilities", "{1A3624C9-EB8A-4F27-98F8-9FAEAB30604E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.FlowAnalysis.Utilities", "src\Microsoft.CodeAnalysis.FlowAnalysis.Utilities\Microsoft.CodeAnalysis.FlowAnalysis.Utilities.csproj", "{B44837CD-F6A2-4268-973A-83C41E5A7B95}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.FlowAnalysis.Utilities.Package", "nuget\Microsoft.CodeAnalysis.FlowAnalysis.Utilities\Microsoft.CodeAnalysis.FlowAnalysis.Utilities.Package.csproj", "{5D88D128-77AB-42EF-A562-BCB5F09B0237}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		src\Utilities\Analyzer.Utilities.projitems*{ec946164-1e17-410b-b7d9-7de7e6268d63}*SharedItemsImports = 13
+		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13
+		src\Utilities\Compiler\Analyzer.Utilities.projitems*{ec946164-1e17-410b-b7d9-7de7e6268d63}*SharedItemsImports = 13
+		src\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems*{fcb56cba-fa35-46a8-86b7-bae5433197d9}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -705,6 +717,22 @@ Global
 		{1718D626-A991-4874-A6A5-2136E68152B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1718D626-A991-4874-A6A5-2136E68152B2}.Release|x86.ActiveCfg = Release|Any CPU
 		{1718D626-A991-4874-A6A5-2136E68152B2}.Release|x86.Build.0 = Release|Any CPU
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95}.Debug|x86.Build.0 = Debug|Any CPU
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95}.Release|x86.ActiveCfg = Release|Any CPU
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95}.Release|x86.Build.0 = Release|Any CPU
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237}.Debug|x86.Build.0 = Debug|Any CPU
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237}.Release|x86.ActiveCfg = Release|Any CPU
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -778,6 +806,10 @@ Global
 		{3F63359D-4438-4446-A49E-58974361457E} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{1D3D05A7-461E-4CEC-BF38-860793014066} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{1718D626-A991-4874-A6A5-2136E68152B2} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
+		{99F594B1-3916-471D-A761-A6731FC50E9A} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{FCB56CBA-FA35-46A8-86B7-BAE5433197D9} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{B44837CD-F6A2-4268-973A-83C41E5A7B95} = {1A3624C9-EB8A-4F27-98F8-9FAEAB30604E}
+		{5D88D128-77AB-42EF-A562-BCB5F09B0237} = {1A3624C9-EB8A-4F27-98F8-9FAEAB30604E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

@@ -16,5 +16,5 @@
     <InternalsVisibleTo Include="DotNetAnalyzers.VisualBasic.BannedApiAnalyzer" />
     <InternalsVisibleTo Include="DotNetAnalyzers.UnitTests" />
   </ItemGroup>
-  <Import Project="..\..\..\Utilities\Analyzer.Utilities.projitems" Label="Shared" />
+  <Import Project="..\..\..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
 </Project>

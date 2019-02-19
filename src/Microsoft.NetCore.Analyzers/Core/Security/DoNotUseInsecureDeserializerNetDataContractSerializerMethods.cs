@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerMethodUsedDescription));
 
         protected override string DeserializerTypeMetadataName =>
-            WellKnownTypes.SystemRuntimeSerializationNetDataContractSerializer;
+            WellKnownTypeNames.SystemRuntimeSerializationNetDataContractSerializer;
 
         protected override ImmutableHashSet<string> DeserializationMethodNames =>
             SecurityHelpers.NetDataContractSerializerDeserializationMethods;

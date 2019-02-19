@@ -1,0 +1,12 @@
+<Project>
+
+  <PropertyGroup>
+    <GeneratePerformanceSensitiveAttribute Condition="'$(GeneratePerformanceSensitiveAttribute)' == ''">true</GeneratePerformanceSensitiveAttribute>
+    <PerformanceSensitiveAttributePath Condition="'$(PerformanceSensitiveAttributePath)' == ''">$(MSBuildThisFileDirectory)PerformanceSensitiveAttribute$(DefaultLanguageSourceExtension)</PerformanceSensitiveAttributePath>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(GeneratePerformanceSensitiveAttribute)' == 'true'">
+    <Compile Include="$(PerformanceSensitiveAttributePath)" Condition="Exists($(PerformanceSensitiveAttributePath))" Visible="false" />
+  </ItemGroup>
+
+</Project>

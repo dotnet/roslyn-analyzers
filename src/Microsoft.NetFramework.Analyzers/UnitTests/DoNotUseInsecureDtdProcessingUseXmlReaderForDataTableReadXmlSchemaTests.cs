@@ -1,27 +1,33 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private DiagnosticResult GetCA3075DataTableReadXmlSchemaCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075DataTableReadXmlSchemaCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "ReadXmlSchema"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "ReadXmlSchema"));
         }
 
-        private DiagnosticResult GetCA3075DataTableReadXmlSchemaBasicResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075DataTableReadXmlSchemaBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "ReadXmlSchema"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "ReadXmlSchema"));
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaShouldGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.IO;
 using System.Xml;
 using System.Data;
@@ -41,7 +47,7 @@ namespace TestNamespace
                 GetCA3075DataTableReadXmlSchemaCSharpResultAt(13, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.IO
 Imports System.Xml
 Imports System.Data
@@ -59,9 +65,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaInGetShouldGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaInGetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Data;
 
 class TestClass
@@ -79,7 +85,7 @@ class TestClass
                 GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Data
 
 Class TestClass
@@ -97,9 +103,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaInSetShouldGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaInSetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Data;
 
 class TestClass
@@ -124,7 +130,7 @@ class TestClass
                 GetCA3075DataTableReadXmlSchemaCSharpResultAt(15, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Data
 
 Class TestClass
@@ -147,9 +153,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaInTryBlockShouldGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
   using System;
   using System.Data;
 
@@ -170,7 +176,7 @@ End Class",
                 GetCA3075DataTableReadXmlSchemaCSharpResultAt(13, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Data
 
@@ -191,9 +197,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
    using System;
    using System.Data;
 
@@ -214,7 +220,7 @@ End Class",
                 GetCA3075DataTableReadXmlSchemaCSharpResultAt(14, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Data
 
@@ -234,9 +240,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
    using System;
    using System.Data;
 
@@ -257,7 +263,7 @@ End Class",
                 GetCA3075DataTableReadXmlSchemaCSharpResultAt(15, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Data
 
@@ -278,9 +284,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaInAsyncAwaitShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
  using System.Threading.Tasks;
 using System.Data;
 
@@ -303,7 +309,7 @@ using System.Data;
                 GetCA3075DataTableReadXmlSchemaCSharpResultAt(12, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Data
 
@@ -326,9 +332,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaInDelegateShouldGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaInDelegateShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Data;
 
 class TestClass
@@ -344,7 +350,7 @@ class TestClass
                 GetCA3075DataTableReadXmlSchemaCSharpResultAt(11, 9)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Data
 
 Class TestClass
@@ -362,9 +368,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataTableReadXmlSchemaWithXmlReaderShouldNotGenerateDiagnostic()
+        public async Task UseDataTableReadXmlSchemaWithXmlReaderShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Data;
 
@@ -382,7 +388,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Data
 

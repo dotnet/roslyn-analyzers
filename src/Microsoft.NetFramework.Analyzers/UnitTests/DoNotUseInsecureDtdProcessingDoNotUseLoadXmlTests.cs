@@ -1,42 +1,33 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private const string CA3075RuleId = DoNotUseInsecureDtdProcessingAnalyzer.RuleId;
-
-        private readonly string _CA3075LoadXmlMessage = MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage;
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureDtdProcessingAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseInsecureDtdProcessingAnalyzer();
-        }
-
         private DiagnosticResult GetCA3075LoadXmlCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "LoadXml"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "LoadXml"));
         }
 
         private DiagnosticResult GetCA3075LoadXmlBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "LoadXml"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "LoadXml"));
         }
 
         [Fact]
-        public void UseXmlDocumentLoadXmlShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -53,7 +44,7 @@ namespace TestNamespace
                 GetCA3075LoadXmlCSharpResultAt(11, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -70,9 +61,9 @@ End Module",
         }
 
         [Fact]
-        public void UseXmlDocumentLoadXmlInGetShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInGetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 class TestClass
@@ -90,7 +81,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(11, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Class TestClass
@@ -110,9 +101,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDocumentLoadXmlInSetShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInSetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 class TestClass
@@ -137,7 +128,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(15, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Class TestClass
@@ -162,9 +153,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDocumentLoadXmlInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -185,7 +176,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(13, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -208,9 +199,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDocumentLoadXmlInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -231,7 +222,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(14, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -253,9 +244,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDocumentLoadXmlInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -276,7 +267,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(15, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -299,9 +290,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDocumentLoadXmlInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXmlDocumentLoadXmlInAsyncAwaitShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -324,7 +315,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(12, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Xml
 
@@ -349,9 +340,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDataDocumentLoadXmlShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 namespace TestNamespace
@@ -368,7 +359,7 @@ namespace TestNamespace
                 GetCA3075LoadXmlCSharpResultAt(11, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -386,9 +377,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXmlDataDocumentLoadXmlInSetShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInSetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 
 class TestClass
@@ -413,7 +404,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(15, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Class TestClass
@@ -438,9 +429,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDataDocumentLoadXmlInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -461,7 +452,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(13, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -484,9 +475,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDataDocumentLoadXmlInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -507,7 +498,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(14, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -529,9 +520,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDataDocumentLoadXmlInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -552,7 +543,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(15, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -575,9 +566,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDataDocumentLoadXmlInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInAsyncAwaitShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -600,7 +591,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(12, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Xml
 
@@ -625,9 +616,9 @@ End Class",
         }
 
         [Fact]
-        public void UseXmlDataDocumentLoadXmlInDelegateShouldGenerateDiagnostic()
+        public async Task UseXmlDataDocumentLoadXmlInDelegateShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -650,7 +641,7 @@ class TestClass
                 GetCA3075LoadXmlCSharpResultAt(12, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Xml
 

@@ -1,7 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.VisualBasic;
 using Test.Utilities;
 using Xunit;
+using CSharpLanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion;
+using VisualBasicLanguageVersion = Microsoft.CodeAnalysis.VisualBasic.LanguageVersion;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
@@ -1872,6 +1876,194 @@ class C
         }
     }
 }");
+        }
+
+        [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
+        public void ValueCompare_AssignedToTuple_NotDisposed_SpecialCases_Diagnostic()
+        {
+            // NOTE: We do not support predicate analysis for tuple binary operator comparison yet.
+            VerifyCSharp(@"
+using System;
+
+class A
+{
+    public A(int i) { }
+}
+
+public class Test
+{
+    // Tuple binary compare with nested tuple.    
+    ((A, int), (A, int)) M1()
+    {
+        A a = new A(1);
+        A a2 = new A(2);
+        ((A, int), (A, int)) b = ((a2, 0), (a2, 0));
+        var b2 = ((a2, 0), (a2, 0));
+        if (b == b2)    // This should get flagged as always 'true' once we implement predicate analysis for ITupleBinaryOperation
+        {
+        }
+
+        return b;
+    }
+
+    // Declaration expression target
+    A M2()
+    {
+        A a = new A(3);
+        var ((a2, x), y) = ((a, 0), 1);
+        if (a2 == a)
+        {
+        }
+
+        return null;
+    }
+
+    // Declaration expression target with discards
+    A M3()
+    {
+        A a = new A(4);
+        var ((a2, _), _) = ((a, 0), 1);
+        if (a2 == null)
+        {
+        }
+
+        return null;
+    }
+
+    // Declaration expressions in target
+    A M4()
+    {
+        A a = new A(5);
+        ((var a2, var x), var y) = ((a, 0), 1);
+        if (a == a2 || x == 0 || y == 1)
+        {
+        }
+
+        return null;
+    }
+
+    // Discards in target
+    A M5()
+    {
+        A a = new A(6);
+        ((var a2, _), _) = ((a, 0), 1);
+        if (null == a2)
+        {
+        }
+
+        return null;
+    }
+
+    // Tuple binary compare
+    (A, A) M6()
+    {
+        A a = new A(7);
+        A a2 = new A(8);
+        var c = (a2, a2);
+        var c2 = (a2, a2);
+        if (c == c2)        // This should get flagged as always 'true' once we implement predicate analysis for ITupleBinaryOperation
+        {
+        }
+
+        var c3 = (a2, a);
+        if (c == c3)        // This should get flagged as always 'false' once we implement predicate analysis for ITupleBinaryOperation
+        {
+        }
+
+        var c4 = (a, a);
+        if (c == c4)        // This should get flagged as always 'false' once we implement predicate analysis for ITupleBinaryOperation
+        {
+        }
+
+        return c;
+    }
+}
+", parseOptions: CSharpParseOptions.Default.WithLanguageVersion(CSharpLanguageVersion.CSharp7_3), expected: new[] {
+            // Test0.cs(30,13): warning CA1508: 'a2 == a' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(30, 13, "a2 == a", "true"),
+            // Test0.cs(42,13): warning CA1508: 'a2 == null' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(42, 13, "a2 == null", "false"),
+            // Test0.cs(54,13): warning CA1508: 'a == a2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(54, 13, "a == a2", "true"),
+            // Test0.cs(54,24): warning CA1508: 'x == 0' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(54, 24, "x == 0", "true"),
+            // Test0.cs(54,34): warning CA1508: 'y == 1' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(54, 34, "y == 1", "true"),
+            // Test0.cs(66,13): warning CA1508: 'null == a2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(66, 13, "null == a2", "false") });
+        }
+
+        [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
+        public void ValueCompare_AddedToTupleLiteral_SpecialCases_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A
+{
+    public A(int i) { }
+}
+
+public class Test
+{
+    // Tuple literal assignment cases.
+    void M1()
+    {
+        A a = new A(1);
+        var x = ((a, 0), 1);
+        if (x.Item1.Item1 == a || x.Item1.a == a || x.Item2 == 1)
+        {
+        }
+    }
+
+    void M2()
+    {
+        A a = new A(2);
+        A a2 = new A(3);
+        var x = (a, a2);
+        if (x.a == a || x.Item2 == a2)
+        {
+        }
+    }
+
+    void M3(out (A a, A a2) arg)
+    {
+        A a = new A(4);
+        A a2 = new A(5);
+        arg = (a, a2);
+        arg = default((A, A));  // We don't yet analyze default tuple expression, so below redundant conditionals are not flagged.
+        if (arg.Item1 == a || arg.a2 == a2)
+        {
+        }
+    }
+
+    void M4(out (A a, A a2) arg)
+    {
+        A a = new A(6);
+        A a2 = new A(7);
+        var a3 = (a, a2);
+        arg = a3;
+        arg = (null, null);
+        if (arg.a == a || arg.Item2 == a2)
+        {
+        }
+    }
+}
+", parseOptions: CSharpParseOptions.Default.WithLanguageVersion(CSharpLanguageVersion.CSharp7_3), expected: new[]{
+            // Test0.cs(16,13): warning CA1508: 'x.Item1.Item1 == a' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 13, "x.Item1.Item1 == a", "true"),
+            // Test0.cs(16,35): warning CA1508: 'x.Item1.a == a' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 35, "x.Item1.a == a", "true"),
+            // Test0.cs(16,53): warning CA1508: 'x.Item2 == 1' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(16, 53, "x.Item2 == 1", "true"),
+            // Test0.cs(26,13): warning CA1508: 'x.a == a' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(26, 13, "x.a == a", "true"),
+            // Test0.cs(26,25): warning CA1508: 'x.Item2 == a2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(26, 25, "x.Item2 == a2", "true"),
+            // Test0.cs(49,13): warning CA1508: 'arg.a == a' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(49, 13, "arg.a == a", "false"),
+            // Test0.cs(49,27): warning CA1508: 'arg.Item2 == a2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(49, 27, "arg.Item2 == a2", "false")});
         }
     }
 }

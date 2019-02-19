@@ -19,32 +19,32 @@
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
         <source>Do Not Call Dangerous Methods In Deserialization</source>
-        <target state="new">Do Not Call Dangerous Methods In Deserialization</target>
+        <target state="translated">Keine gefährlichen Methoden bei der Deserialisierung aufrufen</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationDescription">
         <source>Insecure Deserialization is a vulnerability which occurs when untrusted data is used to abuse the logic of an application, inflict a Denial-of-Service (DoS) attack, or even execute arbitrary code upon it being deserialized. It’s frequently possible for malicious users to abuse these deserialization features when the application is deserializing untrusted data which is under their control. Specifically, invoke dangerous methods in the process of deserialization. Successful insecure deserialization attacks could allow an attacker to carry out attacks such as DoS attacks, authentication bypasses, and remote code execution.</source>
-        <target state="new">Insecure Deserialization is a vulnerability which occurs when untrusted data is used to abuse the logic of an application, inflict a Denial-of-Service (DoS) attack, or even execute arbitrary code upon it being deserialized. It’s frequently possible for malicious users to abuse these deserialization features when the application is deserializing untrusted data which is under their control. Specifically, invoke dangerous methods in the process of deserialization. Successful insecure deserialization attacks could allow an attacker to carry out attacks such as DoS attacks, authentication bypasses, and remote code execution.</target>
+        <target state="translated">Bei der unsicheren Deserialisierung handelt es sich um ein Sicherheitsrisiko, das auftreten kann, wenn nicht vertrauenswürdige Daten verwendet werden, um die Logik einer Anwendung auf nicht beabsichtigte Weise zu verwenden, einen Denial-of-Service-Angriff (DoS) durchzuführen oder beliebigen Code auszuführen, um diese zu deserialisieren. Angreifer nutzen diese Deserialisierungsfeatures häufig aus, indem sie ihre nicht vertrauenswürdigen Daten von der Anwendung deserialisieren lassen. Während der Deserialisierung werden so insbesondere gefährliche Methoden aufgerufen. Eine erfolgreich durchgeführte unsichere Deserialisierung kann dazu führen, dass der Angreifer DoS-Angriffe durchführen, die Authentifizierung umgehen oder Code remote ausführen kann.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationMessage">
         <source>When deserializing an instance of class {0}, method {1} can call dangerous method {2}.</source>
-        <target state="new">When deserializing an instance of class {0}, method {1} can call dangerous method {2}.</target>
+        <target state="translated">Wenn eine Instanz der Klasse {0} deserialisiert wird, kann die Methode {1} die gefährliche Methode {2} aufrufen.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">
         <source>Do Not Disable Certification Validation</source>
-        <target state="new">Do Not Disable Certification Validation</target>
+        <target state="translated">Zertifikatüberprüfung nicht deaktivieren</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationDescription">
         <source>A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</source>
-        <target state="new">A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</target>
+        <target state="translated">Mithilfe von Zertifikaten können Sie die Identität des Servers authentifizieren. Clients sollten das Serverzertifikat überprüfen, um sicherzustellen, dass die Anforderungen an den richtigen Server gesendet werden. Wenn die Eigenschaft "ServerCertificateValidationCallback" immer "true" zurückgibt, werden alle Zertifikate als gültig eingestuft.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationMessage">
         <source>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</source>
-        <target state="new">The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</target>
+        <target state="translated">Die ServerCertificateValidationCallback-Eigenschaft wurde auf eine Funktion festgelegt, die alle Serverzertifikate akzeptiert, indem immer "true" zurückgegeben wird. Stellen Sie sicher, dass die Serverzertifikate darauf ausgelegt sind, die Identität des Servers zu überprüfen, der Anforderungen erhält.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">

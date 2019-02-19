@@ -19,32 +19,32 @@
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
         <source>Do Not Call Dangerous Methods In Deserialization</source>
-        <target state="new">Do Not Call Dangerous Methods In Deserialization</target>
+        <target state="translated">不要在還原序列化期間呼叫危險的方法</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationDescription">
         <source>Insecure Deserialization is a vulnerability which occurs when untrusted data is used to abuse the logic of an application, inflict a Denial-of-Service (DoS) attack, or even execute arbitrary code upon it being deserialized. It’s frequently possible for malicious users to abuse these deserialization features when the application is deserializing untrusted data which is under their control. Specifically, invoke dangerous methods in the process of deserialization. Successful insecure deserialization attacks could allow an attacker to carry out attacks such as DoS attacks, authentication bypasses, and remote code execution.</source>
-        <target state="new">Insecure Deserialization is a vulnerability which occurs when untrusted data is used to abuse the logic of an application, inflict a Denial-of-Service (DoS) attack, or even execute arbitrary code upon it being deserialized. It’s frequently possible for malicious users to abuse these deserialization features when the application is deserializing untrusted data which is under their control. Specifically, invoke dangerous methods in the process of deserialization. Successful insecure deserialization attacks could allow an attacker to carry out attacks such as DoS attacks, authentication bypasses, and remote code execution.</target>
+        <target state="translated">不安全的還原序列化是一種弱點，會在有人使用未受信任的資料來不當使用應用程式的邏輯、發動拒絕服務的攻擊 (DoS)，甚至是在任何程式碼的還原序列化期間執行該程式碼時出現。惡意使用者經常會在應用程式將他們控制的未受信任資料還原序列化時，濫用這些還原序列化功能 (基本上就是在還原序列化期間叫用危險的方法)。不安全的還原序列化攻擊一旦成功，攻擊者就有機會發動後續攻擊，例如 DoS 攻擊、驗證略過和遠端程式碼執行。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserializationMessage">
         <source>When deserializing an instance of class {0}, method {1} can call dangerous method {2}.</source>
-        <target state="new">When deserializing an instance of class {0}, method {1} can call dangerous method {2}.</target>
+        <target state="translated">將類別 {0} 的執行個體還原序列化時，方法 {1} 可以呼叫危險的方法 {2}。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">
         <source>Do Not Disable Certification Validation</source>
-        <target state="new">Do Not Disable Certification Validation</target>
+        <target state="translated">不要停用憑證驗證</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationDescription">
         <source>A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</source>
-        <target state="new">A certificate can help authenticate the identity of the server. Clients should validate the server certificate to ensure requests are sent to the intended server. If the ServerCertificateValidationCallback always returns 'true', any certificate will pass validation.</target>
+        <target state="translated">憑證可協助驗證伺服器的身分識別。用戶端應該驗證伺服器憑證來確保要求會傳送到正確的伺服器。如果 ServerCertificateValidationCallback 一律傳回 'true'，則所有憑證都會通過驗證。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationMessage">
         <source>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</source>
-        <target state="new">The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</target>
+        <target state="translated">ServerCertificateValidationCallback 已設定為會一律傳回 true 來接受所有伺服器憑證的函式。請確保伺服器憑證經過驗證，以驗證收到要求之伺服器的身分識別。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">

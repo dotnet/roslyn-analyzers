@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     {
         protected abstract DiagnosticDescriptor Rule { get; }
 
-        protected virtual IEnumerable<string> AdditionalSources { get; } 
+        protected virtual IEnumerable<string> AdditionalSources { get; }
 
         protected DiagnosticResult GetCSharpResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
         {

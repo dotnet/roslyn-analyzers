@@ -31,7 +31,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -56,7 +55,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -84,7 +82,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -101,8 +98,8 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetCSharpResultAt(14, 24, "B", "a", "A"));
+            // Test0.cs(13,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetCSharpResultAt(13, 24, "B", "a", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -110,7 +107,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -125,8 +121,8 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            // Test0.vb(14,22): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetBasicResultAt(14, 22, "B", "a", "A"));
+            // Test0.vb(13,22): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetBasicResultAt(13, 22, "B", "a", "A"));
         }
 
         [Fact]
@@ -139,7 +135,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -164,7 +159,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -192,7 +186,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -209,8 +202,8 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetCSharpResultAt(14, 15, "B", "a", "A"));
+            // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetCSharpResultAt(13, 15, "B", "a", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -218,7 +211,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -233,8 +225,8 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetBasicResultAt(14, 13, "B", "a", "A"));
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"));
         }
 
         [Fact]
@@ -247,7 +239,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -270,7 +261,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -297,7 +287,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -311,10 +300,10 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetCSharpResultAt(14, 15, "B", "a", "A"),
-            // Test0.cs(15,24): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetCSharpResultAt(15, 24, "B", "a2", "A"));
+            // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetCSharpResultAt(13, 15, "B", "a", "A"),
+            // Test0.cs(14,24): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetCSharpResultAt(14, 24, "B", "a2", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -322,7 +311,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -335,10 +323,10 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetBasicResultAt(14, 13, "B", "a", "A"),
-            // Test0.vb(15,22): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetBasicResultAt(15, 22, "B", "a2", "A"));
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"),
+            // Test0.vb(14,22): warning CA2213: 'B' contains field 'a2' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetBasicResultAt(14, 22, "B", "a2", "A"));
         }
 
         [Fact]
@@ -351,7 +339,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -372,7 +359,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -397,7 +383,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -423,7 +408,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -452,7 +436,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -470,8 +453,8 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetCSharpResultAt(14, 15, "B", "a", "A"));
+            // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetCSharpResultAt(13, 15, "B", "a", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -479,7 +462,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -495,8 +477,8 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetBasicResultAt(14, 13, "B", "a", "A"));
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"));
         }
 
         [Fact]
@@ -509,7 +491,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -535,7 +516,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -564,7 +544,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -582,8 +561,8 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetCSharpResultAt(14, 15, "B", "a", "A"));
+            // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetCSharpResultAt(13, 15, "B", "a", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -591,7 +570,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -607,8 +585,8 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
-            GetBasicResultAt(14, 13, "B", "a", "A"));
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Dispose or Close on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"));
         }
 
         [Fact]
@@ -621,7 +599,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -646,7 +623,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -674,7 +650,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -698,7 +673,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -725,7 +699,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -752,7 +725,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -784,7 +756,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -803,8 +774,8 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetCSharpResultAt(14, 15, "B", "a", "A"));
+            // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(13, 15, "B", "a", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -812,7 +783,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -831,8 +801,8 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetBasicResultAt(14, 13, "B", "a", "A"));
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"));
         }
 
         [Fact]
@@ -845,7 +815,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -872,7 +841,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -904,7 +872,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -923,8 +890,8 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetCSharpResultAt(14, 15, "B", "a", "A"));
+            // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(13, 15, "B", "a", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -932,7 +899,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -951,8 +917,8 @@ Class B
     Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetBasicResultAt(14, 13, "B", "a", "A"));
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"));
         }
 
         [Fact]
@@ -966,7 +932,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -995,7 +960,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1029,7 +993,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1063,7 +1026,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1101,7 +1063,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1128,7 +1089,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1361,7 +1321,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1382,7 +1341,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1407,7 +1365,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1429,7 +1386,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1455,7 +1411,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1469,8 +1424,8 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetCSharpResultAt(14, 15, "B", "a", "A"));
+            // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(13, 15, "B", "a", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -1478,7 +1433,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1491,8 +1445,8 @@ Class B
         Dim l = a
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetBasicResultAt(14, 13, "B", "a", "A"));
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"));
         }
 
         [Fact]
@@ -1505,7 +1459,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1550,7 +1503,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1591,7 +1543,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1627,10 +1578,10 @@ class B : IDisposable
     }
 }
 ",
-            // Test0.cs(14,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetCSharpResultAt(14, 15, "B", "a", "A"),
-            // Test0.cs(15,15): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetCSharpResultAt(15, 15, "B", "b", "A"));
+            // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(13, 15, "B", "a", "A"),
+            // Test0.cs(14,15): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(14, 15, "B", "b", "A"));
 
             VerifyBasic(@"
 Imports System
@@ -1638,7 +1589,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1666,10 +1616,10 @@ Class B
         End If
     End Sub
 End Class",
-            // Test0.vb(14,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetBasicResultAt(14, 13, "B", "a", "A"),
-            // Test0.vb(15,13): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
-            GetBasicResultAt(15, 13, "B", "b", "A"));
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"),
+            // Test0.vb(14,13): warning CA2213: 'B' contains field 'b' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(14, 13, "B", "b", "A"));
         }
 
         [Fact]
@@ -1682,7 +1632,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1709,7 +1658,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1745,7 +1693,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
     public void PerformSomeCleanup()
     {
@@ -1775,7 +1722,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 
     Public Sub PerformSomeCleanup()
@@ -1814,7 +1760,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
     public void PerformSomeCleanup()
     {
@@ -1850,7 +1795,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 
     Public Sub PerformSomeCleanup()
@@ -1888,7 +1832,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1915,7 +1858,6 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -1943,7 +1885,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1951,7 +1892,6 @@ abstract class Base : IDisposable
 {
     public virtual void Dispose()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -1972,14 +1912,12 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
 MustInherit Class Base
     Implements IDisposable
     Public Overridable Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2006,12 +1944,10 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 
     public void Dispose(bool disposed)
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -2032,11 +1968,9 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 
     Public Sub Dispose(disposed As Boolean)
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2061,12 +1995,10 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 
     public void Dispose(bool disposed)
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -2092,11 +2024,9 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 
     Public Sub Dispose(disposed As Boolean)
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2125,12 +2055,10 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 
     public void Close()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -2151,11 +2079,9 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 
     Public Sub Close()
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2180,17 +2106,14 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 
     public void Dispose(bool disposed)
     {
-        throw new NotImplementedException();
     }
 
     public void Close()
     {
-        throw new NotImplementedException();
     }
 }
 
@@ -2223,15 +2146,12 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 
     Public Sub Dispose(disposed As Boolean)
-        Throw New NotImplementedException()
     End Sub
 
     Public Sub Close()
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2266,7 +2186,6 @@ class A : IDisposable
 {
     public void Dispose()
     {
-        throw new NotImplementedException();
     }
 
     public void Close()
@@ -2296,11 +2215,9 @@ Imports System
 Class A
     Implements IDisposable
     Public Sub Dispose() Implements IDisposable.Dispose
-        Throw New NotImplementedException()
     End Sub
 
     Public Sub Dispose(disposed As Boolean)
-        Throw New NotImplementedException()
     End Sub
 End Class
 
@@ -2479,6 +2396,318 @@ Class B
         Return a.DisposeAsync()
     End Function
 End Class");
+        }
+
+        [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
+        public void DisposableAllocation_DisposedInInvokedMethod_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A a = new A();
+    
+    public void Dispose()
+    {
+        DisposeHelper();
+    }
+
+    private void DisposeHelper()
+    {
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class B
+    Implements IDisposable
+
+    Private a As A = New A()
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeHelper()
+    End Sub
+
+    Public Sub DisposeHelper()
+        a.Dispose()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
+        public void DisposableAllocation_NotDisposedInInvokedMethod_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A a = new A();
+    
+    public void Dispose()
+    {
+        DisposeHelper();
+    }
+
+    private void DisposeHelper()
+    {
+    }
+}
+",
+        // Test0.cs(13,15): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+        GetCSharpResultAt(13, 15, "B", "a", "A"));
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class B
+    Implements IDisposable
+
+    Private a As A = New A()
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeHelper()
+    End Sub
+
+    Public Sub DisposeHelper()
+    End Sub
+End Class",
+            // Test0.vb(13,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'A', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(13, 13, "B", "a", "A"));
+        }
+
+        [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
+        public void DisposableAllocation_DisposedInInvokedMethod_DisposableTypeInMetadata_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+class B : IDisposable
+{
+    private FileStream a = File.Open("""", FileMode.Create);
+
+    public void Dispose()
+    {
+        DisposeHelper();
+    }
+
+    private void DisposeHelper()
+    {
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+
+Class B
+    Implements IDisposable
+
+    Private a As FileStream = File.Open("""", FileMode.Create)
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeHelper()
+    End Sub
+
+    Private Sub DisposeHelper()
+        a.Dispose()
+    End Sub
+End Class
+");
+        }
+
+        [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
+        public void DisposableAllocation_NotDisposedInInvokedMethod_DisposableTypeInMetadata_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+class B : IDisposable
+{
+    private FileStream a = File.Open("""", FileMode.Create);
+
+    public void Dispose()
+    {
+        DisposeHelper();
+    }
+
+    private void DisposeHelper()
+    {
+    }
+}
+",
+            // Test0.cs(7,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'FileStream', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(7, 24, "B", "a", "FileStream"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+
+Class B
+    Implements IDisposable
+
+    Private a As FileStream = File.Open("""", FileMode.Create)
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeHelper()
+    End Sub
+
+    Private Sub DisposeHelper()
+    End Sub
+End Class
+",
+            // Test0.vb(8,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'FileStream', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(8, 13, "B", "a", "FileStream"));
+        }
+
+        [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
+        public void DisposableAllocation_DisposedInInvokedMethodMultipleLevelsDown_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+class B : IDisposable
+{
+    private FileStream a = File.Open("""", FileMode.Create);
+
+    public void Dispose()
+    {
+        DisposeHelper();
+    }
+
+    private void DisposeHelper()
+    {
+        Helper.PerformDispose(a);
+    }
+}
+
+static class Helper
+{
+    public static void PerformDispose(IDisposable a)
+    {
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+
+Class B
+    Implements IDisposable
+
+    Private a As FileStream = File.Open("""", FileMode.Create)
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeHelper()
+    End Sub
+
+    Private Sub DisposeHelper()
+        Helper.PerformDispose(a)
+    End Sub
+End Class
+
+Public Module Helper
+    Public Sub PerformDispose(ByVal a As IDisposable)
+        a.Dispose()
+    End Sub
+End Module
+");
+        }
+
+        [Fact, WorkItem(1813, "https://github.com/dotnet/roslyn-analyzers/issues/1813")]
+        public void DisposableAllocation_NotDisposedInInvokedMethodMultipleLevelsDown_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+class B : IDisposable
+{
+    private FileStream a = File.Open("""", FileMode.Create);
+
+    public void Dispose()
+    {
+        DisposeHelper();
+    }
+
+    private void DisposeHelper()
+    {
+        Helper.PerformDispose(a);
+    }
+}
+
+static class Helper
+{
+    public static void PerformDispose(IDisposable a)
+    {
+    }
+}
+",
+            // Test0.cs(7,24): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'FileStream', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetCSharpResultAt(7, 24, "B", "a", "FileStream"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+
+Class B
+    Implements IDisposable
+
+    Private a As FileStream = File.Open("""", FileMode.Create)
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+        DisposeHelper()
+    End Sub
+
+    Private Sub DisposeHelper()
+        Helper.PerformDispose(a)
+    End Sub
+End Class
+
+Public Module Helper
+    Public Sub PerformDispose(ByVal a As IDisposable)
+    End Sub
+End Module
+",
+            // Test0.vb(8,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'FileStream', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
+            GetBasicResultAt(8, 13, "B", "a", "FileStream"));
         }
     }
 }

@@ -1,29 +1,33 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpDoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicDoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests
     {
-        private static readonly string s_CA3077NoConstructorMessage = MicrosoftNetFrameworkAnalyzersResources.XmlDocumentDerivedClassNoConstructorMessage;
-
-        private DiagnosticResult GetCA3077NoConstructorCSharpResultAt(int line, int column, string name)
+        private static DiagnosticResult GetCA3077NoConstructorCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3077RuleId, string.Format(s_CA3077NoConstructorMessage, name));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingInApiDesignAnalyzer.RuleDoNotUseInsecureDtdProcessingInApiDesign).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.XmlDocumentDerivedClassNoConstructorMessage, name));
         }
 
-        private DiagnosticResult GetCA3077NoConstructorBasicResultAt(int line, int column, string name)
+        private static DiagnosticResult GetCA3077NoConstructorBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3077RuleId, string.Format(s_CA3077NoConstructorMessage, name));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingInApiDesignAnalyzer.RuleDoNotUseInsecureDtdProcessingInApiDesign).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.XmlDocumentDerivedClassNoConstructorMessage, name));
         }
 
         [Fact]
-        public void NonXmlDocumentDerivedTypeWithNoConstructorShouldNotGenerateDiagnostic()
+        public async Task NonXmlDocumentDerivedTypeWithNoConstructorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -39,7 +43,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -54,9 +58,9 @@ End Namespace");
         }
 
         [Fact]
-        public void NonXmlDocumentDerivedTypeWithConstructorShouldNotGenerateDiagnostic()
+        public async Task NonXmlDocumentDerivedTypeWithConstructorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -74,7 +78,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Xml
 
@@ -92,9 +96,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlDocumentDerivedTypeWithNoConstructorShouldGenerateDiagnostic()
+        public async Task XmlDocumentDerivedTypeWithNoConstructorShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -105,7 +109,7 @@ namespace TestNamespace
                 GetCA3077NoConstructorCSharpResultAt(7, 11, "TestClass")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace

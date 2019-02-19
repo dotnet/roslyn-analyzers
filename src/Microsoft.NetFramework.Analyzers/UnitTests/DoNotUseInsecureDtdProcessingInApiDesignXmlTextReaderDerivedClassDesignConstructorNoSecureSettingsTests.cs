@@ -1,16 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpDoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicDoNotUseInsecureDtdProcessingInApiDesignAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingInApiDesignAnalyzerTests
     {
         [Fact]
-        public void TextReaderDerivedTypeWithEmptyConstructorShouldNotGenerateDiagnostic()
+        public async Task TextReaderDerivedTypeWithEmptyConstructorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -23,7 +29,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -37,9 +43,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeNullResolverAndProhibitInOnlyCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeNullResolverAndProhibitInOnlyCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -56,7 +62,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -71,9 +77,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeUrlResolverAndProhibitInOnlyCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeUrlResolverAndProhibitInOnlyCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -90,7 +96,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -106,9 +112,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSecureResolverAndParseInOnlyCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSecureResolverAndParseInOnlyCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -125,7 +131,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -141,9 +147,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeNullResolverInOnlyCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeNullResolverInOnlyCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -159,7 +165,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -174,9 +180,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeIgnoreInOnlyCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeIgnoreInOnlyCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -192,7 +198,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -207,9 +213,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetInsecureResolverInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetInsecureResolverInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -232,7 +238,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -253,9 +259,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSecureSettingsForVariableInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSecureSettingsForVariableInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -272,7 +278,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -289,9 +295,9 @@ End Namespace
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSecureSettingsWithOutThisInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSecureSettingsWithOutThisInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -309,7 +315,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -325,9 +331,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetSecureSettingsToAXmlTextReaderFieldInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetSecureSettingsToAXmlTextReaderFieldInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -345,7 +351,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -362,9 +368,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetSecureSettingsAtLeastOnceInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetSecureSettingsAtLeastOnceInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -389,7 +395,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -409,9 +415,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetSecureSettingsAtLeastOnceInCtorShouldNotGenerateDiagnosticFalseNeg()
+        public async Task XmlTextReaderDerivedTypeSetSecureSettingsAtLeastOnceInCtorShouldNotGenerateDiagnosticFalseNeg()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -436,7 +442,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -456,9 +462,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetIgnoreToHidingFieldInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetIgnoreToHidingFieldInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -476,7 +482,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -493,9 +499,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetNullToHidingFieldInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetNullToHidingFieldInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -513,7 +519,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -530,9 +536,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetNullToBaseXmlResolverInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetNullToBaseXmlResolverInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -550,7 +556,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -566,9 +572,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetProhibitToBaseInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetProhibitToBaseInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -586,7 +592,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -602,9 +608,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetSecureSettingsToBaseWithHidingFieldsInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetSecureSettingsToBaseWithHidingFieldsInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -623,7 +629,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -640,9 +646,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetSecureSettingsToBaseInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetSecureSettingsToBaseInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -659,7 +665,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -674,9 +680,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetUrlResolverToBaseXmlResolverInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetUrlResolverToBaseXmlResolverInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -695,7 +701,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -713,9 +719,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetNullToHidingPropertyInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetNullToHidingPropertyInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -734,7 +740,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -760,9 +766,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetProhibitToHidingPropertyInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetProhibitToHidingPropertyInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -781,7 +787,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -807,9 +813,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetSecureSettingsToHidingPropertiesInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetSecureSettingsToHidingPropertiesInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -829,7 +835,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -864,9 +870,9 @@ End Namespace"
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetNullToBaseWithHidingPropertyInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetNullToBaseWithHidingPropertyInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -885,7 +891,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -910,9 +916,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetIgnoreToBaseWithHidingPropertyInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetIgnoreToBaseWithHidingPropertyInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -931,7 +937,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace
@@ -956,9 +962,9 @@ End Namespace");
         }
 
         [Fact]
-        public void XmlTextReaderDerivedTypeSetParseToBaseWithHidingPropertyInCtorShouldNotGenerateDiagnostic()
+        public async Task XmlTextReaderDerivedTypeSetParseToBaseWithHidingPropertyInCtorShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Xml;
 
@@ -978,7 +984,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 
 Namespace TestNamespace

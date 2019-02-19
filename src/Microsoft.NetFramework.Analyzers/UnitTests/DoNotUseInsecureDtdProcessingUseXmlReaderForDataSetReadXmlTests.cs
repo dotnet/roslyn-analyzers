@@ -1,27 +1,33 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.Analyzers.DoNotUseInsecureDtdProcessingAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private DiagnosticResult GetCA3075DataSetReadXmlCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075DataSetReadXmlCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "ReadXml"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "ReadXml"));
         }
 
-        private DiagnosticResult GetCA3075DataSetReadXmlBasicResultAt(int line, int column)
+        private static DiagnosticResult GetCA3075DataSetReadXmlBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, CA3075RuleId, string.Format(_CA3075LoadXmlMessage, "ReadXml"));
+            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.DoNotUseDtdProcessingOverloadsMessage, "ReadXml"));
         }
 
         [Fact]
-        public void UseDataSetReadXmlShouldGenerateDiagnostic()
+        public async Task UseDataSetReadXmlShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Data;
 
@@ -40,7 +46,7 @@ namespace TestNamespace
                 GetCA3075DataSetReadXmlCSharpResultAt(12, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Data
 
@@ -57,9 +63,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseDataSetReadXmlInGetShouldGenerateDiagnostic()
+        public async Task UseDataSetReadXmlInGetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Data;
 
 class TestClass
@@ -77,7 +83,7 @@ class TestClass
                 GetCA3075DataSetReadXmlCSharpResultAt(11, 13)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Data
 
 Class TestClass
@@ -95,9 +101,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataSetReadXmlInSetShouldGenerateDiagnostic()
+        public async Task UseDataSetReadXmlInSetShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Data;
 
 class TestClass
@@ -122,7 +128,7 @@ public DataSet GetDoc
                 GetCA3075DataSetReadXmlCSharpResultAt(15, 21)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Data
 
 Class TestClass
@@ -145,9 +151,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataSetReadXmlInTryBlockShouldGenerateDiagnostic()
+        public async Task UseDataSetReadXmlInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
   using System;
   using System.Data;
 
@@ -168,7 +174,7 @@ End Class",
                 GetCA3075DataSetReadXmlCSharpResultAt(13, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Data
 
@@ -189,9 +195,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataSetReadXmlInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseDataSetReadXmlInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
    using System;
    using System.Data;
 
@@ -212,7 +218,7 @@ End Class",
                 GetCA3075DataSetReadXmlCSharpResultAt(14, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Data
 
@@ -232,9 +238,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataSetReadXmlInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseDataSetReadXmlInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
    using System;
    using System.Data;
 
@@ -255,7 +261,7 @@ End Class",
                 GetCA3075DataSetReadXmlCSharpResultAt(15, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Data
 
@@ -276,9 +282,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataSetReadXmlInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseDataSetReadXmlInAsyncAwaitShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
  using System.Threading.Tasks;
 using System.Data;
 
@@ -301,7 +307,7 @@ using System.Data;
                 GetCA3075DataSetReadXmlCSharpResultAt(12, 17)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Data
 
@@ -324,9 +330,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataSetReadXmlInDelegateShouldGenerateDiagnostic()
+        public async Task UseDataSetReadXmlInDelegateShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Data;
 
 class TestClass
@@ -342,7 +348,7 @@ class TestClass
                 GetCA3075DataSetReadXmlCSharpResultAt(11, 9)
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Data
 
 Class TestClass
@@ -360,9 +366,9 @@ End Class",
         }
 
         [Fact]
-        public void UseDataSetReadXmlWithXmlReaderShouldNotGenerateDiagnostic()
+        public async Task UseDataSetReadXmlWithXmlReaderShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Data;
 
@@ -380,7 +386,7 @@ namespace TestNamespace
 "
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Data
 

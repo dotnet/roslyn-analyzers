@@ -3,20 +3,16 @@
 using Microsoft.NetFramework.CSharp.Analyzers;
 using Microsoft.NetFramework.VisualBasic.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpImplementISerializableCorrectlyAnalyzer,
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpImplementISerializableCorrectlyFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicImplementISerializableCorrectlyAnalyzer,
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicImplementISerializableCorrectlyFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public class ImplementISerializableCorrectlyTests : DiagnosticAnalyzerTestBase
+    public class ImplementISerializableCorrectlyTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicImplementISerializableCorrectlyAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpImplementISerializableCorrectlyAnalyzer();
-        }
     }
 }

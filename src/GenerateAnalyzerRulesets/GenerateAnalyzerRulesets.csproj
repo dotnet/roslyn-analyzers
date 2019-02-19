@@ -5,7 +5,7 @@
     <IsShipping>false</IsShipping>
   </PropertyGroup>  
   <ItemGroup>
-    <Compile Include="..\Utilities\FxCopWellKnownDiagnosticTags.cs" Link="FxCopWellKnownDiagnosticTags.cs" />
+    <Compile Include="..\Utilities\Compiler\FxCopWellKnownDiagnosticTags.cs" Link="FxCopWellKnownDiagnosticTags.cs" />
   </ItemGroup>
 
   <ItemGroup>

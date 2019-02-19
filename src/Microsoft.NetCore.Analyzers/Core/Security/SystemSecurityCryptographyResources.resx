@@ -144,6 +144,15 @@
   <data name="DoNotDisableCertificateValidationMessage" xml:space="preserve">
     <value>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</value>
   </data>
+  <data name="DoNotDisableSchUseStrongCrypto" xml:space="preserve">
+    <value>Do Not Disable SChannel Use of Strong Crypto</value>
+  </data>
+  <data name="DoNotDisableSchUseStrongCryptoDescription" xml:space="preserve">
+    <value>Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommeded to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.</value>
+  </data>
+  <data name="DoNotDisableSchUseStrongCryptoMessage" xml:space="preserve">
+    <value>{0} disables TLS 1.2 and enables SSLv3</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>

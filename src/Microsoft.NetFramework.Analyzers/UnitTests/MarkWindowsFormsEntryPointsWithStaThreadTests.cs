@@ -3,20 +3,16 @@
 using Microsoft.NetFramework.CSharp.Analyzers;
 using Microsoft.NetFramework.VisualBasic.Analyzers;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpMarkWindowsFormsEntryPointsWithStaThreadAnalyzer,
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpMarkWindowsFormsEntryPointsWithStaThreadFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicMarkWindowsFormsEntryPointsWithStaThreadAnalyzer,
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicMarkWindowsFormsEntryPointsWithStaThreadFixer>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public class MarkWindowsFormsEntryPointsWithStaThreadTests : DiagnosticAnalyzerTestBase
+    public class MarkWindowsFormsEntryPointsWithStaThreadTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicMarkWindowsFormsEntryPointsWithStaThreadAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpMarkWindowsFormsEntryPointsWithStaThreadAnalyzer();
-        }
     }
 }

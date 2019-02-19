@@ -1,29 +1,35 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
+using Microsoft.NetFramework.CSharp.Analyzers;
+using Microsoft.NetFramework.VisualBasic.Analyzers;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetFramework.CSharp.Analyzers.CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetFramework.VisualBasic.Analyzers.BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
-    public partial class DoNotUseInsecureXSLTScriptExecutionAnalyzerTests : DiagnosticAnalyzerTestBase
+    public partial class DoNotUseInsecureXSLTScriptExecutionAnalyzerTests
     {
-        private readonly string _CA3076LoadInsecureConstructedMessage = MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage;
-
-        private DiagnosticResult GetCA3076LoadInsecureConstructedCSharpResultAt(int line, int column, string name)
+        private static DiagnosticResult GetCA3076LoadInsecureConstructedCSharpResultAt(int line, int column, string name)
         {
-            return GetCSharpResultAt(line, column, CA3076RuleId, string.Format(_CA3076LoadInsecureConstructedMessage, name));
+            return new DiagnosticResult(CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage, name));
         }
 
-        private DiagnosticResult GetCA3076LoadInsecureConstructedBasicResultAt(int line, int column, string name)
+        private static DiagnosticResult GetCA3076LoadInsecureConstructedBasicResultAt(int line, int column, string name)
         {
-            return GetBasicResultAt(line, column, CA3076RuleId, string.Format(_CA3076LoadInsecureConstructedMessage, name));
+            return new DiagnosticResult(BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer.RuleDoNotUseInsecureXSLTScriptExecution).WithLocation(line, column).WithArguments(string.Format(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage, name));
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsAndNonSecureResolverShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsAndNonSecureResolverShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -42,7 +48,7 @@ namespace TestNamespace
                 GetCA3076LoadInsecureConstructedCSharpResultAt(13, 13, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -60,9 +66,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsAndNonSecureResolverInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsAndNonSecureResolverInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -86,7 +92,7 @@ namespace TestNamespace
                 GetCA3076LoadInsecureConstructedCSharpResultAt(15, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -109,9 +115,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsAndNonSecureResolverInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsAndNonSecureResolverInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -134,7 +140,7 @@ namespace TestNamespace
                 GetCA3076LoadInsecureConstructedCSharpResultAt(15, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -156,9 +162,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsAndNonSecureResolverInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsAndNonSecureResolverInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -181,7 +187,7 @@ namespace TestNamespace
                 GetCA3076LoadInsecureConstructedCSharpResultAt(16, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -203,9 +209,9 @@ End Namespace",
             );
         }
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsAndNullResolverShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsAndNullResolverShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -222,7 +228,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -237,9 +243,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsReconstructDefaultAndNonSecureResolverShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsReconstructDefaultAndNonSecureResolverShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -257,7 +263,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -273,9 +279,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsReconstructTrustedXsltAndNonSecureResolverShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsReconstructTrustedXsltAndNonSecureResolverShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -294,7 +300,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(13, 13, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -312,9 +318,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsReconstructTrustedXsltAndNonSecureResolverInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsReconstructTrustedXsltAndNonSecureResolverInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -338,7 +344,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(15, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -361,9 +367,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsReconstructTrustedXsltAndNonSecureResolverInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsReconstructTrustedXsltAndNonSecureResolverInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -386,7 +392,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(15, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -408,9 +414,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsReconstructTrustedXsltAndNonSecureResolverInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsReconstructTrustedXsltAndNonSecureResolverInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -433,7 +439,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(16, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -456,9 +462,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToFalseAndNonSecureResolverShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToFalseAndNonSecureResolverShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -477,7 +483,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(13, 13, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -495,9 +501,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToFalseAndNonSecureResolverInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToFalseAndNonSecureResolverInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -521,7 +527,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(15, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -544,9 +550,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToFalseAndNonSecureResolverInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToFalseAndNonSecureResolverInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -569,7 +575,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(15, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -591,9 +597,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToFalseAndNonSecureResolverInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToFalseAndNonSecureResolverInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -616,7 +622,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(16, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -639,9 +645,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -659,7 +665,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -675,9 +681,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverInTryBlockShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverInTryBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -700,7 +706,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -721,9 +727,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverInCatchBlockShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverInCatchBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -745,7 +751,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -765,9 +771,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverInFinallyBlockShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverInFinallyBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -789,7 +795,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -810,9 +816,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverAsyncAwaitShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndSecureResolverAsyncAwaitShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -834,7 +840,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -855,9 +861,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -876,7 +882,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(13, 13, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -894,9 +900,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverInTryBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverInTryBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -920,7 +926,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(15, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -943,9 +949,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverInCatchBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverInCatchBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -968,7 +974,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(15, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -990,9 +996,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverInFinallyBlockShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverInFinallyBlockShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -1015,7 +1021,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(16, 17, "TestMethod")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -1038,9 +1044,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverAsyncAwaitShouldGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetOneToTrueAndNonSecureResolverAsyncAwaitShouldGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Xsl;
@@ -1067,7 +1073,7 @@ namespace TestNamespace
                 GetCA3076LoadCSharpResultAt(16, 17, "Run")
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Xml
 Imports System.Xml.Xsl
@@ -1092,9 +1098,9 @@ End Namespace",
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -1113,7 +1119,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -1130,9 +1136,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverInTryBlockShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverInTryBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -1156,7 +1162,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -1178,9 +1184,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverInCatchBlockShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverInCatchBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -1204,7 +1210,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -1225,9 +1231,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverInFinallyBlockShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverInFinallyBlockShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
 using System.Xml.Xsl;
 
@@ -1251,7 +1257,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
 Imports System.Xml.Xsl
 
@@ -1273,9 +1279,9 @@ End Namespace");
         }
 
         [Fact]
-        public void UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverAsyncAwaitShouldNotGenerateDiagnostic()
+        public async Task UseXslCompiledTransformLoadInputSettingsSetBothToFalseAndNonSecureResolverAsyncAwaitShouldNotGenerateDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Xsl;
@@ -1302,7 +1308,7 @@ namespace TestNamespace
 }"
             );
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
 Imports System.Xml
 Imports System.Xml.Xsl

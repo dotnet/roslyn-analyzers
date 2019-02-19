@@ -44,7 +44,7 @@ namespace Microsoft.NetFramework.Analyzers
             MicrosoftSecurityAnalyzersResources.ResourceManager,
             typeof(MicrosoftSecurityAnalyzersResources));
 
-        private static readonly DiagnosticDescriptor NoVerbsRule = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor NoVerbsRule = new DiagnosticDescriptor(
             RuleId,
             Title,
             NoVerbsMessage,
@@ -53,7 +53,7 @@ namespace Microsoft.NetFramework.Analyzers
             isEnabledByDefault: true,
             helpLinkUri: HelpLinkUri);
 
-        private static readonly DiagnosticDescriptor NoVerbsNoTokenRule = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor NoVerbsNoTokenRule = new DiagnosticDescriptor(
             RuleId,
             Title,
             NoVerbsNoTokenMessage,
@@ -62,7 +62,7 @@ namespace Microsoft.NetFramework.Analyzers
             isEnabledByDefault: true,
             helpLinkUri: HelpLinkUri);
 
-        private static readonly DiagnosticDescriptor GetAndTokenRule = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor GetAndTokenRule = new DiagnosticDescriptor(
             RuleId,
             Title,
             GetAndTokenMessage,
@@ -71,7 +71,7 @@ namespace Microsoft.NetFramework.Analyzers
             isEnabledByDefault: true,
             helpLinkUri: HelpLinkUri);
 
-        private static readonly DiagnosticDescriptor GetAndOtherAndTokenRule = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor GetAndOtherAndTokenRule = new DiagnosticDescriptor(
             RuleId,
             Title,
             GetAndOtherAndTokenMessage,
@@ -80,7 +80,7 @@ namespace Microsoft.NetFramework.Analyzers
             isEnabledByDefault: true,
             helpLinkUri: HelpLinkUri);
 
-        private static readonly DiagnosticDescriptor VerbsAndNoTokenRule = new DiagnosticDescriptor(
+        internal static readonly DiagnosticDescriptor VerbsAndNoTokenRule = new DiagnosticDescriptor(
             RuleId,
             Title,
             VerbsAndNoTokenMessage,

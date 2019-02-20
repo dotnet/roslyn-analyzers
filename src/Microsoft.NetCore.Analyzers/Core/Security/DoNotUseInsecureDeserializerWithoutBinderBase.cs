@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -58,6 +59,35 @@ namespace Microsoft.NetCore.Analyzers.Security
                 this.BinderDefinitelyNotSetDescriptor,
                 this.BinderMaybeNotSetDescriptor);
 
+        /// <summary>
+        /// For PropertySetAnalysis dataflow analysis; new instances always start out as flagged.
+        /// </summary>
+        private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(ImmutableArray.Create(PropertySetAbstractValueKind.Flagged));
+
+        /// <summary>
+        /// For PropertySetAnalysis dataflow analysis; only tracking one property, the <see cref="SerializationBinderPropertyMetadataName"/>.
+        /// </summary>
+        private const int SerializationBinderIndex = 0;
+
+        /// <summary>
+        /// For PropertySetAnalysis dataflow analysis; hazardous usage evaluation callback.
+        /// </summary>
+        /// <param name="methodSymbol"></param>
+        /// <param name="propertySetAbstractValue"></param>
+        /// <returns></returns>
+        private static HazardousUsageEvaluationResult HazardousIfNull(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
+        {
+            switch (propertySetAbstractValue[SerializationBinderIndex])
+            {
+                case PropertySetAbstractValueKind.Flagged:
+                    return HazardousUsageEvaluationResult.Flagged;
+                case PropertySetAbstractValueKind.Unflagged:
+                    return HazardousUsageEvaluationResult.Unflagged;
+                default:
+                    return HazardousUsageEvaluationResult.MaybeFlagged;
+            }
+        }
+
         public sealed override void Initialize(AnalysisContext context)
         {
             ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
@@ -73,6 +103,31 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             // Security analyzer - analyze and report diagnostics on generated code.
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
+            // For PropertySetAnalysis dataflow analysis.
+            PropertyMapperCollection propertyMappers = new PropertyMapperCollection(
+                new PropertyMapper(
+                    this.SerializationBinderPropertyMetadataName,
+                    (NullAbstractValue nullAbstractValue) =>
+                    {
+                        // A null SerializationBinder is what we want to flag as hazardous.
+                        switch (nullAbstractValue)
+                        {
+                            case NullAbstractValue.Null:
+                                return PropertySetAbstractValueKind.Flagged;
+
+                            case NullAbstractValue.NotNull:
+                                return PropertySetAbstractValueKind.Unflagged;
+
+                            default:
+                                return PropertySetAbstractValueKind.MaybeFlagged;
+                        }
+                    }));
+
+            HazardousUsageEvaluatorCollection hazardousUsageEvaluators =
+                new HazardousUsageEvaluatorCollection(
+                    cachedDeserializationMethodNames.Select(
+                        methodName => new HazardousUsageEvaluator(methodName, DoNotUseInsecureDeserializerWithoutBinderBase.HazardousIfNull)));
 
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
@@ -90,7 +145,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
-                            HashSet<IOperation> rootOperationsNeedingAnalysis = new HashSet<IOperation>();
+                            PooledHashSet<IOperation> rootOperationsNeedingAnalysis = PooledHashSet<IOperation>.GetInstance();
 
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
@@ -100,7 +155,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     if (invocationOperation.Instance?.Type == deserializerTypeSymbol
                                         && cachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        }
                                     }
                                 },
                                 OperationKind.Invocation);
@@ -114,7 +172,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                        && cachedDeserializationMethodNames.Contains(
                                             methodReferenceOperation.Method.MetadataName))
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        }
                                     }
                                 },
                                 OperationKind.MethodReference);
@@ -122,81 +183,91 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartAnalysisContext.RegisterOperationBlockEndAction(
                                 (OperationBlockAnalysisContext operationBlockAnalysisContext) =>
                                 {
-                                    if (!rootOperationsNeedingAnalysis.Any())
+                                    PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
+                                    try
                                     {
-                                        return;
-                                    }
-
-                                    // Only instantiated if there are any results to report.
-                                    Dictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> allResults = null;
-                                    List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
-
-                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                        operationBlockAnalysisContext.Options, SupportedDiagnostics,
-                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                        cancellationToken: operationBlockAnalysisContext.CancellationToken,
-                                        defaultMaxInterproceduralMethodCallChain: 1); // By default, we only want to track method calls one level down.
-
-                                    foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
-                                    {
-                                        ImmutableDictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> dfaResult =
-                                            PropertySetAnalysis.GetOrComputeHazardousParameterUsages(
-                                                rootOperation.GetEnclosingControlFlowGraph(),
-                                                operationBlockAnalysisContext.Compilation,
-                                                operationBlockAnalysisContext.OwningSymbol,
-                                                this.DeserializerTypeMetadataName,
-                                                true /* isNewInstanceFlagged */,
-                                                this.SerializationBinderPropertyMetadataName,
-                                                true /* isNullPropertyFlagged */,
-                                                cachedDeserializationMethodNames,
-                                                interproceduralAnalysisConfig);
-                                        if (dfaResult.IsEmpty)
+                                        lock (rootOperationsNeedingAnalysis)
                                         {
-                                            continue;
+                                            if (!rootOperationsNeedingAnalysis.Any())
+                                            {
+                                                return;
+                                            }
+
+                                            // Only instantiated if there are any results to report.
+                                            List<ControlFlowGraph> cfgs = new List<ControlFlowGraph>();
+
+                                            var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                                operationBlockAnalysisContext.Options, SupportedDiagnostics,
+                                                defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
+                                                cancellationToken: operationBlockAnalysisContext.CancellationToken,
+                                                defaultMaxInterproceduralMethodCallChain: 1); // By default, we only want to track method calls one level down.
+
+                                            foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
+                                            {
+                                                ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
+                                                    PropertySetAnalysis.GetOrComputeHazardousUsages(
+                                                        rootOperation.GetEnclosingControlFlowGraph(),
+                                                        operationBlockAnalysisContext.Compilation,
+                                                        operationBlockAnalysisContext.OwningSymbol,
+                                                        this.DeserializerTypeMetadataName,
+                                                        DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
+                                                        propertyMappers,
+                                                        hazardousUsageEvaluators,
+                                                        interproceduralAnalysisConfig);
+                                                if (dfaResult.IsEmpty)
+                                                {
+                                                    continue;
+                                                }
+
+                                                if (allResults == null)
+                                                {
+                                                    allResults = PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>.GetInstance();
+                                                }
+
+                                                foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                                    in dfaResult)
+                                                {
+                                                    allResults.Add(kvp.Key, kvp.Value);
+                                                }
+                                            }
                                         }
 
                                         if (allResults == null)
                                         {
-                                            allResults = new Dictionary<(Location Location, IMethodSymbol Method), PropertySetAbstractValue>();
+                                            return;
                                         }
 
-                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> kvp
-                                            in dfaResult)
+                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                            in allResults)
                                         {
-                                            allResults.Add(kvp.Key, kvp.Value);
+                                            DiagnosticDescriptor descriptor;
+                                            switch (kvp.Value)
+                                            {
+                                                case HazardousUsageEvaluationResult.Flagged:
+                                                    descriptor = this.BinderDefinitelyNotSetDescriptor;
+                                                    break;
+
+                                                case HazardousUsageEvaluationResult.MaybeFlagged:
+                                                    descriptor = this.BinderMaybeNotSetDescriptor;
+                                                    break;
+
+                                                default:
+                                                    Debug.Fail($"Unhandled result value {kvp.Value}");
+                                                    continue;
+                                            }
+
+                                            operationBlockAnalysisContext.ReportDiagnostic(
+                                                Diagnostic.Create(
+                                                    descriptor,
+                                                    kvp.Key.Location,
+                                                    kvp.Key.Method.ToDisplayString(
+                                                        SymbolDisplayFormat.MinimallyQualifiedFormat)));
                                         }
                                     }
-
-                                    if (allResults == null)
+                                    finally
                                     {
-                                        return;
-                                    }
-
-                                    foreach (KeyValuePair<(Location Location, IMethodSymbol Method), PropertySetAbstractValue> kvp
-                                        in allResults)
-                                    {
-                                        DiagnosticDescriptor descriptor;
-                                        switch (kvp.Value)
-                                        {
-                                            case PropertySetAbstractValue.Flagged:
-                                                descriptor = this.BinderDefinitelyNotSetDescriptor;
-                                                break;
-
-                                            case PropertySetAbstractValue.MaybeFlagged:
-                                                descriptor = this.BinderMaybeNotSetDescriptor;
-                                                break;
-
-                                            default:
-                                                Debug.Fail($"Unhandled abstract value {kvp.Value}");
-                                                continue;
-                                        }
-
-                                        operationBlockAnalysisContext.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                descriptor,
-                                                kvp.Key.Location,
-                                                kvp.Key.Method.ToDisplayString(
-                                                    SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                        rootOperationsNeedingAnalysis.Free();
+                                        allResults?.Free();
                                     }
                                 });
                         });

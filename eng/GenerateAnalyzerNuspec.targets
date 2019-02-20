@@ -26,6 +26,7 @@
       <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
       <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
       <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>
+      <DevelopmentDependency Condition="'$(DevelopmentDependency)' == ''">true</DevelopmentDependency>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">
@@ -50,7 +51,7 @@
   <Target Name="GenerateAnalyzerNuspecFile"
           BeforeTargets="GenerateNuspec"
           DependsOnTargets="InitializeSourceControlInformation;GenerateAnalyzerRulesets" 
-          Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgFolder)' != '' or '@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != ''">
+          Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgFolder)' != '' or '@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != '' or '@(AnalyzerNupkgLibrary)' != ''">
     <ItemGroup>
       <_NuspecMetadata Include="version=$(PackageVersion)" />
       <_NuspecMetadata Include="id=$(NuspecPackageId)" />
@@ -65,18 +66,19 @@
       <_NuspecMetadata Include="releaseNotes=$(PackageReleaseNotes)" />
       <_NuspecMetadata Include="tags=$(PackageTags)" />
       <_NuspecMetadata Include="serviceable=$(Serviceable)" />
-      <_NuspecMetadata Include="developmentDependency=true" />
+      <_NuspecMetadata Include="developmentDependency=$(DevelopmentDependency)" />
       <_NuspecMetadata Include="repositoryType=$(RepositoryType)" />
       <_NuspecMetadata Include="repositoryCommit=$(SourceRevisionId)" />
       <_NuspecMetadata Include="repositoryUrl=$(PrivateRepositoryUrl)" />
     </ItemGroup>
 
     <PropertyGroup>
-      <_CscToolPath>$(CscToolPath)</_CscToolPath>
+      <_CscToolPath>$(RoslynTargetsPath)</_CscToolPath>
+      <_CscToolPath Condition="'$(_CscToolPath)' == ''">$(CscToolPath)</_CscToolPath>
       <_CscToolPath Condition="'$(_CscToolPath)' == ''">$(MSBuildBinPath)\Roslyn</_CscToolPath>
       <_CscToolPath Condition="!HasTrailingSlash('$(_CscToolPath)')">$(_CscToolPath)\</_CscToolPath>
     </PropertyGroup>
 
-    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "$(_GeneratedRulesetsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\"' />
+    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\"' />
   </Target>
 </Project>

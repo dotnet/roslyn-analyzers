@@ -1,51 +1,37 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Testing;
+using Microsoft.CodeAnalysis.Testing.Verifiers;
+using Microsoft.CodeAnalysis.VisualBasic.Testing;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.NetCore.CSharp.Analyzers.Runtime;
 using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpMarkAllNonSerializableFieldsFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicMarkAllNonSerializableFieldsFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public partial class MarkAllNonSerializableFieldsFixerTests : CodeFixTestBase
+    public partial class MarkAllNonSerializableFieldsFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        [WorkItem(858655, "DevDiv")]
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicMarkAllNonSerializableFieldsFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        [WorkItem(858655, "DevDiv")]
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpMarkAllNonSerializableFieldsFixer();
-        }
-
-        #region CA2235
-
         [Fact]
-        public void CA2235WithNonSerializableFieldsWithFix()
+        public async Task CA2235WithNonSerializableFieldsWithFix()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 public class NonSerializableType { }
 
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
 {
-    internal NonSerializableType s1;
+    internal NonSerializableType {|CA2235:s1|};
 }",
 @"
 using System;
@@ -56,17 +42,16 @@ public class CA2235WithNonPublicNonSerializableFields
 {
     [NonSerialized]
     internal NonSerializableType s1;
-}",
-codeFixIndex: 0);
+}");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Public Class NonSerializableType
 End Class
 
 <Serializable>
 Public Class CA2235WithNonPublicNonSerializableFields 
-    Friend s1 As NonSerializableType
+    Friend {|CA2235:s1|} As NonSerializableType
 End Class",
 @"
 Imports System
@@ -77,15 +62,27 @@ End Class
 Public Class CA2235WithNonPublicNonSerializableFields
     <NonSerialized>
     Friend s1 As NonSerializableType
-End Class",
-codeFixIndex: 0);
+End Class");
         }
 
         [Fact]
-        public void CA2235WithNonSerializableFieldsWithFix1()
+        public async Task CA2235WithNonSerializableFieldsWithFix1()
         {
-            VerifyCSharpFix(@"
+            await new CSharpCodeFixTest<SerializationRulesDiagnosticAnalyzer, CSharpMarkAllNonSerializableFieldsFixer, XUnitVerifier>
+            {
+                TestCode = @"
 using System;
+public class NonSerializableType { }
+
+[Serializable]
+public class CA2235WithNonPublicNonSerializableFields
+{
+    internal NonSerializableType {|CA2235:s1|};
+}",
+                FixedCode = @"
+using System;
+
+[Serializable]
 public class NonSerializableType { }
 
 [Serializable]
@@ -93,29 +90,21 @@ public class CA2235WithNonPublicNonSerializableFields
 {
     internal NonSerializableType s1;
 }",
-@"
-using System;
+                CodeFixIndex = 1,
+            }.RunAsync();
 
-[Serializable]
-public class NonSerializableType { }
-
-[Serializable]
-public class CA2235WithNonPublicNonSerializableFields
-{
-    internal NonSerializableType s1;
-}",
-codeFixIndex: 1);
-
-            VerifyBasicFix(@"
+            await new VisualBasicCodeFixTest<SerializationRulesDiagnosticAnalyzer, BasicMarkAllNonSerializableFieldsFixer, XUnitVerifier>
+            {
+                TestCode = @"
 Imports System
 Public Class NonSerializableType
 End Class
 
 <Serializable>
 Public Class CA2235WithNonPublicNonSerializableFields
-    Friend s1 As NonSerializableType
+    Friend {|CA2235:s1|} As NonSerializableType
 End Class",
-@"
+                FixedCode = @"
 Imports System
 
 <Serializable>
@@ -126,20 +115,21 @@ End Class
 Public Class CA2235WithNonPublicNonSerializableFields
     Friend s1 As NonSerializableType
 End Class",
-codeFixIndex: 1);
+                CodeFixIndex = 1,
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA2235WithNonSerializableFieldsWithFix2()
+        public async Task CA2235WithNonSerializableFieldsWithFix2()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 public class NonSerializableType { }
 
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
 {
-    internal NonSerializableType s1, s2 = new NonSerializableType(), s3;
+    internal NonSerializableType {|CA2235:s1|}, {|CA2235:s2|} = new NonSerializableType(), {|CA2235:s3|};
 }",
 @"
 using System;
@@ -150,17 +140,16 @@ public class CA2235WithNonPublicNonSerializableFields
 {
     [NonSerialized]
     internal NonSerializableType s1, s2 = new NonSerializableType(), s3;
-}",
-codeFixIndex: 0);
+}");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Public Class NonSerializableType
 End Class
 
 <Serializable>
 Public Class CA2235WithNonPublicNonSerializableFields 
-    Friend s1, s2, s3 As NonSerializableType
+    Friend {|CA2235:s1|}, {|CA2235:s2|}, {|CA2235:s3|} As NonSerializableType
 End Class",
 @"
 Imports System
@@ -171,14 +160,15 @@ End Class
 Public Class CA2235WithNonPublicNonSerializableFields
     <NonSerialized>
     Friend s1, s2, s3 As NonSerializableType
-End Class",
-codeFixIndex: 0);
+End Class");
         }
 
         [Fact]
-        public void CA2235WithNonSerializableFieldsWithFix3()
+        public async Task CA2235WithNonSerializableFieldsWithFix3()
         {
-            VerifyCSharpFix(@"
+            await new CSharpCodeFixTest<SerializationRulesDiagnosticAnalyzer, CSharpMarkAllNonSerializableFieldsFixer, XUnitVerifier>
+            {
+                TestCode = @"
 using System;
 public partial class NonSerializableType { }
 
@@ -187,9 +177,9 @@ public partial class NonSerializableType { public void baz() { } }
 [Serializable]
 public class CA2235WithNonPublicNonSerializableFields
 {
-    internal NonSerializableType s1;
+    internal NonSerializableType {|CA2235:s1|};
 }",
-@"
+                FixedCode = @"
 using System;
 
 [Serializable]
@@ -202,9 +192,12 @@ public class CA2235WithNonPublicNonSerializableFields
 {
     internal NonSerializableType s1;
 }",
-codeFixIndex: 1);
+                CodeFixIndex = 1,
+            }.RunAsync();
 
-            VerifyBasicFix(@"
+            await new VisualBasicCodeFixTest<SerializationRulesDiagnosticAnalyzer, BasicMarkAllNonSerializableFieldsFixer, XUnitVerifier>
+            {
+                TestCode = @"
 Imports System
 Public Partial Class NonSerializableType
 End Class
@@ -216,9 +209,9 @@ End Class
 
 <Serializable>
 Public Class CA2235WithNonPublicNonSerializableFields
-    Friend s1 As NonSerializableType
+    Friend {|CA2235:s1|} As NonSerializableType
 End Class",
-@"
+                FixedCode = @"
 Imports System
 
 <Serializable>
@@ -234,9 +227,8 @@ End Class
 Public Class CA2235WithNonPublicNonSerializableFields
     Friend s1 As NonSerializableType
 End Class",
-codeFixIndex: 1);
+                CodeFixIndex = 1,
+            }.RunAsync();
         }
-
-        #endregion
     }
 }

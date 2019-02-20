@@ -305,8 +305,14 @@ Display this help message.");
                     Console.WriteLine($"Computing code metrics for {Path.GetFileName(projectFile)}...");
                 }
 
+                if (!project.SupportsCompilation)
+                {
+                    throw new NotSupportedException("Project must support compilation.");
+                }
+
                 cancellation.ThrowIfCancellationRequested();
-                var metricData = await CodeAnalysisMetricData.ComputeAsync(project, CancellationToken.None).ConfigureAwait(false);
+                var compilation = await project.GetCompilationAsync(CancellationToken.None).ConfigureAwait(false);
+                var metricData = await CodeAnalysisMetricData.ComputeAsync(compilation.Assembly, compilation, CancellationToken.None).ConfigureAwait(false);
                 builder.Add((projectFile, metricData));
             }
 
@@ -332,8 +338,14 @@ Display this help message.");
                         Console.WriteLine($"    Computing code metrics for {Path.GetFileName(project.FilePath)}...");
                     }
 
+                    if (!project.SupportsCompilation)
+                    {
+                        throw new NotSupportedException("Project must support compilation.");
+                    }
+
                     cancellation.ThrowIfCancellationRequested();
-                    var metricData = await CodeAnalysisMetricData.ComputeAsync(project, CancellationToken.None).ConfigureAwait(false);
+                    var compilation = await project.GetCompilationAsync(CancellationToken.None).ConfigureAwait(false);
+                    var metricData = await CodeAnalysisMetricData.ComputeAsync(compilation.Assembly, compilation, CancellationToken.None).ConfigureAwait(false);
                     builder.Add((project.FilePath, metricData));
                 }
             }

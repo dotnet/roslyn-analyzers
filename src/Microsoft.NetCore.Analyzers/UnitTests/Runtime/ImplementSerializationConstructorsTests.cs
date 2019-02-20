@@ -1,30 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+using VerifyCS = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.ImplementSerializationConstructorsFixer>;
+using VerifyVB = Microsoft.CodeAnalysis.VisualBasic.Testing.XUnit.CodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.SerializationRulesDiagnosticAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.ImplementSerializationConstructorsFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public partial class ImplementSerializationConstructorsTests : DiagnosticAnalyzerTestBase
+    public partial class ImplementSerializationConstructorsTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SerializationRulesDiagnosticAnalyzer();
-        }
-
-        #region CA2229
-
         [Fact]
-        public void CA2229NoConstructor()
+        public async Task CA2229NoConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -37,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 GetCA2229CSharpResultAt(5, 30, "CA2229NoConstructor", CA2229Message));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -52,9 +45,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229NoConstructorInternal()
+        public async Task CA2229NoConstructorInternal()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -66,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -80,9 +73,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229HasConstructor()
+        public async Task CA2229HasConstructor()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -96,7 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -113,9 +106,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229HasConstructor1()
+        public async Task CA2229HasConstructor1()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -129,7 +122,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -146,9 +139,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229HasConstructorWrongAccessibility()
+        public async Task CA2229HasConstructorWrongAccessibility()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -163,7 +156,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 GetCA2229CSharpResultAt(7, 28, "CA2229HasConstructorWrongAccessibility", CA2229MessageUnsealed));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -181,13 +174,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229HasConstructorWrongAccessibilityWithScope()
+        public async Task CA2229HasConstructorWrongAccessibilityWithScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
 
-                [|[Serializable]
+                [Serializable]
                 public sealed class CA2229HasConstructor1 : ISerializable
                 {
                     private CA2229HasConstructor1(SerializationInfo info, StreamingContext context) { }
@@ -196,12 +189,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     {
                         throw new NotImplementedException();
                     }
-                }|]
+                }
 
                 [Serializable]
                 public class CA2229HasConstructorWrongAccessibility : ISerializable
                 {
-                    public CA2229HasConstructorWrongAccessibility(SerializationInfo info, StreamingContext context) { }
+                    public {|CA2229:CA2229HasConstructorWrongAccessibility|}(SerializationInfo info, StreamingContext context) { }
 
                     public void GetObjectData(SerializationInfo info, StreamingContext context)
                     {
@@ -209,11 +202,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     }
                 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
 
-                [|<Serializable>
+                <Serializable>
                 Public NotInheritable Class CA2229HasConstructor1
                     Implements ISerializable
                 
@@ -223,13 +216,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
                         throw new NotImplementedException()
                     End Sub
-                End Class|]
+                End Class
 
                 <Serializable>
                 Public Class CA2229HasConstructorWrongAccessibility
                     Implements ISerializable
                 
-                    Public Sub New(info As SerializationInfo, context As StreamingContext)
+                    Public Sub {|CA2229:New|}(info As SerializationInfo, context As StreamingContext)
                     End Sub
 
                     Public Sub GetObjectData(info as SerializationInfo, context as StreamingContext) Implements ISerializable.GetObjectData
@@ -239,9 +232,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229HasConstructorWrongAccessibility1()
+        public async Task CA2229HasConstructorWrongAccessibility1()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -256,7 +249,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 GetCA2229CSharpResultAt(7, 30, "CA2229HasConstructorWrongAccessibility1", CA2229MessageUnsealed));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -274,9 +267,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229HasConstructorWrongAccessibility2()
+        public async Task CA2229HasConstructorWrongAccessibility2()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -291,7 +284,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 GetCA2229CSharpResultAt(7, 40, "CA2229HasConstructorWrongAccessibility2", CA2229MessageSealed));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -309,9 +302,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229HasConstructorWrongAccessibility3()
+        public async Task CA2229HasConstructorWrongAccessibility3()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -326,7 +319,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 GetCA2229CSharpResultAt(7, 40, "CA2229HasConstructorWrongAccessibility3", CA2229MessageUnsealed));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -344,9 +337,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229HasConstructorWrongOrder()
+        public async Task CA2229HasConstructorWrongOrder()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -361,7 +354,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 GetCA2229CSharpResultAt(5, 30, "CA2229HasConstructorWrongOrder", CA2229Message));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -379,9 +372,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         }
 
         [Fact]
-        public void CA2229SerializableProper()
+        public async Task CA2229SerializableProper()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 using System;
                 using System.Runtime.Serialization;
                 [Serializable]
@@ -394,7 +387,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }",
                 GetCA2229CSharpResultAt(5, 30, "CA2229SerializableProper", CA2229Message));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Imports System
                 Imports System.Runtime.Serialization
                 <Serializable>
@@ -414,14 +407,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private static DiagnosticResult GetCA2229CSharpResultAt(int line, int column, string objectName, string message)
         {
-            return GetCSharpResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2229Id, string.Format(message, objectName));
+            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2229).WithLocation(line, column).WithArguments(string.Format(message, objectName));
         }
 
         private static DiagnosticResult GetCA2229BasicResultAt(int line, int column, string objectName, string message)
         {
-            return GetBasicResultAt(line, column, SerializationRulesDiagnosticAnalyzer.RuleCA2229Id, string.Format(message, objectName));
+            return new DiagnosticResult(SerializationRulesDiagnosticAnalyzer.RuleCA2229).WithLocation(line, column).WithArguments(string.Format(message, objectName));
         }
-
-        #endregion
     }
 }

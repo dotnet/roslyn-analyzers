@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// CA1031: Do not catch general exception types
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotCatchGeneralExceptionTypesAnalyzer : DoNotCatchGeneralUnlessRethrownAnalyzer
+    internal sealed class DoNotCatchGeneralExceptionTypesAnalyzer : DoNotCatchGeneralUnlessRethrownAnalyzer
     {
         internal const string RuleId = "CA1031";
 
@@ -24,7 +24,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Design,
-                                                                             DiagnosticSeverity.Error,
+                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182137.aspx",

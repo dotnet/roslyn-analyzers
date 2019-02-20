@@ -131,6 +131,7 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Metrics.Package", "nuget\Microsoft.CodeAnalysis.Metrics\Microsoft.CodeAnalysis.Metrics.Package.csproj", "{36359863-556D-4C16-940A-36592BB3DC72}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzer.Utilities.UnitTests", "src\Utilities.UnitTests\Analyzer.Utilities.UnitTests.csproj", "{AFCB0C5B-E3C6-45AF-940B-AA38C7EC94EA}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DotNetAnalyzers", "DotNetAnalyzers", "{E2E56F9F-AD96-4235-9ACE-CBF26CC5C421}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.BannedApiAnalyzer", "src\DotNetAnalyzers\Core\BannedAPIAnalyzer\DotNetAnalyzers.BannedApiAnalyzer.csproj", "{D1CE04E3-5ABF-4DF9-A121-1C898B4746D7}"

@@ -12,6 +12,7 @@
     <InternalsVisibleTo Include="Microsoft.NetCore.CSharp.Analyzers" />
     <InternalsVisibleTo Include="Microsoft.NetCore.VisualBasic.Analyzers" />
     <InternalsVisibleTo Include="Microsoft.NetCore.Analyzers.UnitTests" />
+    <InternalsVisibleTo Include="Analyzer.Utilities.UnitTests" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Security\MicrosoftNetCoreSecurityResources.resx">

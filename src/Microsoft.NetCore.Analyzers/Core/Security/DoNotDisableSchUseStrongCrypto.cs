@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 s_Title,
                 s_Message,
                 DiagnosticCategory.Security,
-                DiagnosticSeverity.Error,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
@@ -50,16 +50,17 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var compilation = compilationStartAnalysisContext.Compilation;
-                var appContextTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypes.SystemAppContext);
+                var appContextTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAppContext);
 
                 if (appContextTypeSymbol == null)
                 {
                     return;
                 }
 
-                var setSwitchMemberWithStringAndStringParameter = appContextTypeSymbol.GetMembers("SetSwitch").OfType<IMethodSymbol>().GetSingleOrDefaultMemberWithParameterInfos(
-                                                                        GetParameterInfo(compilation.GetSpecialType(SpecialType.System_String)),
-                                                                        GetParameterInfo(compilation.GetSpecialType(SpecialType.System_Boolean)));
+                var setSwitchMemberWithStringAndStringParameter = appContextTypeSymbol.GetMembers("SetSwitch").OfType<IMethodSymbol>().FirstOrDefault(
+                                                                        methodSymbol => methodSymbol.Parameters.Length == 2 &&
+                                                                                        methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
+                                                                                        methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_Boolean);
 
                 if (setSwitchMemberWithStringAndStringParameter == null)
                 {
@@ -89,11 +90,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
                 }, OperationKind.Invocation);
             });
-        }
-
-        private static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)
-        {
-            return ParameterInfo.GetParameterInfo(type, isArray, arrayRank, isParams);
         }
     }
 }

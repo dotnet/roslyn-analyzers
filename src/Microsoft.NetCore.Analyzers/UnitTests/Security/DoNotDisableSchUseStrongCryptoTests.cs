@@ -138,6 +138,7 @@ class TestClass
 }");
         }
 
+        //Ideally, we would generate a diagnostic in this case.
         [Fact]
         public void TestSwitchNameVariableNoDiagnostic()
         {
@@ -154,6 +155,7 @@ class TestClass
 }");
         }
 
+        //Ideally, we would generate a diagnostic in this case.
         [Fact]
         public void TestBoolParseNoDiagnostic()
         {

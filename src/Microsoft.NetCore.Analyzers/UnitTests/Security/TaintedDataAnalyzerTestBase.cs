@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -12,6 +14,8 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public abstract class TaintedDataAnalyzerTestBase : DiagnosticAnalyzerTestBase
     {
         protected abstract DiagnosticDescriptor Rule { get; }
+
+        protected virtual IEnumerable<string> AdditionalSources { get; }
 
         protected DiagnosticResult GetCSharpResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
         {
@@ -30,7 +34,13 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 
         protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
         {
-            this.VerifyCSharp(source, ReferenceFlags.AddTestReferenceAssembly, expected);
+            string[] sources = new string[] { source };
+            if (this.AdditionalSources != null)
+            {
+                sources = sources.Concat(this.AdditionalSources).ToArray();
+            }
+
+            this.VerifyCSharp(sources, ReferenceFlags.AddTestReferenceAssembly, expected);
         }
 
         protected DiagnosticResult GetBasicResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)

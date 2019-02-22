@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Test.Utilities\Test.Utilities.csproj" />
+    <ProjectReference Include="..\Core\IsolateNamespaceAnalyzer\DotNetAnalyzers.IsolateNamespaceAnalyzer.csproj" />
     <ProjectReference Include="..\Core\PublicApiAnalyzer\DotNetAnalyzers.PublicApiAnalyzer.csproj" />
     <ProjectReference Include="..\Core\PublicApiAnalyzer.CodeFixes\DotNetAnalyzers.PublicApiAnalyzer.CodeFixes.csproj" />
     <ProjectReference Include="..\Core\BannedApiAnalyzer\DotNetAnalyzers.BannedApiAnalyzer.csproj" />

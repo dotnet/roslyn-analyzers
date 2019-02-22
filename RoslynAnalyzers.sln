@@ -186,6 +186,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.PerformanceSensit
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Workspaces.Utilities", "src\Utilities\Workspaces\Workspaces.Utilities.shproj", "{99F594B1-3916-471D-A761-A6731FC50E9A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IsolateNamespaceAnalyzer", "IsolateNamespaceAnalyzer", "{53DF5D65-1BB7-41D6-AADA-C2C528BFDAD3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.IsolateNamespaceAnalyzer", "src\DotNetAnalyzers\Core\IsolateNamespaceAnalyzer\DotNetAnalyzers.IsolateNamespaceAnalyzer.csproj", "{DF802689-F6F7-49B9-AB95-3CC287F9D424}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.IsolateNamespaceAnalyzer.Package", "nuget\DotNetAnalyzers\DotNetAnalyzers.IsolateNamespaceAnalyzer.Package.csproj", "{B845E770-F1A8-4557-892A-05F3634AFDEF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetAnalyzers.IsolateNamespaceAnalyzer.Setup", "src\DotNetAnalyzers\Setup\IsolateNamespaceAnalyzer\DotNetAnalyzers.IsolateNamespaceAnalyzer.Setup.csproj", "{88C985E0-791D-4CF0-9EC7-39840B61DA70}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13
@@ -758,6 +766,30 @@ Global
 		{1718D626-A991-4874-A6A5-2136E68152B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1718D626-A991-4874-A6A5-2136E68152B2}.Release|x86.ActiveCfg = Release|Any CPU
 		{1718D626-A991-4874-A6A5-2136E68152B2}.Release|x86.Build.0 = Release|Any CPU
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424}.Debug|x86.Build.0 = Debug|Any CPU
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424}.Release|x86.ActiveCfg = Release|Any CPU
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424}.Release|x86.Build.0 = Release|Any CPU
+		{B845E770-F1A8-4557-892A-05F3634AFDEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B845E770-F1A8-4557-892A-05F3634AFDEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B845E770-F1A8-4557-892A-05F3634AFDEF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B845E770-F1A8-4557-892A-05F3634AFDEF}.Debug|x86.Build.0 = Debug|Any CPU
+		{B845E770-F1A8-4557-892A-05F3634AFDEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B845E770-F1A8-4557-892A-05F3634AFDEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B845E770-F1A8-4557-892A-05F3634AFDEF}.Release|x86.ActiveCfg = Release|Any CPU
+		{B845E770-F1A8-4557-892A-05F3634AFDEF}.Release|x86.Build.0 = Release|Any CPU
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70}.Debug|x86.Build.0 = Debug|Any CPU
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70}.Release|x86.ActiveCfg = Release|Any CPU
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -837,6 +869,10 @@ Global
 		{1D3D05A7-461E-4CEC-BF38-860793014066} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{1718D626-A991-4874-A6A5-2136E68152B2} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{99F594B1-3916-471D-A761-A6731FC50E9A} = {1F4F7A9B-FD3B-495F-86D0-89A7DEA2128C}
+		{53DF5D65-1BB7-41D6-AADA-C2C528BFDAD3} = {E2E56F9F-AD96-4235-9ACE-CBF26CC5C421}
+		{DF802689-F6F7-49B9-AB95-3CC287F9D424} = {53DF5D65-1BB7-41D6-AADA-C2C528BFDAD3}
+		{B845E770-F1A8-4557-892A-05F3634AFDEF} = {53DF5D65-1BB7-41D6-AADA-C2C528BFDAD3}
+		{88C985E0-791D-4CF0-9EC7-39840B61DA70} = {53DF5D65-1BB7-41D6-AADA-C2C528BFDAD3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

@@ -1110,6 +1110,132 @@ End Class
             GetBasicResultAt(16, 51, "Sub Test.M1()", "new A(2)"));
         }
 
+        [Fact, WorkItem(1404, "https://github.com/dotnet/roslyn-analyzers/issues/1404")]
+        public void DocsMicrosoft_Sample()
+        {
+            // See https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope
+
+            VerifyCSharp(@"
+using System;
+
+class Test
+{
+    public SerialPort OpenPort1(string portName)
+    {
+        SerialPort port = new SerialPort(portName);
+        port.Open();  //CA2000 fires because this might throw
+        SomeMethod(); //Other method operations can fail
+        return port;
+    }
+
+    public SerialPort OpenPort2(string portName)
+    {
+        SerialPort tempPort = null;
+        SerialPort port = null;
+        try
+        {
+            tempPort = new SerialPort(portName);
+            tempPort.Open();
+            SomeMethod();
+            //Add any other methods above this line
+            port = tempPort;
+            tempPort = null;
+
+        }
+        catch (Exception ex)
+        {
+        }
+        finally
+        {
+            if (tempPort != null)
+            {
+                tempPort.Close();
+            }
+        }
+        return port;
+    }
+
+    void SomeMethod()
+    {
+    }
+}
+
+public class SerialPort : IDisposable
+{
+    public SerialPort(string portName)
+    {
+    }
+
+    public void Dispose()
+    {
+    }
+
+    public void Open()
+    {
+    }
+
+    public void Close()
+    {
+        Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class Test
+    Public Function OpenPort1(portName As String) As SerialPort
+        Dim port As SerialPort = New SerialPort(portName)
+        port.Open()
+        SomeMethod()
+        Return port
+    End Function
+
+    Public Function OpenPort2(portName As String) As SerialPort
+        Dim tempPort As SerialPort = Nothing
+        Dim port As SerialPort = Nothing
+
+        Try
+            tempPort = New SerialPort(portName)
+            tempPort.Open()
+            SomeMethod()
+            port = tempPort
+            tempPort = Nothing
+        Catch ex As Exception
+        Finally
+
+            If tempPort IsNot Nothing Then
+                tempPort.Close()
+            End If
+        End Try
+
+        Return port
+    End Function
+
+    Private Sub SomeMethod()
+    End Sub
+End Class
+
+Public Class SerialPort
+    Implements IDisposable
+
+    Public Sub New(portName As String)
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+
+    Public Sub Open()
+    End Sub
+
+    Public Sub Close()
+        Dispose()
+    End Sub
+End Class
+");
+        }
+
         [Fact]
         public void LocalWithDisposableAssignment_DisposeBoolCall_NoDiagnostic()
         {

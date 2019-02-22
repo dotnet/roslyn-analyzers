@@ -619,6 +619,498 @@ End Class");
         }
 
         [Fact]
+        public void Interprocedural_DisposedInHelper_MethodInvocation_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    public A a;
+    void M1(Test2 t2)
+    {
+        DisposeHelper(new A());
+        t2.DisposeHelper_MethodOnDifferentType(new A());
+        DisposeHelper_MultiLevelDown(new A());
+    }
+
+    void DisposeHelper(A a)
+    {
+        a.Dispose();
+    }
+
+    void DisposeHelper_MultiLevelDown(A a)
+    {
+        DisposeHelper(a);
+    }
+}
+
+class Test2
+{
+    public A a;
+    public void DisposeHelper_MethodOnDifferentType(A a)
+    {
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Sub M1(t2 As Test2)
+        DisposeHelper(new A())
+        t2.DisposeHelper_MethodOnDifferentType(new A())
+        DisposeHelper_MultiLevelDown(new A())
+    End Sub
+
+    Sub DisposeHelper(a As A)
+        a.Dispose()
+    End Sub
+
+    Sub DisposeHelper_MultiLevelDown(a As A)
+        DisposeHelper(a)
+    End Sub
+End Class
+
+Class Test2
+    Sub DisposeHelper_MethodOnDifferentType(a As A)
+        a.Dispose()
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void Interprocedural_DisposeOwnershipTransfer_MethodInvocation_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    public A a;
+    void M1(Test2 t2)
+    {
+        DisposeOwnershipTransfer(new A());
+        t2.DisposeOwnershipTransfer_MethodOnDifferentType(new A());
+        DisposeOwnershipTransfer_MultiLevelDown(new A());
+    }
+
+    void DisposeOwnershipTransfer(A a)
+    {
+        this.a = a;
+    }
+
+    void DisposeOwnershipTransfer_MultiLevelDown(A a)
+    {
+        DisposeOwnershipTransfer(a);
+    }
+}
+
+class Test2
+{
+    public A a;
+    public void DisposeOwnershipTransfer_MethodOnDifferentType(A a)
+    {
+        this.a = a;
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Public a As A
+    Sub M1(t2 As Test2)
+        DisposeOwnershipTransfer(new A())
+        t2.DisposeOwnershipTransfer_MethodOnDifferentType(new A())
+        DisposeOwnershipTransfer_MultiLevelDown(new A())
+    End Sub
+
+    Sub DisposeOwnershipTransfer(a As A)
+        Me.a = a
+    End Sub
+
+    Sub DisposeOwnershipTransfer_MultiLevelDown(a As A)
+        DisposeOwnershipTransfer(a)
+    End Sub
+End Class
+
+Class Test2
+    Public a As A
+    Sub DisposeOwnershipTransfer_MethodOnDifferentType(a As A)
+        Me.a = a
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void Interprocedural_NoDisposeOwnershipTransfer_MethodInvocation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public A(int i) { }
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    public A a;
+    void M1(Test2 t2)
+    {
+        NoDisposeOwnershipTransfer(new A(1));
+        t2.NoDisposeOwnershipTransfer_MethodOnDifferentType(new A(2));
+        NoDisposeOwnershipTransfer_MultiLevelDown(new A(3));
+    }
+
+    void NoDisposeOwnershipTransfer(A a)
+    {
+        var str = a.ToString();
+        var b = a;
+    }
+
+    void NoDisposeOwnershipTransfer_MultiLevelDown(A a)
+    {
+        NoDisposeOwnershipTransfer(a);
+    }
+}
+
+class Test2
+{
+    public A a;
+    public void NoDisposeOwnershipTransfer_MethodOnDifferentType(A a)
+    {
+        var str = a.ToString();
+        var b = a;
+    }
+}
+",
+            // Test0.cs(17,36): warning CA2000: In method 'void Test.M1(Test2 t2)', call System.IDisposable.Dispose on object created by 'new A(1)' before all references to it are out of scope.
+            GetCSharpResultAt(17, 36, "void Test.M1(Test2 t2)", "new A(1)"),
+            // Test0.cs(18,61): warning CA2000: In method 'void Test.M1(Test2 t2)', call System.IDisposable.Dispose on object created by 'new A(2)' before all references to it are out of scope.
+            GetCSharpResultAt(18, 61, "void Test.M1(Test2 t2)", "new A(2)"),
+            // Test0.cs(19,51): warning CA2000: In method 'void Test.M1(Test2 t2)', call System.IDisposable.Dispose on object created by 'new A(3)' before all references to it are out of scope.
+            GetCSharpResultAt(19, 51, "void Test.M1(Test2 t2)", "new A(3)"));
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub New(i As Integer)
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Public a As A
+    Sub M1(t2 As Test2)
+        NoDisposeOwnershipTransfer(new A(1))
+        t2.NoDisposeOwnershipTransfer_MethodOnDifferentType(new A(2))
+        NoDisposeOwnershipTransfer_MultiLevelDown(new A(3))
+    End Sub
+
+    Sub NoDisposeOwnershipTransfer(a As A)
+        Dim str = a.ToString()
+        Dim b = a
+    End Sub
+
+    Sub NoDisposeOwnershipTransfer_MultiLevelDown(a As A)
+        NoDisposeOwnershipTransfer(a)
+    End Sub
+End Class
+
+Class Test2
+    Public a As A
+    Public Sub NoDisposeOwnershipTransfer_MethodOnDifferentType(a As A)
+        Dim str = a.ToString()
+        Dim b = a
+    End Sub
+End Class
+",
+            // Test0.vb(16,36): warning CA2000: In method 'Sub Test.M1(t2 As Test2)', call System.IDisposable.Dispose on object created by 'new A(1)' before all references to it are out of scope.
+            GetBasicResultAt(16, 36, "Sub Test.M1(t2 As Test2)", "new A(1)"),
+            // Test0.vb(17,61): warning CA2000: In method 'Sub Test.M1(t2 As Test2)', call System.IDisposable.Dispose on object created by 'new A(2)' before all references to it are out of scope.
+            GetBasicResultAt(17, 61, "Sub Test.M1(t2 As Test2)", "new A(2)"),
+            // Test0.vb(18,51): warning CA2000: In method 'Sub Test.M1(t2 As Test2)', call System.IDisposable.Dispose on object created by 'new A(3)' before all references to it are out of scope.
+            GetBasicResultAt(18, 51, "Sub Test.M1(t2 As Test2)", "new A(3)"));
+        }
+
+        [Fact, WorkItem(2136, "https://github.com/dotnet/roslyn-analyzers/issues/2136")]
+        public void Interprocedural_DisposedInHelper_ConstructorInvocation_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        new DisposeHelperType(new A());
+        DisposeHelper_MultiLevelDown(new A());
+    }
+
+    void DisposeHelper(A a)
+    {
+        new DisposeHelperType(a);
+    }
+
+    void DisposeHelper_MultiLevelDown(A a)
+    {
+        DisposeHelper(a);
+    }
+}
+
+class DisposeHelperType
+{
+    public DisposeHelperType(A a)
+    {
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim unused = new DisposeHelperType(new A())
+        DisposeHelper_MultiLevelDown(new A())
+    End Sub
+
+    Sub DisposeHelper(a As A)
+        Dim unused = new DisposeHelperType(a)
+    End Sub
+
+    Sub DisposeHelper_MultiLevelDown(a As A)
+        DisposeHelper(a)
+    End Sub
+End Class
+
+Class DisposeHelperType
+    Public Sub New(a As A)
+        a.Dispose()
+    End Sub
+End Class
+");
+        }
+
+        [Fact, WorkItem(2136, "https://github.com/dotnet/roslyn-analyzers/issues/2136")]
+        public void Interprocedural_DisposeOwnershipTransfer_ConstructorInvocation_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        new DisposableOwnerType(new A());
+        DisposeOwnershipTransfer_MultiLevelDown(new A());
+    }
+
+    void DisposeOwnershipTransfer(A a)
+    {
+        new DisposableOwnerType(a);
+    }
+
+    void DisposeOwnershipTransfer_MultiLevelDown(A a)
+    {
+        DisposeOwnershipTransfer(a);
+    }
+}
+
+class DisposableOwnerType
+{
+    public A a;
+    public DisposableOwnerType(A a)
+    {
+        this.a = a;
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim unused = new DisposableOwnerType(new A())
+        DisposeOwnershipTransfer_MultiLevelDown(new A())
+    End Sub
+
+    Sub DisposeOwnershipTransfer(a As A)
+        Dim unused = new DisposableOwnerType(a)
+    End Sub
+
+    Sub DisposeOwnershipTransfer_MultiLevelDown(a As A)
+        DisposeOwnershipTransfer(a)
+    End Sub
+End Class
+
+Class DisposableOwnerType
+    Public a As A
+    Public Sub New(a As A)
+        Me.a = a
+    End Sub
+End Class
+");
+        }
+
+        [Fact, WorkItem(2136, "https://github.com/dotnet/roslyn-analyzers/issues/2136")]
+        public void Interprocedural_NoDisposeOwnershipTransfer_ConstructorInvocation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public A(int i) { }
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        new NotDisposableOwnerType(new A(1));
+        NoDisposeOwnershipTransfer_MultiLevelDown(new A(2));
+    }
+
+    void NoDisposeOwnershipTransfer(A a)
+    {
+        new NotDisposableOwnerType(a);
+    }
+
+    void NoDisposeOwnershipTransfer_MultiLevelDown(A a)
+    {
+        NoDisposeOwnershipTransfer(a);
+    }
+}
+
+class NotDisposableOwnerType
+{
+    public A a;
+    public NotDisposableOwnerType(A a)
+    {
+        var str = a.ToString();
+        var b = a;
+    }
+}
+",
+            // Test0.cs(16,36): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A(1)' before all references to it are out of scope.
+            GetCSharpResultAt(16, 36, "void Test.M1()", "new A(1)"),
+            // Test0.cs(17,51): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A(2)' before all references to it are out of scope.
+            GetCSharpResultAt(17, 51, "void Test.M1()", "new A(2)"));
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub New(i As Integer)
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim unused = new NotDisposableOwnerType(new A(1))
+        NoDisposeOwnershipTransfer_MultiLevelDown(new A(2))
+    End Sub
+
+    Sub NoDisposeOwnershipTransfer(a As A)
+        Dim unused = new NotDisposableOwnerType(a)
+    End Sub
+
+    Sub NoDisposeOwnershipTransfer_MultiLevelDown(a As A)
+        NoDisposeOwnershipTransfer(a)
+    End Sub
+End Class
+
+Class NotDisposableOwnerType
+    Public a As A
+    Public Sub New(a As A)
+        Dim str = a.ToString()
+        Dim b = a
+    End Sub
+End Class
+",
+            // Test0.vb(15,49): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetBasicResultAt(15, 49, "Sub Test.M1()", "new A(1)"),
+            // Test0.vb(16,51): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetBasicResultAt(16, 51, "Sub Test.M1()", "new A(2)"));
+        }
+
+        [Fact]
         public void LocalWithDisposableAssignment_DisposeBoolCall_NoDiagnostic()
         {
             VerifyCSharp(@"
@@ -4756,8 +5248,9 @@ End Class", TestValidationMode.AllowCompileErrors,
         }
 
         [Fact]
-        public void DisposableCreationPassedToDisposableConstructor_Diagnostic()
+        public void DisposableCreationPassedToDisposableConstructor_NoDiagnostic()
         {
+            // Dispose ownership transfer
             VerifyCSharp(@"
 using System;
 
@@ -4817,13 +5310,7 @@ class Test
         }
     }
 }
-",
-            // Test0.cs(28,23): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(28, 23, "void Test.M1()", "new A()"),
-            // Test0.cs(31,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(31, 17, "void Test.M1()", "new A()"),
-            // Test0.cs(45,18): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(45, 18, "void Test.M1()", "new A()"));
+");
 
             VerifyBasic(@"
 Imports System
@@ -4873,13 +5360,7 @@ Class Test
         End Try
     End Sub
 End Class
-",
-            // Test0.vb(26,23): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(26, 23, "Sub Test.M1()", "New A()"),
-            // Test0.vb(28,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(28, 17, "Sub Test.M1()", "New A()"),
-            // Test0.vb(38,18): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(38, 18, "Sub Test.M1()", "New A()"));
+");
         }
 
         [Fact]
@@ -4892,20 +5373,25 @@ using System.Resources;
 
 class A : IDisposable
 {
+    private readonly object _a;
     public A(Stream a)
     {
+        _a = a;
     }
 
     public A(TextReader t)
     {
+        _a = t;
     }
 
     public A(TextWriter t)
     {
+        _a = t;
     }
 
     public A(IResourceReader r)
     {
+        _a = r;
     }
 
     public void Dispose()
@@ -5010,16 +5496,21 @@ Imports System.Resources
 Class A
     Implements IDisposable
 
+    Private ReadOnly _a As Object
     Public Sub New(a As Stream)
+        _a = a
     End Sub
 
     Public Sub New(t As TextReader)
+        _a = t
     End Sub
 
     Public Sub New(t As TextWriter)
+        _a = t
     End Sub
 
     Public Sub New(r As IResourceReader)
+        _a = r
     End Sub
 
     Public Sub Dispose() Implements IDisposable.Dispose

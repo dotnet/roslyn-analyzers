@@ -1236,6 +1236,38 @@ End Class
 ");
         }
 
+        [Fact, WorkItem(1404, "https://github.com/dotnet/roslyn-analyzers/issues/1404#issuecomment-446715696")]
+        public void DisposableCreationInLoop()
+        {
+            VerifyBasic(@"
+Imports System
+
+Class Test
+    Public Sub M()
+        Dim disposeMe As IDisposable = Nothing
+        Try
+            For Each c In ""Foo""
+                If disposeMe Is Nothing Then
+                    disposeMe = New A()
+                End If
+            Next
+        Finally
+            If disposeMe IsNot Nothing Then
+                disposeMe.Dispose()
+            End If
+        End Try
+    End Sub
+End Class
+
+Public Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+");
+        }
+
         [Fact]
         public void LocalWithDisposableAssignment_DisposeBoolCall_NoDiagnostic()
         {

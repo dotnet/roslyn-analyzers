@@ -156,11 +156,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                             {
                                                 // For MaybeDisposed, conservatively mark the field as disposed as we don't support path sensitive analysis.
                                                 case DisposeAbstractValueKind.MaybeDisposed:
+                                                case DisposeAbstractValueKind.Unknown:
+                                                case DisposeAbstractValueKind.Escaped:
                                                 case DisposeAbstractValueKind.Disposed:
                                                     disposed = true;
                                                     addOrUpdateFieldDisposedValue(field, disposed);
                                                     break;
-
                                             }
                                         }
 

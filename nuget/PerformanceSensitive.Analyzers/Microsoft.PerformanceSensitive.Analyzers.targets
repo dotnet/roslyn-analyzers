@@ -5,8 +5,9 @@
     <PerformanceSensitiveAttributePath Condition="'$(PerformanceSensitiveAttributePath)' == ''">$(MSBuildThisFileDirectory)PerformanceSensitiveAttribute$(DefaultLanguageSourceExtension)</PerformanceSensitiveAttributePath>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(GeneratePerformanceSensitiveAttribute)' == 'true'">
-    <Compile Include="$(PerformanceSensitiveAttributePath)" Condition="Exists($(PerformanceSensitiveAttributePath))" Visible="false" />
+  <ItemGroup Condition="'$(GeneratePerformanceSensitiveAttribute)' == 'true' and Exists($(PerformanceSensitiveAttributePath))">
+    <Compile Include="$(PerformanceSensitiveAttributePath)" Visible="false" />
+    <EmbeddedFiles Include="$(PerformanceSensitiveAttributePath)" />
   </ItemGroup>
 
 </Project>

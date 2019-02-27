@@ -217,10 +217,14 @@ Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValu
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.DisposingOrEscapingOperations.get -> System.Collections.Immutable.ImmutableHashSet<Microsoft.CodeAnalysis.IOperation>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.Kind.get -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
-Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.Disposed = 2 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
-Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.MaybeDisposed = 3 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.Disposed = 5 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.Escaped = 3 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.Invalid = 1 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.MaybeDisposed = 6 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.NotDisposable = 0 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
-Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.NotDisposed = 1 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.NotDisposed = 2 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.NotDisposedOrEscaped = 4 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind.Unknown = 7 -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValueKind
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAnalysis
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAnalysisContext
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAnalysisResult
@@ -611,6 +615,7 @@ static Microsoft.CodeAnalysis.PooledHashSet<T>.CreatePool() -> Microsoft.CodeAna
 static Microsoft.CodeAnalysis.PooledHashSet<T>.GetInstance() -> Microsoft.CodeAnalysis.PooledHashSet<T>
 static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.NoLocation -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation
 static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.Null -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation
+static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.Invalid -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue
 static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.NotDisposable -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue
 static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.NotDisposed -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue
 static readonly Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue.Unknown -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAbstractValue

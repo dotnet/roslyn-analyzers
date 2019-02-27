@@ -33,8 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">
-        <source>Do Not Disable Certification Validation</source>
-        <target state="translated">인증 유효성 검사를 비활성화하면 안 됨</target>
+        <source>Do Not Disable Certificate Validation</source>
+        <target state="needs-review-translation">인증 유효성 검사를 비활성화하면 안 됨</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationDescription">

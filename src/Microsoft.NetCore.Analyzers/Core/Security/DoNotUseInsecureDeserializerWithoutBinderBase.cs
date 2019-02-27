@@ -108,10 +108,10 @@ namespace Microsoft.NetCore.Analyzers.Security
             PropertyMapperCollection propertyMappers = new PropertyMapperCollection(
                 new PropertyMapper(
                     this.SerializationBinderPropertyMetadataName,
-                    (NullAbstractValue nullAbstractValue) =>
+                    (PointsToAbstractValue pointsToAbstractValue) =>
                     {
                         // A null SerializationBinder is what we want to flag as hazardous.
-                        switch (nullAbstractValue)
+                        switch (pointsToAbstractValue.NullState)
                         {
                             case NullAbstractValue.Null:
                                 return PropertySetAbstractValueKind.Flagged;

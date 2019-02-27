@@ -17,8 +17,8 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal const string DoNotUseWeakCryptographyRuleId = "CA5350";
         internal const string DoNotUseBrokenCryptographyRuleId = "CA5351";
 
-        internal const string CA5350HelpLink = "https://aka.ms/CA5350";
-        internal const string CA5351HelpLink = "https://aka.ms/CA5351";
+        internal const string CA5350HelpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca5350-do-not-use-weak-cryptographic-algorithms";
+        internal const string CA5351HelpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca5351-do-not-use-broken-cryptographic-algorithms";
 
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsTitle = new LocalizableResourceString(
             nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithms),

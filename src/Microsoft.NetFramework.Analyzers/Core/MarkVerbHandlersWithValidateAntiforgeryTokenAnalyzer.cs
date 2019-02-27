@@ -12,7 +12,7 @@ namespace Microsoft.NetFramework.Analyzers
     public partial class MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA3147";
-        private const string HelpLinkUri = "https://aka.ms/ca3147";
+        private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca3147-mark-verb-handlers-with-validateantiforgerytoken";
 
         private static readonly LocalizableString Title = new LocalizableResourceString(
             nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenTitle),

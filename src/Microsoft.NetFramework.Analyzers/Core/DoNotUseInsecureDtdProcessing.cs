@@ -19,7 +19,7 @@ namespace Microsoft.NetFramework.Analyzers
     public sealed class DoNotUseInsecureDtdProcessingAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA3075";
-        private const string HelpLink = "http://aka.ms/CA3075";
+        private const string HelpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca3075-insecure-dtd-processing";
 
         internal static DiagnosticDescriptor RuleDoNotUseInsecureDtdProcessing = CreateDiagnosticDescriptor(
                                                                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.DoNotUseInsecureDtdProcessingGenericMessage)),

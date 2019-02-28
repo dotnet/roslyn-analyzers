@@ -231,4 +231,10 @@
   <data name="ReviewCodeForXPathInjectionVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for XPath injection vulnerabilities</value>
   </data>
+  <data name="ReviewCodeForXmlInjectionVulnerabilitiesMessage" xml:space="preserve">
+    <value>Potential XML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+  </data>
+  <data name="ReviewCodeForXmlInjectionVulnerabilitiesTitle" xml:space="preserve">
+    <value>Review code for XML injection vulnerabilities</value>
+  </data>
 </root>

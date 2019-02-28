@@ -225,4 +225,10 @@
   <data name="ReviewCodeForOpenRedirectVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for open redirect vulnerabilities</value>
   </data>
+  <data name="ReviewCodeForXPathInjectionVulnerabilitiesMessage" xml:space="preserve">
+    <value>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+  </data>
+  <data name="ReviewCodeForXPathInjectionVulnerabilitiesTitle" xml:space="preserve">
+    <value>Review code for XPath injection vulnerabilities</value>
+  </data>
 </root>

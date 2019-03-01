@@ -334,6 +334,57 @@ class TestClassB
         }
 
         [Fact]
+        public void TestTwoIndependentParentChildCirclesDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class TestClassA
+{
+    private TestClassB testClassB;
+
+    public void TestMethod()
+    {
+    }
+}
+
+[Serializable()]
+class TestClassB
+{
+    private TestClassA testClassA;
+
+    public void TestMethod()
+    {
+    }
+}
+
+[Serializable()]
+class TestClassA2
+{
+    private TestClassB2 testClassB2;
+
+    public void TestMethod()
+    {
+    }
+}
+
+[Serializable()]
+class TestClassB2
+{
+    private TestClassA2 testClassA2;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassB"),
+            GetCSharpResultAt(17, 24, DoNotReferSelfInSerializableClass.Rule, "testClassA"),
+            GetCSharpResultAt(27, 25, DoNotReferSelfInSerializableClass.Rule, "testClassB2"),
+            GetCSharpResultAt(37, 25, DoNotReferSelfInSerializableClass.Rule, "testClassA2"));
+        }
+
+        [Fact]
         public void TestWithoutSelfReferNoDiagnostic()
         {
             VerifyCSharp(@"

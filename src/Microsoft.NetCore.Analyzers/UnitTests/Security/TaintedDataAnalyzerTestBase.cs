@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     {
         protected abstract DiagnosticDescriptor Rule { get; }
 
-        protected virtual IEnumerable<string> AdditionalSources { get; }
+        protected virtual IEnumerable<string> AdditionalCSharpSources { get; }
 
         protected DiagnosticResult GetCSharpResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
         {
@@ -35,9 +35,9 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
         {
             string[] sources = new string[] { source };
-            if (this.AdditionalSources != null)
+            if (this.AdditionalCSharpSources != null)
             {
-                sources = sources.Concat(this.AdditionalSources).ToArray();
+                sources = sources.Concat(this.AdditionalCSharpSources).ToArray();
             }
 
             this.VerifyCSharp(sources, ReferenceFlags.AddTestReferenceAssembly, expected);

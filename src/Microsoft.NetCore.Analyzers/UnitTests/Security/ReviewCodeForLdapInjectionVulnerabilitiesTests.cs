@@ -12,7 +12,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     {
         protected override DiagnosticDescriptor Rule => ReviewCodeForLdapInjectionVulnerabilities.Rule;
 
-        protected override IEnumerable<string> AdditionalSources => new string[] { AntiXssApis.CSharp };
+        protected override IEnumerable<string> AdditionalCSharpSources => new string[] { AntiXssApis.CSharp };
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {

@@ -84,7 +84,7 @@ Bakım endeksinin düşük olması, koda bakım uygulamanın zor olabileceğini 
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeTitle">
         <source>Avoid unmaintainable code</source>
-        <target state="translated">Avoid unmaintainable code</target>
+        <target state="translated">Sürdürülemeyen koddan kaçın</target>
         <note />
       </trans-unit>
       <trans-unit id="InvalidEntryInCodeMetricsConfigFileDescription">

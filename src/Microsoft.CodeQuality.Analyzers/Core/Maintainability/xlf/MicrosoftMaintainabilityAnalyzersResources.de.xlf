@@ -67,7 +67,7 @@ Dabei ist ein Knoten ein logischer Verzweigungspunkt und ein Edge eine Zeile zwi
       </trans-unit>
       <trans-unit id="AvoidExcessiveInheritanceTitle">
         <source>Avoid excessive inheritance</source>
-        <target state="translated">Avoid excessive inheritance</target>
+        <target state="translated">Übermäßige Vererbung vermeiden</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">

@@ -13,7 +13,7 @@ namespace Microsoft.NetFramework.Analyzers
     public abstract class DoNotUseInsecureXSLTScriptExecutionAnalyzer<TLanguageKindEnum> : DiagnosticAnalyzer where TLanguageKindEnum : struct
     {
         internal const string RuleId = "CA3076";
-        private const string HelpLink = "http://aka.ms/CA3076";
+        private const string HelpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca3076-insecure-xslt-script-execution";
         internal static DiagnosticDescriptor RuleDoNotUseInsecureXSLTScriptExecution = CreateDiagnosticDescriptor(SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.DoNotUseInsecureDtdProcessingGenericMessage)),
                                                                                                                 SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.DoNotUseInsecureXSLTScriptExecutionDescription)),
                                                                                                                  HelpLink);

@@ -6,16 +6,19 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
+using System.Diagnostics;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
-    public abstract class DoNotUseInsecureCryptographicAlgorithmsAnalyzer : DiagnosticAnalyzer
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class DoNotUseInsecureCryptographicAlgorithmsAnalyzer : DiagnosticAnalyzer
     {
         internal const string DoNotUseWeakCryptographyRuleId = "CA5350";
         internal const string DoNotUseBrokenCryptographyRuleId = "CA5351";
 
-        internal const string CA5350HelpLink = "https://aka.ms/CA5350";
-        internal const string CA5351HelpLink = "https://aka.ms/CA5351";
+        internal const string CA5350HelpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca5350-do-not-use-weak-cryptographic-algorithms";
+        internal const string CA5351HelpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca5351-do-not-use-broken-cryptographic-algorithms";
 
         private static readonly LocalizableString s_localizableDoNotUseWeakAlgorithmsTitle = new LocalizableResourceString(
             nameof(SystemSecurityCryptographyResources.DoNotUseWeakCryptographicAlgorithms),
@@ -66,8 +69,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                 helpLinkUri: CA5350HelpLink,
                 customTags: WellKnownDiagnosticTags.Telemetry);
 
-        protected abstract SyntaxNodeAnalyzer GetAnalyzer(CompilationStartAnalysisContext context, CompilationSecurityTypes cryptTypes);
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DoNotUseBrokenCryptographyRule, DoNotUseWeakCryptographyRule);
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -78,13 +79,103 @@ namespace Microsoft.NetCore.Analyzers.Security
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
             analysisContext.RegisterCompilationStartAction(
-                context =>
+                (CompilationStartAnalysisContext context) =>
                 {
                     var cryptTypes = new CompilationSecurityTypes(context.Compilation);
-                    if (ReferencesAnyTargetType(cryptTypes))
+                    if (!ReferencesAnyTargetType(cryptTypes))
                     {
-                        GetAnalyzer(context, cryptTypes);
+                        return;
                     }
+
+                    context.RegisterOperationAction(
+                        (OperationAnalysisContext operationAnalysisContext) =>
+                        {
+                            IMethodSymbol method;
+
+                            switch (operationAnalysisContext.Operation)
+                            {
+                                case IInvocationOperation invocationOperation:
+                                    method = invocationOperation.TargetMethod;
+                                    break;
+                                case IObjectCreationOperation objectCreationOperation:
+                                    method = objectCreationOperation.Constructor;
+                                    break;
+                                default:
+                                    Debug.Fail($"Unhandled IOperation {operationAnalysisContext.Operation.Kind}");
+                                    return;
+                            }
+
+                            INamedTypeSymbol type = method.ContainingType;
+                            DiagnosticDescriptor rule = null;
+                            string algorithmName = null;
+
+                            if (type.DerivesFrom(cryptTypes.MD5))
+                            {
+                                rule = DoNotUseBrokenCryptographyRule;
+                                algorithmName = cryptTypes.MD5.Name;
+                            }
+                            else if (type.DerivesFrom(cryptTypes.SHA1))
+                            {
+                                rule = DoNotUseWeakCryptographyRule;
+                                algorithmName = cryptTypes.SHA1.Name;
+                            }
+                            else if (type.DerivesFrom(cryptTypes.HMACSHA1))
+                            {
+                                rule = DoNotUseWeakCryptographyRule;
+                                algorithmName = cryptTypes.HMACSHA1.Name;
+                            }
+                            else if (type.DerivesFrom(cryptTypes.DES))
+                            {
+                                rule = DoNotUseBrokenCryptographyRule;
+                                algorithmName = cryptTypes.DES.Name;
+                            }
+                            else if ((method.ContainingType.DerivesFrom(cryptTypes.DSA)
+                                      && method.MetadataName == SecurityMemberNames.CreateSignature)
+                                || (type.Equals(cryptTypes.DSASignatureFormatter)
+                                    && method.ContainingType.DerivesFrom(cryptTypes.DSASignatureFormatter)
+                                    && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
+                            {
+                                rule = DoNotUseBrokenCryptographyRule;
+                                algorithmName = cryptTypes.DSA.Name;
+                            }
+                            else if (type.DerivesFrom(cryptTypes.HMACMD5))
+                            {
+                                rule = DoNotUseBrokenCryptographyRule;
+                                algorithmName = cryptTypes.HMACMD5.Name;
+                            }
+                            else if (type.DerivesFrom(cryptTypes.RC2))
+                            {
+                                rule = DoNotUseBrokenCryptographyRule;
+                                algorithmName = cryptTypes.RC2.Name;
+                            }
+                            else if (type.DerivesFrom(cryptTypes.TripleDES))
+                            {
+                                rule = DoNotUseWeakCryptographyRule;
+                                algorithmName = cryptTypes.TripleDES.Name;
+                            }
+                            else if (type.DerivesFrom(cryptTypes.RIPEMD160))
+                            {
+                                rule = DoNotUseWeakCryptographyRule;
+                                algorithmName = cryptTypes.RIPEMD160.Name;
+                            }
+                            else if (type.DerivesFrom(cryptTypes.HMACRIPEMD160))
+                            {
+                                rule = DoNotUseWeakCryptographyRule;
+                                algorithmName = cryptTypes.HMACRIPEMD160.Name;
+                            }
+
+                            if (rule != null)
+                            {
+                                operationAnalysisContext.ReportDiagnostic(
+                                    Diagnostic.Create(
+                                        rule,
+                                        operationAnalysisContext.Operation.Syntax.GetLocation(),
+                                        operationAnalysisContext.ContainingSymbol.Name,
+                                        algorithmName));
+                            }
+                        },
+                        OperationKind.Invocation,
+                        OperationKind.ObjectCreation);
                 });
         }
 
@@ -101,116 +192,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                 || types.TripleDES != null
                 || types.RIPEMD160 != null
                 || types.HMACRIPEMD160 != null;
-        }
-
-        protected class SyntaxNodeAnalyzer
-        {
-            private readonly CompilationSecurityTypes _cryptTypes;
-
-            public SyntaxNodeAnalyzer(CompilationSecurityTypes cryptTypes)
-            {
-                _cryptTypes = cryptTypes;
-            }
-
-            public void AnalyzeNode(SyntaxNodeAnalysisContext context)
-            {
-                SyntaxNode node = context.Node;
-                SemanticModel model = context.SemanticModel;
-                ISymbol symbol = node.GetDeclaredOrReferencedSymbol(model);
-
-                if (!(symbol is IMethodSymbol method))
-                {
-                    return;
-                }
-
-                INamedTypeSymbol type = method.ContainingType;
-                DiagnosticDescriptor rule = null;
-                string[] messageArgs = new string[2];
-                string owningParentName = string.Empty;
-                SyntaxNode cur = node;
-
-                while (cur.Parent != null)
-                {
-                    SyntaxNode pNode = cur.Parent;
-                    ISymbol sym = pNode.GetDeclaredOrReferencedSymbol(model);
-
-                    if (sym != null &&
-                        !string.IsNullOrEmpty(sym.Name)
-                        && (
-                            sym.Kind == SymbolKind.Method ||
-                            sym.Kind == SymbolKind.NamedType
-                           )
-                    )
-                    {
-                        owningParentName = sym.Name;
-                        break;
-                    }
-
-                    cur = pNode;
-                }
-
-                messageArgs[0] = owningParentName;
-
-                if (type.DerivesFrom(_cryptTypes.MD5))
-                {
-                    rule = DoNotUseBrokenCryptographyRule;
-                    messageArgs[1] = _cryptTypes.MD5.Name;
-                }
-                else if (type.DerivesFrom(_cryptTypes.SHA1))
-                {
-                    rule = DoNotUseWeakCryptographyRule;
-                    messageArgs[1] = _cryptTypes.SHA1.Name;
-                }
-                else if (type.DerivesFrom(_cryptTypes.HMACSHA1))
-                {
-                    rule = DoNotUseWeakCryptographyRule;
-                    messageArgs[1] = _cryptTypes.HMACSHA1.Name;
-                }
-                else if (type.DerivesFrom(_cryptTypes.DES))
-                {
-                    rule = DoNotUseBrokenCryptographyRule;
-                    messageArgs[1] = _cryptTypes.DES.Name;
-                }
-                else if ((method.ContainingType.DerivesFrom(_cryptTypes.DSA)
-                          && method.MetadataName == SecurityMemberNames.CreateSignature)
-                    || (type == _cryptTypes.DSASignatureFormatter
-                        && method.ContainingType.DerivesFrom(_cryptTypes.DSASignatureFormatter)
-                        && method.MetadataName == WellKnownMemberNames.InstanceConstructorName))
-                {
-                    rule = DoNotUseBrokenCryptographyRule;
-                    messageArgs[1] = _cryptTypes.DSA.Name;
-                }
-                else if (type.DerivesFrom(_cryptTypes.HMACMD5))
-                {
-                    rule = DoNotUseBrokenCryptographyRule;
-                    messageArgs[1] = _cryptTypes.HMACMD5.Name;
-                }
-                else if (type.DerivesFrom(_cryptTypes.RC2))
-                {
-                    rule = DoNotUseBrokenCryptographyRule;
-                    messageArgs[1] = _cryptTypes.RC2.Name;
-                }
-                else if (type.DerivesFrom(_cryptTypes.TripleDES))
-                {
-                    rule = DoNotUseWeakCryptographyRule;
-                    messageArgs[1] = _cryptTypes.TripleDES.Name;
-                }
-                else if (type.DerivesFrom(_cryptTypes.RIPEMD160))
-                {
-                    rule = DoNotUseWeakCryptographyRule;
-                    messageArgs[1] = _cryptTypes.RIPEMD160.Name;
-                }
-                else if (type.DerivesFrom(_cryptTypes.HMACRIPEMD160))
-                {
-                    rule = DoNotUseWeakCryptographyRule;
-                    messageArgs[1] = _cryptTypes.HMACRIPEMD160.Name;
-                }
-
-                if (rule != null)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(rule, node.GetLocation(), messageArgs));
-                }
-            }
         }
     }
 }

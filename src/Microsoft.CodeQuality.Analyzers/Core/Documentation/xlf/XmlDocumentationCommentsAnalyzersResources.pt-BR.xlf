@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixTitle">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">Evitar usar marcas cref com um prefixo</target>
+        <target state="translated">Evitar usar tags cref com um prefixo</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixDescription">
@@ -14,7 +14,7 @@
       </trans-unit>
       <trans-unit id="AvoidUsingCrefTagsWithAPrefixMessage">
         <source>Avoid using cref tags with a prefix</source>
-        <target state="translated">Evitar usar marcas cref com um prefixo</target>
+        <target state="translated">Evite usar tags cref com um prefixo</target>
         <note />
       </trans-unit>
     </body>

@@ -59,6 +59,15 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 "ReadObject");
 
         /// <summary>
+        /// Deserialization methods for <see cref="System.Web.Script.Serialization.JavaScriptSerializer"/>.
+        /// </summary>
+        public static readonly ImmutableHashSet<string> JavaScriptSerializerDeserializationMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "Deserialize",
+                "DeserializeObject");
+
+        /// <summary>
         /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreSecurityResources"/>.
         /// </summary>
         /// <param name="name">Name of the resource string to retrieve.</param>

@@ -219,4 +219,16 @@
   <data name="ReviewCodeForLdapInjectionVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for LDAP injection vulnerabilities</value>
   </data>
+  <data name="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage" xml:space="preserve">
+    <value>The method '{0}' is insecure when deserializing untrusted data with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or specified with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</value>
+  </data>
+  <data name="JavaScriptSerializerMaybeWithSimpleTypeResolverTitle" xml:space="preserve">
+    <value>Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing</value>
+  </data>
+  <data name="JavaScriptSerializerWithSimpleTypeResolverMessage" xml:space="preserve">
+    <value>The method '{0}' is insecure when deserializing untrusted data with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or specify a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</value>
+  </data>
+  <data name="JavaScriptSerializerWithSimpleTypeResolverTitle" xml:space="preserve">
+    <value>Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver</value>
+  </data>
 </root>

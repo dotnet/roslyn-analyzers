@@ -385,6 +385,102 @@ class TestClassB2
         }
 
         [Fact]
+        public void TestSelfReferDirectlyByPropertyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class TestClass
+{
+    public TestClass TestClassProperty { get; set; }
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(7, 22, DoNotReferSelfInSerializableClass.Rule, "TestClassProperty"));
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithGenericTypeDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[System.Serializable]
+public class GenericClass<T>
+{
+}
+
+[Serializable()]
+class TestClass
+{
+    private GenericClass<TestClass> testClasses;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(12, 37, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithArrayDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class TestClass
+{
+    private TestClass[] testClasses;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(7, 25, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyByListDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+class TestClass
+{
+    private List<TestClass> testClasses;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(8, 29, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyByPropertyWithArrayDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class TestClass
+{
+    public TestClass[] TestClassProperty { get; set; }
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "TestClassProperty"));
+        }
+
+        [Fact]
         public void TestWithoutSelfReferNoDiagnostic()
         {
             VerifyCSharp(@"

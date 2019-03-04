@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 s_Message,
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                isEnabledByDefault: false,
                 description: s_Description,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTags.Telemetry);
@@ -66,8 +66,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
-                    var forwardGraph = new ConcurrentDictionary<ISymbol, HashSet<ISymbol>>();
-                    var invertedGraph = new ConcurrentDictionary<ISymbol, HashSet<ISymbol>>();
+                    var forwardGraph = new ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>>();
+                    var invertedGraph = new ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>>();
 
                     // It keeps the out Degree of every vertex in the invertedGraph, which is corresponding to the in Degree of the vertex in forwardGraph.
                     var inDegree = new ConcurrentDictionary<ISymbol, int>();
@@ -86,18 +86,40 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
 
                             var fields = classSymbol.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAttribute(nonSerializedAttribute) &&
-                                                                                                    !s.IsStatic &&
-                                                                                                    s.Type.IsInSource());
-
+                                                                                                    !s.IsStatic);
+                            
                             foreach (var field in fields)
                             {
-                                var fieldSymbol = (ISymbol)field;
-                                var fieldType = (ISymbol)field.Type;
+                                // Identify if there's a line 'class symbol - field symbol - type associated with field' belongs to the graph.
+                                var startpointIsRelated = false;
+                                var fieldType = field.Type;
 
-                                AddLine(classSymbol, fieldSymbol, outDegree, forwardGraph);
-                                AddLine(fieldSymbol, fieldType, outDegree, forwardGraph);
-                                AddLine(fieldType, fieldSymbol, inDegree, invertedGraph);
-                                AddLine(fieldSymbol, classSymbol, inDegree, invertedGraph);
+                                // If field is a generic type, add 'field symbol - type parameters' to the graphs.
+                                if (fieldType is INamedTypeSymbol namedField)
+                                {
+                                    fieldType = namedField.ConstructedFrom;
+
+                                    foreach (var arg in namedField.TypeArguments)
+                                    {
+                                        UpdateAllGraphsConditionally(field, arg, ref startpointIsRelated);
+                                    }
+                                }
+
+                                // If field is a array, add 'field symbol - element type' to the graphs.
+                                if (fieldType is IArrayTypeSymbol arrayField)
+                                {
+                                    fieldType = arrayField.BaseType;
+                                    UpdateAllGraphsConditionally(field, arrayField.ElementType, ref startpointIsRelated);
+                                }
+
+                                // Add 'field symbol - field type' to the graphs.
+                                UpdateAllGraphsConditionally(field, fieldType, ref startpointIsRelated);
+                                
+                                if (startpointIsRelated)
+                                {
+                                    // Add 'class symbol - field symbol' to the graphs.
+                                    UpdateAllGraphsUnconditionally(classSymbol, field);
+                                }
                             }
                         }, SymbolKind.NamedType);
 
@@ -115,10 +137,13 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             foreach (var vertex in verticesInLoop)
                             {
-                                if (vertex is IFieldSymbol)
+                                if (vertex is IFieldSymbol fieldInLoop)
                                 {
+                                    var associatedSymbol = fieldInLoop.AssociatedSymbol;
                                     compilationAnalysisContext.ReportDiagnostic(
-                                        vertex.CreateDiagnostic(Rule, vertex.Name));
+                                        fieldInLoop.CreateDiagnostic(
+                                            Rule,
+                                            associatedSymbol == null ? vertex.Name : associatedSymbol.Name));
                                 }
                             }
                         });
@@ -130,34 +155,40 @@ namespace Microsoft.NetCore.Analyzers.Security
                     /// <param name="to">The end point of the line</param>
                     /// <param name="degree">The out degree of all vertices in the graph</param>
                     /// <param name="graph">The graph</param>
-                    void AddLine(ISymbol from, ISymbol to, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, HashSet<ISymbol>> graph)
+                    void AddLine(ISymbol from, ISymbol to, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
-                        var value = AddPoint(from, degree, graph);
-
-                        if (value.Add(to))
-                        {
-                            degree[from]++;
-                        }
-
-                        AddPoint(to, degree, graph);
+                        graph.AddOrUpdate(from, new ConcurrentDictionary<ISymbol, bool> { [to] = true }, (k, v) => { v[to] = true; return v; });
+                        degree.AddOrUpdate(from, 1, (k, v) => v + 1);
+                        graph.TryAdd(to, new ConcurrentDictionary<ISymbol, bool>());
+                        degree.TryAdd(to, 0);
                     }
 
                     /// <summary>
-                    /// Add a point to the graph.
+                    /// Add a line to the forward graph and inverted graph unconditionally.
                     /// </summary>
-                    /// <param name="point">The point to be added</param>
-                    /// <param name="degree">The out degree of all vertices in the graph</param>
-                    /// <param name="graph">The graph</param>
-                    HashSet<ISymbol> AddPoint(ISymbol point, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, HashSet<ISymbol>> graph)
+                    /// <param name="from">The start point of the line</param>
+                    /// <param name="to">The end point of the line</param>
+                    void UpdateAllGraphsUnconditionally(ISymbol from, ISymbol to)
                     {
-                        if (!graph.TryGetValue(point, out var value))
-                        {
-                            value = new HashSet<ISymbol>();
-                            graph.TryAdd(point, value);
-                            degree.TryAdd(point, 0);
-                        }
+                        AddLine(from, to, outDegree, forwardGraph);
+                        AddLine(to, from, inDegree, invertedGraph);
+                    }
 
-                        return value;
+                    /// <summary>
+                    /// Add a line to the forward graph and inverted graph only if the endpoint is related - that is, the symbol represented by endpoint is defined in source.
+                    /// </summary>
+                    /// <param name="from">The start point of the line</param>
+                    /// <param name="to">The end point of the line</param>
+                    /// <param name="startpointIsRelated">If any endpoint associated with startpoint is related with the graph, the startpoint is related with the graph</param>
+                    void UpdateAllGraphsConditionally(ISymbol from, ISymbol to, ref bool startpointIsRelated)
+                    {
+                        var endpointIsRelated = to.IsInSource();
+                        startpointIsRelated = startpointIsRelated || endpointIsRelated;
+
+                        if (endpointIsRelated)
+                        {
+                            UpdateAllGraphsUnconditionally(from, to);
+                        }
                     }
 
                     /// <summary>
@@ -165,18 +196,18 @@ namespace Microsoft.NetCore.Analyzers.Security
                     /// </summary>
                     /// <param name="degree">The in degree of all vertices in the graph</param>
                     /// <param name="graph">The graph</param>
-                    void ModifyDegree(ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, HashSet<ISymbol>> graph)
+                    void ModifyDegree(ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
                         var stack = new Stack<ISymbol>(degree.Where(s => s.Value == 0).Select(s => s.Key));
 
                         while (stack.Count != 0)
                         {
                             var start = stack.Pop();
-                            degree[start]--;
+                            degree.AddOrUpdate(start, -1, (k, v) => v - 1);
 
-                            foreach (var vertex in graph[start])
+                            foreach (var vertex in graph[start].Keys)
                             {
-                                degree[vertex]--;
+                                degree.AddOrUpdate(vertex, -1, (k, v) => v - 1);
 
                                 if (degree[vertex] == 0)
                                 {

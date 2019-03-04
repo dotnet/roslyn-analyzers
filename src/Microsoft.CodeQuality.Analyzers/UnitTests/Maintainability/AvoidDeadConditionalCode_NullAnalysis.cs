@@ -25,6 +25,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
         protected DiagnosticResult GetBasicNeverNullResultAt(int line, int column, string condition, string reason) =>
             GetBasicResultAt(line, column, AvoidDeadConditionalCode.NeverNullRule, condition, reason);
 
+        protected new void VerifyCSharp(string source, params DiagnosticResult[] expected)
+        {
+            VerifyCSharp(source, GetEditorConfigToEnableCopyAnalysis(), expected);
+        }
+
+        protected new void VerifyBasic(string source, params DiagnosticResult[] expected)
+        {
+            VerifyBasic(source, GetEditorConfigToEnableCopyAnalysis(), expected);
+        }
+
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
         public void SimpleNullCompare_NoDiagnostic()
@@ -3638,6 +3648,42 @@ class Test
             GetCSharpResultAt(54, 13, "d5 is C c5_2", "true"));
 
             // VB does not support patterns.
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void DeclarationPattern_DiscardSymbol_Diagnostic()
+        {
+            VerifyCSharp(@"
+class C
+{
+}
+
+class D: C
+{
+}
+
+class Test
+{
+    bool M1(C c1)
+    {
+        switch (c1)
+        {
+            case D _:
+                return true;
+
+            case C c2:
+                return c1 == c2;
+
+            default:
+                return true;
+        }
+    }
+}
+",
+            // Test0.cs(20,24): warning CA1508: 'c1 == c2' is always 'true'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(20, 24, "c1 == c2", "true"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]

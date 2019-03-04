@@ -1,17 +1,27 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Test.Utilities;
 using Xunit;
 using CSharpLanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion;
-using VisualBasicLanguageVersion = Microsoft.CodeAnalysis.VisualBasic.LanguageVersion;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
     public partial class AvoidDeadConditionalCodeTests : DiagnosticAnalyzerTestBase
     {
+        protected void VerifyCSharp(string source, CSharpParseOptions parseOptions, params DiagnosticResult[] expected)
+        {
+            VerifyCSharp(source, GetEditorConfigToEnableCopyAnalysis(), compilationOptions: null, parseOptions: parseOptions, expected: expected);
+        }
+
+        protected void VerifyBasic(string source, VisualBasicParseOptions parseOptions, params DiagnosticResult[] expected)
+        {
+            VerifyBasic(source, GetEditorConfigToEnableCopyAnalysis(), compilationOptions: null, parseOptions: parseOptions, expected: expected);
+        }
+
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         [Fact]
         public void SimpleStringCompare_NoDiagnostic()
@@ -912,6 +922,122 @@ class Test
     }
 }
 ");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void EnumValueCompare_ForEachLoop()
+        {
+            VerifyCSharp(@"
+enum Kind
+{
+    Kind1 = 1,
+    Kind2 = 2
+}
+
+class Test
+{
+    private Kind MyKind { get; }
+    private Test[] _tests;
+
+    void M(int[] array)
+    {
+        foreach (var x in array)
+        {
+            var test = GetTest(x);
+            if (test.MyKind != Kind.Kind2)
+            {
+                continue;
+            }
+
+            M2(test);
+        }
+    }
+
+    Test GetTest(int x) => _tests[x];
+    void M2(Test test) { }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void EnumValueCompare_ForEachLoop_02()
+        {
+            VerifyCSharp(@"
+enum Kind
+{
+    Kind1 = 1,
+    Kind2 = 2
+}
+
+class Test
+{
+    private Kind MyKind { get; }
+    private Test[] _tests;
+
+    void M(int[] array)
+    {
+        var kind = Kind.Kind2;
+        foreach (var x in array)
+        {
+            var test = GetTest(x);
+            if (test.MyKind != kind)
+            {
+                continue;
+            }
+
+            M2(test);
+            kind = GetKind(test);
+        }
+    }
+
+    Test GetTest(int x) => _tests[x];
+    Kind GetKind(Test t) => t.MyKind;
+    void M2(Test test) { }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void EnumValueCompare_ForEachLoop_03()
+        {
+            VerifyCSharp(@"
+enum Kind
+{
+    Kind1 = 1,
+    Kind2 = 2
+}
+
+class Test
+{
+    private Kind MyKind { get; }
+    private Test[] _tests;
+
+    void M(int[] array)
+    {
+        var kind = Kind.Kind2;
+        foreach (var x in array)
+        {
+            var test = GetTest(x);
+            var testKind = test.MyKind;
+            if (testKind == kind &&
+                testKind != Kind.Kind2) // Redundant check as 'kind' is always 'Kind.Kind2'
+            {
+                continue;
+            }
+
+            M2(test);
+        }
+    }
+
+    Test GetTest(int x) => _tests[x];
+    void M2(Test test) { }
+}
+",
+            // Test0.cs(21,17): warning CA1508: 'Kind.Kind2 != Kind.Kind2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
+            GetCSharpResultAt(21, 17, "testKind != Kind.Kind2", "false"));
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
@@ -2064,6 +2190,50 @@ public class Test
             GetCSharpResultAt(49, 13, "arg.a == a", "false"),
             // Test0.cs(49,27): warning CA1508: 'arg.Item2 == a2' is always 'false'. Remove or refactor the condition(s) to avoid dead code.
             GetCSharpResultAt(49, 27, "arg.Item2 == a2", "false")});
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void MethodWithNonConstantReturn_DefaultSwitchCaseInsideLoop()
+        {
+            VerifyCSharp(@"
+class Operation
+{
+    public OperationKind Kind { get; }
+    public Operation Parent { get; }
+}
+
+enum OperationKind
+{
+    Kind1,
+    Kind2,
+    Kind3
+}
+
+class Test
+{
+    bool M(Operation operation)
+    {
+        return IsRootOfCondition() == true;
+
+        bool IsRootOfCondition()
+        {
+            var current = operation.Parent;
+            while (current != null)
+            {
+                if (current.Kind == OperationKind.Kind1)
+                {
+                    return false;
+                }
+
+                current = current.Parent;
+            }
+
+            return current == null;
+        }
+    }
+}
+");
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class TestForEmptyStringsUsingStringLengthFixerTests : CodeFixTestBase
     {
+        const int c_StringLengthCodeActionIndex = 1;
         [Fact]
         public void CA1820_FixTestEmptyStringsUsingIsNullOrEmpty()
         {
@@ -65,7 +66,7 @@ public class A
         return s.Length == 0;
     }
 }
-", 1);
+", c_StringLengthCodeActionIndex);
 
             VerifyBasicFix(@"
 Public Class A
@@ -79,7 +80,7 @@ Public Class A
         Return s.Length = 0
     End Function
 End Class
-", 1);
+", c_StringLengthCodeActionIndex);
         }
 
         [Fact]
@@ -137,7 +138,7 @@ public class A
         return 0 == s.Length;
     }
 }
-", 1);
+", c_StringLengthCodeActionIndex);
 
             VerifyBasicFix(@"
 Public Class A
@@ -151,7 +152,7 @@ Public Class A
         Return 0 = s.Length
     End Function
 End Class
-", 1);
+", c_StringLengthCodeActionIndex);
         }
 
         [Fact]
@@ -208,7 +209,7 @@ public class A
         return s.Length != 0;
     }
 }
-", 1);
+", c_StringLengthCodeActionIndex);
 
             VerifyBasicFix(@"
 Public Class A
@@ -222,7 +223,7 @@ Public Class A
         Return s.Length <> 0
     End Function
 End Class
-", 1);
+", c_StringLengthCodeActionIndex);
         }
 
         [Fact]
@@ -279,7 +280,7 @@ public class A
         return 0 != s.Length;
     }
 }
-", 1);
+", c_StringLengthCodeActionIndex);
 
             VerifyBasicFix(@"
 Public Class A
@@ -293,7 +294,7 @@ Public Class A
         Return 0 <> s.Length
     End Function
 End Class
-", 1);
+", c_StringLengthCodeActionIndex);
 
         }
         [Fact]
@@ -673,7 +674,7 @@ public class A
                s == _s;
     }
 }
-", 1);
+", c_StringLengthCodeActionIndex);
             VerifyBasicFix(@"
 Public Class A
     Private _s As String = String.Empty
@@ -690,7 +691,7 @@ Public Class A
                s = _s
     End Function
 End Class
-", 1);
+", c_StringLengthCodeActionIndex);
         }
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

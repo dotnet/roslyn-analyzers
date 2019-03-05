@@ -43,20 +43,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (resolution != null)
             {
-                // We cannot have multiple overlapping diagnostics of this id.
-                Diagnostic diagnostic = context.Diagnostics.Single();
-
                 var methodInvocationAction = CodeAction.Create(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage,
                     async ct => await ConvertToMethodInvocation(context, resolution).ConfigureAwait(false),
                     equivalenceKey: "TestForEmptyStringCorrectlyUsingIsNullOrEmpty");
 
-                context.RegisterCodeFix(methodInvocationAction, diagnostic);
+                context.RegisterCodeFix(methodInvocationAction, context.Diagnostics);
 
                 var stringLengthAction = CodeAction.Create(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage,
                     async ct => await ConvertToStringLengthComparison(context, resolution).ConfigureAwait(false),
                     equivalenceKey: "TestForEmptyStringCorrectlyUsingStringLength");
 
-                context.RegisterCodeFix(stringLengthAction, diagnostic);
+                context.RegisterCodeFix(stringLengthAction, context.Diagnostics);
             }
         }
 
@@ -83,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             if (model.GetSymbolInfo(expressionSyntax).Symbol is IFieldSymbol fieldSymbol)
             {
-                if (fieldSymbol.Type.Equals(model.Compilation.GetTypeByMetadataName("System.String")))
+                if (fieldSymbol.Type.SpecialType == SpecialType.System_String)
                 {
                     return fieldSymbol.IsReadOnly && fieldSymbol.Name == "Empty";
                 }

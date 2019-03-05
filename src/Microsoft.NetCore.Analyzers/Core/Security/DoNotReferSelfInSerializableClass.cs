@@ -78,49 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
-                            var classSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-
-                            if (!classSymbol.HasAttribute(serializableAttributeTypeSymbol))
-                            {
-                                return;
-                            }
-
-                            var fields = classSymbol.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAttribute(nonSerializedAttribute) &&
-                                                                                                    !s.IsStatic);
-
-                            foreach (var field in fields)
-                            {
-                                // Identify if there's a line 'class symbol - field symbol - type associated with field' belongs to the graph.
-                                var startpointIsRelated = false;
-                                var fieldType = field.Type;
-
-                                // If field is a generic type, add 'field symbol - type parameters' to the graphs.
-                                if (fieldType is INamedTypeSymbol namedField)
-                                {
-                                    fieldType = namedField.ConstructedFrom;
-
-                                    foreach (var arg in namedField.TypeArguments)
-                                    {
-                                        UpdateAllGraphsConditionally(field, arg, ref startpointIsRelated);
-                                    }
-                                }
-
-                                // If field is a array, add 'field symbol - element type' to the graphs.
-                                if (fieldType is IArrayTypeSymbol arrayField)
-                                {
-                                    fieldType = arrayField.BaseType;
-                                    UpdateAllGraphsConditionally(field, arrayField.ElementType, ref startpointIsRelated);
-                                }
-
-                                // Add 'field symbol - field type' to the graphs.
-                                UpdateAllGraphsConditionally(field, fieldType, ref startpointIsRelated);
-
-                                if (startpointIsRelated)
-                                {
-                                    // Add 'class symbol - field symbol' to the graphs.
-                                    UpdateAllGraphsUnconditionally(classSymbol, field);
-                                }
-                            }
+                            DrawGraph(symbolAnalysisContext.Symbol);
                         }, SymbolKind.NamedType);
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -149,6 +107,76 @@ namespace Microsoft.NetCore.Analyzers.Security
                         });
 
                     /// <summary>
+                    /// Traverse from point to its descendants, save the information into a directed graph.
+                    /// </summary>
+                    /// <param name="point">The initial point</param>
+                    void DrawGraph(ISymbol point)
+                    {
+                        // If the point has been visited, return.
+                        if (forwardGraph.Keys.Contains(point))
+                        {
+                            return;
+                        }
+
+                        // Add the point to the graph, mark it as visited.
+                        AddPointToBothGraphs(point);
+
+                        if (point is INamedTypeSymbol namedTypePoint)
+                        {
+                            // 1. When the point is of generic type, its children point can be the type arguments of the generic type.
+                            if (namedTypePoint.IsGenericType)
+                            {
+                                foreach (var arg in namedTypePoint.TypeArguments)
+                                {
+                                    AddLineToBothGraphs(point, arg);
+                                    DrawGraph(arg);
+                                }
+                            }
+
+                            // 2. When the point is a INamedTypeSymbol, its children point can be the fields of the type that constructs the point.
+                            var constructedFrom = namedTypePoint.ConstructedFrom;
+
+                            if (!constructedFrom.HasAttribute(serializableAttributeTypeSymbol))
+                            {
+                                return;
+                            }
+
+                            if (constructedFrom.IsInSource())
+                            {
+                                var fields = constructedFrom.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAttribute(nonSerializedAttribute) &&
+                                                                                                            !s.IsStatic);
+
+                                foreach (var field in fields)
+                                {
+                                    AddLineToBothGraphs(point, field);
+                                    DrawGraph(field);
+                                }
+                            }
+                        }
+
+                        if (point is IArrayTypeSymbol arrayTypePoint)
+                        {
+                            // 3. When the point is a IArrayTypeSymbol, its children point can be element type of the array.
+                            var elementType = arrayTypePoint.ElementType;
+                            AddLineToBothGraphs(arrayTypePoint, elementType);
+                            DrawGraph(elementType);
+
+                            // 4. When the point is a IArrayTypeSymbol, its children point can be the array type itself.
+                            var baseType = arrayTypePoint.BaseType;
+                            AddLineToBothGraphs(arrayTypePoint, baseType);
+                            DrawGraph(baseType);
+                        }
+
+                        // 5. When the point is a IFieldSymbol, its children point can be the type of the field.
+                        if (point is IFieldSymbol fieldSymbolPoint)
+                        {
+                            var fieldType = fieldSymbolPoint.Type;
+                            AddLineToBothGraphs(point, fieldType);
+                            DrawGraph(fieldType);
+                        }
+                    }
+
+                    /// <summary>
                     /// Add a line to the graph.
                     /// </summary>
                     /// <param name="from">The start point of the line</param>
@@ -159,8 +187,18 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         graph.AddOrUpdate(from, new ConcurrentDictionary<ISymbol, bool> { [to] = true }, (k, v) => { v[to] = true; return v; });
                         degree.AddOrUpdate(from, 1, (k, v) => v + 1);
-                        graph.TryAdd(to, new ConcurrentDictionary<ISymbol, bool>());
-                        degree.TryAdd(to, 0);
+                    }
+
+                    /// <summary>
+                    /// Add a point to the graph.
+                    /// </summary>
+                    /// <param name="point">The point to be added</param>
+                    /// <param name="degree">The out degree of all vertices in the graph</param>
+                    /// <param name="graph">The graph</param>
+                    void AddPoint(ISymbol point, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
+                    {
+                        graph.TryAdd(point, new ConcurrentDictionary<ISymbol, bool>());
+                        degree.TryAdd(point, 0);
                     }
 
                     /// <summary>
@@ -168,27 +206,20 @@ namespace Microsoft.NetCore.Analyzers.Security
                     /// </summary>
                     /// <param name="from">The start point of the line</param>
                     /// <param name="to">The end point of the line</param>
-                    void UpdateAllGraphsUnconditionally(ISymbol from, ISymbol to)
+                    void AddLineToBothGraphs(ISymbol from, ISymbol to)
                     {
                         AddLine(from, to, outDegree, forwardGraph);
                         AddLine(to, from, inDegree, invertedGraph);
                     }
 
                     /// <summary>
-                    /// Add a line to the forward graph and inverted graph only if the endpoint is related - that is, the symbol represented by endpoint is defined in source.
+                    /// Add a point to the forward graph and inverted graph unconditionally.
                     /// </summary>
-                    /// <param name="from">The start point of the line</param>
-                    /// <param name="to">The end point of the line</param>
-                    /// <param name="startpointIsRelated">If any endpoint associated with startpoint is related with the graph, the startpoint is related with the graph</param>
-                    void UpdateAllGraphsConditionally(ISymbol from, ISymbol to, ref bool startpointIsRelated)
+                    /// <param name="point">The point to be added</param>
+                    void AddPointToBothGraphs(ISymbol point)
                     {
-                        var endpointIsRelated = to.IsInSource();
-                        startpointIsRelated = startpointIsRelated || endpointIsRelated;
-
-                        if (endpointIsRelated)
-                        {
-                            UpdateAllGraphsUnconditionally(from, to);
-                        }
+                        AddPoint(point, outDegree, forwardGraph);
+                        AddPoint(point, inDegree, invertedGraph);
                     }
 
                     /// <summary>

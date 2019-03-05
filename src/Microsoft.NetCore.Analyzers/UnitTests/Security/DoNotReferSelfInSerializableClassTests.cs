@@ -444,7 +444,25 @@ class TestClass
         }
 
         [Fact]
-        public void TestSelfReferDirectlyByListDiagnostic()
+        public void TestSelfReferDirectlyWithDoubleDimensionalArrayDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class TestClass
+{
+    private TestClass[][] testClasses;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(7, 27, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithListDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -463,6 +481,73 @@ class TestClass
         }
 
         [Fact]
+        public void TestSelfReferDirectlyWithListListDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+class TestClass
+{
+    private List<List<TestClass>> testClasses;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(8, 35, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithListListListDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+class TestClass
+{
+    private List<List<List<TestClass>>> testClasses;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(8, 41, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
+        }
+
+        [Fact]
+        public void TestGenericChildCircleDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+class TestClassA
+{
+    private List<TestClassA> testClassAInA;
+
+    public void TestMethod()
+    {
+    }
+}
+
+[Serializable()]
+class TestClassB
+{
+    private TestClassA testClassAInB;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(8, 30, DoNotReferSelfInSerializableClass.Rule, "testClassAInA"));
+        }
+
+        [Fact]
         public void TestSelfReferDirectlyByPropertyWithArrayDiagnostic()
         {
             VerifyCSharp(@"
@@ -478,6 +563,48 @@ class TestClass
     }
 }",
             GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "TestClassProperty"));
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithinGenericTypeDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class TestClass<T>
+{
+    private TestClass<T> testClass;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(7, 26, DoNotReferSelfInSerializableClass.Rule, "testClass"));
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithDictionaryDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+class NormalClass
+{
+}
+
+[Serializable()]
+class TestClass
+{
+    private Dictionary<TestClass, NormalClass> testClasses;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(13, 48, DoNotReferSelfInSerializableClass.Rule, "testClasses"));
         }
 
         [Fact]
@@ -609,6 +736,96 @@ class TestClass
 {
     [NonSerialized]
     private TestClass testClass;
+
+    public void TestMethod()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithArrayNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class NormalClass
+{
+}
+
+[Serializable()]
+class TestClass
+{
+    private NormalClass[] normalClasses;
+
+    public void TestMethod()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithDoubleDimensionalArrayNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class NormalClass
+{
+}
+
+[Serializable()]
+class TestClass
+{
+    private NormalClass[][] normalClasses;
+
+    public void TestMethod()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithListNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+class NormalClass
+{
+}
+
+[Serializable()]
+class TestClass
+{
+    private List<NormalClass> normalClasses;
+
+    public void TestMethod()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestSelfReferDirectlyWithListListNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+class NormalClass
+{
+}
+
+[Serializable()]
+class TestClass
+{
+    private List<List<NormalClass>> normalClasses;
 
     public void TestMethod()
     {

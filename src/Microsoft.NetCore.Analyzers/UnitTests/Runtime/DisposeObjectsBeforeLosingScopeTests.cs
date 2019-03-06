@@ -9448,6 +9448,40 @@ class A : IDisposable
         }
 
         [Fact]
+        public void InvocationOfMethodDelegate_PriorInterproceduralCallChain()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    private readonly Func<int> _coreExecute;
+    public A()
+    {
+        _coreExecute = this.CoreExecute;
+    }
+
+    private int CoreExecute() => 0;
+
+    private int Execute()
+    {
+        return _coreExecute();
+    }
+
+    public static int CreateAndExecute()
+    {
+        var a = new A();
+        return a.Execute();
+    }
+
+    public void Dispose()
+    {
+    }
+}
+");
+        }
+
+        [Fact]
         public void RecursiveInvocationWithConditionalAccess_InterproceduralAnalysis()
         {
             VerifyCSharp(@"

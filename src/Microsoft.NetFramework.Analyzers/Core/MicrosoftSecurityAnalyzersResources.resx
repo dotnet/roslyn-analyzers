@@ -130,7 +130,7 @@
     <value>Missing ValidateAntiForgeryTokenAttribute on MVC controller action {0} which by default accepts POST requests.</value>
   </data>
   <data name="MarkVerbHandlersWithValidateAntiforgeryTokenTitle" xml:space="preserve">
-    <value>MarkVerbHandlersWithValidateAntiforgeryTokenTitle</value>
+    <value>Mark Verb Handlers With Validate Antiforgery Token</value>
   </data>
   <data name="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage" xml:space="preserve">
     <value>Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</value>

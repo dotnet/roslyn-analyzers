@@ -29,32 +29,14 @@
   <!-- Setup the correct code analysis rulesets -->
   <Choose>
     <When Condition="'$(IsTestProject)' == 'true' or '$(NonShipping)' == 'true'">
-      <Choose>
-        <When Condition="'$(DesignTimeBuild)' == 'true'">
-          <PropertyGroup>
-            <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset</CodeAnalysisRuleSet>
-          </PropertyGroup>
-        </When>
-        <Otherwise>
-          <PropertyGroup>
-            <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules_Build.ruleset</CodeAnalysisRuleSet>
-          </PropertyGroup>
-        </Otherwise>
-      </Choose>
+      <PropertyGroup>
+        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_NonShippingRules.ruleset</CodeAnalysisRuleSet>
+      </PropertyGroup>
     </When>
     <Otherwise>
-      <Choose>
-        <When Condition="'$(DesignTimeBuild)' == 'true'">
-          <PropertyGroup>
-            <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset</CodeAnalysisRuleSet>
-          </PropertyGroup>
-        </When>
-        <Otherwise>
-          <PropertyGroup>
-            <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules_Build.ruleset</CodeAnalysisRuleSet>
-          </PropertyGroup>
-        </Otherwise>
-      </Choose>
+      <PropertyGroup>
+        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)..\eng\Analyzers_ShippingRules.ruleset</CodeAnalysisRuleSet>
+      </PropertyGroup>
     </Otherwise>
   </Choose>
 </Project>

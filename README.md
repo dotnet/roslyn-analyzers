@@ -10,7 +10,7 @@ Microsoft.CodeAnalysis.FxCopAnalyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
-This is the **primary analyzer package** for this repo that contains all **the ported FxCop code analysis rules (CAxxxx)**. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-analyzers for the documentation and FAQs on migration from legacy post-build static analysis ("Analyze" -> "Run Code Analysis" command in Visual Studio), also known as "FxCop", to FxCop analyzers.
+This is the **primary analyzer package** for this repo that contains all **the ported FxCop code analysis rules (CAxxxx)**. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-analyzers for the documentation and FAQs on migration from legacy post-build static analysis ("Analyze" &rarr; "Run Code Analysis" command in Visual Studio), also known as "FxCop", to FxCop analyzers.
 
 This analyzer package contains all the ported FxCop rules that are applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. You **do not need to install any separate analyzer package from this repo to get target framework specific FxCop rules**.
 

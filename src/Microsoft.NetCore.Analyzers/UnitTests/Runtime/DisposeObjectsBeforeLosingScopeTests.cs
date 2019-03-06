@@ -9313,5 +9313,60 @@ class DataflowAnalysis<TContext>
 }
 ");
         }
+
+        [Theory]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void ExceptionFromCatch_Diagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        {
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsAndMayBeNotDisposedViolationsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.cs(15,17): warning CA2000: In method 'void C.M()', use recommended dispose pattern to ensure that object created by 'new A()' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                    GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(15, 17, "void C.M()", "new A()")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class C
+{
+    public void M()
+    {
+        var a = new A();
+        try
+        {
+            int.Parse(null);
+            a.Dispose();
+        }
+        catch (Exception ex)
+        {
+            throw new MyException(ex);
+        }
+    }
+}
+
+class MyException: Exception
+{
+    private const string MyExceptionMessage = nameof(MyExceptionMessage);
+    public MyException(Exception inner)
+        : base (MyExceptionMessage, inner)
+    {
+    }
+}
+", GetEditorConfigFile(disposeAnalysisKind), expectedDiagnostics);
+        }
     }
 }

@@ -40,8 +40,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private async Task<Document> UseCollectionDirectly(Document document, TextSpan span, CancellationToken c)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(c);
-            var semanticModel = await document.GetSemanticModelAsync(c);
+            var syntaxRoot = await document.GetSyntaxRootAsync(c).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(c).ConfigureAwait(false);
 
             var invocationSyntax = GetSyntaxOfType<InvocationExpressionSyntax>(syntaxRoot.FindNode(span));
             var invocationOp = (IInvocationOperation)semanticModel.GetOperation(invocationSyntax);

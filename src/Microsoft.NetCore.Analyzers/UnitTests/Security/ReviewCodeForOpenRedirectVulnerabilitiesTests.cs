@@ -8,101 +8,92 @@ using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class ReviewCodeForLdapInjectionVulnerabilitiesTests : TaintedDataAnalyzerTestBase
+    public class ReviewCodeForOpenRedirectVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
-        protected override DiagnosticDescriptor Rule => ReviewCodeForLdapInjectionVulnerabilities.Rule;
-
-        protected override IEnumerable<string> AdditionalCSharpSources => new string[] { AntiXssApis.CSharp };
+        protected override DiagnosticDescriptor Rule => ReviewCodeForOpenRedirectVulnerabilities.Rule;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new ReviewCodeForLdapInjectionVulnerabilities();
+            return new ReviewCodeForOpenRedirectVulnerabilities();
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new ReviewCodeForLdapInjectionVulnerabilities();
+            return new ReviewCodeForOpenRedirectVulnerabilities();
         }
 
         [Fact]
-        public void DirectoryEntry_Path_Diagnostic()
+        public void HttpResponse_Redirect_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
-using System.DirectoryServices;
 using System.Web;
-using System.Web.UI;
 
 public partial class WebForm : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         string input = Request.Form[""in""];
-        new DirectoryEntry(input);
+        this.Response.Redirect(input);
     }
 }",
-                GetCSharpResultAt(12, 9, 11, 24, "DirectoryEntry.DirectoryEntry(string path)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
+                GetCSharpResultAt(10, 9, 9, 24, "void HttpResponse.Redirect(string url)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
-        public void DirectoryEntry_Username_NoDiagnostic()
+        public void HttpResponse_Redirect_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
-using System.DirectoryServices;
 using System.Web;
-using System.Web.UI;
 
 public partial class WebForm : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         string input = Request.Form[""in""];
-        new DirectoryEntry(""path"", input, ""password"");
+        if (String.IsNullOrWhiteSpace(input))
+        {
+            this.Response.Redirect(""https://example.org/login.html"");
+        }
     }
 }");
         }
 
         [Fact]
-        public void DirectorySearcher_Filter_Diagnostic()
+        public void HttpResponse_RedirectToRoutePermanent_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
-using System.DirectoryServices;
 using System.Web;
-using System.Web.UI;
 
 public partial class WebForm : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         string input = Request.Form[""in""];
-        DirectorySearcher ds = new DirectorySearcher();
-        ds.Filter = ""(lastName="" + input + "")"";
+        this.Response.RedirectToRoutePermanent(input);
     }
 }",
-                GetCSharpResultAt(13, 9, 11, 24, "string DirectorySearcher.Filter", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
+                GetCSharpResultAt(10, 9, 9, 24, "void HttpResponse.RedirectToRoutePermanent(string routeName)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
-        public void DirectoryEntry_Path_Sanitized_NoDiagnostic()
+        public void HttpResponseBase_RedirectLocation_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
-using System.DirectoryServices;
 using System.Web;
-using System.Web.UI;
-using Microsoft.Security.Application;
 
 public partial class WebForm : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
         string input = Request.Form[""in""];
-        input = Encoder.LdapDistinguishedNameEncode(input);
-        new DirectoryEntry(input);
+        new HttpResponseWrapper(this.Response).RedirectLocation = input;
     }
-}");
+}",
+                GetCSharpResultAt(10, 9, 9, 24, "string HttpResponseWrapper.RedirectLocation", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
     }
 }

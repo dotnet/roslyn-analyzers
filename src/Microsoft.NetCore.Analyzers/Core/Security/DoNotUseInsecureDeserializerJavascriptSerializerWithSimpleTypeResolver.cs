@@ -43,12 +43,34 @@ namespace Microsoft.NetCore.Analyzers.Security
                 DefinitelyWithSimpleTypeResolver,
                 MaybeWithSimpleTypeResolver);
 
+        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
+            new PropertyMapper(
+                "...dummy name",    // There isn't *really* a property for what we're tracking; just the constructor argument.
+                (PointsToAbstractValue v) => PropertySetAbstractValueKind.Unknown));
+
+        private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
+        {
+            switch (propertySetAbstractValue[0])
+            {
+                case PropertySetAbstractValueKind.Flagged:
+                    return HazardousUsageEvaluationResult.Flagged;
+                case PropertySetAbstractValueKind.Unflagged:
+                    return HazardousUsageEvaluationResult.Unflagged;
+                default:
+                    return HazardousUsageEvaluationResult.MaybeFlagged;
+            }
+        }
+
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics on generated code.
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
+            HazardousUsageEvaluatorCollection hazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
+                SecurityHelpers.JavaScriptSerializerDeserializationMethods.Select(
+                    (string methodName) => new HazardousUsageEvaluator(methodName, HazardousUsageCallback)));
 
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
@@ -84,6 +106,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         if (pointsTo.Locations.Any(l => !l.IsNull && simpleTypeResolverSymbol.Equals(l.LocationTypeOpt)))
                                         {
                                             kind = PropertySetAbstractValueKind.Flagged;
+                                        }
+                                        else if (pointsTo.Locations.Any(l => 
+                                                    !l.IsNull
+                                                    && javaScriptTypeResolverSymbol.Equals(l.LocationTypeOpt)
+                                                    && (l.CreationOpt == null || l.CreationOpt.Kind != OperationKind.ObjectCreation)))
+                                        {
+                                            // Points to a JavaScriptTypeResolver, but we don't know if the instance is a SimpleTypeResolver.
+                                            kind = PropertySetAbstractValueKind.MaybeFlagged;
                                         }
                                         else
                                         {
@@ -161,7 +191,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 operationBlockAnalysisContext.Options, SupportedDiagnostics,
                                                 defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
                                                 cancellationToken: operationBlockAnalysisContext.CancellationToken,
-                                                defaultMaxInterproceduralMethodCallChain: 1); // By default, we only want to track method calls one level down.
+                                                defaultMaxInterproceduralMethodCallChain: 2); // By default, we only want to track method calls one level down.
 
                                             foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {
@@ -171,8 +201,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                         operationBlockAnalysisContext.Compilation,
                                                         operationBlockAnalysisContext.OwningSymbol,
                                                         WellKnownTypeNames.SystemWebScriptSerializationJavaScriptSerializer,
-                                                        DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
-                                                        propertyMappers,
+                                                        constructorMapper,
+                                                        PropertyMappers,
                                                         hazardousUsageEvaluators,
                                                         interproceduralAnalysisConfig);
                                                 if (dfaResult.IsEmpty)
@@ -205,11 +235,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             switch (kvp.Value)
                                             {
                                                 case HazardousUsageEvaluationResult.Flagged:
-                                                    descriptor = this.BinderDefinitelyNotSetDescriptor;
+                                                    descriptor = DefinitelyWithSimpleTypeResolver;
                                                     break;
 
                                                 case HazardousUsageEvaluationResult.MaybeFlagged:
-                                                    descriptor = this.BinderMaybeNotSetDescriptor;
+                                                    descriptor = MaybeWithSimpleTypeResolver;
                                                     break;
 
                                                 default:
@@ -233,5 +263,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 });
                         });
                 });
+        }
     }
 }

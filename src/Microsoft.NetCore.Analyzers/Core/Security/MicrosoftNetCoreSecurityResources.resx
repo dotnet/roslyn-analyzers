@@ -220,15 +220,39 @@
     <value>Review code for LDAP injection vulnerabilities</value>
   </data>
   <data name="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage" xml:space="preserve">
-    <value>The method '{0}' is insecure when deserializing untrusted data with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or specified with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</value>
+    <value>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</value>
   </data>
   <data name="JavaScriptSerializerMaybeWithSimpleTypeResolverTitle" xml:space="preserve">
     <value>Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing</value>
   </data>
   <data name="JavaScriptSerializerWithSimpleTypeResolverMessage" xml:space="preserve">
-    <value>The method '{0}' is insecure when deserializing untrusted data with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or specify a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</value>
+    <value>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</value>
   </data>
   <data name="JavaScriptSerializerWithSimpleTypeResolverTitle" xml:space="preserve">
     <value>Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver</value>
+  </data>
+  <data name="ReviewCodeForOpenRedirectVulnerabilitiesMessage" xml:space="preserve">
+    <value>Potential open redirect vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+  </data>
+  <data name="ReviewCodeForOpenRedirectVulnerabilitiesTitle" xml:space="preserve">
+    <value>Review code for open redirect vulnerabilities</value>
+  </data>
+  <data name="ReviewCodeForXPathInjectionVulnerabilitiesMessage" xml:space="preserve">
+    <value>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+  </data>
+  <data name="ReviewCodeForXPathInjectionVulnerabilitiesTitle" xml:space="preserve">
+    <value>Review code for XPath injection vulnerabilities</value>
+  </data>
+  <data name="ReviewCodeForXmlInjectionVulnerabilitiesMessage" xml:space="preserve">
+    <value>Potential XML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+  </data>
+  <data name="ReviewCodeForXmlInjectionVulnerabilitiesTitle" xml:space="preserve">
+    <value>Review code for XML injection vulnerabilities</value>
+  </data>
+  <data name="ReviewCodeForXamlInjectionVulnerabilitiesMessage" xml:space="preserve">
+    <value>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
+  </data>
+  <data name="ReviewCodeForXamlInjectionVulnerabilitiesTitle" xml:space="preserve">
+    <value>Review code for XAML injection vulnerabilities</value>
   </data>
 </root>

@@ -9368,5 +9368,83 @@ class MyException: Exception
 }
 ", GetEditorConfigFile(disposeAnalysisKind), expectedDiagnostics);
         }
+
+        [Fact]
+        public void InvocationOfLambdaCachedOntoField_InterproceduralAnalysis()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    private readonly Func<int> _getInt;
+    public A(Func<int> getInt)
+    {
+        _getInt = getInt;
+    }
+
+    private static A Create()
+    {
+        var a = new A(() => 0);
+        return a;
+    }
+
+    public static int CreateAndExecute()
+    {
+        var a = Create();
+        return a.Execute();
+    }
+
+    private int Execute()
+    {
+        return _getInt();
+    }
+
+    public void Dispose()
+    {
+    }
+}
+");
+        }
+
+        [Fact]
+        public void InvocationOfLocalFunctionCachedOntoField_InterproceduralAnalysis()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    private readonly Func<int> _getInt;
+    public A(Func<int> getInt)
+    {
+        _getInt = getInt;
+    }
+
+    private static A Create()
+    {
+        var a = new A(Create);
+        return a;
+
+        int Create() => 0;
+    }
+
+    public static int CreateAndExecute()
+    {
+        var a = Create();
+        return a.Execute();
+    }
+
+    private int Execute()
+    {
+        return _getInt();
+    }
+
+    public void Dispose()
+    {
+    }
+}
+");
+        }
     }
 }

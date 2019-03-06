@@ -112,14 +112,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                     /// <param name="point">The initial point</param>
                     void DrawGraph(ISymbol point)
                     {
-                        // If the point has been visited, return.
-                        if (forwardGraph.Keys.Contains(point))
+                        // If the point has been visited, return;
+                        // otherwise, add it to the graph and mark it as visited.
+                        if (!AddPointToBothGraphs(point))
                         {
                             return;
                         }
-
-                        // Add the point to the graph, mark it as visited.
-                        AddPointToBothGraphs(point);
 
                         if (point is INamedTypeSymbol namedTypePoint)
                         {
@@ -195,10 +193,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                     /// <param name="point">The point to be added</param>
                     /// <param name="degree">The out degree of all vertices in the graph</param>
                     /// <param name="graph">The graph</param>
-                    void AddPoint(ISymbol point, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
+                    bool AddPoint(ISymbol point, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
-                        graph.TryAdd(point, new ConcurrentDictionary<ISymbol, bool>());
                         degree.TryAdd(point, 0);
+                        return graph.TryAdd(point, new ConcurrentDictionary<ISymbol, bool>());
                     }
 
                     /// <summary>
@@ -216,10 +214,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                     /// Add a point to the forward graph and inverted graph unconditionally.
                     /// </summary>
                     /// <param name="point">The point to be added</param>
-                    void AddPointToBothGraphs(ISymbol point)
+                    /// <returns>
+                    /// <c>true</c> if <paramref name="point"/> is added to the forward graph successfully;
+                    /// otherwise <c>false</c>.
+                    /// </returns>
+                    bool AddPointToBothGraphs(ISymbol point)
                     {
-                        AddPoint(point, outDegree, forwardGraph);
                         AddPoint(point, inDegree, invertedGraph);
+                        return AddPoint(point, outDegree, forwardGraph);
                     }
 
                     /// <summary>

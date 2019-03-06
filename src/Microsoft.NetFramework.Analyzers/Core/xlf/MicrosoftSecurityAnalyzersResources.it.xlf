@@ -23,13 +23,13 @@
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenTitle">
-        <source>MarkVerbHandlersWithValidateAntiforgeryTokenTitle</source>
-        <target state="translated">MarkVerbHandlersWithValidateAntiforgeryTokenTitle</target>
+        <source>Mark Verb Handlers With Validate Antiforgery Token</source>
+        <target state="needs-review-translation">MarkVerbHandlersWithValidateAntiforgeryTokenTitle</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">
         <source>Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</source>
-        <target state="translated">Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</target>
+        <target state="translated">ValidateAntiForgeryTokenAttribute mancante nell'azione del controller {0}.</target>
         <note />
       </trans-unit>
     </body>

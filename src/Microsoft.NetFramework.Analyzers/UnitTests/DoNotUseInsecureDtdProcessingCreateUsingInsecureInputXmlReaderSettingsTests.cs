@@ -14,18 +14,8 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(int line, int column)
-        {
-            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithMessage(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateInsecureInputMessage);
-        }
-
-        private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputBasicResultAt(int line, int column)
-        {
-            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithMessage(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateInsecureInputMessage);
-        }
-
         [Fact]
-        public async Task XmlReaderSettingsDefaultAsFieldShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsDefaultAsFieldShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
@@ -38,13 +28,11 @@ namespace TestNamespace
 
         public void TestMethod(string path)
         {
-            var reader = XmlReader.Create(path, settings);  // we treat the field the same as parameter
+            var reader = XmlReader.Create(path, settings);  // analyzer only looks at a code block, so the field's state is unknown
         }
     }
 }
-",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 26)
-            );
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
@@ -55,12 +43,10 @@ Namespace TestNamespace
 
         Public Sub TestMethod(path As String)
             Dim reader = XmlReader.Create(path, settings)
-            ' we treat the field the same as parameter
+            ' analyzer only looks at a code block, so the field's state is unknown
         End Sub
     End Class
-End Namespace",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 26)
-            );
+End Namespace");
         }
 
         [Fact]
@@ -134,7 +120,7 @@ End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputSetDtdProcessingToParseShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputSetDtdProcessingToParseShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
@@ -149,9 +135,7 @@ namespace TestNamespace
         }
     }
 }
-",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(10, 26)
-            );
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
@@ -162,13 +146,11 @@ Namespace TestNamespace
             Dim reader = XmlReader.Create(path, settings)
         End Sub
     End Class
-End Namespace",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(7, 26)
-             );
+End Namespace");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInGetShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInGetShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
@@ -186,9 +168,7 @@ public class TestClass
         }
     }
 }
-",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 32)
-            );
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
@@ -202,13 +182,11 @@ Public Class TestClass
             Return reader
         End Get
     End Property
-End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(9, 39)
-            );
+End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInTryShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInTryShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -228,9 +206,7 @@ class TestClass6a
         finally { }
     }
 }
-",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(13, 26)
-            );
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -247,13 +223,11 @@ Class TestClass6a
         Finally
         End Try
     End Sub
-End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(10, 26)
-            );
+End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInCatchShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInCatchShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -272,9 +246,7 @@ class TestClass6a
         finally { }
     }
 }
-",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(13, 26)
-            );
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -290,13 +262,11 @@ Class TestClass6a
         Finally
         End Try
     End Sub
-End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(11, 26)
-            );
+End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInFinallyShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInFinallyShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
@@ -315,9 +285,7 @@ class TestClass6a
         }
     }
 }
-",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(14, 26)
-            );
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
@@ -334,13 +302,11 @@ Class TestClass6a
             Dim reader = XmlReader.Create(xml, settings)
         End Try
     End Sub
-End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(13, 26)
-            );
+End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInAsyncAwaitShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInAsyncAwaitShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Threading.Tasks;
@@ -362,9 +328,7 @@ class TestClass
         await TestMethod();
     }
 }
-",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 26)
-            );
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Threading.Tasks
@@ -383,13 +347,11 @@ End Function)
     Private Async Sub TestMethod2()
         Await TestMethod()
     End Sub
-End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(10, 22)
-            );
+End Class");
         }
 
         [Fact]
-        public async Task XmlReaderSettingsAsInputInDelegateShouldGenerateDiagnostic()
+        public async Task XmlReaderSettingsAsInputInDelegateShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
 using System.Xml;
@@ -405,9 +367,7 @@ class TestClass
         var reader = XmlReader.Create(xml, settings);
     };
 }
-",
-                GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(12, 22)
-            );
+");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System.Xml
@@ -422,9 +382,7 @@ Class TestClass
     Dim reader = XmlReader.Create(xml, settings)
 
 End Sub
-End Class",
-                GetCA3075XmlReaderCreateInsecureInputBasicResultAt(11, 18)
-            );
+End Class");
         }
 
         [Fact]

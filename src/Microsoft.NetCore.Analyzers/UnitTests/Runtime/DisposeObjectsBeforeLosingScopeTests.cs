@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -22,15 +25,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private new DiagnosticResult GetCSharpResultAt(int line, int column, string containingMethod, string allocationText) =>
             GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedRule, containingMethod, allocationText);
-        private DiagnosticResult GetCSharpMayBeDisposedResultAt(int line, int column, string containingMethod, string allocationText) =>
+        private DiagnosticResult GetCSharpMayBeNotDisposedResultAt(int line, int column, string containingMethod, string allocationText) =>
             GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedRule, containingMethod, allocationText);
+        private DiagnosticResult GetCSharpNotDisposedOnExceptionPathsResultAt(int line, int column, string containingMethod, string allocationText) =>
+            GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedOnExceptionPathsRule, containingMethod, allocationText);
+        private DiagnosticResult GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(int line, int column, string containingMethod, string allocationText) =>
+            GetCSharpResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedOnExceptionPathsRule, containingMethod, allocationText);
 
         private new DiagnosticResult GetBasicResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
             GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedRule, invokedSymbol, containingMethod);
-        private DiagnosticResult GetBasicNotDisposedResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
+        private DiagnosticResult GetBasicMayBeNotDisposedResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
             GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedRule, invokedSymbol, containingMethod);
-        private DiagnosticResult GetBasicMayBeDisposedResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
-            GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedRule, invokedSymbol, containingMethod);
+        private DiagnosticResult GetBasicNotDisposedOnExceptionPathsResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
+            GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.NotDisposedOnExceptionPathsRule, invokedSymbol, containingMethod);
+        private DiagnosticResult GetBasicMayBeNotDisposedOnExceptionPathsResultAt(int line, int column, string invokedSymbol, string containingMethod) =>
+            GetBasicResultAt(line, column, DisposeObjectsBeforeLosingScope.MayBeDisposedOnExceptionPathsRule, invokedSymbol, containingMethod);
+
+        private FileAndSource GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind disposeAnalysisKind)
+        {
+            var text = $@"dotnet_code_quality.interprocedural_analysis_kind = None
+                          dotnet_code_quality.dispose_analysis_kind = {disposeAnalysisKind.ToString()}";
+            return GetEditorConfigAdditionalFile(text);
+        }
+
+        private FileAndSource GetEditorConfigFile(DisposeAnalysisKind disposeAnalysisKind)
+            => GetEditorConfigAdditionalFile($@"dotnet_code_quality.dispose_analysis_kind = {disposeAnalysisKind.ToString()}");
 
         [Fact]
         public void LocalWithDisposableInitializer_DisposeCall_NoDiagnostic()
@@ -718,9 +737,10 @@ class A : IDisposable
 class Test
 {
     public A a;
-    void M1(Test2 t2)
+    void M1()
     {
         DisposeOwnershipTransfer(new A());
+        var t2 = new Test2();
         t2.DisposeOwnershipTransfer_MethodOnDifferentType(new A());
         DisposeOwnershipTransfer_MultiLevelDown(new A());
     }
@@ -757,8 +777,9 @@ End Class
 
 Class Test
     Public a As A
-    Sub M1(t2 As Test2)
+    Sub M1()
         DisposeOwnershipTransfer(new A())
+        Dim t2 = New Test2()
         t2.DisposeOwnershipTransfer_MethodOnDifferentType(new A())
         DisposeOwnershipTransfer_MultiLevelDown(new A())
     End Sub
@@ -1117,12 +1138,18 @@ End Class
             GetBasicResultAt(16, 51, "Sub Test.M1()", "new A(2)"));
         }
 
-        [Fact, WorkItem(1404, "https://github.com/dotnet/roslyn-analyzers/issues/1404")]
-        public void DocsMicrosoft_Sample()
+        [Theory, WorkItem(1404, "https://github.com/dotnet/roslyn-analyzers/issues/1404")]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void DocsMicrosoft_Sample(DisposeAnalysisKind disposeAnalysisKind)
         {
             // See https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope
 
-            VerifyCSharp(@"
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
+            var source = @"
 using System;
 
 class Test
@@ -1164,6 +1191,7 @@ class Test
 
     void SomeMethod()
     {
+        Console.WriteLine(0);
     }
 }
 
@@ -1179,6 +1207,7 @@ public class SerialPort : IDisposable
 
     public void Open()
     {
+        Console.WriteLine(0);
     }
 
     public void Close()
@@ -1186,9 +1215,20 @@ public class SerialPort : IDisposable
         Dispose();
     }
 }
-");
+";
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.cs(8,27): warning CA2000: In method 'SerialPort Test.OpenPort1(string portName)', object created by 'new SerialPort(portName)' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(8, 27, "SerialPort Test.OpenPort1(string portName)", "new SerialPort(portName)")
+                };
+            }
 
-            VerifyBasic(@"
+            VerifyCSharp(source, editorConfigFile, expectedDiagnostics);
+
+            source = @"
 Imports System
 
 Class Test
@@ -1221,6 +1261,7 @@ Class Test
     End Function
 
     Private Sub SomeMethod()
+        Console.WriteLine(0)
     End Sub
 End Class
 
@@ -1234,13 +1275,25 @@ Public Class SerialPort
     End Sub
 
     Public Sub Open()
+        Console.WriteLine(0)
     End Sub
 
     Public Sub Close()
         Dispose()
     End Sub
 End Class
-");
+";
+            expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.vb(6,34): warning CA2000: In method 'Function Test.OpenPort1(portName As String) As SerialPort', object created by 'New SerialPort(portName)' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetBasicNotDisposedOnExceptionPathsResultAt(6, 34, "Function Test.OpenPort1(portName As String) As SerialPort", "New SerialPort(portName)")
+                };
+            }
+
+            VerifyBasic(source, editorConfigFile, expectedDiagnostics);
         }
 
         [Fact, WorkItem(1404, "https://github.com/dotnet/roslyn-analyzers/issues/1404#issuecomment-446715696")]
@@ -1273,6 +1326,58 @@ Public Class A
     End Sub
 End Class
 ");
+        }
+
+        [Theory, WorkItem(1404, "https://github.com/dotnet/roslyn-analyzers/issues/1404#issuecomment-446715696")]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void ExceptionInFinally(DisposeAnalysisKind disposeAnalysisKind)
+        {
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsAndMayBeNotDisposedViolationsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.vb(7,26): warning CA2000: In method 'Sub Test.M()', use recommended dispose pattern to ensure that object created by 'New A(1)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                    GetBasicMayBeNotDisposedOnExceptionPathsResultAt(7, 26, "Sub Test.M()", "New A(1)")
+                };
+            }
+
+            VerifyBasic(@"
+Imports System
+
+Class Test
+    Public Str As String
+    Public Sub M()
+        Dim disposeMe1 = New A(1)
+        Dim disposeMe2 As A = Nothing
+        Try
+            disposeMe2 = New A(2)
+            Integer.Parse(Str) ' Can throw
+        Finally
+            If disposeMe2 IsNot Nothing Then
+                disposeMe2.Dispose()
+            End If
+
+            Integer.Parse(Str) ' Can throw
+
+            disposeMe1.Dispose()
+        End Try
+    End Sub
+End Class
+
+Public Class A
+    Implements IDisposable
+
+    Public Sub New(i As Integer)
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+", GetEditorConfigFile(disposeAnalysisKind), expectedDiagnostics);
         }
 
         [Fact]
@@ -1747,10 +1852,16 @@ Class Test
 End Class");
         }
 
-        [Fact]
-        public void CollectionInitializer_ElementWithDisposableAssignment_NoDiagnostic()
+        [Theory]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void CollectionInitializer_ElementWithDisposableAssignment_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
         {
-            VerifyCSharp(@"
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
+            var source = @"
 using System;
 using System.Collections.Generic;
 
@@ -1769,9 +1880,20 @@ class Test
         List<A> a = new List<A>() { new A() };   // TODO: https://github.com/dotnet/roslyn-analyzers/issues/1577
     }
 }
-");
+";
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.cs(17,37): warning CA2000: In method 'void Test.M1()', object created by 'new A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(17, 37, "void Test.M1()", "new A()")
+                };
+            }
 
-            VerifyBasic(@"
+            VerifyCSharp(source, editorConfigFile, expectedDiagnostics);
+
+            source = @"
 Imports System
 Imports System.Collections.Generic
 
@@ -1786,13 +1908,31 @@ Class Test
     Sub M1()
         Dim a As List(Of A) = New List(Of A) From {New A()}    ' TODO: https://github.com/dotnet/roslyn-analyzers/issues/1577
     End Sub
-End Class");
+End Class";
+
+            expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.vb(14,52): warning CA2000: In method 'Sub Test.M1()', object created by 'New A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetBasicNotDisposedOnExceptionPathsResultAt(14, 52, "Sub Test.M1()", "New A()")
+                };
+            }
+
+            VerifyBasic(source, editorConfigFile, expectedDiagnostics);
         }
 
-        [Fact]
-        public void CollectionInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
+        [Theory]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void CollectionInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
         {
-            VerifyCSharp(@"
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
+            var source = @"
 using System;
 using System.Collections.Generic;
 
@@ -1812,9 +1952,20 @@ class Test
         a[0].Dispose();
     }
 }
-");
+";
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.cs(17,37): warning CA2000: In method 'void Test.M1()', object created by 'new A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(17, 37, "void Test.M1()", "new A()")
+                };
+            }
 
-            VerifyBasic(@"
+            VerifyCSharp(source, editorConfigFile, expectedDiagnostics);
+
+            source = @"
 Imports System
 Imports System.Collections.Generic
 
@@ -1830,13 +1981,31 @@ Class Test
         Dim a As List(Of A) = New List(Of A) From {New A()}
         a(0).Dispose()
     End Sub
-End Class");
+End Class";
+
+            expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.vb(14,52): warning CA2000: In method 'Sub Test.M1()', object created by 'New A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetBasicNotDisposedOnExceptionPathsResultAt(14, 52, "Sub Test.M1()", "New A()")
+                };
+            }
+
+            VerifyBasic(source, editorConfigFile, expectedDiagnostics);
         }
 
-        [Fact]
-        public void CollectionInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic()
+        [Theory]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void CollectionInitializer_ElementWithDisposableAssignment_NonConstantIndex_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
         {
-            VerifyCSharp(@"
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
+            var source = @"
 using System;
 using System.Collections.Generic;
 
@@ -1856,9 +2025,20 @@ class Test
         a[i].Dispose();
     }
 }
-");
+";
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.cs(17,37): warning CA2000: In method 'void Test.M1(int i)', object created by 'new A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(17, 37, "void Test.M1(int i)", "new A()")
+                };
+            }
 
-            VerifyBasic(@"
+            VerifyCSharp(source, editorConfigFile, expectedDiagnostics);
+
+            source = @"
 Imports System
 Imports System.Collections.Generic
 
@@ -1874,22 +2054,40 @@ Class Test
         Dim a As List(Of A) = New List(Of A) From {New A()}
         a(i).Dispose()
     End Sub
-End Class");
+End Class";
+
+            expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.vb(14,52): warning CA2000: In method 'Sub Test.M1(i As Integer)', object created by 'New A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetBasicNotDisposedOnExceptionPathsResultAt(14, 52, "Sub Test.M1(i As Integer)", "New A()")
+                };
+            }
+
+            VerifyBasic(source, editorConfigFile, expectedDiagnostics);
         }
 
-        [Fact]
-        public void CollectionAdd_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic()
+        [Theory]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void CollectionAdd_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
         {
-            VerifyCSharp(@"
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
+            var source = @"
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
 class A : IDisposable
 {
+    public A(int i) { }
     public void Dispose()
     {
-
     }
 }
 
@@ -1921,29 +2119,52 @@ class Test
     void M1()
     {
         List<A> a = new List<A>();
-        a.Add(new A());
+        a.Add(new A(1));
 
-        A b = new A();
+        A b = new A(2);
         a.Add(b);
 
         NonGenericList l = new NonGenericList();
-        l.Add(new A());
+        l.Add(new A(3));
 
-        b = new A();
+        b = new A(4);
         l.Add(b);
     }
 }
-");
+";
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                // NOTE: 'new A(3)' and 'new A(4)' are not flagged as they invoke Add method defined in source which is a no-op.
 
-            VerifyBasic(@"
+                var builder = new List<DiagnosticResult>();
+                if (disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled())
+                {
+                    builder.Add(
+                        // Test0.cs(42,15): warning CA2000: In method 'void Test.M1()', use recommended dispose pattern to ensure that object created by 'new A(1)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                        GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(42, 15, "void Test.M1()", "new A(1)"));
+                }
+
+                builder.Add(
+                    // Test0.cs(44,15): warning CA2000: In method 'void Test.M1()', object created by 'new A(2)' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(44, 15, "void Test.M1()", "new A(2)"));
+
+                expectedDiagnostics = builder.ToArray();
+            }
+
+            VerifyCSharp(source, editorConfigFile, expectedDiagnostics);
+
+            source = @"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
 
 Class A
     Implements IDisposable
-    Public Sub Dispose() Implements IDisposable.Dispose
+    Public Sub New(i As Integer)
+    End Sub
 
+    Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class
 
@@ -1983,24 +2204,52 @@ End Class
 Class Test
     Private Sub M1()
         Dim a As New List(Of A)()
-        a.Add(New A())
+        a.Add(New A(1))
 
-        Dim b As A = New A()
+        Dim b As A = New A(2)
         a.Add(b)
 
         Dim l As New NonGenericList()
-        l.Add(New A())
+        l.Add(New A(3))
 
-        b = New A()
+        b = New A(4)
         l.Add(b)
     End Sub
-End Class");
+End Class";
+
+            expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                // NOTE: 'new A(3)' and 'new A(4)' are not flagged as they invoke Add method defined in source which is a no-op.
+
+                var builder = new List<DiagnosticResult>();
+                if (disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled())
+                {
+                    builder.Add(
+                        // Test0.vb(51,15): warning CA2000: In method 'Sub Test.M1()', use recommended dispose pattern to ensure that object created by 'New A(1)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                        GetBasicMayBeNotDisposedOnExceptionPathsResultAt(51, 15, "Sub Test.M1()", "New A(1)"));
+                }
+
+                builder.Add(
+                    // Test0.vb(53,22): warning CA2000: In method 'Sub Test.M1()', object created by 'New A(2)' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetBasicNotDisposedOnExceptionPathsResultAt(53, 22, "Sub Test.M1()", "New A(2)"));
+
+                expectedDiagnostics = builder.ToArray();
+            }
+
+            VerifyBasic(source, editorConfigFile, expectedDiagnostics);
         }
 
-        [Fact]
-        public void CollectionAdd_IReadOnlyCollection_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic()
+        [Theory]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void CollectionAdd_IReadOnlyCollection_SpecialCases_ElementWithDisposableAssignment_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
         {
-            VerifyCSharp(@"
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
+            var source = @"
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -2009,9 +2258,9 @@ using System.Collections.Immutable;
 
 class A : IDisposable
 {
+    public A(int i) { }
     public void Dispose()
     {
-
     }
 }
 
@@ -2039,24 +2288,51 @@ class Test
     void M1()
     {
         var myReadOnlyCollection = new MyReadOnlyCollection();
-        myReadOnlyCollection.Add(new A());
-        A a = new A();
+        myReadOnlyCollection.Add(new A(1));
+        A a = new A(2);
         myReadOnlyCollection.Add(a);
 
         var builder = ImmutableArray.CreateBuilder<A>();
-        builder.Add(new A());
-        A a2 = new A();
+        builder.Add(new A(3));
+        A a2 = new A(4);
         builder.Add(a2);
 
         var bag = new ConcurrentBag<A>();
-        builder.Add(new A());
-        A a3 = new A();
+        builder.Add(new A(5));
+        A a3 = new A(6);
         builder.Add(a3);
     }
 }
-");
+";
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                var builder = new List<DiagnosticResult>();
+                if (disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled())
+                {
+                    builder.AddRange(new[]
+                    {
+                        // NOTE: 'new A(1)' and 'new A(2)' are not flagged as they invoke Add method defined in source which is a no-op.
 
-            VerifyBasic(@"
+                        // Test0.cs(45,21): warning CA2000: In method 'void Test.M1()', use recommended dispose pattern to ensure that object created by 'new A(3)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                        GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(45, 21, "void Test.M1()", "new A(3)"),
+                        // Test0.cs(46,16): warning CA2000: In method 'void Test.M1()', use recommended dispose pattern to ensure that object created by 'new A(4)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                        GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(46, 16, "void Test.M1()", "new A(4)"),
+                        // Test0.cs(50,21): warning CA2000: In method 'void Test.M1()', use recommended dispose pattern to ensure that object created by 'new A(5)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                        GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(50, 21, "void Test.M1()", "new A(5)"),
+                    });
+                }
+
+                builder.Add(
+                    // Test0.cs(51,16): warning CA2000: In method 'void Test.M1()', object created by 'new A(6)' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(51, 16, "void Test.M1()", "new A(6)"));
+
+                expectedDiagnostics = builder.ToArray();
+            }
+
+            VerifyCSharp(source, editorConfigFile, expectedDiagnostics);
+
+            source = @"
 Imports System
 Imports System.Collections
 Imports System.Collections.Concurrent
@@ -2065,8 +2341,10 @@ Imports System.Collections.Immutable
 
 Class A
     Implements IDisposable
-    Public Sub Dispose() Implements IDisposable.Dispose
+    Public Sub New(i As Integer)
+    End Sub
 
+    Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class
 
@@ -2094,21 +2372,49 @@ End Class
 Class Test
     Private Sub M1()
         Dim myReadOnlyCollection = New MyReadOnlyCollection()
-        myReadOnlyCollection.Add(New A())
-        Dim a As A = New A()
+        myReadOnlyCollection.Add(New A(1))
+        Dim a As A = New A(2)
         myReadOnlyCollection.Add(a)
 
         Dim builder = ImmutableArray.CreateBuilder(Of A)()
-        builder.Add(New A())
-        Dim a2 As A = New A()
+        builder.Add(New A(3))
+        Dim a2 As A = New A(4)
         builder.Add(a2)
 
         Dim bag = New ConcurrentBag(Of A)()
-        builder.Add(New A())
-        Dim a3 As A = New A()
+        builder.Add(New A(5))
+        Dim a3 As A = New A(6)
         builder.Add(a3)
     End Sub
-End Class");
+End Class";
+
+            expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                var builder = new List<DiagnosticResult>();
+                if (disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled())
+                {
+                    builder.AddRange(new[]
+                    {
+                        // NOTE: 'New A(1)' and 'New A(2)' are not flagged as they invoke Add method defined in source which is a no-op.
+
+                        // Test0.vb(46,21): warning CA2000: In method 'Sub Test.M1()', use recommended dispose pattern to ensure that object created by 'New A(3)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                        GetBasicMayBeNotDisposedOnExceptionPathsResultAt(46, 21, "Sub Test.M1()", "New A(3)"),
+                        // Test0.vb(47,23): warning CA2000: In method 'Sub Test.M1()', use recommended dispose pattern to ensure that object created by 'New A(4)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                        GetBasicMayBeNotDisposedOnExceptionPathsResultAt(47, 23, "Sub Test.M1()", "New A(4)"),
+                        // Test0.vb(51,21): warning CA2000: In method 'Sub Test.M1()', use recommended dispose pattern to ensure that object created by 'New A(5)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                        GetBasicMayBeNotDisposedOnExceptionPathsResultAt(51, 21, "Sub Test.M1()", "New A(5)")
+                    });
+                }
+
+                builder.Add(
+                    // Test0.vb(52,23): warning CA2000: In method 'Sub Test.M1()', object created by 'New A(6)' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetBasicNotDisposedOnExceptionPathsResultAt(52, 23, "Sub Test.M1()", "New A(6)"));
+
+                expectedDiagnostics = builder.ToArray();
+            }
+
+            VerifyBasic(source, editorConfigFile, expectedDiagnostics);
         }
 
         [Fact]
@@ -2769,8 +3075,8 @@ class Test
     }
 }
 ",
-            // Test0.cs(17,15): warning CA2000: In method 'void Test.M1()', refactor the code to ensure that disposable object created by 'new A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(17, 15, "void Test.M1()", "new A(1)"),
+            // Test0.cs(17,15): warning CA2000: In method 'void Test.M1()', use recommended dispose pattern to ensure that object created by 'new A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(17, 15, "void Test.M1()", "new A(1)"),
             // Test0.cs(21,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A(2)' before all references to it are out of scope.
             GetCSharpResultAt(21, 17, "void Test.M1()", "new A(2)"));
 
@@ -2796,8 +3102,8 @@ Module Test
         End While
     End Sub
 End Module",
-            // Test0.vb(16,18): warning CA2000: In method 'Sub Test.M1()', refactor the code to ensure that disposable object created by 'New A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(16, 18, "Sub Test.M1()", "New A(1)"),
+            // Test0.vb(16,18): warning CA2000: In method 'Sub Test.M1()', use recommended dispose pattern to ensure that object created by 'New A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(16, 18, "Sub Test.M1()", "New A(1)"),
             // Test0.vb(19,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A(2)' before all references to it are out of scope.
             GetBasicResultAt(19, 17, "Sub Test.M1()", "New A(2)"));
         }
@@ -2927,7 +3233,7 @@ Module Test
 End Module");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1648")]
+        [Fact]
         public void DoWhileLoop_MissingDisposeOnExit_Diagnostic()
         {
             VerifyCSharp(@"
@@ -2935,9 +3241,9 @@ using System;
 
 class A : IDisposable
 {
+    public A(int i) { }
     public void Dispose()
     {
-
     }
 }
 
@@ -2945,39 +3251,41 @@ class Test
 {
     void M1()
     {
-        A a = new A();
+        A a = new A(1);
         do
         {
             a.Dispose();
-            a = new A();   // This instance will not be disposed on loop exit.
+            a = new A(2);   // This instance will not be disposed on loop exit.
         } while (true);
     }
 }
 ",
-            // Test0.cs(20,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(20, 17, "void Test.M1()", "new A()"));
+            // Test0.cs(20,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A(2)' before all references to it are out of scope.
+            GetCSharpResultAt(20, 17, "void Test.M1()", "new A(2)"));
 
             VerifyBasic(@"
 Imports System
 
 Class A
     Implements IDisposable
-    Public Sub Dispose() Implements IDisposable.Dispose
+    Public Sub New(i As Integer)
+    End Sub
 
+    Public Sub Dispose() Implements IDisposable.Dispose
     End Sub
 End Class
 
 Module Test
     Sub M1()
-        Dim a As New A()
-        Do While True
+        Dim a As New A(1)
+        Do
             a.Dispose()
-            a = New A()   ' This instance will not be disposed on loop exit.
-        Loop
+            a = New A(2)   ' This instance will not be disposed on loop exit.
+        Loop While True
     End Sub
 End Module",
-            // Test0.vb(16,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(16, 17, "Sub Test.M1()", "New A()"));
+            // Test0.vb(18,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A(2)' before all references to it are out of scope.
+            GetBasicResultAt(18, 17, "Sub Test.M1()", "New A(2)"));
         }
 
         [Fact]
@@ -3081,10 +3389,10 @@ class Test
     }
 }
 ",
-            // Test0.cs(16,15): warning CA2000: In method 'void Test.M1(bool flag)', refactor the code to ensure that disposable object created by 'new A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(16, 15, "void Test.M1(bool flag)", "new A(1)"),
-            // Test0.cs(25,17): warning CA2000: In method 'void Test.M1(bool flag)', refactor the code to ensure that disposable object created by 'new A(2)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(25, 17, "void Test.M1(bool flag)", "new A(2)"));
+            // Test0.cs(16,15): warning CA2000: In method 'void Test.M1(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(16, 15, "void Test.M1(bool flag)", "new A(1)"),
+            // Test0.cs(25,17): warning CA2000: In method 'void Test.M1(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(2)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(25, 17, "void Test.M1(bool flag)", "new A(2)"));
 
             VerifyBasic(@"
 Imports System
@@ -3110,10 +3418,10 @@ Module Test
         Next
     End Sub
 End Module",
-            // Test0.vb(15,18): warning CA2000: In method 'Sub Test.M1(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(15, 18, "Sub Test.M1(flag As Boolean)", "New A(1)"),
-            // Test0.vb(21,17): warning CA2000: In method 'Sub Test.M1(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(2)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(21, 17, "Sub Test.M1(flag As Boolean)", "New A(2)"));
+            // Test0.vb(15,18): warning CA2000: In method 'Sub Test.M1(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(15, 18, "Sub Test.M1(flag As Boolean)", "New A(1)"),
+            // Test0.vb(21,17): warning CA2000: In method 'Sub Test.M1(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(2)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(21, 17, "Sub Test.M1(flag As Boolean)", "New A(2)"));
         }
 
         [Fact]
@@ -3144,8 +3452,8 @@ class Test
     }
 }
 ",
-            // Test0.cs(17,15): warning CA2000: In method 'void Test.M1()', refactor the code to ensure that disposable object created by 'new A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(17, 15, "void Test.M1()", "new A(1)"),
+            // Test0.cs(17,15): warning CA2000: In method 'void Test.M1()', use recommended dispose pattern to ensure that object created by 'new A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(17, 15, "void Test.M1()", "new A(1)"),
             // Test0.cs(21,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A(2)' before all references to it are out of scope.
             GetCSharpResultAt(21, 17, "void Test.M1()", "new A(2)"));
 
@@ -3171,8 +3479,8 @@ Module Test
         Next
     End Sub
 End Module",
-            // Test0.vb(16,18): warning CA2000: In method 'Sub Test.M1()', refactor the code to ensure that disposable object created by 'New A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(16, 18, "Sub Test.M1()", "New A(1)"),
+            // Test0.vb(16,18): warning CA2000: In method 'Sub Test.M1()', use recommended dispose pattern to ensure that object created by 'New A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(16, 18, "Sub Test.M1()", "New A(1)"),
             // Test0.vb(19,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A(2)' before all references to it are out of scope.
             GetBasicResultAt(19, 17, "Sub Test.M1()", "New A(2)"));
         }
@@ -5709,8 +6017,8 @@ class Test
     }
 }
 ",
-            // Test0.cs(92,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', refactor the code to ensure that disposable object created by 'new FileStream(filePath + filePath, fileMode)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(92, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath + filePath, fileMode)"));
+            // Test0.cs(92,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', use recommended dispose pattern to ensure that object created by 'new FileStream(filePath + filePath, fileMode)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(92, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath + filePath, fileMode)"));
 
             VerifyBasic(@"
 
@@ -5802,13 +6110,18 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(70,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', refactor the code to ensure that disposable object created by 'New FileStream(filePath + filePath, fileMode)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(70, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath + filePath, fileMode)"));
+            // Test0.vb(70,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', use recommended dispose pattern to ensure that object created by 'New FileStream(filePath + filePath, fileMode)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(70, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath + filePath, fileMode)"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
+        [Fact, WorkItem(1580, "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
         public void DisposableCreationPassedToDisposableConstructor_SpecialCases_ExceptionPath_Diagnostic()
         {
+            // Disable interprocedural analysis to test special ctor invocation cases from metadata.
+            var editorConfigFile = GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
+
+            // For special dispose ownership transfer cases, we always assume ownership transfer
+            // and the constructor invocation is assumed to be non-exception throwing.
             VerifyCSharp(@"
 using System;
 using System.IO;
@@ -5848,7 +6161,7 @@ class Test
         {
             a = new A(stream);
         }
-        catch(IOException)
+        catch (IOException)
         {
             stream.Dispose();
         }
@@ -5879,7 +6192,6 @@ class Test
         }
 
         TextWriter writer = File.CreateText(filePath);
-        a = null;
         try
         {
             a = new A(writer);
@@ -5896,7 +6208,7 @@ class Test
             }
         }
 
-        stream = new FileStream(filePath, fileMode);
+        stream = new FileStream(filePath + filePath, fileMode);     // This is flagged as 'new ResourceReader(stream)' is not considered a Dispose ownership transfer, see https://github.com/dotnet/roslyn-analyzers/issues/1617
         ResourceReader resourceReader = null;
         a = null;
         try
@@ -5924,15 +6236,17 @@ class Test
         }
     }
 }
-",
-            // Test0.cs(34,25): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
-            GetCSharpResultAt(34, 25, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"),
-            // Test0.cs(52,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
-            GetCSharpResultAt(52, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.OpenText(filePath)"),
-            // Test0.cs(70,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-            GetCSharpResultAt(70, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"),
-            // Test0.cs(88,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', call System.IDisposable.Dispose on object created by 'new FileStream(filePath, fileMode)' before all references to it are out of scope.
-            GetCSharpResultAt(88, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"));
+", editorConfigFile,
+            // Test0.cs(34,25): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', use recommended dispose pattern to ensure that object created by 'new FileStream(filePath, fileMode)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(34, 25, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath, fileMode)"),
+            // Test0.cs(52,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', use recommended dispose pattern to ensure that object created by 'File.OpenText(filePath)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(52, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.OpenText(filePath)"),
+            // Test0.cs(70,29): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', use recommended dispose pattern to ensure that object created by 'File.CreateText(filePath)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(70, 29, "void Test.M1(string filePath, FileMode fileMode)", "File.CreateText(filePath)"),
+            // Test0.cs(87,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', use recommended dispose pattern to ensure that object created by 'new FileStream(filePath + filePath, fileMode)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(87, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath + filePath, fileMode)"),
+            // Test0.cs(92,30): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', use recommended dispose pattern to ensure that object created by 'new ResourceReader(stream)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(92, 30, "void Test.M1(string filePath, FileMode fileMode)", "new ResourceReader(stream)"));
 
             VerifyBasic(@"
 
@@ -5999,7 +6313,236 @@ Class Test
             End If
         End Try
 
-        stream = New FileStream(filePath, fileMode)
+        stream = New FileStream(filePath + filePath, fileMode)
+        Dim resourceReader As ResourceReader = Nothing
+        a = Nothing
+        Try
+            resourceReader = New ResourceReader(stream)
+            a = New A(resourceReader)
+        Catch ex As IOException
+            If resourceReader IsNot Nothing Then
+                resourceReader.Dispose()
+            Else
+                stream.Dispose()
+            End If
+
+        Finally
+            If a IsNot Nothing Then
+                a.Dispose()
+            End If
+        End Try
+    End Sub
+End Class
+", editorConfigFile,
+            // Test0.vb(30,32): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', use recommended dispose pattern to ensure that object created by 'New FileStream(filePath, fileMode)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedOnExceptionPathsResultAt(30, 32, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"),
+            // Test0.vb(42,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', use recommended dispose pattern to ensure that object created by 'File.OpenText(filePath)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedOnExceptionPathsResultAt(42, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.OpenText(filePath)"),
+            // Test0.vb(54,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', use recommended dispose pattern to ensure that object created by 'File.CreateText(filePath)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedOnExceptionPathsResultAt(54, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"),
+            // Test0.vb(66,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', use recommended dispose pattern to ensure that object created by 'New FileStream(filePath + filePath, fileMode)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(66, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath + filePath, fileMode)"),
+            // Test0.vb(70,30): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', use recommended dispose pattern to ensure that object created by 'New ResourceReader(stream)' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedOnExceptionPathsResultAt(70, 30, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New ResourceReader(stream)"));
+        }
+
+        [Fact, WorkItem(1580, "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
+        public void DisposableCreationPassedToDisposableConstructor_SpecialCases_InterproceduralAnalysis_ExceptionPath_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Resources;
+
+class A : IDisposable
+{
+    private object _a;
+    public A(Stream a)
+    {
+        _a = a;
+    }
+
+    public A(TextReader t)
+    {
+        _a = t;
+    }
+
+    public A(TextWriter t)
+    {
+        _a = t;
+    }
+
+    public A(IResourceReader r)
+    {
+        _a = r;
+    }
+
+    public void Dispose()
+    {
+
+    }
+}
+
+class Test
+{
+    void M1(string filePath, FileMode fileMode)
+    {
+        Stream stream = new FileStream(filePath, fileMode);
+        A a = null;
+        try
+        {
+            a = new A(stream);
+        }
+        catch (IOException)
+        {
+            stream.Dispose();
+        }
+        finally
+        {
+            if (a != null)
+            {
+                a.Dispose();
+            }
+        }
+
+        TextReader reader = File.OpenText(filePath);
+        a = null;
+        try
+        {
+            a = new A(reader);
+        }
+        catch (IOException)
+        {
+            reader.Dispose();
+        }
+        finally
+        {
+            if (a != null)
+            {
+                a.Dispose();
+            }
+        }
+
+        TextWriter writer = File.CreateText(filePath);
+        try
+        {
+            a = new A(writer);
+        }
+        catch (IOException)
+        {
+            writer.Dispose();
+        }
+        finally
+        {
+            if (a != null)
+            {
+                a.Dispose();
+            }
+        }
+
+        stream = new FileStream(filePath + filePath, fileMode);     // This is flagged as 'new ResourceReader(stream)' is not considered a Dispose ownership transfer, see https://github.com/dotnet/roslyn-analyzers/issues/1617
+        ResourceReader resourceReader = null;
+        a = null;
+        try
+        {
+            resourceReader = new ResourceReader(stream);
+            a = new A(resourceReader);
+        }
+        catch (IOException)
+        {
+            if (resourceReader != null)
+            {
+                resourceReader.Dispose();
+            }
+            else
+            {
+                stream.Dispose();
+            }
+        }
+        finally
+        {
+            if (a != null)
+            {
+                a.Dispose();
+            }
+        }
+    }
+}
+",
+            // Test0.cs(92,18): warning CA2000: In method 'void Test.M1(string filePath, FileMode fileMode)', use recommended dispose pattern to ensure that object created by 'new FileStream(filePath + filePath, fileMode)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(92, 18, "void Test.M1(string filePath, FileMode fileMode)", "new FileStream(filePath + filePath, fileMode)"));
+
+            VerifyBasic(@"
+
+Imports System
+Imports System.IO
+Imports System.Resources
+
+Class A
+    Implements IDisposable
+
+    Private _a As Object
+    Public Sub New(a As Stream)
+        _a = a
+    End Sub
+
+    Public Sub New(t As TextReader)
+        _a = t
+    End Sub
+
+    Public Sub New(t As TextWriter)
+        _a = t
+    End Sub
+
+    Public Sub New(r As IResourceReader)
+        _a = r
+    End Sub
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+
+    End Sub
+End Class
+
+Class Test
+
+    Private Sub M1(filePath As String, fileMode As FileMode)
+        Dim stream As Stream = New FileStream(filePath, fileMode)
+        Dim a As A = Nothing
+        Try
+            a = New A(stream)
+        Catch ex As IOException
+            stream.Dispose()
+        Finally
+            If a IsNot Nothing Then
+                a.Dispose()
+            End If
+        End Try
+
+        Dim reader As TextReader = File.OpenText(filePath)
+        a = Nothing
+        Try
+            a = New A(reader)
+        Catch ex As IOException
+            reader.Dispose()
+        Finally
+            If a IsNot Nothing Then
+                a.Dispose()
+            End If
+        End Try
+
+        Dim writer As TextWriter = File.CreateText(filePath)
+        a = Nothing
+        Try
+            a = New A(writer)
+        Catch ex As IOException
+            writer.Dispose()
+        Finally
+            If a IsNot Nothing Then
+                a.Dispose()
+            End If
+        End Try
+
+        stream = New FileStream(filePath + filePath, fileMode)
         Dim resourceReader As ResourceReader = Nothing
         a = Nothing
         Try
@@ -6020,20 +6563,20 @@ Class Test
     End Sub
 End Class
 ",
-            // Test0.vb(30,32): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
-            GetBasicResultAt(30, 32, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"),
-            // Test0.vb(42,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.OpenText(filePath)' before all references to it are out of scope.
-            GetBasicResultAt(42, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.OpenText(filePath)"),
-            // Test0.vb(54,36): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'File.CreateText(filePath)' before all references to it are out of scope.
-            GetBasicResultAt(54, 36, "Sub Test.M1(filePath As String, fileMode As FileMode)", "File.CreateText(filePath)"),
-            // Test0.vb(66,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', call System.IDisposable.Dispose on object created by 'New FileStream(filePath, fileMode)' before all references to it are out of scope.
-            GetBasicResultAt(66, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath, fileMode)"));
+            // Test0.vb(71,18): warning CA2000: In method 'Sub Test.M1(filePath As String, fileMode As FileMode)', use recommended dispose pattern to ensure that object created by 'New FileStream(filePath + filePath, fileMode)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(71, 18, "Sub Test.M1(filePath As String, fileMode As FileMode)", "New FileStream(filePath + filePath, fileMode)"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
-        public void DisposableObjectNotDisposed_ExceptionPath_Diagnostic()
+        [Theory, WorkItem(1580, "https://github.com/dotnet/roslyn-analyzers/issues/1580")]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void DisposableObjectNotDisposed_ExceptionPath_Diagnostic(DisposeAnalysisKind disposeAnalysisKind)
         {
-            VerifyCSharp(@"
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
+            var source = @"
 using System;
 
 class A : IDisposable
@@ -6086,15 +6629,30 @@ class Test
     {
         throw new NotImplementedException();
     }
-}",
-            // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 17, "void Test.M1()", "new A()"),
-            // Test0.cs(23,17): warning CA2000: In method 'void Test.M2()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(23, 17, "void Test.M2()", "new A()"),
-            // Test0.cs(37,17): warning CA2000: In method 'void Test.M3()', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(37, 17, "void Test.M3()", "new A()"));
+}";
+            var builder = new List<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                builder.AddRange(new[]
+                {
+                    // Test0.cs(16,17): warning CA2000: In method 'void Test.M1()', object created by 'new A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(16, 17, "void Test.M1()", "new A()"),
+                    // Test0.cs(23,17): warning CA2000: In method 'void Test.M2()', object created by 'new A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(23, 17, "void Test.M2()", "new A()"),
+                    // Test0.cs(37,17): warning CA2000: In method 'void Test.M3()', object created by 'new A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetCSharpNotDisposedOnExceptionPathsResultAt(37, 17, "void Test.M3()", "new A()")
+                });
+            }
+            else if (disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled())
+            {
+                builder.Add(
+                    // Test0.cs(23,17): warning CA2000: In method 'void Test.M2()', use recommended dispose pattern to ensure that object created by 'new A()' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                    GetCSharpMayBeNotDisposedResultAt(23, 17, "void Test.M2()", "new A()"));
+            }
 
-            VerifyBasic(@"
+            VerifyCSharp(source, editorConfigFile, builder.ToArray());
+
+            source = @"
 Imports System
 
 Class A
@@ -6138,13 +6696,28 @@ Class Test
         Throw New NotImplementedException()
     End Sub
 End Class
-",
-            // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(15, 17, "Sub Test.M1()", "New A()"),
-            // Test0.vb(21,17): warning CA2000: In method 'Sub Test.M2()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(21, 17, "Sub Test.M2()", "New A()"),
-            // Test0.vb(31,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(31, 17, "Sub Test.M3()", "New A()"));
+";
+            builder.Clear();
+            if (disposeAnalysisKind.AreExceptionPathsEnabled())
+            {
+                builder.AddRange(new[]
+                {
+                    // Test0.vb(15,17): warning CA2000: In method 'Sub Test.M1()', object created by 'New A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetBasicNotDisposedOnExceptionPathsResultAt(15, 17, "Sub Test.M1()", "New A()"),
+                    // Test0.vb(31,17): warning CA2000: In method 'Sub Test.M3()', call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope." was "In method 'Sub Test.M3()', object created by 'New A()' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.
+                    GetBasicNotDisposedOnExceptionPathsResultAt(31, 17, "Sub Test.M3()", "New A()")
+                });
+            }
+
+            if (disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled())
+            {
+                var index = builder.Count == 0 ? 0 : 1;
+                builder.Insert(index,
+                    // Test0.vb(21,17): warning CA2000: In method 'Sub Test.M2()', use recommended dispose pattern to ensure that object created by 'New A()' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                    GetBasicMayBeNotDisposedResultAt(21, 17, "Sub Test.M2()", "New A()"));
+            }
+
+            VerifyBasic(source, editorConfigFile, builder.ToArray());
         }
 
         [Fact]
@@ -6809,14 +7382,14 @@ public class Test
     }
 }
 ",
-            // Test0.cs(20,20): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', refactor the code to ensure that disposable object created by 'new A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(20, 20, "A Test.M1(int flag, bool flag2, bool flag3)", "new A(1)"),
-            // Test0.cs(33,17): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', refactor the code to ensure that disposable object created by 'new A(2)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(33, 17, "A Test.M1(int flag, bool flag2, bool flag3)", "new A(2)"),
+            // Test0.cs(20,20): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', use recommended dispose pattern to ensure that object created by 'new A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(20, 20, "A Test.M1(int flag, bool flag2, bool flag3)", "new A(1)"),
+            // Test0.cs(33,17): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', use recommended dispose pattern to ensure that object created by 'new A(2)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(33, 17, "A Test.M1(int flag, bool flag2, bool flag3)", "new A(2)"),
             // Test0.cs(36,21): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', call System.IDisposable.Dispose on object created by 'new A(3)' before all references to it are out of scope.
             GetCSharpResultAt(36, 21, "A Test.M1(int flag, bool flag2, bool flag3)", "new A(3)"),
-            // Test0.cs(42,25): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', refactor the code to ensure that disposable object created by 'new A(4)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(42, 25, "A Test.M1(int flag, bool flag2, bool flag3)", "new A(4)"));
+            // Test0.cs(42,25): warning CA2000: In method 'A Test.M1(int flag, bool flag2, bool flag3)', use recommended dispose pattern to ensure that object created by 'new A(4)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(42, 25, "A Test.M1(int flag, bool flag2, bool flag3)", "new A(4)"));
 
             VerifyBasic(@"
 Imports System
@@ -6867,14 +7440,14 @@ Public Class Test
     End Function
 End Class
 ",
-            // Test0.vb(21,27): warning CA2000: In method 'Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A', refactor the code to ensure that disposable object created by 'New A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(21, 27, "Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A", "New A(1)"),
-            // Test0.vb(29,17): warning CA2000: In method 'Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A', refactor the code to ensure that disposable object created by 'New A(2)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(29, 17, "Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A", "New A(2)"),
+            // Test0.vb(21,27): warning CA2000: In method 'Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A', use recommended dispose pattern to ensure that object created by 'New A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(21, 27, "Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A", "New A(1)"),
+            // Test0.vb(29,17): warning CA2000: In method 'Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A', use recommended dispose pattern to ensure that object created by 'New A(2)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(29, 17, "Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A", "New A(2)"),
             // Test0.vb(31,21): warning CA2000: In method 'Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A', call System.IDisposable.Dispose on object created by 'New A(3)' before all references to it are out of scope.
             GetBasicResultAt(31, 21, "Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A", "New A(3)"),
-            // Test0.vb(34,25): warning CA2000: In method 'Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A', refactor the code to ensure that disposable object created by 'New A(4)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(34, 25, "Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A", "New A(4)"));
+            // Test0.vb(34,25): warning CA2000: In method 'Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A', use recommended dispose pattern to ensure that object created by 'New A(4)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(34, 25, "Function Test.M1(flag As Integer, flag2 As Boolean, flag3 As Boolean) As A", "New A(4)"));
         }
 
         [Fact]
@@ -7057,9 +7630,15 @@ End Class
 ");
         }
 
-        [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
-        public void DisposableAllocation_AssignedToTuple_Escaped_SpecialCases_NoDiagnostic()
+        [Theory, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void DisposableAllocation_AssignedToTuple_Escaped_SpecialCases_NoDiagnostic(DisposeAnalysisKind disposeAnalysisKind)
         {
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
             VerifyCSharp(@"
 using System;
 
@@ -7122,7 +7701,7 @@ public class Test
         return b;
     }
 }
-");
+", editorConfigFile);
         }
 
         [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
@@ -7495,6 +8074,98 @@ Public Class Test
     End Sub
 End Class
 ", parseOptions: VisualBasicParseOptions.Default.WithLanguageVersion(VisualBasicLanguageVersion.VisualBasic15_3));
+        }
+
+        [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
+        public void DisposableAllocation_DeconstructionAssignmentToTuple_DeconstructMethod_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+
+internal static class KeyValuePairExtensions
+{
+    public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> pair, out TKey key, out TValue value)
+    {
+        key = pair.Key;
+        value = pair.Value;
+    }
+}
+
+class A : IDisposable
+{
+    public A(int i) { }
+    public int X { get; }
+    public void Dispose()
+    {
+    }
+
+    public int M() => 0;
+}
+
+public class Test
+{
+    void M1(IDictionary<A, int> map)
+    {
+        foreach ((A a, _) in map)
+        {
+            var x = new A(1);
+            var y = a.M();
+        }
+    }
+
+    void M2(IDictionary<A, int> map)
+    {
+        foreach (var (a, _) in map)
+        {
+            var x = new A(2);
+            var y = a.M();
+        }
+    }
+
+    void M3(KeyValuePair<A, int> pair, int y)
+    {
+        A a;
+        (a, y) = pair;
+        var x = new A(3);
+    }
+}", parseOptions: CSharpParseOptions.Default.WithLanguageVersion(CSharpLanguageVersion.CSharp7_3),
+    expected: new[] {
+            // Test0.cs(31,21): warning CA2000: In method 'void Test.M1(IDictionary<A, int> map)', call System.IDisposable.Dispose on object created by 'new A(1)' before all references to it are out of scope.
+            GetCSharpResultAt(31, 21, "void Test.M1(IDictionary<A, int> map)", "new A(1)"),
+            // Test0.cs(40,21): warning CA2000: In method 'void Test.M2(IDictionary<A, int> map)', call System.IDisposable.Dispose on object created by 'new A(2)' before all references to it are out of scope.
+            GetCSharpResultAt(40, 21, "void Test.M2(IDictionary<A, int> map)", "new A(2)"),
+            // Test0.cs(49,17): warning CA2000: In method 'void Test.M3(KeyValuePair<A, int> pair, int y)', call System.IDisposable.Dispose on object created by 'new A(3)' before all references to it are out of scope.
+            GetCSharpResultAt(49, 17, "void Test.M3(KeyValuePair<A, int> pair, int y)", "new A(3)")
+    });
+        }
+
+        [Fact, WorkItem(1571, "https://github.com/dotnet/roslyn-analyzers/issues/1571")]
+        public void DisposableAllocation_RefArgument_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading;
+
+class A : IDisposable
+{
+    public A(int i) { }
+    public void Dispose()
+    {
+    }
+}
+
+public class Test
+{
+    private Test _field;
+    public void M1()
+    {
+        Interlocked.CompareExchange(ref _field, null, new Test());
+        var a = new A(1);
+    }
+}",
+            // Test0.cs(19,17): warning CA2000: In method 'void Test.M1()', call System.IDisposable.Dispose on object created by 'new A(1)' before all references to it are out of scope.
+            GetCSharpResultAt(19, 17, "void Test.M1()", "new A(1)"));
         }
 
         [Fact]
@@ -8159,7 +8830,7 @@ class Test
             }
             else
             {
-                a = null;   // Leaked here.
+                a = null;   // Leaked here, needs path sensitive analysis.
             }
         }
         finally
@@ -8276,27 +8947,25 @@ class Test
         }
     }
 }
-",
-            // Test0.cs(17,15): warning CA2000: In method 'void Test.M1(bool flag)', refactor the code to ensure that disposable object created by 'new A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(17, 15, "void Test.M1(bool flag)", "new A(1)"),
-            // Test0.cs(36,17): warning CA2000: In method 'void Test.M2(bool flag)', refactor the code to ensure that disposable object created by 'new A(2)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(36, 17, "void Test.M2(bool flag)", "new A(2)"),
-            // Test0.cs(58,21): warning CA2000: In method 'void Test.M3(bool flag)', refactor the code to ensure that disposable object created by 'new A(3)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(58, 21, "void Test.M3(bool flag)", "new A(3)"),
-            // Test0.cs(83,21): warning CA2000: In method 'void Test.M4(bool flag)', refactor the code to ensure that disposable object created by 'new A(4)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(83, 21, "void Test.M4(bool flag)", "new A(4)"),
-            // Test0.cs(84,21): warning CA2000: In method 'void Test.M4(bool flag)', refactor the code to ensure that disposable object created by 'new A(31)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(84, 21, "void Test.M4(bool flag)", "new A(41)"),
-            // Test0.cs(100,15): warning CA2000: In method 'void Test.M5(bool flag)', refactor the code to ensure that disposable object created by 'new A(5)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(100, 15, "void Test.M5(bool flag)", "new A(5)"),
-            // Test0.cs(120,21): warning CA2000: In method 'void Test.M6(bool flag)', refactor the code to ensure that disposable object created by 'new A(6)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(120, 21, "void Test.M6(bool flag)", "new A(6)"),
-            // Test0.cs(162,21): warning CA2000: In method 'void Test.M8(bool flag1, bool flag2)', refactor the code to ensure that disposable object created by 'new A(8)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(162, 21, "void Test.M8(bool flag1, bool flag2)", "new A(8)"),
-            // Test0.cs(184,15): warning CA2000: In method 'void Test.M9(bool flag)', refactor the code to ensure that disposable object created by 'new A(9)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(184, 15, "void Test.M9(bool flag)", "new A(9)"),
-            // Test0.cs(242,15): warning CA2000: In method 'void Test.M11(bool flag)', refactor the code to ensure that disposable object created by 'new A(11)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetCSharpMayBeDisposedResultAt(242, 15, "void Test.M11(bool flag)", "new A(11)"));
+", GetEditorConfigFile(DisposeAnalysisKind.AllPaths),
+            // Test0.cs(17,15): warning CA2000: In method 'void Test.M1(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(17, 15, "void Test.M1(bool flag)", "new A(1)"),
+            // Test0.cs(36,17): warning CA2000: In method 'void Test.M2(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(2)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(36, 17, "void Test.M2(bool flag)", "new A(2)"),
+            // Test0.cs(58,21): warning CA2000: In method 'void Test.M3(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(3)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(58, 21, "void Test.M3(bool flag)", "new A(3)"),
+            // Test0.cs(83,21): warning CA2000: In method 'void Test.M4(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(4)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(83, 21, "void Test.M4(bool flag)", "new A(4)"),
+            // Test0.cs(84,21): warning CA2000: In method 'void Test.M4(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(41)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(84, 21, "void Test.M4(bool flag)", "new A(41)"),
+            // Test0.cs(100,15): warning CA2000: In method 'void Test.M5(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(5)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(100, 15, "void Test.M5(bool flag)", "new A(5)"),
+            // Test0.cs(120,21): warning CA2000: In method 'void Test.M6(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(6)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(120, 21, "void Test.M6(bool flag)", "new A(6)"),
+            // Test0.cs(184,15): warning CA2000: In method 'void Test.M9(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(9)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(184, 15, "void Test.M9(bool flag)", "new A(9)"),
+            // Test0.cs(242,15): warning CA2000: In method 'void Test.M11(bool flag)', use recommended dispose pattern to ensure that object created by 'new A(11)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(242, 15, "void Test.M11(bool flag)", "new A(11)"));
 
             VerifyBasic(@"
 Imports System
@@ -8508,27 +9177,331 @@ Class Test
         End Try
     End Sub
 End Class
+", GetEditorConfigFile(DisposeAnalysisKind.AllPaths),
+            // Test0.vb(16,22): warning CA2000: In method 'Sub Test.M1(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(16, 22, "Sub Test.M1(flag As Boolean)", "New A(1)"),
+            // Test0.vb(30,17): warning CA2000: In method 'Sub Test.M2(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(2)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(30, 17, "Sub Test.M2(flag As Boolean)", "New A(2)"),
+            // Test0.vb(44,21): warning CA2000: In method 'Sub Test.M3(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(3)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(44, 21, "Sub Test.M3(flag As Boolean)", "New A(3)"),
+            // Test0.vb(61,21): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(4)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(61, 21, "Sub Test.M4(flag As Boolean)", "New A(4)"),
+            // Test0.vb(62,21): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(41)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(62, 21, "Sub Test.M4(flag As Boolean)", "New A(41)"),
+            // Test0.vb(73,22): warning CA2000: In method 'Sub Test.M5(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(5)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(73, 22, "Sub Test.M5(flag As Boolean)", "New A(5)"),
+            // Test0.vb(86,21): warning CA2000: In method 'Sub Test.M6(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(6)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(86, 21, "Sub Test.M6(flag As Boolean)", "New A(6)"),
+            // Test0.vb(131,22): warning CA2000: In method 'Sub Test.M9(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(9)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(131, 22, "Sub Test.M9(flag As Boolean)", "New A(9)"),
+            // Test0.vb(174,22): warning CA2000: In method 'Sub Test.M11(flag As Boolean)', use recommended dispose pattern to ensure that object created by 'New A(11)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetBasicMayBeNotDisposedResultAt(174, 22, "Sub Test.M11(flag As Boolean)", "New A(11)"));
+        }
+
+        [Fact]
+        public void DisposableObjectsCopyValues_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B
+{
+    private readonly A _a;
+    public B(A a1, A a2)
+    {
+        _a = a1;
+    }
+
+    public void M2(A param2)
+    {
+        if (param2 == null)
+        {
+            throw new ArgumentNullException(nameof(param2));
+        }
+    }
+}
+
+class Test
+{
+    void M1(A param1)
+    {
+        using (var a = new A())
+        {
+            var b = new B(a, param1);
+            b.M2(param1);
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public void DisposableObjectsCopyValues_NoDiagnostic_02()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class DataflowOperationVisitor<TContext>
+    where TContext: class
+{
+    public TContext DataFlowAnalysisContext { get; }
+    public DataflowOperationVisitor(TContext t)
+    {
+        DataFlowAnalysisContext = t;
+    }
+}
+
+class PointsToDataflowOperationVisitor : DataflowOperationVisitor<A>
+{
+    public PointsToDataflowOperationVisitor(A context)
+        : base(context)
+    {
+    }
+}
+
+class PointsToAnalysis : DataflowAnalysis<A>
+{
+    public PointsToAnalysis(PointsToDataflowOperationVisitor visitor)
+        : base (visitor)
+    {
+    }
+
+    void M1(A param1)
+    {
+        using (var a = new A())
+        {
+            var visitor = new PointsToDataflowOperationVisitor(param1);
+            var pointsToAnalysis = new PointsToAnalysis(visitor);
+            pointsToAnalysis.GetOrComputeResultCore(param1);
+        }
+    }
+}
+
+class DataflowAnalysis<TContext>
+    where TContext: class
+{
+    private TContext context;
+    public DataflowOperationVisitor<TContext> OperationVisitor { get; }
+    public DataflowAnalysis(DataflowOperationVisitor<TContext> visitor)
+    {
+        OperationVisitor = visitor;
+    }
+
+    protected void GetOrComputeResultCore(TContext param1)
+    {
+        if (param1 == null)
+        {
+            throw new ArgumentNullException(nameof(param1));
+        }
+
+        param1 = context;
+    }
+}
+");
+        }
+
+        [Theory]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void ExceptionFromCatch_Diagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        {
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreExceptionPathsAndMayBeNotDisposedViolationsEnabled())
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.cs(15,17): warning CA2000: In method 'void C.M()', use recommended dispose pattern to ensure that object created by 'new A()' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                    GetCSharpMayBeNotDisposedOnExceptionPathsResultAt(15, 17, "void C.M()", "new A()")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class C
+{
+    public void M()
+    {
+        var a = new A();
+        try
+        {
+            int.Parse(null);
+            a.Dispose();
+        }
+        catch (Exception ex)
+        {
+            throw new MyException(ex);
+        }
+    }
+}
+
+class MyException: Exception
+{
+    private const string MyExceptionMessage = nameof(MyExceptionMessage);
+    public MyException(Exception inner)
+        : base (MyExceptionMessage, inner)
+    {
+    }
+}
+", GetEditorConfigFile(disposeAnalysisKind), expectedDiagnostics);
+        }
+
+        [Fact]
+        public void InvocationOfLambdaCachedOntoField_InterproceduralAnalysis()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    private readonly Func<int> _getInt;
+    public A(Func<int> getInt)
+    {
+        _getInt = getInt;
+    }
+
+    private static A Create()
+    {
+        var a = new A(() => 0);
+        return a;
+    }
+
+    public static int CreateAndExecute()
+    {
+        var a = Create();
+        return a.Execute();
+    }
+
+    private int Execute()
+    {
+        return _getInt();
+    }
+
+    public void Dispose()
+    {
+    }
+}
+");
+        }
+
+        [Fact]
+        public void InvocationOfLocalFunctionCachedOntoField_InterproceduralAnalysis()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    private readonly Func<int> _getInt;
+    public A(Func<int> getInt)
+    {
+        _getInt = getInt;
+    }
+
+    private static A Create()
+    {
+        var a = new A(Create);
+        return a;
+
+        int Create() => 0;
+    }
+
+    public static int CreateAndExecute()
+    {
+        var a = Create();
+        return a.Execute();
+    }
+
+    private int Execute()
+    {
+        return _getInt();
+    }
+
+    public void Dispose()
+    {
+    }
+}
+");
+        }
+
+        [Fact]
+        public void InvocationOfMethodDelegate_PriorInterproceduralCallChain()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    private readonly Func<int> _coreExecute;
+    public A()
+    {
+        _coreExecute = this.CoreExecute;
+    }
+
+    private int CoreExecute() => 0;
+
+    private int Execute()
+    {
+        return _coreExecute();
+    }
+
+    public static int CreateAndExecute()
+    {
+        var a = new A();
+        return a.Execute();
+    }
+
+    public void Dispose()
+    {
+    }
+}
+");
+        }
+
+        [Fact]
+        public void RecursiveInvocationWithConditionalAccess_InterproceduralAnalysis()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void M(A a1)
+    {
+        var a2 = new A();
+        a1?.M(a2);
+    }
+
+    public void Dispose()
+    {
+    }
+}
 ",
-            // Test0.vb(16,22): warning CA2000: In method 'Sub Test.M1(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(1)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(16, 22, "Sub Test.M1(flag As Boolean)", "New A(1)"),
-            // Test0.vb(30,17): warning CA2000: In method 'Sub Test.M2(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(2)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(30, 17, "Sub Test.M2(flag As Boolean)", "New A(2)"),
-            // Test0.vb(44,21): warning CA2000: In method 'Sub Test.M3(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(3)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(44, 21, "Sub Test.M3(flag As Boolean)", "New A(3)"),
-            // Test0.vb(61,21): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(4)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(61, 21, "Sub Test.M4(flag As Boolean)", "New A(4)"),
-            // Test0.vb(62,21): warning CA2000: In method 'Sub Test.M4(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(41)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(62, 21, "Sub Test.M4(flag As Boolean)", "New A(41)"),
-            // Test0.vb(73,22): warning CA2000: In method 'Sub Test.M5(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(5)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(73, 22, "Sub Test.M5(flag As Boolean)", "New A(5)"),
-            // Test0.vb(86,21): warning CA2000: In method 'Sub Test.M6(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(6)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(86, 21, "Sub Test.M6(flag As Boolean)", "New A(6)"),
-            // Test0.vb(116,21): warning CA2000: In method 'Sub Test.M8(flag1 As Boolean, flag2 As Boolean)', refactor the code to ensure that disposable object created by 'New A(8)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(116, 21, "Sub Test.M8(flag1 As Boolean, flag2 As Boolean)", "New A(8)"),
-            // Test0.vb(131,22): warning CA2000: In method 'Sub Test.M9(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(9)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(131, 22, "Sub Test.M9(flag As Boolean)", "New A(9)"),
-            // Test0.vb(174,22): warning CA2000: In method 'Sub Test.M11(flag As Boolean)', refactor the code to ensure that disposable object created by 'New A(11)' is disposed on all paths where references to it go out of scope. If possible, wrap the creation within a 'using' statement or declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
-            GetBasicMayBeDisposedResultAt(174, 22, "Sub Test.M11(flag As Boolean)", "New A(11)"));
+            // Test0.cs(8,18): warning CA2000: In method 'void A.M(A a1)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(8, 18, "void A.M(A a1)", "new A()"));
         }
     }
 }

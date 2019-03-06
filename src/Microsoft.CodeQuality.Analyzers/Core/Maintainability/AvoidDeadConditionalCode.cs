@@ -81,8 +81,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
                             var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
                                     operationBlockContext.Options, AlwaysTrueFalseOrNullRule, operationBlockContext.CancellationToken,
-                                    out var copyAnalysisResult, out var pointsToAnalysisResult);
-                            Debug.Assert(copyAnalysisResult != null);
+                                    out var copyAnalysisResultOpt, out var pointsToAnalysisResult,
+                                    performCopyAnalysisIfNotUserConfigured: false); // TODO: Enable copy analysis by default.
+
                             Debug.Assert(pointsToAnalysisResult != null);
 
                             foreach (var operation in cfg.DescendantOperations())
@@ -169,10 +170,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                         return predicateKind;
                                     }
 
-                                    predicateKind = copyAnalysisResult.GetPredicateKind(operation);
-                                    if (predicateKind != PredicateValueKind.Unknown)
+                                    if (copyAnalysisResultOpt != null)
                                     {
-                                        return predicateKind;
+                                        predicateKind = copyAnalysisResultOpt.GetPredicateKind(operation);
+                                        if (predicateKind != PredicateValueKind.Unknown)
+                                        {
+                                            return predicateKind;
+                                        }
                                     }
 
                                     predicateKind = valueContentAnalysisResult.GetPredicateKind(operation);

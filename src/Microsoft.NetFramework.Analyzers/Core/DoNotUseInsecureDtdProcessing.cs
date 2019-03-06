@@ -19,7 +19,7 @@ namespace Microsoft.NetFramework.Analyzers
     public sealed class DoNotUseInsecureDtdProcessingAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA3075";
-        private const string HelpLink = "http://aka.ms/CA3075";
+        private const string HelpLink = "https://docs.microsoft.com/visualstudio/code-quality/ca3075-insecure-dtd-processing";
 
         internal static DiagnosticDescriptor RuleDoNotUseInsecureDtdProcessing = CreateDiagnosticDescriptor(
                                                                                     SecurityDiagnosticHelpers.GetLocalizableResourceString(nameof(MicrosoftNetFrameworkAnalyzersResources.DoNotUseInsecureDtdProcessingGenericMessage)),
@@ -284,19 +284,10 @@ namespace Microsoft.NetFramework.Analyzers
                             return;
                         }
 
-                        if (!_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out XmlReaderSettingsEnvironment env))
-                        {
-                            // symbol for settings is not found => passed in without any change => assume insecure
-                            Diagnostic diag = Diagnostic.Create(
-                                RuleDoNotUseInsecureDtdProcessing,
-                                expressionSyntax.GetLocation(),
-                                SecurityDiagnosticHelpers.GetLocalizableResourceString(
-                                    nameof(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateInsecureInputMessage)
-                                )
-                            );
-                            context.ReportDiagnostic(diag);
-                        }
-                        else if (!env.IsDtdProcessingDisabled && !(env.IsSecureResolver && env.IsMaxCharactersFromEntitiesLimited))
+                        // If we have no XmlReaderSettingsEnvironment, then we don't know.
+                        if (_xmlReaderSettingsEnvironments.TryGetValue(settingsSymbol, out XmlReaderSettingsEnvironment env)
+                            && !env.IsDtdProcessingDisabled
+                            && !(env.IsSecureResolver && env.IsMaxCharactersFromEntitiesLimited))
                         {
                             Diagnostic diag;
                             if (env.IsConstructedInCodeBlock)
@@ -319,6 +310,7 @@ namespace Microsoft.NetFramework.Analyzers
                                     )
                                 );
                             }
+
                             context.ReportDiagnostic(diag);
                         }
                     }

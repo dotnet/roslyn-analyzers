@@ -9446,5 +9446,28 @@ class A : IDisposable
 }
 ");
         }
+
+        [Fact]
+        public void RecursiveInvocationWithConditionalAccess_InterproceduralAnalysis()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void M(A a1)
+    {
+        var a2 = new A();
+        a1?.M(a2);
+    }
+
+    public void Dispose()
+    {
+    }
+}
+",
+            // Test0.cs(8,18): warning CA2000: In method 'void A.M(A a1)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(8, 18, "void A.M(A a1)", "new A()"));
+        }
     }
 }

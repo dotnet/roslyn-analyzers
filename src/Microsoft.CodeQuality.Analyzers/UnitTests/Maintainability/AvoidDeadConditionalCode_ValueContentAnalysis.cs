@@ -2235,5 +2235,22 @@ class Test
 }
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void LogicalOrWrappedInsideParenthesisAndUnary()
+        {
+            VerifyBasic(@"
+Class Test
+    Public Sub M(x1 As Boolean, x2 As Boolean, t As Test)
+        Dim y = Not (x1 Or x2)
+        t?.M2()
+    End Sub
+
+    Private Sub M2()
+    End Sub
+End Class
+");
+        }
     }
 }

@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
-                            DrawGraph(symbolAnalysisContext.Symbol);
+                            DrawGraph(symbolAnalysisContext.Symbol as ITypeSymbol);
                         }, SymbolKind.NamedType);
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -110,7 +110,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     /// Traverse from point to its descendants, save the information into a directed graph.
                     /// </summary>
                     /// <param name="point">The initial point</param>
-                    void DrawGraph(ISymbol point)
+                    void DrawGraph(ITypeSymbol point)
                     {
                         // If the point has been visited, return;
                         // otherwise, add it to the graph and mark it as visited.
@@ -119,59 +119,63 @@ namespace Microsoft.NetCore.Analyzers.Security
                             return;
                         }
 
-                        if (point is INamedTypeSymbol namedTypePoint)
+                        foreach (var associatedTypePoint in GetAssociatedTypes(point))
                         {
-                            // 1. When the point is of generic type, its children point can be the type arguments of the generic type.
-                            if (namedTypePoint.IsGenericType)
+                            if (associatedTypePoint == null ||
+                                associatedTypePoint.Equals(point))
                             {
-                                foreach (var arg in namedTypePoint.TypeArguments)
+                                continue;
+                            }
+
+                            AddLineToBothGraphs(point, associatedTypePoint);
+                            DrawGraph(associatedTypePoint);
+                        }
+
+                        if (point.IsInSource() &&
+                            point.HasAttribute(serializableAttributeTypeSymbol))
+                        {
+                            var fieldPoints = point.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAttribute(nonSerializedAttribute) &&
+                                                                                                        !s.IsStatic);
+
+                            foreach (var fieldPoint in fieldPoints)
+                            {
+                                var fieldTypePoint = fieldPoint.Type;
+                                AddLineToBothGraphs(point, fieldPoint);
+                                AddLineToBothGraphs(fieldPoint, fieldTypePoint);
+                                DrawGraph(fieldTypePoint);
+                            }
+                        }
+                    }
+
+                    HashSet<ITypeSymbol> GetAssociatedTypes(ITypeSymbol type)
+                    {
+                        var result = new HashSet<ITypeSymbol>();
+
+                        if (type is INamedTypeSymbol namedTypeSymbol)
+                        {
+                            // 1. Type arguments of generic type.
+                            if (namedTypeSymbol.IsGenericType)
+                            {
+                                foreach (var arg in namedTypeSymbol.TypeArguments)
                                 {
-                                    AddLineToBothGraphs(point, arg);
-                                    DrawGraph(arg);
+                                    result.Add(arg);
                                 }
                             }
 
-                            // 2. When the point is a INamedTypeSymbol, its children point can be the fields of the type that constructs the point.
-                            var constructedFrom = namedTypePoint.ConstructedFrom;
-
-                            if (!constructedFrom.HasAttribute(serializableAttributeTypeSymbol))
-                            {
-                                return;
-                            }
-
-                            if (constructedFrom.IsInSource())
-                            {
-                                var fields = constructedFrom.GetMembers().OfType<IFieldSymbol>().Where(s => !s.HasAttribute(nonSerializedAttribute) &&
-                                                                                                            !s.IsStatic);
-
-                                foreach (var field in fields)
-                                {
-                                    AddLineToBothGraphs(point, field);
-                                    DrawGraph(field);
-                                }
-                            }
+                            // 2. The type it constructed from.
+                            var constructedFrom = namedTypeSymbol.ConstructedFrom;
+                            result.Add(constructedFrom);
                         }
-
-                        if (point is IArrayTypeSymbol arrayTypePoint)
+                        else if (type is IArrayTypeSymbol arrayTypeSymbol)
                         {
-                            // 3. When the point is a IArrayTypeSymbol, its children point can be element type of the array.
-                            var elementType = arrayTypePoint.ElementType;
-                            AddLineToBothGraphs(arrayTypePoint, elementType);
-                            DrawGraph(elementType);
-
-                            // 4. When the point is a IArrayTypeSymbol, its children point can be the array type itself.
-                            var baseType = arrayTypePoint.BaseType;
-                            AddLineToBothGraphs(arrayTypePoint, baseType);
-                            DrawGraph(baseType);
+                            // 3. Element type of the array.
+                            result.Add(arrayTypeSymbol.ElementType);
                         }
 
-                        // 5. When the point is a IFieldSymbol, its children point can be the type of the field.
-                        if (point is IFieldSymbol fieldSymbolPoint)
-                        {
-                            var fieldType = fieldSymbolPoint.Type;
-                            AddLineToBothGraphs(point, fieldType);
-                            DrawGraph(fieldType);
-                        }
+                        // 4. Base type.
+                        result.Add(type.BaseType);
+
+                        return result;
                     }
 
                     /// <summary>

@@ -608,6 +608,98 @@ class TestClass
         }
 
         [Fact]
+        public void TestParentClassSubclassCirlceDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class TestClassA
+{
+    private TestClassB testClassB;
+
+    public void TestMethod()
+    {
+    }
+}
+
+[Serializable()]
+class TestClassB : TestClassA
+{
+    private int b;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassB"));
+
+            VerifyBasic(@"
+Imports System
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClassA
+        Private testClassB As TestClassB
+        
+        Sub TestMethod()
+        End Sub
+    End Class
+
+    <Serializable()> _
+    Class TestClassB
+        Inherits TestClassA
+
+        Private b As Integer
+
+        Sub TestMethod()
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(7, 17, DoNotReferSelfInSerializableClass.Rule, "testClassB"));
+        }
+
+        [Fact]
+        public void TestParentClassIndirectSubclassCirlceDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+[Serializable()]
+class TestClassA
+{
+    private TestClassB testClassB;
+
+    public void TestMethod()
+    {
+    }
+}
+
+[Serializable()]
+class TestClassB : TestClassA
+{   
+    private TestClassC testClassC;
+
+    public void TestMethod()
+    {
+    }
+}
+
+[Serializable()]
+class TestClassC : TestClassB
+{   
+    private TestClassA testClassA;
+
+    public void TestMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(7, 24, DoNotReferSelfInSerializableClass.Rule, "testClassB"),
+            GetCSharpResultAt(17, 24, DoNotReferSelfInSerializableClass.Rule, "testClassC"),
+            GetCSharpResultAt(27, 24, DoNotReferSelfInSerializableClass.Rule, "testClassA"));
+        }
+
+        [Fact]
         public void TestWithoutSelfReferNoDiagnostic()
         {
             VerifyCSharp(@"

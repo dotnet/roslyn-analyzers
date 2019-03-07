@@ -2252,5 +2252,67 @@ Class Test
 End Class
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void DoWhileLoopWithSwitch()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Runtime.CompilerServices
+
+Friend Module TypeSymbolExtensions
+    <Extension()>
+    Public Function VisitType(type As TypeSymbol, predicate As Func(Of TypeSymbol, Boolean)) As TypeSymbol
+        Dim current As TypeSymbol = type
+
+        Do
+            Select Case current.TypeKind
+                Case TypeKind.Class
+            End Select
+
+            If predicate(current) Then
+                Return current
+            End If
+
+            Select Case current.TypeKind
+                Case TypeKind.Array
+                    current = DirectCast(current, ArrayTypeSymbol).ElementType
+                    Continue Do
+            End Select
+        Loop
+    End Function
+End Module
+
+Class TypeSymbol
+    Public ReadOnly Property TypeKind As TypeKind
+End Class
+
+Class ArrayTypeSymbol
+    Inherits TypeSymbol
+    Public ReadOnly Property ElementType As TypeSymbol
+End Class
+
+Enum TypeKind
+    [Class]
+    Array
+End Enum
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ConditionalAccessInConditionalAndOperand()
+        {
+            VerifyBasic(@"
+Class Test
+    Public ReadOnly Property Flag As Boolean
+    Public Sub M(t As Test, flag As Boolean)
+        If t?.Flag AndAlso flag Then
+        End If
+    End Sub
+End Class
+");
+        }
     }
 }

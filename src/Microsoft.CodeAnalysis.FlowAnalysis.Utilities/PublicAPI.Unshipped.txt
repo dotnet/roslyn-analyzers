@@ -16,6 +16,7 @@ Microsoft.CodeAnalysis.FlowAnalysis.BranchWithInfo.Kind.get -> Microsoft.CodeAna
 Microsoft.CodeAnalysis.FlowAnalysis.BranchWithInfo.LeavingRegionFlowCaptures.get -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.FlowAnalysis.CaptureId>
 Microsoft.CodeAnalysis.FlowAnalysis.BranchWithInfo.LeavingRegionLocals.get -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.ILocalSymbol>
 Microsoft.CodeAnalysis.FlowAnalysis.BranchWithInfo.LeavingRegions.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegion>
+Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowBranchExtensions
 Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraphExtensions
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractAnalysisData
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractAnalysisData.AbstractAnalysisData() -> void
@@ -582,6 +583,7 @@ static Microsoft.CodeAnalysis.FlowAnalysis.BasicBlockExtensions.IsFirstBlockOfFi
 static Microsoft.CodeAnalysis.FlowAnalysis.BasicBlockExtensions.IsFirstBlockOfRegionKind(this Microsoft.CodeAnalysis.FlowAnalysis.BasicBlock basicBlock, Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegionKind regionKind, out Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegion region) -> bool
 static Microsoft.CodeAnalysis.FlowAnalysis.BasicBlockExtensions.IsLastBlockOfFinally(this Microsoft.CodeAnalysis.FlowAnalysis.BasicBlock basicBlock, out Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegion finallyRegion) -> bool
 static Microsoft.CodeAnalysis.FlowAnalysis.BasicBlockExtensions.IsLastBlockOfRegionKind(this Microsoft.CodeAnalysis.FlowAnalysis.BasicBlock basicBlock, Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegionKind regionKind, out Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegion region) -> bool
+static Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowBranchExtensions.IsBackEdge(this Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowBranch controlFlowBranch) -> bool
 static Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraphExtensions.DescendantOperations(this Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraph cfg) -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.IOperation>
 static Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraphExtensions.DescendantOperations<T>(this Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraph cfg, Microsoft.CodeAnalysis.OperationKind operationKind) -> System.Collections.Generic.IEnumerable<T>
 static Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraphExtensions.GetEntry(this Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowGraph cfg) -> Microsoft.CodeAnalysis.FlowAnalysis.BasicBlock

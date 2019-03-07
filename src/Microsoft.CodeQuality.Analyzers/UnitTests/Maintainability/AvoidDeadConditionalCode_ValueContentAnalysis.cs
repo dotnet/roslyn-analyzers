@@ -2314,5 +2314,73 @@ Class Test
 End Class
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void LoopWithMethodInvocationInConditional()
+        {
+            VerifyBasic(@"
+Imports System
+
+Class Test
+    Public Function GetNextDirective(predicate As Func(Of SyntaxNode, Boolean), token As SyntaxToken, d As SyntaxNode) As SyntaxNode
+        Do While (token.Kind <> SyntaxKind.None)
+            If predicate(d) Then
+                Return d
+            End If
+        Loop
+        Return Nothing
+    End Function
+End Class
+
+Class SyntaxNode
+End Class
+
+Structure SyntaxToken
+    Public Property Kind As SyntaxKind
+End Structure
+
+Enum SyntaxKind
+    None
+    Kind1
+End Enum
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void LoopWithGotoTargetBeforeLoop()
+        {
+            VerifyCSharp(@"
+class A
+{
+    public static A M(int? x, A[] listOfA, A a)
+    {
+    RETRY:
+        if (a == null)
+        {
+            return null;
+        }
+
+        foreach (var element in listOfA)
+        {
+            if (x != 1)
+            {
+                goto RETRY;
+            }
+        }
+
+        return a;
+    }
+
+    private Kind Kind { get; }
+}
+
+enum Kind
+{
+    Kind1,
+    Kind2
+}");
+        }
     }
 }

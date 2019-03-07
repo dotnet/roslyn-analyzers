@@ -24,10 +24,7 @@
   <Rules AnalyzerId="Microsoft.CodeAnalysis.Features" RuleNamespace="Microsoft.CodeAnalysis.Features">
     <Rule Id="IDE0051" Action="Warning" /> <!-- Remove unused private members -->
     <Rule Id="IDE0052" Action="Warning" /> <!-- Remove unread private members -->
-    
-    <!-- Fix Formatting - default to Info severity for typing.
-         Overridden to Warning severity in build-only ruleset. -->
-    <Rule Id="IDE0055" Action="Info" />
+    <Rule Id="IDE0055" Action="Warning" /> <!-- Fix Formatting -->
   </Rules>
 
 </RuleSet>

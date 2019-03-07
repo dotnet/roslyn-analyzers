@@ -14,6 +14,41 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         [Fact]
+        public async Task DefaultXmlReaderSettingsInStaticFieldShouldNotGenerateDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Xml;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        private static readonly XmlReaderSettings Settings = new XmlReaderSettings();
+
+        public void TestMethod(string path)
+        {
+            XmlReader reader = XmlReader.Create(path, Settings);
+        }
+    }
+}
+"
+            );
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Xml
+
+Namespace TestNamespace
+    Public Class TestClass
+        Private Shared ReadOnly Settings As New XmlReaderSettings()
+
+        Public Sub TestMethod(path As String)
+            Dim reader As XmlReader = XmlReader.Create(path, Settings)
+        End Sub
+    End Class
+End Namespace");
+        }
+
+        [Fact]
         public async Task DefaultXmlReaderSettingsShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -29,39 +30,56 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var diagnostic = context.Diagnostics[0];
-            var codeAction = CodeAction.Create("Use indexer", c => UseCollectionDirectly(context.Document, context.Span, c));
-            context.RegisterCodeFix(codeAction, diagnostic);
+            // Only one diagnostic expected 
+            Diagnostic diagnostic = context.Diagnostics.Single();
 
-            // Fixer not yet implemented.
+            // The fixer is only implemented for "Enumerable.First"
+            if (!diagnostic.Properties.TryGetValue("method", out var method) || method != "First")
+            {
+                return Task.CompletedTask;
+            }
+
+            string title = SystemRuntimeAnalyzersResources.UseIndexerInstead;
+
+            context.RegisterCodeFix(new MyCodeAction(title,
+                                        async ct => await UseCollectionDirectly(context.Document, context.Span, ct).ConfigureAwait(false),
+                                        equivalenceKey: title),
+                                    diagnostic);
+
             return Task.CompletedTask;
-
         }
 
-        private async Task<Document> UseCollectionDirectly(Document document, TextSpan span, CancellationToken c)
+        private async Task<Document> UseCollectionDirectly(Document document, TextSpan span, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(c).ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(c).ConfigureAwait(false);
+            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxNode invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
+            if (!(invocationNode is InvocationExpressionSyntax))
+            {
+                return document;
+            }
 
-            var invocationSyntax = GetSyntaxOfType<InvocationExpressionSyntax>(syntaxRoot.FindNode(span));
-            var invocationOp = (IInvocationOperation)semanticModel.GetOperation(invocationSyntax);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            //implemented for "Enumerable.First" only
-            if (invocationOp.TargetMethod.Name != "First")
+            var invocationOp = semanticModel.GetOperation(invocationNode) as IInvocationOperation;
+            if (invocationOp == null)
             {
                 return document;
             }
 
             var collectionSyntax = GetSyntaxOfType<ExpressionSyntax>(invocationOp.Arguments[0].Syntax);
+            if (collectionSyntax == null)
+            {
+                return document;
+            }
 
-            var generator = SyntaxGenerator.GetGenerator(document);
-            var trailing = collectionSyntax.GetTrailingTrivia();
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxTriviaList trailing = collectionSyntax.GetTrailingTrivia();
             collectionSyntax = collectionSyntax.WithTrailingTrivia(SyntaxTriviaList.Empty);
-            var indexSyntax = generator.LiteralExpression(0);
-            var elementAccessSyntax = generator.ElementAccessExpression(collectionSyntax, indexSyntax).WithTrailingTrivia(trailing);
+            SyntaxNode indexNode = generator.LiteralExpression(0);
+            SyntaxNode elementAccessNode = generator.ElementAccessExpression(collectionSyntax, indexNode).WithTrailingTrivia(trailing);
 
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(invocationSyntax, elementAccessSyntax);
-            return document.WithSyntaxRoot(newSyntaxRoot);
+            SyntaxNode newRoot = root.ReplaceNode(invocationNode, elementAccessNode);
+            return document.WithSyntaxRoot(newRoot);
         }
 
         private T GetSyntaxOfType<T>(SyntaxNode node)
@@ -74,6 +92,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     .First();
             }
             return result;
+        }
+
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
+            {
+            }
         }
     }
 }

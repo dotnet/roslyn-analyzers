@@ -84,7 +84,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation()));
+                var properties = new Dictionary<string, string> { ["method"] = invocation.TargetMethod.Name }.ToImmutableDictionary();
+                operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation(), properties));
             }, OperationKind.Invocation);
         }
 

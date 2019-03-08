@@ -2382,5 +2382,57 @@ enum Kind
     Kind2
 }");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ConditionalAccess_OperationNone()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Xml.Linq
+
+Class Test
+    Public Sub M(arg As XElement)
+        Dim x = If(arg.@name, """")
+    End Sub
+End Class
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void Assignment_OperationNone()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Xml.Linq
+
+Class Test
+    Public Sub M(arg As XElement, arg2 As XElement)
+        Dim x = If(arg, arg2)
+        Dim a = arg.@name
+        arg.@name = """"
+    End Sub
+End Class
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ConditionalExpression_OperationNone()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Xml.Linq
+
+Class Test
+    Public Sub M(arg As XElement, arg2 As XElement)
+        Dim x = If(arg, arg2)
+        If arg.@name = """" Then
+        End If
+    End Sub
+End Class
+");
+        }
     }
 }

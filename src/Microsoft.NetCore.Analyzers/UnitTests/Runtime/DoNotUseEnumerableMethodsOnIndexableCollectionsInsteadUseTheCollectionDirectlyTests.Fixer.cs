@@ -130,6 +130,8 @@ class C
         [Fact]
         public void CA1826FixEnumerableFirstMethodChainCallWrongFormattingCSharp()
         {
+            //this unit test documents a problematic edge case which needs to be discussed and addressed
+
             VerifyCSharpFix(@"
 using System.Linq;
 using System.Collections.Generic;
@@ -173,8 +175,10 @@ class C
         }
 
         [Fact]
-        public void CA1826FixEnumerableFirsProblematicSyntaxCallCSharp()
+        public void CA1826FixEnumerableFirstProblematicSyntaxCallCSharp()
         {
+            //this unit test documents a problematic edge case which needs to be discussed and addressed
+
             VerifyCSharpFix(@"
 using System.Linq;
 using System.Collections.Generic;
@@ -205,7 +209,7 @@ class C
         return new List<int> { 1, 2, 3 };
     }
 }
-", allowNewCompilerDiagnostics: true);
+", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
         }
     }
 }

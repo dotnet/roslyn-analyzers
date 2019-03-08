@@ -6,6 +6,9 @@
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
     <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/1378 -->
     <Rule Id="CA2222" Action="None" />
+
+    <!-- ValidateArgumentsOfPublicMethods - only useful for libraries with supported public API surface, we don't have any -->
+    <Rule Id="CA1062" Action="None" />
   </Rules>
 
   <!-- TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/965 has been fixed. -->

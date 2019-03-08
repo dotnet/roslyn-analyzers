@@ -60,7 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     {
                         if (method.ReturnsVoid &&
                             operationBlockStartContext.Options.GetBoolOptionValue(
-                                optionName: EditorConfigOptionNames.SkipAsyncVoidMethods,
+                                optionName: EditorConfigOptionNames.ExcludeAsyncVoidMethods,
                                 rule: Rule,
                                 defaultValue: false,
                                 cancellationToken: operationBlockStartContext.CancellationToken))

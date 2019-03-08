@@ -144,6 +144,15 @@
   <data name="DoNotDisableCertificateValidationMessage" xml:space="preserve">
     <value>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</value>
   </data>
+  <data name="DoNotDisableRequestValidation" xml:space="preserve">
+    <value>Do Not Disable Request Validation</value>
+  </data>
+  <data name="DoNotDisableRequestValidationDescription" xml:space="preserve">
+    <value>Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</value>
+  </data>
+  <data name="DoNotDisableRequestValidationMessage" xml:space="preserve">
+    <value>The method {0} has request validation disabled</value>
+  </data>
   <data name="DoNotDisableSchUseStrongCrypto" xml:space="preserve">
     <value>Do Not Disable SChannel Use of Strong Crypto</value>
   </data>

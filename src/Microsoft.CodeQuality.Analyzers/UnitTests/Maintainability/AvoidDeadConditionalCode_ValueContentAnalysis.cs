@@ -2423,15 +2423,38 @@ End Class
         {
             VerifyBasic(@"
 Imports System
-Imports System.Xml.Linq
+Imports System.Linq
 
 Class Test
-    Public Sub M(arg As XElement, arg2 As XElement)
-        Dim x = If(arg, arg2)
-        If arg.@name = """" Then
-        End If
-    End Sub
+    Public Function M(ifNode As SingleLineIfStatementSyntax) As Boolean
+        Return TypeOf ifNode.Parent IsNot SingleLineLambdaExpressionSyntax AndAlso
+                Not ifNode.Statements.Any(Function(n) n.IsKind(SyntaxKind.Kind1)) AndAlso
+                Not If(ifNode.ElseClause?.Statements.Any(Function(n) n.IsKind(SyntaxKind.Kind1)), False)
+    End Function
 End Class
+
+Class SingleLineIfStatementSyntax
+    Inherits SyntaxNode
+    Public ReadOnly Property Statements As SyntaxNode()
+    Public ReadOnly Property ElseClause As SingleLineIfStatementSyntax
+End Class
+
+Class SingleLineLambdaExpressionSyntax
+    Inherits SyntaxNode
+End Class
+
+Class SyntaxNode
+    Public ReadOnly Property Parent As SyntaxNode
+    Public Function IsKind(kind As SyntaxKind) As Boolean
+        Return True
+    End Function
+End Class
+
+Enum SyntaxKind
+    None
+    Kind1
+    Kind2
+End Enum
 ");
         }
     }

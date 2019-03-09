@@ -2252,5 +2252,210 @@ Class Test
 End Class
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void DoWhileLoopWithSwitch()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Runtime.CompilerServices
+
+Friend Module TypeSymbolExtensions
+    <Extension()>
+    Public Function VisitType(type As TypeSymbol, predicate As Func(Of TypeSymbol, Boolean)) As TypeSymbol
+        Dim current As TypeSymbol = type
+
+        Do
+            Select Case current.TypeKind
+                Case TypeKind.Class
+            End Select
+
+            If predicate(current) Then
+                Return current
+            End If
+
+            Select Case current.TypeKind
+                Case TypeKind.Array
+                    current = DirectCast(current, ArrayTypeSymbol).ElementType
+                    Continue Do
+            End Select
+        Loop
+    End Function
+End Module
+
+Class TypeSymbol
+    Public ReadOnly Property TypeKind As TypeKind
+End Class
+
+Class ArrayTypeSymbol
+    Inherits TypeSymbol
+    Public ReadOnly Property ElementType As TypeSymbol
+End Class
+
+Enum TypeKind
+    [Class]
+    Array
+End Enum
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ConditionalAccessInConditionalAndOperand()
+        {
+            VerifyBasic(@"
+Class Test
+    Public ReadOnly Property Flag As Boolean
+    Public Sub M(t As Test, flag As Boolean)
+        If t?.Flag AndAlso flag Then
+        End If
+    End Sub
+End Class
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void LoopWithMethodInvocationInConditional()
+        {
+            VerifyBasic(@"
+Imports System
+
+Class Test
+    Public Function GetNextDirective(predicate As Func(Of SyntaxNode, Boolean), token As SyntaxToken, d As SyntaxNode) As SyntaxNode
+        Do While (token.Kind <> SyntaxKind.None)
+            If predicate(d) Then
+                Return d
+            End If
+        Loop
+        Return Nothing
+    End Function
+End Class
+
+Class SyntaxNode
+End Class
+
+Structure SyntaxToken
+    Public Property Kind As SyntaxKind
+End Structure
+
+Enum SyntaxKind
+    None
+    Kind1
+End Enum
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void LoopWithGotoTargetBeforeLoop()
+        {
+            VerifyCSharp(@"
+class A
+{
+    public static A M(int? x, A[] listOfA, A a)
+    {
+    RETRY:
+        if (a == null)
+        {
+            return null;
+        }
+
+        foreach (var element in listOfA)
+        {
+            if (x != 1)
+            {
+                goto RETRY;
+            }
+        }
+
+        return a;
+    }
+
+    private Kind Kind { get; }
+}
+
+enum Kind
+{
+    Kind1,
+    Kind2
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ConditionalAccess_OperationNone()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Xml.Linq
+
+Class Test
+    Public Sub M(arg As XElement)
+        Dim x = If(arg.@name, """")
+    End Sub
+End Class
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void Assignment_OperationNone()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Xml.Linq
+
+Class Test
+    Public Sub M(arg As XElement, arg2 As XElement)
+        Dim x = If(arg, arg2)
+        Dim a = arg.@name
+        arg.@name = """"
+    End Sub
+End Class
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ConditionalExpression_OperationNone()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Linq
+
+Class Test
+    Public Function M(ifNode As SingleLineIfStatementSyntax) As Boolean
+        Return TypeOf ifNode.Parent IsNot SingleLineLambdaExpressionSyntax AndAlso
+                Not ifNode.Statements.Any(Function(n) n.IsKind(SyntaxKind.Kind1)) AndAlso
+                Not If(ifNode.ElseClause?.Statements.Any(Function(n) n.IsKind(SyntaxKind.Kind1)), False)
+    End Function
+End Class
+
+Class SingleLineIfStatementSyntax
+    Inherits SyntaxNode
+    Public ReadOnly Property Statements As SyntaxNode()
+    Public ReadOnly Property ElseClause As SingleLineIfStatementSyntax
+End Class
+
+Class SingleLineLambdaExpressionSyntax
+    Inherits SyntaxNode
+End Class
+
+Class SyntaxNode
+    Public ReadOnly Property Parent As SyntaxNode
+    Public Function IsKind(kind As SyntaxKind) As Boolean
+        Return True
+    End Function
+End Class
+
+Enum SyntaxKind
+    None
+    Kind1
+    Kind2
+End Enum
+");
+        }
     }
 }

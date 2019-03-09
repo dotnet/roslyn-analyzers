@@ -30,70 +30,103 @@ namespace System.Web.Mvc
         }
 
         [Fact]
-        public void TestLiteralDiagnostic()
+        public void TestLiteralAtActionLevelDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
 using System.Web.Mvc;
 
-class TestClass
+class TestControllerClass
 {
     [ValidateInput(false)]
-    public void TestMethod()
+    public void TestActionMethod()
     {
     }
 }",
-            GetCSharpResultAt(8, 17, DoNotDisableRequestValidation.Rule, "TestMethod"));
+            GetCSharpResultAt(8, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
         }
 
         [Fact]
-        public void TestConstDiagnostic()
+        public void TestConstAtActionLevelDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
 using System.Web.Mvc;
 
-class TestClass
+class TestControllerClass
 {
     private const bool flag = false;
 
     [ValidateInput(flag)]
-    public void TestMethod()
+    public void TestActionMethod()
     {
     }
 }",
-            GetCSharpResultAt(10, 17, DoNotDisableRequestValidation.Rule, "TestMethod"));
+            GetCSharpResultAt(10, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
         }
 
         [Fact]
-        public void TestLiteralNoDiagnostic()
+        public void TestLiteralAtControllerLevelDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
 using System.Web.Mvc;
 
-class TestClass
+[ValidateInput(false)]
+class TestControllerClass
+{
+    public void TestActionMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(6, 7, DoNotDisableRequestValidation.Rule, "TestControllerClass"));
+        }
+
+        [Fact]
+        public void TestLiteralAtActionLevelNoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Web.Mvc;
+
+class TestControllerClass
 {
     [ValidateInput(true)]
-    public void TestMethod()
+    public void TestActionMethod()
     {
     }
 }");
         }
 
         [Fact]
-        public void TestConstNoDiagnostic()
+        public void TestConstAtActionLevelNoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
 using System.Web.Mvc;
 
-class TestClass
+class TestControllerClass
 {
     private const bool flag = true;
 
     [ValidateInput(flag)]
-    public void TestMethod()
+    public void TestActionMethod()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestLiteralAtControllerLevelNoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Web.Mvc;
+
+[ValidateInput(true)]
+class TestControllerClass
+{
+    public void TestActionMethod()
     {
     }
 }");

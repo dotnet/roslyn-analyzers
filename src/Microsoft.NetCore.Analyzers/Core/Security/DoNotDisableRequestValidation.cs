@@ -59,8 +59,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
-                            var methodSymbol = (IMethodSymbol)symbolAnalysisContext.Symbol;
-                            var attr = methodSymbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(validateInputAttributeTypeSymbol));
+                            var symbol = symbolAnalysisContext.Symbol;
+                            var attr = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(validateInputAttributeTypeSymbol));
 
                             if (attr == null)
                             {
@@ -69,17 +69,16 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             var constructorArguments = attr.ConstructorArguments;
 
-                            if (constructorArguments != null &&
-                                constructorArguments.Length == 1 &&
-                                !constructorArguments[0].IsNull &&
+                            if (constructorArguments.Length == 1 &&
+                                constructorArguments[0].Kind == TypedConstantKind.Primitive &&
                                 constructorArguments[0].Value.Equals(false))
                             {
                                 symbolAnalysisContext.ReportDiagnostic(
-                                    methodSymbol.CreateDiagnostic(
+                                    symbol.CreateDiagnostic(
                                         Rule,
-                                        methodSymbol.Name));
+                                        symbol.Name));
                             }
-                        }, SymbolKind.Method);
+                        }, SymbolKind.Method, SymbolKind.NamedType);
                 });
         }
     }

@@ -107,7 +107,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         {
                                             kind = PropertySetAbstractValueKind.Flagged;
                                         }
-                                        else if (pointsTo.Locations.Any(l => 
+                                        else if (pointsTo.Locations.Any(l =>
                                                     !l.IsNull
                                                     && javaScriptTypeResolverSymbol.Equals(l.LocationTypeOpt)
                                                     && (l.CreationOpt == null || l.CreationOpt.Kind != OperationKind.ObjectCreation)))
@@ -147,12 +147,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     IInvocationOperation invocationOperation =
                                         (IInvocationOperation)operationAnalysisContext.Operation;
-                                    if (javaScriptSerializerSymbol.Equals(invocationOperation.Instance?.Type)
-                                        && SecurityHelpers.JavaScriptSerializerDeserializationMethods.Contains(invocationOperation.TargetMethod.Name))
+                                    if ((javaScriptSerializerSymbol.Equals(invocationOperation.Instance?.Type)
+                                            && SecurityHelpers.JavaScriptSerializerDeserializationMethods.Contains(invocationOperation.TargetMethod.Name))
+                                        || simpleTypeResolverSymbol.Equals(invocationOperation.TargetMethod.ReturnType)
+                                        || javaScriptTypeResolverSymbol.Equals(invocationOperation.TargetMethod.ReturnType))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
-                                            rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                            rootOperationsNeedingAnalysis.Add(invocationOperation.GetRoot());
                                         }
                                     }
                                 },
@@ -189,9 +191,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                             InterproceduralAnalysisConfiguration interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                                                 operationBlockAnalysisContext.Options, SupportedDiagnostics,
-                                                defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                                cancellationToken: operationBlockAnalysisContext.CancellationToken,
-                                                defaultMaxInterproceduralMethodCallChain: 2); // By default, we only want to track method calls one level down.
+                                                defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                cancellationToken: operationBlockAnalysisContext.CancellationToken);
 
                                             foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {

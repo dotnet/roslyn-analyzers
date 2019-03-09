@@ -318,7 +318,7 @@ namespace Blah
 
 
         [Fact]
-        public void DeserializeObject_InLocalFunction_SimpleTypeResolverFromLocalFunction_DefinitelyDiagnostic()
+        public void Deserialize_InLocalFunction_SimpleTypeResolverFromLocalFunction_DefinitelyDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -339,7 +339,136 @@ namespace Blah
         }
     }
 }",
-               GetCSharpResultAt(16, 38, DefinitelyRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
+               GetCSharpResultAt(16, 37, DefinitelyRule, "object JavaScriptSerializer.Deserialize(string input, Type targetType)"));
+        }
+
+        [Fact]
+        public void DeserializeObject_InLambda_DefinitelyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object D(string str)
+        {
+            Func<string, object> f = (s) => new JavaScriptSerializer(GetTypeResolver()).DeserializeObject(s);
+            return f(str);
+
+            JavaScriptTypeResolver GetTypeResolver() => new SimpleTypeResolver();
+        }
+    }
+}",
+                  GetCSharpResultAt(12, 45, DefinitelyRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
+        }
+
+        [Fact]
+        public void DeserializeObject_InLambda_CustomTypeResolver_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object D(string str)
+        {
+            Func<string, object> f = (s) => new JavaScriptSerializer(GetTypeResolver()).DeserializeObject(s);
+            return f(str);
+
+            JavaScriptTypeResolver GetTypeResolver() => new MyTypeResolver();
+        }
+    }
+
+    public class MyTypeResolver : JavaScriptTypeResolver
+    {
+        public override Type ResolveType(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ResolveTypeId(Type type)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void DeserializeObject_InOtherMethod_DefinitelyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object D(string str)
+        {
+            return D(GetTypeResolver(), str);
+
+            JavaScriptTypeResolver GetTypeResolver() => new SimpleTypeResolver();
+        }
+
+        public object D(JavaScriptTypeResolver tr, string s)
+        {
+            return new JavaScriptSerializer(tr).DeserializeObject(s);
+        }
+    }
+}",
+                  GetCSharpResultAt(12, 45, DefinitelyRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
+        }
+
+
+        [Fact]
+        public void DeserializeObject_InOtherMethod_CustomTypeResolver_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object D(string str)
+        {
+            return D(GetTypeResolver(), str);
+
+            JavaScriptTypeResolver GetTypeResolver() => new SimpleTypeResolver();
+        }
+
+        public object D(JavaScriptTypeResolver tr, string s)
+        {
+            return new JavaScriptSerializer(tr).DeserializeObject(s);
+        }
+    }
+
+    public class MyTypeResolver : JavaScriptTypeResolver
+    {
+        public override Type ResolveType(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string ResolveTypeId(Type type)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}");
         }
     }
 }

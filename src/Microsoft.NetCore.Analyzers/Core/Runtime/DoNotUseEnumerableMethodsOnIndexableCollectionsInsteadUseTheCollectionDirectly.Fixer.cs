@@ -30,16 +30,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // Only one diagnostic expected 
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
-            // The fixer is only implemented for "Enumerable.First"
-            if (!diagnostic.Properties.TryGetValue("method", out var method) || method != "First")
+            Diagnostic diagnostic = context.Diagnostics.FirstOrDefault();
+            if (diagnostic == null)
             {
                 return Task.CompletedTask;
             }
 
-            string title = SystemRuntimeAnalyzersResources.UseIndexerInstead;
+            string methodPropertyKey = DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.MethodPropertyKey;
+            // The fixer is only implemented for "Enumerable.First"
+            if (!diagnostic.Properties.TryGetValue(methodPropertyKey, out var method) || method != "First")
+            {
+                return Task.CompletedTask;
+            }
+
+            string title = SystemRuntimeAnalyzersResources.UseIndexer;
 
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async ct => await UseCollectionDirectly(context.Document, context.Span, ct).ConfigureAwait(false),

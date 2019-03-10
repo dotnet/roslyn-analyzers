@@ -36,8 +36,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         {
             VerifyCSharpFix(@"
 using System;
-using System.Linq;
 using System.Collections.Generic;
+#pragma warning disable CS8019 //Unnecessary using directive
+using System.Linq;
+#pragma warning restore CS8019
 class C
 {
     void M()
@@ -57,8 +59,10 @@ class C
 }
 ", @"
 using System;
-using System.Linq;
 using System.Collections.Generic;
+#pragma warning disable CS8019 //Unnecessary using directive
+using System.Linq;
+#pragma warning restore CS8019
 class C
 {
     void M()
@@ -76,7 +80,7 @@ class C
         return new List<int> { 1, 2, 3 };
     }
 }
-", allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
@@ -84,8 +88,10 @@ class C
         {
             VerifyCSharpFix(@"
 using System;
-using System.Linq;
 using System.Collections.Generic;
+#pragma warning disable CS8019 //Unnecessary using directive
+using System.Linq;
+#pragma warning restore CS8019
 class C
 {
     void M()
@@ -105,8 +111,10 @@ class C
 }
 ", @"
 using System;
-using System.Linq;
 using System.Collections.Generic;
+#pragma warning disable CS8019 //Unnecessary using directive
+using System.Linq;
+#pragma warning restore CS8019
 class C
 {
     void M()
@@ -124,7 +132,7 @@ class C
         return new List<int> { 1, 2, 3 };
     }
 }
-", allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
@@ -133,8 +141,10 @@ class C
             //this unit test documents a problematic edge case which needs to be discussed and addressed
 
             VerifyCSharpFix(@"
-using System.Linq;
 using System.Collections.Generic;
+#pragma warning disable CS8019 //Unnecessary using directive
+using System.Linq;
+#pragma warning restore CS8019
 class C
 {
     void M()
@@ -153,8 +163,10 @@ class C
     }
 }
 ", @"
-using System.Linq;
 using System.Collections.Generic;
+#pragma warning disable CS8019 //Unnecessary using directive
+using System.Linq;
+#pragma warning restore CS8019
 class C
 {
     void M()
@@ -171,7 +183,7 @@ class C
         return new List<int> { 1, 2, 3 };
     }
 }
-", allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]

@@ -381,7 +381,7 @@
   <data name="UseArrayEmpty" xml:space="preserve">
     <value>Use Array.Empty</value>
   </data>
-  <data name="UseIndexerInstead" xml:space="preserve">
-    <value>Use indexer instead</value>
+  <data name="UseIndexer" xml:space="preserve">
+    <value>Use indexer</value>
   </data>
 </root>

@@ -381,4 +381,10 @@
   <data name="UseArrayEmpty" xml:space="preserve">
     <value>Use Array.Empty</value>
   </data>
+  <data name="UseToLowerInvariantOrToUpperInvariantDescription" xml:space="preserve">
+    <value>Using an invariant version yields consistent results regardless of the culture of an application.</value>
+  </data>
+  <data name="UseToLowerInvariantOrToUpperInvariantTitle" xml:space="preserve">
+    <value>Use an invariant version</value>
+  </data>
 </root>

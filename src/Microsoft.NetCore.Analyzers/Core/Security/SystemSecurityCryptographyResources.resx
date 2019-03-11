@@ -153,6 +153,15 @@
   <data name="DoNotDisableSchUseStrongCryptoMessage" xml:space="preserve">
     <value>{0} disables TLS 1.2 and enables SSLv3</value>
   </data>
+  <data name="DoNotReferSelfInSerializableClass" xml:space="preserve">
+    <value>Do Not Refer Self In Serializable Class</value>
+  </data>
+  <data name="DoNotReferSelfInSerializableClassDescription" xml:space="preserve">
+    <value>This can allow an attacker to DOS or exhaust the memory of the process.</value>
+  </data>
+  <data name="DoNotReferSelfInSerializableClassMessage" xml:space="preserve">
+    <value>{0} participates in a potential reference cycle</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>

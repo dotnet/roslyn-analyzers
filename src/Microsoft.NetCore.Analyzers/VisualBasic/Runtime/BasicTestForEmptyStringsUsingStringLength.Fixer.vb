@@ -4,6 +4,8 @@ Imports System.Composition
 Imports Microsoft.NetCore.Analyzers.Runtime
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
+Imports Microsoft.CodeAnalysis.VisualBasic
+Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
     ''' <summary>
@@ -12,6 +14,25 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Runtime
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicTestForEmptyStringsUsingStringLengthFixer
         Inherits TestForEmptyStringsUsingStringLengthFixer
+        Protected Overrides Function GetBinaryExpression(node As SyntaxNode) As SyntaxNode
+            Dim argumentSyntax = TryCast(node, ArgumentSyntax)
+            Return If(argumentSyntax IsNot Nothing, argumentSyntax.GetExpression(), node)
+        End Function
 
+        Protected Overrides Function IsEqualsOperator(node As SyntaxNode) As Boolean
+            Return node.IsKind(SyntaxKind.EqualsExpression)
+        End Function
+
+        Protected Overrides Function IsNotEqualsOperator(node As SyntaxNode) As Boolean
+            Return node.IsKind(SyntaxKind.NotEqualsExpression)
+        End Function
+
+        Protected Overrides Function GetLeftOperand(binaryExpressionSyntax As SyntaxNode) As SyntaxNode
+            Return DirectCast(binaryExpressionSyntax, BinaryExpressionSyntax).Left
+        End Function
+
+        Protected Overrides Function GetRightOperand(binaryExpressionSyntax As SyntaxNode) As SyntaxNode
+            Return DirectCast(binaryExpressionSyntax, BinaryExpressionSyntax).Right
+        End Function
     End Class
 End Namespace

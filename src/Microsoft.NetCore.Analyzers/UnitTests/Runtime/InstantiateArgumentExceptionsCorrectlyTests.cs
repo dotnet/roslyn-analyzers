@@ -589,6 +589,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                 }");
         }
 
+        [Fact, WorkItem(1561, "https://github.com/dotnet/roslyn-analyzers/issues/1561")]
+        public void ArgumentOutOfRangeException_PropertyName_DoesNotWarn()
+        {
+            VerifyCSharp(@"
+                using System;
+
+                public class Class1
+                {
+                    private int _size;
+                    public int Size
+                    {
+                        get => _size;
+                        set
+                        {
+                            if (value < 0)
+                            {
+                                throw new ArgumentOutOfRangeException(nameof(Size));
+                            }
+
+                            _size = value;
+                        }
+                    }
+                }");
+        }
+
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column, string format, params string[] args)
         {
             string message = string.Format(format, args);

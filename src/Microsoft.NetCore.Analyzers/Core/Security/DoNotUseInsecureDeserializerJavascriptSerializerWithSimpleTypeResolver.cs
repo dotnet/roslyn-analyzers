@@ -137,11 +137,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                             return PropertySetAbstractValue.GetInstance(kind);
                         });
 
+                    PooledHashSet<(IOperation Operation, ISymbol ContainingSymbol)> rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
+
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
-                            PooledHashSet<IOperation> rootOperationsNeedingAnalysis = PooledHashSet<IOperation>.GetInstance();
-
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -154,7 +154,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
-                                            rootOperationsNeedingAnalysis.Add(invocationOperation.GetRoot());
+                                            rootOperationsNeedingAnalysis.Add((invocationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
                                 },
@@ -170,99 +170,107 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
-                                            rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                            rootOperationsNeedingAnalysis.Add((operationAnalysisContext.Operation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
                                 },
                                 OperationKind.MethodReference);
+                        });
 
-                            operationBlockStartAnalysisContext.RegisterOperationBlockEndAction(
-                                (OperationBlockAnalysisContext operationBlockAnalysisContext) =>
+                    compilationStartAnalysisContext.RegisterCompilationEndAction(
+                        (CompilationAnalysisContext compilationAnalysisContext) =>
+                        {
+                            PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
+                            try
+                            {
+                                lock (rootOperationsNeedingAnalysis)
                                 {
-                                    PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> allResults = null;
-                                    try
+                                    if (!rootOperationsNeedingAnalysis.Any())
                                     {
-                                        lock (rootOperationsNeedingAnalysis)
+                                        return;
+                                    }
+
+                                    InterproceduralAnalysisConfiguration interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                        compilationAnalysisContext.Options, SupportedDiagnostics,
+                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                        cancellationToken: compilationAnalysisContext.CancellationToken);
+
+                                    foreach ((IOperation Operation, ISymbol ContainingSymbol) pair in rootOperationsNeedingAnalysis)
+                                    {
+                                        ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
+                                            PropertySetAnalysis.GetOrComputeHazardousUsages(
+                                                pair.Operation.GetEnclosingControlFlowGraph(),
+                                                compilationAnalysisContext.Compilation,
+                                                pair.ContainingSymbol,
+                                                WellKnownTypeNames.SystemWebScriptSerializationJavaScriptSerializer,
+                                                constructorMapper,
+                                                PropertyMappers,
+                                                hazardousUsageEvaluators,
+                                                interproceduralAnalysisConfig);
+                                        if (dfaResult.IsEmpty)
                                         {
-                                            if (!rootOperationsNeedingAnalysis.Any())
-                                            {
-                                                return;
-                                            }
-
-                                            InterproceduralAnalysisConfiguration interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                                operationBlockAnalysisContext.Options, SupportedDiagnostics,
-                                                defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                                cancellationToken: operationBlockAnalysisContext.CancellationToken);
-
-                                            foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
-                                            {
-                                                ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
-                                                    PropertySetAnalysis.GetOrComputeHazardousUsages(
-                                                        rootOperation.GetEnclosingControlFlowGraph(),
-                                                        operationBlockAnalysisContext.Compilation,
-                                                        operationBlockAnalysisContext.OwningSymbol,
-                                                        WellKnownTypeNames.SystemWebScriptSerializationJavaScriptSerializer,
-                                                        constructorMapper,
-                                                        PropertyMappers,
-                                                        hazardousUsageEvaluators,
-                                                        interproceduralAnalysisConfig);
-                                                if (dfaResult.IsEmpty)
-                                                {
-                                                    continue;
-                                                }
-
-                                                if (allResults == null)
-                                                {
-                                                    allResults = PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>.GetInstance();
-                                                }
-
-                                                foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
-                                                    in dfaResult)
-                                                {
-                                                    allResults.Add(kvp.Key, kvp.Value);
-                                                }
-                                            }
+                                            continue;
                                         }
 
                                         if (allResults == null)
                                         {
-                                            return;
+                                            allResults = PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>.GetInstance();
                                         }
 
                                         foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
-                                            in allResults)
+                                            in dfaResult)
                                         {
-                                            DiagnosticDescriptor descriptor;
-                                            switch (kvp.Value)
+                                            if (allResults.TryGetValue(kvp.Key, out HazardousUsageEvaluationResult existingValue))
                                             {
-                                                case HazardousUsageEvaluationResult.Flagged:
-                                                    descriptor = DefinitelyWithSimpleTypeResolver;
-                                                    break;
-
-                                                case HazardousUsageEvaluationResult.MaybeFlagged:
-                                                    descriptor = MaybeWithSimpleTypeResolver;
-                                                    break;
-
-                                                default:
-                                                    Debug.Fail($"Unhandled result value {kvp.Value}");
-                                                    continue;
+                                                allResults[kvp.Key] = PropertySetAnalysis.MergeHazardousUsageEvaluationResult(existingValue, kvp.Value);
                                             }
-
-                                            operationBlockAnalysisContext.ReportDiagnostic(
-                                                Diagnostic.Create(
-                                                    descriptor,
-                                                    kvp.Key.Location,
-                                                    kvp.Key.Method.ToDisplayString(
-                                                        SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                            else
+                                            {
+                                                allResults.Add(kvp.Key, kvp.Value);
+                                            }
                                         }
                                     }
-                                    finally
+                                }
+
+                                if (allResults == null)
+                                {
+                                    return;
+                                }
+
+                                foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                    in allResults)
+                                {
+                                    DiagnosticDescriptor descriptor;
+                                    switch (kvp.Value)
                                     {
-                                        rootOperationsNeedingAnalysis.Free();
-                                        allResults?.Free();
+                                        case HazardousUsageEvaluationResult.Flagged:
+                                            descriptor = DefinitelyWithSimpleTypeResolver;
+                                            break;
+
+                                        case HazardousUsageEvaluationResult.MaybeFlagged:
+                                            descriptor = MaybeWithSimpleTypeResolver;
+                                            break;
+
+                                        default:
+                                            Debug.Fail($"Unhandled result value {kvp.Value}");
+                                            continue;
                                     }
-                                });
+
+                                    compilationAnalysisContext.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            descriptor,
+                                            kvp.Key.Location,
+                                            kvp.Key.Method.ToDisplayString(
+                                                SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                }
+                            }
+                            finally
+                            {
+                                rootOperationsNeedingAnalysis.Free();
+                                allResults?.Free();
+                            }
                         });
+
                 });
         }
     }

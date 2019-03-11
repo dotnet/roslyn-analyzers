@@ -427,12 +427,75 @@ namespace Blah
         }
     }
 }",
-                  GetCSharpResultAt(12, 45, DefinitelyRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
+                  GetCSharpResultAt(19, 20, DefinitelyRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
+        }
+
+        [Fact]
+        public void DeserializeObject_InOtherMethodThrice_DefinitelyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public object D(string str)
+        {
+            JavaScriptTypeResolver tr = GetTypeResolver();
+            D(tr, str);
+            D(tr, str);
+            return D(tr, str);
+
+            JavaScriptTypeResolver GetTypeResolver() => new SimpleTypeResolver();
+        }
+
+        public object D(JavaScriptTypeResolver tr, string s)
+        {
+            return new JavaScriptSerializer(tr).DeserializeObject(s);
+        }
+    }
+}",
+                  GetCSharpResultAt(22, 20, DefinitelyRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
+        }
+
+        [Fact]
+        public void DeserializeObject_InOtherMethod_OnceDefinitely_OnceMaybe_DefinitelyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public JavaScriptTypeResolver OtherTypeResolver { get; set; }
+
+        public object D(string str)
+        {
+            JavaScriptTypeResolver tr = GetTypeResolver();
+            D(tr, str);
+            return D(OtherTypeResolver, str);
+
+            JavaScriptTypeResolver GetTypeResolver() => new SimpleTypeResolver();
+        }
+
+        public object D(JavaScriptTypeResolver tr, string s)
+        {
+            return new JavaScriptSerializer(tr).DeserializeObject(s);
+        }
+    }
+}",
+                  GetCSharpResultAt(23, 20, DefinitelyRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
         }
 
 
         [Fact]
-        public void DeserializeObject_InOtherMethod_CustomTypeResolver_NoDiagnostic()
+        public void DeserializeObject_InOtherMethod_CustomTypeResolver_MaybeDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -447,7 +510,7 @@ namespace Blah
         {
             return D(GetTypeResolver(), str);
 
-            JavaScriptTypeResolver GetTypeResolver() => new SimpleTypeResolver();
+            JavaScriptTypeResolver GetTypeResolver() => new MyTypeResolver();
         }
 
         public object D(JavaScriptTypeResolver tr, string s)
@@ -468,7 +531,8 @@ namespace Blah
             throw new NotImplementedException();
         }
     }
-}");
+}",
+                  GetCSharpResultAt(19, 20, MaybeRule, "object JavaScriptSerializer.DeserializeObject(string input)"));
         }
     }
 }

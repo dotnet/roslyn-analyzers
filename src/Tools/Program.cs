@@ -19,20 +19,22 @@ namespace Metrics
     {
         public static int Main(string[] args)
         {
-            var tokenSource = new CancellationTokenSource();
-            Console.CancelKeyPress += delegate
+            using (var tokenSource = new CancellationTokenSource())
             {
-                tokenSource.Cancel();
-            };
+                Console.CancelKeyPress += delegate
+                {
+                    tokenSource.Cancel();
+                };
 
-            try
-            {
-                return (int)RunAsync(args, tokenSource.Token).GetAwaiter().GetResult();
-            }
-            catch (OperationCanceledException)
-            {
-                Console.WriteLine("Operation Cancelled.");
-                return -1;
+                try
+                {
+                    return (int)RunAsync(args, tokenSource.Token).GetAwaiter().GetResult();
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("Operation Cancelled.");
+                    return -1;
+                }
             }
         }
 
@@ -244,11 +246,13 @@ Display this help message.");
 
                     return ErrorCode.None;
                 }
+#pragma warning disable CA1031 // Do not catch general exception types - gracefully catch exceptions and log them to the console and output file.
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                     return ErrorCode.WriteException;
                 }
+#pragma warning restore CA1031 // Do not catch general exception types
                 finally
                 {
                     if (metricFile != null)
@@ -284,11 +288,13 @@ Display this help message.");
 
                 return (builder.ToImmutable(), ErrorCode.None);
             }
+#pragma warning disable CA1031 // Do not catch general exception types - gracefully catch exceptions and log them to the console and output file.
             catch (Exception ex)
             {
                 Console.Write(ex.Message);
                 return (ImmutableArray<(string, CodeAnalysisMetricData)>.Empty, ErrorCode.ComputeException);
             }
+#pragma warning restore CA1031 // Do not catch general exception types
 
             async Task computeProjectMetricDataAsync(MSBuildWorkspace workspace, string projectFile, CancellationToken cancellation)
             {

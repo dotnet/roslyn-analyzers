@@ -12,12 +12,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new BasicDisposeMethodsShouldCallBaseClassDisposeAnalyzer();
+            return new DisposeMethodsShouldCallBaseClassDispose();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpDisposeMethodsShouldCallBaseClassDisposeAnalyzer();
+            return new DisposeMethodsShouldCallBaseClassDispose();
         }
 
         protected override CodeFixProvider GetBasicCodeFixProvider()

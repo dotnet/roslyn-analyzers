@@ -62,36 +62,6 @@
         <target state="translated">서비스 구성 요소를 WebMethod를 사용하여 표시하지 마세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsTitle">
-        <source>Implement serialization constructors</source>
-        <target state="translated">serialization 생성자를 구현하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsDescription">
-        <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="translated">이 규칙 위반 문제를 해결하려면 serialization 생성자를 구현하세요. sealed 클래스의 경우 생성자를 private으로 설정하거나 protected로 설정하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
-        <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
-        <target state="translated">'protected {0}(SerializationInfo info, StreamingContext context)' 시그니처를 사용하여 생성자를 {0}에 추가하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
-        <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="translated">unsealed 형식의 {0} serialization 생성자를 protected로 선언하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
-        <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="translated">sealed 형식의 {0} serialization 생성자를 private으로 선언하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
-        <source>Implement Serialization constructor</source>
-        <target state="translated">serialization 생성자를 구현하세요.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="MarkWindowsFormsEntryPointsWithStaThreadTitle">
         <source>Mark Windows Forms entry points with STAThread</source>
         <target state="translated">Windows Forms 진입점을 STAThread를 사용하여 표시하세요.</target>
@@ -107,21 +77,6 @@
         <target state="translated">Windows Forms 진입점을 STAThread를 사용하여 표시하세요.</target>
         <note />
       </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsTitle">
-        <source>Mark all non-serializable fields</source>
-        <target state="translated">모두 직렬화할 수 없는 필드로 표시하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsDescription">
-        <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
-        <target state="translated">직렬화할 수 없는 형식의 인스턴스 필드가 직렬화할 수 있는 형식에서 선언되었습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkAllNonSerializableFieldsMessage">
-        <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
-        <target state="translated">{0} 필드는 직렬화할 수 있는 {1} 형식의 멤버이지만 직렬화할 수 없는 {2} 형식입니다.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesTitle">
         <source>Call base class methods on ISerializable types</source>
         <target state="translated">ISerializable 형식에서 기본 클래스 메서드를 호출하세요.</target>
@@ -135,111 +90,6 @@
       <trans-unit id="CallBaseClassMethodsOnISerializableTypesMessage">
         <source>Call base class methods on ISerializable types</source>
         <target state="translated">ISerializable 형식에서 기본 클래스 메서드를 호출하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableTitle">
-        <source>Mark ISerializable types with serializable</source>
-        <target state="translated">ISerializable 형식을 serializable로 표시하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableDescription">
-        <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
-        <target state="translated">공용 언어 런타임에서 serializable로 인식되려면 형식이 ISerializable 인터페이스의 구현을 통해 사용자 지정 serialization 루틴을 사용해도 SerializableAttribute 특성을 사용하여 형식을 표시해야 합니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MarkISerializableTypesWithSerializableMessage">
-        <source>Add [Serializable] to {0} as this type implements ISerializable</source>
-        <target state="translated">이 형식이 ISerializable을 구현할 때 {0}에 [Serializable]을 추가하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AddSerializableAttributeCodeActionTitle">
-        <source>Add Serializable attribute</source>
-        <target state="translated">Serializable 특성을 추가하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
-        <source>Add the 'NonSerialized' attribute to this field.</source>
-        <target state="translated">이 필드에 'NonSerialized' 특성을 추가하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
-        <source>Implement serialization methods correctly</source>
-        <target state="translated">serialization 메서드를 올바르게 구현하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
-        <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
-        <target state="translated">serialization 이벤트를 처리하는 메서드에 올바른 시그니처, 반환 형식 또는 표시 유형이 없습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 접근성을 private으로 변경하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 반환 형식을 {1}에서 void(Visual Basic의 경우 Sub)로 변경하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 'System.Runtime.Serialization.StreamingContext' 형식의 단일 매개 변수를 사용할 수 있도록 시그니처를 변경하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 더 이상 제네릭 형식이 아닐 수 있도록 시그니처를 변경하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
-        <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 static(Visual Basic의 경우 Shared)에서 인스턴스 메서드로 변경하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
-        <source>Provide deserialization methods for optional fields</source>
-        <target state="translated">선택적 필드에 deserialization 메서드를 제공하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
-        <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
-        <target state="translated">형식에 System.Runtime.Serialization.OptionalFieldAttribute 특성을 사용하여 표시된 필드가 있으며 이 형식에서 deserialization 이벤트 처리 메서드를 제공하지 않습니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
-        <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="translated">{0} 형식에 'private void OnDeserialized(StreamingContext)' 메서드를 추가하고 System.Runtime.Serialization.OnDeserializedAttribute 특성을 사용하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
-        <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="translated">{0} 형식에 'private void OnDeserializing(StreamingContext)' 메서드를 추가하고 System.Runtime.Serialization.OnDeserializingAttribute 특성을 사용하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyTitle">
-        <source>Implement ISerializable correctly</source>
-        <target state="translated">ISerializable을 올바르게 구현하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyDescription">
-        <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
-        <target state="translated">이 규칙 위반 문제를 해결하려면 GetObjectData 메서드를 visible 및 overridable로 설정하고 serialization 프로세스에 모든 인스턴스 필드가 포함되었는지, NonSerializedAttribute 특성을 사용하여 표시되었는지 확인하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
-        <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="translated">{0} 형식에 GetObjectData 구현을 추가하세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
-        <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="translated">파생 형식에 표시되도록 {0}.GetObjectData의 접근성을 높이세요.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
-        <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="translated">{0}.GetObjectData를 virtual 및 overridable로 설정하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXmlTitle">

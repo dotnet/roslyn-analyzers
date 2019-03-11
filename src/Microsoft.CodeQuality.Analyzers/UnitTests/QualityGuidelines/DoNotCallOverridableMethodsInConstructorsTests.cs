@@ -284,7 +284,7 @@ abstract class F : System.ComponentModel.Component
             Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
             project = project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location));
             DiagnosticAnalyzer analyzer = GetCSharpDiagnosticAnalyzer();
-            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer);
+            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer, GetDefaultPath(LanguageNames.CSharp));
         }
 
         [Fact]
@@ -335,7 +335,7 @@ End Class
             Project project = document.Project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Web.UI.Control).Assembly.Location));
             project = project.AddMetadataReference(MetadataReference.CreateFromFile(typeof(System.Windows.Forms.Control).Assembly.Location));
             DiagnosticAnalyzer analyzer = GetBasicDiagnosticAnalyzer();
-            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer);
+            GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer, GetDefaultPath(LanguageNames.VisualBasic));
         }
 
         [Fact]

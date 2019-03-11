@@ -14,16 +14,6 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
 {
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
-        private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputCSharpResultAt(int line, int column)
-        {
-            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithMessage(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateInsecureInputMessage);
-        }
-
-        private DiagnosticResult GetCA3075XmlReaderCreateInsecureInputBasicResultAt(int line, int column)
-        {
-            return new DiagnosticResult(DoNotUseInsecureDtdProcessingAnalyzer.RuleDoNotUseInsecureDtdProcessing).WithLocation(line, column).WithMessage(MicrosoftNetFrameworkAnalyzersResources.XmlReaderCreateInsecureInputMessage);
-        }
-
         [Fact]
         public async Task XmlReaderSettingsDefaultAsFieldShouldNotGenerateDiagnostic()
         {

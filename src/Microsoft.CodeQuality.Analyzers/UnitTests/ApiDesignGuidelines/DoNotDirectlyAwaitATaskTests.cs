@@ -297,8 +297,8 @@ public class C
         }
 
         [Theory, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
-        [InlineData("dotnet_code_quality.skip_async_void_methods = true")]
-        [InlineData("dotnet_code_quality.CA2007.skip_async_void_methods = true")]
+        [InlineData("dotnet_code_quality.exclude_async_void_methods = true")]
+        [InlineData("dotnet_code_quality.CA2007.exclude_async_void_methods = true")]
         public void CSharpAsyncVoidMethod_AnalyzerOption_NoDiagnostic(string editorConfigText)
         {
             var code = @"
@@ -321,8 +321,8 @@ public class C
         }
 
         [Theory, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
-        [InlineData("dotnet_code_quality.skip_async_void_methods = false")]
-        [InlineData("dotnet_code_quality.CA2007.skip_async_void_methods = false")]
+        [InlineData("dotnet_code_quality.exclude_async_void_methods = false")]
+        [InlineData("dotnet_code_quality.CA2007.exclude_async_void_methods = false")]
         public void CSharpAsyncVoidMethod_AnalyzerOption_Diagnostic(string editorConfigText)
         {
             var code = @"

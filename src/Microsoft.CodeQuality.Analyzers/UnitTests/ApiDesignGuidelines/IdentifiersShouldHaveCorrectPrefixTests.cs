@@ -256,10 +256,10 @@ public class Class6<TTypeParameter>
         [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
         [Theory]
         [InlineData(@"")]
-        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = false")]
-        [InlineData(@"dotnet_code_quality.CA1715.allow_single_letter_type_parameters = false")]
-        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = true
-                      dotnet_code_quality.CA1715.allow_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.exclude_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.exclude_single_letter_type_parameters = true
+                      dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = false")]
         public void TestTypeParameterNamesCSharp_SingleLetterCases_EditorConfig_Diagnostic(string editorConfigText)
         {
             VerifyCSharp(@"
@@ -297,10 +297,10 @@ public class Class6<TTypeParameter>
 
         [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
         [Theory]
-        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = true")]
-        [InlineData(@"dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true")]
-        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = false
-                      dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.exclude_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.exclude_single_letter_type_parameters = false
+                      dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true")]
         public void TestTypeParameterNamesCSharp_SingleLetterCases_EditorConfig_NoDiagnostic(string editorConfigText)
         {
             VerifyCSharp(@"
@@ -530,10 +530,10 @@ End Class
         [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
         [Theory]
         [InlineData(@"")]
-        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = false")]
-        [InlineData(@"dotnet_code_quality.CA1715.allow_single_letter_type_parameters = false")]
-        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = true
-                      dotnet_code_quality.CA1715.allow_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.exclude_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = false")]
+        [InlineData(@"dotnet_code_quality.exclude_single_letter_type_parameters = true
+                      dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = false")]
         public void TestTypeParameterNamesBasic_SingleLetterCases_EditorConfig_Diagnostic(string editorConfigText)
         {
             VerifyBasic(@"
@@ -566,10 +566,10 @@ End Class
 
         [WorkItem(1604, "https://github.com/dotnet/roslyn-analyzers/issues/1604")]
         [Theory]
-        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = true")]
-        [InlineData(@"dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true")]
-        [InlineData(@"dotnet_code_quality.allow_single_letter_type_parameters = false
-                      dotnet_code_quality.CA1715.allow_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.exclude_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true")]
+        [InlineData(@"dotnet_code_quality.exclude_single_letter_type_parameters = false
+                      dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true")]
         public void TestTypeParameterNamesBasic_SingleLetterCases_EditorConfig_NoDiagnostic(string editorConfigText)
         {
             VerifyBasic(@"

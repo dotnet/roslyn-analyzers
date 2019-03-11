@@ -310,8 +310,6 @@ namespace Microsoft.NetFramework.Analyzers
                 bool isDtdProcessingEnabled = true;
 
                 List<Location> locs = null;
-                Location insecureXmlResolverAssignLoc = null;
-                Location issecureDtdProcessingLoc = null;
 
                 IEnumerable<SyntaxNode> assignments = _syntaxNodeHelper.GetDescendantAssignmentExpressionNodes(node);
                 foreach (SyntaxNode assignment in assignments)
@@ -388,14 +386,6 @@ namespace Microsoft.NetFramework.Analyzers
                 // but explicitly set XmlResolver and/or DtdProcessing to insecure value
                 else
                 {
-                    if (insecureXmlResolverAssignLoc != null)
-                    {
-                        locs.Add(insecureXmlResolverAssignLoc);
-                    }
-                    if (issecureDtdProcessingLoc != null)
-                    {
-                        locs.Add(issecureDtdProcessingLoc);
-                    }
                     DiagnosticDescriptor rule = RuleDoNotUseInsecureDtdProcessingInApiDesign;
                     // TODO: Only first location is shown in error, maybe we want to report on method instead?
                     //       Or on each insecure assignment?

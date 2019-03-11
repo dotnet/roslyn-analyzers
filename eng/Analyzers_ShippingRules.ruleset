@@ -6,10 +6,16 @@
   <Rules AnalyzerId="Microsoft.ApiDesignGuidelines.Analyzers" RuleNamespace="Microsoft.ApiDesignGuidelines.Analyzers">
     <!-- DoNotDecreaseInheritedMemberVisibility - blocked by https://github.com/dotnet/roslyn-analyzers/issues/1378 -->
     <Rule Id="CA2222" Action="None" />
+
+    <!-- ValidateArgumentsOfPublicMethods - only useful for libraries with supported public API surface, we don't have any -->
+    <Rule Id="CA1062" Action="None" />
   </Rules>
 
   <!-- TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/965 has been fixed. -->
   <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">
+    <!-- DoNotPassLiteralsAsLocalizedParameters - primarily useful for libraries where public APIs throw exceptions, and the messages need to be localized -->
+    <Rule Id="CA1303" Action="None" />
+
     <!-- SpecifyIFormatProvider -->
     <Rule Id="CA1305" Action="None" />
   </Rules>

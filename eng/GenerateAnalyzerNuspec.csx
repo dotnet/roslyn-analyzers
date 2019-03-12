@@ -8,9 +8,10 @@ var fileList = Args[6].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntrie
 var folderList = Args[7].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var assemblyList = Args[8].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var dependencyList = Args[9].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var rulesetsDir = Args[10];
-var legacyRulesets = Args[11].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var artifactsBinDir = Args[12];
+var libraryList = Args[10].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var rulesetsDir = Args[11];
+var legacyRulesets = Args[12].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var artifactsBinDir = Args[13];
 
 var result = new StringBuilder();
 
@@ -69,7 +70,7 @@ result.AppendLine(@"  <files>");
 
 string FileElement(string file, string target) => $@"    <file src=""{file}"" target=""{target}""/>";
 
-if (fileList.Length > 0 || assemblyList.Length > 0)
+if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0)
 {
     const string csName = "CSharp";
     const string vbName = "VisualBasic";
@@ -122,6 +123,12 @@ if (fileList.Length > 0 || assemblyList.Length > 0)
     {
         var fileWithPath = Path.IsPathRooted(file) ? file : Path.Combine(projectDir, file);
         result.AppendLine(FileElement(fileWithPath, "build"));
+    }
+
+    foreach (string file in libraryList)
+    {
+        var fileWithPath = Path.Combine(artifactsBinDir, Path.GetFileNameWithoutExtension(file), configuration, tfm, file);
+        result.AppendLine(FileElement(fileWithPath, Path.Combine("lib", tfm)));
     }
 
     foreach (string folder in folderList)

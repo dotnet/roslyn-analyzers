@@ -153,7 +153,9 @@ namespace MetaCompilation.Analyzers.UnitTests
 
             ProjectId projectId = ProjectId.CreateNewId(debugName: TestProjectName);
 
+#pragma warning disable CA2000 // Dispose objects before losing scope - Current solution/project takes the dispose ownership of the created AdhocWorkspace
             Solution solution = new AdhocWorkspace()
+#pragma warning restore CA2000 // Dispose objects before losing scope
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .AddMetadataReference(projectId, s_corlibReference)

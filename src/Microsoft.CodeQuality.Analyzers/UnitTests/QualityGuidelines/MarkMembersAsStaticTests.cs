@@ -562,6 +562,44 @@ End Class
 ", vbTestApiDefinitions });
         }
 
+        [Fact, WorkItem(1865, "https://github.com/dotnet/roslyn-analyzers/issues/1865")]
+        public void CSharp_InstanceReferenceInObjectInitializer_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class A
+{
+    public void M()
+    {
+        var x = new B() { P = true };
+    }
+}
+
+public class B
+{
+    public bool P { get; set; }
+}",
+            // Test0.cs(4,17): warning CA1822: Member M does not access instance data and can be marked as static (Shared in VisualBasic)
+            GetCSharpResultAt(4, 17, "M"));
+        }
+
+        [Fact, WorkItem(1865, "https://github.com/dotnet/roslyn-analyzers/issues/1865")]
+        public void Basic_InstanceReferenceInObjectInitializer_Diagnostic()
+        {
+            VerifyBasic(@"
+Public Class A
+    Public Sub M()
+        Dim x = New B With {.P = True}
+    End Sub
+End Class
+
+Public Class B
+    Public Property P As Boolean
+End Class
+",
+            // Test0.vb(3,16): warning CA1822: Member M does not access instance data and can be marked as static (Shared in VisualBasic)
+            GetBasicResultAt(3, 16, "M"));
+        }
+
         [Fact, WorkItem(1933, "https://github.com/dotnet/roslyn-analyzers/issues/1933")]
         public void CSharpPropertySingleAccessorAccessingInstance_NoDiagnostic()
         {

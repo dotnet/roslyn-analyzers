@@ -139,12 +139,8 @@ Namespace Microsoft.NetFramework.VisualBasic.Analyzers.Helpers
         End Function
 
         Public Overrides Function GetDefaultValueForAnOptionalParameter(declNode As SyntaxNode, paramIndex As Integer) As SyntaxNode
-            If (declNode Is Nothing) Then
-                Return Nothing
-            End If
-
-            Dim methodDecl As MethodBlockBaseSyntax = CType(declNode, MethodBlockBaseSyntax)
-            If (methodDecl Is Nothing) Then
+            Dim methodDecl = TryCast(declNode, MethodBlockBaseSyntax)
+            If methodDecl Is Nothing Then
                 Return Nothing
             End If
 

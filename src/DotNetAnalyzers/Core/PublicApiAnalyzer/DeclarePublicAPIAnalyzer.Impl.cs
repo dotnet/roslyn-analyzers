@@ -270,11 +270,13 @@ namespace DotNetAnalyzers.PublicApiAnalyzer
                 {
                     return GetSiblingNamesToRemoveFromUnshippedTextCore(symbol);
                 }
+#pragma warning disable CA1031 // Do not catch general exception types - https://github.com/dotnet/roslyn-analyzers/issues/2181
                 catch (Exception ex)
                 {
                     Debug.Assert(false, ex.Message);
                     return string.Empty;
                 }
+#pragma warning restore CA1031 // Do not catch general exception types
             }
 
             private string GetSiblingNamesToRemoveFromUnshippedTextCore(ISymbol symbol)

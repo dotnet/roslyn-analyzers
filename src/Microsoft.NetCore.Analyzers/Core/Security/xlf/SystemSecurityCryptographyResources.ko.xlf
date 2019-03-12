@@ -92,6 +92,21 @@
         <target state="translated">{0}이(가) 손상된 암호화 알고리즘 {1}을(를) 사용합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="new">Do Not Use Deprecated Security Protocols</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="new">Using a deprecated security protocol rather than the system default is risky.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="new">Hard-coded use of deprecated security protocol {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseMD5">
         <source>Do not use insecure cryptographic algorithm MD5.</source>
         <target state="translated">안전하지 않은 암호화 알고리즘 MD5를 사용하지 마세요.</target>

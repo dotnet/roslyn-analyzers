@@ -187,9 +187,11 @@ class C
         }
 
         [Fact]
-        public void CA1826FixEnumerableFirstProblematicSyntaxCallCSharp()
+        public void CA1826FixEnumerableFirstInvalidStatementCSharp()
         {
-            //this unit test documents a problematic edge case which needs to be discussed and addressed
+            //this unit test documents a problematic edge case
+            //the fixed code triggers an error - CS0201: Only assignment, call, increment, decrement, and new object expressions can be used as a statement
+            //the decision was to let this fly because even though the initial code itself is syntactically correct, it doesn't really make much sense due to the return value of the 'First' method call not being used
 
             VerifyCSharpFix(@"
 using System.Linq;

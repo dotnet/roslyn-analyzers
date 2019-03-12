@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.NetCore.Analyzers.Runtime;
 using System;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -20,8 +21,16 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     /// RS0014: Do not use Enumerable methods on indexable collections. Instead use the collection directly
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public class CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer : DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer
+    public class CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer : CodeFixProvider
     {
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.RuleId);
+
+        public sealed override FixAllProvider GetFixAllProvider()
+        {
+            // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Diagnostic diagnostic = context.Diagnostics.FirstOrDefault();

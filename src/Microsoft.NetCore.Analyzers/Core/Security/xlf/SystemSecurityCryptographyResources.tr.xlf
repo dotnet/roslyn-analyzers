@@ -47,6 +47,21 @@
         <target state="translated">ServerCertificateValidationCallback, her zaman true döndürerek tüm sunucu sertifikatarını kabul eden bir işleve ayarlanmış. Sunucu sertifikalarının istekleri alan sunucunun kimliğini doğrulamak için doğrulandığından emin olun.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableRequestValidation">
+        <source>Do Not Disable Request Validation</source>
+        <target state="new">Do Not Disable Request Validation</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableRequestValidationDescription">
+        <source>Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</source>
+        <target state="new">Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableRequestValidationMessage">
+        <source>The method {0} has request validation disabled</source>
+        <target state="new">The method {0} has request validation disabled</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
         <source>Do Not Disable SChannel Use of Strong Crypto</source>
         <target state="new">Do Not Disable SChannel Use of Strong Crypto</target>

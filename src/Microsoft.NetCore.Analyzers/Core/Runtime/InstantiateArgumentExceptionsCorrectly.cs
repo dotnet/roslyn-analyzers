@@ -115,6 +115,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
             else if (IsParameterName(parameter) && !matchesParameter)
             {
+                // Allow argument exceptions in accessors to use the associated property symbol name.
+                if (MatchesAssociatedSymbol(targetSymbol, stringArgument))
+                {
+                    return;
+                }
+
                 format = s_localizableMessageIncorrectParameterName;
             }
 
@@ -209,5 +215,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             return false;
         }
+
+        private static bool MatchesAssociatedSymbol(ISymbol targetSymbol, string stringArgument)
+            => targetSymbol.IsAccessorMethod() &&
+            ((IMethodSymbol)targetSymbol).AssociatedSymbol?.Name == stringArgument;
     }
 }

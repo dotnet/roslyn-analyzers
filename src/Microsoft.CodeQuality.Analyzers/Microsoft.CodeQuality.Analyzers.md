@@ -241,6 +241,16 @@ Severity: Warning
 
 Help: [http://msdn.microsoft.com/library/ms182161.aspx](http://msdn.microsoft.com/library/ms182161.aspx)
 
+### CA1062: Validate arguments of public methods ###
+
+An externally visible method dereferences one of its reference arguments without verifying whether that argument is null (Nothing in Visual Basic). All reference arguments that are passed to externally visible methods should be checked against null.
+
+Category: Design.
+
+Severity: Warning
+
+Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1062-validate-arguments-of-public-methods](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1062-validate-arguments-of-public-methods)
+
 ### CA1064: Exceptions should be public ###
 
 An internal exception is visible only inside its own internal scope. After the exception falls outside the internal scope, only the base exception can be used to catch the exception. If the internal exception is inherited from T:System.Exception, T:System.SystemException, or T:System.ApplicationException, the external code will not have sufficient information to know what to do with the exception.
@@ -478,7 +488,7 @@ Help: [https://msdn.microsoft.com/en-us/library/bb385973.aspx](https://msdn.micr
 
 Documentation
 ----------------------------------
-### RS0010: Avoid using cref tags with a prefix ###
+### CA1200: Avoid using cref tags with a prefix ###
 
 Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings.
 
@@ -529,6 +539,16 @@ Category: Maintainability
 Severity: Warning
 
 Help: [https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling)
+
+### CA1508: Avoid dead conditional code ###
+
+Conditional expressions which are always true/false and null checks for operations that are always null/non-null lead to dead code. Such conditional expressions should be removed or refactored to avoid dead code.
+
+Category: Maintainability.
+
+Severity: Warning
+
+Help: <To be added>
 
 ### CA1509: Invalid entry in code metrics rule specification file ###
 

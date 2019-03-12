@@ -93,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 result = node
                     .ChildNodes()
                     .OfType<T>()
-                    .First();
+                    .FirstOrDefault();
             }
             return result;
         }

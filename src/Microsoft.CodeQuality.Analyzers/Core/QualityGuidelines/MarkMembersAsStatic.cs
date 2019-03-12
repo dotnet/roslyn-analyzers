@@ -74,7 +74,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     blockStartContext.RegisterOperationAction(operationContext =>
                     {
-                        isInstanceReferenced = true;
+                        if (((IInstanceReferenceOperation)operationContext.Operation).ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+                        {
+                            isInstanceReferenced = true;
+                        }
                     }, OperationKind.InstanceReference);
 
                     blockStartContext.RegisterOperationAction(operationContext =>

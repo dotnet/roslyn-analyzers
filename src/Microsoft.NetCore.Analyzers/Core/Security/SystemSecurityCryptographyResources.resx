@@ -180,6 +180,15 @@
   <data name="DoNotUseBrokenCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>{0} uses a broken cryptographic algorithm {1}</value>
   </data>
+  <data name="DoNotUseDeprecatedSecurityProtocols" xml:space="preserve">
+    <value>Do Not Use Deprecated Security Protocols</value>
+  </data>
+  <data name="DoNotUseDeprecatedSecurityProtocolsDescription" xml:space="preserve">
+    <value>Using a deprecated security protocol rather than the system default is risky.</value>
+  </data>
+  <data name="DoNotUseDeprecatedSecurityProtocolsMessage" xml:space="preserve">
+    <value>Hard-coded use of deprecated security protocol {0}</value>
+  </data>
   <data name="DoNotUseMD5" xml:space="preserve">
     <value>Do not use insecure cryptographic algorithm MD5.</value>
   </data>

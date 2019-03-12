@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-
-    <VersionPrefix>2.6.4</VersionPrefix>
+    
+    <VersionPrefix>2.9.0</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
@@ -18,10 +18,10 @@
     <CodecovVersion>1.0.3</CodecovVersion>
 
     <!-- Roslyn -->
-    <MicrosoftCodeAnalysisVersion>2.6.0</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
     <MicrosoftNetCompilersVersion>2.11.0-beta1-final</MicrosoftNetCompilersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.6.4-beta1.19067.1+c6049bf9</MicrosoftCodeAnalysisFXCopAnalyersVersion>
-    <MicrosoftCodeAnalysisAnalyersVersion>2.6.4-beta1.19067.1+c6049bf9</MicrosoftCodeAnalysisAnalyersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.0-beta1.19158.2+85a05d0e</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftCodeAnalysisAnalyersVersion>2.9.0-beta1.19158.2+85a05d0e</MicrosoftCodeAnalysisAnalyersVersion>
     <CodeStyleAnalyersVersion>2.11.0-beta2-63603-03</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
@@ -33,6 +33,7 @@
     <SystemReflectionMetadataVersion>1.4.2</SystemReflectionMetadataVersion>
     <MicrosoftVisualBasicVersion>10.1.0</MicrosoftVisualBasicVersion>
     <MicrosoftBuildLocatorVersion>1.1.2</MicrosoftBuildLocatorVersion>
+    <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
     <HumanizerVersion>2.2.0</HumanizerVersion>
   </PropertyGroup>
 

@@ -107,6 +107,21 @@
         <target state="translated">{0} 使用损坏的加密算法 {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="new">Do Not Use Deprecated Security Protocols</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="new">Using a deprecated security protocol rather than the system default is risky.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="new">Hard-coded use of deprecated security protocol {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseMD5">
         <source>Do not use insecure cryptographic algorithm MD5.</source>
         <target state="translated">不要使用不安全的加密算法 MD5。</target>

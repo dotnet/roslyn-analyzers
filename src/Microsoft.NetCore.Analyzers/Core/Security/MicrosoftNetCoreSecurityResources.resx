@@ -178,7 +178,7 @@
     <value>Potential regex injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</value>
   </data>
   <data name="ReviewCodeForRegexInjectionVulnerabilitiesTitle" xml:space="preserve">
-    <value>Review code for regex injection vulnerabalities</value>
+    <value>Review code for regex injection vulnerabilities</value>
   </data>
   <data name="NetDataContractSerializerDeserializeMaybeWithoutBinderSetMessage" xml:space="preserve">
     <value>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</value>

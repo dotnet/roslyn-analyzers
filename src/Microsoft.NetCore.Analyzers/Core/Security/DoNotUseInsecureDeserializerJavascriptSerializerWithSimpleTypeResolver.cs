@@ -190,46 +190,18 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         return;
                                     }
 
-                                    InterproceduralAnalysisConfiguration interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                        compilationAnalysisContext.Options, SupportedDiagnostics,
-                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                        cancellationToken: compilationAnalysisContext.CancellationToken);
-
-                                    foreach ((IOperation Operation, ISymbol ContainingSymbol) pair in rootOperationsNeedingAnalysis)
-                                    {
-                                        ImmutableDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> dfaResult =
-                                            PropertySetAnalysis.GetOrComputeHazardousUsages(
-                                                pair.Operation.GetEnclosingControlFlowGraph(),
-                                                compilationAnalysisContext.Compilation,
-                                                pair.ContainingSymbol,
-                                                WellKnownTypeNames.SystemWebScriptSerializationJavaScriptSerializer,
-                                                constructorMapper,
-                                                PropertyMappers,
-                                                hazardousUsageEvaluators,
-                                                interproceduralAnalysisConfig);
-                                        if (dfaResult.IsEmpty)
-                                        {
-                                            continue;
-                                        }
-
-                                        if (allResults == null)
-                                        {
-                                            allResults = PooledDictionary<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult>.GetInstance();
-                                        }
-
-                                        foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
-                                            in dfaResult)
-                                        {
-                                            if (allResults.TryGetValue(kvp.Key, out HazardousUsageEvaluationResult existingValue))
-                                            {
-                                                allResults[kvp.Key] = PropertySetAnalysis.MergeHazardousUsageEvaluationResult(existingValue, kvp.Value);
-                                            }
-                                            else
-                                            {
-                                                allResults.Add(kvp.Key, kvp.Value);
-                                            }
-                                        }
-                                    }
+                                    allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
+                                        compilationAnalysisContext.Compilation,
+                                        rootOperationsNeedingAnalysis,
+                                        WellKnownTypeNames.SystemWebScriptSerializationJavaScriptSerializer,
+                                        constructorMapper,
+                                        PropertyMappers,
+                                        hazardousUsageEvaluators,
+                                        InterproceduralAnalysisConfiguration.Create(
+                                            compilationAnalysisContext.Options,
+                                            SupportedDiagnostics,
+                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                            cancellationToken: compilationAnalysisContext.CancellationToken));
                                 }
 
                                 if (allResults == null)

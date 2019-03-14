@@ -1,0 +1,32 @@
+﻿<!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecPackageId>Microsoft.CodeAnalysis.PublicApiAnalyzer</NuspecPackageId>
+    <Description>Public API Analyzer</Description>
+    <Summary>Public API Analyzer</Summary>
+    <ReleaseNotes>Public API Analyzer</ReleaseNotes>
+    <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics PublicApi ApiAnalyzer</PackageTags>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.3'">
+      <PropertyGroup>
+        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <ItemGroup>
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\PublicApiAnalyzer\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\PublicApiAnalyzer.CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.csproj" />
+  </ItemGroup>
+</Project>

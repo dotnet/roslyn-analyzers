@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers\Core\Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers\CSharp\Microsoft.CodeAnalysis.PerformanceSensitive.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\PerformanceSensitive.Analyzers\Core\Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\PerformanceSensitive.Analyzers\CSharp\Microsoft.CodeAnalysis.PerformanceSensitive.CSharp.Analyzers.csproj" />
   </ItemGroup>
 </Project>

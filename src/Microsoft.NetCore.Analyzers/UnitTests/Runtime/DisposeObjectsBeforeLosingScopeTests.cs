@@ -5250,6 +5250,89 @@ class Test
         }
 
         [Fact]
+        public void Lambda_InvokedFromInterprocedural_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A a1 = new A();
+        M2(() => a1.Dispose());
+    }
+
+    void M2(Action disposeCallback) => disposeCallback();
+}
+");
+        }
+
+        [Theory]
+        [InlineData(DisposeAnalysisKind.AllPaths)]
+        [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPaths)]
+        [InlineData(DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed)]
+        internal void Lambda_MayBeInvokedFromInterprocedural_Diagnostic(DisposeAnalysisKind disposeAnalysisKind)
+        {
+            var editorConfigFile = GetEditorConfigFile(disposeAnalysisKind);
+
+            var source = @"
+using System;
+
+class A : IDisposable
+{
+    public A(int i) { }
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    public bool Flag;
+    void M1()
+    {
+        A a1 = new A(1);
+        M2(() => a1.Dispose());
+
+        A a2 = new A(2);
+        if (Flag)
+            M3(() => a2.Dispose());
+    }
+
+    void M2(Action disposeCallback)
+    {
+        if (Flag)
+            disposeCallback();
+    }
+
+    void M3(Action disposeCallback) => disposeCallback();
+}
+";
+            var expected = Array.Empty<DiagnosticResult>();
+            if (disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled())
+            {
+                expected = new[]
+                {
+                    // Test0.cs(17,16): warning CA2000: In method 'void Test.M1()', use recommended dispose pattern to ensure that object created by 'new A(1)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                    GetCSharpMayBeNotDisposedResultAt(17, 16, "void Test.M1()", "new A(1)"),
+                    // Test0.cs(20,16): warning CA2000: In method 'void Test.M1()', use recommended dispose pattern to ensure that object created by 'new A(2)' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+                    GetCSharpMayBeNotDisposedResultAt(20, 16, "void Test.M1()", "new A(2)")
+                };
+            }
+
+            VerifyCSharp(source, editorConfigFile, expected);
+        }
+
+        [Fact]
         public void DelegateInvocation_EmptyBody_NoArguments_Diagnostic()
         {
             VerifyCSharp(@"
@@ -9502,6 +9585,128 @@ class A : IDisposable
 ",
             // Test0.cs(8,18): warning CA2000: In method 'void A.M(A a1)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
             GetCSharpResultAt(8, 18, "void A.M(A a1)", "new A()"));
+        }
+
+        [Fact]
+        public void StaticExtensionMethodInvokedAsDelegate_InterproceduralAnalysis()
+        {
+            VerifyCSharp(@"
+using System;
+
+internal delegate bool MyPredicate<in T>(T obj);
+
+internal class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+internal class B
+{
+    public void M(int i)
+    {
+        var a1 = new A();
+        M2(a1.ExtensionMethod, i);
+    }
+
+    public void M2(MyPredicate<int> predicate, int i)
+    {
+        if (predicate(i))
+        {
+        }
+    }
+}
+
+internal static class AExtensions
+{
+    public static bool ExtensionMethod(this A a, int i) => i != 0;
+}
+",
+            // Test0.cs(17,18): warning CA2000: In method 'void B.M(int i)', call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(17, 18, "void B.M(int i)", "new A()"));
+        }
+
+        [Fact]
+        public void InfiniteAnalysesIterationBug_InterproceduralAnalysis()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.ObjectModel;
+
+internal static class Extensions
+{
+    internal static bool TryGetEvalAttribute<T>(this DkmClrType type, out DkmClrType attributeTarget, out T evalAttribute)
+            where T : DkmClrEvalAttribute
+    {
+        attributeTarget = null;
+        evalAttribute = null;
+
+        var underlyingType = type.GetLmrType();
+        while ((underlyingType != null) && !underlyingType.IsObject())
+        {
+            foreach (var attribute in type.GetEvalAttributes())
+            {
+                evalAttribute = attribute as T;
+                if (evalAttribute != null)
+                {
+                    attributeTarget = type;
+                    return true;
+                }
+            }
+
+            underlyingType = underlyingType.GetBaseTypeOrNull(out type);
+        }
+
+        return false;
+    }
+
+    internal static bool IsObject(this CustomType type)
+    {
+        bool result = type.IsClass && (type.BaseType == null) && !type.IsPointer;
+        return result;
+    }
+
+    internal static CustomType GetBaseTypeOrNull(this CustomType underlyingType, out DkmClrType type)
+    {
+        underlyingType = underlyingType.BaseType;
+        type = (underlyingType != null) ? DkmClrType.Create(underlyingType) : null;
+
+        return underlyingType;
+    }
+}
+
+internal class DkmClrEvalAttribute : Attribute
+{
+}
+
+internal class DkmClrType : IDisposable
+{
+    public CustomType CustomType { get; }
+    public ReadOnlyCollection<DkmClrEvalAttribute> EvalAttributes { get; }
+
+    internal static DkmClrType Create(CustomType underlyingType) => new DkmClrType();
+
+    internal CustomType GetLmrType() => CustomType;
+    public ReadOnlyCollection<DkmClrEvalAttribute> GetEvalAttributes()
+        => EvalAttributes;
+
+    public void Dispose()
+    {
+    }
+}
+
+public class CustomType : IDisposable
+{
+    public bool IsClass { get; internal set; }
+    public CustomType BaseType { get; internal set; }
+    public bool IsPointer { get; internal set; }
+
+    public void Dispose()
+    {
+    }
+}
+");
         }
     }
 }

@@ -136,10 +136,8 @@ class C
         }
 
         [Fact]
-        public void CA1826FixEnumerableFirstMethodChainCallWrongFormattingCSharp()
+        public void CA1826FixEnumerableFirstMethodChainCallCSharp()
         {
-            //this unit test documents a problematic edge case which needs to be discussed and addressed
-
             VerifyCSharpFix(@"
 using System.Collections.Generic;
 #pragma warning disable CS8019 //Unnecessary using directive
@@ -171,8 +169,7 @@ class C
 {
     void M()
     {
-        var f = GetList()[0]
-;
+        var f = GetList()[0];
 
         var s = GetList()[0]
             .ToString();

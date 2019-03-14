@@ -47,6 +47,21 @@
         <target state="translated">ServerCertificateValidationCallback は、常時 true を返すことによってあらゆるサーバー証明書を受け入れる関数に設定されます。要求を受信するサーバーの ID を確認するサーバー証明書が検証されるようにします。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableHeaderChecking">
+        <source>Do Not Disable Header Checking</source>
+        <target state="new">Do Not Disable Header Checking</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHeaderCheckingDescription">
+        <source>The purpose of enable HTTP headers checking is to enable encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
+        <target state="new">The purpose of enable HTTP headers checking is to enable encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHeaderCheckingMessage">
+        <source>Do not disable header checking</source>
+        <target state="new">Do not disable header checking</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
         <source>Do Not Disable Request Validation</source>
         <target state="new">Do Not Disable Request Validation</target>

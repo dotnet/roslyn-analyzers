@@ -47,6 +47,21 @@
         <target state="translated">ServerCertificateValidationCallback est défini sur une fonction qui accepte n'importe quel certificat de serveur en retournant toujours la valeur true. Veillez à ce que ces certificats de serveur soient validés pour vérifier l'identité du serveur qui reçoit les demandes.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableHeaderChecking">
+        <source>Do Not Disable Header Checking</source>
+        <target state="new">Do Not Disable Header Checking</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHeaderCheckingDescription">
+        <source>The purpose of enable HTTP headers checking is to enable encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
+        <target state="new">The purpose of enable HTTP headers checking is to enable encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHeaderCheckingMessage">
+        <source>Do not disable header checking</source>
+        <target state="new">Do not disable header checking</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
         <source>Do Not Disable Request Validation</source>
         <target state="new">Do Not Disable Request Validation</target>

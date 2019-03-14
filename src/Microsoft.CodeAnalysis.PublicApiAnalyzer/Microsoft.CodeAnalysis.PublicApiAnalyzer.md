@@ -47,15 +47,3 @@ https://github.com/dotnet/roslyn/blob/master/docs/Adding%20Optional%20Parameters
 Category: ApiDesign
 
 Severity: Warning
-
-### RS0030: Do not use banned APIs ###
-
-Category: ApiDesign
-
-Severity: Warning
-
-### RS0031: The list of banned symbols contains a duplicate ###
-
-Category: ApiDesign
-
-Severity: Warning

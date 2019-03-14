@@ -129,7 +129,7 @@ class C
 }
 ";
             DiagnosticResult[] expected = new[] {
-                // Test0.cs(4,10): warning CA1502: 'M' has a cyclomatic complexity of '29'. Rewrite or refactor the code to decrease its complexity below '26'.
+                // Test0.cs(4,10): warning CA1502: 'M' has a cyclomatic complexity of '28'. Rewrite or refactor the code to decrease its complexity below '26'.
                 GetCSharpCA1502ExpectedDiagnostic(4, 10, "M", 28, 26)};
             VerifyCSharp(source, expected);
         }
@@ -178,7 +178,7 @@ class C
 CA1502: 2
 ";
             DiagnosticResult[] expected = new[] {
-                // Test0.cs(4,10): warning CA1502: 'M1' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '3'.
+                // Test0.cs(4,10): warning CA1502: 'M1' has a cyclomatic complexity of '4'. Rewrite or refactor the code to decrease its complexity below '3'.                
                 GetCSharpCA1502ExpectedDiagnostic(4, 10, "M1", 4, 3)};
             VerifyCSharp(source, GetAdditionalFile(additionalText), expected);
         }

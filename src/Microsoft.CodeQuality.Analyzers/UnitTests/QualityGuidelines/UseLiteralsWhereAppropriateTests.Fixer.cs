@@ -74,6 +74,8 @@ End Class
         [Fact]
         public void CSharp_CodeFixForMultiDeclaration()
         {
+            // Fixers are disabled on multiple fields, because it may introduce compile error.
+
             VerifyCSharpFix(@"
 class C
 {
@@ -85,11 +87,9 @@ class C
 class C
 {
     /*leading*/
-    const /*intermediate*/  /*trailing*/ string f3, f4 = ""Message is shown only for f4"";
+    readonly /*intermediate*/ static /*trailing*/ string f3, f4 = ""Message is shown only for f4"";
 }
 ");
-            // VB-fixer is disabled on multiple fields, because it would introduce compile error.
-            // Error BC30438: Constants must have a value.
             VerifyBasicFix(@"
 Class C
     Shared ReadOnly f3 As String, f4 As String = ""Message is shown only for f4""

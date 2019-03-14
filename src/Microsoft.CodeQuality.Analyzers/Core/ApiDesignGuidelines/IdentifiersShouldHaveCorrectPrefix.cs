@@ -60,7 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 Debug.Assert(context.Symbol.MatchesConfiguredVisibility(context.Options, TypeParameterRule, context.CancellationToken));
 
                 bool allowSingleLetterTypeParameters = context.Options.GetBoolOptionValue(
-                    optionName: EditorConfigOptionNames.AllowSingleLetterTypeParameters,
+                    optionName: EditorConfigOptionNames.ExcludeSingleLetterTypeParameters,
                     rule: TypeParameterRule,
                     defaultValue: false,
                     cancellationToken: context.CancellationToken);

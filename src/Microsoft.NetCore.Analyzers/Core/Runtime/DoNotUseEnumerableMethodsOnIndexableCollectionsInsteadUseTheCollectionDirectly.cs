@@ -24,6 +24,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         internal const string RuleId = "CA1826";
 
+        internal const string MethodPropertyKey = "method";
+
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
@@ -84,7 +86,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation()));
+                var properties = new Dictionary<string, string> { [MethodPropertyKey] = invocation.TargetMethod.Name }.ToImmutableDictionary();
+                operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation(), properties));
             }, OperationKind.Invocation);
         }
 

@@ -22,11 +22,9 @@
 
   <ItemGroup>
     <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.dll" />
-    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.dll" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\PublicApiAnalyzer\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\PublicApiAnalyzer.CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
   </ItemGroup>
 </Project>

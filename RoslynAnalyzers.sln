@@ -168,10 +168,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.Bann
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PublicApiAnalyzer.Package", "nuget\Microsoft.CodeAnalysis.PublicApiAnalyzer\Microsoft.CodeAnalysis.PublicApiAnalyzer.Package.csproj", "{18CE822A-A46D-494B-BBFC-C52EF1D048BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PublicApiAnalyzer", "src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\PublicApiAnalyzer\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj", "{4C008880-34A0-4749-B1DC-538A7D7B8C95}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes", "src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\PublicApiAnalyzer.CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.csproj", "{378E2C44-6E42-4638-B81C-76A1A76E34AF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PublicApiAnalyzer.Setup", "src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Setup\Microsoft.CodeAnalysis.PublicApiAnalyzer.Setup.csproj", "{7208D244-35E7-4EC1-BB51-320B95EB06C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PublicApiAnalyzer.UnitTests", "src\Microsoft.CodeAnalysis.PublicApiAnalyzer\UnitTests\Microsoft.CodeAnalysis.PublicApiAnalyzer.UnitTests.csproj", "{A46E44BE-F340-4787-8C7D-323CB52A6514}"
@@ -185,6 +181,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.Setup", "src\PerformanceSensitive.Analyzers\Setup\Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.Setup.csproj", "{14EB9C4E-24D4-4321-9D07-1F94A4A32911}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.UnitTests", "src\PerformanceSensitive.Analyzers\UnitTests\Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.UnitTests.csproj", "{6BC50A5B-5965-4C6C-9CBD-EA48176C2AAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.CodeAnalysis.PublicApiAnalyzer", "src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj", "{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -679,22 +677,6 @@ Global
 		{18CE822A-A46D-494B-BBFC-C52EF1D048BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{18CE822A-A46D-494B-BBFC-C52EF1D048BE}.Release|x86.ActiveCfg = Release|Any CPU
 		{18CE822A-A46D-494B-BBFC-C52EF1D048BE}.Release|x86.Build.0 = Release|Any CPU
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95}.Debug|x86.Build.0 = Debug|Any CPU
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95}.Release|x86.ActiveCfg = Release|Any CPU
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95}.Release|x86.Build.0 = Release|Any CPU
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF}.Debug|x86.Build.0 = Debug|Any CPU
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF}.Release|x86.ActiveCfg = Release|Any CPU
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF}.Release|x86.Build.0 = Release|Any CPU
 		{7208D244-35E7-4EC1-BB51-320B95EB06C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7208D244-35E7-4EC1-BB51-320B95EB06C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7208D244-35E7-4EC1-BB51-320B95EB06C1}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -751,6 +733,14 @@ Global
 		{6BC50A5B-5965-4C6C-9CBD-EA48176C2AAA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BC50A5B-5965-4C6C-9CBD-EA48176C2AAA}.Release|x86.ActiveCfg = Release|Any CPU
 		{6BC50A5B-5965-4C6C-9CBD-EA48176C2AAA}.Release|x86.Build.0 = Release|Any CPU
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}.Debug|x86.Build.0 = Debug|Any CPU
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}.Release|x86.ActiveCfg = Release|Any CPU
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -820,8 +810,6 @@ Global
 		{86303643-749E-468C-838C-5AD459017E79} = {8D64F6D4-951C-413E-8A53-FB708F9FB5CD}
 		{B88CCE32-B1EA-45A5-AE4C-AE92B7CFD691} = {8D64F6D4-951C-413E-8A53-FB708F9FB5CD}
 		{18CE822A-A46D-494B-BBFC-C52EF1D048BE} = {8E48BD4D-5178-47E1-A850-76B5DA2EB9D0}
-		{4C008880-34A0-4749-B1DC-538A7D7B8C95} = {8E48BD4D-5178-47E1-A850-76B5DA2EB9D0}
-		{378E2C44-6E42-4638-B81C-76A1A76E34AF} = {8E48BD4D-5178-47E1-A850-76B5DA2EB9D0}
 		{7208D244-35E7-4EC1-BB51-320B95EB06C1} = {8E48BD4D-5178-47E1-A850-76B5DA2EB9D0}
 		{A46E44BE-F340-4787-8C7D-323CB52A6514} = {8E48BD4D-5178-47E1-A850-76B5DA2EB9D0}
 		{04CDAFD7-7EC6-43A0-AC42-84FFD56E78B6} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
@@ -829,6 +817,7 @@ Global
 		{5F78E062-0B9F-47D2-B749-3CE49472E0A3} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{14EB9C4E-24D4-4321-9D07-1F94A4A32911} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
 		{6BC50A5B-5965-4C6C-9CBD-EA48176C2AAA} = {34430BD4-4D66-4FE6-8076-51B87B4FBCD4}
+		{1639FE32-3F7A-4F4F-8AB6-A9C77C5CE459} = {8E48BD4D-5178-47E1-A850-76B5DA2EB9D0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

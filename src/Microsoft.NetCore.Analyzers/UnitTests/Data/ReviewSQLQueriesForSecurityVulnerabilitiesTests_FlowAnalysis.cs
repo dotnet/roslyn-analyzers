@@ -2918,8 +2918,8 @@ End Class",
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1568")]
-        public void FlowAnalysis_PointsTo_AnonymousObjectCreation_NoDiagnostic()
+        [Fact]
+        public void CSharp_FlowAnalysis_PointsTo_AnonymousObjectCreation_NoDiagnostic()
         {
             VerifyCSharp($@"
 {SetupCodeCSharp}
@@ -2948,7 +2948,12 @@ class Test
     }}
 }}
 ");
+        }
 
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PointsToAnalysis)]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1568")]
+        public void VisualBasic_FlowAnalysis_PointsTo_AnonymousObjectCreation_NoDiagnostic()
+        {
             VerifyBasic($@"
 {SetupCodeBasic}
 

@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Text;
 using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
 
-namespace Microsoft.CodeAnalysis.PublicApiAnalyzer
+namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic, Name = "DeclarePublicAFix"), Shared]
     public sealed class DeclarePublicApiFix : CodeFixProvider

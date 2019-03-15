@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Text;
 
 using DiagnosticIds = Roslyn.Diagnostics.Analyzers.RoslynDiagnosticIds;
 
-namespace Microsoft.CodeAnalysis.PublicApiAnalyzer
+namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed partial class DeclarePublicApiAnalyzer : DiagnosticAnalyzer

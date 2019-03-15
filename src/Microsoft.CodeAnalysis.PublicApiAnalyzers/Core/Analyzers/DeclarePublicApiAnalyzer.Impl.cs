@@ -12,7 +12,7 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.CodeAnalysis.PublicApiAnalyzer
+namespace Microsoft.CodeAnalysis.PublicApiAnalyzers
 {
     public partial class DeclarePublicApiAnalyzer : DiagnosticAnalyzer
     {

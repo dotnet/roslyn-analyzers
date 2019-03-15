@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.VisualBasic.Testing;
 using Test.Utilities;
 using Xunit;
 
-namespace Microsoft.CodeAnalysis.PublicApiAnalyzer.UnitTests
+namespace Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests
 {
     public class DeclarePublicApiAnalyzerTests
     {

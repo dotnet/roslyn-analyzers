@@ -11,13 +11,13 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Core\PublicApiAnalyzer\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj">
+    <ProjectReference Include="..\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj">
       <Name>Microsoft.CodeAnalysis.PublicApiAnalyzer</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>
       <ForceIncludeInVSIX>true</ForceIncludeInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\Core\PublicApiAnalyzer.CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.csproj">
+    <ProjectReference Include="..\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.csproj">
       <Name>Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup</IncludeOutputGroupsInVSIXLocalOnly>

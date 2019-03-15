@@ -19,7 +19,7 @@
   </Choose>
 
   <ItemGroup>
-    <ProjectReference Include="..\PublicApiAnalyzer\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
+    <ProjectReference Include="..\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

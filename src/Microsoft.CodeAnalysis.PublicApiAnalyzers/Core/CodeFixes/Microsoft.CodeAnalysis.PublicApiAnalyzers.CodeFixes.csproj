@@ -19,7 +19,7 @@
   </Choose>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.UnitTests" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PublicApiAnalyzers.UnitTests" />
   </ItemGroup>
 
   <ItemGroup>

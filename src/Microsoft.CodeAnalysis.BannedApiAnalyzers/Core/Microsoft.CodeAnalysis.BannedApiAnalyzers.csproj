@@ -12,9 +12,9 @@
     <Compile Include="..\..\Roslyn.Diagnostics.Analyzers\Core\RoslynDiagnosticIds.cs" Link="RoslynDiagnosticIds.cs" />
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzer" />
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzer" />
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.BannedApiAnalyzer.UnitTests" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.CSharp.BannedApiAnalyzers" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.VisualBasic.BannedApiAnalyzers" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.BannedApiAnalyzers.UnitTests" />
   </ItemGroup>
   <Import Project="..\..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
 </Project>

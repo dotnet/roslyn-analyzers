@@ -4,9 +4,9 @@
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="$(MicrosoftCodeAnalysisVersion)" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="$(MicrosoftCodeAnalysisVersion)" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.BannedApiAnalyzer.csproj" />
+    <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.BannedApiAnalyzers.csproj" />
   </ItemGroup>
 </Project>

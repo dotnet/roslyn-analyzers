@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.csproj" />
-    <ProjectReference Include="..\CSharp\Microsoft.CodeAnalysis.PerformanceSensitive.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\Core\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj" />
+    <ProjectReference Include="..\CSharp\Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.csproj" />
   </ItemGroup>
 </Project>

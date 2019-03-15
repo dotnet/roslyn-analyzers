@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <NuspecPackageId>Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers</NuspecPackageId>
+    <NuspecPackageId>Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers</NuspecPackageId>
     <Description>PerformanceSensitive Analyzers</Description>
     <Summary>PerformanceSensitive Analyzers</Summary>
     <ReleaseNotes>PerformanceSensitive Analyzers</ReleaseNotes>
@@ -12,14 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.dll" />
-    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PerformanceSensitive.CSharp.Analyzers.dll" />
-    <AnalyzerNupkgFile Include="Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.targets" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.dll" />
     <AnalyzerNupkgFile Include="PerformanceSensitiveAttribute.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\PerformanceSensitive.Analyzers\Core\Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.csproj" />
-    <ProjectReference Include="..\..\src\PerformanceSensitive.Analyzers\CSharp\Microsoft.CodeAnalysis.PerformanceSensitive.CSharp.Analyzers.csproj" />
+    <ProjectReference Include="..\..\src\PerformanceSensitiveAnalyzers\Core\Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers.csproj" />
+    <ProjectReference Include="..\..\src\PerformanceSensitiveAnalyzers\CSharp\Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers.csproj" />
   </ItemGroup>
 </Project>

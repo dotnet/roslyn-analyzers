@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <!--
-      PackageId is used by Restore. If we set it to Microsoft.CodeAnalysis.PublicApiAnalyzer,
-      Restore would conclude that there is a cyclic dependency between us and the Microsoft.CodeAnalysis.PublicApiAnalyzer package.
+      PackageId is used by Restore. If we set it to DotNetAnalyzers.PublicApiAnalyzer.CodeFixes,
+      Restore would conclude that there is a cyclic dependency between us and the DotNetAnalyzers.PublicApiAnalyzer.CodeFixes package.
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
     <MicrosoftCodeAnalysisVersion>1.2.1</MicrosoftCodeAnalysisVersion>
@@ -19,11 +19,12 @@
   </Choose>
 
   <ItemGroup>
-    <Compile Include="..\..\Roslyn.Diagnostics.Analyzers\Core\RoslynDiagnosticIds.cs" Link="RoslynDiagnosticIds.cs" />
+    <ProjectReference Include="..\PublicApiAnalyzer\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.UnitTests" />
   </ItemGroup>
-  <Import Project="..\..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
-  <Import Project="..\..\Utilities\Workspaces\Workspaces.Utilities.projitems" Label="Shared" />
+
+  <Import Project="..\..\..\Utilities\Workspaces\Workspaces.Utilities.projitems" Label="Shared" />
 </Project>

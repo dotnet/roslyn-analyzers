@@ -5,10 +5,10 @@
 
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <NuspecPackageId>Microsoft.CodeAnalysis.PublicApiAnalyzer</NuspecPackageId>
-    <Description>Public API Analyzer</Description>
+    <NuspecPackageId>Microsoft.CodeAnalysis.PublicApiAnalyzers</NuspecPackageId>
+    <Description>Public API Analyzers</Description>
     <Summary>Public API Analyzer</Summary>
-    <ReleaseNotes>Public API Analyzer</ReleaseNotes>
+    <ReleaseNotes>Public API Analyzers</ReleaseNotes>
     <PackageTags>Roslyn CodeAnalysis Compiler CSharp VB VisualBasic Diagnostic Analyzers Syntax Semantics PublicApi ApiAnalyzer</PackageTags>
   </PropertyGroup>
 
@@ -21,12 +21,12 @@
   </Choose>
 
   <ItemGroup>
-    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.dll" />
-    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PublicApiAnalyzers.dll" />
+    <AnalyzerNupkgAssembly Include="Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.dll" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzer\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzers\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzers\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj" />
   </ItemGroup>
 </Project>

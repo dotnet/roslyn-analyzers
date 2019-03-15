@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Test.Utilities\Test.Utilities.csproj" />
-    <ProjectReference Include="..\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
-    <ProjectReference Include="..\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzer.CodeFixes.csproj" />
+    <ProjectReference Include="..\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj" />
+    <ProjectReference Include="..\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj" />
   </ItemGroup>
 </Project>

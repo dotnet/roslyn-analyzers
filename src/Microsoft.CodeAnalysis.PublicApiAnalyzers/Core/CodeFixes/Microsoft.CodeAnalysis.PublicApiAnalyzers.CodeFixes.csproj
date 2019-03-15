@@ -19,11 +19,11 @@
   </Choose>
 
   <ItemGroup>
-    <ProjectReference Include="..\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzer.csproj" />
+    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.UnitTests" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.PublicApiAnalyzer.UnitTests" />
+    <ProjectReference Include="..\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj" />
   </ItemGroup>
 
   <Import Project="..\..\..\Utilities\Workspaces\Workspaces.Utilities.projitems" Label="Shared" />

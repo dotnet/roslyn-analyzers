@@ -26,7 +26,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzers\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.CodeAnalysis.PublicApiAnalyzers\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj" />
+    <ProjectReference Include="..\..\src\PublicApiAnalyzers\Core\Analyzers\Microsoft.CodeAnalysis.PublicApiAnalyzers.csproj" />
+    <ProjectReference Include="..\..\src\PublicApiAnalyzers\Core\CodeFixes\Microsoft.CodeAnalysis.PublicApiAnalyzers.CodeFixes.csproj" />
   </ItemGroup>
 </Project>

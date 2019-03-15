@@ -4094,6 +4094,86 @@ Class Test
 End Class");
         }
 
+        [Fact, WorkItem(2201, "https://github.com/dotnet/roslyn-analyzers/issues/2201")]
+        public void UsingStatementInTryCatch_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+
+class Test
+{
+    void M1()
+    {
+        try
+        {
+            using (var ms = new MemoryStream())
+            {
+            }
+        }
+        catch
+        {
+        }
+    }
+}");
+
+            VerifyBasic(@"
+Imports System.IO
+
+Class Test
+    Private Sub M1()
+        Try
+            Using ms = New MemoryStream()
+            End Using
+        Catch
+        End Try
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(2201, "https://github.com/dotnet/roslyn-analyzers/issues/2201")]
+        public void NestedTryFinallyInTryCatch_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+
+class Test
+{
+    void M1()
+    {
+        try
+        {
+            var ms = new MemoryStream();
+            try
+            {
+            }
+            finally
+            {
+                ms?.Dispose();
+            }
+        }
+        catch
+        {
+        }
+    }
+}");
+
+            VerifyBasic(@"
+Imports System.IO
+
+Class Test
+    Private Sub M1()
+        Try
+            Dim ms = New MemoryStream()
+            Try
+            Finally
+                ms?.Dispose()
+            End Try
+        Catch
+        End Try
+    End Sub
+End Class");
+        }
+
         [Fact]
         public void ReturnStatement_NoDiagnostic()
         {

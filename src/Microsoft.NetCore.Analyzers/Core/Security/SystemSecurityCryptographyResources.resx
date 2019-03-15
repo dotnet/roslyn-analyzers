@@ -144,14 +144,14 @@
   <data name="DoNotDisableCertificateValidationMessage" xml:space="preserve">
     <value>The ServerCertificateValidationCallback is set to a function that accepts any server certificate, by always returning true. Ensure that server certificates are validated to verify the identity of the server receiving requests.</value>
   </data>
-  <data name="DoNotDisableHeaderChecking" xml:space="preserve">
-    <value>Do Not Disable Header Checking</value>
+  <data name="DoNotDisableHTTPHeaderChecking" xml:space="preserve">
+    <value>Do Not Disable HTTP Header Checking</value>
   </data>
-  <data name="DoNotDisableHeaderCheckingDescription" xml:space="preserve">
-    <value>The purpose of enable HTTP headers checking is to enable encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</value>
+  <data name="DoNotDisableHTTPHeaderCheckingDescription" xml:space="preserve">
+    <value>HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</value>
   </data>
-  <data name="DoNotDisableHeaderCheckingMessage" xml:space="preserve">
-    <value>Do not disable header checking</value>
+  <data name="DoNotDisableHTTPHeaderCheckingMessage" xml:space="preserve">
+    <value>Do not disable HTTP header checking</value>
   </data>
   <data name="DoNotDisableRequestValidation" xml:space="preserve">
     <value>Do Not Disable Request Validation</value>

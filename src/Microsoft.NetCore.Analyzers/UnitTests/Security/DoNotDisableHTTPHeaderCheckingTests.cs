@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableHeaderCheckingTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableHTTPHeaderCheckingTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
         public void TestLiteralDiagnostic()
@@ -28,7 +28,7 @@ class TestClass
         httpRuntimeSection.EnableHeaderChecking = false;
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotDisableHeaderChecking.Rule));
+            GetCSharpResultAt(10, 9, DoNotDisableHTTPHeaderChecking.Rule));
         }
 
         [Fact]
@@ -47,7 +47,27 @@ class TestClass
         httpRuntimeSection.EnableHeaderChecking = flag;
     }
 }",
-            GetCSharpResultAt(11, 9, DoNotDisableHeaderChecking.Rule));
+            GetCSharpResultAt(11, 9, DoNotDisableHTTPHeaderChecking.Rule));
+        }
+
+        [Fact]
+        public void TestPropertyInitializerDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.Configuration;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var httpRuntimeSection = new HttpRuntimeSection
+        {
+            EnableHeaderChecking = false
+        };
+    }
+}",
+            GetCSharpResultAt(11, 13, DoNotDisableHTTPHeaderChecking.Rule));
         }
 
         //Ideally, we would generate a diagnostic in this case.
@@ -104,14 +124,33 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public void TestPropertyInitializerNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.Configuration;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var httpRuntimeSection = new HttpRuntimeSection
+        {
+            EnableHeaderChecking = true
+        };
+    }
+}");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DoNotDisableHeaderChecking();
+            return new DoNotDisableHTTPHeaderChecking();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DoNotDisableHeaderChecking();
+            return new DoNotDisableHTTPHeaderChecking();
         }
     }
 }

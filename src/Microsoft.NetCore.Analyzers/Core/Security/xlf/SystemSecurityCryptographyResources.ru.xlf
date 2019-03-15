@@ -47,19 +47,19 @@
         <target state="translated">В качестве значения параметра ServerCertificateValidationCallback задается функция, которая принимает любой сертификат сервера, всегда возвращая значение true. Убедитесь, что сертификаты серверов проверяются, чтобы подтвердить подлинность сервера, принимающего запросы.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDisableHeaderChecking">
-        <source>Do Not Disable Header Checking</source>
-        <target state="new">Do Not Disable Header Checking</target>
+      <trans-unit id="DoNotDisableHTTPHeaderChecking">
+        <source>Do Not Disable HTTP Header Checking</source>
+        <target state="new">Do Not Disable HTTP Header Checking</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDisableHeaderCheckingDescription">
-        <source>The purpose of enable HTTP headers checking is to enable encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
-        <target state="new">The purpose of enable HTTP headers checking is to enable encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
+      <trans-unit id="DoNotDisableHTTPHeaderCheckingDescription">
+        <source>HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
+        <target state="new">HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotDisableHeaderCheckingMessage">
-        <source>Do not disable header checking</source>
-        <target state="new">Do not disable header checking</target>
+      <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
+        <source>Do not disable HTTP header checking</source>
+        <target state="new">Do not disable HTTP header checking</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">

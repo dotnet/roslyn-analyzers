@@ -11,19 +11,19 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotDisableHeaderChecking : DiagnosticAnalyzer
+    public sealed class DoNotDisableHTTPHeaderChecking : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5365";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableHeaderChecking),
+            nameof(SystemSecurityCryptographyResources.DoNotDisableHTTPHeaderChecking),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableHeaderCheckingMessage),
+            nameof(SystemSecurityCryptographyResources.DoNotDisableHTTPHeaderCheckingMessage),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableHeaderCheckingDescription),
+            nameof(SystemSecurityCryptographyResources.DoNotDisableHTTPHeaderCheckingDescription),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 

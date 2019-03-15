@@ -93,9 +93,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var disposeAnalysisKind = operationBlockContext.Options.GetDisposeAnalysisKindOption(NotDisposedOnExceptionPathsRule, DisposeAnalysisKind.NonExceptionPaths, operationBlockContext.CancellationToken);
                     var trackExceptionPaths = disposeAnalysisKind.AreExceptionPathsEnabled();
 
+                    // For non-exception paths analysis, we can skip interprocedural analysis for certain invocations.
+                    var interproceduralAnalysisPredicateOpt = !trackExceptionPaths ?
+                        new InterproceduralAnalysisPredicate(
+                            skipAnalysisForInvokedMethodPredicateOpt: SkipInterproceduralAnalysis,
+                            skipAnalysisForInvokedLambdaOrLocalFunctionPredicateOpt: null,
+                            skipAnalysisForInvokedContextPredicateOpt: null) :
+                        null;
+
                     if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod,
                         operationBlockContext.Options, NotDisposedRule, trackInstanceFields: false, trackExceptionPaths,
-                        operationBlockContext.CancellationToken, out var disposeAnalysisResult, out var pointsToAnalysisResult))
+                        operationBlockContext.CancellationToken, out var disposeAnalysisResult, out var pointsToAnalysisResult,
+                        interproceduralAnalysisPredicateOpt))
                     {
                         var notDisposedDiagnostics = ArrayBuilder<Diagnostic>.GetInstance();
                         var mayBeNotDisposedDiagnostics = ArrayBuilder<Diagnostic>.GetInstance();
@@ -143,6 +152,29 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
                 });
+
+                return;
+
+                // Local functions.
+
+                bool SkipInterproceduralAnalysis(IMethodSymbol invokedMethod)
+                {
+                    // Skip interprocedural analysis if we are invoking a method and not passing any disposable object as an argument.
+                    // We also check that we are not passing any object type argument which might hold disposable object
+                    // and also check that we are not passing delegate type argument which can
+                    // be a lambda or local function that has access to disposable object in current method's scope.
+                    foreach (var p in invokedMethod.Parameters)
+                    {
+                        if (p.Type.SpecialType == SpecialType.System_Object ||
+                            p.Type.DerivesFrom(disposeAnalysisHelper.IDisposable) ||
+                            p.Type.TypeKind == TypeKind.Delegate)
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
             });
         }
 

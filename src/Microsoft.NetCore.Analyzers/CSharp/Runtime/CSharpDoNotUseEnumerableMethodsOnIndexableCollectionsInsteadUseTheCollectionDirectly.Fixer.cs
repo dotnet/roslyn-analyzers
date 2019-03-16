@@ -80,10 +80,9 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
             }
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxTriviaList trailing = collectionSyntax.GetTrailingTrivia();
-            collectionSyntax = collectionSyntax.WithTrailingTrivia(SyntaxTriviaList.Empty);
             SyntaxNode indexNode = generator.LiteralExpression(0);
-            SyntaxNode elementAccessNode = generator.ElementAccessExpression(collectionSyntax, indexNode).WithTrailingTrivia(trailing);
+            SyntaxNode elementAccessNode = generator.ElementAccessExpression(collectionSyntax.WithoutTrailingTrivia(), indexNode)
+                .WithTrailingTrivia(invocationNode.GetTrailingTrivia());
 
             SyntaxNode newRoot = root.ReplaceNode(invocationNode, elementAccessNode);
             return document.WithSyntaxRoot(newRoot);

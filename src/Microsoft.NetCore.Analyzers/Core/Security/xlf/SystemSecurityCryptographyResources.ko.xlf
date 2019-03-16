@@ -47,6 +47,21 @@
         <target state="translated">ServerCertificateValidationCallback은 항상 true를 반환하여 서버 인증서를 허용하는 함수로 설정되어 있습니다. 서버 인증서의 유효성을 검사하여 요청을 받는 서버의 ID를 확인해야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderChecking">
+        <source>Do Not Disable HTTP Header Checking</source>
+        <target state="new">Do Not Disable HTTP Header Checking</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderCheckingDescription">
+        <source>HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
+        <target state="new">HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
+        <source>Do not disable HTTP header checking</source>
+        <target state="new">Do not disable HTTP header checking</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
         <source>Do Not Disable Request Validation</source>
         <target state="new">Do Not Disable Request Validation</target>

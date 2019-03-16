@@ -37,11 +37,6 @@
         <target state="new">Delegate on struct instance caused a boxing allocation</target>
         <note />
       </trans-unit>
-      <trans-unit id="ImplicitArrayCreationRuleTitleAndMessage">
-        <source>Implicit new array creation allocation</source>
-        <target state="new">Implicit new array creation allocation</target>
-        <note />
-      </trans-unit>
       <trans-unit id="InitializerCreationRuleTitleAndMessage">
         <source>Initializer reference type allocation</source>
         <target state="new">Initializer reference type allocation</target>
@@ -70,11 +65,6 @@
       <trans-unit id="MethodGroupAllocationRuleTitle">
         <source>Delegate allocation from a method group</source>
         <target state="new">Delegate allocation from a method group</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="NewArrayRuleTitleAndMessage">
-        <source>Explicit new array type allocation</source>
-        <target state="new">Explicit new array type allocation</target>
         <note />
       </trans-unit>
       <trans-unit id="NewObjectRuleTitleAndMessage">

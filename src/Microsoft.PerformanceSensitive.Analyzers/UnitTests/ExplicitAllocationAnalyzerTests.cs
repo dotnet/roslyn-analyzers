@@ -11,7 +11,6 @@ namespace Microsoft.PerformanceSensitive.Analyzers.UnitTests
 {
     public class ExplicitAllocationAnalyzerTests
     {
-        // TODO: Should this really be here? Should this not be under TypeConverter analyzer?
         [Fact]
         [WorkItem(7995606, "http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp")]
         public async Task Converting_any_value_type_into_interface_reference()
@@ -36,7 +35,6 @@ public class MyClass
                 VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.ObjectCreationRule).WithLocation(13, 17));
         }
 
-        // TODO: Should this really be here? Should this not be under TypeConverter analyzer?
         [Fact]
         [WorkItem(7995606, "http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp")]
         public async Task Converting_any_value_type_to_System_Object_type()
@@ -59,7 +57,6 @@ public class MyClass
                 VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.ObjectCreationRule).WithLocation(11, 22));
         }
 
-        // TODO: Should this really be here? Should this not be under TypeConverter analyzer?
         [Fact]
         [WorkItem(7995606, "http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp")]
         public async Task Converting_any_value_type_to_System_ValueType_type()

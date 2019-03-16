@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.PerformanceSensitive.CSharp.Analyzers;
+using Microsoft.PerformanceSensitive.Analyzers;
 using Xunit;
 using VerifyCS = Microsoft.PerformanceSensitive.Analyzers.UnitTests.CSharpPerformanceCodeFixVerifier<
-    Microsoft.PerformanceSensitive.CSharp.Analyzers.ExplicitAllocationAnalyzer,
+    Microsoft.PerformanceSensitive.Analyzers.ExplicitAllocationAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace PerformanceSensitive.Analyzers.UnitTests
@@ -41,7 +41,7 @@ namespace PerformanceSensitive.Analyzers.UnitTests
 
             await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
                 // Test0.cs(21,38): info HAA0502: Explicit new reference type allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.NewObjectRule).WithLocation(21, 38));
+                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.ObjectCreationRule).WithLocation(21, 38));
         }
     }
 }

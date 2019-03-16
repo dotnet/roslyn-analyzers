@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AnonymousNewObjectRuleTitleAndMessage" xml:space="preserve">
+    <value>Explicit new anonymous object allocation</value>
+  </data>
+  <data name="LetCauseRuleTitleAndMessage" xml:space="preserve">
+    <value>Let clause induced allocation</value>
+  </data>
   <data name="NewArrayRuleTitleAndMessage" xml:space="preserve">
     <value>Explicit new array type allocation</value>
+  </data>
+  <data name="NewObjectRuleTitleAndMessage" xml:space="preserve">
+    <value>Explicit new reference type allocation</value>
   </data>
 </root>

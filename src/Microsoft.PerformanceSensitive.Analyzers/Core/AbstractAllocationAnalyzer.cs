@@ -7,8 +7,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.PerformanceSensitive.Analyzers
 {
-    internal abstract class AbstractAllocationAnalyzer
-    : DiagnosticAnalyzer
+    internal abstract class AbstractAllocationAnalyzer : DiagnosticAnalyzer
     {
         protected abstract ImmutableArray<OperationKind> Operations { get; }
 
@@ -152,7 +151,7 @@ namespace Microsoft.PerformanceSensitive.Analyzers
         }
     }
 
-        internal abstract class AbstractLanguageAllocationAnalyzer<TLanguageKindEnum>
+    internal abstract class AbstractLanguageAllocationAnalyzer<TLanguageKindEnum>
         : AbstractAllocationAnalyzer
         where TLanguageKindEnum : struct
     {
@@ -203,7 +202,7 @@ namespace Microsoft.PerformanceSensitive.Analyzers
             {
                 return;
             }
-        
+
             codeBlockStartAnalysisContext.RegisterSyntaxNodeAction(
                 syntaxNodeContext =>
                 {

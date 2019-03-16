@@ -21,7 +21,7 @@ namespace Microsoft.PerformanceSensitive.Analyzers
         private static readonly LocalizableString s_localizableObjectCreationRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.NewObjectRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
         private static readonly LocalizableString s_localizablAnonymousObjectCreationRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.AnonymousNewObjectRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
         private static readonly LocalizableString s_localizableLetCauseRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.LetCauseRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
-        
+
         internal static DiagnosticDescriptor ArrayCreationRule = new DiagnosticDescriptor(
             ArrayCreationRuleId,
             s_localizableArrayCreationRuleTitleAndMessage,

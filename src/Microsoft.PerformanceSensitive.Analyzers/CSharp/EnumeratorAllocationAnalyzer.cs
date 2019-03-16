@@ -14,7 +14,7 @@ namespace Microsoft.PerformanceSensitive.CSharp.Analyzers
 {
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal sealed class EnumeratorAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
+    internal sealed class EnumeratorAllocationAnalyzer : AbstractLanguageAllocationAnalyzer<SyntaxKind>
     {
         public const string ReferenceTypeEnumeratorRuleId = "HAA0401";
 

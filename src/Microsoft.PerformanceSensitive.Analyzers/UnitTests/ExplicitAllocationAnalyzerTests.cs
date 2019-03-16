@@ -46,26 +46,6 @@ public class TestClass
         }
 
         [Fact]
-        public async Task ExplicitAllocation_ImplicitArrayCreationExpressionSyntax()
-        {
-            var sampleProgram =
-@"using System.Collections.Generic;
-using Roslyn.Utilities;
-
-public class MyClass
-{
-    [PerformanceSensitive(""uri"")]
-    public void Testing()
-    {
-        int[] intData = new[] { 123, 32, 4 };
-    }
-}";
-            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
-                // Test0.cs(9,25): info HAA0504: Implicit new array creation allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.ImplicitArrayCreationRule).WithLocation(9, 25));
-        }
-
-        [Fact]
         public async Task ExplicitAllocation_AnonymousObjectCreationExpressionSyntax()
         {
             var sampleProgram =
@@ -83,26 +63,6 @@ public class MyClass
             await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
                 // Test0.cs(9,20): info HAA0503: Explicit new anonymous object allocation
                 VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.AnonymousNewObjectRule).WithLocation(9, 20));
-        }
-
-        [Fact]
-        public async Task ExplicitAllocation_ArrayCreationExpressionSyntax()
-        {
-            var sampleProgram =
-@"using System.Collections.Generic;
-using Roslyn.Utilities;
-
-public class MyClass
-{
-    [PerformanceSensitive(""uri"")]
-    public void Testing()
-    {
-        int[] intData = new int[] { 123, 32, 4 };
-    }
-}";
-            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
-                // Test0.cs(9,25): info HAA0501: Explicit new array type allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.NewArrayRule).WithLocation(9, 25));
         }
 
         [Fact]
@@ -146,12 +106,9 @@ public class MyClass
     }
 }";
             await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
-                // Test0.cs(10,25): info HAA0504: Implicit new array creation allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.ImplicitArrayCreationRule).WithLocation(10, 25),
                 // Test0.cs(12,23): info HAA0506: Let clause induced allocation
                 VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.LetCauseRule).WithLocation(12, 23));
         }
-
         [Fact]
         public async Task ExplicitAllocation_AllSyntax()
         {
@@ -169,11 +126,9 @@ public class MyClass
         var @struct = new TestStruct { Name = ""Bob"" };
         var @class = new TestClass { Name = ""Bob"" };
 
-        int[] intDataImplicit = new[] { 123, 32, 4 };
 
         var temp = new { A = 123, Name = ""Test"", };
 
-        int[] intDataExplicit = new int[] { 123, 32, 4 };
 
         var allocation = new String('a', 10);
         var noAllocation = new DateTime();
@@ -194,23 +149,18 @@ public class TestClass
 {
     public string Name { get; set; }
 }";
-            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram, 
                 // Test0.cs(12,13): info HAA0505: Initializer reference type allocation
                 VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.InitializerCreationRule).WithLocation(12, 13),
                 // Test0.cs(12,22): info HAA0502: Explicit new reference type allocation
                 VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.NewObjectRule).WithLocation(12, 22),
-                // Test0.cs(14,33): info HAA0504: Implicit new array creation allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.ImplicitArrayCreationRule).WithLocation(14, 33),
                 // Test0.cs(16,20): info HAA0503: Explicit new anonymous object allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.AnonymousNewObjectRule).WithLocation(16, 20),
-                // Test0.cs(18,33): info HAA0501: Explicit new array type allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.NewArrayRule).WithLocation(18, 33),
+                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.AnonymousNewObjectRule).WithLocation(15, 20),
                 // Test0.cs(20,26): info HAA0502: Explicit new reference type allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.NewObjectRule).WithLocation(20, 26),
-                // Test0.cs(23,29): info HAA0501: Explicit new array type allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.NewArrayRule).WithLocation(23, 29),
+                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.NewObjectRule).WithLocation(18, 26),
                 // Test0.cs(25,23): info HAA0506: Let clause induced allocation
-                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.LetCauseRule).WithLocation(25, 23));
+                VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.LetCauseRule).WithLocation(23, 23)
+                );
         }
 
         [Fact]
@@ -256,7 +206,7 @@ public class MyClass
                 // Test0.cs(11,32): info HAA0502: Explicit new reference type allocation
                 VerifyCS.Diagnostic(ExplicitAllocationAnalyzer.NewObjectRule).WithLocation(11, 32));
         }
-
+        
         [Fact]
         [WorkItem(7995606, "http://stackoverflow.com/questions/7995606/boxing-occurrence-in-c-sharp")]
         public async Task Converting_any_value_type_into_interface_reference()

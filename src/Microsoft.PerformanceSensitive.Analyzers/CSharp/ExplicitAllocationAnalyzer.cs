@@ -12,29 +12,18 @@ using Microsoft.PerformanceSensitive.Analyzers;
 namespace Microsoft.PerformanceSensitive.CSharp.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal sealed class ExplicitAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
+    internal sealed class ExplicitAllocationAnalyzer : AbstractLanguageAllocationAnalyzer<SyntaxKind>
     {
-        public const string NewArrayRuleId = "HAA0501";
         public const string NewObjectRuleId = "HAA0502";
         public const string AnonymousNewObjectRuleId = "HAA0503";
         public const string ImplicitArrayCreationRuleId = "HAA0504";
         public const string InitializerCreationRuleId = "HAA0505";
         public const string LetCauseRuleId = "HAA0506";
 
-        private static readonly LocalizableString s_localizableNewArrayRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.NewArrayRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
         private static readonly LocalizableString s_localizableNewObjectRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.NewObjectRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
         private static readonly LocalizableString s_localizableAnonymousNewObjectRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.AnonymousNewObjectRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
-        private static readonly LocalizableString s_localizableImplicitArrayCreationRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.ImplicitArrayCreationRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
         private static readonly LocalizableString s_localizableInitializerCreationRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.InitializerCreationRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
         private static readonly LocalizableString s_localizableLetCauseRuleTitleAndMessage = new LocalizableResourceString(nameof(PerformanceSensitiveAnalyzersResources.LetCauseRuleTitleAndMessage), PerformanceSensitiveAnalyzersResources.ResourceManager, typeof(PerformanceSensitiveAnalyzersResources));
-
-        internal static DiagnosticDescriptor NewArrayRule = new DiagnosticDescriptor(
-            NewArrayRuleId,
-            s_localizableNewArrayRuleTitleAndMessage,
-            s_localizableNewArrayRuleTitleAndMessage,
-            DiagnosticCategory.Performance,
-            DiagnosticSeverity.Info,
-            isEnabledByDefault: true);
 
         internal static DiagnosticDescriptor NewObjectRule = new DiagnosticDescriptor(
             NewObjectRuleId,
@@ -53,14 +42,6 @@ namespace Microsoft.PerformanceSensitive.CSharp.Analyzers
             isEnabledByDefault: true,
             helpLinkUri: "http://msdn.microsoft.com/en-us/library/bb397696.aspx");
 
-        internal static DiagnosticDescriptor ImplicitArrayCreationRule = new DiagnosticDescriptor(
-            ImplicitArrayCreationRuleId,
-            s_localizableImplicitArrayCreationRuleTitleAndMessage,
-            s_localizableImplicitArrayCreationRuleTitleAndMessage,
-            DiagnosticCategory.Performance,
-            DiagnosticSeverity.Info,
-            isEnabledByDefault: true);
-
         internal static DiagnosticDescriptor InitializerCreationRule = new DiagnosticDescriptor(
             InitializerCreationRuleId,
             s_localizableInitializerCreationRuleTitleAndMessage,
@@ -77,19 +58,20 @@ namespace Microsoft.PerformanceSensitive.CSharp.Analyzers
             DiagnosticSeverity.Info,
             isEnabledByDefault: true);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LetCauseRule, InitializerCreationRule, ImplicitArrayCreationRule, AnonymousNewObjectRule, NewObjectRule, NewArrayRule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(LetCauseRule, 
+            InitializerCreationRule, AnonymousNewObjectRule, NewObjectRule);
 
         protected override ImmutableArray<SyntaxKind> Expressions => ImmutableArray.Create(
             SyntaxKind.ObjectCreationExpression,            // Used
             SyntaxKind.AnonymousObjectCreationExpression,   // Used
-            SyntaxKind.ArrayInitializerExpression,          // Used (this is inside an ImplicitArrayCreationExpression)
             SyntaxKind.CollectionInitializerExpression,     // Is this used anywhere?
             SyntaxKind.ComplexElementInitializerExpression, // Is this used anywhere? For what this is see http://source.roslyn.codeplex.com/#Microsoft.CodeAnalysis.CSharp/Compilation/CSharpSemanticModel.cs,80
             SyntaxKind.ObjectInitializerExpression,         // Used linked to InitializerExpressionSyntax
-            SyntaxKind.ArrayCreationExpression,             // Used
-            SyntaxKind.ImplicitArrayCreationExpression,     // Used (this then contains an ArrayInitializerExpression)
             SyntaxKind.LetClause                            // Used
             );
+
+        protected override ImmutableArray<OperationKind> Operations => ImmutableArray.Create(
+            OperationKind.ArrayCreation);
 
         private static readonly object[] EmptyMessageArgs = Array.Empty<object>();
 
@@ -119,23 +101,17 @@ namespace Microsoft.PerformanceSensitive.CSharp.Analyzers
                 }
             }
 
-            if (node is ImplicitArrayCreationExpressionSyntax implicitArrayExpression)
-            {
-                reportDiagnostic(Diagnostic.Create(ImplicitArrayCreationRule, implicitArrayExpression.NewKeyword.GetLocation(), EmptyMessageArgs));
-                return;
-            }
-
             if (node is AnonymousObjectCreationExpressionSyntax newAnon)
             {
                 reportDiagnostic(Diagnostic.Create(AnonymousNewObjectRule, newAnon.NewKeyword.GetLocation(), EmptyMessageArgs));
                 return;
             }
 
-            if (node is ArrayCreationExpressionSyntax newArr)
-            {
-                reportDiagnostic(Diagnostic.Create(NewArrayRule, newArr.NewKeyword.GetLocation(), EmptyMessageArgs));
-                return;
-            }
+            //if (node is ArrayCreationExpressionSyntax newArr)
+            //{
+            //    reportDiagnostic(Diagnostic.Create(NewArrayRule, newArr.NewKeyword.GetLocation(), EmptyMessageArgs));
+            //    return;
+            //}
 
             if (node is ObjectCreationExpressionSyntax newObj)
             {

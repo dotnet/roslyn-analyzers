@@ -13,7 +13,7 @@ using Microsoft.PerformanceSensitive.Analyzers;
 namespace Microsoft.PerformanceSensitive.CSharp.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal sealed class ConcatenationAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
+    internal sealed class ConcatenationAllocationAnalyzer : AbstractLanguageAllocationAnalyzer<SyntaxKind>
     {
         public const string StringConcatenationAllocationRuleId = "HAA0201";
         public const string ValueTypeToReferenceTypeInAStringConcatenationRuleId = "HAA0202";

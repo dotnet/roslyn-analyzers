@@ -15,7 +15,7 @@ namespace Microsoft.PerformanceSensitive.CSharp.Analyzers
 {
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal sealed class CallSiteImplicitAllocationAnalyzer : AbstractAllocationAnalyzer<SyntaxKind>
+    internal sealed class CallSiteImplicitAllocationAnalyzer : AbstractLanguageAllocationAnalyzer<SyntaxKind>
     {
         public const string ParamsParameterRuleId = "HAA0101";
         public const string ValueTypeNonOverridenCallRuleId = "HAA0102";

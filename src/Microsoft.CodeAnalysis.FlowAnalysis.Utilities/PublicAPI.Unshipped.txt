@@ -55,12 +55,12 @@ Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.AnalysisEntityOpt.get -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.CreationCallStack.get -> System.Collections.Immutable.ImmutableStack<Microsoft.CodeAnalysis.IOperation>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.CreationOpt.get -> Microsoft.CodeAnalysis.IOperation
-Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.GetNodeToReportDiagnostic(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis.PointsToAnalysisResult pointsToAnalysisResultOpt) -> Microsoft.CodeAnalysis.SyntaxNode
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.IsAnalysisEntityDefaultLocation.get -> bool
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.IsNoLocation.get -> bool
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.IsNull.get -> bool
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.LocationTypeOpt.get -> Microsoft.CodeAnalysis.ITypeSymbol
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.SymbolOpt.get -> Microsoft.CodeAnalysis.ISymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.TryGetNodeToReportDiagnostic(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis.PointsToAnalysisResult pointsToAnalysisResultOpt) -> Microsoft.CodeAnalysis.SyntaxNode
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocationDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocationDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.AbstractLocationDataFlowOperationVisitor(TAnalysisContext analysisContext) -> void
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocationDataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.ApplyMissingCurrentAnalysisDataForUnhandledExceptionData(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation, TAbstractAnalysisValue> coreDataAtException, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation, TAbstractAnalysisValue> coreCurrentAnalysisData) -> void

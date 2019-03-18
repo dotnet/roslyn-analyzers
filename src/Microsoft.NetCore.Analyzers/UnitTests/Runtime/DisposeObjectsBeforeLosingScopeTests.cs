@@ -9788,5 +9788,135 @@ public class CustomType : IDisposable
 }
 ");
         }
+
+        [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
+        public void ReturnDisposableObjectWrappenInTask_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class C : IDisposable
+{
+    public void Dispose()
+    {
+    }
+
+    public Task<C> M1_Task()
+    {
+        return Task.FromResult(new C());
+    }
+}
+");
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+
+    Public Function M1_Task() As Task(Of C)
+        Return Task.FromResult(New C())
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
+        public void AwaitedButNotDisposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class C : IDisposable
+{
+    public void Dispose()
+    {
+    }
+
+    public Task<C> M1_Task()
+    {
+        return Task.FromResult(new C());
+    }
+
+    public async Task M2_Task()
+    {
+        // This is not flagged as we don't track the underlying object wrapped within a task.
+        // In future, we might do this tracking and then should be able to flag this case.
+        var c = await M1_Task().ConfigureAwait(false);
+    }
+}
+");
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+Class C
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+
+    Public Function M1_Task() As Task(Of C)
+        Return Task.FromResult(New C())
+    End Function
+
+    Public Async Function M2_Task() As Task
+        Dim c = Await M1_Task().ConfigureAwait(False)
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
+        public void AwaitedButNotDisposed_TaskWrappingField_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class C : IDisposable
+{
+    private C _c;
+    public void Dispose()
+    {
+    }
+
+    public Task<C> M1_Task()
+    {
+        return Task.FromResult(_c);
+    }
+
+    public async Task M2_Task()
+    {
+        // This is not flagged as we don't track the underlying object wrapped within a task.
+        // In future, we might do this tracking and then should be able to flag this case.
+        var c = await M1_Task().ConfigureAwait(false);
+    }
+}
+");
+            VerifyBasic(@"
+Imports System
+Imports System.Threading.Tasks
+
+Class C
+    Implements IDisposable
+
+    Private _c As C
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+
+    Public Function M1_Task() As Task(Of C)
+        Return Task.FromResult(_c)
+    End Function
+
+    Public Async Function M2_Task() As Task
+        Dim c = Await M1_Task().ConfigureAwait(False)
+    End Function
+End Class");
+        }
     }
 }

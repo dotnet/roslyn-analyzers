@@ -172,6 +172,21 @@
         <target state="translated">{0} zayıf {1} kriptografik algoritmasını kullanıyor</target>
         <note />
       </trans-unit>
+      <trans-unit id="SetViewStateUserKey">
+        <source>Set ViewStateUserKey For Classes Derived From Page</source>
+        <target state="new">Set ViewStateUserKey For Classes Derived From Page</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetViewStateUserKeyDescription">
+        <source>Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</source>
+        <target state="new">Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetViewStateUserKeyMessage">
+        <source>The subclass {0} of Page does not set the ViewStateUserKey property</source>
+        <target state="new">The subclass {0} of Page does not set the ViewStateUserKey property</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

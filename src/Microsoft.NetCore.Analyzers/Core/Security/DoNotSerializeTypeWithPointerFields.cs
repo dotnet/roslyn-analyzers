@@ -82,15 +82,18 @@ namespace Microsoft.NetCore.Analyzers.Security
 
 
                     /// <summary>
-                    /// Look for serialization of a type with pointer type fields directly and indirectly.
+                    /// Look for serialization of a type with valid pointer fields directly and indirectly.
                     /// </summary>
                     /// <param name="typeSymbol">The symbol of the type to be analyzed</param>
                     void LookForSerializationWithPointerFields(ITypeSymbol typeSymbol)
                     {
+                        // If not visited, visit it and mark it as visited;
+                        // otherwise, return.
                         if (typeSymbol.IsInSource() &&
                             typeSymbol.HasAttribute(serializableAttributeTypeSymbol) &&
                             visitedType.TryAdd(typeSymbol, true))
                         {
+                            // Get all the fields can be serialized.
                             var fields = typeSymbol.GetMembers().OfType<IFieldSymbol>().Where(s => nonSerializedAttribute != null &&
                                                                                                 !s.HasAttribute(nonSerializedAttribute) &&
                                                                                                 !s.IsStatic);
@@ -99,11 +102,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 var fieldType = field.Type;
 
-                                if (fieldType is IPointerTypeSymbol pointerTypeField &&
-                                    (pointerTypeField.PointedAtType.TypeKind == TypeKind.Struct ||
-                                    pointerTypeField.PointedAtType.TypeKind == TypeKind.Pointer))
+
+                                if (fieldType is IPointerTypeSymbol pointerTypeField)
                                 {
-                                    pointerFields.TryAdd(field, true);
+                                    // If the field is a valid pointer
+                                    if (pointerTypeField.PointedAtType.TypeKind == TypeKind.Struct ||
+                                    pointerTypeField.PointedAtType.TypeKind == TypeKind.Pointer)
+                                    {
+                                        pointerFields.TryAdd(field, true);
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }
                                 }
                                 else
                                 {

@@ -5,6 +5,12 @@ Analyzer.Utilities.DisposeAnalysisHelper.IDisposable.get -> Microsoft.CodeAnalys
 Analyzer.Utilities.DisposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation location, Microsoft.CodeAnalysis.IMethodSymbol containingMethod) -> bool
 Analyzer.Utilities.DisposeAnalysisHelper.Task.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
 Analyzer.Utilities.DisposeAnalysisHelper.TryGetOrComputeResult(System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.IOperation> operationBlocks, Microsoft.CodeAnalysis.IMethodSymbol containingMethod, Microsoft.CodeAnalysis.Diagnostics.AnalyzerOptions analyzerOptions, Microsoft.CodeAnalysis.DiagnosticDescriptor rule, bool trackInstanceFields, bool trackExceptionPaths, System.Threading.CancellationToken cancellationToken, out Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis.DisposeAnalysisResult disposeAnalysisResult, out Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis.PointsToAnalysisResult pointsToAnalysisResult, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.InterproceduralAnalysisPredicate interproceduralAnalysisPredicateOpt = null, bool defaultDisposeOwnershipTransferAtConstructor = false) -> bool
+Analyzer.Utilities.DisposeAnalysisKind
+Analyzer.Utilities.DisposeAnalysisKind.AllPaths = 0 -> Analyzer.Utilities.DisposeAnalysisKind
+Analyzer.Utilities.DisposeAnalysisKind.AllPathsOnlyNotDisposed = 1 -> Analyzer.Utilities.DisposeAnalysisKind
+Analyzer.Utilities.DisposeAnalysisKind.NonExceptionPaths = 2 -> Analyzer.Utilities.DisposeAnalysisKind
+Analyzer.Utilities.DisposeAnalysisKind.NonExceptionPathsOnlyNotDisposed = 3 -> Analyzer.Utilities.DisposeAnalysisKind
+Analyzer.Utilities.DisposeAnalysisKindExtensions
 Microsoft.CodeAnalysis.FlowAnalysis.BasicBlockExtensions
 Microsoft.CodeAnalysis.FlowAnalysis.BranchWithInfo
 Microsoft.CodeAnalysis.FlowAnalysis.BranchWithInfo.BranchValueOpt.get -> Microsoft.CodeAnalysis.IOperation
@@ -580,6 +586,9 @@ override sealed Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVi
 override sealed Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.MapAbstractDomain<TKey, TValue>.Compare(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<TKey, TValue> oldValue, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<TKey, TValue> newValue) -> int
 override sealed Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.MapAbstractDomain<TKey, TValue>.Equals(Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<TKey, TValue> value1, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<TKey, TValue> value2) -> bool
 static Analyzer.Utilities.DisposeAnalysisHelper.TryGetOrCreate(Microsoft.CodeAnalysis.Compilation compilation, out Analyzer.Utilities.DisposeAnalysisHelper disposeHelper) -> bool
+static Analyzer.Utilities.DisposeAnalysisKindExtensions.AreExceptionPathsAndMayBeNotDisposedViolationsEnabled(this Analyzer.Utilities.DisposeAnalysisKind disposeAnalysisKind) -> bool
+static Analyzer.Utilities.DisposeAnalysisKindExtensions.AreExceptionPathsEnabled(this Analyzer.Utilities.DisposeAnalysisKind disposeAnalysisKind) -> bool
+static Analyzer.Utilities.DisposeAnalysisKindExtensions.AreMayBeNotDisposedViolationsEnabled(this Analyzer.Utilities.DisposeAnalysisKind disposeAnalysisKind) -> bool
 static Microsoft.CodeAnalysis.FlowAnalysis.BasicBlockExtensions.DescendantOperations(this Microsoft.CodeAnalysis.FlowAnalysis.BasicBlock basicBlock) -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.IOperation>
 static Microsoft.CodeAnalysis.FlowAnalysis.BasicBlockExtensions.GetContainingRegionOfKind(this Microsoft.CodeAnalysis.FlowAnalysis.BasicBlock basicBlock, Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegionKind regionKind) -> Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegion
 static Microsoft.CodeAnalysis.FlowAnalysis.BasicBlockExtensions.IsContainedInRegionOfKind(this Microsoft.CodeAnalysis.FlowAnalysis.BasicBlock basicBlock, Microsoft.CodeAnalysis.FlowAnalysis.ControlFlowRegionKind regionKind) -> bool

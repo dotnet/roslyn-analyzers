@@ -9,8 +9,6 @@
 
 [//]: # (End current test results)
 
-[![Join the chat at https://gitter.im/roslyn-analyzers/Lobby](https://badges.gitter.im/roslyn-analyzers/Lobby.svg)](https://gitter.im/roslyn-analyzers/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 This repository contains Roslyn [diagnostic analyzers and code fix providers](https://docs.microsoft.com/en-us/visualstudio/code-quality/roslyn-analyzers-overview) for general _code quality_ improvement for C# and Visual Basic projects that target either _.NET Core, .NET Standard,_ or _.NET Framework for desktop apps_.
 
 Microsoft.CodeAnalysis.FxCopAnalyzers

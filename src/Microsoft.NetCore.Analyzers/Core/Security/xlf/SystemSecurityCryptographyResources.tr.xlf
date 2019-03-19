@@ -62,6 +62,21 @@
         <target state="translated">ServerCertificateValidationCallback, her zaman true döndürerek tüm sunucu sertifikatarını kabul eden bir işleve ayarlanmış. Sunucu sertifikalarının istekleri alan sunucunun kimliğini doğrulamak için doğrulandığından emin olun.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderChecking">
+        <source>Do Not Disable HTTP Header Checking</source>
+        <target state="new">Do Not Disable HTTP Header Checking</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderCheckingDescription">
+        <source>HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
+        <target state="new">HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
+        <source>Do not disable HTTP header checking</source>
+        <target state="new">Do not disable HTTP header checking</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
         <source>Do Not Disable Request Validation</source>
         <target state="new">Do Not Disable Request Validation</target>

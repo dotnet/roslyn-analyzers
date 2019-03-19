@@ -126,6 +126,15 @@
   <data name="ApprovedCipherModeMessage" xml:space="preserve">
     <value>It uses an unsafe Cipher Mode {0}</value>
   </data>
+  <data name="DoNotAddSchemaByURL" xml:space="preserve">
+    <value>Do Not Add Schema By URL</value>
+  </data>
+  <data name="DoNotAddSchemaByURLDescription" xml:space="preserve">
+    <value>This overload of XmlSchemaCollection.Add method is potentially unsafe because it may load untrusted XML which includes dangerous external references. Either use an XmlSecureResolver or disable DTD processing.</value>
+  </data>
+  <data name="DoNotAddSchemaByURLMessage" xml:space="preserve">
+    <value>This overload of the Add method is potentially unsafe because it may resolve dangerous external references</value>
+  </data>
   <data name="DoNotCallDangerousMethodsInDeserialization" xml:space="preserve">
     <value>Do Not Call Dangerous Methods In Deserialization</value>
   </data>

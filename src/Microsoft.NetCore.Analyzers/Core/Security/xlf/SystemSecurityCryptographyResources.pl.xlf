@@ -17,6 +17,21 @@
         <target state="translated">Używa niebezpiecznego trybu szyfrowania {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotAddSchemaByURL">
+        <source>Do Not Add Schema By URL</source>
+        <target state="new">Do Not Add Schema By URL</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddSchemaByURLDescription">
+        <source>This overload of XmlSchemaCollection.Add method is potentially unsafe because it may load untrusted XML which includes dangerous external references. Either use an XmlSecureResolver or disable DTD processing.</source>
+        <target state="new">This overload of XmlSchemaCollection.Add method is potentially unsafe because it may load untrusted XML which includes dangerous external references. Either use an XmlSecureResolver or disable DTD processing.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddSchemaByURLMessage">
+        <source>This overload of the Add method is potentially unsafe because it may resolve dangerous external references</source>
+        <target state="new">This overload of the Add method is potentially unsafe because it may resolve dangerous external references</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
         <source>Do Not Call Dangerous Methods In Deserialization</source>
         <target state="translated">Nie wywołuj niebezpiecznych metod w deserializacji</target>

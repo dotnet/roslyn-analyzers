@@ -180,6 +180,15 @@
   <data name="DoNotReferSelfInSerializableClassMessage" xml:space="preserve">
     <value>{0} participates in a potential reference cycle</value>
   </data>
+  <data name="DoNotSerializeTypesWithPointerFields" xml:space="preserve">
+    <value>Do Not Serialize Types With Pointer Fields</value>
+  </data>
+  <data name="DoNotSerializeTypesWithPointerFieldsDescription" xml:space="preserve">
+    <value>Pointers are not "type safe" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.</value>
+  </data>
+  <data name="DoNotSerializeTypesWithPointerFieldsMessage" xml:space="preserve">
+    <value>Pointer field {0} on serializable type.</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>

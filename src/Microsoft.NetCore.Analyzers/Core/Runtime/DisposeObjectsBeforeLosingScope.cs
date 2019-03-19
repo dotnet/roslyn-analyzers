@@ -205,7 +205,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (isNotDisposed ||
                     (isMayBeNotDisposed && disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled()))
                 {
-                    var syntax = location.GetNodeToReportDiagnostic(pointsToAnalysisResult);
+                    var syntax = location.TryGetNodeToReportDiagnostic(pointsToAnalysisResult);
+                    if (syntax == null)
+                    {
+                        continue;
+                    }
 
                     // CA2000: Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.
                     var rule = GetRule(isNotDisposed);

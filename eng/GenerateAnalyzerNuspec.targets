@@ -39,7 +39,7 @@
     </ItemGroup>
 
     <PropertyGroup Condition="'$(GenerateAnalyzerMdFile)' == 'true'">
-      <AnalyzerDocumentationFileDir>$(RepoRoot)src\$(NuspecPackageId)</AnalyzerDocumentationFileDir>
+      <AnalyzerDocumentationFileDir Condition="'$(AnalyzerDocumentationFileDir)' == ''">$(RepoRoot)src\$(NuspecPackageId)</AnalyzerDocumentationFileDir>
       <AnalyzerDocumentationFileName>$(NuspecPackageId).md</AnalyzerDocumentationFileName>
     </PropertyGroup>
     

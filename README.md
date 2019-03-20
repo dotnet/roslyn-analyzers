@@ -20,13 +20,15 @@ This is the **primary analyzer package** for this repo that contains all **the p
 
 This analyzer package contains all the ported FxCop rules that are applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**.
 
+[More info](src/Microsoft.CodeAnalysis.FxCopAnalyzers/Microsoft.CodeAnalysis.FxCopAnalyzers.md)
+
 This analyzer package contains the following subpackages or NuGet dependencies that are automatically installed when you install the Microsoft.CodeAnalysis.FxCopAnalyzers package:
 
 ### Microsoft.CodeQuality.Analyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers)
 
-This package contains common code quality improvement rules that are not specific to usage of any particular API. For example, [CA1801](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1801-review-unused-parameters) (ReviewUnusedParameters) flags parameters that are unused and is part of this package. 
+This package contains common code quality improvement rules that are not specific to usage of any particular API. For example, [CA1801](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1801-review-unused-parameters) (ReviewUnusedParameters) flags parameters that are unused and is part of this package.
 
 [More info](src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md)
 

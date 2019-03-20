@@ -74,7 +74,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                         var onInitMethodSymbol = classSymbol.GetMembers().OfType<IMethodSymbol>().FirstOrDefault(s => s.Name == "OnInit" &&
                                                                                                         s.Parameters.Length == 1 &&
                                                                                                         s.Parameters[0].Type.Equals(eventArgsTypeSymbol) &&
-                                                                                                        s.IsProtected());
+                                                                                                        s.IsProtected() &&
+                                                                                                        !s.IsStatic);
 
                         if (onInitMethodSymbol != null)
                         {
@@ -82,7 +83,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                     .Descendants()
                                                     .Where(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
                                                                 simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation &&
-                                                                propertyReferenceOperation.Property.Name == "ViewStateUserKey")
+                                                                propertyReferenceOperation.Property.Name == "ViewStateUserKey" &&
+                                                                propertyReferenceOperation.Property.Type.SpecialType == SpecialType.System_String &&
+                                                                propertyReferenceOperation.Instance is IInstanceReferenceOperation instanceReferenceOperation &&
+                                                                instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                                                     .Count() != 0)
                             {
                                 return;

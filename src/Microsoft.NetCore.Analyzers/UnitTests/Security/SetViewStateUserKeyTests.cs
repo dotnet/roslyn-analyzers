@@ -119,6 +119,83 @@ class TestClass : Page
         }
 
         [Fact]
+        public void TestStaticMethodWithSettingViewStateUserKeyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    protected static void OnInit (EventArgs e)
+    {
+        var testClass = new TestClass();
+        testClass.ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
+        public void TestSubclassWithSettingPropertyOfLocalObjectDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    protected override void OnInit (EventArgs e)
+    {
+        var testClass = new TestClass();
+        testClass.ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
+        public void TestSubclassWithSettingPropertyOfWrongClassDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class MyType
+{
+    public string ViewStateUserKey { get; set; }
+}
+
+class TestClass : Page
+{
+    private MyType _field;
+
+    protected override void OnInit (EventArgs e)
+    {
+        _field.ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}",
+            GetCSharpResultAt(10, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+        [Fact]
+        public void TestSubclassWithSettingWrongPropertyDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    public int ViewStateUserKey { get; set; }
+
+    protected override void OnInit (EventArgs e)
+    {
+        ViewStateUserKey = 123;
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+        [Fact]
         public void TestSubclassWithSettingViewStateUserKeyNoDiagnostic()
         {
             VerifyCSharp(@"
@@ -167,7 +244,7 @@ class TestClass : Page
         }
 
         [Fact]
-        public void TestOrinaryClassWithSettingViewStateUserKeyNoDiagnostic()
+        public void TestOrdinaryClassWithSettingViewStateUserKeyNoDiagnostic()
         {
             VerifyCSharp(@"
 using System;

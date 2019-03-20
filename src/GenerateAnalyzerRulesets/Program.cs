@@ -39,6 +39,7 @@ namespace GenerateAnalyzerRulesets
 
             var allRulesByAssembly = new SortedList<string, SortedList<string, DiagnosticDescriptor>>();
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
+            var fixableDiagnosticIds = new HashSet<string>();
             var categories = new HashSet<string>();
             foreach (string assembly in assemblyList)
             {
@@ -64,6 +65,11 @@ namespace GenerateAnalyzerRulesets
                     }
 
                     allRulesByAssembly.Add(assemblyName, rulesById);
+                }
+
+                foreach (var id in analyzerFileReference.GetFixers().SelectMany(fixer => fixer.FixableDiagnosticIds))
+                {
+                    fixableDiagnosticIds.Add(id);
                 }
             }
 
@@ -352,10 +358,24 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
                 var fileWithPath = Path.Combine(directory.FullName, analyzerDocumentationFileName);
 
                 var builder = new StringBuilder();
+                builder.Append(@"
+Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
+--------|---------|-------|----------|---------|---------|--------------------------------------------------------------------------------------------------------------|
+");
+
+                var index = 1;
                 foreach (var ruleById in allRulesById)
                 {
                     string ruleId = ruleById.Key;
                     DiagnosticDescriptor descriptor = ruleById.Value;
+
+                    var ruleIdWithHyperLink = descriptor.Id;
+                    if (!string.IsNullOrWhiteSpace(descriptor.HelpLinkUri))
+                    {
+                        ruleIdWithHyperLink = $"[{ruleIdWithHyperLink}]({descriptor.HelpLinkUri})";
+                    }
+
+                    var hasCodeFix = fixableDiagnosticIds.Contains(descriptor.Id);
 
                     var description = descriptor.Description.ToString();
                     if (string.IsNullOrWhiteSpace(description))
@@ -363,23 +383,8 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
                         description = descriptor.MessageFormat.ToString();
                     }
 
-                    builder.AppendLine($"### {descriptor.Id}: {descriptor.Title} ###")
-                        .AppendLine()
-                        .AppendLine(description)
-                        .AppendLine()
-                        .AppendLine($"Category: {descriptor.Category}")
-                        .AppendLine()
-                        .AppendLine($"Severity: {descriptor.DefaultSeverity}")
-                        .AppendLine()
-                        .AppendLine($"IsEnabledByDefault: {descriptor.IsEnabledByDefault}");
-
-                    if (!string.IsNullOrWhiteSpace(descriptor.HelpLinkUri))
-                    {
-                        builder.AppendLine()
-                            .AppendLine($"Help: [{descriptor.HelpLinkUri}]({descriptor.HelpLinkUri})");
-                    }
-
-                    builder.AppendLine();
+                    builder.AppendLine($"{index} | {ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {hasCodeFix} | {description} |");
+                    index++;
                 }
 
                 File.WriteAllText(fileWithPath, builder.ToString());

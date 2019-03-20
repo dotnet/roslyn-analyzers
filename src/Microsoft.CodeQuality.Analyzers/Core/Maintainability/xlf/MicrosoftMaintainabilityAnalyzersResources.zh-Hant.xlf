@@ -33,12 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
-        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
-
-cyclomatic complexity = the number of edges - the number of nodes + 1
-
-where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="translated">循環複雜度用於衡量整個方法中線性獨立路經的數目，這取決於條件分支的數目與複雜度。循環複雜度低一般表示方法易於了解、測試及維護。循環複雜度計算自方法的控制流程圖，計算方式如下:
+        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
+        <target state="needs-review-translation">循環複雜度用於衡量整個方法中線性獨立路經的數目，這取決於條件分支的數目與複雜度。循環複雜度低一般表示方法易於了解、測試及維護。循環複雜度計算自方法的控制流程圖，計算方式如下:
 
 循環複雜度 = 邊線數目 - 節點數目 + 1
 
@@ -71,9 +67,8 @@ where a node represents a logic branch point and an edge represents a line betwe
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
-        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="translated">可維護性指數使用下列度量計算而成: 程式碼、程式數量和循環複雜度。程式數量用於衡量根據程式碼中運算子和運算元數目了解某個符號的困難度。循環複雜度則用於衡量類型或方法的結構複雜度。可維護性指數低表示程式碼可能難以維護，因而適合重新設計。</target>
+        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
+        <target state="needs-review-translation">可維護性指數使用下列度量計算而成: 程式碼、程式數量和循環複雜度。程式數量用於衡量根據程式碼中運算子和運算元數目了解某個符號的困難度。循環複雜度則用於衡量類型或方法的結構複雜度。可維護性指數低表示程式碼可能難以維護，因而適合重新設計。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">

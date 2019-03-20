@@ -29,6 +29,18 @@ class TestClass
     }
 }",
             GetCSharpResultAt(10, 9, DoNotAddSchemaByURL.Rule));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Xml.Schema
+
+class TestClass
+    public Sub TestMethod
+        Dim xsc As New XmlSchemaCollection
+        xsc.Add(""urn: bookstore - schema"", ""books.xsd"")
+    End Sub
+End Class",
+            GetBasicResultAt(8, 9, DoNotAddSchemaByURL.Rule));
         }
 
         [Fact]
@@ -43,10 +55,22 @@ class TestClass
     public void TestMethod()
     {
         XmlSchemaCollection xsc = new XmlSchemaCollection();
-        xsc.Add(null, ""urn: bookstore - schema"");
+        xsc.Add(null, ""books.xsd"");
     }
 }",
             GetCSharpResultAt(10, 9, DoNotAddSchemaByURL.Rule));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Xml.Schema
+
+class TestClass
+    public Sub TestMethod
+        Dim xsc As New XmlSchemaCollection
+        xsc.Add(Nothing, ""books.xsd"")
+    End Sub
+End Class",
+            GetBasicResultAt(8, 9, DoNotAddSchemaByURL.Rule));
         }
 
         [Fact]
@@ -79,6 +103,26 @@ class TestClass
     {
         XmlSchemaCollection xsc = new XmlSchemaCollection();
         xsc.Add(new XmlSchema());
+    }
+}");
+        }
+
+        [Fact]
+        public void TestNormalAddMethodDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Xml.Schema;
+
+class TestClass
+{
+    public static void Add (string ns, string uri)
+    {
+    }
+
+    public void TestMethod()
+    {
+        TestClass.Add(""urn: bookstore - schema"", ""books.xsd"");
     }
 }");
         }

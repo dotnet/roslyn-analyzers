@@ -13,7 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotAddSchemaByURL : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA5366";
+        internal const string DiagnosticId = "CA3061";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
             nameof(SystemSecurityCryptographyResources.DoNotAddSchemaByURL),
             SystemSecurityCryptographyResources.ResourceManager,
@@ -61,7 +61,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
                     var methodSymbol = invocationOperation.TargetMethod;
 
-                    if (methodSymbol.Name == "Add" &&
+                    if (methodSymbol.ContainingType.Equals(xmlSchemaCollectionTypeSymbol) &&
+                        methodSymbol.Name == "Add" &&
                         methodSymbol.Parameters.Length > 1 &&
                         methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_String)
                     {

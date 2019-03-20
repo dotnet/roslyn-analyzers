@@ -17,7 +17,7 @@ namespace GenerateAnalyzerRulesets
     {
         public static int Main(string[] args)
         {
-            if (args.Length != 8)
+            if (args.Length != 10)
             {
                 Console.Error.WriteLine($"Excepted 8 arguments, found {args.Length}: {string.Join(';', args)}");
                 return 1;
@@ -30,12 +30,15 @@ namespace GenerateAnalyzerRulesets
             var assemblyList = args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             string propsFileDir = args[5];
             string propsFileName = args[6];
-            if (!bool.TryParse(args[7], out var containsPortedFxCopRules))
+            string analyzerDocumentationFileDir = args[7];
+            string analyzerDocumentationFileName = args[8];
+            if (!bool.TryParse(args[9], out var containsPortedFxCopRules))
             {
                 containsPortedFxCopRules = false;
             }
 
             var allRulesByAssembly = new SortedList<string, SortedList<string, DiagnosticDescriptor>>();
+            var allRulesById = new SortedList<string, DiagnosticDescriptor>();
             var categories = new HashSet<string>();
             foreach (string assembly in assemblyList)
             {
@@ -56,6 +59,7 @@ namespace GenerateAnalyzerRulesets
                     foreach (DiagnosticDescriptor rule in rules)
                     {
                         rulesById[rule.Id] = rule;
+                        allRulesById[rule.Id] = rule;
                         categories.Add(rule.Category);
                     }
 
@@ -102,6 +106,8 @@ namespace GenerateAnalyzerRulesets
             }
 
             createPropsFile();
+
+            createAnalyzerDocumentationFile();
 
             return 0;
 
@@ -332,6 +338,51 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
     <AdditionalFiles Include=""$(MSBuildProjectDirectory)\.editorconfig"" />
   </ItemGroup>
 ";
+            }
+
+            void createAnalyzerDocumentationFile()
+            {
+                if (string.IsNullOrEmpty(analyzerDocumentationFileDir) || string.IsNullOrEmpty(analyzerDocumentationFileName) || allRulesById.Count == 0)
+                {
+                    Debug.Assert(!containsPortedFxCopRules);
+                    return;
+                }
+
+                var directory = Directory.CreateDirectory(analyzerDocumentationFileDir);
+                var fileWithPath = Path.Combine(directory.FullName, analyzerDocumentationFileName);
+
+                var builder = new StringBuilder();
+                foreach (var ruleById in allRulesById)
+                {
+                    string ruleId = ruleById.Key;
+                    DiagnosticDescriptor descriptor = ruleById.Value;
+
+                    var description = descriptor.Description.ToString();
+                    if (string.IsNullOrWhiteSpace(description))
+                    {
+                        description = descriptor.MessageFormat.ToString();
+                    }
+
+                    builder.AppendLine($"### {descriptor.Id}: {descriptor.Title} ###")
+                        .AppendLine()
+                        .AppendLine(description)
+                        .AppendLine()
+                        .AppendLine($"Category: {descriptor.Category}")
+                        .AppendLine()
+                        .AppendLine($"Severity: {descriptor.DefaultSeverity}")
+                        .AppendLine()
+                        .AppendLine($"IsEnabledByDefault: {descriptor.IsEnabledByDefault}");
+
+                    if (!string.IsNullOrWhiteSpace(descriptor.HelpLinkUri))
+                    {
+                        builder.AppendLine()
+                            .AppendLine($"Help: [{descriptor.HelpLinkUri}]({descriptor.HelpLinkUri})");
+                    }
+
+                    builder.AppendLine();
+                }
+
+                File.WriteAllText(fileWithPath, builder.ToString());
             }
         }
 

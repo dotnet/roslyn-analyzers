@@ -15,8 +15,8 @@ namespace Microsoft.CodeAnalysis.PerformanceSensitive.Analyzers.UnitTests
         [Fact]
         public async Task TypeConversionAllocation_Argument()
         {
-            await VerifyCS.VerifyAnalyzerAsync(
-@"using System;
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System;
 using Roslyn.Utilities;
 
 public class MyObject
@@ -36,8 +36,8 @@ public class MyObject
         _ = new MyObject(10); // Allocation
     }
 }",
-                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(17, 17),
-                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(18, 26)
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(18, 17),
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(19, 26)
             );
         }
 
@@ -207,7 +207,7 @@ public class MyClass
         public async Task TypeConversionAllocation_BinaryExpression_ClassWithDelegates()
         {
             var sampleProgram =
-        @"using System;
+@"using System;
 using Roslyn.Utilities;
 
 public class MyClass
@@ -543,16 +543,16 @@ class Program
         }
 
 #if false
-[Fact]
-public void TypeConversionAllocation_InterpolatedStringWithString_NoWarning()
-{
-    var sampleProgram = @"string s = $""{1.ToString()}"";";
+        [Fact]
+        public void TypeConversionAllocation_InterpolatedStringWithString_NoWarning()
+        {
+            var sampleProgram = @"string s = $""{1.ToString()}"";";
 
-    var analyser = new TypeConversionAllocationAnalyzer();
-    var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.Interpolation));
+            var analyser = new TypeConversionAllocationAnalyzer();
+            var info = ProcessCode(analyser, sampleProgram, ImmutableArray.Create(SyntaxKind.Interpolation));
 
-    Assert.Empty(info.Allocations);
-}
+            Assert.Empty(info.Allocations);
+        }
 #endif
 
         [Theory]

@@ -7,13 +7,11 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers
 {
-    internal abstract class AbstractAllocationAnalyzer<TLanguageKindEnum>
-        : DiagnosticAnalyzer
-        where TLanguageKindEnum : struct
+    internal abstract class AbstractAllocationAnalyzer : DiagnosticAnalyzer
     {
-        protected abstract ImmutableArray<TLanguageKindEnum> Expressions { get; }
+        protected abstract ImmutableArray<OperationKind> Operations { get; }
 
-        protected abstract void AnalyzeNode(SyntaxNodeAnalysisContext context, in PerformanceSensitiveInfo info);
+        protected abstract void AnalyzeNode(OperationAnalysisContext context, in PerformanceSensitiveInfo info);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -28,22 +26,17 @@ namespace Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers
                     return;
                 }
 
-                compilationStartContext.RegisterCodeBlockStartAction<TLanguageKindEnum>(blockStartContext =>
+                compilationStartContext.RegisterOperationBlockStartAction(blockStartContext =>
                 {
                     var checker = new AttributeChecker(attributeSymbol);
-                    RegisterSyntaxAnalysis(blockStartContext, checker);
+                    RegisterOperationAnalysis(blockStartContext, checker);
                 });
             });
         }
 
-        private void RegisterSyntaxAnalysis(CodeBlockStartAnalysisContext<TLanguageKindEnum> codeBlockStartAnalysisContext, AttributeChecker performanceSensitiveAttributeChecker)
+        private void RegisterOperationAnalysis(OperationBlockStartAnalysisContext operationBlockStartAnalysisContext, AttributeChecker performanceSensitiveAttributeChecker)
         {
-            if (AllocationRules.IsIgnoredFile(codeBlockStartAnalysisContext.CodeBlock.SyntaxTree.FilePath))
-            {
-                return;
-            }
-
-            var owningSymbol = codeBlockStartAnalysisContext.OwningSymbol;
+            var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
             if (owningSymbol.GetAttributes().Any(AllocationRules.IsIgnoredAttribute))
             {
@@ -55,12 +48,17 @@ namespace Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers
                 return;
             }
 
-            codeBlockStartAnalysisContext.RegisterSyntaxNodeAction(
+            if (operationBlockStartAnalysisContext.OperationBlocks.Any(block => AllocationRules.IsIgnoredFile(block.Syntax.SyntaxTree.FilePath)))
+            {
+                return;
+            }
+
+            operationBlockStartAnalysisContext.RegisterOperationAction(
                 syntaxNodeContext =>
                 {
                     AnalyzeNode(syntaxNodeContext, in info);
                 },
-                Expressions);
+                Operations);
         }
 
         protected sealed class AttributeChecker
@@ -150,6 +148,67 @@ namespace Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers
                 AllowGenericEnumeration = allowGenericEnumeration;
                 AllowLocks = allowLocks;
             }
+        }
+    }
+
+    internal abstract class AbstractAllocationAnalyzer<TLanguageKindEnum>
+        : AbstractAllocationAnalyzer
+        where TLanguageKindEnum : struct
+    {
+        protected abstract ImmutableArray<TLanguageKindEnum> Expressions { get; }
+
+        protected override ImmutableArray<OperationKind> Operations => ImmutableArray<OperationKind>.Empty;
+
+        protected abstract void AnalyzeNode(SyntaxNodeAnalysisContext context, in PerformanceSensitiveInfo info);
+
+        protected override void AnalyzeNode(OperationAnalysisContext context, in PerformanceSensitiveInfo info) { }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterCompilationStartAction(compilationStartContext =>
+            {
+                var compilation = compilationStartContext.Compilation;
+                var attributeSymbol = compilation.GetTypeByMetadataName(AllocationRules.PerformanceSensitiveAttributeName);
+
+                // Bail if PerformanceSensitiveAttribute is not delcared in the compilation.
+                if (attributeSymbol == null)
+                {
+                    return;
+                }
+
+                compilationStartContext.RegisterCodeBlockStartAction<TLanguageKindEnum>(blockStartContext =>
+                {
+                    var checker = new AttributeChecker(attributeSymbol);
+                    RegisterSyntaxAnalysis(blockStartContext, checker);
+                });
+            });
+        }
+
+        private void RegisterSyntaxAnalysis(CodeBlockStartAnalysisContext<TLanguageKindEnum> codeBlockStartAnalysisContext, AttributeChecker performanceSensitiveAttributeChecker)
+        {
+            if (AllocationRules.IsIgnoredFile(codeBlockStartAnalysisContext.CodeBlock.SyntaxTree.FilePath))
+            {
+                return;
+            }
+
+            var owningSymbol = codeBlockStartAnalysisContext.OwningSymbol;
+
+            if (owningSymbol.GetAttributes().Any(AllocationRules.IsIgnoredAttribute))
+            {
+                return;
+            }
+
+            if (!performanceSensitiveAttributeChecker.TryGetContainsPerformanceSensitiveInfo(owningSymbol, out var info))
+            {
+                return;
+            }
+
+            codeBlockStartAnalysisContext.RegisterSyntaxNodeAction(
+                syntaxNodeContext =>
+                {
+                    AnalyzeNode(syntaxNodeContext, in info);
+                },
+                Expressions);
         }
     }
 }

@@ -65,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
-                            LookForSerializationWithPointerFields((ITypeSymbol)symbolAnalysisContext.Symbol);
+                            LookForSerializationWithPointerFields((ITypeSymbol)symbolAnalysisContext.Symbol, null);
                         }, SymbolKind.NamedType);
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -73,54 +73,61 @@ namespace Microsoft.NetCore.Analyzers.Security
                         {
                             foreach (var pointerField in pointerFields.Keys)
                             {
+                                var associatedSymbol = pointerField.AssociatedSymbol;
                                 compilationAnalysisContext.ReportDiagnostic(
                                     pointerField.CreateDiagnostic(
                                         Rule,
-                                        pointerField.Name));
+                                        associatedSymbol == null ? pointerField.Name : associatedSymbol.Name));
                             }
                         });
-
 
                     /// <summary>
                     /// Look for serialization of a type with valid pointer fields directly and indirectly.
                     /// </summary>
                     /// <param name="typeSymbol">The symbol of the type to be analyzed</param>
-                    void LookForSerializationWithPointerFields(ITypeSymbol typeSymbol)
+                    /// <param name="relatedFieldSymbol">When relatedFieldSymbol is null, traverse all descendants of typeSymbol to find pointer fields; otherwise, traverse to find if relatedFieldSymbol is a pointer field</param>
+                    void LookForSerializationWithPointerFields(ITypeSymbol typeSymbol, IFieldSymbol relatedFieldSymbol)
                     {
-                        // If not visited, visit it and mark it as visited;
-                        // otherwise, return.
-                        if (typeSymbol.IsInSource() &&
-                            typeSymbol.HasAttribute(serializableAttributeTypeSymbol) &&
-                            visitedType.TryAdd(typeSymbol, true))
+                        if (typeSymbol is IPointerTypeSymbol pointerTypeSymbol)
                         {
-                            // Get all the fields can be serialized.
-                            var fields = typeSymbol.GetMembers().OfType<IFieldSymbol>().Where(s => nonSerializedAttribute != null &&
-                                                                                                !s.HasAttribute(nonSerializedAttribute) &&
-                                                                                                !s.IsStatic);
-
-                            foreach (var field in fields)
+                            // If the field is a valid pointer.
+                            if (pointerTypeSymbol.PointedAtType.TypeKind == TypeKind.Struct ||
+                                pointerTypeSymbol.PointedAtType.TypeKind == TypeKind.Pointer)
                             {
-                                var fieldType = field.Type;
+                                pointerFields.TryAdd(relatedFieldSymbol, true);
+                            }
+                        }
+                        else if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
+                        {
+                            // If it is defined in source and not visited,
+                            // mark it as visited and analyze all fields of it.
+                            if (namedTypeSymbol.IsInSource() &&
+                                namedTypeSymbol.HasAttribute(serializableAttributeTypeSymbol) &&
+                                visitedType.TryAdd(namedTypeSymbol, true))
+                            {
+                                // Get all the fields can be serialized.
+                                var fields = namedTypeSymbol.GetMembers().OfType<IFieldSymbol>().Where(s => (nonSerializedAttribute == null ||
+                                                                                                            !s.HasAttribute(nonSerializedAttribute)) &&
+                                                                                                            !s.IsStatic);
 
-
-                                if (fieldType is IPointerTypeSymbol pointerTypeField)
+                                foreach (var field in fields)
                                 {
-                                    // If the field is a valid pointer
-                                    if (pointerTypeField.PointedAtType.TypeKind == TypeKind.Struct ||
-                                    pointerTypeField.PointedAtType.TypeKind == TypeKind.Pointer)
-                                    {
-                                        pointerFields.TryAdd(field, true);
-                                    }
-                                    else
-                                    {
-                                        continue;
-                                    }
-                                }
-                                else
-                                {
-                                    LookForSerializationWithPointerFields(fieldType);
+                                    LookForSerializationWithPointerFields(field.Type, field);
                                 }
                             }
+
+                            // If it is a generic type, analyze all type arguments of it.
+                            if (namedTypeSymbol.IsGenericType)
+                            {
+                                foreach (var arg in namedTypeSymbol.TypeArguments)
+                                {
+                                    LookForSerializationWithPointerFields(arg, relatedFieldSymbol);
+                                }
+                            }
+                        }
+                        else if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
+                        {
+                            LookForSerializationWithPointerFields(arrayTypeSymbol.ElementType, relatedFieldSymbol);
                         }
                     }
                 });

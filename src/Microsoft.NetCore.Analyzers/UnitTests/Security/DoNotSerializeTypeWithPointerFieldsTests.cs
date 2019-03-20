@@ -22,14 +22,14 @@ using System;
 [Serializable()]
 unsafe class TestClassA
 {
-    private TestClassB* pointer;
+    private TestStructB* pointer;
 }
 
 [Serializable()]
-struct TestClassB
+struct TestStructB
 {
 }",
-            GetCSharpResultAt(7, 25, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
         }
 
         [Fact]
@@ -75,6 +75,96 @@ unsafe class TestClassA
         }
 
         [Fact]
+        public void TestChildPointerPropertyToPointerDiagnostic()
+        {
+            VerifyCSharpUnsafeCode(@"
+using System;
+
+[Serializable()]
+unsafe class TestClassA
+{
+    private int** pointer { get; set; }
+}",
+            GetCSharpResultAt(7, 19, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+        }
+
+        [Fact]
+        public void TestChildPointerInArrayDiagnostic()
+        {
+            VerifyCSharpUnsafeCode(@"
+using System;
+
+[Serializable()]
+unsafe class TestClassA
+{
+    private int*[] pointers;
+}",
+            GetCSharpResultAt(7, 20, DoNotSerializeTypeWithPointerFields.Rule, "pointers"));
+        }
+
+        [Fact]
+        public void TestChildArrayOfChildPointerDiagnostic()
+        {
+            VerifyCSharpUnsafeCode(@"
+using System;
+
+[Serializable()]
+unsafe class TestClassA
+{
+    private TestClassB[] testClassBs;
+}
+
+[Serializable()]
+unsafe class TestClassB
+{
+    private int* pointer;
+}",
+            GetCSharpResultAt(13, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+        }
+
+        [Fact]
+        public void TestChildListOfChildPointerDiagnostic()
+        {
+            VerifyCSharpUnsafeCode(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+unsafe class TestClassA
+{
+    private List<TestClassB> testClassBs;
+}
+
+[Serializable()]
+unsafe class TestClassB
+{
+    private int* pointer;
+}",
+            GetCSharpResultAt(14, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+        }
+
+        [Fact]
+        public void TestChildListOfListOfChildPointerDiagnostic()
+        {
+            VerifyCSharpUnsafeCode(@"
+using System;
+using System.Collections.Generic;
+
+[Serializable()]
+unsafe class TestClassA
+{
+    private List<List<TestClassB>> testClassBs;
+}
+
+[Serializable()]
+unsafe class TestClassB
+{
+    private int* pointer;
+}",
+            GetCSharpResultAt(14, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+        }
+
+        [Fact]
         public void TestGrandchildPointerToIntegerDiagnostic()
         {
             VerifyCSharpUnsafeCode(@"
@@ -87,11 +177,31 @@ unsafe class TestClassA
 }
 
 [Serializable()]
-unsafe struct TestClassB
+unsafe class TestClassB
 {
     public int* pointer;
 }",
             GetCSharpResultAt(13, 17, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+        }
+
+        [Fact]
+        public void TestGrandchildPointerInArrayDiagnostic()
+        {
+            VerifyCSharpUnsafeCode(@"
+using System;
+
+[Serializable()]
+unsafe class TestClassA
+{
+    private TestClassB testClassB;
+}
+
+[Serializable()]
+unsafe class TestClassB
+{
+    private int*[] pointers;
+}",
+            GetCSharpResultAt(13, 20, DoNotSerializeTypeWithPointerFields.Rule, "pointers"));
         }
 
         [Fact]
@@ -103,15 +213,15 @@ using System;
 [Serializable()]
 unsafe class TestClassA
 {
-    private TestClassB* pointer1;
+    private TestStructB* pointer1;
 }
 
 [Serializable()]
-unsafe struct TestClassB
+unsafe struct TestStructB
 {
     public int* pointer2;
 }",
-            GetCSharpResultAt(7, 25, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
+            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
             GetCSharpResultAt(13, 17, DoNotSerializeTypeWithPointerFields.Rule, "pointer2"));
         }
 
@@ -139,11 +249,11 @@ unsafe class TestClassA
 using System;
 
 [Serializable()]
-unsafe struct TestClassA
+unsafe struct TestStructA
 {
-    private TestClassA* pointer;
+    private TestStructA* pointer;
 }",
-            GetCSharpResultAt(7, 25, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(7, 26, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
         }
 
         [Fact]
@@ -153,17 +263,17 @@ unsafe struct TestClassA
 using System;
 
 [Serializable()]
-unsafe struct TestClassA
+unsafe class TestClassA
 {
-    public TestClassB testClassB;
+    public TestStructB testStructB;
 }
 
 [Serializable()]
-unsafe struct TestClassB
+unsafe struct TestStructB
 {
-    public TestClassB* pointer;
+    public TestStructB* pointer;
 }",
-            GetCSharpResultAt(13, 24, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+            GetCSharpResultAt(13, 25, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
         }
 
         [Fact]
@@ -175,11 +285,11 @@ using System;
 [Serializable()]
 unsafe class TestClassA
 {
-    protected TestClassB* pointer1;
+    protected TestStructB* pointer1;
 }
 
 [Serializable()]
-struct TestClassB
+struct TestStructB
 {
 }
 
@@ -188,8 +298,37 @@ unsafe class TestClassC : TestClassA
 {
     private int* pointer2;
 }",
-            GetCSharpResultAt(7, 27, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
+            GetCSharpResultAt(7, 28, DoNotSerializeTypeWithPointerFields.Rule, "pointer1"),
             GetCSharpResultAt(18, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer2"));
+        }
+
+        [Fact]
+        public void TestGenericTypeWithPointerFieldDiagnostic()
+        {
+            VerifyCSharpUnsafeCode(@"
+using System;
+
+[Serializable()]
+unsafe class TestClassA<T>
+{
+    private T[] normalField;
+
+    private int* pointer;
+}",
+            GetCSharpResultAt(9, 18, DoNotSerializeTypeWithPointerFields.Rule, "pointer"));
+        }
+
+        [Fact]
+        public void TestGenericTypeWithoutPointerFieldNoDiagnostic()
+        {
+            VerifyCSharpUnsafeCode(@"
+using System;
+
+[Serializable()]
+class TestClassA<T>
+{
+    private T[] normalField;
+}");
         }
 
         [Fact]

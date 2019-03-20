@@ -50,12 +50,6 @@ This package contains rules for correct usage of APIs that are present only in _
 
 [More info](src/Microsoft.NetFramework.Analyzers/Microsoft.NetFramework.Analyzers.md)
 
-### Text.Analyzers
-
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Text.Analyzers.svg)](https://www.nuget.org/packages/Text.Analyzers)
-
-This package contains naming rules for identifiers and for text included in code, such as comments. Currently, this package has no implemented rules, but future versions will have some of the naming rules from [legacy FxCop naming warnings](https://docs.microsoft.com/en-us/visualstudio/code-quality/naming-warnings).
-
 
 Other analyzer packages
 --------------------------------

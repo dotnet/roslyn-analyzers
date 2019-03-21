@@ -108,7 +108,7 @@ class TestClass
         }
 
         [Fact]
-        public void TestNormalAddMethodDiagnostic()
+        public void TestNormalAddMethodNoDiagnostic()
         {
             VerifyCSharp(@"
 using System;

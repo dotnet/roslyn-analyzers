@@ -146,7 +146,7 @@ class C
     }
 }
 ";
-            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors, testFixAllScope: null);
         }
 
         [Fact]
@@ -585,7 +585,7 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors, testFixAllScope: null);
         }
 
         [Fact]

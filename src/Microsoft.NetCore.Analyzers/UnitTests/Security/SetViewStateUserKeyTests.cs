@@ -177,6 +177,7 @@ class TestClass : Page
 }",
             GetCSharpResultAt(10, 7, SetViewStateUserKey.Rule, "TestClass"));
         }
+
         [Fact]
         public void TestSubclassWithSettingWrongPropertyDiagnostic()
         {
@@ -195,6 +196,123 @@ class TestClass : Page
 }",
             GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
         }
+
+        [Fact]
+        public void TestSettingPropertyOfLocalObjectInPage_InitDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    private void Page_Init (object sender, EventArgs e)
+    {
+        var testClass = new TestClass();
+        testClass.ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
+        public void TesthSettingPropertyOfWrongClassInPage_InitDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class MyType
+{
+    public string ViewStateUserKey { get; set; }
+}
+
+class TestClass : Page
+{
+    private MyType _field;
+
+    private void Page_Init (object sender, EventArgs e)
+    {
+        _field.ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}",
+            GetCSharpResultAt(10, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
+        public void TestWithSettingWrongPropertyInPage_InitDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    public int ViewStateUserKey { get; set; }
+
+    private void Page_Init (object sender, EventArgs e)
+    {
+        ViewStateUserKey = 123;
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
+        public void TestInPage_InitWithObjectParameterDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    private void Page_Init (EventArgs e)
+    {
+        ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
+        public void TestInPage_InitWithStringReturnTypeDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    private string Page_Init (EventArgs e)
+    {
+        ViewStateUserKey = ""ViewStateUserKey"";
+        return ViewStateUserKey;
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
+        public void TestNeitherOnInitNorInPage_InitNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    protected override void OnInit (EventArgs e)
+    {
+    }
+
+    private void Page_Init (object sender, EventArgs e)
+    {
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
         [Fact]
         public void TestSubclassWithSettingViewStateUserKeyNoDiagnostic()
         {
@@ -254,6 +372,43 @@ class TestClass
     public string ViewStateUserKey { get; set; }
 
     protected void OnInit (EventArgs e)
+    {
+        ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}");
+        }
+
+        [Fact]
+        public void TestSettingViewStateUserKeyInPage_InitNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    private void Page_Init (object sender, EventArgs e)
+    {
+        ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}");
+        }
+
+        [Fact]
+        public void TestBothOnInitAndInPage_InitNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    protected override void OnInit (EventArgs e)
+    {
+        ViewStateUserKey = ""ViewStateUserKey"";
+    }
+
+    private void Page_Init (object sender, EventArgs e)
     {
         ViewStateUserKey = ""ViewStateUserKey"";
     }

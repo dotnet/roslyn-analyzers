@@ -64,6 +64,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
+                var objectTypeSymbol = WellKnownTypes.Object(compilation);
+
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
                     var classSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
@@ -71,26 +73,22 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     if (baseClassSymbol.Equals(pageTypeSymbol))
                     {
-                        var onInitMethodSymbol = classSymbol.GetMembers().OfType<IMethodSymbol>().FirstOrDefault(s => s.Name == "OnInit" &&
-                                                                                                        s.Parameters.Length == 1 &&
-                                                                                                        s.Parameters[0].Type.Equals(eventArgsTypeSymbol) &&
-                                                                                                        s.IsProtected() &&
-                                                                                                        !s.IsStatic);
+                        var methods = classSymbol.GetMembers().OfType<IMethodSymbol>();
+                        var setViewStateUserKeyInOnInit = SetViewStateUserKeyCorrectly(methods.FirstOrDefault(s => s.Name == "OnInit" &&
+                                                                                                                    s.Parameters.Length == 1 &&
+                                                                                                                    s.Parameters[0].Type.Equals(eventArgsTypeSymbol) &&
+                                                                                                                    s.IsProtected() &&
+                                                                                                                    !s.IsStatic));
+                        var setViewStateUserKeyInPage_Init = SetViewStateUserKeyCorrectly(methods.FirstOrDefault(s => s.Name == "Page_Init" &&
+                                                                                                                        s.Parameters.Length == 2 &&
+                                                                                                                        objectTypeSymbol != null &&
+                                                                                                                        s.Parameters[0].Type.Equals(objectTypeSymbol) &&
+                                                                                                                        s.Parameters[1].Type.Equals(eventArgsTypeSymbol) &&
+                                                                                                                        s.ReturnType.SpecialType == SpecialType.System_Void));
 
-                        if (onInitMethodSymbol != null)
+                        if (setViewStateUserKeyInOnInit || setViewStateUserKeyInPage_Init)
                         {
-                            if (onInitMethodSymbol.GetTopmostOperationBlock(compilation)
-                                                    .Descendants()
-                                                    .Where(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
-                                                                simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation &&
-                                                                propertyReferenceOperation.Property.Name == "ViewStateUserKey" &&
-                                                                propertyReferenceOperation.Property.Type.SpecialType == SpecialType.System_String &&
-                                                                propertyReferenceOperation.Instance is IInstanceReferenceOperation instanceReferenceOperation &&
-                                                                instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
-                                                    .Count() != 0)
-                            {
-                                return;
-                            }
+                            return;
                         }
 
                         symbolAnalysisContext.ReportDiagnostic(
@@ -99,6 +97,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         classSymbol.Name));
                     }
                 }, SymbolKind.NamedType);
+
+                bool SetViewStateUserKeyCorrectly(IMethodSymbol methodSymbol)
+                {
+                    return methodSymbol?.GetTopmostOperationBlock(compilation)
+                                        .Descendants()
+                                        .Where(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
+                                                    simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation &&
+                                                    propertyReferenceOperation.Property.Name == "ViewStateUserKey" &&
+                                                    propertyReferenceOperation.Property.Type.SpecialType == SpecialType.System_String &&
+                                                    propertyReferenceOperation.Instance is IInstanceReferenceOperation instanceReferenceOperation &&
+                                                    instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+                                        .Count() > 0;
+                }
             });
         }
     }

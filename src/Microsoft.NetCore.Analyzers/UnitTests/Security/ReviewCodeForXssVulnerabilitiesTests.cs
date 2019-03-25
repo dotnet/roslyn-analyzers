@@ -39,6 +39,13 @@ public partial class WebForm : System.Web.UI.Page
         }
 
         [Fact]
+        public void Simple_VB_Diagnostic()
+        {
+            VerifyBasic(@"
+");
+        }
+
+        [Fact]
         public void Simple_NoDiagnostic()
         {
             VerifyCSharp(@"

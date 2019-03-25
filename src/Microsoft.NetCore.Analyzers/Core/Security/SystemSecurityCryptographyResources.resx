@@ -126,6 +126,15 @@
   <data name="ApprovedCipherModeMessage" xml:space="preserve">
     <value>It uses an unsafe Cipher Mode {0}</value>
   </data>
+  <data name="DoNotAddSchemaByURL" xml:space="preserve">
+    <value>Do Not Add Schema By URL</value>
+  </data>
+  <data name="DoNotAddSchemaByURLDescription" xml:space="preserve">
+    <value>This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
+  </data>
+  <data name="DoNotAddSchemaByURLMessage" xml:space="preserve">
+    <value>This overload of the Add method is potentially unsafe because it may resolve dangerous external references</value>
+  </data>
   <data name="DoNotCallDangerousMethodsInDeserialization" xml:space="preserve">
     <value>Do Not Call Dangerous Methods In Deserialization</value>
   </data>

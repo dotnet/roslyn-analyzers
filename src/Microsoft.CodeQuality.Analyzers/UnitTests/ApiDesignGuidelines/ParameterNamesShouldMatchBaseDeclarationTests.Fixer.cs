@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : BaseClass
                               {
                                   public override void TestMethod(string baseArg1, string baseArg2) { }
-                              }");
+                              }", testFixAllScope: null);
 
             VerifyCSharpFix(@"public abstract class BaseClass
                               {
@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : BaseClass
                               {
                                   public override void TestMethod(string baseArg1, string baseArg2, __arglist) { }
-                              }");
+                              }", testFixAllScope: null);
 
             VerifyCSharpFix(@"public abstract class BaseClass
                               {
@@ -67,7 +67,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : BaseClass
                               {
                                   public override void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3) { }
-                              }");
+                              }", testFixAllScope: null);
 
             VerifyBasicFix(@"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String)
@@ -88,7 +88,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Overrides Sub TestMethod(baseArg1 as String, baseArg2 as String)
                                  End Sub
-                             End Class");
+                             End Class", testFixAllScope: null);
 
             VerifyBasicFix(@"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
@@ -109,7 +109,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Overrides Sub TestMethod(baseArg1 as String, baseArg2 as String, ParamArray baseArg3() As String)
                                  End Sub
-                             End Class");
+                             End Class", testFixAllScope: null);
         }
 
         [Fact]
@@ -132,7 +132,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IBase
                               {
                                   public void TestMethod(string baseArg1, string baseArg2) { }
-                              }");
+                              }", testFixAllScope: null);
 
             VerifyCSharpFix(@"public interface IBase
                               {
@@ -151,7 +151,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IBase
                               {
                                   public void TestMethod(string baseArg1, string baseArg2, __arglist) { }
-                              }");
+                              }", testFixAllScope: null);
 
             VerifyCSharpFix(@"public interface IBase
                               {
@@ -170,7 +170,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IBase
                               {
                                   public void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3) { }
-                              }");
+                              }", testFixAllScope: null);
 
             VerifyBasicFix(@"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String)
@@ -191,7 +191,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Sub TestMethod(baseArg1 As String, baseArg2 As String) Implements IBase.TestMethod
                                  End Sub
-                             End Class");
+                             End Class", testFixAllScope: null);
 
             VerifyBasicFix(@"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
@@ -212,7 +212,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String) Implements IBase.TestMethod
                                  End Sub
-                             End Class");
+                             End Class", testFixAllScope: null);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -274,7 +274,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Sub AnotherTestMethod(baseArg1 As String, baseArg2 As String) Implements IBase.TestMethod
                                  End Sub
-                             End Class");
+                             End Class", testFixAllScope: null);
 
             VerifyBasicFix(@"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
@@ -295,7 +295,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Sub AnotherTestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String) Implements IBase.TestMethod
                                  End Sub
-                             End Class");
+                             End Class", testFixAllScope: null);
         }
 
         [Fact]
@@ -326,7 +326,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IntermediateBaseClass
                               {
                                   public override void TestMethod(string baseArg1, string baseArg2) { }
-                              }");
+                              }", testFixAllScope: null);
 
             VerifyBasicFix(@"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String)
@@ -355,7 +355,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Overrides Sub TestMethod(baseArg1 As String, baseArg2 As String)
                                  End Sub
-                             End Class");
+                             End Class", testFixAllScope: null);
         }
 
         [Fact]
@@ -388,7 +388,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : BaseClass, ITest
                               {
                                   public override void TestMethod(string arg1, string arg2) { }
-                              }");
+                              }", testFixAllScope: null);
 
             VerifyBasicFix(@"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(arg1 As String, arg2 As String)
@@ -419,7 +419,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     
                                  Public Overrides Sub TestMethod(arg1 As String, arg2 As String) Implements ITest.TestMethod
                                  End Sub
-                             End Class");
+                             End Class", testFixAllScope: null);
         }
 
         [Fact]

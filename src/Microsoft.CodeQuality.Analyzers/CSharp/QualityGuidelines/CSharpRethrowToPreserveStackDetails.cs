@@ -34,17 +34,22 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                 {
                     case SyntaxKind.CatchClause:
                         {
-                            if (!(context.SemanticModel.GetSymbolInfo(expr).Symbol is ILocalSymbol local) || local.Locations.Length == 0)
+                            if (syntax is CatchClauseSyntax catchClause &&
+                                catchClause.Declaration != null)
                             {
-                                return;
-                            }
+                                if (!(context.SemanticModel.GetSymbolInfo(expr).Symbol is ILocalSymbol local) || local.Locations.Length == 0)
+                                {
+                                    return;
+                                }
 
-                            // if (local.LocalKind != LocalKind.Catch) return; // TODO: expose LocalKind in the symbol model?
+                                // if (local.LocalKind != LocalKind.Catch) return; // TODO: expose LocalKind in the symbol model?
 
-                            if (syntax is CatchClauseSyntax catchClause && catchClause.Declaration.Span.Contains(local.Locations[0].SourceSpan))
-                            {
-                                context.ReportDiagnostic(CreateDiagnostic(throwStatement));
-                                return;
+                                if (catchClause.Declaration.Span.Contains(local.Locations[0].SourceSpan))
+                                {
+                                    context.ReportDiagnostic(CreateDiagnostic(throwStatement));
+                                    return;
+                                }
+
                             }
                         }
 

@@ -60,6 +60,9 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
             End If
 
             ' if (local.LocalKind) TODO: expose LocalKind In the symbol model?
+            If catchStatement.IdentifierName Is Nothing Then
+                Return False
+            End If
 
             Return catchStatement.IdentifierName.Span.Contains(local.Locations(0).SourceSpan)
         End Function

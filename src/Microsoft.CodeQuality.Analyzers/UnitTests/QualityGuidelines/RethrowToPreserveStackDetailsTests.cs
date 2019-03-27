@@ -356,6 +356,44 @@ End Class
 ", TestValidationMode.AllowCompileErrors);
         }
 
+        [Fact]
+        [WorkItem(2167, "https://github.com/dotnet/roslyn-analyzers/issues/2167")]
+        public void CA2200_NoDiagnosticsForCatchWithOutArgument()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrow(Exception exception)
+    {
+        try
+        {            
+        }
+        catch
+        { 
+            var finalException = new InvalidOperationException(""barf"", exception);
+            throw finalException;
+        }
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrow(exception As Exception)
+        Try
+            
+        Catch
+            Dim finalException = new InvalidOperationException(""barf"", exception)
+            Throw finalException
+        End Try
+    End Sub
+End Class
+");
+        }
+
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
         {
             return GetBasicResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage);

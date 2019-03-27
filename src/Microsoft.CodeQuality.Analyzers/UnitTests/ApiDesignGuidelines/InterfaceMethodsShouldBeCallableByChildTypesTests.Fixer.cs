@@ -279,7 +279,7 @@ public class ImplementsGeneralThree : IGeneral
     }
 }";
 
-            VerifyCSharpFix(code, expectedFixedCode);
+            VerifyCSharpFix(code, expectedFixedCode, testFixAllScope: null);
         }
 
         [Fact]
@@ -868,7 +868,7 @@ Public Class ImplementsGeneralThree
 End Class
 ";
 
-            VerifyBasicFix(code, expectedFixedCode);
+            VerifyBasicFix(code, expectedFixedCode, testFixAllScope: null);
         }
 
         [Fact]

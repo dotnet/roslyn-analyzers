@@ -92,7 +92,7 @@ public sealed class SetterOnlyTestAttribute : Attribute
             throw new NotImplementedException();
         }
     }
-}", allowNewCompilerDiagnostics: true);
+}", allowNewCompilerDiagnostics: true, testFixAllScope: null);
         }
 
         [Fact]
@@ -337,7 +337,7 @@ Public NotInheritable Class SetterOnlyTestAttribute
             Throw New NotImplementedException()
         End Get
     End Property
-End Class", allowNewCompilerDiagnostics: true);
+End Class", allowNewCompilerDiagnostics: true, testFixAllScope: null);
         }
 
         [Fact]
@@ -383,7 +383,7 @@ Public NotInheritable Class InternalGetterTestAttribute
             m_name = value
         End Set
     End Property
-End Class", allowNewCompilerDiagnostics: true);
+End Class", allowNewCompilerDiagnostics: true, testFixAllScope: null);
         }
 
         [Fact]

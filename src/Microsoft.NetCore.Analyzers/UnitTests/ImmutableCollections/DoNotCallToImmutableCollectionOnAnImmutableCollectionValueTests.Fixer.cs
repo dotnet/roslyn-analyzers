@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.NetCore.CSharp.Analyzers.ImmutableCollections;
-using Microsoft.NetCore.VisualBasic.Analyzers.ImmutableCollections;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
@@ -25,12 +23,12 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections.UnitTests
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicDoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer();
+            return new DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpDoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer();
+            return new DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer();
         }
 
         public static readonly TheoryData<string> CollectionNames_Arity1 = new TheoryData<string>
@@ -55,20 +53,14 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections.UnitTests
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-static class Extensions
-{{
-     public static {collectionName}<TSource> To{collectionName}<TSource>(this IEnumerable<TSource> items)
-     {{
-         return default({collectionName}<TSource>);
-     }}
-}}
-
 class C
 {{
     public void M(IEnumerable<int> p1, List<int> p2, {collectionName}<int> p3)
     {{
-        var x = p1.To{collectionName}().To{collectionName}();
-        var y = p3.To{collectionName}();
+        var a = p1.To{collectionName}().To{collectionName}();
+        var b = p3.To{collectionName}();
+        var c = ImmutableExtensions.To{collectionName}(ImmutableExtensions.To{collectionName}(p1));
+        var d = ImmutableExtensions.To{collectionName}(p3);
     }}
 }}";
 
@@ -76,23 +68,17 @@ class C
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-static class Extensions
-{{
-     public static {collectionName}<TSource> To{collectionName}<TSource>(this IEnumerable<TSource> items)
-     {{
-         return default({collectionName}<TSource>);
-     }}
-}}
-
 class C
 {{
     public void M(IEnumerable<int> p1, List<int> p2, {collectionName}<int> p3)
     {{
-        var x = p1.To{collectionName}();
-        var y = p3;
+        var a = p1.To{collectionName}();
+        var b = p3;
+        var c = ImmutableExtensions.To{collectionName}(p1);
+        var d = p3;
     }}
 }}";
-            VerifyCSharpFix(new[] { initial, ImmutableCollectionsSource.CSharp }, new[] { expected, ImmutableCollectionsSource.CSharp });
+            VerifyCSharpFix(new[] { initial, ImmutableCollectionsSource.CSharp }, new[] { expected, ImmutableCollectionsSource.CSharp }, referenceFlags: ReferenceFlags.RemoveImmutable);
         }
 
         [Theory]
@@ -103,17 +89,10 @@ class C
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
-Module Extensions
-	<System.Runtime.CompilerServices.Extension> _
-	Public Function To{collectionName}(Of TSource)(items As IEnumerable(Of TSource)) As {collectionName}(Of TSource)
-		Return Nothing
-	End Function
-End Module
-
 Class C
 	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As {collectionName}(Of Integer))
-		Dim x = p1.To{collectionName}().To{collectionName}()
-		Dim y = p3.To{collectionName}()
+		Dim a = p1.To{collectionName}().To{collectionName}()
+		Dim b = p3.To{collectionName}()
 	End Sub
 End Class";
 
@@ -121,20 +100,13 @@ End Class";
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
-Module Extensions
-	<System.Runtime.CompilerServices.Extension> _
-	Public Function To{collectionName}(Of TSource)(items As IEnumerable(Of TSource)) As {collectionName}(Of TSource)
-		Return Nothing
-	End Function
-End Module
-
 Class C
 	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As {collectionName}(Of Integer))
-		Dim x = p1.To{collectionName}()
-		Dim y = p3
+		Dim a = p1.To{collectionName}()
+		Dim b = p3
 	End Sub
 End Class";
-            VerifyBasicFix(new[] { initial, ImmutableCollectionsSource.Basic }, new[] { expected, ImmutableCollectionsSource.Basic });
+            VerifyBasicFix(new[] { initial, ImmutableCollectionsSource.Basic }, new[] { expected, ImmutableCollectionsSource.Basic }, referenceFlags: ReferenceFlags.RemoveImmutable);
         }
 
         [Theory]
@@ -145,20 +117,14 @@ End Class";
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-static class Extensions
-{{
-     public static {collectionName}<TKey, TValue> To{collectionName}<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> items)
-     {{
-         return default({collectionName}<TKey, TValue>);
-     }}
-}}
-
 class C
 {{
     public void M(IEnumerable<KeyValuePair<int, int>> p1, List<KeyValuePair<int, int>> p2, {collectionName}<int, int> p3)
     {{
-        var x = p1.To{collectionName}().To{collectionName}();
-        var y = p3.To{collectionName}();
+        var a = p1.To{collectionName}().To{collectionName}();
+        var b = p3.To{collectionName}();
+        var c = ImmutableExtensions.To{collectionName}(ImmutableExtensions.To{collectionName}(p1));
+        var d = ImmutableExtensions.To{collectionName}(p3);
     }}
 }}";
 
@@ -166,23 +132,17 @@ class C
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-static class Extensions
-{{
-     public static {collectionName}<TKey, TValue> To{collectionName}<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> items)
-     {{
-         return default({collectionName}<TKey, TValue>);
-     }}
-}}
-
 class C
 {{
     public void M(IEnumerable<KeyValuePair<int, int>> p1, List<KeyValuePair<int, int>> p2, {collectionName}<int, int> p3)
     {{
-        var x = p1.To{collectionName}();
-        var y = p3;
+        var a = p1.To{collectionName}();
+        var b = p3;
+        var c = ImmutableExtensions.To{collectionName}(p1);
+        var d = p3;
     }}
 }}";
-            VerifyCSharpFix(new[] { initial, ImmutableCollectionsSource.CSharp }, new[] { expected, ImmutableCollectionsSource.CSharp });
+            VerifyCSharpFix(new[] { initial, ImmutableCollectionsSource.CSharp }, new[] { expected, ImmutableCollectionsSource.CSharp }, referenceFlags: ReferenceFlags.RemoveImmutable);
         }
 
         [Theory]
@@ -193,17 +153,10 @@ class C
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
-Module Extensions
-	<System.Runtime.CompilerServices.Extension> _
-	Public Function To{collectionName}(Of TKey, TValue)(items As IEnumerable(Of KeyValuePair(Of TKey, TValue))) As {collectionName}(Of TKey, TValue)
-		Return Nothing
-	End Function
-End Module
-
 Class C
 	Public Sub M(p1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)), p2 As List(Of KeyValuePair(Of Integer, Integer)), p3 As {collectionName}(Of Integer, Integer))
-		Dim x = p1.To{collectionName}().To{collectionName}()
-		Dim y = p3.To{collectionName}()
+		Dim a = p1.To{collectionName}().To{collectionName}()
+		Dim b = p3.To{collectionName}()
 	End Sub
 End Class";
 
@@ -211,20 +164,13 @@ End Class";
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
-Module Extensions
-	<System.Runtime.CompilerServices.Extension> _
-	Public Function To{collectionName}(Of TKey, TValue)(items As IEnumerable(Of KeyValuePair(Of TKey, TValue))) As {collectionName}(Of TKey, TValue)
-		Return Nothing
-	End Function
-End Module
-
 Class C
 	Public Sub M(p1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)), p2 As List(Of KeyValuePair(Of Integer, Integer)), p3 As {collectionName}(Of Integer, Integer))
-		Dim x = p1.To{collectionName}()
-		Dim y = p3
+		Dim a = p1.To{collectionName}()
+		Dim b = p3
 	End Sub
 End Class";
-            VerifyBasicFix(new[] { initial, ImmutableCollectionsSource.Basic }, new[] { expected, ImmutableCollectionsSource.Basic });
+            VerifyBasicFix(new[] { initial, ImmutableCollectionsSource.Basic }, new[] { expected, ImmutableCollectionsSource.Basic }, referenceFlags: ReferenceFlags.RemoveImmutable);
         }
     }
 }

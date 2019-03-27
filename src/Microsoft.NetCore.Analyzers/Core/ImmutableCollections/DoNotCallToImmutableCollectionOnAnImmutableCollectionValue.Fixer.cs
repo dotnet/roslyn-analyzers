@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,14 +10,14 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 {
     /// <summary>
     /// CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     /// </summary>
-    public abstract class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public sealed class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.RuleId);
 
@@ -26,61 +27,52 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        private static readonly ImmutableArray<string> ToImmutableMethodNames = new[]
-        {
-            "ToImmutableArray",
-            "ToImmutableDictionary",
-            "ToImmutableHashSet",
-            "ToImmutableList",
-            "ToImmutableSortedDictionary",
-            "ToImmutableSortedSet"
-        }.ToImmutableArray();
-
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            Diagnostic diagnostic = context.Diagnostics.FirstOrDefault();
+            var diagnostic = context.Diagnostics.FirstOrDefault();
             if (diagnostic == null)
             {
                 return;
             }
 
-            Document document = context.Document;
-            TextSpan span = context.Span;
-            SyntaxNode root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxNode invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
+            var document = context.Document;
+            var span = context.Span;
+            var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
             if (invocationNode == null)
             {
                 return;
             }
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var invocationOp = semanticModel.GetOperation(invocationNode) as IInvocationOperation;
-            if (invocationOp == null || !ToImmutableMethodNames.Contains(invocationOp.TargetMethod.Name))
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            var invocationOperation = semanticModel.GetOperation(invocationNode) as IInvocationOperation;
+            if (invocationOperation == null ||
+                !DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.ToImmutableMethodNames.Contains(invocationOperation.TargetMethod.Name))
             {
                 return;
             }
 
-            string title = SystemCollectionsImmutableAnalyzersResources.RemoveRedundantCall;
+            var title = SystemCollectionsImmutableAnalyzersResources.RemoveRedundantCall;
 
             context.RegisterCodeFix(new MyCodeAction(title,
-                                        async cancellationToken => await RemoveRedundantCall(document, root, invocationNode, invocationOp).ConfigureAwait(false),
+                                        async cancellationToken => await RemoveRedundantCall(document, root, invocationNode, invocationOperation).ConfigureAwait(false),
                                         equivalenceKey: title),
                                     diagnostic);
         }
 
-        private static Task<Document> RemoveRedundantCall(Document document, SyntaxNode root, SyntaxNode invocationNode, IInvocationOperation invocationOp)
+        private static Task<Document> RemoveRedundantCall(Document document, SyntaxNode root, SyntaxNode invocationNode, IInvocationOperation invocationOperation)
         {
-            SyntaxNode instance = GetInstance(invocationOp).WithTrailingTrivia(invocationNode.GetTrailingTrivia());
-            SyntaxNode newRoot = root.ReplaceNode(invocationNode, instance);
-            Document newDocument = document.WithSyntaxRoot(newRoot);
+            var instance = GetInstance(invocationOperation).WithTriviaFrom(invocationNode);
+            var newRoot = root.ReplaceNode(invocationNode, instance);
+            var newDocument = document.WithSyntaxRoot(newRoot);
             return Task.FromResult(newDocument);
         }
 
-        private static SyntaxNode GetInstance(IInvocationOperation invocationOp)
+        private static SyntaxNode GetInstance(IInvocationOperation invocationOperation)
         {
-            return invocationOp.TargetMethod.IsExtensionMethod && invocationOp.Language != LanguageNames.VisualBasic ?
-                invocationOp.Arguments[0].Value.Syntax :
-                invocationOp.Instance.Syntax;
+            return invocationOperation.TargetMethod.IsExtensionMethod && invocationOperation.Language != LanguageNames.VisualBasic ?
+                invocationOperation.Arguments[0].Value.Syntax :
+                invocationOperation.Instance.Syntax;
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)

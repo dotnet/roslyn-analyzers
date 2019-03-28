@@ -67,7 +67,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var methodName = methodSymbol.Name;
 
                     if (methodName.StartsWith("ReadXml", StringComparison.Ordinal) &&
-                        MethodOverridenFromDataSet(methodSymbol))
+                        IsOverrides(methodSymbol, dataSetTypeSymbol))
                     {
                         if (xmlReaderTypeSymbol != null &&
                             methodSymbol.Parameters.Length > 0 &&
@@ -83,7 +83,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
                 }, OperationKind.Invocation);
 
-                bool MethodOverridenFromDataSet(IMethodSymbol methodSymbol)
+                /// <summary>
+                /// Find out if the method overrides from target virtual method of a certain class
+                /// </summary>
+                /// <param name="methodSymbol">The method</param>
+                /// <param name="classSymbol">The class has virtual method</param>
+                bool IsOverrides(IMethodSymbol methodSymbol, INamedTypeSymbol classSymbol)
                 {
                     if (methodSymbol == null)
                     {
@@ -91,13 +96,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
                     else
                     {
-                        if (methodSymbol.ContainingType.Equals(dataSetTypeSymbol))
+                        if (methodSymbol.ContainingType.Equals(classSymbol))
                         {
                             return true;
                         }
                         else
                         {
-                            return MethodOverridenFromDataSet(methodSymbol.OverriddenMethod);
+                            return IsOverrides(methodSymbol.OverriddenMethod, classSymbol);
                         }
                     }
                 }

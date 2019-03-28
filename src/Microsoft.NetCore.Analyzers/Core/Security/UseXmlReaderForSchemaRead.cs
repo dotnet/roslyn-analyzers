@@ -66,8 +66,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var methodSymbol = invocationOperation.TargetMethod;
                     var methodName = methodSymbol.Name;
 
-                    if (methodSymbol.ContainingType.Equals(dataSetTypeSymbol) &&
-                        methodName.StartsWith("ReadXml", StringComparison.Ordinal))
+                    if (methodName.StartsWith("ReadXml", StringComparison.Ordinal) &&
+                        MethodOverridenFromDataSet(methodSymbol))
                     {
                         if (xmlReaderTypeSymbol != null &&
                             methodSymbol.Parameters.Length > 0 &&
@@ -82,6 +82,25 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 methodName));
                     }
                 }, OperationKind.Invocation);
+
+                bool MethodOverridenFromDataSet(IMethodSymbol methodSymbol)
+                {
+                    if (methodSymbol == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        if (methodSymbol.ContainingType.Equals(dataSetTypeSymbol))
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return MethodOverridenFromDataSet(methodSymbol.OverriddenMethod);
+                        }
+                    }
+                }
             });
         }
     }

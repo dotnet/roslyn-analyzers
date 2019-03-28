@@ -63,7 +63,7 @@ public class Foo : Exception
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            VerifyCSharpFix(code, fix, testFixAllScope: null);
         }
 
         [Fact]
@@ -95,7 +95,7 @@ public class Foo : Exception
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            VerifyCSharpFix(code, fix, testFixAllScope: null);
         }
 
         [Fact]
@@ -127,7 +127,7 @@ public class Foo : Exception
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            VerifyCSharpFix(code, fix, testFixAllScope: null);
         }
 
         [Fact]
@@ -271,7 +271,7 @@ Public Class Foo : Inherits Exception
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix);
+            VerifyBasicFix(code, fix, testFixAllScope: null);
         }
 
         [Fact]
@@ -298,7 +298,7 @@ Public Class Foo : Inherits Exception
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix);
+            VerifyBasicFix(code, fix, testFixAllScope: null);
         }
 
         [Fact]
@@ -325,7 +325,7 @@ Public Class Foo : Inherits Exception
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix);
+            VerifyBasicFix(code, fix, testFixAllScope: null);
         }
 
         [Fact]

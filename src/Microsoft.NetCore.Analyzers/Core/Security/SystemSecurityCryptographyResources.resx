@@ -126,6 +126,15 @@
   <data name="ApprovedCipherModeMessage" xml:space="preserve">
     <value>It uses an unsafe Cipher Mode {0}</value>
   </data>
+  <data name="DoNotAddSchemaByURL" xml:space="preserve">
+    <value>Do Not Add Schema By URL</value>
+  </data>
+  <data name="DoNotAddSchemaByURLDescription" xml:space="preserve">
+    <value>This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</value>
+  </data>
+  <data name="DoNotAddSchemaByURLMessage" xml:space="preserve">
+    <value>This overload of the Add method is potentially unsafe because it may resolve dangerous external references</value>
+  </data>
   <data name="DoNotCallDangerousMethodsInDeserialization" xml:space="preserve">
     <value>Do Not Call Dangerous Methods In Deserialization</value>
   </data>
@@ -180,6 +189,15 @@
   <data name="DoNotReferSelfInSerializableClassMessage" xml:space="preserve">
     <value>{0} participates in a potential reference cycle</value>
   </data>
+  <data name="DoNotSerializeTypesWithPointerFields" xml:space="preserve">
+    <value>Do Not Serialize Types With Pointer Fields</value>
+  </data>
+  <data name="DoNotSerializeTypesWithPointerFieldsDescription" xml:space="preserve">
+    <value>Pointers are not "type safe" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.</value>
+  </data>
+  <data name="DoNotSerializeTypesWithPointerFieldsMessage" xml:space="preserve">
+    <value>Pointer field {0} on serializable type.</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>
@@ -218,6 +236,15 @@
   </data>
   <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>{0} uses a weak cryptographic algorithm {1}</value>
+  </data>
+  <data name="SetViewStateUserKey" xml:space="preserve">
+    <value>Set ViewStateUserKey For Classes Derived From Page</value>
+  </data>
+  <data name="SetViewStateUserKeyDescription" xml:space="preserve">
+    <value>Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</value>
+  </data>
+  <data name="SetViewStateUserKeyMessage" xml:space="preserve">
+    <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
   </data>
   <data name="UseXmlReaderForSchemaRead" xml:space="preserve">
     <value>Use XmlReader For Schema Read</value>

@@ -1138,6 +1138,88 @@ End Class
             GetBasicResultAt(16, 51, "new A(2)"));
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Configured_DisposeOwnershipTransfer_AtConstructorInvocation(bool disposeOwnershipTransferAtConstructor)
+        {
+            var editorConfigText = disposeOwnershipTransferAtConstructor ?
+                        $@"dotnet_code_quality.interprocedural_analysis_kind = None
+                           dotnet_code_quality.dispose_ownership_transfer_at_constructor = true" :
+                        string.Empty;
+            var editorConfigFile = GetEditorConfigAdditionalFile(editorConfigText);
+
+            var source = @"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    DisposableOwnerType M1()
+    {
+        return new DisposableOwnerType(new A());
+    }
+}
+
+class DisposableOwnerType
+{
+    public DisposableOwnerType(A a)
+    {
+    }
+}";
+
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (!disposeOwnershipTransferAtConstructor)
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.cs(15,40): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                    GetCSharpResultAt(15, 40, "new A()")
+                };
+            }
+
+            VerifyCSharp(source, editorConfigFile, expectedDiagnostics);
+
+            source = @"
+Imports System
+
+Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Private Function M1() As DisposableOwnerType
+        Return New DisposableOwnerType(New A())
+    End Function
+End Class
+
+Class DisposableOwnerType
+    Public Sub New(ByVal a As A)
+    End Sub
+End Class
+";
+            expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (!disposeOwnershipTransferAtConstructor)
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.vb(13,40): warning CA2000: Call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                    GetBasicResultAt(13, 40, "New A()")
+                };
+            }
+
+            VerifyBasic(source, editorConfigFile, expectedDiagnostics);
+        }
+
         [Theory, WorkItem(1404, "https://github.com/dotnet/roslyn-analyzers/issues/1404")]
         [InlineData(DisposeAnalysisKind.AllPaths)]
         [InlineData(DisposeAnalysisKind.AllPathsOnlyNotDisposed)]

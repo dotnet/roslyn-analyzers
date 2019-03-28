@@ -35,7 +35,8 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                     case SyntaxKind.CatchClause:
                         {
                             if (syntax is CatchClauseSyntax catchClause &&
-                                catchClause.Declaration != null)
+                                catchClause.Declaration != null &&
+                                catchClause.Declaration.Identifier.RawKind != 0)
                             {
                                 if (!(context.SemanticModel.GetSymbolInfo(expr).Symbol is ILocalSymbol local) || local.Locations.Length == 0)
                                 {
@@ -49,7 +50,6 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                                     context.ReportDiagnostic(CreateDiagnostic(throwStatement));
                                     return;
                                 }
-
                             }
                         }
 

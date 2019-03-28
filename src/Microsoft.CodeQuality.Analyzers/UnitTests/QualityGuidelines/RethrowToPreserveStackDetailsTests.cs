@@ -357,8 +357,31 @@ End Class
         }
 
         [Fact]
+        public void CA2200_NoDiagnosticsForCatchWithoutIdentifier()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrow(Exception exception)
+    {
+        try
+        {            
+        }
+        catch (Exception)
+        { 
+            var finalException = new InvalidOperationException(""barf"", exception);
+            throw finalException;
+        }
+    }
+}
+");
+        }
+
+        [Fact]
         [WorkItem(2167, "https://github.com/dotnet/roslyn-analyzers/issues/2167")]
-        public void CA2200_NoDiagnosticsForCatchWithOutArgument()
+        public void CA2200_NoDiagnosticsForCatchWithoutArgument()
         {
             VerifyCSharp(@"
 using System;

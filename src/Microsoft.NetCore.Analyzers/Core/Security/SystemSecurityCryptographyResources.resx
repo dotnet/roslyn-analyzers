@@ -219,4 +219,13 @@
   <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>{0} uses a weak cryptographic algorithm {1}</value>
   </data>
+  <data name="UseXmlReaderForSchemaRead" xml:space="preserve">
+    <value>Use XmlReader For Schema Read</value>
+  </data>
+  <data name="UseXmlReaderForSchemaReadDescription" xml:space="preserve">
+    <value>Using a DataSet to read XML with untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</value>
+  </data>
+  <data name="UseXmlReaderForSchemaReadMessage" xml:space="preserve">
+    <value>This overload of the DataSet.{0} method is potentially unsafe, use an overload that takes a XmlReader instance instead</value>
+  </data>
 </root>

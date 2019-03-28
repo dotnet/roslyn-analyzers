@@ -172,6 +172,21 @@
         <target state="translated">{0} utilise un algorithme de chiffrement faible {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseXmlReaderForSchemaRead">
+        <source>Use XmlReader For Schema Read</source>
+        <target state="new">Use XmlReader For Schema Read</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForSchemaReadDescription">
+        <source>Using a DataSet to read XML with untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
+        <target state="new">Using a DataSet to read XML with untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForSchemaReadMessage">
+        <source>This overload of the DataSet.{0} method is potentially unsafe, use an overload that takes a XmlReader instance instead</source>
+        <target state="new">This overload of the DataSet.{0} method is potentially unsafe, use an overload that takes a XmlReader instance instead</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

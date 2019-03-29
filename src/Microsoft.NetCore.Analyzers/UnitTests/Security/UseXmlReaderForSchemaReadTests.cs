@@ -273,6 +273,64 @@ End Class");
         }
 
         [Fact]
+        public void TestDerivedFromANormalClassNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Data;
+using System.IO;
+using System.Xml;
+
+class TestClass
+{
+    protected virtual void ReadXmlSerializable(XmlReader xmlReader)
+    {
+    }
+}
+
+class SubTestClass : TestClass
+{
+    protected override void ReadXmlSerializable(XmlReader xmlReader)
+    {
+    }
+
+    public void TestMethod()
+    {
+        ReadXmlSerializable(new XmlTextReader(new FileStream(""xmlFilename"", FileMode.Open)));
+    }
+}");
+        }
+
+        [Fact]
+        public void TestTwoLevelsOfInheritanceAndOverridesNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Data;
+using System.IO;
+using System.Xml;
+
+class TestClass : DataSet
+{
+    protected override void ReadXmlSerializable(XmlReader xmlReader)
+    {
+    }
+}
+
+class SubTestClass : TestClass
+{
+    protected override void ReadXmlSerializable(XmlReader xmlReader)
+    {
+    }
+
+    public void TestMethod()
+    {
+        ReadXmlSerializable(new XmlTextReader(new FileStream(""xmlFilename"", FileMode.Open)));
+    }
+}");
+        }
+
+        [Fact]
         public void TestNormalClassReadXmlWithXmlReaderParameterNoDiagnostic()
         {
             VerifyCSharp(@"

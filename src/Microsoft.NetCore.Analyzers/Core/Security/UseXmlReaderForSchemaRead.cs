@@ -7,6 +7,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -50,15 +51,18 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                var compilation = compilationStartAnalysisContext.Compilation;
-                var dataSetTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                if (dataSetTypeSymbol == null)
+                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                            WellKnownTypeNames.SystemDataDataSet,
+                            out INamedTypeSymbol dataSetTypeSymbol))
                 {
                     return;
                 }
 
-                var xmlReaderTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReader);
+                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                            WellKnownTypeNames.SystemXmlXmlReader,
+                            out INamedTypeSymbol xmlReaderTypeSymbol);
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
@@ -67,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var methodName = methodSymbol.Name;
 
                     if (methodName.StartsWith("ReadXml", StringComparison.Ordinal) &&
-                        IsOverrides(methodSymbol, dataSetTypeSymbol))
+                        methodSymbol.IsOverrides(dataSetTypeSymbol))
                     {
                         if (xmlReaderTypeSymbol != null &&
                             methodSymbol.Parameters.Length > 0 &&
@@ -82,30 +86,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 methodName));
                     }
                 }, OperationKind.Invocation);
-
-                /// <summary>
-                /// Find out if the method overrides from target virtual method of a certain class
-                /// </summary>
-                /// <param name="methodSymbol">The method</param>
-                /// <param name="classSymbol">The class has virtual method</param>
-                bool IsOverrides(IMethodSymbol methodSymbol, INamedTypeSymbol classSymbol)
-                {
-                    if (methodSymbol == null)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        if (methodSymbol.ContainingType.Equals(classSymbol))
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return IsOverrides(methodSymbol.OverriddenMethod, classSymbol);
-                        }
-                    }
-                }
             });
         }
     }

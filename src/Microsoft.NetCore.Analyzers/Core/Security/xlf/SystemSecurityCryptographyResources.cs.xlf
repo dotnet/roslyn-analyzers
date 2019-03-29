@@ -217,17 +217,17 @@
         <target state="new">The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseXmlReaderForSchemaRead">
-        <source>Use XmlReader For Schema Read</source>
-        <target state="new">Use XmlReader For Schema Read</target>
+      <trans-unit id="UseXmlReaderForDataSetReadXml">
+        <source>Use XmlReader For DataSet Read Xml</source>
+        <target state="new">Use XmlReader For DataSet Read Xml</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseXmlReaderForSchemaReadDescription">
+      <trans-unit id="UseXmlReaderForDataSetReadXmlDescription">
         <source>Using a DataSet to read XML with untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
         <target state="new">Using a DataSet to read XML with untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseXmlReaderForSchemaReadMessage">
+      <trans-unit id="UseXmlReaderForDataSetReadXmlMessage">
         <source>This overload of the DataSet.{0} method is potentially unsafe, use an overload that takes a XmlReader instance instead</source>
         <target state="new">This overload of the DataSet.{0} method is potentially unsafe, use an overload that takes a XmlReader instance instead</target>
         <note />

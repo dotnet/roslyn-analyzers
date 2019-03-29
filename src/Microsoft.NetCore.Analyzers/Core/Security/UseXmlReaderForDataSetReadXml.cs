@@ -13,19 +13,19 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseXmlReaderForSchemaRead : DiagnosticAnalyzer
+    public sealed class UseXmlReaderForDataSetReadXml : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5366";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseXmlReaderForSchemaRead),
+            nameof(SystemSecurityCryptographyResources.UseXmlReaderForDataSetReadXml),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseXmlReaderForSchemaReadMessage),
+            nameof(SystemSecurityCryptographyResources.UseXmlReaderForDataSetReadXmlMessage),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseXmlReaderForSchemaReadDescription),
+            nameof(SystemSecurityCryptographyResources.UseXmlReaderForDataSetReadXmlDescription),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 

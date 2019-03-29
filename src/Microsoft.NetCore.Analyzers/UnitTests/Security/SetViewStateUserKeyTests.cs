@@ -453,7 +453,6 @@ interface ITestInterface
 }");
         }
 
-
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new SetViewStateUserKey();

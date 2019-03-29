@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">
-        <source>Do Not Disable Certification Validation</source>
-        <target state="translated">Ne pas désactiver la validation de certification</target>
+        <source>Do Not Disable Certificate Validation</source>
+        <target state="needs-review-translation">Ne pas désactiver la validation de certification</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationDescription">
@@ -150,6 +150,21 @@
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsMessage">
         <source>{0} uses a broken cryptographic algorithm {1}</source>
         <target state="translated">{0} utilise un algorithme de chiffrement cassé {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="new">Do Not Use Deprecated Security Protocols</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="new">Using a deprecated security protocol rather than the system default is risky.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="new">Hard-coded use of deprecated security protocol {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5">

@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="fr" original="../MicrosoftMaintainabilityAnalyzersResources.resx">
     <body>
+      <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
+        <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
+        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
+        <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
+        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidDeadConditionalCodeTitle">
+        <source>Avoid dead conditional code</source>
+        <target state="new">Avoid dead conditional code</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
         <source>This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.</source>
         <target state="translated">Cette règle mesure le couplage de classes en comptant le nombre de références de type uniques que contient un symbole. Les symboles qui ont un haut degré de couplage de classes peuvent être difficiles à maintenir. Une bonne pratique est d'avoir des types et des méthodes qui présentent un faible couplage et une cohésion élevée. Pour corriger cette infraction, essayez de revoir le code afin de réduire le nombre de types auquel il est couplé.</target>
@@ -18,12 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
-        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
-
-cyclomatic complexity = the number of edges - the number of nodes + 1
-
-where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="translated">La complexité cyclomatique mesure le nombre de chemins linéairement indépendants avec la méthode, qui est déterminé par le nombre et la complexité des branches conditionnelles. Une complexité cyclomatique basse indique généralement une méthode facile à comprendre, tester et maintenir. La complexité cyclomatique est calculée à partir d'un graphique de contrôle de flux de la méthode et donnée comme suit :
+        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
+        <target state="needs-review-translation">La complexité cyclomatique mesure le nombre de chemins linéairement indépendants avec la méthode, qui est déterminé par le nombre et la complexité des branches conditionnelles. Une complexité cyclomatique basse indique généralement une méthode facile à comprendre, tester et maintenir. La complexité cyclomatique est calculée à partir d'un graphique de contrôle de flux de la méthode et donnée comme suit :
 
 complexité cyclomatique = nombre d'arêtes - nombre de nœuds + 1
 
@@ -56,9 +67,8 @@ où un nœud représente un point de branche logique et une arête représente u
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
-        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="translated">L'indice de maintenabilité est calculé en utilisant les métriques suivantes : lignes de code, volume de programme et complexité cyclomatique. Le volume du programme mesure la difficulté de compréhension d'un symbole en fonction du nombre d'opérateurs et d'opérandes dans le code. La complexité cyclomatique mesure la complexité structurelle du type ou de la méthode.
+        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
+        <target state="needs-review-translation">L'indice de maintenabilité est calculé en utilisant les métriques suivantes : lignes de code, volume de programme et complexité cyclomatique. Le volume du programme mesure la difficulté de compréhension d'un symbole en fonction du nombre d'opérateurs et d'opérandes dans le code. La complexité cyclomatique mesure la complexité structurelle du type ou de la méthode.
 Un indice de maintenabilité faible indique que le code est probablement difficile à maintenir et constitue un bon candidat pour une nouvelle conception.</target>
         <note />
       </trans-unit>

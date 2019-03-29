@@ -64,9 +64,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
-                if (!System.Diagnostics.Debugger.IsAttached)
-                    System.Diagnostics.Debugger.Launch();
-
                 var objectTypeSymbol = WellKnownTypes.Object(compilation);
 
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
@@ -74,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var classSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
                     var baseClassSymbol = classSymbol.BaseType;
 
-                    if (baseClassSymbol.Equals(pageTypeSymbol))
+                    if (pageTypeSymbol.Equals(baseClassSymbol))
                     {
                         var methods = classSymbol.GetMembers().OfType<IMethodSymbol>();
                         var setViewStateUserKeyInOnInit = SetViewStateUserKeyCorrectly(methods.FirstOrDefault(s => s.Name == "OnInit" &&

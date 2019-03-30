@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 s_Message,
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                isEnabledByDefault: false,    // https://github.com/dotnet/roslyn-analyzers/issues/2258
                 description: s_Description,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTags.Telemetry);
@@ -71,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var classSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
                     var baseClassSymbol = classSymbol.BaseType;
 
-                    if (baseClassSymbol.Equals(pageTypeSymbol))
+                    if (pageTypeSymbol.Equals(baseClassSymbol))
                     {
                         var methods = classSymbol.GetMembers().OfType<IMethodSymbol>();
                         var setViewStateUserKeyInOnInit = SetViewStateUserKeyCorrectly(methods.FirstOrDefault(s => s.Name == "OnInit" &&

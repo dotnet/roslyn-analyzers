@@ -81,11 +81,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         });
 
-                    /// <summary>
-                    /// Look for serialization of a type with valid pointer fields directly and indirectly.
-                    /// </summary>
-                    /// <param name="typeSymbol">The symbol of the type to be analyzed</param>
-                    /// <param name="relatedFieldSymbol">When relatedFieldSymbol is null, traverse all descendants of typeSymbol to find pointer fields; otherwise, traverse to find if relatedFieldSymbol is a pointer field</param>
+                    // Look for serialization of a type with valid pointer fields directly and indirectly.
+                    //
+                    // typeSymbol: The symbol of the type to be analyzed
+                    // relatedFieldSymbol: When relatedFieldSymbol is null, traverse all descendants of typeSymbol to
+                    //     find pointer fields; otherwise, traverse to find if relatedFieldSymbol is a pointer field
                     void LookForSerializationWithPointerFields(ITypeSymbol typeSymbol, IFieldSymbol relatedFieldSymbol)
                     {
                         if (typeSymbol is IPointerTypeSymbol pointerTypeSymbol)

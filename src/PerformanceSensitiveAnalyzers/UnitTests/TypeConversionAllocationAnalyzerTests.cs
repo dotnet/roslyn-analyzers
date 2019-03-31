@@ -707,5 +707,112 @@ struct Foo {
 
             await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
         }
+
+        [Fact]
+        public async void TypeConversionAllocation_GenericStructParameter_BoxingWarning()
+        {
+            const string sampleProgram = @"
+using System;
+using Roslyn.Utilities;
+
+class Foo
+{
+    [PerformanceSensitive(""uri"")]
+    void A<T>(T a) where T : struct
+    {
+        object box = a;
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(10, 22));
+        }
+
+        [Fact]
+        public async void TypeConversionAllocation_GenericParameter_Warning()
+        {
+            const string sampleProgram = @"
+using System;
+using Roslyn.Utilities;
+
+class Foo
+{
+    [PerformanceSensitive(""uri"")]
+    void A<T>(T a)
+    {
+        object box = a;
+    }
+}";
+            
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram,
+                VerifyCS.Diagnostic(TypeConversionAllocationAnalyzer.ValueTypeToReferenceTypeConversionRule).WithLocation(10, 22));
+        }
+
+        [Fact]
+        public async void TypeConversionAllocation_GenericClassParameter_NoWarning()
+        {
+            const string sampleProgram = @"
+using System;
+using Roslyn.Utilities;
+
+class Foo
+{
+    [PerformanceSensitive(""uri"")]
+    void A<T>(T a) where T : class
+    {
+        object box = a;
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
+        }
+
+        [Fact]
+        public async void TypeConversionAllocation_GenericStructParameterWithImplicitConversion_NoWarning()
+        {
+            const string sampleProgram = @"
+using System;
+using Roslyn.Utilities;
+
+class Foo<T> where T : struct
+{
+    [PerformanceSensitive(""uri"")]
+    void A(T value)
+    {
+        Foo<T> noBox = value;
+    }
+
+    public static implicit operator Foo<T>(T value)
+    {
+        return new Foo<T>();
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
+        }
+
+        [Fact]
+        public async void TypeConversionAllocation_GenericParameterWithImplicitConversion_NoWarning()
+        {
+            const string sampleProgram = @"
+using System;
+using Roslyn.Utilities;
+
+class Foo<T>
+{
+    [PerformanceSensitive(""uri"")]
+    void A(T value)
+    {
+        Foo<T> noBox = value;
+    }
+
+    public static implicit operator Foo<T>(T value)
+    {
+        return new Foo<T>();
+    }
+}";
+
+            await VerifyCS.VerifyAnalyzerAsync(sampleProgram);
+        }
     }
 }

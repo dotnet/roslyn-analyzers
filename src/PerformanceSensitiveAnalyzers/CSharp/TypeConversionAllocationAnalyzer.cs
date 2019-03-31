@@ -92,6 +92,10 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
                 {
                     context.ReportDiagnostic(Diagnostic.Create(ValueTypeToReferenceTypeConversionRule, conversion.Operand.Syntax.GetLocation(), EmptyMessageArgs));
                 }
+                else if (conversion.Operand.Type?.TypeKind == TypeKind.TypeParameter && !conversion.Operand.Type.IsReferenceType && conversion.OperatorMethod == null)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(ValueTypeToReferenceTypeConversionRule, conversion.Operand.Syntax.GetLocation(), EmptyMessageArgs));
+                }
 
                 return;
             }

@@ -15,9 +15,10 @@ namespace Microsoft.NetCore.Analyzers.Security
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA5366",
                 nameof(SystemSecurityCryptographyResources.UseXmlReaderForDataSetReadXml),
-                nameof(SystemSecurityCryptographyResources.UseXmlReaderForDataSetReadXmlMessage),
+                nameof(SystemSecurityCryptographyResources.UseXmlReaderMessage),
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                helpLinkUri: null);
+                helpLinkUri: null,
+                nameof(SystemSecurityCryptographyResources.UseXmlReaderDescription));
 
         protected override string TypeMetadataName => WellKnownTypeNames.SystemDataDataSet;
 

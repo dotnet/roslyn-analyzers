@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -31,6 +32,10 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public override void Initialize(AnalysisContext context)
         {
+            Debug.Assert(TypeMetadataName != null);
+            Debug.Assert(MethodMetadataName != null);
+            Debug.Assert(Rule != null);
+
             context.EnableConcurrentExecution();
 
             // Security analyzer - analyze and report diagnostics on generated code.
@@ -86,6 +91,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         operationAnalysisContext.ReportDiagnostic(
                             operation.CreateDiagnostic(
                                 Rule,
+                                methodSymbol.ContainingType.Name,
                                 methodName));
                     }
                 }, OperationKind.Invocation, OperationKind.ObjectCreation);

@@ -49,7 +49,7 @@ class TestClass
         }
 
         [Fact]
-        public void TestXmlReaderParameterDiagnostic()
+        public void TestXmlReaderParameterNoDiagnostic()
         {
             VerifyCSharp(@"
 using System;

@@ -23,7 +23,7 @@ class TestClass
         new DataSet().ReadXml(new FileStream(""xmlFilename"", FileMode.Open));
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXml"));
+            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXml"));
 
             VerifyBasic(@"
 Imports System
@@ -36,7 +36,7 @@ Class TestClass
         dataSet.ReadXml(new FileStream(""xmlFilename"", FileMode.Open))
     End Sub
 End Class",
-            GetBasicResultAt(9, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXml"));
+            GetBasicResultAt(9, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXml"));
         }
 
         [Fact]
@@ -54,7 +54,7 @@ class TestClass
         new DataSet().ReadXml(new FileStream(""xmlFilename"", FileMode.Open), XmlReadMode.Auto);
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXml"));
+            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXml"));
         }
 
         [Fact]
@@ -71,7 +71,7 @@ class TestClass
         new DataSet().ReadXml(""Filename"");
     }
 }",
-            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXml"));
+            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXml"));
         }
 
         [Fact]
@@ -88,7 +88,7 @@ class TestClass
         new DataSet().ReadXml(""Filename"", XmlReadMode.Auto);
     }
 }",
-            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXml"));
+            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXml"));
         }
 
         [Fact]
@@ -106,7 +106,7 @@ class TestClass
         new DataSet().ReadXml(new StreamReader(""TestFile.txt""));
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXml"));
+            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXml"));
         }
 
         [Fact]
@@ -124,7 +124,7 @@ class TestClass
         new DataSet().ReadXml(new StreamReader(""TestFile.txt""), XmlReadMode.Auto);
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXml"));
+            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXml"));
         }
 
         [Fact]
@@ -142,7 +142,7 @@ class TestClass
         new DataSet().ReadXmlSchema(new FileStream(""xmlFilename"", FileMode.Open));
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXmlSchema"));
+            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXmlSchema"));
         }
 
         [Fact]
@@ -159,7 +159,7 @@ class TestClass
         new DataSet().ReadXmlSchema(""Filename"");
     }
 }",
-            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXmlSchema"));
+            GetCSharpResultAt(9, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXmlSchema"));
         }
 
         [Fact]
@@ -177,7 +177,7 @@ class TestClass
         new DataSet().ReadXmlSchema(new StreamReader(""TestFile.txt""));
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.Rule, "ReadXmlSchema"));
+            GetCSharpResultAt(10, 9, UseXmlReaderForDataSetReadXml.RealRule, "ReadXmlSchema"));
         }
 
         [Fact]

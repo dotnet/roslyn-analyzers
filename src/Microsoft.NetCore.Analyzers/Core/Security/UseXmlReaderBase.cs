@@ -61,22 +61,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var operation = operationAnalysisContext.Operation;
                     IMethodSymbol methodSymbol = null;
+                    string methodName = null;
 
                     switch (operation.Kind)
                     {
                         case OperationKind.Invocation:
                             methodSymbol = (operation as IInvocationOperation).TargetMethod;
+                            methodName = methodSymbol.Name;
                             break;
 
                         case OperationKind.ObjectCreation:
                             methodSymbol = (operation as IObjectCreationOperation).Constructor;
+                            methodName = methodSymbol.ContainingType.Name;
                             break;
 
                         default:
                             return;
                     }
-
-                    var methodName = methodSymbol.Name;
 
                     if (methodName.StartsWith(MethodMetadataName, StringComparison.Ordinal) &&
                         methodSymbol.IsOverrides(xmlSchemaTypeSymbol))

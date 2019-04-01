@@ -232,6 +232,11 @@
         <target state="new">Use XmlReader For Deserialize</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseXmlReaderForValidatingReader">
+        <source>Use XmlReader For Validating Reader</source>
+        <target state="new">Use XmlReader For Validating Reader</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseXmlReaderMessage">
         <source>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</source>
         <target state="new">This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</target>

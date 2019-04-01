@@ -415,6 +415,44 @@ class TestClass : Page
 }");
         }
 
+        [Fact]
+        public void TestNotAPage_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass
+{
+    public Page Page { get; set; }
+
+    protected void OnInit (EventArgs e)
+    {
+    }
+
+    private void Page_Init (object sender, EventArgs e)
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestInterface_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+interface ITestInterface
+{
+    Page Page { get; set; }
+
+    void OnInit(EventArgs e);
+
+    void Page_Init(object sender, EventArgs e);
+}");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new SetViewStateUserKey();

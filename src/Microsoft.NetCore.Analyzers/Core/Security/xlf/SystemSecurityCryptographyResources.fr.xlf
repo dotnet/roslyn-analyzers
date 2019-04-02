@@ -232,9 +232,19 @@
         <target state="new">Use XmlReader For Deserialize</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseXmlReaderForSchemaRead">
+        <source>Use XmlReader For Schema Read</source>
+        <target state="new">Use XmlReader For Schema Read</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseXmlReaderForValidatingReader">
         <source>Use XmlReader For Validating Reader</source>
         <target state="new">Use XmlReader For Validating Reader</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForXPathDocument">
+        <source>Use XmlReader For XPathDocument</source>
+        <target state="new">Use XmlReader For XPathDocument</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderMessage">

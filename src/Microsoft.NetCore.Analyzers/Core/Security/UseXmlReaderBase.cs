@@ -13,7 +13,6 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public abstract class UseXmlReaderBase : DiagnosticAnalyzer
     {
         /// <summary>
@@ -80,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
 
                     if (methodName.StartsWith(MethodMetadataName, StringComparison.Ordinal) &&
-                        methodSymbol.IsOverrides(xmlSchemaTypeSymbol))
+                        methodSymbol.IsOverrideOrVirtualMethodOf(xmlSchemaTypeSymbol))
                     {
                         if (xmlReaderTypeSymbol != null &&
                             methodSymbol.Parameters.Length > 0 &&

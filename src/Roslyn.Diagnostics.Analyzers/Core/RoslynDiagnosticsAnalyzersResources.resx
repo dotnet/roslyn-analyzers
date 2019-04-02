@@ -261,4 +261,13 @@
   <data name="ImplementWithNoMainThreadDependencyTitle" xml:space="preserve">
     <value>Implement with no main thread dependency</value>
   </data>
+  <data name="CodeMayHaveMainThreadDependencyDescription" xml:space="preserve">
+    <value>Code may have main thread dependency</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyMessage" xml:space="preserve">
+    <value>Code may have main thread dependency</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyTitle" xml:space="preserve">
+    <value>Code may have main thread dependency</value>
+  </data>
 </root>

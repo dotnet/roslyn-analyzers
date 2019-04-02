@@ -252,4 +252,13 @@
   <data name="TestExportsShouldNotBeDiscoverableCodeFix" xml:space="preserve">
     <value>Apply PartNotDiscoverableAttribute</value>
   </data>
+  <data name="ImplementWithNoMainThreadDependencyDescription" xml:space="preserve">
+    <value>Implement with no main thread dependency</value>
+  </data>
+  <data name="ImplementWithNoMainThreadDependencyMessage" xml:space="preserve">
+    <value>Implement with no main thread dependency</value>
+  </data>
+  <data name="ImplementWithNoMainThreadDependencyTitle" xml:space="preserve">
+    <value>Implement with no main thread dependency</value>
+  </data>
 </root>

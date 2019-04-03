@@ -43,6 +43,8 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             ["ToImmutableSortedSet"] = "System.Collections.Immutable.ImmutableSortedSet`1",
         }.ToImmutableDictionary();
 
+        public static ImmutableArray<string> ToImmutableMethodNames => ImmutableCollectionMetadataNames.Keys.ToImmutableArray();
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public override void Initialize(AnalysisContext context)

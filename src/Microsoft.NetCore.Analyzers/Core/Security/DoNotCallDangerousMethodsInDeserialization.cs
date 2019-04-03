@@ -205,12 +205,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         });
 
-                    /// <summary>
-                    /// Analyze the method to find all the dangerous method it calls.
-                    /// </summary>
-                    /// <param name="methodSymbol">The symbol of the method to be analyzed</param>
-                    /// <param name="visited">All the method has been analyzed</param>
-                    /// <param name="results">The result is organized by &lt;method to be analyzed, dangerous method it calls&gt;</param>
+                    // Analyze the method to find all the dangerous method it calls.
+                    //
+                    // methodSymbol: The symbol of the method to be analyzed
+                    // visited: All the method has been analyzed
+                    // results: The result is organized by <method to be analyzed, dangerous method it calls>
                     void FindCalledDangerousMethod(IMethodSymbol methodSymbol, HashSet<IMethodSymbol> visited, Dictionary<IMethodSymbol, HashSet<IMethodSymbol>> results)
                     {
                         if (visited.Add(methodSymbol))

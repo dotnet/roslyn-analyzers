@@ -268,11 +268,20 @@ namespace GenerateAnalyzerRulesets
 
                 var fileContents =
 $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-  {getEditorConfigAsAdditionalFile()}{getCodeAnalysisTreatWarningsNotAsErrors()}{getRulesetOverrides()}
+  {getEditorConfigAsAdditionalFile()}{getCodeAnalysisTreatWarningsNotAsErrors()}{getRulesetOverrides()}{getFlowAnalysisFeatureFlag()}
 </Project>";
                 var directory = Directory.CreateDirectory(propsFileDir);
                 var fileWithPath = Path.Combine(directory.FullName, propsFileName);
                 File.WriteAllText(fileWithPath, fileContents);
+            }
+
+            string getFlowAnalysisFeatureFlag()
+            {
+                return @"
+
+  <PropertyGroup>
+    <Features>$(Features);flow-analysis</Features> 
+  </PropertyGroup>";
             }
 
             string getCodeAnalysisTreatWarningsNotAsErrors()

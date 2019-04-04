@@ -117,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
   <data name="DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTitle" xml:space="preserve">
     <value>Do not call ToImmutableCollection on an ImmutableCollection value</value>
   </data>
@@ -126,5 +125,8 @@
   </data>
   <data name="CategoryReliability" xml:space="preserve">
     <value>Reliability</value>
+  </data>
+  <data name="RemoveRedundantCall" xml:space="preserve">
+    <value>Remove redundant call</value>
   </data>
 </root>

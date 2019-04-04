@@ -246,4 +246,25 @@
   <data name="SetViewStateUserKeyMessage" xml:space="preserve">
     <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
   </data>
+  <data name="UseXmlReaderDescription" xml:space="preserve">
+    <value>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</value>
+  </data>
+  <data name="UseXmlReaderForDataSetReadXml" xml:space="preserve">
+    <value>Use XmlReader For DataSet Read Xml</value>
+  </data>
+  <data name="UseXmlReaderForDeserialize" xml:space="preserve">
+    <value>Use XmlReader For Deserialize</value>
+  </data>
+  <data name="UseXmlReaderForSchemaRead" xml:space="preserve">
+    <value>Use XmlReader For Schema Read</value>
+  </data>
+  <data name="UseXmlReaderForValidatingReader" xml:space="preserve">
+    <value>Use XmlReader For Validating Reader</value>
+  </data>
+  <data name="UseXmlReaderForXPathDocument" xml:space="preserve">
+    <value>Use XmlReader For XPathDocument</value>
+  </data>
+  <data name="UseXmlReaderMessage" xml:space="preserve">
+    <value>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</value>
+  </data>
 </root>

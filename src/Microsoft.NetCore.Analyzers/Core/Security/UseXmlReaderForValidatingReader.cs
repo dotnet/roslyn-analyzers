@@ -16,7 +16,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(SystemSecurityCryptographyResources.UseXmlReaderForValidatingReader),
                 nameof(SystemSecurityCryptographyResources.UseXmlReaderMessage),
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                helpLinkUri: null);
+                helpLinkUri: null,
+                nameof(SystemSecurityCryptographyResources.UseXmlReaderDescription));
 
         protected override string TypeMetadataName => WellKnownTypeNames.SystemXmlXmlValidatingReader;
 

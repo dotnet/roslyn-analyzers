@@ -70,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 
         private static SyntaxNode GetInstance(IInvocationOperation invocationOperation)
         {
-            return invocationOperation.TargetMethod.IsExtensionMethod && invocationOperation.Language != LanguageNames.VisualBasic ?
+            return invocationOperation.TargetMethod.IsExtensionMethod && (invocationOperation.Language != LanguageNames.VisualBasic || invocationOperation.Instance == null) ?
                 invocationOperation.Arguments[0].Value.Syntax :
                 invocationOperation.Instance.Syntax;
         }

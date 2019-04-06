@@ -116,7 +116,7 @@ public class A
 }
 ";
 
-            VerifyCSharpFix(code, fixAllSequentially, onlyFixFirstFixableDiagnostic: false, testFixAllScope: null);
+            VerifyCSharpFix(code, fixAllSequentially, onlyFixFirstFixableDiagnostic: false);
         }
 
         [Fact]
@@ -151,7 +151,7 @@ public class A
     }
 }
 ";
-            VerifyCSharpFix(code, fix, testFixAllScope: null);
+            VerifyCSharpFix(code, fix);
         }
 
         [Fact]

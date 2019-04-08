@@ -32,20 +32,20 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            Diagnostic diagnostic = context.Diagnostics.FirstOrDefault();
+            var diagnostic = context.Diagnostics.FirstOrDefault();
             if (diagnostic == null)
             {
                 return Task.CompletedTask;
             }
 
-            string methodPropertyKey = DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.MethodPropertyKey;
+            var methodPropertyKey = DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.MethodPropertyKey;
             // The fixer is only implemented for "Enumerable.First"
             if (!diagnostic.Properties.TryGetValue(methodPropertyKey, out var method) || method != "First")
             {
                 return Task.CompletedTask;
             }
 
-            string title = SystemRuntimeAnalyzersResources.UseIndexer;
+            var title = SystemRuntimeAnalyzersResources.UseIndexer;
 
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async ct => await UseCollectionDirectly(context.Document, context.Span, ct).ConfigureAwait(false),
@@ -57,32 +57,32 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private async Task<Document> UseCollectionDirectly(Document document, TextSpan span, CancellationToken cancellationToken)
         {
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
             if (invocationNode == null)
             {
                 return document;
             }
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-
-            if (!(semanticModel.GetOperation(invocationNode) is IInvocationOperation invocationOp))
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var invocationOperation = semanticModel.GetOperation(invocationNode, cancellationToken) as IInvocationOperation;
+            if (invocationOperation == null)
             {
                 return document;
             }
 
-            var collectionSyntax = invocationOp.GetInstance();
+            var collectionSyntax = invocationOperation.GetInstance();
             if (collectionSyntax == null)
             {
                 return document;
             }
 
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode indexNode = generator.LiteralExpression(0);
-            SyntaxNode elementAccessNode = generator.ElementAccessExpression(collectionSyntax.WithoutTrailingTrivia(), indexNode)
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var indexNode = generator.LiteralExpression(0);
+            var elementAccessNode = generator.ElementAccessExpression(collectionSyntax.WithoutTrailingTrivia(), indexNode)
                 .WithTrailingTrivia(invocationNode.GetTrailingTrivia());
 
-            SyntaxNode newRoot = root.ReplaceNode(invocationNode, elementAccessNode);
+            var newRoot = root.ReplaceNode(invocationNode, elementAccessNode);
             return document.WithSyntaxRoot(newRoot);
         }
 

@@ -14,21 +14,20 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class DoNotUseInsecureDeserializerNetDataContractSerializerWithoutBinder : DoNotUseInsecureDeserializerWithoutBinderBase
     {
-        // TODO paulming: Help link URLs.
         internal static readonly DiagnosticDescriptor RealBinderDefinitelyNotSetDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2311",
                 nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerDeserializeWithoutBinderSetTitle),
                 nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerDeserializeWithoutBinderSetMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2301-do-not-call-binaryformatter.deserialize-without-first-setting-binaryformatter.binder");
         internal static readonly DiagnosticDescriptor RealBinderMaybeNotSetDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2312",
                 nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerDeserializeMaybeWithoutBinderSetTitle),
                 nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerDeserializeMaybeWithoutBinderSetMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca2302-ensure-binaryformatter.binder-is-set-before-calling-binaryformatter.deserialize");
 
         protected override string DeserializerTypeMetadataName =>
             WellKnownTypeNames.SystemRuntimeSerializationNetDataContractSerializer;

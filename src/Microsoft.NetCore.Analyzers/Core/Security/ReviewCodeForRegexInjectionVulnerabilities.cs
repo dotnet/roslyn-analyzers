@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForRegexInjectionVulnerabilitiesTitle),
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForRegexInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null); // TODO paulming: Help link.  https://github.com/dotnet/roslyn-analyzers/issues/1892
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca3012-review-code-for-regex-injection-vulnerabilities");
 
         protected override SinkKind SinkKind { get { return SinkKind.Regex; } }
 

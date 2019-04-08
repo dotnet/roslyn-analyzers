@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForXPathInjectionVulnerabilitiesTitle),
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForXPathInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null); // TODO paulming: Help link.  https://github.com/dotnet/roslyn-analyzers/issues/1892
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca3008-review-code-for-xpath-injection-vulnerabilities");
 
         protected override SinkKind SinkKind { get { return SinkKind.XPath; } }
 

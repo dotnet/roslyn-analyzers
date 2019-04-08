@@ -8,6 +8,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -63,27 +64,29 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var serializableAttributeTypeSymbol = WellKnownTypes.SerializableAttribute(compilation);
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (serializableAttributeTypeSymbol == null)
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                                WellKnownTypeNames.SystemSerializableAttribute,
+                                out INamedTypeSymbol serializableAttributeTypeSymbol))
                     {
                         return;
                     }
 
-                    var dangerousMethodSymbolsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
+                    var dangerousMethodSymbolsBuilder = ImmutableHashSet.CreateBuilder<IMethodSymbol>();
 
                     foreach (var kvp in DangerousCallable)
                     {
-                        var typeSymbol = compilation.GetTypeByMetadataName(kvp.Item1);
-
-                        if (typeSymbol == null)
+                        if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                                kvp.Item1,
+                                out INamedTypeSymbol typeSymbol))
                         {
                             continue;
                         }
 
                         foreach (var methodName in kvp.Item2)
                         {
-                            dangerousMethodSymbolsBuilder.AddRange(
+                            dangerousMethodSymbolsBuilder.UnionWith(
                                                 typeSymbol.GetMembers()
                                                     .OfType<IMethodSymbol>()
                                                     .Where(
@@ -91,13 +94,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
                     }
 
-                    var dangerousMethodSymbols = dangerousMethodSymbolsBuilder.ToImmutableArray();
-
-                    if (dangerousMethodSymbols.IsEmpty)
+                    if (dangerousMethodSymbolsBuilder.Count() == 0)
                     {
                         return;
                     }
 
+                    var dangerousMethodSymbols = dangerousMethodSymbolsBuilder.ToImmutableHashSet();
                     var attributeTypeSymbolsBuilder = ImmutableArray.CreateBuilder<INamedTypeSymbol>();
                     var onDeserializingAttributeTypeSymbol = WellKnownTypes.OnDeserializingAttribute(compilation);
 
@@ -179,12 +181,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         });
 
-                    /// <summary>
-                    /// Analyze the method to find all the dangerous method it calls.
-                    /// </summary>
-                    /// <param name="methodSymbol">The symbol of the method to be analyzed</param>
-                    /// <param name="visited">All the method has been analyzed</param>
-                    /// <param name="results">The result is organized by &lt;method to be analyzed, dangerous method it calls&gt;</param>
+                    // <summary>
+                    // Analyze the method to find all the dangerous method it calls.
+                    // </summary>
+                    // <param name="methodSymbol">The symbol of the method to be analyzed</param>
+                    // <param name="visited">All the method has been analyzed</param>
+                    // <param name="results">The result is organized by &lt;method to be analyzed, dangerous method it calls&gt;</param>
                     void FindCalledDangerousMethod(IMethodSymbol methodSymbol, HashSet<IMethodSymbol> visited, Dictionary<IMethodSymbol, HashSet<IMethodSymbol>> results)
                     {
                         if (visited.Add(methodSymbol))

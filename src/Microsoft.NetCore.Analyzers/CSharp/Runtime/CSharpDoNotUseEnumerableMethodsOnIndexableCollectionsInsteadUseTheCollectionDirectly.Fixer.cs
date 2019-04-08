@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
@@ -20,7 +20,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
     /// <summary>
     /// RS0014: Do not use Enumerable methods on indexable collections. Instead use the collection directly
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
     public class CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.RuleId);
@@ -60,7 +60,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
         {
             SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
-            if (!(invocationNode is InvocationExpressionSyntax))
+            if (invocationNode == null)
             {
                 return document;
             }
@@ -72,7 +72,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
                 return document;
             }
 
-            var collectionSyntax = GetSyntaxOfType<ExpressionSyntax>(invocationOp.Arguments[0].Syntax);
+            var collectionSyntax = invocationOp.GetInstance();
             if (collectionSyntax == null)
             {
                 return document;
@@ -85,18 +85,6 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
             SyntaxNode newRoot = root.ReplaceNode(invocationNode, elementAccessNode);
             return document.WithSyntaxRoot(newRoot);
-        }
-
-        private T GetSyntaxOfType<T>(SyntaxNode node)
-        {
-            if (!(node is T result))
-            {
-                result = node
-                    .ChildNodes()
-                    .OfType<T>()
-                    .FirstOrDefault();
-            }
-            return result;
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)

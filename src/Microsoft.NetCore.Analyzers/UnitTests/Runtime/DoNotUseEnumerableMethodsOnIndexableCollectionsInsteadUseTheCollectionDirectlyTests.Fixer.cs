@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
-            return new BasicDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer();
+            return new CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
@@ -84,6 +84,54 @@ class C
         }
 
         [Fact]
+        public void CA1826FixEnumerableFirstExtensionCallBasic()
+        {
+            VerifyBasicFix(@"
+Imports System
+Imports System.Collections.Generic
+#Disable Warning BC50001 'Unused import statement
+Imports System.Linq
+#Enable Warning BC50001
+
+Class C
+    Sub M()
+        Dim list = GetList()
+        Dim matrix = {list}
+        Dim f1 = list.First()
+        Dim f2 = GetList().First()
+        Dim f3 = matrix(0).First()
+        Console.WriteLine(list.First())
+    End Sub
+
+    Function GetList() As IReadOnlyList(Of Integer)
+        Return New List(Of Integer) From {1, 2, 3}
+    End Function
+End Class
+", @"
+Imports System
+Imports System.Collections.Generic
+#Disable Warning BC50001 'Unused import statement
+Imports System.Linq
+#Enable Warning BC50001
+
+Class C
+    Sub M()
+        Dim list = GetList()
+        Dim matrix = {list}
+        Dim f1 = list(0)
+        Dim f2 = GetList()(0)
+        Dim f3 = matrix(0)(0)
+        Console.WriteLine(list(0))
+    End Sub
+
+    Function GetList() As IReadOnlyList(Of Integer)
+        Return New List(Of Integer) From {1, 2, 3}
+    End Function
+End Class
+");
+        }
+
+        [Fact]
         public void CA1826FixEnumerableFirstStaticCallCSharp()
         {
             VerifyCSharpFix(@"
@@ -132,6 +180,54 @@ class C
         return new List<int> { 1, 2, 3 };
     }
 }
+");
+        }
+
+        [Fact]
+        public void CA1826FixEnumerableFirstStaticCallBasic()
+        {
+            VerifyBasicFix(@"
+Imports System
+Imports System.Collections.Generic
+#Disable Warning BC50001 'Unused import statement
+Imports System.Linq
+#Enable Warning BC50001
+
+Class C
+    Sub M()
+        Dim list = GetList()
+        Dim matrix = {list}
+        Dim f1 = Enumerable.First(list)
+        Dim f2 = Enumerable.First(GetList())
+        Dim f3 = Enumerable.First(matrix(0))
+        Console.WriteLine(Enumerable.First(list))
+    End Sub
+
+    Function GetList() As IReadOnlyList(Of Integer)
+        Return New List(Of Integer) From {1, 2, 3}
+    End Function
+End Class
+", @"
+Imports System
+Imports System.Collections.Generic
+#Disable Warning BC50001 'Unused import statement
+Imports System.Linq
+#Enable Warning BC50001
+
+Class C
+    Sub M()
+        Dim list = GetList()
+        Dim matrix = {list}
+        Dim f1 = list(0)
+        Dim f2 = GetList()(0)
+        Dim f3 = matrix(0)(0)
+        Console.WriteLine(list(0))
+    End Sub
+
+    Function GetList() As IReadOnlyList(Of Integer)
+        Return New List(Of Integer) From {1, 2, 3}
+    End Function
+End Class
 ");
         }
 

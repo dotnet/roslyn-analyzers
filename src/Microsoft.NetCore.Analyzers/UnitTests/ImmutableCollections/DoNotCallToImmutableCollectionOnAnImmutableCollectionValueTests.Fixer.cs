@@ -93,6 +93,8 @@ Class C
 	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As {collectionName}(Of Integer))
 		Dim a = p1.To{collectionName}().To{collectionName}()
 		Dim b = p3.To{collectionName}()
+		Dim c = ImmutableExtensions.To{collectionName}(ImmutableExtensions.To{collectionName}(p1))
+		Dim d = ImmutableExtensions.To{collectionName}(p3)
 	End Sub
 End Class";
 
@@ -104,6 +106,8 @@ Class C
 	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As {collectionName}(Of Integer))
 		Dim a = p1.To{collectionName}()
 		Dim b = p3
+		Dim c = ImmutableExtensions.To{collectionName}(p1)
+		Dim d = p3
 	End Sub
 End Class";
             VerifyBasicFix(new[] { initial, ImmutableCollectionsSource.Basic }, new[] { expected, ImmutableCollectionsSource.Basic }, referenceFlags: ReferenceFlags.RemoveImmutable);
@@ -157,6 +161,8 @@ Class C
 	Public Sub M(p1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)), p2 As List(Of KeyValuePair(Of Integer, Integer)), p3 As {collectionName}(Of Integer, Integer))
 		Dim a = p1.To{collectionName}().To{collectionName}()
 		Dim b = p3.To{collectionName}()
+		Dim c = ImmutableExtensions.To{collectionName}(ImmutableExtensions.To{collectionName}(p1))
+		Dim d = ImmutableExtensions.To{collectionName}(p3)
 	End Sub
 End Class";
 
@@ -168,6 +174,8 @@ Class C
 	Public Sub M(p1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)), p2 As List(Of KeyValuePair(Of Integer, Integer)), p3 As {collectionName}(Of Integer, Integer))
 		Dim a = p1.To{collectionName}()
 		Dim b = p3
+		Dim c = ImmutableExtensions.To{collectionName}(p1)
+		Dim d = p3
 	End Sub
 End Class";
             VerifyBasicFix(new[] { initial, ImmutableCollectionsSource.Basic }, new[] { expected, ImmutableCollectionsSource.Basic }, referenceFlags: ReferenceFlags.RemoveImmutable);

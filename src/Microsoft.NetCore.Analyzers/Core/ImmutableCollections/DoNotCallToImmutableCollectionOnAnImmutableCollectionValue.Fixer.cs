@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Operations;
@@ -62,17 +63,10 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 
         private static Task<Document> RemoveRedundantCall(Document document, SyntaxNode root, SyntaxNode invocationNode, IInvocationOperation invocationOperation)
         {
-            var instance = GetInstance(invocationOperation).WithTriviaFrom(invocationNode);
+            var instance = invocationOperation.GetInstance().WithTriviaFrom(invocationNode);
             var newRoot = root.ReplaceNode(invocationNode, instance);
             var newDocument = document.WithSyntaxRoot(newRoot);
             return Task.FromResult(newDocument);
-        }
-
-        private static SyntaxNode GetInstance(IInvocationOperation invocationOperation)
-        {
-            return invocationOperation.TargetMethod.IsExtensionMethod && (invocationOperation.Language != LanguageNames.VisualBasic || invocationOperation.Instance == null) ?
-                invocationOperation.Arguments[0].Value.Syntax :
-                invocationOperation.Instance.Syntax;
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)

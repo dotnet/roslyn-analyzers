@@ -177,6 +177,21 @@
         <target state="translated">この型は、暗号として安全でないハッシュ関数である MD5 を実装しています。MD5 と HMACMD5 アルゴリズムでは、計算上、ハッシュの競合が起こる可能性があります。この使用を SHA-2 ファミリのハッシュ アルゴリズム (SHA512、SHA384、SHA256) に置き換えてください。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
+        <source>Do Not Use Obsolete KDF Algorithm</source>
+        <target state="new">Do Not Use Obsolete KDF Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmDescription">
+        <source>Password-based Key Derivation should use PBKDF2 with SHA2.  Avoid using PasswordDeriveBytes since it's generating PBKDF1 key. Avoid using CryptDeriveBytes since it doesn't use iteration count, salt and IV.</source>
+        <target state="new">Password-based Key Derivation should use PBKDF2 with SHA2.  Avoid using PasswordDeriveBytes since it's generating PBKDF1 key. Avoid using CryptDeriveBytes since it doesn't use iteration count, salt and IV.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
+        <source>Call to obsolete Crypto API {0}.{1}</source>
+        <target state="new">Call to obsolete Crypto API {0}.{1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
         <target state="translated">安全でない暗号アルゴリズム SHA1 を使用しない。</target>

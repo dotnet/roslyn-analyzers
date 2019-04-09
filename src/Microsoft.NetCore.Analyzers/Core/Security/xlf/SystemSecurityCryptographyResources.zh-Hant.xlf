@@ -177,6 +177,21 @@
         <target state="translated">此類型會實作 MD5，此雜湊函數在密碼編譯方面有安全性疑慮。MD5 與 HMACMD5 演算法在運算方面可能會發生雜湊衝突。請以 SHA-2 系列雜湊演算法 (SHA512、SHA384、SHA256) 取代此用法。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
+        <source>Do Not Use Obsolete KDF Algorithm</source>
+        <target state="new">Do Not Use Obsolete KDF Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmDescription">
+        <source>Password-based Key Derivation should use PBKDF2 with SHA2.  Avoid using PasswordDeriveBytes since it's generating PBKDF1 key. Avoid using CryptDeriveBytes since it doesn't use iteration count, salt and IV.</source>
+        <target state="new">Password-based Key Derivation should use PBKDF2 with SHA2.  Avoid using PasswordDeriveBytes since it's generating PBKDF1 key. Avoid using CryptDeriveBytes since it doesn't use iteration count, salt and IV.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
+        <source>Call to obsolete Crypto API {0}.{1}</source>
+        <target state="new">Call to obsolete Crypto API {0}.{1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
         <target state="translated">請勿使用不安全的密碼編譯演算法 SHA1。</target>

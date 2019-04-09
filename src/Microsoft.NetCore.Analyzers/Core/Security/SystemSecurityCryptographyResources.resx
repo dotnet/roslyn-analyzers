@@ -222,6 +222,15 @@
   <data name="DoNotUseMD5Description" xml:space="preserve">
     <value>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</value>
   </data>
+  <data name="DoNotUseObsoleteKDFAlgorithm" xml:space="preserve">
+    <value>Do Not Use Obsolete KDF Algorithm</value>
+  </data>
+  <data name="DoNotUseObsoleteKDFAlgorithmDescription" xml:space="preserve">
+    <value>Password-based Key Derivation should use PBKDF2 with SHA2.  Avoid using PasswordDeriveBytes since it's generating PBKDF1 key. Avoid using CryptDeriveBytes since it doesn't use iteration count, salt and IV.</value>
+  </data>
+  <data name="DoNotUseObsoleteKDFAlgorithmMessage" xml:space="preserve">
+    <value>Call to obsolete Crypto API {0}.{1}</value>
+  </data>
   <data name="DoNotUseSHA1" xml:space="preserve">
     <value>Do not use insecure cryptographic algorithm SHA1.</value>
   </data>

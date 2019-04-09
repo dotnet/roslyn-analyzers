@@ -177,6 +177,21 @@
         <target state="translated">Este tipo implementa MD5, una función hash no segura criptográficamente. Las colisiones de hash son computacionalmente factibles para los algoritmos MD5 y HMACMD5. Reemplace este uso por un algoritmo de hash de la familia SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
+        <source>Do Not Use Obsolete KDF Algorithm</source>
+        <target state="new">Do Not Use Obsolete KDF Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmDescription">
+        <source>Password-based Key Derivation should use PBKDF2 with SHA2.  Avoid using PasswordDeriveBytes since it's generating PBKDF1 key. Avoid using CryptDeriveBytes since it doesn't use iteration count, salt and IV.</source>
+        <target state="new">Password-based Key Derivation should use PBKDF2 with SHA2.  Avoid using PasswordDeriveBytes since it's generating PBKDF1 key. Avoid using CryptDeriveBytes since it doesn't use iteration count, salt and IV.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
+        <source>Call to obsolete Crypto API {0}.{1}</source>
+        <target state="new">Call to obsolete Crypto API {0}.{1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
         <target state="translated">No use el algoritmo criptográfico no seguro SHA1.</target>

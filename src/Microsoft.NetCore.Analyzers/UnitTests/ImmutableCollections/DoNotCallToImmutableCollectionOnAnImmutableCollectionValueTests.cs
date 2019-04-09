@@ -68,9 +68,15 @@ class C
         p2.To{collectionName}();
         p3.To{collectionName}(comparer); // Potentially modifies the collection
 
+        Extensions.To{collectionName}(p1);
+        Extensions.To{collectionName}(p2);
+        Extensions.To{collectionName}(p3, comparer); // Potentially modifies the collection
+
         // No dataflow
         IEnumerable<int> l1 = p3;
         l1.To{collectionName}();
+
+        Extensions.To{collectionName}(l1);
     }}
 }}
 ");
@@ -98,9 +104,15 @@ Class C
 		p2.To{collectionName}()
         p3.To{collectionName}(comparer) ' Potentially modifies the collection
 
+        Extensions.To{collectionName}(p1)
+        Extensions.To{collectionName}(p2)
+        Extensions.To{collectionName}(p3, comparer) ' Potentially modifies the collection
+
 		' No dataflow
 		Dim l1 As IEnumerable(Of Integer) = p3
 		l1.To{collectionName}()
+
+        Extensions.To{collectionName}(l1)
 	End Sub
 End Class
 ");
@@ -123,9 +135,9 @@ static class Extensions
      }}
 
     public static {collectionName}<TKey, TValue> To{collectionName}<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> items, IEqualityComparer<TKey> keyComparer)
-     {{
+    {{
          return default({collectionName}<TKey, TValue>);
-     }}
+    }}
 }}
 
 class C
@@ -137,9 +149,15 @@ class C
         p2.To{collectionName}();
         p3.To{collectionName}(keyComparer); // Potentially modifies the collection
 
+        Extensions.To{collectionName}(p1);
+        Extensions.To{collectionName}(p2);
+        Extensions.To{collectionName}(p3, keyComparer); // Potentially modifies the collection
+
         // No dataflow
         IEnumerable<KeyValuePair<int, int>> l1 = p3;
         l1.To{collectionName}();
+
+        Extensions.To{collectionName}(l1);
     }}
 }}
 ");
@@ -167,9 +185,15 @@ Class C
 		p2.To{collectionName}()
         p3.To{collectionName}(keyComparer) ' Potentially modifies the collection
 
+        Extensions.To{collectionName}(p1)
+        Extensions.To{collectionName}(p2)
+        Extensions.To{collectionName}(p3, keyComparer) ' Potentially modifies the collection
+
 		' No dataflow
 		Dim l1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)) = p3
 		l1.To{collectionName}()
+
+        Extensions.To{collectionName}(l1)
 	End Sub
 End Class
 ");
@@ -201,6 +225,9 @@ class C
     {{
         p1.To{collectionName}().To{collectionName}();
         p3.To{collectionName}();
+
+        Extensions.To{collectionName}(Extensions.To{collectionName}(p1));
+        Extensions.To{collectionName}(p3);
     }}
 }}
 ", ImmutableCollectionsSource.CSharp },
@@ -208,7 +235,11 @@ class C
                 // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetCSharpResultAt(17, 9, collectionName),
                 // Test0.cs(19,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetCSharpResultAt(18, 9, collectionName));
+                GetCSharpResultAt(18, 9, collectionName),
+                // Test0.cs(20,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(20, 9, collectionName),
+                // Test0.cs(21,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(21, 9, collectionName));
 
             VerifyBasic(new[] { $@"
 Imports System.Collections.Generic
@@ -225,6 +256,9 @@ Class C
 	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As {collectionName}(Of Integer))
 		p1.To{collectionName}().To{collectionName}()
 		p3.To{collectionName}()
+
+		Extensions.To{collectionName}(Extensions.To{collectionName}(p1))
+		Extensions.To{collectionName}(p3)
 	End Sub
 End Class
 ", ImmutableCollectionsSource.Basic },
@@ -232,7 +266,11 @@ End Class
                 // Test0.vb(14,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetBasicResultAt(14, 3, collectionName),
                 // Test0.vb(15,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetBasicResultAt(15, 3, collectionName));
+                GetBasicResultAt(15, 3, collectionName),
+                // Test0.vb(17,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(17, 3, collectionName),
+                // Test0.vb(18,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(18, 3, collectionName));
         }
 
         [Theory]
@@ -257,6 +295,9 @@ class C
     {{
         p1.To{collectionName}().To{collectionName}();
         p3.To{collectionName}();
+
+        Extensions.To{collectionName}(Extensions.To{collectionName}(p1));
+        Extensions.To{collectionName}(p3);
     }}
 }}
 ", ImmutableCollectionsSource.CSharp },
@@ -264,7 +305,11 @@ class C
                 // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetCSharpResultAt(17, 9, collectionName),
                 // Test0.cs(19,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetCSharpResultAt(18, 9, collectionName));
+                GetCSharpResultAt(18, 9, collectionName),
+                // Test0.cs(20,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(20, 9, collectionName),
+                // Test0.cs(21,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(21, 9, collectionName));
 
             VerifyBasic(new[] { $@"
 Imports System.Collections.Generic
@@ -281,6 +326,9 @@ Class C
 	Public Sub M(p1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)), p2 As List(Of KeyValuePair(Of Integer, Integer)), p3 As {collectionName}(Of Integer, Integer))
 		p1.To{collectionName}().To{collectionName}()
 		p3.To{collectionName}()
+
+		Extensions.To{collectionName}(Extensions.To{collectionName}(p1))
+		Extensions.To{collectionName}(p3)
 	End Sub
 End Class
 ", ImmutableCollectionsSource.Basic },
@@ -288,7 +336,11 @@ End Class
                 // Test0.vb(14, 3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetBasicResultAt(14, 3, collectionName),
                 // Test0.vb(15,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetBasicResultAt(15, 3, collectionName));
+                GetBasicResultAt(15, 3, collectionName),
+                // Test0.vb(17,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(17, 3, collectionName),
+                // Test0.vb(18,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(18, 3, collectionName));
         }
 
         #endregion

@@ -14,14 +14,13 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     class DoNotUseInsecureDeserializerBinaryFormatterMethods : DoNotUseInsecureDeserializerMethodsBase
     {
-        // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor RealMethodUsedDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2300",
                 nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodUsedTitle),
                 nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodUsedMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2300-do-not-use-insecure-deserializer-binaryformatter",
                 descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.BinaryFormatterMethodUsedDescription));
 
         protected override string DeserializerTypeMetadataName =>

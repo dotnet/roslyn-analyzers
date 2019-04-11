@@ -19,13 +19,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Fact]
         public async Task CA1309FixStaticEqualsOverloadCSharp()
         {
-            await new VerifyCS.Test
-            {
-                TestState =
-                {
-                    Sources =
-                    {
-                        @"
+            await VerifyCS.VerifyCodeFixAsync(
+                @"
 class C
 {
     void M(string a, string b)
@@ -36,13 +31,7 @@ class C
     }
 }
 ",
-                    },
-                },
-                FixedState =
-                {
-                    Sources =
-                    {
-                        @"
+                @"
 class C
 {
     void M(string a, string b)
@@ -52,22 +41,14 @@ class C
         if (string.Equals(a, b, System.StringComparison.OrdinalIgnoreCase)) { }
     }
 }
-",
-                    },
-                },
-            }.RunAsync();
+");
         }
 
         [Fact]
         public async Task CA1309FixStaticEqualsOverloadBasic()
         {
-            await new VerifyVB.Test
-            {
-                TestState =
-                {
-                    Sources =
-                    {
-                        @"
+            await VerifyVB.VerifyCodeFixAsync(
+                @"
 Class C
     Sub M(a As String, b As String)
         If String.[|Equals|](a, b) Then
@@ -79,13 +60,7 @@ Class C
     End Sub
 End Class
 ",
-                    },
-                },
-                FixedState =
-                {
-                    Sources =
-                    {
-                        @"
+                @"
 Class C
     Sub M(a As String, b As String)
         If String.Equals(a, b, System.StringComparison.Ordinal) Then
@@ -96,22 +71,14 @@ Class C
         End If
     End Sub
 End Class
-",
-                    },
-                },
-            }.RunAsync();
+");
         }
 
         [Fact]
         public async Task CA1309FixInstanceEqualsOverloadCSharp()
         {
-            await new VerifyCS.Test
-            {
-                TestState =
-                {
-                    Sources =
-                    {
-                        @"
+            await VerifyCS.VerifyCodeFixAsync(
+                @"
 class C
 {
     void M(string a, string b)
@@ -123,13 +90,7 @@ class C
     }
 }
 ",
-                    },
-                },
-                FixedState =
-                {
-                    Sources =
-                    {
-                        @"
+                @"
 class C
 {
     void M(string a, string b)
@@ -140,22 +101,14 @@ class C
         if (a.Equals(b, System.StringComparison.Ordinal)) { }
     }
 }
-",
-                    },
-                },
-            }.RunAsync();
+");
         }
 
         [Fact]
         public async Task CA1309FixInstanceEqualsOverloadBasic()
         {
-            await new VerifyVB.Test
-            {
-                TestState =
-                {
-                    Sources =
-                    {
-                        @"
+            await VerifyVB.VerifyCodeFixAsync(
+                @"
 Class C
     Sub M(a As String, b As String)
         If a.Equals(15) Then
@@ -169,13 +122,7 @@ Class C
     End Sub
 End Class
 ",
-                    },
-                },
-                FixedState =
-                {
-                    Sources =
-                    {
-                        @"
+                @"
 Class C
     Sub M(a As String, b As String)
         If a.Equals(15) Then
@@ -188,10 +135,7 @@ Class C
         End If
     End Sub
 End Class
-",
-                    },
-                },
-            }.RunAsync();
+");
         }
 
         [Fact]

@@ -12,11 +12,12 @@
 
   <!-- 
     Projects in this directory do not produce useful binaries, they are only used to generate packages. 
-    Build target only needs to build their project dependencies (via ResolveProjectReferences).
   -->
-  <Target Name="Build" DependsOnTargets="ResolveProjectReferences">
-    <MakeDir Directories="$(IntermediateOutputPath)" ContinueOnError="True"/>
-  </Target>
+  <PropertyGroup>
+    <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
 
   <Target Name="GenerateAnalyzerRulesets"
           DependsOnTargets="InitializeSourceControlInformation" 

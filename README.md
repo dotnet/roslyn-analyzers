@@ -88,12 +88,8 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
 Step 1: Clone this repository
 Step 2: Open the command prompt or PowerShell
 Step 3: Go to the directory of the Roslyn Analyzer Repo
-Step 4: Run the restore and build command in the command prompt or PowerShell
-If you are using the command prompt run: `build.cmd`
-If you are using PowerShell run: `.\build.cmd`
-Step 5: Execute tests in the command prompt or PowerShell: 
-If you are using the command prompt run: `test.cmd`
-If you are using PowerShell run: `.\test.cmd`
+Step 4: Run the restore and build command: `build.cmd`(in the command prompt) or `.\build.cmd`(in PowerShell). 
+Step 5: Execute tests: `test.cmd`(in the command prompt) or `.\test.cmd`(in PowerShell).
 
 # Submitting Pull Requests
 

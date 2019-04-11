@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Test.Utilities.EmptyDiagnosticAnalyzer, // Diagnostic is from the compiler
+    Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer, // Diagnostic is from the compiler
     Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpOverrideGetHashCodeOnOverridingEqualsFixer>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicOverrideGetHashCodeOnOverridingEqualsAnalyzer,

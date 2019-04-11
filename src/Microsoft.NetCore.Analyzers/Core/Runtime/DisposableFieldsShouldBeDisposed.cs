@@ -29,7 +29,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);

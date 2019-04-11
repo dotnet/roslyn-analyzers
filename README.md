@@ -1,11 +1,5 @@
-﻿.NET Compiler Platform ("Roslyn") Analyzers
+﻿.NET Compiler Platform ("Roslyn") Analyzers, including ported [FxCop analyzers](https://docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-analyzers)
 ===========================================
-
-[![Join the chat at https://gitter.im/roslyn-analyzers/Lobby](https://badges.gitter.im/roslyn-analyzers/Lobby.svg)](https://gitter.im/roslyn-analyzers/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-This repository contains a number of [Roslyn](https://github.com/dotnet/roslyn) diagnostic analyzers initially developed to help flesh out the design and implementation of the static analysis APIs. They have been migrated from the main [dotnet/roslyn](https://github.com/dotnet/roslyn) repository in order to continue and speed their further development.
-
-Pre-release builds are available on MyGet gallery: https://dotnet.myget.org/Gallery/roslyn-analyzers.
 
 [//]: # (Begin current test results)
 
@@ -15,69 +9,96 @@ Pre-release builds are available on MyGet gallery: https://dotnet.myget.org/Gall
 
 [//]: # (End current test results)
 
-Projects
-========
+This repository contains Roslyn [diagnostic analyzers and code fix providers](https://docs.microsoft.com/en-us/visualstudio/code-quality/roslyn-analyzers-overview) for general _code quality_ improvement for C# and Visual Basic projects that target either _.NET Core, .NET Standard,_ or _.NET Framework for desktop apps_.
 
-MetaCompilation
----------------
-
-*Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jessica Petty](https://github.com/jepetty), and [Daniel King](https://github.com/daking2014)*
-
-The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for a novice analyzer programmer with some previous programming experience.
-
-For instructions on using this tutorial, see [Instructions](src/MetaCompilation.Analyzers/Core/ReadMe.md#instructions).
-
-Microsoft.CodeAnalysis.Analyzers
+Microsoft.CodeAnalysis.FxCopAnalyzers
 --------------------------------
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
-Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
+This is the **primary analyzer package** for this repo that contains all **the ported FxCop code analysis rules (CAxxxx)**. Refer to [FxCop analyzers](https://docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-analyzers) for documentation and FAQs about migrating from legacy post-build static analysis ("Analyze" &rarr; "Run Code Analysis" command in Visual Studio), also known as "FxCop", to FxCop analyzers.
 
-[More info](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
+This analyzer package contains all the ported FxCop rules that are applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**.
 
-Microsoft.CodeQuality.Analyzers
---------------------------------
+[More info about rules in this package](src/Microsoft.CodeAnalysis.FxCopAnalyzers/Microsoft.CodeAnalysis.FxCopAnalyzers.md)
+
+This analyzer package contains the following subpackages or NuGet dependencies that are automatically installed when you install the Microsoft.CodeAnalysis.FxCopAnalyzers package:
+
+### Microsoft.CodeQuality.Analyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeQuality.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeQuality.Analyzers)
 
-Provides common code quality guidelines.
+This package contains common code quality improvement rules that are not specific to usage of any particular API. For example, [CA1801](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1801-review-unused-parameters) (ReviewUnusedParameters) flags parameters that are unused and is part of this package.
 
-[More info](src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md)
+[More info about rules in this package](src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md)
 
-Microsoft.NetCore.Analyzers
------------------
+### Microsoft.NetCore.Analyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetCore.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetCore.Analyzers)
 
-Analyzers for APIs specific to .NET Core.
+This package contains rules for correct usage of APIs that are present in _.NetCore/.NetStandard_ framework libraries. For example, [CA1309](https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison) (UseOrdinalStringComparison) flags usages of string compare APIs that don't specify a `StringComparison` argument.
 
-[More info](src/Microsoft.NetCore.Analyzers/Microsoft.NetCore.Analyzers.md)
+**NOTE:** This analyzer package is applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. If the API whose usage is being checked exists only in _.NetCore/.NetStandard_ libraries, then the analyzer will bail out silently for _Desktop .NetFramework_ projects. Otherwise, if the API exists in both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ libraries, the analyzer will run correctly for both  _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects.
 
-Microsoft.NetFramework.Analyzers
------------------
+[More info about rules in this package](src/Microsoft.NetCore.Analyzers/Microsoft.NetCore.Analyzers.md)
+
+### Microsoft.NetFramework.Analyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.NetFramework.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.NetFramework.Analyzers)
 
-Analyzers for APIs specific to the desktop .NET Framework.
+This package contains rules for correct usage of APIs that are present only in _Desktop .NetFramework_ libraries.
 
-[More info](src/Microsoft.NetFramework.Analyzers/Microsoft.NetFramework.Analyzers.md)
+**NOTE:** The analyzers in this package will silently bail out if installed on a _.NetCore/.NetStandard_ project that do not have the underlying API whose usage is being checked. If future versions of _.NetCore/.NetStandard_ libraries include these APIs, the analyzers will automatically light up on _.NetCore/.NetStandard_ projects that target these libraries.
 
-Roslyn.Diagnostics.Analyzers
--------------------------------
+[More info about rules in this package](src/Microsoft.NetFramework.Analyzers/Microsoft.NetFramework.Analyzers.md)
+
+
+Other analyzer packages
+--------------------------------
+
+### Microsoft.CodeAnalysis.Analyzers
+
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.Analyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.Analyzers)
+
+This package contains rules for correct usage of APIs from the [Microsoft.CodeAnalysis](https://www.nuget.org/packages/Microsoft.CodeAnalysis) NuGet package, i.e. .NET Compiler Platform ("Roslyn") APIs. These are primarily aimed towards helping authors of diagnostic analyzers and code fix providers to invoke the Microsoft.CodeAnalysis APIs in a recommended manner.
+
+[More info about rules in this package](src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)
+
+
+### Roslyn.Diagnostics.Analyzers
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Roslyn.Diagnostics.Analyzers.svg)](https://www.nuget.org/packages/Roslyn.Diagnostics.Analyzers)
 
-Contains analyzers specific to the .NET Compiler Platform ("Roslyn") project.
+This package contains rules that are very specific to the .NET Compiler Platform ("Roslyn") project, i.e. https://github.com/dotnet/roslyn repo. This analyzer package is _not intended for general consumption_ outside the Roslyn repo.
 
-[More info](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
+[More info about rules in this package](src/Roslyn.Diagnostics.Analyzers/Roslyn.Diagnostics.Analyzers.md)
 
-Text.Analyzers
--------------------------------
 
-*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Text.Analyzers.svg)](https://www.nuget.org/packages/Text.Analyzers)
+### Microsoft.CodeAnalysis.BannedApiAnalyzers
 
-Contains analyzers for text included in code, such as comments.
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.BannedApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.BannedApiAnalyzers)
+
+This package contains customizable rules for identifying references to banned APIs.
+
+[More info about rules in this package](src/Microsoft.CodeAnalysis.BannedApiAnalyzers/Microsoft.CodeAnalysis.BannedApiAnalyzers.md)
+
+### Microsoft.CodeAnalysis.PublicApiAnalyzers
+
+*Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.PublicApiAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.PublicApiAnalyzers)
+
+This package contains rules to help library authors monitoring change to their public APIs.
+
+[More info about rules in this package](src/PublicApiAnalyzers/Microsoft.CodeAnalysis.PublicApiAnalyzers.md)
+
+### MetaCompilation (prototype)
+
+*Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jessica Petty](https://github.com/jepetty), and [Daniel King](https://github.com/daking2014)*
+
+The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for novice analyzer developers who have some previous programming experience.
+
+For instructions on using this tutorial, see [Instructions](src/MetaCompilation.Analyzers/Core/ReadMe.md#instructions).
+
+[More info about rules in this package](src/MetaCompilation.Analyzers/MetaCompilation.Analyzers.md)
 
 Getting Started
 ===============

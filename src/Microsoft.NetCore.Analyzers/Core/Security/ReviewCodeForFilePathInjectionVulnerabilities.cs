@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForFilePathInjectionVulnerabilitiesTitle),
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForFilePathInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null); // TODO paulming: Help link.  https://github.com/dotnet/roslyn-analyzers/issues/1892
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca3003-review-code-for-file-path-injection-vulnerabilities");
 
         protected override SinkKind SinkKind => SinkKind.FilePathInjection;
 

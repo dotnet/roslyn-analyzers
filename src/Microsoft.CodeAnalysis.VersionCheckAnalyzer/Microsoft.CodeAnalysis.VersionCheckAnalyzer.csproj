@@ -7,10 +7,22 @@
       Restore would conclude that there is a cyclic dependency between us and the Microsoft.CodeAnalysis.VersionCheckAnalyzer package.
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
+    <MicrosoftCodeAnalysisVersion>2.0.0</MicrosoftCodeAnalysisVersion>
   </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.3'">
+      <PropertyGroup>
+        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.CodeAnalysis.UnitTests" />
+    <Compile Include="..\Utilities\Compiler\DiagnosticCategory.cs" Link="DiagnosticCategory.cs" />
+    <Compile Include="..\Utilities\Compiler\DiagnosticHelpers.cs" Link="DiagnosticHelpers.cs" />
   </ItemGroup>
-  <Import Project="..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
-  <Import Project="..\Utilities\Workspaces\Workspaces.Utilities.projitems" Label="Shared" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="$(MicrosoftCodeAnalysisVersion)" />
+  </ItemGroup>
 </Project>

@@ -31,7 +31,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              s_localizableAlwaysTrueFalseOrNullMessage,
                                                                              DiagnosticCategory.Maintainability,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2180 tracks enabling the rule by default
                                                                              helpLinkUri: null, // TODO: Add helplink
                                                                              customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
@@ -40,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                              s_localizableNeverNullMessage,
                                                                              DiagnosticCategory.Maintainability,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                             isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2180 tracks enabling the rule by default
                                                                              helpLinkUri: null, // TODO: Add helplink
                                                                              customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 

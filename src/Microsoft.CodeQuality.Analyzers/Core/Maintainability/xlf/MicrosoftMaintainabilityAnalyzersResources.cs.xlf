@@ -33,12 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
-        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
-
-cyclomatic complexity = the number of edges - the number of nodes + 1
-
-where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="translated">Cyklomatická složitost měří počet lineárně nezávislých cest skrz metodu, který se určuje podle počtu a složitosti podmínkových větví. Nízká cyklomatická složitost obecně naznačuje, že metodu bude snadné pochopit, testovat a udržovat. Cyklomatická složitost se počítá z grafu toku řízení metody, a to takto:
+        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
+        <target state="needs-review-translation">Cyklomatická složitost měří počet lineárně nezávislých cest skrz metodu, který se určuje podle počtu a složitosti podmínkových větví. Nízká cyklomatická složitost obecně naznačuje, že metodu bude snadné pochopit, testovat a udržovat. Cyklomatická složitost se počítá z grafu toku řízení metody, a to takto:
 
 cyklomatická složitost = počet hran - počet uzlů + 1
 
@@ -71,9 +67,8 @@ kde uzel představuje bod větvení logiky a hrana představuje spojnici mezi uz
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
-        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="translated">Index udržovatelnosti se počítá za použití následujících metrik: řádky kódu, objem programu a cyklomatická složitost. Objem programu je míra složitosti pochopení symbolu, která je založená na počtu operátorů a operandů v kódu. Cyklomatická složitost je míra strukturální složitosti typu nebo metody.
+        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
+        <target state="needs-review-translation">Index udržovatelnosti se počítá za použití následujících metrik: řádky kódu, objem programu a cyklomatická složitost. Objem programu je míra složitosti pochopení symbolu, která je založená na počtu operátorů a operandů v kódu. Cyklomatická složitost je míra strukturální složitosti typu nebo metody.
 Nízký index udržovatelnosti naznačuje, že kód bude pravděpodobně složité udržovat a že by bylo vhodné ho přepracovat.</target>
         <note />
       </trans-unit>

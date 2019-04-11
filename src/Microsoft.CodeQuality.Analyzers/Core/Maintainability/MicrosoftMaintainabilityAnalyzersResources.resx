@@ -208,11 +208,7 @@
     <value>Avoid excessive class coupling</value>
   </data>
   <data name="AvoidExcessiveComplexityDescription" xml:space="preserve">
-    <value>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
-
-cyclomatic complexity = the number of edges - the number of nodes + 1
-
-where a node represents a logic branch point and an edge represents a line between nodes.</value>
+    <value>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</value>
   </data>
   <data name="AvoidExcessiveComplexityMessage" xml:space="preserve">
     <value>'{0}' has a cyclomatic complexity of '{1}'. Rewrite or refactor the code to decrease its complexity below '{2}'.</value>
@@ -230,8 +226,7 @@ where a node represents a logic branch point and an edge represents a line betwe
     <value>Avoid excessive inheritance</value>
   </data>
   <data name="AvoidUnmantainableCodeDescription" xml:space="preserve">
-    <value>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</value>
+    <value>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</value>
   </data>
   <data name="AvoidUnmantainableCodeMessage" xml:space="preserve">
     <value>'{0}' has a maintainability index of '{1}'. Rewrite or refactor the code to increase its maintainability index (MI) above '{2}'.</value>

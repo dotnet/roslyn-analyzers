@@ -17,6 +17,21 @@
         <target state="translated">안전하지 않은 암호화 모드 {0}을(를) 사용합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotAddSchemaByURL">
+        <source>Do Not Add Schema By URL</source>
+        <target state="new">Do Not Add Schema By URL</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddSchemaByURLDescription">
+        <source>This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</source>
+        <target state="new">This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddSchemaByURLMessage">
+        <source>This overload of the Add method is potentially unsafe because it may resolve dangerous external references</source>
+        <target state="new">This overload of the Add method is potentially unsafe because it may resolve dangerous external references</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
         <source>Do Not Call Dangerous Methods In Deserialization</source>
         <target state="translated">역직렬화에서 위험한 메서드를 호출하면 안 됨</target>
@@ -47,6 +62,36 @@
         <target state="translated">ServerCertificateValidationCallback은 항상 true를 반환하여 서버 인증서를 허용하는 함수로 설정되어 있습니다. 서버 인증서의 유효성을 검사하여 요청을 받는 서버의 ID를 확인해야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderChecking">
+        <source>Do Not Disable HTTP Header Checking</source>
+        <target state="new">Do Not Disable HTTP Header Checking</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderCheckingDescription">
+        <source>HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
+        <target state="new">HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
+        <source>Do not disable HTTP header checking</source>
+        <target state="new">Do not disable HTTP header checking</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableRequestValidation">
+        <source>Do Not Disable Request Validation</source>
+        <target state="new">Do Not Disable Request Validation</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableRequestValidationDescription">
+        <source>Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</source>
+        <target state="new">Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableRequestValidationMessage">
+        <source>The method {0} has request validation disabled</source>
+        <target state="new">The method {0} has request validation disabled</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
         <source>Do Not Disable SChannel Use of Strong Crypto</source>
         <target state="new">Do Not Disable SChannel Use of Strong Crypto</target>
@@ -62,6 +107,36 @@
         <target state="new">{0} disables TLS 1.2 and enables SSLv3</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotReferSelfInSerializableClass">
+        <source>Do Not Refer Self In Serializable Class</source>
+        <target state="new">Do Not Refer Self In Serializable Class</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotReferSelfInSerializableClassDescription">
+        <source>This can allow an attacker to DOS or exhaust the memory of the process.</source>
+        <target state="new">This can allow an attacker to DOS or exhaust the memory of the process.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotReferSelfInSerializableClassMessage">
+        <source>{0} participates in a potential reference cycle</source>
+        <target state="new">{0} participates in a potential reference cycle</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotSerializeTypesWithPointerFields">
+        <source>Do Not Serialize Types With Pointer Fields</source>
+        <target state="new">Do Not Serialize Types With Pointer Fields</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotSerializeTypesWithPointerFieldsDescription">
+        <source>Pointers are not "type safe" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.</source>
+        <target state="new">Pointers are not "type safe" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotSerializeTypesWithPointerFieldsMessage">
+        <source>Pointer field {0} on serializable type.</source>
+        <target state="new">Pointer field {0} on serializable type.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
         <source>Do Not Use Broken Cryptographic Algorithms</source>
         <target state="translated">손상된 암호화 알고리즘을 사용하지 마세요.</target>
@@ -75,6 +150,21 @@
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithmsMessage">
         <source>{0} uses a broken cryptographic algorithm {1}</source>
         <target state="translated">{0}이(가) 손상된 암호화 알고리즘 {1}을(를) 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
+        <source>Do Not Use Deprecated Security Protocols</source>
+        <target state="new">Do Not Use Deprecated Security Protocols</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
+        <source>Using a deprecated security protocol rather than the system default is risky.</source>
+        <target state="new">Using a deprecated security protocol rather than the system default is risky.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
+        <source>Hard-coded use of deprecated security protocol {0}</source>
+        <target state="new">Hard-coded use of deprecated security protocol {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5">
@@ -110,6 +200,21 @@
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsMessage">
         <source>{0} uses a weak cryptographic algorithm {1}</source>
         <target state="translated">{0}이(가) 취약한 암호화 알고리즘 {1}을(를) 사용합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetViewStateUserKey">
+        <source>Set ViewStateUserKey For Classes Derived From Page</source>
+        <target state="new">Set ViewStateUserKey For Classes Derived From Page</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetViewStateUserKeyDescription">
+        <source>Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</source>
+        <target state="new">Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetViewStateUserKeyMessage">
+        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
+        <target state="new">The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</target>
         <note />
       </trans-unit>
     </body>

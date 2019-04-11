@@ -12,6 +12,8 @@ var libraryList = Args[10].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEn
 var rulesetsDir = Args[11];
 var legacyRulesets = Args[12].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var artifactsBinDir = Args[13];
+var analyzerDocumentationFileDir = Args[14];
+var analyzerDocumentationFileName = Args[15];
 
 var result = new StringBuilder();
 
@@ -159,6 +161,15 @@ if (rulesetsDir.Length > 0 && Directory.Exists(rulesetsDir))
         {
             result.AppendLine(FileElement(Path.Combine(rulesetsDir, ruleset), "rulesets"));
         }
+    }
+}
+
+if (analyzerDocumentationFileDir.Length > 0 && Directory.Exists(analyzerDocumentationFileDir) && analyzerDocumentationFileName.Length > 0)
+{
+    var fileWithPath = Path.Combine(analyzerDocumentationFileDir, analyzerDocumentationFileName);
+    if (File.Exists(fileWithPath))
+    {
+        result.AppendLine(FileElement(fileWithPath, "documentation"));
     }
 }
 

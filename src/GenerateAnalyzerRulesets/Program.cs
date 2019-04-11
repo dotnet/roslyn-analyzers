@@ -17,7 +17,7 @@ namespace GenerateAnalyzerRulesets
     {
         public static int Main(string[] args)
         {
-            if (args.Length != 8)
+            if (args.Length != 10)
             {
                 Console.Error.WriteLine($"Excepted 8 arguments, found {args.Length}: {string.Join(';', args)}");
                 return 1;
@@ -30,12 +30,16 @@ namespace GenerateAnalyzerRulesets
             var assemblyList = args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList();
             string propsFileDir = args[5];
             string propsFileName = args[6];
-            if (!bool.TryParse(args[7], out var containsPortedFxCopRules))
+            string analyzerDocumentationFileDir = args[7];
+            string analyzerDocumentationFileName = args[8];
+            if (!bool.TryParse(args[9], out var containsPortedFxCopRules))
             {
                 containsPortedFxCopRules = false;
             }
 
             var allRulesByAssembly = new SortedList<string, SortedList<string, DiagnosticDescriptor>>();
+            var allRulesById = new SortedList<string, DiagnosticDescriptor>();
+            var fixableDiagnosticIds = new HashSet<string>();
             var categories = new HashSet<string>();
             foreach (string assembly in assemblyList)
             {
@@ -56,10 +60,16 @@ namespace GenerateAnalyzerRulesets
                     foreach (DiagnosticDescriptor rule in rules)
                     {
                         rulesById[rule.Id] = rule;
+                        allRulesById[rule.Id] = rule;
                         categories.Add(rule.Category);
                     }
 
                     allRulesByAssembly.Add(assemblyName, rulesById);
+                }
+
+                foreach (var id in analyzerFileReference.GetFixers().SelectMany(fixer => fixer.FixableDiagnosticIds))
+                {
+                    fixableDiagnosticIds.Add(id);
                 }
             }
 
@@ -102,6 +112,8 @@ namespace GenerateAnalyzerRulesets
             }
 
             createPropsFile();
+
+            createAnalyzerDocumentationFile();
 
             return 0;
 
@@ -256,11 +268,20 @@ namespace GenerateAnalyzerRulesets
 
                 var fileContents =
 $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-  {getEditorConfigAsAdditionalFile()}{getCodeAnalysisTreatWarningsNotAsErrors()}{getRulesetOverrides()}
+  {getEditorConfigAsAdditionalFile()}{getCodeAnalysisTreatWarningsNotAsErrors()}{getRulesetOverrides()}{getFlowAnalysisFeatureFlag()}
 </Project>";
                 var directory = Directory.CreateDirectory(propsFileDir);
                 var fileWithPath = Path.Combine(directory.FullName, propsFileName);
                 File.WriteAllText(fileWithPath, fileContents);
+            }
+
+            string getFlowAnalysisFeatureFlag()
+            {
+                return @"
+
+  <PropertyGroup>
+    <Features>$(Features);flow-analysis</Features> 
+  </PropertyGroup>";
             }
 
             string getCodeAnalysisTreatWarningsNotAsErrors()
@@ -332,6 +353,50 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
     <AdditionalFiles Include=""$(MSBuildProjectDirectory)\.editorconfig"" />
   </ItemGroup>
 ";
+            }
+
+            void createAnalyzerDocumentationFile()
+            {
+                if (string.IsNullOrEmpty(analyzerDocumentationFileDir) || string.IsNullOrEmpty(analyzerDocumentationFileName) || allRulesById.Count == 0)
+                {
+                    Debug.Assert(!containsPortedFxCopRules);
+                    return;
+                }
+
+                var directory = Directory.CreateDirectory(analyzerDocumentationFileDir);
+                var fileWithPath = Path.Combine(directory.FullName, analyzerDocumentationFileName);
+
+                var builder = new StringBuilder();
+                builder.Append(@"
+Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
+--------|---------|-------|----------|---------|---------|--------------------------------------------------------------------------------------------------------------|
+");
+
+                var index = 1;
+                foreach (var ruleById in allRulesById)
+                {
+                    string ruleId = ruleById.Key;
+                    DiagnosticDescriptor descriptor = ruleById.Value;
+
+                    var ruleIdWithHyperLink = descriptor.Id;
+                    if (!string.IsNullOrWhiteSpace(descriptor.HelpLinkUri))
+                    {
+                        ruleIdWithHyperLink = $"[{ruleIdWithHyperLink}]({descriptor.HelpLinkUri})";
+                    }
+
+                    var hasCodeFix = fixableDiagnosticIds.Contains(descriptor.Id);
+
+                    var description = descriptor.Description.ToString();
+                    if (string.IsNullOrWhiteSpace(description))
+                    {
+                        description = descriptor.MessageFormat.ToString();
+                    }
+
+                    builder.AppendLine($"{index} | {ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {hasCodeFix} | {description} |");
+                    index++;
+                }
+
+                File.WriteAllText(fileWithPath, builder.ToString());
             }
         }
 

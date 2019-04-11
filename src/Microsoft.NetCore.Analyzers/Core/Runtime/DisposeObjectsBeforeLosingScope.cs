@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                         s_localizableNotDisposedMessage,
                                                                                         DiagnosticCategory.Reliability,
                                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                                        isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
                                                                                         description: s_localizableDescription,
                                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                           s_localizableMayBeDisposedMessage,
                                                                                           DiagnosticCategory.Reliability,
                                                                                           DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                                          isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
                                                                                           description: s_localizableDescription,
                                                                                           helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                           customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                         s_localizableNotDisposedOnExceptionPathsMessage,
                                                                                                         DiagnosticCategory.Reliability,
                                                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                                                        isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
                                                                                                         description: s_localizableDescription,
                                                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -62,7 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                           s_localizableMayBeDisposedOnExceptionPathsMessage,
                                                                                                           DiagnosticCategory.Reliability,
                                                                                                           DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                                                                                                          isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
                                                                                                           description: s_localizableDescription,
                                                                                                           helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                                           customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -93,9 +93,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var disposeAnalysisKind = operationBlockContext.Options.GetDisposeAnalysisKindOption(NotDisposedOnExceptionPathsRule, DisposeAnalysisKind.NonExceptionPaths, operationBlockContext.CancellationToken);
                     var trackExceptionPaths = disposeAnalysisKind.AreExceptionPathsEnabled();
 
+                    // For non-exception paths analysis, we can skip interprocedural analysis for certain invocations.
+                    var interproceduralAnalysisPredicateOpt = !trackExceptionPaths ?
+                        new InterproceduralAnalysisPredicate(
+                            skipAnalysisForInvokedMethodPredicateOpt: SkipInterproceduralAnalysis,
+                            skipAnalysisForInvokedLambdaOrLocalFunctionPredicateOpt: null,
+                            skipAnalysisForInvokedContextPredicateOpt: null) :
+                        null;
+
                     if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockContext.OperationBlocks, containingMethod,
                         operationBlockContext.Options, NotDisposedRule, trackInstanceFields: false, trackExceptionPaths,
-                        operationBlockContext.CancellationToken, out var disposeAnalysisResult, out var pointsToAnalysisResult))
+                        operationBlockContext.CancellationToken, out var disposeAnalysisResult, out var pointsToAnalysisResult,
+                        interproceduralAnalysisPredicateOpt))
                     {
                         var notDisposedDiagnostics = ArrayBuilder<Diagnostic>.GetInstance();
                         var mayBeNotDisposedDiagnostics = ArrayBuilder<Diagnostic>.GetInstance();
@@ -104,7 +113,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             // Compute diagnostics for undisposed objects at exit block for non-exceptional exit paths.
                             var exitBlock = disposeAnalysisResult.ControlFlowGraph.GetExit();
                             var disposeDataAtExit = disposeAnalysisResult.ExitBlockOutput.Data;
-                            ComputeDiagnostics(disposeDataAtExit, containingMethod,
+                            ComputeDiagnostics(disposeDataAtExit,
                                 notDisposedDiagnostics, mayBeNotDisposedDiagnostics, disposeAnalysisResult, pointsToAnalysisResult,
                                 disposeAnalysisKind, isDisposeDataForExceptionPaths: false);
 
@@ -112,7 +121,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 // Compute diagnostics for undisposed objects at handled exception exit paths.
                                 var disposeDataAtHandledExceptionPaths = disposeAnalysisResult.ExceptionPathsExitBlockOutputOpt.Data;
-                                ComputeDiagnostics(disposeDataAtHandledExceptionPaths, containingMethod,
+                                ComputeDiagnostics(disposeDataAtHandledExceptionPaths,
                                     notDisposedDiagnostics, mayBeNotDisposedDiagnostics, disposeAnalysisResult, pointsToAnalysisResult,
                                     disposeAnalysisKind, isDisposeDataForExceptionPaths: true);
 
@@ -120,7 +129,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 var disposeDataAtUnhandledExceptionPaths = disposeAnalysisResult.MergedStateForUnhandledThrowOperationsOpt?.Data;
                                 if (disposeDataAtUnhandledExceptionPaths != null)
                                 {
-                                    ComputeDiagnostics(disposeDataAtUnhandledExceptionPaths, containingMethod,
+                                    ComputeDiagnostics(disposeDataAtUnhandledExceptionPaths,
                                         notDisposedDiagnostics, mayBeNotDisposedDiagnostics, disposeAnalysisResult, pointsToAnalysisResult,
                                         disposeAnalysisKind, isDisposeDataForExceptionPaths: true);
                                 }
@@ -143,12 +152,34 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
                 });
+
+                return;
+
+                // Local functions.
+
+                bool SkipInterproceduralAnalysis(IMethodSymbol invokedMethod)
+                {
+                    // Skip interprocedural analysis if we are invoking a method and not passing any disposable object as an argument.
+                    // We also check that we are not passing any object type argument which might hold disposable object
+                    // and also check that we are not passing delegate type argument which can
+                    // be a lambda or local function that has access to disposable object in current method's scope.
+                    foreach (var p in invokedMethod.Parameters)
+                    {
+                        if (p.Type.SpecialType == SpecialType.System_Object ||
+                            p.Type.DerivesFrom(disposeAnalysisHelper.IDisposable) ||
+                            p.Type.TypeKind == TypeKind.Delegate)
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
             });
         }
 
         private static void ComputeDiagnostics(
             ImmutableDictionary<AbstractLocation, DisposeAbstractValue> disposeData,
-            IMethodSymbol containingMethod,
             ArrayBuilder<Diagnostic> notDisposedDiagnostics,
             ArrayBuilder<Diagnostic> mayBeNotDisposedDiagnostics,
             DisposeAnalysisResult disposeAnalysisResult,
@@ -174,13 +205,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 if (isNotDisposed ||
                     (isMayBeNotDisposed && disposeAnalysisKind.AreMayBeNotDisposedViolationsEnabled()))
                 {
-                    var syntax = location.GetNodeToReportDiagnostic(pointsToAnalysisResult);
+                    var syntax = location.TryGetNodeToReportDiagnostic(pointsToAnalysisResult);
+                    if (syntax == null)
+                    {
+                        continue;
+                    }
 
-                    // CA2000: In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.
+                    // CA2000: Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.
                     var rule = GetRule(isNotDisposed);
-                    var arg1 = containingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
-                    var arg2 = syntax.ToString();
-                    var diagnostic = syntax.CreateDiagnostic(rule, arg1, arg2);
+                    var argument = syntax.ToString();
+                    var diagnostic = syntax.CreateDiagnostic(rule, argument);
                     if (isNotDisposed)
                     {
                         notDisposedDiagnostics.Add(diagnostic);

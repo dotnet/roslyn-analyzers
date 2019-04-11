@@ -2709,5 +2709,41 @@ End Module
             // Test0.vb(8,13): warning CA2213: 'B' contains field 'a' that is of IDisposable type 'FileStream', but it is never disposed. Change the Dispose method on 'B' to call Close or Dispose on this field.
             GetBasicResultAt(8, 13, "B", "a", "FileStream"));
         }
+
+        [Fact, WorkItem(2182, "https://github.com/dotnet/roslyn-analyzers/issues/2182")]
+        public void DisposableAllocation_NonReadOnlyField_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public sealed class B : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+public sealed class A : IDisposable
+{
+    private B _b;
+
+    public A()
+    {
+        _b = new B();
+    }
+
+    public void Dispose()
+    {
+        if (_b == null)
+        {
+            return;
+        }
+
+        _b.Dispose();
+        _b = null;
+    }
+}
+");
+        }
     }
 }

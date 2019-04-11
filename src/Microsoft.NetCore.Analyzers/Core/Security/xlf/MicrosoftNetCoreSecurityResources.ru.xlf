@@ -158,8 +158,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForRegexInjectionVulnerabilitiesTitle">
-        <source>Review code for regex injection vulnerabalities</source>
-        <target state="new">Review code for regex injection vulnerabalities</target>
+        <source>Review code for regex injection vulnerabilities</source>
+        <target state="new">Review code for regex injection vulnerabilities</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">

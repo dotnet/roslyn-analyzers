@@ -363,6 +363,9 @@
   <data name="UseArrayEmpty" xml:space="preserve">
     <value>Use Array.Empty</value>
   </data>
+  <data name="UseIndexer" xml:space="preserve">
+    <value>Use indexer</value>
+  </data>
   <data name="DisposableFieldsShouldBeDisposedDescription" xml:space="preserve">
     <value>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</value>
   </data>
@@ -385,16 +388,16 @@
     <value>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</value>
   </data>
   <data name="DisposeObjectsBeforeLosingScopeNotDisposedMessage" xml:space="preserve">
-    <value>In method '{0}', call System.IDisposable.Dispose on object created by '{1}' before all references to it are out of scope.</value>
+    <value>Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</value>
   </data>
   <data name="DisposeObjectsBeforeLosingScopeMayBeDisposedMessage" xml:space="preserve">
-    <value>In method '{0}', use recommended dispose pattern to ensure that object created by '{1}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</value>
+    <value>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</value>
   </data>
   <data name="DisposeObjectsBeforeLosingScopeNotDisposedOnExceptionPathsMessage" xml:space="preserve">
-    <value>In method '{0}', object created by '{1}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</value>
+    <value>Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</value>
   </data>
   <data name="DisposeObjectsBeforeLosingScopeMayBeDisposedOnExceptionPathsMessage" xml:space="preserve">
-    <value>In method '{0}', use recommended dispose pattern to ensure that object created by '{1}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</value>
+    <value>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</value>
   </data>
   <data name="DisposeObjectsBeforeLosingScopeTitle" xml:space="preserve">
     <value>Dispose objects before losing scope</value>

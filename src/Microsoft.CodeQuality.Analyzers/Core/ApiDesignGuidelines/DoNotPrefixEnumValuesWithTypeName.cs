@@ -34,7 +34,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 DiagnosticSeverity.Error,
                 isEnabledByDefault: true,
                 description: s_localizableDescription,
-                helpLinkUri: "https://msdn.microsoft.com/en-us/library/ms182237.aspx",
+                helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1712-do-not-prefix-enum-values-with-type-name",
                 customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

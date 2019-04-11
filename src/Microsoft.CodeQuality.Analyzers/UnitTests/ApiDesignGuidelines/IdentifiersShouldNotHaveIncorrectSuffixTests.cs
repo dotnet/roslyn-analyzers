@@ -83,6 +83,7 @@ End Class",
                     IdentifiersShouldNotHaveIncorrectSuffixAnalyzer.EventArgsSuffix));
         }
 
+        [Fact]
         public void CA1711_CSharp_NoDiagnostic_TypeDerivesFromEventArgs()
         {
             VerifyCSharp(
@@ -92,6 +93,7 @@ public class MyEventArgs : EventArgs {}
 public class MyOtherEventArgs : MyEventArgs {}");
         }
 
+        [Fact]
         public void CA1711_Basic_NoDiagnostic_TypeDerivesFromEventArgs()
         {
             VerifyBasic(

@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
+using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
 using Test.Utilities;
 using Xunit;
 
@@ -30,9 +30,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         {
             return new CSharpEnumsShouldHaveZeroValueFixer();
         }
-
-        // No trivial way to FixAll diagnostics for this code fix.
-        protected override bool TestFixAllByDefault => false;
 
         [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsRename()

@@ -27,6 +27,7 @@
       <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
       <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>
       <DevelopmentDependency Condition="'$(DevelopmentDependency)' == ''">true</DevelopmentDependency>
+      <GenerateAnalyzerMdFile Condition="'$(GenerateAnalyzerMdFile)' == ''">true</GenerateAnalyzerMdFile>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(GeneratePackagePropsFile)' == 'true'">
@@ -36,6 +37,11 @@
     <ItemGroup Condition="'$(GeneratePackagePropsFile)' == 'true'" >
       <AnalyzerNupkgFile Include="$(PackagePropsFileDir)\$(PackagePropsFileName)"/>
     </ItemGroup>
+
+    <PropertyGroup Condition="'$(GenerateAnalyzerMdFile)' == 'true'">
+      <AnalyzerDocumentationFileDir Condition="'$(AnalyzerDocumentationFileDir)' == ''">$(RepoRoot)src\$(NuspecPackageId)</AnalyzerDocumentationFileDir>
+      <AnalyzerDocumentationFileName>$(NuspecPackageId).md</AnalyzerDocumentationFileName>
+    </PropertyGroup>
     
     <MSBuild Projects="$(RepoRoot)src\GenerateAnalyzerRulesets\GenerateAnalyzerRulesets.csproj" Targets="Build">
       <Output TaskParameter="TargetOutputs" PropertyName="_GenerateAnalyzerRulesetsPath"/>
@@ -43,9 +49,10 @@
 
     <ItemGroup>
       <AnalyzerRulesetAssembly Condition="'@(AnalyzerNupkgAssembly)' != '' and '@(AnalyzerRulesetAssembly)' == ''" Include="@(AnalyzerNupkgAssembly)"/>
+      <AnalyzerRulesetAssembly Update="@(AnalyzerRulesetAssembly)" Condition="'%(AnalyzerRulesetAssembly.TargetFramework)' == ''" TargetFramework="$(TargetFramework)" />
     </ItemGroup>
-    
-    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(_GeneratedRulesetsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "$(TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" $(ContainsPortedFxCopRules)' />
+
+    <Exec Command='"$(DotNetRoot)dotnet.exe" "$(_GenerateAnalyzerRulesetsPath)" "$(_GeneratedRulesetsDir)" "$(ArtifactsBinDir)\" "$(Configuration)" "%(AnalyzerRulesetAssembly.TargetFramework)" "@(AnalyzerRulesetAssembly)" "$(PackagePropsFileDir)" "$(PackagePropsFileName)" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)" $(ContainsPortedFxCopRules)' />
   </Target>
   
   <Target Name="GenerateAnalyzerNuspecFile"
@@ -79,6 +86,6 @@
       <_CscToolPath Condition="!HasTrailingSlash('$(_CscToolPath)')">$(_CscToolPath)\</_CscToolPath>
     </PropertyGroup>
 
-    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\"' />
+    <Exec Command='"$(_CscToolPath)csi.exe" "$(RepoRoot)eng\GenerateAnalyzerNuspec.csx" "$(NuspecFile)" "$(AssetsDir)\" "$(MSBuildProjectDirectory)" "$(Configuration)" "$(TargetFramework)" "@(_NuspecMetadata)" "@(AnalyzerNupkgFile)" "@(AnalyzerNupkgFolder)" "@(AnalyzerNupkgAssembly)" "@(AnalyzerNupkgDependency)" "@(AnalyzerNupkgLibrary)" "$(_GeneratedRulesetsDir)" "@(AnalyzerLegacyRuleset)" "$(ArtifactsBinDir)\" "$(AnalyzerDocumentationFileDir)" "$(AnalyzerDocumentationFileName)"' />
   </Target>
 </Project>

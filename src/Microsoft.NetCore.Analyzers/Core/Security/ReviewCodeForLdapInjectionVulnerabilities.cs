@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForLdapInjectionVulnerabilitiesTitle),
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForLdapInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null); // TODO paulming: Help link.  https://github.com/dotnet/roslyn-analyzers/issues/1892
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca3005-review-code-for-ldap-injection-vulnerabilities");
 
         protected override SinkKind SinkKind { get { return SinkKind.Ldap; } }
 

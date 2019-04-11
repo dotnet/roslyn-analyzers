@@ -33,12 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
-        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
-
-cyclomatic complexity = the number of edges - the number of nodes + 1
-
-where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="translated">Döngüsel karmaşıklık, metot aracılığıyla oluşturulmuş, doğrusal olarak bağımsız yol sayısını ölçer ve bu sayı, koşullu dalların sayısı ve karmaşıklığına göre belirlenir. Döngüsel karmaşıklığın düşük olması genellikle metodu anlamanın, test etmenin ve metoda bakım uygulamanın kolay olduğu anlamına gelir. Döngüsel karmaşıklık, metodun denetim akışı grafiğinden hesaplanır ve aşağıdaki formülle elde edilir:
+        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
+        <target state="needs-review-translation">Döngüsel karmaşıklık, metot aracılığıyla oluşturulmuş, doğrusal olarak bağımsız yol sayısını ölçer ve bu sayı, koşullu dalların sayısı ve karmaşıklığına göre belirlenir. Döngüsel karmaşıklığın düşük olması genellikle metodu anlamanın, test etmenin ve metoda bakım uygulamanın kolay olduğu anlamına gelir. Döngüsel karmaşıklık, metodun denetim akışı grafiğinden hesaplanır ve aşağıdaki formülle elde edilir:
 
 döngüsel karmaşıklık = uç sayısı - düğüm sayısı + 1
 
@@ -71,9 +67,8 @@ burada her düğüm bir mantık dalı noktasını temsil ederken, her uç düğ�
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
-        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="translated">Bakım endeksi şu ölçümler kullanılarak hesaplanır: kod satırı sayısı, program hacmi ve döngüsel karmaşıklık. Program hacmi, koddaki işleçler ve işlenenlerden yola çıkılarak bir sembolün anlaşılmasının ne kadar zor olduğunu gösteren bir ölçüdür. Döngüsel karmaşıklık, tür veya metodun yapısal karmaşıklığını gösteren bir ölçüdür.
+        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
+        <target state="needs-review-translation">Bakım endeksi şu ölçümler kullanılarak hesaplanır: kod satırı sayısı, program hacmi ve döngüsel karmaşıklık. Program hacmi, koddaki işleçler ve işlenenlerden yola çıkılarak bir sembolün anlaşılmasının ne kadar zor olduğunu gösteren bir ölçüdür. Döngüsel karmaşıklık, tür veya metodun yapısal karmaşıklığını gösteren bir ölçüdür.
 Bakım endeksinin düşük olması, koda bakım uygulamanın zor olabileceğini ve kodun yeniden tasarlanmasının uygun olduğunu gösterir.</target>
         <note />
       </trans-unit>

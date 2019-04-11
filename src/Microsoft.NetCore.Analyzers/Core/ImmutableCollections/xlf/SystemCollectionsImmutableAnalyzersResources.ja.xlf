@@ -17,6 +17,11 @@
         <target state="translated">{1} 値で {0} を呼び出さないでください</target>
         <note />
       </trans-unit>
+      <trans-unit id="RemoveRedundantCall">
+        <source>Remove redundant call</source>
+        <target state="new">Remove redundant call</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

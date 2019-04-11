@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForXamlInjectionVulnerabilitiesTitle),
             nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForXamlInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null); // TODO paulming: Help link.  https://github.com/dotnet/roslyn-analyzers/issues/1892
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca3010-review-code-for-xaml-injection-vulnerabilities");
 
         protected override SinkKind SinkKind { get { return SinkKind.Xaml; } }
 

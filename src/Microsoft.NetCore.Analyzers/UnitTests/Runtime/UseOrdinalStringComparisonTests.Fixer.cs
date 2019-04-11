@@ -55,7 +55,6 @@ class C
 ",
                     },
                 },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -100,7 +99,6 @@ End Class
 ",
                     },
                 },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -145,7 +143,6 @@ class C
 ",
                     },
                 },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -194,7 +191,6 @@ End Class
 ",
                     },
                 },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -268,7 +264,6 @@ class C
                     // Not everything is fixed; we use markup to indicate the remaining ones.
                     MarkupHandling = MarkupMode.Allow,
                 },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -360,7 +355,6 @@ End Class
                     // Not everything is fixed; we use markup to indicate the remaining ones.
                     MarkupHandling = MarkupMode.Allow,
                 },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 

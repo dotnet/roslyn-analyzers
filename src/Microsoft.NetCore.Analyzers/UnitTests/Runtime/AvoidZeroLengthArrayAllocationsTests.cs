@@ -4,7 +4,6 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing;
 using Microsoft.NetCore.CSharp.Analyzers.Runtime;
 using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
 using Test.Utilities;
@@ -142,7 +141,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { arrayEmptySource + fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
 
             await new VerifyCS.Test
@@ -161,7 +159,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { "using System;\r\n" + arrayEmptySource + fixedSource.Replace("System.Array.Empty", "Array.Empty") } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -253,7 +250,6 @@ End Class";
                     },
                 },
                 FixedState = { Sources = { arrayEmptySource + fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
 
             await new VerifyVB.Test
@@ -272,7 +268,6 @@ End Class";
                     },
                 },
                 FixedState = { Sources = { "Imports System\r\n" + arrayEmptySource + fixedSource.Replace("System.Array.Empty", "Array.Empty") } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -313,7 +308,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
 
             await new VerifyCS.Test
@@ -328,7 +322,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { "using System;\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty") } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -463,7 +456,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -509,7 +501,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -573,7 +564,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -609,7 +599,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -687,7 +676,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
 
@@ -717,7 +705,6 @@ class C
                     },
                 },
                 FixedState = { Sources = { fixedSource } },
-                CodeFixValidationMode = CodeFixValidationMode.None,
             }.RunAsync();
         }
     }

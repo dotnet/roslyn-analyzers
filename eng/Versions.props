@@ -35,6 +35,7 @@
     <MicrosoftBuildLocatorVersion>1.1.2</MicrosoftBuildLocatorVersion>
     <SQLitePCLRawVersion>1.1.2</SQLitePCLRawVersion>
     <HumanizerVersion>2.2.0</HumanizerVersion>
+    <XunitCombinatorialVersion>1.2.7</XunitCombinatorialVersion>
   </PropertyGroup>
 
   <PropertyGroup>

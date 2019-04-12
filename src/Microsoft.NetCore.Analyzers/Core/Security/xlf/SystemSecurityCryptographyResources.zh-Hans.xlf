@@ -202,6 +202,21 @@
         <target state="translated">{0} 使用弱加密算法 {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseXslTransform">
+        <source>Do Not Use XslTransform</source>
+        <target state="new">Do Not Use XslTransform</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseXslTransformDescription">
+        <source>XslTransform may include dangerous external references.</source>
+        <target state="new">XslTransform may include dangerous external references.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseXslTransformMessage">
+        <source>Construct XslTransform</source>
+        <target state="new">Construct XslTransform</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SetViewStateUserKey">
         <source>Set ViewStateUserKey For Classes Derived From Page</source>
         <target state="new">Set ViewStateUserKey For Classes Derived From Page</target>

@@ -52,17 +52,26 @@ namespace Roslyn.Diagnostics.Analyzers
         private void HandleAwaitOperation(OperationAnalysisContext context, ThreadDependencyInfo threadDependencyInfo)
         {
             var awaitOperation = (IAwaitOperation)context.Operation;
-            var valueThreadDependencyInfo = GetThreadDependencyInfo(awaitOperation.Operation);
+            var valueThreadDependencyInfo = GetThreadDependencyInfo(awaitOperation.Operation, captureContextUnlessConfigured: true);
 
             if (valueThreadDependencyInfo.AlwaysCompleted)
             {
                 return;
             }
 
-            if (valueThreadDependencyInfo.CapturesContext && !threadDependencyInfo.CapturesContext)
+            if (!valueThreadDependencyInfo.AlwaysCompleted)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
-                return;
+                if (threadDependencyInfo.AlwaysCompleted)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+                    return;
+                }
+
+                if (valueThreadDependencyInfo.CapturesContext && !threadDependencyInfo.CapturesContext)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+                    return;
+                }
             }
 
             if (valueThreadDependencyInfo.PerInstance && !threadDependencyInfo.PerInstance)
@@ -72,7 +81,7 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        private ThreadDependencyInfo GetThreadDependencyInfo(IOperation operation)
+        private ThreadDependencyInfo GetThreadDependencyInfo(IOperation operation, bool captureContextUnlessConfigured)
         {
             while (operation is IConversionOperation conversion)
             {
@@ -88,10 +97,10 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 if (invocation.TargetMethod?.Name == nameof(Task.ConfigureAwait))
                 {
-                    var instanceDependencyInfo = GetThreadDependencyInfo(invocation.Instance);
+                    var instanceDependencyInfo = GetThreadDependencyInfo(invocation.Instance, captureContextUnlessConfigured: false);
                     if (!instanceDependencyInfo.CapturesContext
                         && invocation.Arguments.Length == 1
-                        && invocation.Arguments[0].TryGetBoolConstantValue(out var continueOnCapturedContext)
+                        && invocation.Arguments[0].Value.TryGetBoolConstantValue(out var continueOnCapturedContext)
                         && continueOnCapturedContext)
                     {
                         instanceDependencyInfo = instanceDependencyInfo.WithCapturesContext(true);
@@ -104,11 +113,16 @@ namespace Roslyn.Diagnostics.Analyzers
                     var targetDependencyInfo = GetThreadDependencyInfoForReturn(invocation.TargetMethod);
                     if (targetDependencyInfo.PerInstance)
                     {
-                        var instanceDependencyInfo = GetThreadDependencyInfo(invocation.Instance);
+                        var instanceDependencyInfo = GetThreadDependencyInfo(invocation.Instance, captureContextUnlessConfigured: false);
                         if (instanceDependencyInfo.IsExplicit && !instanceDependencyInfo.MayHaveMainThreadDependency)
                         {
                             targetDependencyInfo = targetDependencyInfo.WithPerInstance(false);
                         }
+                    }
+
+                    if (captureContextUnlessConfigured)
+                    {
+                        targetDependencyInfo = targetDependencyInfo.WithCapturesContext(true);
                     }
 
                     return targetDependencyInfo;
@@ -117,7 +131,13 @@ namespace Roslyn.Diagnostics.Analyzers
 
             if (operation is IParameterReferenceOperation parameterReference)
             {
-                return GetThreadDependencyInfo(parameterReference.Parameter);
+                var parameterDependencyInfo = GetThreadDependencyInfo(parameterReference.Parameter);
+                if (captureContextUnlessConfigured)
+                {
+                    parameterDependencyInfo = parameterDependencyInfo.WithCapturesContext(true);
+                }
+
+                return parameterDependencyInfo;
             }
 
             return ThreadDependencyInfo.DefaultAsynchronous;

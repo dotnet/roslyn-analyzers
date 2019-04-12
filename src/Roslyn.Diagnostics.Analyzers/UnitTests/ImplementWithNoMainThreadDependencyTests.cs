@@ -60,7 +60,7 @@ interface Interface {
 }
 
 class Class : Interface {
-    [|public Task MethodAsync() => throw null;|]
+    [|[|public Task MethodAsync() => throw null;|]|]
 }
 ";
 

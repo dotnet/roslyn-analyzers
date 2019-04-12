@@ -131,6 +131,29 @@ class Class {
         }
 
         [Fact]
+        public async Task ConfigureAwaitTrueCapturesContextInAsynchronousMethod()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface IInterface {
+    [NoMainThreadDependency]
+    Task MethodAsync();
+}
+
+class Class {
+    [NoMainThreadDependency]
+    async Task OperationAsync(IInterface obj) {
+        [|await obj.MethodAsync().ConfigureAwait(true)|];
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyAnalyzerAsync(code);
+        }
+
+        [Fact]
         public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompleted()
         {
             var code = @"
@@ -168,7 +191,7 @@ interface IInterface {
 class Class {
     [NoMainThreadDependency]
     async Task OperationAsync([NoMainThreadDependency] IInterface obj) {
-        await obj.MethodAsync();
+        await obj.MethodAsync().ConfigureAwait(false);
     }
 }
 " + NoMainThreadDependencyAttribute.CSharp;

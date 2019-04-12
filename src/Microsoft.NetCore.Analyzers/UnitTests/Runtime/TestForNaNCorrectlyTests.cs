@@ -476,10 +476,12 @@ public class A
             VerifyCSharp(code, GetCSharpResultAt(8, 15));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/11741")]
+        [Fact]
         public void CSharpDiagnosticForComparisonWithNaNInCatchFilterClause()
         {
             var code = @"
+using System;
+
 public class A
 {
     float _n = 42.0F;
@@ -495,7 +497,7 @@ public class A
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(11, 36));
+            VerifyCSharp(code, GetCSharpResultAt(13, 36));
         }
 
         [Fact]

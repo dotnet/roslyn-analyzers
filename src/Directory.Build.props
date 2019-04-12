@@ -3,9 +3,6 @@
   <Import Project="..\Directory.Build.props"/>
 
   <PropertyGroup>
-    <!-- TODO: Remove suppressions of Xunit warnings: https://github.com/dotnet/roslyn-analyzers/issues/1257 -->
-    <NoWarn>$(NoWarn);xUnit1004;xUnit2000;xUnit2003;xUnit2004;xUnit2009;xUnit2010;xUnit1013</NoWarn>
-
     <!-- Enable flow-analysis feature flag (can be removed when we move to Microsoft.CodeAnalysis 3.0 or larger) -->
     <Features>$(Features);flow-analysis</Features>
 

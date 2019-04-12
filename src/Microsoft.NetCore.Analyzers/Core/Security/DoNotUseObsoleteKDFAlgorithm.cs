@@ -59,6 +59,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                             WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
                             out INamedTypeSymbol rfc2898DeriveBytesTypeSymbol);
 
+                if (passwordDeriveBytesTypeSymbol == null && rfc2898DeriveBytesTypeSymbol == null)
+                {
+                    return;
+                }
+
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
                     var operation = operationAnalysisContext.Operation;
@@ -66,11 +71,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var typeSymbol = methodSymbol.ContainingType;
                     var methodName = methodSymbol.MethodKind == MethodKind.Constructor ? typeSymbol.Name : methodSymbol.Name;
 
-                    if ((passwordDeriveBytesTypeSymbol != null &&
-                         typeSymbol.Equals(passwordDeriveBytesTypeSymbol)) ||
-                        (rfc2898DeriveBytesTypeSymbol != null &&
-                         typeSymbol.Equals(rfc2898DeriveBytesTypeSymbol) &&
-                         methodSymbol.Name == "CryptDeriveKey"))
+                    if (typeSymbol.Equals(passwordDeriveBytesTypeSymbol) ||
+                        typeSymbol.Equals(rfc2898DeriveBytesTypeSymbol) &&
+                        methodSymbol.Name == "CryptDeriveKey")
                     {
                         operationAnalysisContext.ReportDiagnostic(
                             operation.CreateDiagnostic(

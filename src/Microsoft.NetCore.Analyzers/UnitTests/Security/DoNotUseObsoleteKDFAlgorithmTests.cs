@@ -17,13 +17,12 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(string password, byte[] salt)
+    public void TestMethod(PasswordDeriveBytes passwordDeriveBytes)
     {
-        new PasswordDeriveBytes(password, salt).GetBytes(1);
+        passwordDeriveBytes.GetBytes(1);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "GetBytes"),
-            GetCSharpResultAt(9, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "PasswordDeriveBytes"));
+            GetCSharpResultAt(9, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "GetBytes"));
         }
 
         [Fact]
@@ -59,9 +58,9 @@ class DerivedClass : PasswordDeriveBytes
 
 class TestClass
 {
-    public void TestMethod(string password, byte[] salt, string algname, string alghashname, int keySize, byte[] rgbIV)
+    public void TestMethod(DerivedClass derivedClass, string algname, string alghashname, int keySize, byte[] rgbIV)
     {
-        new DerivedClass(password, salt).CryptDeriveKey(algname, alghashname, keySize, rgbIV);
+        derivedClass.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
 }",
             GetCSharpResultAt(7, 55, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "PasswordDeriveBytes"),
@@ -77,9 +76,9 @@ using System.Security.Cryptography;
 
 class TestClass
 {
-    public void TestMethod(string password, byte[] salt, string algname, string alghashname, int keySize, byte[] rgbIV)
+    public void TestMethod(Rfc2898DeriveBytes rfc2898DeriveBytes, string algname, string alghashname, int keySize, byte[] rgbIV)
     {
-        new Rfc2898DeriveBytes(password, salt).CryptDeriveKey(algname, alghashname, keySize, rgbIV);
+        rfc2898DeriveBytes.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
 }",
             GetCSharpResultAt(9, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "Rfc2898DeriveBytes", "CryptDeriveKey"));
@@ -101,16 +100,32 @@ class DerivedClass : Rfc2898DeriveBytes
 
 class TestClass
 {
-    public void TestMethod(string password, byte[] salt, string algname, string alghashname, int keySize, byte[] rgbIV)
+    public void TestMethod(DerivedClass derivedClass, string algname, string alghashname, int keySize, byte[] rgbIV)
     {
-        new DerivedClass(password, salt).CryptDeriveKey(algname, alghashname, keySize, rgbIV);
+        derivedClass.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
 }",
             GetCSharpResultAt(16, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "Rfc2898DeriveBytes", "CryptDeriveKey"));
         }
 
         [Fact]
-        public void TestNormalMethodOfRfc2898DeriveBytesDiagnostic()
+        public void TestNormalMethodOfRfc2898DeriveBytesNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(Rfc2898DeriveBytes rfc2898DeriveBytes)
+    {
+        rfc2898DeriveBytes.GetBytes(1);
+    }
+}");
+        }
+
+        [Fact]
+        public void TestConstructorOfRfc2898DeriveBytesNoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -120,7 +135,7 @@ class TestClass
 {
     public void TestMethod(string password, byte[] salt)
     {
-        new Rfc2898DeriveBytes(password, salt).GetBytes(1);
+        new Rfc2898DeriveBytes(password, salt);
     }
 }");
         }

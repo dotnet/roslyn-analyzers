@@ -74,6 +74,12 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
             }
 
+            if (valueThreadDependencyInfo.MayDirectlyRequireMainThread && !threadDependencyInfo.MayDirectlyRequireMainThread)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+                return;
+            }
+
             if (valueThreadDependencyInfo.PerInstance && !threadDependencyInfo.PerInstance)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));

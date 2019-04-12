@@ -62,6 +62,28 @@ class Class {
         }
 
         [Fact]
+        public async Task IncorrectUseOfUnrestrictedAsynchronousMethodWhenCallerCapturesContext()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface IInterface {
+    Task MethodAsync();
+}
+
+class Class {
+    [NoMainThreadDependency(CapturesContext = true)]
+    async Task OperationAsync(IInterface obj) {
+        [|await obj.MethodAsync()|];
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyAnalyzerAsync(code);
+        }
+
+        [Fact]
         public async Task CorrectUseOfContextCapturingAsynchronousMethod()
         {
             var code = @"

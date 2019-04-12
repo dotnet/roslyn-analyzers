@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -10,7 +8,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics.UnitTests
 {
-    public class CodeMetricsAnalyzerTests : CodeFixTestBase
+    public class CodeMetricsAnalyzerTests : DiagnosticAnalyzerTestBase
     {
         #region CA1501: Avoid excessive inheritance
 
@@ -637,16 +635,6 @@ CA 1501: 10
         #endregion
 
         #region Helpers
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return null;
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return null;
-        }
-
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new CodeMetricsAnalyzer();

@@ -4,6 +4,12 @@ using Microsoft.NetCore.CSharp.Analyzers.Runtime;
 using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDoNotUseTimersThatPreventPowerStateChangesAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDoNotUseTimersThatPreventPowerStateChangesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDoNotUseTimersThatPreventPowerStateChangesAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDoNotUseTimersThatPreventPowerStateChangesFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {

@@ -4,6 +4,12 @@ using Microsoft.NetCore.CSharp.Analyzers.InteropServices;
 using Microsoft.NetCore.VisualBasic.Analyzers.InteropServices;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.CSharp.Analyzers.InteropServices.CSharpMarkBooleanPInvokeArgumentsWithMarshalAsAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.InteropServices.CSharpMarkBooleanPInvokeArgumentsWithMarshalAsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.VisualBasic.Analyzers.InteropServices.BasicMarkBooleanPInvokeArgumentsWithMarshalAsAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.InteropServices.BasicMarkBooleanPInvokeArgumentsWithMarshalAsFixer>;
 
 namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
 {

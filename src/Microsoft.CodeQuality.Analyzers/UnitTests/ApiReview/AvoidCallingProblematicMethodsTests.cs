@@ -4,6 +4,12 @@ using Microsoft.CodeQuality.CSharp.Analyzers.ApiReview;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiReview;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiReview.CSharpAvoidCallingProblematicMethodsAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiReview.CSharpAvoidCallingProblematicMethodsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiReview.BasicAvoidCallingProblematicMethodsAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiReview.BasicAvoidCallingProblematicMethodsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiReview.UnitTests
 {

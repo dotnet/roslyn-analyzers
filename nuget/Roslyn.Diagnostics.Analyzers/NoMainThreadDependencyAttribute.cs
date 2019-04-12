@@ -23,6 +23,13 @@ namespace Roslyn.Utilities
         public bool CapturesContext { get; set; }
 
         /// <summary>
+        /// <para>Gets or sets a value indicating whether the dependency claim applies only when the target instance of
+        /// the operation is marked as not having a main thread dependency.</para>
+        /// <para>The default value is <see langword="false"/>.</para>
+        /// </summary>
+        public bool PerInstance { get; set; }
+
+        /// <summary>
         /// <para>Gets or sets a value indicating whether the dependency claim has been verified against the signatures
         /// and contracts of referenced code.</para>
         /// <para>The default value is <see langword="true"/>.</para>

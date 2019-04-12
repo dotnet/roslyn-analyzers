@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -46,7 +47,19 @@ namespace Roslyn.Diagnostics.Analyzers
             => GetThreadDependencyInfo(symbol.GetAttributes(), in GetDefaultThreadDependencyInfo(symbol));
 
         protected ThreadDependencyInfo GetThreadDependencyInfoForReturn(IMethodSymbol symbol)
-            => GetThreadDependencyInfo(symbol.GetReturnTypeAttributes(), in GetDefaultThreadDependencyInfo(symbol.ReturnType));
+        {
+            var result = GetThreadDependencyInfo(symbol.GetReturnTypeAttributes(), in GetDefaultThreadDependencyInfo(symbol.ReturnType));
+            if (!result.IsExplicit)
+            {
+                var alternateResult = GetThreadDependencyInfo(symbol);
+                if (alternateResult.IsExplicit)
+                {
+                    return alternateResult;
+                }
+            }
+
+            return result;
+        }
 
         private ref readonly ThreadDependencyInfo GetDefaultThreadDependencyInfo(ISymbol symbol)
         {
@@ -105,6 +118,9 @@ namespace Roslyn.Diagnostics.Analyzers
                                 break;
                             case "CapturesContext":
                                 capturesContext = (namedArgument.Value.Value as bool?) ?? capturesContext;
+                                break;
+                            case "PerInstance":
+                                perInstance = (namedArgument.Value.Value as bool?) ?? perInstance;
                                 break;
                             case "Verified":
                                 verified = (namedArgument.Value.Value as bool?) ?? verified;
@@ -167,14 +183,65 @@ namespace Roslyn.Diagnostics.Analyzers
                 Verified = verified;
             }
 
+            /// <summary>
+            /// Gets a value indicating whether the allowed thread dependencies are explicitly stated.
+            /// </summary>
             public bool IsExplicit { get; }
+
+            /// <summary>
+            /// Gets a value indicating whether this method (or a method it calls) is allowed to explicitly switch to
+            /// the main thread.
+            /// </summary>
             public bool MayDirectlyRequireMainThread { get; }
+
+            /// <summary>
+            /// Gets a value indicating whether the asynchronous result is always completed.
+            /// </summary>
             public bool AlwaysCompleted { get; }
+
+            /// <summary>
+            /// Gets a value indicating whether the declared threading dependencies apply per instance.
+            /// </summary>
             public bool PerInstance { get; }
+
+            /// <summary>
+            /// Gets a value indicating whether the method is allowed to capture the current
+            /// <see cref="SynchronizationContext"/> as part of a continuation.
+            /// </summary>
             public bool CapturesContext { get; }
+
+            /// <summary>
+            /// Gets a value indicating whether the dependency claims are verified.
+            /// </summary>
             public bool Verified { get; }
 
+            /// <summary>
+            /// Gets a value indicating whether the method is allowed to directly or indirectly rely on the main thread
+            /// for completion.
+            /// </summary>
             public bool MayHaveMainThreadDependency => MayDirectlyRequireMainThread || CapturesContext;
+
+            internal ThreadDependencyInfo WithPerInstance(bool value)
+            {
+                return new ThreadDependencyInfo(
+                    isExplicit: IsExplicit,
+                    mayDirectlyRequireMainThread: MayDirectlyRequireMainThread,
+                    alwaysCompleted: AlwaysCompleted,
+                    perInstance: value,
+                    capturesContext: CapturesContext,
+                    verified: Verified);
+            }
+
+            internal ThreadDependencyInfo WithCapturesContext(bool value)
+            {
+                return new ThreadDependencyInfo(
+                    isExplicit: IsExplicit,
+                    mayDirectlyRequireMainThread: MayDirectlyRequireMainThread,
+                    alwaysCompleted: AlwaysCompleted,
+                    perInstance: PerInstance,
+                    capturesContext: value,
+                    verified: Verified);
+            }
         }
     }
 }

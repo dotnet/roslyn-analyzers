@@ -173,10 +173,7 @@ public class Class1
             GetCA1821CSharpResultAt(11, 3));
         }
 
-        // Unskip the test once we move to Microsoft.CodeAnalysis version >= 2.7
-        // as we need the fix for https://github.com/dotnet/roslyn/issues/26520
-        // for the analyzer to report a diagnostic here.
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1788"), WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFail_ExpressionBody()
         {
             VerifyCSharp(@"
@@ -415,7 +412,7 @@ public class Class1
                 GetCA1821CSharpResultAt(4, 6));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1788"), WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithThrowExpression()
         {
             VerifyCSharp(@"

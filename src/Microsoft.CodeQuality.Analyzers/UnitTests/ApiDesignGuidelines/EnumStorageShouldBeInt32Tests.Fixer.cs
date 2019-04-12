@@ -1,45 +1,27 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumStorageShouldBeInt32Analyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpEnumStorageShouldBeInt32Fixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumStorageShouldBeInt32Analyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicEnumStorageShouldBeInt32Fixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class EnumStorageShouldBeInt32FixerTests : CodeFixTestBase
+    public class EnumStorageShouldBeInt32FixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new EnumStorageShouldBeInt32Analyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new EnumStorageShouldBeInt32Analyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicEnumStorageShouldBeInt32Fixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpEnumStorageShouldBeInt32Fixer();
-        }
-
         #region CSharpUnitTests
         [Fact]
-        public void CSharp_CA1028_TestFixForEnumTypeIsLongWithNoTrivia()
+        public async Task CSharp_CA1028_TestFixForEnumTypeIsLongWithNoTrivia()
         {
             var code = @"
 using System;
 namespace Test
 {
-    public enum TestEnum1: long
+    public enum [|TestEnum1|]: long
     {
         Value1 = 1,
         Value2 = 2
@@ -57,17 +39,17 @@ namespace Test
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void CSharp_CA1028_TestFixForEnumTypeIsLongWithTrivia()
+        public async Task CSharp_CA1028_TestFixForEnumTypeIsLongWithTrivia()
         {
             var code = @"
 using System;
 namespace Test
 {
-    public enum TestEnum1: long // with trivia
+    public enum [|TestEnum1|]: long // with trivia
     {
         Value1 = 1,
         Value2 = 2
@@ -85,19 +67,19 @@ namespace Test
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
         #endregion
 
         #region BasicUnitTests
 
         [Fact]
-        public void Basic_CA1028_TestFixForEnumTypeIsLongWithNoTrivia()
+        public async Task Basic_CA1028_TestFixForEnumTypeIsLongWithNoTrivia()
         {
             var code = @"
 Imports System
 Public Module Module1
-    Public Enum TestEnum1 As Long
+    Public Enum [|TestEnum1|] As Long
         Value1 = 1
         Value2 = 2
     End Enum
@@ -112,16 +94,16 @@ Public Module Module1
     End Enum
 End Module
 ";
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void Basic_CA1028_TestFixForEnumTypeIsLongWithTrivia()
+        public async Task Basic_CA1028_TestFixForEnumTypeIsLongWithTrivia()
         {
             var code = @"
 Imports System
 Public Module Module1
-    Public Enum TestEnum1 As Long 'with trivia 
+    Public Enum [|TestEnum1|] As Long 'with trivia 
         Value1 = 1
         Value2 = 2
     End Enum
@@ -136,7 +118,7 @@ Public Module Module1
     End Enum
 End Module
 ";
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
 
         #endregion

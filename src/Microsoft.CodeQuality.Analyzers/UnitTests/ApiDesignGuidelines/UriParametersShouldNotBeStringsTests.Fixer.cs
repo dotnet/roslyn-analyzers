@@ -1,9 +1,16 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UriParametersShouldNotBeStringsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UriParametersShouldNotBeStringsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UriParametersShouldNotBeStringsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UriParametersShouldNotBeStringsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -30,14 +37,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public void CA1054WarningWithUrl()
+        public async Task CA1054WarningWithUrl()
         {
             var code = @"
 using System;
 
 public class A
 {
-    public static void Method(string url) { }
+    public static void Method(string [|url|]) { }
 }
 ";
 
@@ -55,7 +62,7 @@ public class A
 }
 ";
 
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
@@ -109,7 +116,7 @@ public class A
 }
 ";
 
-            VerifyCSharpFix(code, fixAllSequentially, onlyFixFirstFixableDiagnostic: false, testFixAllScope: null);
+            VerifyCSharpFix(code, fixAllSequentially, onlyFixFirstFixableDiagnostic: false);
         }
 
         [Fact]
@@ -144,18 +151,18 @@ public class A
     }
 }
 ";
-            VerifyCSharpFix(code, fix, testFixAllScope: null);
+            VerifyCSharpFix(code, fix);
         }
 
         [Fact]
-        public void CA1054WarningVB()
+        public async Task CA1054WarningVB()
         {
             // C# and VB shares same implementation. so just one vb test
             var code = @"
 Imports System
 
 Public Class A
-    Public Sub Method(firstUri As String)
+    Public Sub Method([|firstUri|] As String)
     End Sub
 End Class
 ";
@@ -172,7 +179,7 @@ Public Class A
 End Class
 ";
 
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
     }
 }

@@ -769,7 +769,7 @@ Class B
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1654"), WorkItem(1654, "https://github.com/dotnet/roslyn-analyzers/issues/1654")]
+        [Fact, WorkItem(1654, "https://github.com/dotnet/roslyn-analyzers/issues/1654")]
         public void BaseDisposeCalls_SomePaths_Diagnostic()
         {
             VerifyCSharp(@"

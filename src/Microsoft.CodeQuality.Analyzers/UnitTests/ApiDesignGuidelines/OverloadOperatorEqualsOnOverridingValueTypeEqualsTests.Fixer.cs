@@ -1,31 +1,26 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverloadOperatorEqualsOnOverridingValueTypeEqualsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverloadOperatorEqualsOnOverridingValueTypeEqualsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class OverloadOperatorEqualsOnOverridingValueTypeEqualsTests : CodeFixTestBase
+    public partial class OverloadOperatorEqualsOnOverridingValueTypeEqualsTests
     {
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new OverloadOperatorEqualsOnOverridingValueTypeEqualsFixer();
-        }
-
         [Fact]
-        public void CA2231CSharpCodeFixNoEqualsOperator()
+        public async Task CA2231CSharpCodeFixNoEqualsOperator()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 // value type without overriding Equals
-public struct A
+public struct [|A|]
 {    
     public override bool Equals(Object obj)
     {
@@ -54,20 +49,16 @@ public struct A
         return !(left == right);
     }
 }
-",
-
-                // This fix introduces the compiler warning:
-                // Test0.cs(5,15): warning CS0661: 'A' defines operator == or operator != but does not override Object.GetHashCode()
-                allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
-        public void CA2231BasicCodeFixNoEqualsOperator()
+        public async Task CA2231BasicCodeFixNoEqualsOperator()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
-Public Structure A
+Public Structure [|A|]
     Public Overloads Overrides Function Equals(obj As Object) As Boolean
         Return True
     End Function

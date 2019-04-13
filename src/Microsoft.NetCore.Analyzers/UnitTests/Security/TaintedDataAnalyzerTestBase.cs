@@ -22,8 +22,8 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             this.PrintActualDiagnosticsOnFailure = true;
             return GetCSharpResultAt(
                 new[] {
-                    Tuple.Create(sinkLine, sinkColumn),
-                    Tuple.Create(sourceLine, sourceColumn)
+                    (sinkLine, sinkColumn),
+                    (sourceLine, sourceColumn)
                 },
                 this.Rule,
                 sink,
@@ -48,8 +48,8 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             this.PrintActualDiagnosticsOnFailure = true;
             return GetBasicResultAt(
                 new[] {
-                    Tuple.Create(sinkLine, sinkColumn),
-                    Tuple.Create(sourceLine, sourceColumn)
+                    (sinkLine, sinkColumn),
+                    (sourceLine, sourceColumn)
                 },
                 this.Rule,
                 sink,

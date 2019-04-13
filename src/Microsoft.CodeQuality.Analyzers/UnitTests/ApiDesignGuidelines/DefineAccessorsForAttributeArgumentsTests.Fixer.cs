@@ -1,27 +1,24 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpDefineAccessorsForAttributeArgumentsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DefineAccessorsForAttributeArgumentsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicDefineAccessorsForAttributeArgumentsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DefineAccessorsForAttributeArgumentsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class DefineAccessorsForAttributeArgumentsTests : CodeFixTestBase
+    public partial class DefineAccessorsForAttributeArgumentsTests
     {
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new DefineAccessorsForAttributeArgumentsFixer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new DefineAccessorsForAttributeArgumentsFixer();
-        }
-
         [Fact]
-        public void CSharp_CA1019_AddAccessor()
+        public async Task CSharp_CA1019_AddAccessor()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -33,7 +30,9 @@ public sealed class NoAccessorTestAttribute : Attribute
     {
         m_name = name;
     }
-}", @"
+}",
+                VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.DefaultRule).WithSpan(9, 43, 9, 47).WithArguments("name", "NoAccessorTestAttribute"),
+@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -51,9 +50,15 @@ public sealed class NoAccessorTestAttribute : Attribute
         }
 
         [Fact]
-        public void CSharp_CA1019_AddAccessor1()
+        public async Task CSharp_CA1019_AddAccessor1()
         {
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -70,7 +75,19 @@ public sealed class SetterOnlyTestAttribute : Attribute
     { 
         set { m_name = value; }
     }
-}", @"
+}",
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.DefaultRule).WithSpan(9, 43, 9, 47).WithArguments("name", "SetterOnlyTestAttribute"),
+                        VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterRule).WithSpan(16, 9, 16, 12).WithArguments("Name", "name"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -92,13 +109,17 @@ public sealed class SetterOnlyTestAttribute : Attribute
             throw new NotImplementedException();
         }
     }
-}", allowNewCompilerDiagnostics: true, testFixAllScope: null);
+}",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void CSharp_CA1019_MakeGetterPublic()
+        public async Task CSharp_CA1019_MakeGetterPublic()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -116,7 +137,9 @@ public sealed class InternalGetterTestAttribute : Attribute
         get { return m_name; }
         set { m_name = value; }
     }
-}", @"
+}",
+                VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.IncreaseVisibilityRule).WithSpan(16, 9, 16, 12).WithArguments("Name", "name"),
+@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -139,9 +162,9 @@ public sealed class InternalGetterTestAttribute : Attribute
         }
 
         [Fact]
-        public void CSharp_CA1019_MakeGetterPublic2()
+        public async Task CSharp_CA1019_MakeGetterPublic2()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -159,7 +182,9 @@ public sealed class InternalGetterTestAttribute : Attribute
         get { return m_name; }
         set { m_name = value; }
     }
-}", @"
+}",
+                VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.IncreaseVisibilityRule).WithSpan(16, 9, 16, 12).WithArguments("Name", "name"),
+@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -182,9 +207,9 @@ public sealed class InternalGetterTestAttribute : Attribute
         }
 
         [Fact]
-        public void CSharp_CA1019_MakeGetterPublic3()
+        public async Task CSharp_CA1019_MakeGetterPublic3()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -201,7 +226,9 @@ public sealed class InternalGetterTestAttribute : Attribute
     {
         get { return m_name; }
     }
-}", @"
+}",
+                VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.IncreaseVisibilityRule).WithSpan(16, 9, 16, 12).WithArguments("Name", "name"),
+@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -222,9 +249,9 @@ public sealed class InternalGetterTestAttribute : Attribute
         }
 
         [Fact]
-        public void CSharp_CA1019_MakeSetterInternal()
+        public async Task CSharp_CA1019_MakeSetterInternal()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -242,7 +269,9 @@ public sealed class PublicSetterTestAttribute : Attribute
         get { return m_name; }
         set { m_name = value; }
     }
-}", @"
+}",
+                VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterRule).WithSpan(17, 9, 17, 12).WithArguments("Name", "name"),
+@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -265,9 +294,9 @@ public sealed class PublicSetterTestAttribute : Attribute
         }
 
         [Fact]
-        public void VisualBasic_CA1019_AddAccessor()
+        public async Task VisualBasic_CA1019_AddAccessor()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -278,7 +307,9 @@ Public NotInheritable Class NoAccessorTestAttribute
     Public Sub New(name As String)
         m_name = name
     End Sub
-End Class", @"
+End Class",
+                VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.DefaultRule).WithSpan(9, 20, 9, 24).WithArguments("name", "NoAccessorTestAttribute"),
+@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -294,13 +325,19 @@ Public NotInheritable Class NoAccessorTestAttribute
         Get
         End Get
     End Property
-End Class", allowNewCompilerDiagnostics: true);
+End Class");
         }
 
         [Fact]
-        public void VisualBasic_CA1019_AddAccessor2()
+        public async Task VisualBasic_CA1019_AddAccessor2()
         {
-            VerifyBasicFix(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -317,7 +354,18 @@ Public NotInheritable Class SetterOnlyTestAttribute
             m_name = value
         End Set
     End Property
-End Class", @"
+End Class",
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.DefaultRule).WithSpan(9, 20, 9, 24).WithArguments("name", "SetterOnlyTestAttribute"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -337,13 +385,24 @@ Public NotInheritable Class SetterOnlyTestAttribute
             Throw New NotImplementedException()
         End Get
     End Property
-End Class", allowNewCompilerDiagnostics: true, testFixAllScope: null);
+End Class",
+                    },
+                },
+                NumberOfIncrementalIterations = 2,
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void VisualBasic_CA1019_MakeGetterPublic()
+        public async Task VisualBasic_CA1019_MakeGetterPublic()
         {
-            VerifyBasicFix(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -363,7 +422,19 @@ Public NotInheritable Class InternalGetterTestAttribute
             m_name = value
         End Set
     End Property
-End Class", @"
+End Class",
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.IncreaseVisibilityRule).WithSpan(14, 16, 14, 19).WithArguments("Name", "name"),
+                        VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterRule).WithSpan(17, 9, 17, 12).WithArguments("Name", "name"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -383,13 +454,17 @@ Public NotInheritable Class InternalGetterTestAttribute
             m_name = value
         End Set
     End Property
-End Class", allowNewCompilerDiagnostics: true, testFixAllScope: null);
+End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void VisualBasic_CA1019_MakeGetterPublic2()
+        public async Task VisualBasic_CA1019_MakeGetterPublic2()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -409,7 +484,9 @@ Public NotInheritable Class InternalGetterTestAttribute
             m_name = value
         End Set
     End Property
-End Class", @"
+End Class",
+                VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.IncreaseVisibilityRule).WithSpan(14, 9, 14, 12).WithArguments("Name", "name"),
+@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -429,13 +506,13 @@ Public NotInheritable Class InternalGetterTestAttribute
             m_name = value
         End Set
     End Property
-End Class", allowNewCompilerDiagnostics: true);
+End Class");
         }
 
         [Fact]
-        public void VisualBasic_CA1019_MakeGetterPublic3()
+        public async Task VisualBasic_CA1019_MakeGetterPublic3()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -452,7 +529,9 @@ Public NotInheritable Class InternalGetterTestAttribute
             Return m_name
         End Get
     End Property
-End Class", @"
+End Class",
+                VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.IncreaseVisibilityRule).WithSpan(14, 9, 14, 12).WithArguments("Name", "name"),
+@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -469,13 +548,13 @@ Public NotInheritable Class InternalGetterTestAttribute
             Return m_name
         End Get
     End Property
-End Class", allowNewCompilerDiagnostics: true);
+End Class");
         }
 
         [Fact]
-        public void VisualBasic_CA1019_MakeSetterInternal()
+        public async Task VisualBasic_CA1019_MakeSetterInternal()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -495,7 +574,9 @@ Public NotInheritable Class PublicSetterTestAttribute
             m_name = value
         End Set
     End Property
-End Class", @"
+End Class",
+                VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterRule).WithSpan(17, 9, 17, 12).WithArguments("Name", "name"),
+@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -515,7 +596,7 @@ Public NotInheritable Class PublicSetterTestAttribute
             m_name = value
         End Set
     End Property
-End Class", allowNewCompilerDiagnostics: true);
+End Class");
         }
     }
 }

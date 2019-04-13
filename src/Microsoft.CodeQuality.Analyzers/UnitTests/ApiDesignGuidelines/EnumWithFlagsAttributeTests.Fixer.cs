@@ -1,39 +1,26 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumWithFlagsAttributeAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumWithFlagsAttributeFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumWithFlagsAttributeAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EnumWithFlagsAttributeFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class EnumWithFlagsAttributeFixerTests : CodeFixTestBase
+    public class EnumWithFlagsAttributeFixerTests
     {
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new EnumWithFlagsAttributeFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new EnumWithFlagsAttributeAnalyzer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new EnumWithFlagsAttributeFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new EnumWithFlagsAttributeAnalyzer();
-        }
-
         [Fact]
-        public void CSharp_EnumWithFlagsAttributes_SimpleCase()
+        public async Task CSharp_EnumWithFlagsAttributes_SimpleCase()
         {
             var code = @"
-public enum SimpleFlagsEnumClass
+public enum {|CA1027:SimpleFlagsEnumClass|}
 {
     Zero = 0,
     One = 1,
@@ -41,7 +28,7 @@ public enum SimpleFlagsEnumClass
     Four = 4
 }
 
-public enum HexFlagsEnumClass
+public enum {|CA1027:HexFlagsEnumClass|}
 {
     One = 0x1,
     Two = 0x2,
@@ -69,21 +56,21 @@ public enum HexFlagsEnumClass
 }";
 
             // Verify fixes for CA1027
-            VerifyCSharpFix(code, expected);
+            await VerifyCS.VerifyCodeFixAsync(code, expected);
         }
 
         [Fact]
-        public void VisualBasic_EnumWithFlagsAttributes_SimpleCase()
+        public async Task VisualBasic_EnumWithFlagsAttributes_SimpleCase()
         {
             var code = @"
-Public Enum SimpleFlagsEnumClass
+Public Enum {|CA1027:SimpleFlagsEnumClass|}
     Zero = 0
     One = 1
     Two = 2
     Four = 4
 End Enum
 
-Public Enum HexFlagsEnumClass
+Public Enum {|CA1027:HexFlagsEnumClass|}
     One = &H1
     Two = &H2
     Four = &H4
@@ -108,14 +95,14 @@ Public Enum HexFlagsEnumClass
 End Enum";
 
             // Verify fixes for CA1027
-            VerifyBasicFix(code, expected);
+            await VerifyVB.VerifyCodeFixAsync(code, expected);
         }
 
         [Fact]
-        public void CSharp_EnumWithFlagsAttributes_DuplicateValues()
+        public async Task CSharp_EnumWithFlagsAttributes_DuplicateValues()
         {
             string code = @"
-public enum DuplicateValuesEnumClass
+public enum {|CA1027:DuplicateValuesEnumClass|}
 {
     Zero = 0,
     One = 1,
@@ -140,14 +127,14 @@ public enum DuplicateValuesEnumClass
 ";
 
             // Verify fixes for CA1027
-            VerifyCSharpFix(code, expected);
+            await VerifyCS.VerifyCodeFixAsync(code, expected);
         }
 
         [Fact]
-        public void VisualBasic_EnumWithFlagsAttributes_DuplicateValues()
+        public async Task VisualBasic_EnumWithFlagsAttributes_DuplicateValues()
         {
             string code = @"
-Public Enum DuplicateValuesEnumClass
+Public Enum {|CA1027:DuplicateValuesEnumClass|}
     Zero = 0
     One = 1
     Two = 2
@@ -170,14 +157,14 @@ End Enum
 ";
 
             // Verify fixes for CA1027
-            VerifyBasicFix(code, expected);
+            await VerifyVB.VerifyCodeFixAsync(code, expected);
         }
 
         [Fact]
-        public void CSharp_EnumWithFlagsAttributes_MissingPowerOfTwo()
+        public async Task CSharp_EnumWithFlagsAttributes_MissingPowerOfTwo()
         {
             string code = @"
-public enum MissingPowerOfTwoEnumClass
+public enum {|CA1027:MissingPowerOfTwoEnumClass|}
 {
     Zero = 0,
     One = 1,
@@ -186,7 +173,7 @@ public enum MissingPowerOfTwoEnumClass
     Sixteen = 16
 }
 
-public enum MultipleMissingPowerOfTwoEnumClass
+public enum {|CA1027:MultipleMissingPowerOfTwoEnumClass|}
 {
     Zero = 0,
     One = 1,
@@ -217,15 +204,15 @@ public enum MultipleMissingPowerOfTwoEnumClass
 }";
 
             // Verify fixes for CA1027
-            VerifyCSharpFix(code, expected);
+            await VerifyCS.VerifyCodeFixAsync(code, expected);
         }
 
         [Fact]
-        public void CSharp_EnumWithFlagsAttributes_IncorrectNumbers()
+        public async Task CSharp_EnumWithFlagsAttributes_IncorrectNumbers()
         {
             string code = @"
 [System.Flags]
-public enum AnotherTestValue
+public enum {|CA2217:AnotherTestValue|}
 {
     Value1 = 0,
     Value2 = 1,
@@ -243,14 +230,14 @@ public enum AnotherTestValue
 }";
 
             // Verify fixes for CA2217
-            VerifyCSharpFix(code, expected);
+            await VerifyCS.VerifyCodeFixAsync(code, expected);
         }
 
         [Fact]
-        public void VisualBasic_EnumWithFlagsAttributes_MissingPowerOfTwo()
+        public async Task VisualBasic_EnumWithFlagsAttributes_MissingPowerOfTwo()
         {
             string code = @"
-Public Enum MissingPowerOfTwoEnumClass
+Public Enum {|CA1027:MissingPowerOfTwoEnumClass|}
 	Zero = 0
 	One = 1
 	Two = 2
@@ -258,7 +245,7 @@ Public Enum MissingPowerOfTwoEnumClass
 	Sixteen = 16
 End Enum
 
-Public Enum MultipleMissingPowerOfTwoEnumClass
+Public Enum {|CA1027:MultipleMissingPowerOfTwoEnumClass|}
 	Zero = 0
 	One = 1
 	Two = 2
@@ -288,15 +275,15 @@ End Enum
 ";
 
             // Verify fixes for CA1027
-            VerifyBasicFix(code, expected);
+            await VerifyVB.VerifyCodeFixAsync(code, expected);
         }
 
         [Fact]
-        public void VisualBasic_EnumWithFlagsAttributes_IncorrectNumber()
+        public async Task VisualBasic_EnumWithFlagsAttributes_IncorrectNumber()
         {
             string code = @"
 <System.Flags>
-Public Enum AnotherTestValue
+Public Enum {|CA2217:AnotherTestValue|}
 	Value1 = 0
 	Value2 = 1
 	Value3 = 1
@@ -314,7 +301,7 @@ End Enum
 ";
 
             // Verify fixes for CA2217
-            VerifyBasicFix(code, expected);
+            await VerifyVB.VerifyCodeFixAsync(code, expected);
         }
     }
 }

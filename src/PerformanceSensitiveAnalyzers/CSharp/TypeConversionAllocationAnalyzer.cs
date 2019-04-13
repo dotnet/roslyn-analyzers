@@ -15,6 +15,7 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
         public const string ValueTypeToReferenceTypeConversionRuleId = "HAA0601";
         public const string DelegateOnStructInstanceRuleId = "HAA0602";
         public const string MethodGroupAllocationRuleId = "HAA0603";
+        // HeapAnalyzerReadonlyMethodGroupAllocationRule [sic] is retired and should not be reused
 
         private static readonly LocalizableString s_localizableValueTypeToReferenceTypeConversionRuleTitle = new LocalizableResourceString(nameof(AnalyzersResources.ValueTypeToReferenceTypeConversionRuleTitle), AnalyzersResources.ResourceManager, typeof(AnalyzersResources));
         private static readonly LocalizableString s_localizableValueTypeToReferenceTypeConversionRuleMessage = new LocalizableResourceString(nameof(AnalyzersResources.ValueTypeToReferenceTypeConversionRuleMessage), AnalyzersResources.ResourceManager, typeof(AnalyzersResources));
@@ -65,7 +66,10 @@ namespace Microsoft.CodeAnalysis.CSharp.PerformanceSensitiveAnalyzers
         {
             if (context.Operation is IDelegateCreationOperation delegateCreation)
             {
-                context.ReportDiagnostic(Diagnostic.Create(MethodGroupAllocationRule, context.Operation.Syntax.GetLocation(), EmptyMessageArgs));
+                if (delegateCreation.IsImplicit)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(MethodGroupAllocationRule, context.Operation.Syntax.GetLocation(), EmptyMessageArgs));
+                }
 
                 if (delegateCreation.Target is IMethodReferenceOperation methodReference &&
                     methodReference.Instance?.Type.IsValueType == true)

@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             return other != null &&
                 HandlingCatchRegionOpt == other.HandlingCatchRegionOpt &&
                 ContainingFinallyRegionOpt == other.ContainingFinallyRegionOpt &&
-                ExceptionType == other.ExceptionType &&
+                Equals(ExceptionType, other.ExceptionType) &&
                 InterproceduralCallStack.SequenceEqual(other.InterproceduralCallStack) &&
                 IsDefaultExceptionForExceptionsPathAnalysis == other.IsDefaultExceptionForExceptionsPathAnalysis;
         }

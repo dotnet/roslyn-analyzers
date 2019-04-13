@@ -382,7 +382,7 @@ namespace Microsoft.NetFramework.Analyzers
                 SyntaxNode node = objCreation.Syntax;
                 bool isXmlDocumentSecureResolver = false;
 
-                if (objCreation.Constructor.ContainingType != _xmlTypes.XmlDocument)
+                if (!Equals(objCreation.Constructor.ContainingType, _xmlTypes.XmlDocument))
                 {
                     isXmlDocumentSecureResolver = true;
                 }
@@ -456,7 +456,7 @@ namespace Microsoft.NetFramework.Analyzers
                     };
                 }
 
-                if (objCreation.Constructor.ContainingType != _xmlTypes.XmlTextReader)
+                if (!Equals(objCreation.Constructor.ContainingType, _xmlTypes.XmlTextReader))
                 {
                     env.IsDtdProcessingDisabled = true;
                     env.IsSecureResolver = true;

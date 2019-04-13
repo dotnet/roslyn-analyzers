@@ -1,49 +1,43 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer, // Diagnostic is from the compiler
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpOverrideEqualsOnOverloadingOperatorEqualsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicOverrideEqualsOnOverloadingOperatorEqualsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class OverrideEqualsOnOverloadingOperatorEqualsFixerTests : CodeFixTestBase
+    public class OverrideEqualsOnOverloadingOperatorEqualsFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            // Fixer fixes compiler diagnostics.
-            return null;
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicOverrideEqualsOnOverloadingOperatorEqualsFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpOverrideEqualsOnOverloadingOperatorEqualsFixer();
-        }
-
         [Fact]
-        public void CS0660()
+        public async Task CS0660()
         {
-            VerifyCSharpFix(@"
-class C
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+class {|CS0660:{|CS0661:C|}|}
 {
     public static bool operator ==(C c1, C c2) => true;
     public static bool operator !=(C c1, C c2) => false;
 }
 ",
-                @"
-class C
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
+class {|CS0659:{|CS0661:C|}|}
 {
     public static bool operator ==(C c1, C c2) => true;
     public static bool operator !=(C c1, C c2) => false;
@@ -64,26 +58,48 @@ class C
     }
 }
 ",
-                codeFixIndex: null,
-                allowNewCompilerDiagnostics: true);
+                    },
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                        compilationOptions = compilationOptions.WithGeneralDiagnosticOption(ReportDiagnostic.Error);
+                        return solution.WithProjectCompilationOptions(projectId, compilationOptions);
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void CS0660_Simplified()
+        public async Task CS0660_Simplified()
         {
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
-class C
+class {|CS0660:{|CS0661:C|}|}
 {
     public static bool operator ==(C c1, C c2) => true;
     public static bool operator !=(C c1, C c2) => false;
 }
 ",
-                @"
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
-class C
+class {|CS0659:{|CS0661:C|}|}
 {
     public static bool operator ==(C c1, C c2) => true;
     public static bool operator !=(C c1, C c2) => false;
@@ -104,15 +120,25 @@ class C
     }
 }
 ",
-                codeFixIndex: null,
-                allowNewCompilerDiagnostics: true);
+                    },
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                        compilationOptions = compilationOptions.WithGeneralDiagnosticOption(ReportDiagnostic.Error);
+                        return solution.WithProjectCompilationOptions(projectId, compilationOptions);
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA2224()
+        public async Task CA2224()
         {
-            VerifyBasicFix(@"
-Class C
+            await VerifyVB.VerifyCodeFixAsync(@"
+Class [|C|]
     Public Shared Operator =(c1 As C, c2 As C) As Boolean
         Return True
     End Operator
@@ -148,12 +174,12 @@ End Class
         }
 
         [Fact]
-        public void CA2224_Simplified()
+        public async Task CA2224_Simplified()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
-Class C
+Class [|C|]
     Public Shared Operator =(c1 As C, c2 As C) As Boolean
         Return True
     End Operator

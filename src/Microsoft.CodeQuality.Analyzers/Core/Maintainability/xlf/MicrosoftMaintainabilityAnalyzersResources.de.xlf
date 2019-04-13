@@ -33,12 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
-        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows:
-
-cyclomatic complexity = the number of edges - the number of nodes + 1
-
-where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="translated">Die zyklomatische Komplexität misst die Anzahl der linear unabhängigen Pfade über die Methode, die anhand der Anzahl und der Komplexität der Verbindungsverzweigung bestimmt wird. Geringe zyklomatische Komplexität deutet auf eine Methode hin, die einfach zu verstehen, zu testen und zu verwalten ist. Die zyklomatische Komplexität wird wie folgt über ein Diagramm der Methode zur Ablaufsteuerung berechnet:
+        <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
+        <target state="needs-review-translation">Die zyklomatische Komplexität misst die Anzahl der linear unabhängigen Pfade über die Methode, die anhand der Anzahl und der Komplexität der Verbindungsverzweigung bestimmt wird. Geringe zyklomatische Komplexität deutet auf eine Methode hin, die einfach zu verstehen, zu testen und zu verwalten ist. Die zyklomatische Komplexität wird wie folgt über ein Diagramm der Methode zur Ablaufsteuerung berechnet:
 
 zyklomatische Komplexität = die Anzahl der Edges – die Anzahl der Knoten + 1
 
@@ -71,9 +67,8 @@ Dabei ist ein Knoten ein logischer Verzweigungspunkt und ein Edge eine Zeile zwi
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
-        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method.
-A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="translated">Der Wartbarkeitsindex wird anhand der folgenden Metriken bestimmt: Codezeilen, Programmvolumen und zyklomatische Komplexität. Das Programmvolumen stellt eine Kennzahl für den Schwierigkeitsgrad für das Verstehen eines Symbols dar, die auf der Anzahl der Operatoren und Operanden im Code basiert. Die zyklomatische Komplexität ist eine Kennzahl für die Komplexität der Struktur des Typs oder der Methode.
+        <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
+        <target state="needs-review-translation">Der Wartbarkeitsindex wird anhand der folgenden Metriken bestimmt: Codezeilen, Programmvolumen und zyklomatische Komplexität. Das Programmvolumen stellt eine Kennzahl für den Schwierigkeitsgrad für das Verstehen eines Symbols dar, die auf der Anzahl der Operatoren und Operanden im Code basiert. Die zyklomatische Komplexität ist eine Kennzahl für die Komplexität der Struktur des Typs oder der Methode.
 Ein niedriger Wartbarkeitsindex deutet darauf hin, dass der Code wahrscheinlich schwierig zu verwalten ist und umgestaltet werden sollte.</target>
         <note />
       </trans-unit>

@@ -1,10 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UriParametersShouldNotBeStringsAnalyzer,
@@ -57,33 +53,6 @@ public class A
     public static void Method(string [|url|], string [|url2|]) { }
 }
 ";
-
-#if false // Not currently supported by the new test harness
-            var fixSingle = @"
-using System;
-
-public class A
-{
-    public static void Method(string url, string [|url2|]) { }
-
-    public static void Method(Uri url, string [|url2|])
-    {
-        throw new NotImplementedException();
-    }
-}
-";
-            await new VerifyCS.Test
-            {
-                TestState = { Sources = { code } },
-                FixedState =
-                {
-                    Sources = { fixSingle },
-                    MarkupHandling = MarkupMode.Allow,
-                },
-                NumberOfIncrementalIterations = 2,
-            }.RunAsync();
-#endif
-
             var fix = @"
 using System;
 

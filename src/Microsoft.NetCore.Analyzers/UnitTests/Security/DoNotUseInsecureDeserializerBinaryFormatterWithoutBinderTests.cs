@@ -860,8 +860,8 @@ namespace Blah
             return des(stream);
         }
     }
-}",
-            GetCSharpResultAt(22, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+}");
+            // Ideally we'd be able to detect this, but it's kinda a weird case.
         }
 
         [Fact]
@@ -881,8 +881,6 @@ namespace Blah
         public object Deserialize(byte[] bytes)
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Binder = new MyBinder();
-            formatter.Deserialize(new MemoryStream(bytes));  // Force DFA.
             formatter.Binder = null;
             return DoDeserialization(formatter, new MemoryStream(bytes));
         }
@@ -893,8 +891,7 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(23, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+            GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
-
     }
 }

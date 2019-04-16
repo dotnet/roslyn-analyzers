@@ -486,6 +486,35 @@ class MyCollection
 ");
         }
 
+        [Fact, WorkItem(2245, "https://github.com/dotnet/roslyn-analyzers/issues/2245")]
+        public void OutDisposableArgument_StoredIntoField_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    private A _a;
+    void M(out A param)
+    {
+        param = new A();
+    }
+
+    void Method()
+    {
+        M(out _a);  // This is considered as an escape of interprocedural disposable creation.
+    }
+}
+");
+        }
+
         [Fact]
         public void LocalWithMultipleDisposableAssignment_DisposeCallOnSome_Diagnostic()
         {

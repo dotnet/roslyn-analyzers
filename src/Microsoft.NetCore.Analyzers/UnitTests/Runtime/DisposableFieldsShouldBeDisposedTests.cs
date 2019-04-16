@@ -2745,5 +2745,58 @@ public sealed class A : IDisposable
 }
 ");
         }
+
+        [Fact, WorkItem(2306, "https://github.com/dotnet/roslyn-analyzers/issues/2306")]
+        public void DisposableAllocationInConstructor_DisposedInGeneratedCodeFile_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private readonly A a;
+    public B()
+    {
+        a = new A();
+    }
+
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("""", """")]
+    public void Dispose()
+    {
+        a.Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class B
+    Implements IDisposable
+
+    Private ReadOnly a As A
+    Sub New()
+        a = New A()
+    End Sub
+
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("""", """")> _
+    Public Sub Dispose() Implements IDisposable.Dispose
+        a.Dispose()
+    End Sub
+End Class");
+        }
     }
 }

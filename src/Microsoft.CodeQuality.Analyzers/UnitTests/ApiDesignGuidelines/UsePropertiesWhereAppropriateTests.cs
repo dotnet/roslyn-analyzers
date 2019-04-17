@@ -344,7 +344,7 @@ Public Class class1
         Return 0
     End Function
 End Class
-");
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]

@@ -74,8 +74,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, ITypeSymbol elementType, SemanticModel semanticModel)
         {
             INamedTypeSymbol arrayTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayTypeName);
-            SyntaxNode arrayEmptyName = generator.QualifiedName(
-                generator.TypeExpression(arrayTypeSymbol),
+            SyntaxNode arrayEmptyName = generator.MemberAccessExpression(
+                generator.TypeExpressionForStaticMemberAccess(arrayTypeSymbol),
                 generator.GenericName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayEmptyMethodName, elementType));
             return generator.InvocationExpression(arrayEmptyName);
         }

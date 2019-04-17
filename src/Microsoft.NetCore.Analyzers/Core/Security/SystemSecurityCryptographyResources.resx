@@ -246,6 +246,12 @@
   <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>{0} uses a weak cryptographic algorithm {1}</value>
   </data>
+  <data name="DoNotUseXslTransform" xml:space="preserve">
+    <value>Do Not Use XslTransform</value>
+  </data>
+  <data name="DoNotUseXslTransformMessage" xml:space="preserve">
+    <value>Do not use XslTransform. It does not restrict potentially dangerous external references.</value>
+  </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>
   </data>

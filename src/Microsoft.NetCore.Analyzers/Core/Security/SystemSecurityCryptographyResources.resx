@@ -240,11 +240,8 @@
   <data name="DoNotUseXslTransform" xml:space="preserve">
     <value>Do Not Use XslTransform</value>
   </data>
-  <data name="DoNotUseXslTransformDescription" xml:space="preserve">
-    <value>XslTransform may include dangerous external references.</value>
-  </data>
   <data name="DoNotUseXslTransformMessage" xml:space="preserve">
-    <value>Construct XslTransform</value>
+    <value>Do not use XslTransform. It does not restrict potentially dangerous external references.</value>
   </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>

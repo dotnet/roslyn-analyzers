@@ -21,10 +21,6 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(SystemSecurityCryptographyResources.DoNotUseXslTransformMessage),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotUseXslTransformDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -33,7 +29,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                description: s_Description,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTags.Telemetry);
 
@@ -59,9 +54,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var objectCreationOperation = (IObjectCreationOperation)operationAnalysisContext.Operation;
 
-                    if (objectCreationOperation.Constructor
-                                                .ContainingType
-                                                .Equals(xslTransformTypeSymbol))
+                    if (xslTransformTypeSymbol.Equals(objectCreationOperation.Constructor.ContainingType))
                     {
                         operationAnalysisContext.ReportDiagnostic(
                             objectCreationOperation.CreateDiagnostic(

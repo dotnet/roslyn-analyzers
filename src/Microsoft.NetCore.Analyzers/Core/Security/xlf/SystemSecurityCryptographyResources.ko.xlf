@@ -207,14 +207,9 @@
         <target state="new">Do Not Use XslTransform</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseXslTransformDescription">
-        <source>XslTransform may include dangerous external references.</source>
-        <target state="new">XslTransform may include dangerous external references.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotUseXslTransformMessage">
-        <source>Construct XslTransform</source>
-        <target state="new">Construct XslTransform</target>
+        <source>Do not use XslTransform. It does not restrict potentially dangerous external references.</source>
+        <target state="new">Do not use XslTransform. It does not restrict potentially dangerous external references.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">

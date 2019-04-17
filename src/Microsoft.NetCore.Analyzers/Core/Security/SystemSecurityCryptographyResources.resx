@@ -226,7 +226,7 @@
     <value>Do not use obsolete key derivation function</value>
   </data>
   <data name="DoNotUseObsoleteKDFAlgorithmDescription" xml:space="preserve">
-    <value>Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using CryptDeriveBytes since it doesn't use iteration count, salt and initialization vector.</value>
+    <value>Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</value>
   </data>
   <data name="DoNotUseObsoleteKDFAlgorithmMessage" xml:space="preserve">
     <value>Call to obsolete key derivation function {0}.{1}</value>

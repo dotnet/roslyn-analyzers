@@ -10017,12 +10017,13 @@ class C : IDisposable
 
     public async Task M2_Task()
     {
-        // This is not flagged as we don't track the underlying object wrapped within a task.
-        // In future, we might do this tracking and then should be able to flag this case.
         var c = await M1_Task().ConfigureAwait(false);
     }
 }
-");
+",
+            // Test0.cs(18,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'await M1_Task().ConfigureAwait(false)' before all references to it are out of scope.
+            GetCSharpResultAt(18, 17, "await M1_Task().ConfigureAwait(false)"));
+
             VerifyBasic(@"
 Imports System
 Imports System.Threading.Tasks
@@ -10040,7 +10041,9 @@ Class C
     Public Async Function M2_Task() As Task
         Dim c = Await M1_Task().ConfigureAwait(False)
     End Function
-End Class");
+End Class",
+            // Test0.vb(16,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'Await M1_Task().ConfigureAwait(False)' before all references to it are out of scope.
+            GetBasicResultAt(16, 17, "Await M1_Task().ConfigureAwait(False)"));
         }
 
         [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
@@ -10064,12 +10067,13 @@ class C : IDisposable
 
     public async Task M2_Task()
     {
-        // This is not flagged as we don't track the underlying object wrapped within a task.
-        // In future, we might do this tracking and then should be able to flag this case.
         var c = await M1_Task().ConfigureAwait(false);
     }
 }
-");
+",
+            // Test0.cs(19,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'await M1_Task().ConfigureAwait(false)' before all references to it are out of scope.
+            GetCSharpResultAt(19, 17, "await M1_Task().ConfigureAwait(false)"));
+
             VerifyBasic(@"
 Imports System
 Imports System.Threading.Tasks
@@ -10089,7 +10093,64 @@ Class C
     Public Async Function M2_Task() As Task
         Dim c = Await M1_Task().ConfigureAwait(False)
     End Function
-End Class");
+End Class",
+            // Test0.vb(18,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'Await M1_Task().ConfigureAwait(False)' before all references to it are out of scope.
+            GetBasicResultAt(18, 17, "Await M1_Task().ConfigureAwait(False)"));
+        }
+
+        [Fact, WorkItem(2347, "https://github.com/dotnet/roslyn-analyzers/issues/2347")]
+        public void ReturnDisposableObjectInAsyncMethod_DisposedInCaller_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class C : IDisposable
+{
+    public void Dispose()
+    {
+    }
+
+    public async Task<C> M1_Task(object context)
+    {
+        await Task.Yield();
+        return new C();
+    }
+
+    public async Task M2_Task()
+    {
+        var c = await M1_Task(null).ConfigureAwait(false);
+        c.Dispose();
+    }
+}");
+        }
+
+        [Fact, WorkItem(2347, "https://github.com/dotnet/roslyn-analyzers/issues/2347")]
+        public void ReturnDisposableObjectInAsyncMethod_NotDisposedInCaller_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading.Tasks;
+
+class C : IDisposable
+{
+    public void Dispose()
+    {
+    }
+
+    public async Task<C> M1_Task(object context)
+    {
+        await Task.Yield();
+        return new C();
+    }
+
+    public async Task M2_Task()
+    {
+        var c = await M1_Task(null).ConfigureAwait(false);
+    }
+}",
+            // Test0.cs(19,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'await M1_Task(null).ConfigureAwait(false)' before all references to it are out of scope.
+            GetCSharpResultAt(19, 17, "await M1_Task(null).ConfigureAwait(false)"));
         }
     }
 }

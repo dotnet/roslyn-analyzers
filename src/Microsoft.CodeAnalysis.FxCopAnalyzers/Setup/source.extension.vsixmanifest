@@ -5,7 +5,7 @@
     <Identity Id="4db2d63d-3320-4fbd-bf80-07f8d1500bd3" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft"  />
     <DisplayName>Microsoft Code Analysis 2019</DisplayName>
     <Description xml:space="preserve">Live code analysis rules and code fixes addressing API design, performance, security, and best practices for C# and Visual Basic.</Description>
-    <MoreInfo>https://go.microsoft.com/fwlink/?linkid=849061</MoreInfo>
+    <MoreInfo>https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2019#to-install-fxcop-analyzers-as-a-vsix</MoreInfo>
     <License>EULA.rtf</License>
     <ReleaseNotes>ReleaseNotes.txt</ReleaseNotes>
     <Icon>Icons\MsCodeAnalysisAnalyzer_72x.png</Icon>

@@ -222,6 +222,15 @@
   <data name="DoNotUseMD5Description" xml:space="preserve">
     <value>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</value>
   </data>
+  <data name="DoNotUseObsoleteKDFAlgorithm" xml:space="preserve">
+    <value>Do not use obsolete key derivation function</value>
+  </data>
+  <data name="DoNotUseObsoleteKDFAlgorithmDescription" xml:space="preserve">
+    <value>Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</value>
+  </data>
+  <data name="DoNotUseObsoleteKDFAlgorithmMessage" xml:space="preserve">
+    <value>Call to obsolete key derivation function {0}.{1}</value>
+  </data>
   <data name="DoNotUseSHA1" xml:space="preserve">
     <value>Do not use insecure cryptographic algorithm SHA1.</value>
   </data>
@@ -236,6 +245,12 @@
   </data>
   <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>{0} uses a weak cryptographic algorithm {1}</value>
+  </data>
+  <data name="DoNotUseXslTransform" xml:space="preserve">
+    <value>Do Not Use XslTransform</value>
+  </data>
+  <data name="DoNotUseXslTransformMessage" xml:space="preserve">
+    <value>Do not use XslTransform. It does not restrict potentially dangerous external references.</value>
   </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>

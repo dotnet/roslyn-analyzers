@@ -177,6 +177,21 @@
         <target state="translated">Ten typ implementuje niezabezpieczoną kryptograficznie funkcję skrótu MD5. Istnieje możliwość wystąpienia kolizji skrótów w przypadku algorytmów MD5 i HMACMD5. Zastąp to użycie algorytmem wartości skrótu z rodziny SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
+        <source>Do not use obsolete key derivation function</source>
+        <target state="new">Do not use obsolete key derivation function</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmDescription">
+        <source>Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</source>
+        <target state="new">Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
+        <source>Call to obsolete key derivation function {0}.{1}</source>
+        <target state="new">Call to obsolete key derivation function {0}.{1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
         <target state="translated">Nie używaj niezabezpieczonego algorytmu kryptograficznego SHA1.</target>
@@ -200,6 +215,16 @@
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsMessage">
         <source>{0} uses a weak cryptographic algorithm {1}</source>
         <target state="translated">Element {0} używa słabych algorytmów kryptograficznych {1}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseXslTransform">
+        <source>Do Not Use XslTransform</source>
+        <target state="new">Do Not Use XslTransform</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseXslTransformMessage">
+        <source>Do not use XslTransform. It does not restrict potentially dangerous external references.</source>
+        <target state="new">Do not use XslTransform. It does not restrict potentially dangerous external references.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">

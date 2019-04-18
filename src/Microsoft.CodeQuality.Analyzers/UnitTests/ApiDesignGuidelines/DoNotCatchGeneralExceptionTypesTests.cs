@@ -178,7 +178,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         }
 
         [Fact]
-        public void CSharp_Diagnostic_GeneralCatchThrowNew()
+        public void CSharp_NoDiagnostic_GeneralCatchThrowNew()
         {
             VerifyCSharp(@"
             using System;
@@ -203,12 +203,11 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         }
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(18, 25, "TestMethod"));
+            }");
         }
 
         [Fact]
-        public void Basic_Diagnostic_GeneralCatchThrowNew()
+        public void Basic_NoDiagnostic_GeneralCatchThrowNew()
         {
             VerifyBasic(@"
             Imports System.IO
@@ -225,8 +224,7 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     End Sub
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(10, 25, "TestMethod"));
+            ");
         }
 
         [Fact]
@@ -326,6 +324,100 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             End Namespace
             ",
             GetCA1031BasicResultAt(10, 25, "TestMethod"));
+        }
+
+        [Fact]
+        public void CSharp_NoDiagnostic_GenericExceptionRethrown()
+        {
+            VerifyCSharp(@"
+            using System;
+            using System.IO;
+
+            namespace TestNamespace
+            {
+                class TestClass
+                {
+                    public static void TestMethod()
+                    {
+                        try 
+                        {
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
+                        }
+                        catch (Exception e)
+                        {
+                            throw e;
+                        }
+                    }
+                }
+            }");
+        }
+
+        [Fact]
+        public void Basic_NoDiagnostic_GenericExceptionRethrown()
+        {
+            VerifyBasic(@"
+            Imports System
+            Imports System.IO
+
+            Namespace TestNamespace
+                Class TestClass
+                    Public Shared Sub TestMethod()
+                        Try
+                            Dim fileStream As New FileStream(""name"", FileMode.Create)
+                        Catch e As Exception
+                            Throw e
+                        End Try
+                    End Sub
+                End Class
+            End Namespace
+            ");
+        }
+
+        [Fact]
+        public void CSharp_NoDiagnostic_ThrowNewWrapped()
+        {
+            VerifyCSharp(@"
+            using System;
+            using System.IO;
+
+            namespace TestNamespace
+            {
+                class TestClass
+                {
+                    public static void TestMethod()
+                    {
+                        try 
+                        {
+                            FileStream fileStream = new FileStream(""name"", FileMode.Create);
+                        }
+                        catch (Exception e)
+                        {
+                            throw new AggregateException(e);
+                        }
+                    }
+                }
+            }");
+        }
+
+        [Fact]
+        public void Basic_NoDiagnostic_ThrowNewWrapped()
+        {
+            VerifyBasic(@"
+            Imports System
+            Imports System.IO
+
+            Namespace TestNamespace
+                Class TestClass
+                    Public Shared Sub TestMethod()
+                        Try
+                            Dim fileStream As New FileStream(""name"", FileMode.Create)
+                        Catch e As Exception
+                            Throw New AggregateException(e)
+                        End Try
+                    End Sub
+                End Class
+            End Namespace
+            ");
         }
 
         [Fact]

@@ -74,10 +74,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
 
                     var typeSymbol = methodSymbol.ContainingType;
+
+                    if (typeSymbol == null)
+                    {
+                        return;
+                    }
+
                     var methodName = methodSymbol.Name;
 
-                    if (passwordDeriveBytesTypeSymbol.Equals(typeSymbol) ||
-                        rfc2898DeriveBytesTypeSymbol.Equals(typeSymbol) &&
+                    if (typeSymbol.Equals(passwordDeriveBytesTypeSymbol) ||
+                        typeSymbol.Equals(rfc2898DeriveBytesTypeSymbol) &&
                         methodName == "CryptDeriveKey")
                     {
                         operationAnalysisContext.ReportDiagnostic(

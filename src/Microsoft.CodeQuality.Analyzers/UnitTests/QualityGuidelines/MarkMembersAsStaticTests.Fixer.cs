@@ -184,7 +184,7 @@ Public Class MembersTests
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_ReferencesInSameType_MemberReferences()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -288,7 +288,7 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_ReferencesInSameType_Invocations()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -364,7 +364,7 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_ReferencesInSameFile_MemberReferences()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -425,7 +425,7 @@ class C2
 }");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_ReferencesInSameFile_Invocations()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -480,7 +480,7 @@ class C2
 }");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_ReferencesInMultipleFiles_MemberReferences()
         {
             await new VerifyCS.Test
@@ -592,7 +592,7 @@ class C3
             }.RunAsync();
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_ReferencesInMultipleFiles_Invocations()
         {
             await new VerifyCS.Test
@@ -692,7 +692,7 @@ class C3
             }.RunAsync();
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_ReferenceInArgument()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -758,7 +758,7 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_GenericMethod()
         {
             await VerifyCS.VerifyCodeFixAsync(@"
@@ -870,7 +870,7 @@ Public Class C2(Of T2)
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_InvocationInInstance()
         {
             // We don't make the replacement if instance has an invocation.
@@ -1048,7 +1048,7 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        [Fact]
         public async Task TestCSharp_FixAll()
         {
             await new VerifyCS.Test

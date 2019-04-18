@@ -65,22 +65,28 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
-                    var operation = operationAnalysisContext.Operation;
-                    var methodSymbol = operation.Kind == OperationKind.Invocation ? (operation as IInvocationOperation).TargetMethod : (operation as IObjectCreationOperation).Constructor;
-                    var typeSymbol = methodSymbol.ContainingType;
-                    var methodName = methodSymbol.MethodKind == MethodKind.Constructor ? typeSymbol.Name : methodSymbol.Name;
+                    var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
+                    var methodSymbol = invocationOperation.TargetMethod;
 
-                    if (typeSymbol.Equals(passwordDeriveBytesTypeSymbol) ||
-                        typeSymbol.Equals(rfc2898DeriveBytesTypeSymbol) &&
-                        methodSymbol.Name == "CryptDeriveKey")
+                    if (methodSymbol.MethodKind == MethodKind.Constructor)
+                    {
+                        return;
+                    }
+
+                    var typeSymbol = methodSymbol.ContainingType;
+                    var methodName = methodSymbol.Name;
+
+                    if (passwordDeriveBytesTypeSymbol.Equals(typeSymbol) ||
+                        rfc2898DeriveBytesTypeSymbol.Equals(typeSymbol) &&
+                        methodName == "CryptDeriveKey")
                     {
                         operationAnalysisContext.ReportDiagnostic(
-                            operation.CreateDiagnostic(
+                            invocationOperation.CreateDiagnostic(
                                 Rule,
                                 typeSymbol.Name,
                                 methodName));
                     }
-                }, OperationKind.Invocation, OperationKind.ObjectCreation);
+                }, OperationKind.Invocation);
             });
         }
     }

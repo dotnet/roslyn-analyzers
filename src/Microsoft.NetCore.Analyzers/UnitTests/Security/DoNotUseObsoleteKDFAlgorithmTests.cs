@@ -26,23 +26,6 @@ class TestClass
         }
 
         [Fact]
-        public void TestConstructorOfPasswordDeriveBytesDiagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Security.Cryptography;
-
-class TestClass
-{
-    public void TestMethod(string password, byte[] salt)
-    {
-        new PasswordDeriveBytes(password, salt);
-    }
-}",
-            GetCSharpResultAt(9, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "PasswordDeriveBytes"));
-        }
-
-        [Fact]
         public void TestCryptDeriveKeyOfClassDerivedFromPasswordDeriveBytesDiagnostic()
         {
             VerifyCSharp(@"
@@ -63,7 +46,6 @@ class TestClass
         derivedClass.CryptDeriveKey(algname, alghashname, keySize, rgbIV);
     }
 }",
-            GetCSharpResultAt(7, 55, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "PasswordDeriveBytes"),
             GetCSharpResultAt(16, 9, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "CryptDeriveKey"));
         }
 
@@ -140,7 +122,22 @@ class TestClass
 }");
         }
 
-        // This diagnositc is produced by base(password, salt) not DerivedClass.GetBytes(cb)
+        [Fact]
+        public void TestConstructorOfPasswordDeriveBytesNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(string password, byte[] salt)
+    {
+        new PasswordDeriveBytes(password, salt);
+    }
+}");
+        }
+
         [Fact]
         public void TestGetBytesOfClassDerivedFromPasswordDeriveBytesNoDiagnostic()
         {
@@ -166,8 +163,7 @@ class TestClass
     {
         new DerivedClass(password, salt).GetBytes(cb);
     }
-}",
-            GetCSharpResultAt(7, 55, DoNotUseObsoleteKDFAlgorithm.Rule, "PasswordDeriveBytes", "PasswordDeriveBytes"));
+}");
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

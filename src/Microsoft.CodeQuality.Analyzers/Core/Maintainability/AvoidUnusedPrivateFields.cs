@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             analysisContext.RegisterCompilationStartAction(
                 (compilationContext) =>
                 {
-                    ConcurrentDictionary<IFieldSymbol, UnusedValue> unreferencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
+                    ConcurrentDictionary<IFieldSymbol, UnusedValue> maybeUnreferencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
                     ConcurrentDictionary<IFieldSymbol, UnusedValue> referencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
 
                     ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
@@ -95,7 +95,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                     }
                                 }
 
-                                unreferencedPrivateFields.TryAdd(field, default);
+                                maybeUnreferencedPrivateFields.TryAdd(field, default);
                             }
                         },
                         SymbolKind.Field);
@@ -107,19 +107,37 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             if (field.DeclaredAccessibility == Accessibility.Private)
                             {
                                 referencedPrivateFields.TryAdd(field, default);
-                                unreferencedPrivateFields.TryRemove(field, out _);
+                                maybeUnreferencedPrivateFields.TryRemove(field, out _);
                             }
                         },
                         OperationKind.FieldReference);
 
-                    compilationContext.RegisterCompilationEndAction(
-                        (compilationEndContext) =>
+                    // Private field reference information reaches a state of consistency as each type symbol completes
+                    // analysis. Reporting information at the end of each named type provides incremental analysis
+                    // support inside the IDE.
+                    compilationContext.RegisterSymbolStartAction(
+                        context =>
                         {
-                            foreach (IFieldSymbol unreferencedPrivateField in unreferencedPrivateFields.Keys)
+                            context.RegisterSymbolEndAction(context =>
                             {
-                                compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, unreferencedPrivateField.Locations[0], unreferencedPrivateField.Name));
-                            }
-                        });
+                                var namedType = (INamedTypeSymbol)context.Symbol;
+                                foreach (var member in namedType.GetMembers())
+                                {
+                                    if (!(member is IFieldSymbol field))
+                                    {
+                                        continue;
+                                    }
+
+                                    if (!maybeUnreferencedPrivateFields.ContainsKey(field) || referencedPrivateFields.ContainsKey(field))
+                                    {
+                                        continue;
+                                    }
+
+                                    context.ReportDiagnostic(Diagnostic.Create(Rule, field.Locations[0], field.Name));
+                                }
+                            });
+                        },
+                        SymbolKind.NamedType);
                 });
         }
 

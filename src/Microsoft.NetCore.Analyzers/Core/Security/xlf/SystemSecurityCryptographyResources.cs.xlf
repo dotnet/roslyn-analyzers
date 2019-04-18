@@ -137,6 +137,11 @@
         <target state="new">Pointer field {0} on serializable type.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseAccountSASMessage">
+        <source>Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</source>
+        <target state="new">Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
         <source>Do Not Use Broken Cryptographic Algorithms</source>
         <target state="translated">Nepoužívejte prolomené kryptografické algoritmy</target>
@@ -215,6 +220,26 @@
       <trans-unit id="SetViewStateUserKeyMessage">
         <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
         <target state="new">The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicyMessage">
+        <source>Use container-level access policy when creating Shared Access Signature (SAS)</source>
+        <target state="new">Use container-level access policy when creating Shared Access Signature (SAS)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSecureSharedAccesSignature">
+        <source>Use Secure Shared Acces Signature</source>
+        <target state="new">Use Secure Shared Acces Signature</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSecureSharedAccesSignatureDescription">
+        <source>Validates parameters to Shared Access Signatures created for Azure storage (Blob, File, Queue, Table) objects and storage cloud account (for Account SAS).</source>
+        <target state="new">Validates parameters to Shared Access Signatures created for Azure storage (Blob, File, Queue, Table) objects and storage cloud account (for Account SAS).</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
+        <source>Use SharedAccessProtocol.HttpsOnly when creating Shared Access Signature (SAS)</source>
+        <target state="new">Use SharedAccessProtocol.HttpsOnly when creating Shared Access Signature (SAS)</target>
         <note />
       </trans-unit>
     </body>

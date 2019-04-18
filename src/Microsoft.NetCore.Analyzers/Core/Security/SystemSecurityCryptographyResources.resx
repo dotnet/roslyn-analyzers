@@ -198,6 +198,9 @@
   <data name="DoNotSerializeTypesWithPointerFieldsMessage" xml:space="preserve">
     <value>Pointer field {0} on serializable type.</value>
   </data>
+  <data name="DoNotUseAccountSASMessage" xml:space="preserve">
+    <value>Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>
@@ -245,5 +248,17 @@
   </data>
   <data name="SetViewStateUserKeyMessage" xml:space="preserve">
     <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
+  </data>
+  <data name="UseContainerLevelAccessPolicyMessage" xml:space="preserve">
+    <value>Use container-level access policy when creating Shared Access Signature (SAS)</value>
+  </data>
+  <data name="UseSecureSharedAccesSignature" xml:space="preserve">
+    <value>Use Secure Shared Acces Signature</value>
+  </data>
+  <data name="UseSecureSharedAccesSignatureDescription" xml:space="preserve">
+    <value>Validates parameters to Shared Access Signatures created for Azure storage (Blob, File, Queue, Table) objects and storage cloud account (for Account SAS).</value>
+  </data>
+  <data name="UseSharedAccessProtocolHttpsOnlyMessage" xml:space="preserve">
+    <value>Use SharedAccessProtocol.HttpsOnly when creating Shared Access Signature (SAS)</value>
   </data>
 </root>

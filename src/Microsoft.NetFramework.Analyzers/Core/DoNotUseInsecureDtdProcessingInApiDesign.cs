@@ -24,7 +24,9 @@ namespace Microsoft.NetFramework.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleDoNotUseInsecureDtdProcessingInApiDesign);
 
+#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1026 // Enable concurrent execution
         {
             // TODO: Make analyzer thread-safe.
             //analysisContext.EnableConcurrentExecution();

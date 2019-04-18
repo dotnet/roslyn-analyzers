@@ -10164,5 +10164,24 @@ class C
     Stream M() => File.OpenRead(""C:/somewhere/"");
 }");
         }
+
+        [Fact, WorkItem(2361, "https://github.com/dotnet/roslyn-analyzers/issues/2361")]
+        public void ReturnsDisposableObject_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+
+class C
+{
+    Stream GetStream() => File.OpenRead(""C:/somewhere/"");
+
+    void M2()
+    {
+        var stream = GetStream();
+    }
+}",
+            // Test0.cs(10,22): warning CA2000: Call System.IDisposable.Dispose on object created by 'GetStream()' before all references to it are out of scope.
+            GetCSharpResultAt(10, 22, "GetStream()"));
+        }
     }
 }

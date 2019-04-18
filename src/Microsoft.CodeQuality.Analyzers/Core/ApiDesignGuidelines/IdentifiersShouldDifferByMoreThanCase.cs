@@ -45,10 +45,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
             IEnumerable<INamespaceSymbol> globalNamespaces = context.Compilation.GlobalNamespace.GetNamespaceMembers()
-                .Where(item => item.ContainingAssembly == context.Compilation.Assembly);
+                .Where(item => Equals(item.ContainingAssembly, context.Compilation.Assembly));
 
             IEnumerable<INamedTypeSymbol> globalTypes = context.Compilation.GlobalNamespace.GetTypeMembers().Where(item =>
-                    item.ContainingAssembly == context.Compilation.Assembly &&
+                    Equals(item.ContainingAssembly, context.Compilation.Assembly) &&
                     MatchesConfiguredVisibility(item, context.Options, context.CancellationToken));
 
             CheckTypeNames(globalTypes, context.ReportDiagnostic);
@@ -91,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // Get all the potentially externally visible types in the namespace
                 IEnumerable<INamedTypeSymbol> typeMembers = @namespace.GetTypeMembers().Where(item =>
-                    item.ContainingAssembly == context.Compilation.Assembly &&
+                    Equals(item.ContainingAssembly, context.Compilation.Assembly) &&
                     MatchesConfiguredVisibility(item, context.Options, context.CancellationToken));
 
                 if (typeMembers.Any())

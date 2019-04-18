@@ -71,7 +71,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var enumType = model.GetDeclaredSymbol(enumTypeSyntax, cancellationToken) as INamedTypeSymbol;
             Debug.Assert(enumType != null);
 
-            AttributeData flagsAttribute = enumType.GetAttributes().First(a => a.AttributeClass == flagsAttributeType);
+            AttributeData flagsAttribute = enumType.GetAttributes().First(a => Equals(a.AttributeClass, flagsAttributeType));
             SyntaxNode attributeNode = flagsAttribute.ApplicationSyntaxReference.GetSyntax(cancellationToken);
 
             return generator.RemoveNode(enumTypeSyntax, attributeNode);

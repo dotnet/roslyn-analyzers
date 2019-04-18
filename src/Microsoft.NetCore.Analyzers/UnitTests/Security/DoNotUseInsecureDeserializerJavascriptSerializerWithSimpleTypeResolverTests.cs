@@ -133,6 +133,73 @@ namespace Blah
         }
 
         [Fact]
+        public void Deserialize_TypeResolver_Unknown_MaybeDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public T D<T>(Func<JavaScriptTypeResolver> trFactory, string str)
+        {
+            JavaScriptSerializer jss = new JavaScriptSerializer(trFactory());
+            return (T) jss.Deserialize(str, typeof(T));
+        }
+    }
+}",
+                GetCSharpResultAt(13, 24, MaybeRule, "object JavaScriptSerializer.Deserialize(string input, Type targetType)"));
+        }
+
+        [Fact]
+        public void Deserialize_TypeResolver_UnknownNotNull_MaybeDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public T D<T>(Func<JavaScriptTypeResolver> trFactory, string str)
+        {
+            JavaScriptTypeResolver tr = trFactory();
+            JavaScriptSerializer jss = tr != null ? new JavaScriptSerializer(tr) : new JavaScriptSerializer();
+            return (T) jss.Deserialize(str, typeof(T));
+        }
+    }
+}",
+                GetCSharpResultAt(14, 24, MaybeRule, "object JavaScriptSerializer.Deserialize(string input, Type targetType)"));
+        }
+
+        [Fact]
+        public void Deserialize_TypeResolver_UnknownNull_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Web.Script.Serialization;
+
+namespace Blah
+{
+    public class Program
+    {
+        public T D<T>(Func<JavaScriptTypeResolver> trFactory, string str)
+        {
+            JavaScriptTypeResolver tr = trFactory();
+            JavaScriptSerializer jss = tr == null ? new JavaScriptSerializer(tr) : new JavaScriptSerializer();
+            return (T) jss.Deserialize(str, typeof(T));
+        }
+    }
+}");
+        }
+
+        [Fact]
         public void Deserialize_FromField_MaybeDiagnostic()
         {
             VerifyCSharp(@"

@@ -34,8 +34,8 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static readonly DiagnosticDescriptor MaybeWithSimpleTypeResolver =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2322",
-                nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerWithSimpleTypeResolverTitle),
-                nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerWithSimpleTypeResolverMessage),
+                nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerMaybeWithSimpleTypeResolverTitle),
+                nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerMaybeWithSimpleTypeResolverMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null);
 
@@ -100,6 +100,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 switch (pointsTo.Kind)
                                 {
                                     case PointsToAbstractValueKind.Invalid:
+                                    case PointsToAbstractValueKind.UnknownNull:
+                                    case PointsToAbstractValueKind.Undefined:
                                         kind = PropertySetAbstractValueKind.Unflagged;
                                         break;
 
@@ -121,6 +123,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             kind = PropertySetAbstractValueKind.Unflagged;
                                         }
 
+                                        break;
+
+                                    case PointsToAbstractValueKind.UnknownNotNull:
+                                    case PointsToAbstractValueKind.Unknown:
+                                        kind = PropertySetAbstractValueKind.MaybeFlagged;
                                         break;
 
                                     default:

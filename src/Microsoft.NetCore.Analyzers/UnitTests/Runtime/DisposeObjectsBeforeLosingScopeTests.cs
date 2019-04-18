@@ -486,6 +486,97 @@ class MyCollection
 ");
         }
 
+        [Fact, WorkItem(2245, "https://github.com/dotnet/roslyn-analyzers/issues/2245")]
+        public void OutDisposableArgument_StoredIntoField_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    private A _a;
+    void M(out A param)
+    {
+        param = new A();
+    }
+
+    void Method()
+    {
+        M(out _a);  // This is considered as an escape of interprocedural disposable creation.
+    }
+}
+");
+        }
+
+        [Fact, WorkItem(2245, "https://github.com/dotnet/roslyn-analyzers/issues/2245")]
+        public void OutDisposableArgument_WithinTryXXXInvocation_DisposedOnSuccessPath_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Concurrent;
+
+public class C
+{
+    private readonly ConcurrentDictionary<object, IDisposable> _dictionary;
+    public C(ConcurrentDictionary<object, IDisposable> dictionary)
+    {
+        _dictionary = dictionary;
+    }
+
+    public void Remove1(object key)
+    {
+        if (_dictionary.TryRemove(key, out IDisposable value))
+        {
+            value.Dispose();
+        }
+    }
+
+    public void Remove2(object key)
+    {
+        if (!_dictionary.TryRemove(key, out IDisposable value))
+        {
+            return;
+        }
+
+        value.Dispose();
+    }
+}");
+        }
+
+        [Fact, WorkItem(2245, "https://github.com/dotnet/roslyn-analyzers/issues/2245")]
+        public void OutDisposableArgument_WithinTryXXXInvocation_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Concurrent;
+
+public class C
+{
+    private readonly ConcurrentDictionary<object, IDisposable> _dictionary;
+    public C(ConcurrentDictionary<object, IDisposable> dictionary)
+    {
+        _dictionary = dictionary;
+    }
+
+    public void Remove(object key)
+    {
+        if (_dictionary.TryRemove(key, out IDisposable value))
+        {
+            // value is not disposed.
+        }
+    }
+}",
+            // Test0.cs(15,40): warning CA2000: Call System.IDisposable.Dispose on object created by 'out IDisposable value' before all references to it are out of scope.
+            GetCSharpResultAt(15, 40, "out IDisposable value"));
+        }
+
         [Fact]
         public void LocalWithMultipleDisposableAssignment_DisposeCallOnSome_Diagnostic()
         {

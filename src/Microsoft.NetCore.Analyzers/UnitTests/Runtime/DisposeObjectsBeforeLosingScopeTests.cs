@@ -10091,5 +10091,17 @@ Class C
     End Function
 End Class");
         }
+
+        [Fact, WorkItem(2361, "https://github.com/dotnet/roslyn-analyzers/issues/2361")]
+        public void ExpressionBodiedMethod_ReturnsDisposableObject_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+
+class C
+{
+    Stream M() => File.OpenRead(""C:/somewhere/"");
+}");
+        }
     }
 }

@@ -243,7 +243,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 int parameterIndex = method.GetParameterIndex(parameterSymbol);
                 IParameterSymbol overridenParameter = method.OverriddenMethod.Parameters[parameterIndex];
-                if (overridenParameter.Type == parameterSymbol.Type)
+                if (Equals(overridenParameter.Type, parameterSymbol.Type))
                 {
                     return ShouldBeLocalized(overridenParameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore);
                 }

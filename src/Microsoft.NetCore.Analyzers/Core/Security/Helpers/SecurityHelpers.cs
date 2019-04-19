@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 
@@ -39,8 +40,9 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         }
 
         /// <summary>
-        /// Deserialization methods for <see cref="System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"/>.
+        /// Deserialization methods for <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter"/>.
         /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
         public static readonly ImmutableHashSet<string> BinaryFormatterDeserializationMethods =
             ImmutableHashSet.Create(
                 StringComparer.Ordinal,
@@ -50,8 +52,9 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 "UnsafeDeserializeMethodResponse");
 
         /// <summary>
-        /// Deserialization methods for <see cref="System.Runtime.Serialization.NetDataContractSerializer"/>.
+        /// Deserialization methods for <see cref="T:System.Runtime.Serialization.NetDataContractSerializer"/>.
         /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
         public static readonly ImmutableHashSet<string> NetDataContractSerializerDeserializationMethods =
             ImmutableHashSet.Create(
                 StringComparer.Ordinal,

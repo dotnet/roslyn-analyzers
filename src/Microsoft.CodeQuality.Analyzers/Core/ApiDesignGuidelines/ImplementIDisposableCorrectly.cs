@@ -317,7 +317,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     bool isDisposeOverride = false;
                     for (IMethodSymbol m = method.OverriddenMethod; m != null; m = m.OverriddenMethod)
                     {
-                        if (m == FindDisposeMethod(m.ContainingType))
+                        if (Equals(m, FindDisposeMethod(m.ContainingType)))
                         {
                             isDisposeOverride = true;
                             break;
@@ -423,7 +423,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             /// </summary>
             private IMethodSymbol FindDisposeMethod(INamedTypeSymbol type)
             {
-                if (type.FindImplementationForInterfaceMember(_disposeInterfaceMethod) is IMethodSymbol disposeMethod && disposeMethod.ContainingType == type)
+                if (type.FindImplementationForInterfaceMember(_disposeInterfaceMethod) is IMethodSymbol disposeMethod && Equals(disposeMethod.ContainingType, type))
                 {
                     return disposeMethod;
                 }
@@ -595,7 +595,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             private bool IsSuppressFinalizeCall(IInvocationOperation invocationExpression)
             {
-                if (invocationExpression.TargetMethod != _suppressFinalizeMethod)
+                if (!Equals(invocationExpression.TargetMethod, _suppressFinalizeMethod))
                 {
                     return false;
                 }
@@ -719,7 +719,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     IMethodSymbol methodSymbol = invocation.TargetMethod;
                     IInstanceReferenceOperation receiver = (IInstanceReferenceOperation)invocation.Instance;
 
-                    return methodSymbol.IsFinalizer() && receiver.Type.OriginalDefinition == _type.BaseType.OriginalDefinition;
+                    return methodSymbol.IsFinalizer() && Equals(receiver.Type.OriginalDefinition, _type.BaseType.OriginalDefinition);
                 }
 
                 return false;

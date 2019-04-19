@@ -1,38 +1,27 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
+#pragma warning disable IDE0055 // Formatting analyzer complains about bad formatting when "BUILDING_VSIX = true". Fixing the formatting leads to it complaining about bad formatting when "BUILDING_VSIX = false".
+
+#if !BUILDING_VSIX // Analyzer not supported in the Microsoft CodeAnalysis (FxCop analyzers) VSIX
+
+using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.InterfaceMethodsShouldBeCallableByChildTypesAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.InterfaceMethodsShouldBeCallableByChildTypesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.InterfaceMethodsShouldBeCallableByChildTypesAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.InterfaceMethodsShouldBeCallableByChildTypesFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class InterfaceMethodsShouldBeCallableByChildTypesFixerTests : CodeFixTestBase
+    public class InterfaceMethodsShouldBeCallableByChildTypesFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new InterfaceMethodsShouldBeCallableByChildTypesAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new InterfaceMethodsShouldBeCallableByChildTypesFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new InterfaceMethodsShouldBeCallableByChildTypesAnalyzer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new InterfaceMethodsShouldBeCallableByChildTypesFixer();
-        }
-
         #region CSharp
 
         [Fact]
-        public void CA1033SimpleDiagnosticCasesCSharp_MakeProtected()
+        public async Task CA1033SimpleDiagnosticCasesCSharp_MakeProtected()
         {
             var code = @"
 using System;
@@ -52,7 +41,7 @@ public class ImplementsGeneralThree : IGeneral
     }
 
     // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-    object IGeneral.DoSomething() { return null; }
+    object IGeneral.[|DoSomething|]() { return null; }
 
     void IGeneral.DoNothing() { }
     void IGeneral.JustThrow() { throw new Exception(); }
@@ -60,7 +49,7 @@ public class ImplementsGeneralThree : IGeneral
     string IGeneral.Name
     {
         // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-        get
+        [|get|]
         {
             Console.WriteLine(this);
             return ""name"";
@@ -123,11 +112,11 @@ public class ImplementsGeneralThree : IGeneral
     }
 }";
 
-            VerifyCSharpFix(code, expectedFixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, expectedFixedCode);
         }
 
         [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        public void CA1033SimpleDiagnosticCasesCSharp_ImplicitImpl()
+        public async Task CA1033SimpleDiagnosticCasesCSharp_ImplicitImpl()
         {
             var code = @"
 using System;
@@ -143,7 +132,7 @@ public interface IGeneral
 public class ImplementsGeneral  : IGeneral
 {
     // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-    object IGeneral.DoSomething() { return null; }
+    object IGeneral.[|DoSomething|]() { return null; }
 
     void IGeneral.DoNothing() { }
     void IGeneral.JustThrow() { throw new Exception(); }
@@ -151,7 +140,7 @@ public class ImplementsGeneral  : IGeneral
     string IGeneral.Name
     {
         // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-        get
+        [|get|]
         {
             Console.WriteLine(this);
             return ""name"";
@@ -188,11 +177,11 @@ public class ImplementsGeneral  : IGeneral
     }
 }";
 
-            VerifyCSharpFix(code, expectedFixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, expectedFixedCode);
         }
 
         [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        public void CA1033SimpleDiagnosticCasesCSharp_Indexer()
+        public async Task CA1033SimpleDiagnosticCasesCSharp_Indexer()
         {
             var code = @"
 using System;
@@ -207,7 +196,7 @@ public class ImplementsGeneral  : IGeneral
     int IGeneral.this[int item]
     {
         // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-        get
+        [|get|]
         {
             Console.WriteLine(this);
             return item;
@@ -220,7 +209,7 @@ public class ImplementsGeneralThree : IGeneral
     int IGeneral.this[int item]
     {
         // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-        get
+        [|get|]
         {
             Console.WriteLine(this);
             return item;
@@ -279,11 +268,16 @@ public class ImplementsGeneralThree : IGeneral
     }
 }";
 
-            VerifyCSharpFix(code, expectedFixedCode, testFixAllScope: null);
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { expectedFixedCode } },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1033SimpleDiagnosticCasesCSharp_MakeSealed()
+        public async Task CA1033SimpleDiagnosticCasesCSharp_MakeSealed()
         {
             var code = @"
 using System;
@@ -301,7 +295,7 @@ public interface IGeneral
 public class ImplementsGeneral  : IGeneral
 {
     // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-    object IGeneral.DoSomething() { return null; }
+    object IGeneral.[|DoSomething|]() { return null; }
 
     void IGeneral.DoNothing() { }
     void IGeneral.JustThrow() { throw new Exception(); }
@@ -309,7 +303,7 @@ public class ImplementsGeneral  : IGeneral
     int IGeneral.this[int item]
     {
         // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-        get
+        [|get|]
         {
             Console.WriteLine(this);
             return item;
@@ -319,7 +313,7 @@ public class ImplementsGeneral  : IGeneral
     string IGeneral.Name
     {
         // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-        get
+        [|get|]
         {
             Console.WriteLine(this);
             return ""name"";
@@ -369,11 +363,17 @@ public sealed class ImplementsGeneral  : IGeneral
     }
 }
 ";
-            VerifyCSharpFix(code, expectedFixedCode, codeFixIndex: 1);
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { expectedFixedCode } },
+                CodeFixIndex = 1,
+                CodeFixEquivalenceKey = "Make the containing type '{0}' sealed.",
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1033SimpleDiagnosticCasesCSharp_MakeSealed_2()
+        public async Task CA1033SimpleDiagnosticCasesCSharp_MakeSealed_2()
         {
             var code = @"
 using System;
@@ -400,7 +400,7 @@ public class ImplementsGeneralThree : IGeneral
     }
 
     // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-    object IGeneral.DoSomething() { return null; }
+    object IGeneral.[|DoSomething|]() { return null; }
 
     void IGeneral.DoNothing() { }
     void IGeneral.JustThrow() { throw new Exception(); }
@@ -408,7 +408,7 @@ public class ImplementsGeneralThree : IGeneral
     int IGeneral.this[int item]
     {
         // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-        get
+        [|get|]
         {
             Console.WriteLine(this);
             return item;
@@ -418,7 +418,7 @@ public class ImplementsGeneralThree : IGeneral
     string IGeneral.Name
     {
         // [ExpectedWarning(""InterfaceMethodsShouldBeCallableByChildTypes"", ""DesignRules"")]
-        get
+        [|get|]
         {
             Console.WriteLine(this);
             return ""name"";
@@ -513,11 +513,17 @@ public sealed class ImplementsGeneralThree : IGeneral
     }
 }
 ";
-            VerifyCSharpFix(code, expectedFixedCode, codeFixIndex: 1);
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { expectedFixedCode } },
+                CodeFixIndex = 1,
+                CodeFixEquivalenceKey = "Make the containing type '{0}' sealed.",
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1033SimpleDiagnosticCasesCSharp_Events()
+        public async Task CA1033SimpleDiagnosticCasesCSharp_Events()
         {
             var code = @"
 using System;
@@ -533,9 +539,9 @@ public class NestedExplicitInterfaceImplementation
     {
         event EventHandler INestedGeneral.TheEvent
         {
-            add
+            [|add|]
             { Console.WriteLine(this); }
-            remove
+            [|remove|]
             { Console.WriteLine(this); }
         }
 
@@ -579,12 +585,12 @@ public class NestedExplicitInterfaceImplementation
     }
 }
 ";
-            VerifyCSharpFix(code, expectedFixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, expectedFixedCode);
         }
 
         [WorkItem(2654, "https://github.com/dotnet/roslyn/issues/2654")]
         [Fact]
-        public void CA1033SimpleDiagnosticCasesCSharp_Property()
+        public async Task CA1033SimpleDiagnosticCasesCSharp_Property()
         {
             var code = @"
 using System;
@@ -600,14 +606,14 @@ public class NestedExplicitInterfaceImplementation
     {
         string INestedGeneral.Name
         {
-            get
+            [|get|]
             {
                 Console.WriteLine(this);
                 return ""name"";
             }
         }
 
-        internal string Name
+        internal string {|CS0276:Name|}
         {
             // Cannot have accessibility on an accessor unless you have both get and set
             private get
@@ -652,7 +658,7 @@ public class NestedExplicitInterfaceImplementation
     }
 }
 ";
-            VerifyCSharpFix(code, expectedFixedCode, validationMode: TestValidationMode.AllowCompileErrors);
+            await VerifyCS.VerifyCodeFixAsync(code, expectedFixedCode);
         }
 
         #endregion
@@ -660,7 +666,7 @@ public class NestedExplicitInterfaceImplementation
         #region VisualBasic
 
         [Fact]
-        public void CA1033SimpleDiagnosticCasesBasic_MakeProtected()
+        public async Task CA1033SimpleDiagnosticCasesBasic_MakeProtected()
         {
             var code = @"
 Imports System
@@ -675,12 +681,12 @@ Public Class ImplementsGeneralThree
     Public Sub New()
     End Sub
 
-    Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
+    Private Function [|IGeneral_DoSomething|]() As Object Implements IGeneral.DoSomething
         Return Nothing
     End Function
 
     Private ReadOnly Property IGeneral_Name() As String Implements IGeneral.Name
-        Get
+        [|Get|]
             Console.WriteLine(Me)
             Return ""name""
         End Get
@@ -737,11 +743,11 @@ Public Class ImplementsGeneralThree
 End Class
 ";
 
-            VerifyBasicFix(code, expectedFixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, expectedFixedCode);
         }
 
         [Fact, WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        public void CA1033SimpleDiagnosticCasesBasic_ImplicitImpl()
+        public async Task CA1033SimpleDiagnosticCasesBasic_ImplicitImpl()
         {
             var code = @"
 Imports System
@@ -754,12 +760,12 @@ End Interface
 Public Class ImplementsGeneral
     Implements IGeneral
 
-    Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
+    Private Function [|IGeneral_DoSomething|]() As Object Implements IGeneral.DoSomething
         Return Nothing
     End Function
 
     Private ReadOnly Property IGeneral_Name() As String Implements IGeneral.Name
-        Get
+        [|Get|]
             Console.WriteLine(Me)
             Return ""name""
         End Get
@@ -790,11 +796,11 @@ Public Class ImplementsGeneral
 End Class
 ";
 
-            VerifyBasicFix(code, expectedFixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, expectedFixedCode);
         }
 
         [Fact, WorkItem(2650, "https://github.com/dotnet/roslyn/issues/2650")]
-        public void CA1033SimpleDiagnosticCasesBasic_Indexer()
+        public async Task CA1033SimpleDiagnosticCasesBasic_Indexer()
         {
             var code = @"
 Imports System
@@ -806,7 +812,7 @@ End Interface
 Public Class ImplementsGeneral
     Implements IGeneral
     Private ReadOnly Property IGeneral_Item(item_1 As Integer) As Integer Implements IGeneral.Item
-        Get
+        [|Get|]
             Console.WriteLine(Me)
             Throw New NotImplementedException()
         End Get
@@ -817,7 +823,7 @@ Public Class ImplementsGeneralThree
     Implements IGeneral
 
     Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
-        Get
+        [|Get|]
             Console.WriteLine(Me)
             Throw New NotImplementedException()
         End Get
@@ -868,11 +874,16 @@ Public Class ImplementsGeneralThree
 End Class
 ";
 
-            VerifyBasicFix(code, expectedFixedCode, testFixAllScope: null);
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { expectedFixedCode } },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1033SimpleDiagnosticCasesBasic_MakeSealed()
+        public async Task CA1033SimpleDiagnosticCasesBasic_MakeSealed()
         {
             var code = @"
 Imports System
@@ -885,19 +896,19 @@ End Interface
 
 Public Class ImplementsGeneral
     Implements IGeneral
-    Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
+    Private Function [|IGeneral_DoSomething|]() As Object Implements IGeneral.DoSomething
         Return Nothing
     End Function
 
     Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
-        Get
+        [|Get|]
             Console.WriteLine(Me)
             Return item
         End Get
     End Property
 
     Private ReadOnly Property IGeneral_Name() As String Implements IGeneral.Name
-        Get
+        [|Get|]
             Console.WriteLine(Me)
             Return ""name""
         End Get
@@ -934,11 +945,17 @@ Public NotInheritable Class ImplementsGeneral
     End Property
 End Class
 ";
-            VerifyBasicFix(code, expectedFixedCode, codeFixIndex: 1);
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { expectedFixedCode } },
+                CodeFixIndex = 1,
+                CodeFixEquivalenceKey = "Make the containing type '{0}' sealed.",
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1033SimpleDiagnosticCasesBasic_MakeSealed_2()
+        public async Task CA1033SimpleDiagnosticCasesBasic_MakeSealed_2()
         {
             var code = @"
 Imports System
@@ -954,19 +971,19 @@ Public Class ImplementsGeneralThree
     Public Sub New()
     End Sub
 
-    Private Function IGeneral_DoSomething() As Object Implements IGeneral.DoSomething
+    Private Function [|IGeneral_DoSomething|]() As Object Implements IGeneral.DoSomething
         Return Nothing
     End Function
 
     Private ReadOnly Property IGeneral_Item(item As Integer) As Integer Implements IGeneral.Item
-        Get
+        [|Get|]
             Console.WriteLine(Me)
             Return item
         End Get
     End Property
 
     Private ReadOnly Property IGeneral_Name() As String Implements IGeneral.Name
-        Get
+        [|Get|]
             Console.WriteLine(Me)
             Return ""name""
         End Get
@@ -1044,11 +1061,17 @@ Public NotInheritable Class ImplementsGeneralThree
     End Property
 End Class
 ";
-            VerifyBasicFix(code, expectedFixedCode, codeFixIndex: 1);
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { expectedFixedCode } },
+                CodeFixIndex = 1,
+                CodeFixEquivalenceKey = "Make the containing type '{0}' sealed.",
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1033SimpleDiagnosticCasesBasic_Events()
+        public async Task CA1033SimpleDiagnosticCasesBasic_Events()
         {
             var code = @"
 Imports System
@@ -1061,10 +1084,10 @@ Public Class NestedExplicitInterfaceImplementation
     Public Class ImplementsNestedGeneral
         Implements INestedGeneral
         Private Custom Event TheEvent_Impl As EventHandler Implements INestedGeneral.TheEvent
-            AddHandler(ByVal value As EventHandler)
+            [|AddHandler(ByVal value As EventHandler)|]
                 Console.WriteLine(Me)
             End AddHandler
-            RemoveHandler(ByVal value As EventHandler)
+            [|RemoveHandler(ByVal value As EventHandler)|]
                 Console.WriteLine(Me)
             End RemoveHandler
             RaiseEvent()
@@ -1122,12 +1145,12 @@ Public Class NestedExplicitInterfaceImplementation
     End Class
 End Class
 ";
-            VerifyBasicFix(code, expectedFixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, expectedFixedCode);
         }
 
         [WorkItem(2654, "https://github.com/dotnet/roslyn/issues/2654")]
         [Fact]
-        public void CA1033SimpleDiagnosticCasesBasic_Property()
+        public async Task CA1033SimpleDiagnosticCasesBasic_Property()
         {
             var code = @"
 Imports System
@@ -1140,7 +1163,7 @@ Public Class NestedExplicitInterfaceImplementation
     Public Class ImplementsNestedGeneral
         Implements INestedGeneral
         Private ReadOnly Property INestedGeneral_Name() As String Implements INestedGeneral.Name
-            Get
+            [|Get|]
                 Console.WriteLine(Me)
                 Return ""name""
             End Get
@@ -1187,9 +1210,11 @@ Public Class NestedExplicitInterfaceImplementation
     End Class
 End Class
 ";
-            VerifyBasicFix(code, expectedFixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, expectedFixedCode);
         }
 
-        #endregion 
+        #endregion
     }
 }
+
+#endif

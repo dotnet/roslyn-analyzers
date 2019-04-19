@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
 
                         var invocation = (IInvocationOperation)operationContext.Operation;
-                        if (invocation.TargetMethod == containingMethod.OverriddenMethod &&
+                        if (Equals(invocation.TargetMethod, containingMethod.OverriddenMethod) &&
                             invocation.Instance is IInstanceReferenceOperation instanceReference &&
                             instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                         {

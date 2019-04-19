@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public override void Initialize(AnalysisContext context)
         {
             context.EnableConcurrentExecution();
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
 
             context.RegisterCompilationStartAction(compilationContext =>
             {

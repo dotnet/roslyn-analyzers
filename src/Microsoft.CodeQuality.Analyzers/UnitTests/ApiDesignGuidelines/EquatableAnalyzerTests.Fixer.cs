@@ -1,19 +1,25 @@
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EquatableAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EquatableFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EquatableAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.EquatableFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class EquatableFixerTests : CodeFixTestBase
+    public class EquatableFixerTests
     {
         [Fact]
-        public void CodeFixForStructWithEqualsOverrideButNoIEquatableImplementation()
+        public async Task CodeFixForStructWithEqualsOverrideButNoIEquatableImplementation()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
-struct S
+struct {|CA1066:S|}
 {
     public override bool Equals(object other)
     {
@@ -43,12 +49,12 @@ struct S : IEquatable<S>
         }
 
         [Fact]
-        public void CodeFixForStructWithIEquatableImplementationButNoEqualsOverride()
+        public async Task CodeFixForStructWithIEquatableImplementationButNoEqualsOverride()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
-struct S : IEquatable<S>
+struct {|CA1067:S|} : IEquatable<S>
 {
     public bool Equals(S other)
     {
@@ -70,18 +76,16 @@ struct S : IEquatable<S>
         return obj is S && Equals((S)obj);
     }
 }
-",
-            // warning CS0659: 'S' overrides Object.Equals(object o) but does not override Object.GetHashCode()
-            allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
-        public void CodeFixForClassWithIEquatableImplementationButNoEqualsOverride()
+        public async Task CodeFixForClassWithIEquatableImplementationButNoEqualsOverride()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
-class C : IEquatable<C>
+class {|CA1067:C|} : IEquatable<C>
 {
     public bool Equals(C other)
     {
@@ -103,18 +107,16 @@ class C : IEquatable<C>
         return Equals(obj as C);
     }
 }
-",
-            // warning CS0659: 'C' overrides Object.Equals(object o) but does not override Object.GetHashCode()
-            allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
-        public void CodeFixForClassWithExplicitIEquatableImplementationAndNoEqualsOverride()
+        public async Task CodeFixForClassWithExplicitIEquatableImplementationAndNoEqualsOverride()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
-class C : IEquatable<C>
+class {|CA1067:C|} : IEquatable<C>
 {
     bool IEquatable<C>.Equals(C other)
     {
@@ -136,18 +138,16 @@ class C : IEquatable<C>
         return ((IEquatable<C>)this).Equals(obj as C);
     }
 }
-",
-            // warning CS0659: 'C' overrides Object.Equals(object o) but does not override Object.GetHashCode()
-            allowNewCompilerDiagnostics: true);
+");
         }
 
         [Fact]
-        public void CodeFixForStructWithExplicitIEquatableImplementationAndNoEqualsOverride()
+        public async Task CodeFixForStructWithExplicitIEquatableImplementationAndNoEqualsOverride()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
-struct S : IEquatable<S>
+struct {|CA1067:S|} : IEquatable<S>
 {
     bool IEquatable<S>.Equals(S other)
     {
@@ -169,29 +169,7 @@ struct S : IEquatable<S>
         return obj is S && ((IEquatable<S>)this).Equals((S)obj);
     }
 }
-",
-            // warning CS0659: 'S' overrides Object.Equals(object o) but does not override Object.GetHashCode()
-            allowNewCompilerDiagnostics: true);
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new EquatableAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new EquatableAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new EquatableFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new EquatableFixer();
+");
         }
     }
 }

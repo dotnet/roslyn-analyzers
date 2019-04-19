@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class OverrideMethodsOnComparableTypesTests : CodeFixTestBase
+    public partial class OverrideMethodsOnComparableTypesTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

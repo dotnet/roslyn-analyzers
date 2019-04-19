@@ -62,6 +62,16 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 "ReadObject");
 
         /// <summary>
+        /// Deserialization methods for <see cref="T:System.Web.Script.Serialization.JavaScriptSerializer"/>.
+        /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
+        public static readonly ImmutableHashSet<string> JavaScriptSerializerDeserializationMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "Deserialize",
+                "DeserializeObject");
+
+        /// <summary>
         /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreSecurityResources"/>.
         /// </summary>
         /// <param name="name">Name of the resource string to retrieve.</param>

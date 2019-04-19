@@ -182,6 +182,21 @@
         <target state="translated">Tento typ implementuje MD5, což je kryptograficky nezabezpečená hashovací funkce. Kolize hashovací funkce jsou výpočetně schůdné u algoritmů MD5 a HMACMD5. Nahraďte toto použití hashovacím algoritmem z řady SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
+        <source>Do not use obsolete key derivation function</source>
+        <target state="new">Do not use obsolete key derivation function</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmDescription">
+        <source>Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</source>
+        <target state="new">Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
+        <source>Call to obsolete key derivation function {0}.{1}</source>
+        <target state="new">Call to obsolete key derivation function {0}.{1}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseSHA1">
         <source>Do not use insecure cryptographic algorithm SHA1.</source>
         <target state="translated">Nepoužívejte nezabezpečený kryptografický algoritmus SHA1</target>
@@ -205,6 +220,16 @@
       <trans-unit id="DoNotUseWeakCryptographicAlgorithmsMessage">
         <source>{0} uses a weak cryptographic algorithm {1}</source>
         <target state="translated">{0} používá slabý kryptografický algoritmus {1}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseXslTransform">
+        <source>Do Not Use XslTransform</source>
+        <target state="new">Do Not Use XslTransform</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseXslTransformMessage">
+        <source>Do not use XslTransform. It does not restrict potentially dangerous external references.</source>
+        <target state="new">Do not use XslTransform. It does not restrict potentially dangerous external references.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -240,6 +265,39 @@
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Use SharedAccessProtocol.HttpsOnly when creating Shared Access Signature (SAS)</source>
         <target state="new">Use SharedAccessProtocol.HttpsOnly when creating Shared Access Signature (SAS)</target>
+      <trans-unit id="UseXmlReaderDescription">
+        <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
+        <target state="new">Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDataSetReadXml">
+        <source>Use XmlReader For DataSet Read Xml</source>
+        <target state="new">Use XmlReader For DataSet Read Xml</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForDeserialize">
+        <source>Use XmlReader For Deserialize</source>
+        <target state="new">Use XmlReader For Deserialize</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForSchemaRead">
+        <source>Use XmlReader For Schema Read</source>
+        <target state="new">Use XmlReader For Schema Read</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForValidatingReader">
+        <source>Use XmlReader For Validating Reader</source>
+        <target state="new">Use XmlReader For Validating Reader</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderForXPathDocument">
+        <source>Use XmlReader For XPathDocument</source>
+        <target state="new">Use XmlReader For XPathDocument</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseXmlReaderMessage">
+        <source>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</source>
+        <target state="new">This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</target>
         <note />
       </trans-unit>
     </body>

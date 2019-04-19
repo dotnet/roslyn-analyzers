@@ -162,7 +162,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// <summary>
         /// Find every IReturnOperation in the method and get the value of return statement to determine if the method always return true.
         /// </summary>
-        /// <param name="operation">A method body in the form of explicit IOperations</param>
+        /// <param name="operations">A method body in the form of explicit IOperations</param>
         private static bool AlwaysReturnTrue(IEnumerable<IOperation> operations)
         {
             var hasReturnStatement = false;

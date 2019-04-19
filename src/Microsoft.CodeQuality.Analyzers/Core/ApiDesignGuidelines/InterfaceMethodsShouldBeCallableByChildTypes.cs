@@ -41,6 +41,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                           helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1033-interface-methods-should-be-callable-by-child-types",
                                                                           customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
+        // Disable analyzer when building the FxCop analyzers VSIX as it gets unconditionally turned on by the default ManagedMinimumRecommended ruleset that ships with FxCop.
+        // Rule is not critical to ship in the analyzers VSIX.
         public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         public sealed override void Initialize(AnalysisContext analysisContext)

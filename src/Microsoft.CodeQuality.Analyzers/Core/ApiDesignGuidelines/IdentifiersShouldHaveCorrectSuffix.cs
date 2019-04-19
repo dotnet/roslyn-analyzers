@@ -49,26 +49,25 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         // Tuple says <TypeInheritedOrImplemented, AppropriateSuffix, Bool value saying if the suffix can `Collection` or the `AppropriateSuffix`>s
         // The bool values are as mentioned in the Uri
-        private static readonly List<Tuple<string, string, bool>> s_baseTypesAndTheirSuffix = new List<Tuple<string, string, bool>>()
+        private static readonly List<(string typeName, string suffix, bool canSuffixBeCollection)> s_baseTypesAndTheirSuffix = new List<(string, string, bool)>()
                                                     {
-                                                        //Tuple.Create("TypeName", "Suffix", CanSuffixBeCollection)
-                                                        Tuple.Create("System.Attribute", "Attribute", false),
-                                                        Tuple.Create("System.EventArgs", "EventArgs", false),
-                                                        Tuple.Create("System.Exception", "Exception", false),
-                                                        Tuple.Create("System.Collections.ICollection", "Collection", false),
-                                                        Tuple.Create("System.Collections.IDictionary", "Dictionary", false),
-                                                        Tuple.Create("System.Collections.IEnumerable", "Collection", false),
-                                                        Tuple.Create("System.Collections.Queue", "Queue", true),
-                                                        Tuple.Create("System.Collections.Stack", "Stack", true),
-                                                        Tuple.Create("System.Collections.Generic.Queue`1", "Queue", true),
-                                                        Tuple.Create("System.Collections.Generic.Stack`1", "Stack", true),
-                                                        Tuple.Create("System.Collections.Generic.ICollection`1", "Collection", false),
-                                                        Tuple.Create("System.Collections.Generic.IDictionary`2", "Dictionary", false),
-                                                        Tuple.Create("System.Data.DataSet", "DataSet", false),
-                                                        Tuple.Create("System.Data.DataTable", "DataTable", true),
-                                                        Tuple.Create("System.IO.Stream", "Stream", false),
-                                                        Tuple.Create("System.Security.IPermission","Permission", false),
-                                                        Tuple.Create("System.Security.Policy.IMembershipCondition", "Condition", false)
+                                                        ("System.Attribute", "Attribute", false),
+                                                        ("System.EventArgs", "EventArgs", false),
+                                                        ("System.Exception", "Exception", false),
+                                                        ("System.Collections.ICollection", "Collection", false),
+                                                        ("System.Collections.IDictionary", "Dictionary", false),
+                                                        ("System.Collections.IEnumerable", "Collection", false),
+                                                        ("System.Collections.Queue", "Queue", true),
+                                                        ("System.Collections.Stack", "Stack", true),
+                                                        ("System.Collections.Generic.Queue`1", "Queue", true),
+                                                        ("System.Collections.Generic.Stack`1", "Stack", true),
+                                                        ("System.Collections.Generic.ICollection`1", "Collection", false),
+                                                        ("System.Collections.Generic.IDictionary`2", "Dictionary", false),
+                                                        ("System.Data.DataSet", "DataSet", false),
+                                                        ("System.Data.DataTable", "DataTable", true),
+                                                        ("System.IO.Stream", "Stream", false),
+                                                        ("System.Security.IPermission","Permission", false),
+                                                        ("System.Security.Policy.IMembershipCondition", "Condition", false)
                                                     };
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -84,20 +83,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var baseTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
             var interfaceTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
 
-            foreach (var tuple in s_baseTypesAndTheirSuffix)
+            foreach (var (typeName, suffix, canSuffixBeCollection) in s_baseTypesAndTheirSuffix)
             {
-                var wellKnownNamedType = context.Compilation.GetTypeByMetadataName(tuple.Item1);
+                var wellKnownNamedType = context.Compilation.GetTypeByMetadataName(typeName);
 
                 if (wellKnownNamedType != null && wellKnownNamedType.OriginalDefinition != null)
                 {
                     // If the type is interface
                     if (wellKnownNamedType.OriginalDefinition.TypeKind == TypeKind.Interface)
                     {
-                        interfaceTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
+                        interfaceTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(suffix, canSuffixBeCollection));
                     }
                     else
                     {
-                        baseTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
+                        baseTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(suffix, canSuffixBeCollection));
                     }
                 }
             }

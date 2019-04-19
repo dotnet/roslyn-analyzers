@@ -1,25 +1,30 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.NetCore.CSharp.Analyzers.Runtime;
-using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+#if !BUILDING_VSIX // Analyzer not supported in the Microsoft CodeAnalysis (FxCop analyzers) VSIX
+
+using System.Threading.Tasks;
 using Xunit;
+// Use the security verifiers since this diagnostic is reported in generated code
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.TestForNaNCorrectlyAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpTestForNaNCorrectlyFixer>;
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.TestForNaNCorrectlyAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicTestForNaNCorrectlyFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class TestForNaNCorrectlyFixerTests : CodeFixTestBase
+    public class TestForNaNCorrectlyFixerTests
     {
         [Fact]
-        public void CA2242_FixFloatForEqualityWithFloatNaN()
+        public async Task CA2242_FixFloatForEqualityWithFloatNaN()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(float f)
     {
-        return f == float.NaN;
+        return [|f == float.NaN|];
     }
 }
 ", @"
@@ -32,10 +37,10 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(s As Single) As Boolean
-        Return s = Single.NaN
+        Return [|s = Single.NaN|]
     End Function
 End Class
 ", @"
@@ -48,14 +53,14 @@ End Class
         }
 
         [Fact]
-        public void CA2242_FixFloatForInequalityWithFloatNaN()
+        public async Task CA2242_FixFloatForInequalityWithFloatNaN()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(float f)
     {
-        return f != float.NaN;
+        return [|f != float.NaN|];
     }
 }
 ", @"
@@ -68,10 +73,10 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(s As Single) As Boolean
-        Return s <> Single.NaN
+        Return [|s <> Single.NaN|]
     End Function
 End Class
 ", @"
@@ -83,14 +88,15 @@ End Class
 ");
         }
 
-        public void CA2242_FixDoubleForEqualityWithDoubleNaN()
+        [Fact]
+        public async Task CA2242_FixDoubleForEqualityWithDoubleNaN()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(double d)
     {
-        return d == double.NaN;
+        return [|d == double.NaN|];
     }
 }
 ", @"
@@ -103,10 +109,10 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(d As Double) As Boolean
-        Return d = Double.NaN
+        Return [|d = Double.NaN|]
     End Function
 End Class
 ", @"
@@ -119,14 +125,14 @@ End Class
         }
 
         [Fact]
-        public void CA2242_FixDoubleForInequalityWithDoubleNaN()
+        public async Task CA2242_FixDoubleForInequalityWithDoubleNaN()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(double d)
     {
-        return d != double.NaN;
+        return [|d != double.NaN|];
     }
 }
 ", @"
@@ -139,10 +145,10 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(d As Double) As Boolean
-        Return d <> Double.NaN
+        Return [|d <> Double.NaN|]
     End Function
 End Class
 ", @"
@@ -155,14 +161,14 @@ End Class
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNOnLeft()
+        public async Task CA2242_FixForComparisonWithNaNOnLeft()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(double d)
     {
-        return double.NaN == d;
+        return [|double.NaN == d|];
     }
 }
 ", @"
@@ -175,10 +181,10 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(s As Single) As Boolean
-        Return Single.NaN = s
+        Return [|Single.NaN = s|]
     End Function
 End Class
 ", @"
@@ -192,14 +198,14 @@ End Class
         }
 
         [Fact]
-        public void CA2242_FixOnlyOneDiagnosticForComparisonWithNaNOnBothSides()
+        public async Task CA2242_FixOnlyOneDiagnosticForComparisonWithNaNOnBothSides()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare()
     {
-        return float.NaN == float.NaN;
+        return [|float.NaN == float.NaN|];
     }
 }
 ", @"
@@ -212,10 +218,10 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare() As Boolean
-        Return Double.NaN = Double.NaN
+        Return [|Double.NaN = Double.NaN|]
     End Function
 End Class
 ", @"
@@ -229,16 +235,16 @@ End Class
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNInFunctionArgument()
+        public async Task CA2242_FixForComparisonWithNaNInFunctionArgument()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     float _n = 42.0F;
 
     public void F()
     {
-        G(_n == float.NaN);
+        G([|_n == float.NaN|]);
     }
 
     public void G(bool comparison) {}
@@ -257,12 +263,12 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Private _n As Single = 42.0F
 
     Public Sub F()
-        G(_n = Single.NaN)
+        G([|_n = Single.NaN|])
     End Sub
 
     Public Sub G(comparison As Boolean)
@@ -283,16 +289,16 @@ End Class
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNInTernaryOperator()
+        public async Task CA2242_FixForComparisonWithNaNInTernaryOperator()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     float _n = 42.0F;
 
     public int F()
     {
-        return _n == float.NaN ? 1 : 0;
+        return [|_n == float.NaN|] ? 1 : 0;
     }
 }
 ", @"
@@ -308,12 +314,12 @@ public class A
 ");
 
             // VB doesn't have the ternary operator, but we add this test for symmetry.
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Private _n As Single = 42.0F
 
     Public Function F() As Integer
-        Return If(_n = Single.NaN, 1, 0)
+        Return If([|_n = Single.NaN|], 1, 0)
     End Function
 End Class
 ", @"
@@ -328,16 +334,16 @@ End Class
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNInThrowStatement()
+        public async Task CA2242_FixForComparisonWithNaNInThrowStatement()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     float _n = 42.0F;
 
     public void F()
     {
-        throw _n != float.NaN ? new System.Exception() : new System.ArgumentException();
+        throw [|_n != float.NaN|] ? new System.Exception() : new System.ArgumentException();
     }
 }
 ", @"
@@ -353,10 +359,11 @@ public class A
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn/issues/11741")]
-        public void CA2242_FixForComparisonWithNaNInCatchFilterClause()
+        [Fact]
+        public async Task CA2242_FixForComparisonWithNaNInCatchFilterClause()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
+using System;
 public class A
 {
     float _n = 42.0F;
@@ -364,10 +371,11 @@ public class A
     public void F()
     {
         try { }
-        catch (Exception ex) when (_n != float.NaN) { }
+        catch (Exception ex) when ([|_n != float.NaN|]) { }
     }
 }
 ", @"
+using System;
 public class A
 {
     float _n = 42.0F;
@@ -382,9 +390,9 @@ public class A
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNInYieldReturnStatement()
+        public async Task CA2242_FixForComparisonWithNaNInYieldReturnStatement()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System.Collections.Generic;
 
 public class A
@@ -393,7 +401,7 @@ public class A
 
     public IEnumerable<bool> F()
     {
-        yield return _n != float.NaN;
+        yield return [|_n != float.NaN|];
     }
 }
 ", @"
@@ -412,16 +420,16 @@ public class A
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNInSwitchStatement()
+        public async Task CA2242_FixForComparisonWithNaNInSwitchStatement()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     float _n = 42.0F;
 
     public void F()
     {
-        switch (_n != float.NaN)
+        switch ([|_n != float.NaN|])
         {
             default:
                 throw new System.NotImplementedException();
@@ -446,16 +454,16 @@ public class A
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNInForLoop()
+        public async Task CA2242_FixForComparisonWithNaNInForLoop()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     float _n = 42.0F;
 
     public void F()
     {
-        for (; _n != float.NaN; )
+        for (; [|_n != float.NaN|]; )
         {
             throw new System.Exception();
         }
@@ -478,16 +486,16 @@ public class A
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNInWhileLoop()
+        public async Task CA2242_FixForComparisonWithNaNInWhileLoop()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     float _n = 42.0F;
 
     public void F()
     {
-        while (_n != float.NaN)
+        while ([|_n != float.NaN|])
         {
         }
     }
@@ -508,9 +516,9 @@ public class A
         }
 
         [Fact]
-        public void CA2242_FixForComparisonWithNaNInDoWhileLoop()
+        public async Task CA2242_FixForComparisonWithNaNInDoWhileLoop()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     float _n = 42.0F;
@@ -520,7 +528,7 @@ public class A
         do
         {
         }
-        while (_n != float.NaN);
+        while ([|_n != float.NaN|]);
     }
 }
 ", @"
@@ -538,25 +546,7 @@ public class A
 }
 ");
         }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new TestForNaNCorrectlyAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new TestForNaNCorrectlyAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicTestForNaNCorrectlyFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpTestForNaNCorrectlyFixer();
-        }
     }
 }
+
+#endif

@@ -1,41 +1,28 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ExceptionsShouldBePublicAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ExceptionsShouldBePublicFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ExceptionsShouldBePublicAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ExceptionsShouldBePublicFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class ExceptionsShouldBePublicFixerTests : CodeFixTestBase
+    public class ExceptionsShouldBePublicFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new ExceptionsShouldBePublicAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new ExceptionsShouldBePublicAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new ExceptionsShouldBePublicFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new ExceptionsShouldBePublicFixer();
-        }
-
         [Fact]
-        public void TestCSharpNonPublicException()
+        public async Task TestCSharpNonPublicException()
         {
             var original = @"
 using System;
 
-class InternalException : Exception
+class [|InternalException|] : Exception
 {
 }";
 
@@ -46,18 +33,18 @@ public class InternalException : Exception
 {
 }";
 
-            VerifyCSharpFix(original, expected);
+            await VerifyCS.VerifyCodeFixAsync(original, expected);
         }
 
         [Fact]
-        public void TestCSharpNonPublicException2()
+        public async Task TestCSharpNonPublicException2()
         {
             var original = @"
 using System;
 
 public class Outer
 {
-    private class PrivateException : SystemException
+    private class [|PrivateException|] : SystemException
     {
     }
 }";
@@ -72,16 +59,16 @@ public class Outer
     }
 }";
 
-            VerifyCSharpFix(original, expected);
+            await VerifyCS.VerifyCodeFixAsync(original, expected);
         }
 
         [Fact]
-        public void TestVBasicNonPublicException()
+        public async Task TestVBasicNonPublicException()
         {
             var original = @"
 Imports System
 
-Class InternalException
+Class [|InternalException|]
    Inherits Exception
 End Class";
 
@@ -92,17 +79,17 @@ Public Class InternalException
    Inherits Exception
 End Class";
 
-            VerifyBasicFix(original, expected);
+            await VerifyVB.VerifyCodeFixAsync(original, expected);
         }
 
         [Fact]
-        public void TestVBasicNonPublicException2()
+        public async Task TestVBasicNonPublicException2()
         {
             var original = @"
 Imports System
 
 public class Outer
-    Private Class PrivateException
+    Private Class [|PrivateException|]
        Inherits SystemException
     End Class
 End Class";
@@ -116,7 +103,7 @@ public class Outer
     End Class
 End Class";
 
-            VerifyBasicFix(original, expected);
+            await VerifyVB.VerifyCodeFixAsync(original, expected);
         }
     }
 }

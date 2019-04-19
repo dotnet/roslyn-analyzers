@@ -17,6 +17,11 @@
         <target state="translated">Non chiamare {0} su un valore {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="RemoveRedundantCall">
+        <source>Remove redundant call</source>
+        <target state="new">Remove redundant call</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

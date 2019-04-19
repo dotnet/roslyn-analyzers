@@ -17,6 +17,11 @@
         <target state="translated">請勿對 {1} 值呼叫 {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="RemoveRedundantCall">
+        <source>Remove redundant call</source>
+        <target state="new">Remove redundant call</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

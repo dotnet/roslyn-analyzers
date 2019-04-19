@@ -69,7 +69,7 @@ namespace Metrics
                     case SymbolKind.Property:
                         var location = data.Symbol.Locations.First();
                         writer.WriteAttributeString("Name", data.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
-                        writer.WriteAttributeString("File", location.SourceTree.FilePath);
+                        writer.WriteAttributeString("File", location.SourceTree?.FilePath ?? "UNKNOWN");
                         writer.WriteAttributeString("Line", (location.GetLineSpan().StartLinePosition.Line + 1).ToString());
                         break;
 

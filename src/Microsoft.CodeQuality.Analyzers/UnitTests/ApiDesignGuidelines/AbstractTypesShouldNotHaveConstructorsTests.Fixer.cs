@@ -1,39 +1,24 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.AbstractTypesShouldNotHaveConstructorsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.AbstractTypesShouldNotHaveConstructorsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.AbstractTypesShouldNotHaveConstructorsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.AbstractTypesShouldNotHaveConstructorsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class CA1012FixerTests : CodeFixTestBase
+    public class CA1012FixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new AbstractTypesShouldNotHaveConstructorsAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new AbstractTypesShouldNotHaveConstructorsFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new AbstractTypesShouldNotHaveConstructorsAnalyzer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new AbstractTypesShouldNotHaveConstructorsFixer();
-        }
-
         [Fact]
-        public void TestCSPublicAbstractClass()
+        public async Task TestCSPublicAbstractClass()
         {
             var code = @"
-public abstract class C
+public abstract class [|C|]
 {
     public C()
     {
@@ -48,14 +33,14 @@ public abstract class C
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void TestVBPublicAbstractClass()
+        public async Task TestVBPublicAbstractClass()
         {
             var code = @"
-Public MustInherit Class C
+Public MustInherit Class [|C|]
     Public Sub New()
     End Sub
 End Class
@@ -66,11 +51,11 @@ Public MustInherit Class C
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TestCSInternalAbstractClass()
+        public async Task TestCSInternalAbstractClass()
         {
             var code = @"
 abstract class C
@@ -80,11 +65,11 @@ abstract class C
     }
 }
 ";
-            VerifyCSharpFix(code, code);
+            await VerifyCS.VerifyCodeFixAsync(code, code);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TestVBInternalAbstractClass()
+        public async Task TestVBInternalAbstractClass()
         {
             var code = @"
 MustInherit Class C
@@ -92,11 +77,11 @@ MustInherit Class C
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, code);
+            await VerifyVB.VerifyCodeFixAsync(code, code);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TestCSNestedAbstractClassWithPublicConstructor1()
+        public async Task TestCSNestedAbstractClassWithPublicConstructor1()
         {
             var code = @"
 public struct C
@@ -107,15 +92,15 @@ public struct C
     }
 }
 ";
-            VerifyCSharpFix(code, code);
+            await VerifyCS.VerifyCodeFixAsync(code, code);
         }
 
         [Fact]
-        public void TestVBNestedAbstractClassWithPublicConstructor1()
+        public async Task TestVBNestedAbstractClassWithPublicConstructor1()
         {
             var code = @"
 Public Structure C
-    MustInherit Class D
+    MustInherit Class [|D|]
         Public Sub New()
         End Sub
     End Class
@@ -129,16 +114,16 @@ Public Structure C
     End Class
 End Structure
 ";
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void TestNestedAbstractClassWithPublicConstructor2()
+        public async Task TestNestedAbstractClassWithPublicConstructor2()
         {
             var code = @"
 public abstract class C
 {
-    public abstract class D
+    public abstract class [|D|]
     {
         public D() { }
     }
@@ -153,15 +138,15 @@ public abstract class C
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void TestVBNestedAbstractClassWithPublicConstructor2()
+        public async Task TestVBNestedAbstractClassWithPublicConstructor2()
         {
             var code = @"
 Public MustInherit Class C
-   Protected Friend MustInherit Class D
+   Protected Friend MustInherit Class [|D|]
         Sub New()
         End Sub
     End Class
@@ -175,11 +160,11 @@ Public MustInherit Class C
     End Class
 End Class
 ";
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TestNestedAbstractClassWithPublicConstructor3()
+        public async Task TestNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"
 internal abstract class C
@@ -190,11 +175,11 @@ internal abstract class C
     }
 }
 ";
-            VerifyCSharpFix(code, code);
+            await VerifyCS.VerifyCodeFixAsync(code, code);
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void TestVBNestedAbstractClassWithPublicConstructor3()
+        public async Task TestVBNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"
 MustInherit Class C
@@ -204,7 +189,7 @@ MustInherit Class C
     End Class
 End Class
 ";
-            VerifyBasicFix(code, code);
+            await VerifyVB.VerifyCodeFixAsync(code, code);
         }
     }
 }

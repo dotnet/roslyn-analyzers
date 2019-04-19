@@ -57,7 +57,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             INamedTypeSymbol stringType = model.Compilation.GetSpecialType(SpecialType.System_String);
             SyntaxNode memberAccess = generator.MemberAccessExpression(
-                        generator.TypeExpression(stringType),
+                        generator.TypeExpressionForStaticMemberAccess(stringType),
                         generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.EqualsMethodName));
             SyntaxNode ordinal = CreateOrdinalMemberAccess(generator, model);
             SyntaxNode invocation = generator.InvocationExpression(
@@ -80,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             INamedTypeSymbol stringComparisonType = WellKnownTypes.StringComparison(model.Compilation);
             return generator.MemberAccessExpression(
-                generator.TypeExpression(stringComparisonType),
+                generator.TypeExpressionForStaticMemberAccess(stringComparisonType),
                 generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.OrdinalText));
         }
 

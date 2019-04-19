@@ -697,6 +697,205 @@ End Namespace",
         }
 
         [Fact]
+        public void TestOnDeserializationDeleteOfDirectoryDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        Directory.Delete(path);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            Directory.Delete(path)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationDeleteOfFileInfoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        new FileInfo(""fileName"").Delete();
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim fileInfo As New FileInfo(""fileName"")
+            fileInfo.Delete()
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationDeleteOfDirectoryInfoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        new DirectoryInfo(""path"").Delete();
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim directoryInfo As new DirectoryInfo(""path"")
+            directoryInfo.Delete()
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationDeleteOfLogStoreDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.IO.Log;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+namespace System.IO.Log
+{
+    public sealed class LogStore : IDisposable
+    {
+        public static void Delete (string path)
+        {
+        }
+        
+        public void Dispose ()
+        {
+        }
+    }
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        LogStore.Delete(path);
+    }
+}",
+            GetCSharpResultAt(28, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.IO.Log
+Imports System.Runtime.Serialization
+
+Namespace System.IO.Log
+    Public NotInheritable Class LogStore
+        Implements IDisposable
+        Public Shared Sub Delete (path As String)
+        End Sub
+        
+        Public Sub Dispose () Implements IDisposable.Dispose
+        End Sub
+    End Class
+End Namespace
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            LogStore.Delete(path)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(24, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
         public void TestOnDeserializationGetLoadedModulesDiagnostic()
         {
             VerifyCSharp(@"

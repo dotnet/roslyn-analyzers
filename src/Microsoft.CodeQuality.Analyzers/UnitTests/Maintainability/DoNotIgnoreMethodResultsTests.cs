@@ -314,7 +314,7 @@ End Class
     GetBasicHResultOrErrorCodeResultAt(6, 9, "M", "NativeMethod"));
         }
 
-        [Fact(Skip = "746")]
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/746")]
         [WorkItem(746, "https://github.com/dotnet/roslyn-analyzers/issues/746")]
         public void UnusedComImportPreserveSig()
         {

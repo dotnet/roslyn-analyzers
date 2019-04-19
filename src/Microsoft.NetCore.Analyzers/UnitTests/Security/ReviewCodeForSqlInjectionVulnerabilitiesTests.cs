@@ -2702,7 +2702,7 @@ public class Class1
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1891")]
+        [Fact]
         public void PointsToAnalysisAssertsLocationSetsComparison()
         {
             VerifyCSharp(@"

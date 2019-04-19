@@ -5257,5 +5257,155 @@ public class CSharpSyntaxNode : SyntaxNode
             // Test0.cs(37,23): warning CA1062: In externally visible method 'SyntaxKind Extensions.Kind(SyntaxNode node)', validate parameter 'node' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(37, 23, "SyntaxKind Extensions.Kind(SyntaxNode node)", "node"));
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2339, "https://github.com/dotnet/roslyn-analyzers/issues/2339")]
+        public void ParameterReassignedAfterNullCheck()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    public static string AsString(this Exception exception)
+    {
+        if (exception == null)
+        {
+            return null;
+        }
+
+        while (exception.InnerException != null)
+        {
+            exception = exception.InnerException;
+        }
+
+        return exception.Message;
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2327, "https://github.com/dotnet/roslyn-analyzers/issues/2327")]
+        public void ForEachLoopsAfterNullCheck()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.ObjectModel;
+
+public static class MainClass
+{
+    public static void Initialize(ModelsCollection models)
+    {
+        if (models == null) throw new ArgumentNullException(nameof(models));
+
+        foreach (var item in models)
+        {
+            Console.WriteLine(item.Name);
+        }
+
+        foreach (var item in models)
+        {
+            Console.WriteLine(item.Id);
+        }
+    }
+}
+
+public class ModelsCollection : ObservableCollection<Model>
+{
+}
+
+public class Model
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2280, "https://github.com/dotnet/roslyn-analyzers/issues/2280")]
+        public void ConditionalAssignmentAfterNullCheck()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class Node
+{
+    public Node Parent { get; set; }
+
+    public static Node M(Node node, bool flag)
+    {
+        if (node == null) { throw new ArgumentNullException(nameof(node)); }
+
+        var parent = flag ? node.Parent : node;
+        return parent.Parent; // CA1062 is reported on `parent`
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2276, "https://github.com/dotnet/roslyn-analyzers/issues/2276")]
+        public void AssignedArrayEmptyOnNullPath()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Data.Common;
+
+public class TableSet
+{
+    public TableSet(DbDataReader reader, params string[] tableNames)
+    {
+        if (reader == null)
+            throw new ArgumentNullException(nameof(reader));
+        if (tableNames == null)
+            tableNames = Array.Empty<string>();
+
+        var index = 0;
+        do
+        {
+            var tableName = (index < tableNames.Length) ? tableNames[index] : (""Table "" + index);
+            index += 1;
+        }
+        while (reader.NextResult());
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Theory, WorkItem(2275, "https://github.com/dotnet/roslyn-analyzers/issues/2275")]
+        [InlineData("IsNullOrWhiteSpace")]
+        [InlineData("IsNullOrEmpty")]
+        public void StringNullCheckApis(string apiName)
+        {
+            VerifyCSharp($@"
+using System.Globalization;
+
+public class C
+{{
+    public static readonly char[] s_InvalidCharacters = new[] {{ 'a', 'b' }};
+
+    public string Name {{ get; }}
+    public C(string name)
+    {{
+        Name = M1(name);
+    }}
+
+    private static string M1(string name)
+    {{
+        if (string.{apiName}(name))
+            return null;
+
+        string result = name;
+        foreach (char c in s_InvalidCharacters)
+        {{
+            result = result.Replace(c.ToString(CultureInfo.InvariantCulture), """");
+        }}
+
+        if (!char.IsLetter(result[0]) && result[0] != '_')
+            result = ""_"" + result;
+
+        return result;
+    }}
+}}");
+        }
     }
 }

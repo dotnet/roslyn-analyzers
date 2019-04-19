@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -33,8 +34,9 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected abstract string DeserializerTypeMetadataName { get; }
 
         /// <summary>
-        /// Name of the <see cref="System.Runtime.Serialization.SerializationBinder"/> property.
+        /// Name of the <see cref="T:System.Runtime.Serialization.SerializationBinder"/> property.
         /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
         protected abstract string SerializationBinderPropertyMetadataName { get; }
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     IInvocationOperation invocationOperation =
                                         (IInvocationOperation)operationAnalysisContext.Operation;
-                                    if (invocationOperation.Instance?.Type == deserializerTypeSymbol
+                                    if (Equals(invocationOperation.Instance?.Type, deserializerTypeSymbol)
                                         && cachedDeserializationMethodNames.Contains(invocationOperation.TargetMethod.Name))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
@@ -184,7 +186,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     IMethodReferenceOperation methodReferenceOperation =
                                         (IMethodReferenceOperation)operationAnalysisContext.Operation;
-                                    if (methodReferenceOperation.Instance?.Type == deserializerTypeSymbol
+                                    if (Equals(methodReferenceOperation.Instance?.Type, deserializerTypeSymbol)
                                        && cachedDeserializationMethodNames.Contains(
                                             methodReferenceOperation.Method.MetadataName))
                                     {

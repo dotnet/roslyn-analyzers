@@ -148,6 +148,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         });
 
                     PooledHashSet<(IOperation Operation, ISymbol ContainingSymbol)> rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
+                    Debug.WriteLine($"JavaScriptSerializer compilation {compilationStartAnalysisContext.Compilation.GetHashCode()} allocated rootOps {rootOperationsNeedingAnalysis.GetHashCode()}");
 
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
@@ -164,6 +165,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
+                                            Debug.WriteLine($"JavaScriptSerializer compilation {operationAnalysisContext.Compilation.GetHashCode()} adding to rootOps {rootOperationsNeedingAnalysis.GetHashCode()}");
                                             rootOperationsNeedingAnalysis.Add((invocationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
@@ -180,6 +182,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
+                                            Debug.WriteLine($"JavaScriptSerializer compilation {operationAnalysisContext.Compilation.GetHashCode()} adding to rootOps {rootOperationsNeedingAnalysis.GetHashCode()}");
                                             rootOperationsNeedingAnalysis.Add((operationAnalysisContext.Operation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
@@ -248,6 +251,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             finally
                             {
+                                Debug.WriteLine($"JavaScriptSerializer compilation {compilationAnalysisContext.Compilation.GetHashCode()} freeing rootOps {rootOperationsNeedingAnalysis.GetHashCode()}");
                                 rootOperationsNeedingAnalysis.Free();
                                 allResults?.Free();
                             }

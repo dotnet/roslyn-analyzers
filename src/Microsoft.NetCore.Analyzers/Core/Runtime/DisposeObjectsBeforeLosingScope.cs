@@ -159,21 +159,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 bool SkipInterproceduralAnalysis(IMethodSymbol invokedMethod)
                 {
-                    // Skip interprocedural analysis if we are invoking a method and not passing any disposable object as an argument.
+                    // Skip interprocedural analysis if we are invoking a method and not passing any disposable object as an argument
+                    // and not receiving a disposable object as a return value.
                     // We also check that we are not passing any object type argument which might hold disposable object
                     // and also check that we are not passing delegate type argument which can
                     // be a lambda or local function that has access to disposable object in current method's scope.
+
+                    if (CanBeDisposable(invokedMethod.ReturnType))
+                    {
+                        return false;
+                    }
+
                     foreach (var p in invokedMethod.Parameters)
                     {
-                        if (p.Type.SpecialType == SpecialType.System_Object ||
-                            p.Type.DerivesFrom(disposeAnalysisHelper.IDisposable) ||
-                            p.Type.TypeKind == TypeKind.Delegate)
+                        if (CanBeDisposable(p.Type))
                         {
                             return false;
                         }
                     }
 
                     return true;
+
+                    bool CanBeDisposable(ITypeSymbol type)
+                        => type.SpecialType == SpecialType.System_Object ||
+                            type.DerivesFrom(disposeAnalysisHelper.IDisposable) ||
+                            type.TypeKind == TypeKind.Delegate;
                 }
             });
         }

@@ -112,32 +112,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                         },
                         OperationKind.FieldReference);
 
-                    // Private field reference information reaches a state of consistency as each type symbol completes
-                    // analysis. Reporting information at the end of each named type provides incremental analysis
-                    // support inside the IDE.
-                    compilationContext.RegisterSymbolStartAction(
-                        context =>
+                    compilationContext.RegisterCompilationEndAction(
+                        (compilationEndContext) =>
                         {
-                            context.RegisterSymbolEndAction(context =>
+                            foreach (IFieldSymbol maybeUnreferencedPrivateField in maybeUnreferencedPrivateFields.Keys)
                             {
-                                var namedType = (INamedTypeSymbol)context.Symbol;
-                                foreach (var member in namedType.GetMembers())
+                                if (referencedPrivateFields.ContainsKey(maybeUnreferencedPrivateField))
                                 {
-                                    if (!(member is IFieldSymbol field))
-                                    {
-                                        continue;
-                                    }
-
-                                    if (!maybeUnreferencedPrivateFields.ContainsKey(field) || referencedPrivateFields.ContainsKey(field))
-                                    {
-                                        continue;
-                                    }
-
-                                    context.ReportDiagnostic(Diagnostic.Create(Rule, field.Locations[0], field.Name));
+                                    continue;
                                 }
-                            });
-                        },
-                        SymbolKind.NamedType);
+
+                                compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, maybeUnreferencedPrivateField.Locations[0], maybeUnreferencedPrivateField.Name));
+                            }
+                        });
                 });
         }
 

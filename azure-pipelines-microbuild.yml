@@ -16,7 +16,7 @@ steps:
     esrpSigning: true
   condition: and(succeeded(), ne(variables['SignType'], ''))
 
-- script: eng\CIBuild.cmd 
+- script: eng\common\CIBuild.cmd 
             -configuration $(BuildConfiguration)
             /p:OfficialBuildId=$(BUILD.BUILDNUMBER)
             /p:DotNetSignType=$(SignType)

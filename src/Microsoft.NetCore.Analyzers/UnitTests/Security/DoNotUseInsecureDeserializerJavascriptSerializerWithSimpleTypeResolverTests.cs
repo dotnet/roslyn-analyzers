@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.Analyzers.Security;
 using Test.Utilities;
 using Xunit;
 

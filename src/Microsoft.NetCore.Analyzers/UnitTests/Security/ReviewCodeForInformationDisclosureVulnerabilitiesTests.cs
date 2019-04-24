@@ -123,5 +123,59 @@ public class Class
 ",
                 GetCSharpResultAt(17, 13, 17, 38, "string BulletedList.Text", "void Class.Blah()", "string Exception.StackTrace", "void Class.Blah()"));
         }
+
+        [Fact]
+        public void TryUsingTryUsingTry()
+        {
+            this.VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Web.UI.WebControls;
+
+public class Class
+{
+    public BulletedList BulletedList;
+
+    public async Task DoSomethingNotReallyAsync(Stream stream)
+    {
+        try
+        {
+            using (stream)
+            {
+                try
+                {
+                    using (StreamWriter sw = new StreamWriter(stream))
+                    {
+                        ValidateStreamIsNotMemoryStream(stream);
+                        sw.Write(""Hello world!"");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Write(ex.Message);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        finally
+        {
+            
+        }
+    }
+
+    private static void ValidateStreamIsNotMemoryStream(Stream stream)
+    {
+        if (stream is MemoryStream)
+        {
+            throw new ArgumentException(nameof(stream));
+        }
+    }
+}
+");
+        }
     }
 }

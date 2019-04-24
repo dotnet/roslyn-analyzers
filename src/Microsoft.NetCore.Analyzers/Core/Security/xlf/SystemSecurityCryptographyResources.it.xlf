@@ -242,6 +242,21 @@
         <target state="new">The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSharedAccessProtocolHttpsOnly">
+        <source>Use SharedAccessProtocol HttpsOnly</source>
+        <target state="new">Use SharedAccessProtocol HttpsOnly</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
+        <source>Https is identical to Http because it follows the same basic protocols, but Https was developed to allow authorization and secured transactions, which is more secure and more private than Http. So, it is recommended to use Https.</source>
+        <target state="new">Https is identical to Http because it follows the same basic protocols, but Https was developed to allow authorization and secured transactions, which is more secure and more private than Http. So, it is recommended to use Https.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
+        <source>Use SharedAccessProtocol.HttpsOnly when creating Shared Access Signature (SAS)</source>
+        <target state="new">Use SharedAccessProtocol.HttpsOnly when creating Shared Access Signature (SAS)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
         <target state="new">Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</target>

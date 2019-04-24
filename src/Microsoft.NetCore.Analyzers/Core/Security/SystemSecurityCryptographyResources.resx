@@ -261,6 +261,15 @@
   <data name="SetViewStateUserKeyMessage" xml:space="preserve">
     <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
   </data>
+  <data name="UseContainerLevelAccessPolicy" xml:space="preserve">
+    <value>Use Container Level Access Policy</value>
+  </data>
+  <data name="UseContainerLevelAccessPolicyDescription" xml:space="preserve">
+    <value>No access policy identifier is used which makes it a non-revocable token limiting the table SAS access to only the request customer's id. To grant longer-term permissions or to retain the ability to modify or revoke permissions after handing URL out, it's better to use container-level access policies.</value>
+  </data>
+  <data name="UseContainerLevelAccessPolicyMessage" xml:space="preserve">
+    <value>Use container-level access policy when creating Shared Access Signature (SAS)</value>
+  </data>
   <data name="UseXmlReaderDescription" xml:space="preserve">
     <value>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</value>
   </data>

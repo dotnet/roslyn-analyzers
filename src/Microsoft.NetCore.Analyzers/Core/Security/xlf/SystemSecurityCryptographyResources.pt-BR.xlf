@@ -242,6 +242,21 @@
         <target state="new">The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicy">
+        <source>Use Container Level Access Policy</source>
+        <target state="new">Use Container Level Access Policy</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicyDescription">
+        <source>No access policy identifier is used which makes it a non-revocable token limiting the table SAS access to only the request customer's id. To grant longer-term permissions or to retain the ability to modify or revoke permissions after handing URL out, it's better to use container-level access policies.</source>
+        <target state="new">No access policy identifier is used which makes it a non-revocable token limiting the table SAS access to only the request customer's id. To grant longer-term permissions or to retain the ability to modify or revoke permissions after handing URL out, it's better to use container-level access policies.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicyMessage">
+        <source>Use container-level access policy when creating Shared Access Signature (SAS)</source>
+        <target state="new">Use container-level access policy when creating Shared Access Signature (SAS)</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
         <target state="new">Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</target>

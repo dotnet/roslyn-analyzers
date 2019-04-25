@@ -265,7 +265,7 @@
     <value>Use Container Level Access Policy</value>
   </data>
   <data name="UseContainerLevelAccessPolicyDescription" xml:space="preserve">
-    <value>No access policy identifier is used which makes it a non-revocable token limiting the table SAS access to only the request customer's id. To grant longer-term permissions or to retain the ability to modify or revoke permissions after handing URL out, it's better to use container-level access policies.</value>
+    <value>No access policy identifier is used which makes it a non-revocable token limiting the SAS access to only the request customer's id. To grant longer-term permissions or to retain the ability to modify or revoke permissions after handing URL out, it's better to use container-level access policies.</value>
   </data>
   <data name="UseContainerLevelAccessPolicyMessage" xml:space="preserve">
     <value>Use container-level access policy when creating Shared Access Signature (SAS)</value>

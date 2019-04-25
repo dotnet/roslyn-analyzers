@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -39,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
-                customTags: WellKnownDiagnosticTags.Telemetry);
+                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         internal static ImmutableArray<(string nspace, string policyIdentifierName)> NamespaceAndPolicyIdentifierNamePairs = ImmutableArray.Create(
                                                                                                     ("Blob", "groupPolicyIdentifier"),
@@ -60,18 +61,35 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var microsoftWindowsAzureStorageNamespaceSymbol = compilationStartAnalysisContext
-                            .Compilation
-                            .GlobalNamespace
-                            .GetMembers("Microsoft")
-                            ?.FirstOrDefault()
-                            .GetMembers("WindowsAzure")
-                            .OfType<INamespaceOrTypeSymbol>()
-                            .FirstOrDefault()
-                            .GetMembers("Storage")
-                            .OfType<INamespaceOrTypeSymbol>()
-                            .FirstOrDefault();
+                                                                    .Compilation
+                                                                    .GlobalNamespace
+                                                                    .GetMembers("Microsoft")
+                                                                    ?.FirstOrDefault()
+                                                                    .GetMembers("WindowsAzure")
+                                                                    .OfType<INamespaceSymbol>()
+                                                                    .FirstOrDefault()
+                                                                    .GetMembers("Storage")
+                                                                    .OfType<INamespaceSymbol>()
+                                                                    .FirstOrDefault();
 
                 if (microsoftWindowsAzureStorageNamespaceSymbol == null)
+                {
+                    return;
+                }
+
+                var namespaceTypeSymbolAndPolicyIdentifierNamePairs = new Dictionary<INamespaceSymbol, string>();
+
+                foreach (var (nspace, policyIdentifierName) in NamespaceAndPolicyIdentifierNamePairs)
+                {
+                    namespaceTypeSymbolAndPolicyIdentifierNamePairs.Add(
+                        microsoftWindowsAzureStorageNamespaceSymbol
+                            .GetMembers(nspace)
+                            .OfType<INamespaceSymbol>()
+                            ?.FirstOrDefault(),
+                        policyIdentifierName);
+                }
+
+                if (namespaceTypeSymbolAndPolicyIdentifierNamePairs.Count() == 0)
                 {
                     return;
                 }
@@ -81,19 +99,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
-                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                                            operationBlockStartContext.Options,
-                                                            SupportedDiagnostics,
-                                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                                            cancellationToken: operationBlockStartContext.CancellationToken,
-                                                            defaultMaxInterproceduralMethodCallChain: 1);
 
                     operationBlockStartContext.RegisterOperationAction(operationAnalysisContext =>
                     {
                         var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
                         var methodSymbol = invocationOperation.TargetMethod;
+                        var methodName = methodSymbol.Name;
 
-                        if (methodSymbol.Name != "GetSharedAccessSignature")
+                        if (methodName != "GetSharedAccessSignature")
                         {
                             return;
                         }
@@ -105,37 +118,35 @@ namespace Microsoft.NetCore.Analyzers.Security
                             return;
                         }
 
-                        var namespaceQualifiedName = namespaceSymbol.ToDisplayString();
-
-                        if (namespaceQualifiedName != "Microsoft.WindowsAzure.Storage" &&
-                            !namespaceQualifiedName.StartsWith("Microsoft.WindowsAzure.Storage.", StringComparison.Ordinal))
+                        foreach (var (nspaceTypeSymbol, policyIdentifierName) in namespaceTypeSymbolAndPolicyIdentifierNamePairs)
                         {
-                            return;
-                        }
-
-                        var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(
-                                                                            invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
-                                                                            owningSymbol,
-                                                                            wellKnownTypeProvider,
-                                                                            interproceduralAnalysisConfig,
-                                                                            interproceduralAnalysisPredicateOpt: null,
-                                                                            false);
-
-                        foreach (var (nspace, policyIdentifierName) in NamespaceAndPolicyIdentifierNamePairs)
-                        {
-                            if (namespaceQualifiedName == "Microsoft.WindowsAzure.Storage." + nspace)
+                            if (namespaceSymbol.Equals(nspaceTypeSymbol))
                             {
                                 var argumentOperation = invocationOperation.Arguments.FirstOrDefault(s => s.Parameter.Name == policyIdentifierName);
 
                                 if (argumentOperation != null)
                                 {
+                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                                                            operationBlockStartContext.Options,
+                                                                            SupportedDiagnostics,
+                                                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
+                                                                            cancellationToken: operationBlockStartContext.CancellationToken,
+                                                                            defaultMaxInterproceduralMethodCallChain: 1);
+                                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(
+                                                                    invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
+                                                                    owningSymbol,
+                                                                    wellKnownTypeProvider,
+                                                                    interproceduralAnalysisConfig,
+                                                                    interproceduralAnalysisPredicateOpt: null,
+                                                                    false);
                                     var pointsToAbstractValue = pointsToAnalysisResult[argumentOperation.Kind, argumentOperation.Syntax];
 
                                     if (pointsToAbstractValue.NullState == NullAbstractValue.Null)
                                     {
                                         operationAnalysisContext.ReportDiagnostic(
                                             invocationOperation.CreateDiagnostic(
-                                                Rule));
+                                                Rule,
+                                                methodName));
                                     }
                                 }
                             }

@@ -129,7 +129,7 @@ class TestClass
         cloudAppendBlob.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange);
     }
 }",
-            GetCSharpResultAt(12, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(12, 9, UseContainerLevelAccessPolicy.Rule, "GetSharedAccessSignature"));
         }
 
         [Fact]
@@ -148,7 +148,7 @@ class TestClass
         cloudTable.GetSharedAccessSignature(policy, accessPolicyIdentifier, startPartitionKey, startRowKey, endPartitionKey, endRowKey);
     }
 }",
-            GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule, "GetSharedAccessSignature"));
         }
 
         [Fact]
@@ -167,7 +167,7 @@ class TestClass
         cloudFile.GetSharedAccessSignature(policy, groupPolicyIdentifier);
     }
 }",
-            GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule, "GetSharedAccessSignature"));
         }
 
         [Fact]
@@ -187,7 +187,7 @@ class TestClass
         cloudQueue.GetSharedAccessSignature(policy, accessPolicyIdentifier);
     }
 }",
-            GetCSharpResultAt(12, 9, UseContainerLevelAccessPolicy.Rule));
+            GetCSharpResultAt(12, 9, UseContainerLevelAccessPolicy.Rule, "GetSharedAccessSignature"));
         }
 
         [Fact]

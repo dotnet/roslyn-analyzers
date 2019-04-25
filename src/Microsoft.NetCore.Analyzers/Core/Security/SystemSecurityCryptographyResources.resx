@@ -265,7 +265,7 @@
     <value>Use SharedAccessProtocol HttpsOnly</value>
   </data>
   <data name="UseSharedAccessProtocolHttpsOnlyDescription" xml:space="preserve">
-    <value>Https is identical to Http because it follows the same basic protocols, but Https was developed to allow authorization and secured transactions, which is more secure and more private than Http. So, it is recommended to use Https.</value>
+    <value>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</value>
   </data>
   <data name="UseSharedAccessProtocolHttpsOnlyMessage" xml:space="preserve">
     <value>Use SharedAccessProtocol.HttpsOnly when creating Shared Access Signature (SAS)</value>

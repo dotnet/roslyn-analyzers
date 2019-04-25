@@ -39,9 +39,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
-                customTags: WellKnownDiagnosticTags.Telemetry);
+                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+
+        /// <summary>
+        /// SharedAccessProtocol.HttpsOnly = 1, SharedAccessProtocol.HttpsOrHttp = 2.
+        /// </summary>
+        private const int SharedAccessProtocolHttpsOnly = 1;
 
         public override void Initialize(AnalysisContext context)
         {
@@ -71,15 +76,13 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
+                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                                        WellKnownTypeNames.MicrosoftWindowsAzureStorageCloudStorageAccount,
+                                        out INamedTypeSymbol cloudStorageAccountTypeSymbol);
+
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
-                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                                            operationBlockStartContext.Options,
-                                                            SupportedDiagnostics,
-                                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                                            cancellationToken: operationBlockStartContext.CancellationToken,
-                                                            defaultMaxInterproceduralMethodCallChain: 1);
 
                     operationBlockStartContext.RegisterOperationAction(operationAnalysisContext =>
                     {
@@ -93,38 +96,47 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         var namespaceSymbol = methodSymbol.ContainingNamespace;
 
+                        while (namespaceSymbol != null)
+                        {
+                            if (namespaceSymbol.Equals(microsoftWindowsAzureStorageNamespaceSymbol))
+                            {
+                                break;
+                            }
+
+                            namespaceSymbol = namespaceSymbol.ContainingNamespace;
+                        }
+
                         if (namespaceSymbol == null)
                         {
                             return;
                         }
 
-                        var namespaceQualifiedName = namespaceSymbol.ToDisplayString();
-
-                        if (namespaceQualifiedName != "Microsoft.WindowsAzure.Storage" &&
-                            !namespaceQualifiedName.StartsWith("Microsoft.WindowsAzure.Storage.", StringComparison.Ordinal))
-                        {
-                            return;
-                        }
-
-                        var valueContentAnalysisResultOpt = ValueContentAnalysis.GetOrComputeResult(
-                                                                                    invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
-                                                                                    owningSymbol,
-                                                                                    wellKnownTypeProvider,
-                                                                                    interproceduralAnalysisConfig,
-                                                                                    out var copyAnalysisResult,
-                                                                                    out var pointsToAnalysisResult);
                         var typeSymbol = methodSymbol.ContainingType;
 
-                        if (typeSymbol.Name != "CloudStorageAccount")
+                        if (!typeSymbol.Equals(cloudStorageAccountTypeSymbol))
                         {
                             var protocolsArgumentOperation = invocationOperation.Arguments.FirstOrDefault(s => s.Parameter.Name == "protocols");
 
                             if (protocolsArgumentOperation != null)
                             {
-                                var protocolsArgument = valueContentAnalysisResultOpt[protocolsArgumentOperation.Kind, protocolsArgumentOperation.Syntax];
+                                var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                                                        operationBlockStartContext.Options,
+                                                                        SupportedDiagnostics,
+                                                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
+                                                                        cancellationToken: operationBlockStartContext.CancellationToken,
+                                                                        defaultMaxInterproceduralMethodCallChain: 1);
+                                var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(
+                                                                                            invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
+                                                                                            owningSymbol,
+                                                                                            wellKnownTypeProvider,
+                                                                                            interproceduralAnalysisConfig,
+                                                                                            out var copyAnalysisResult,
+                                                                                            out var pointsToAnalysisResult);
+
+                                var protocolsArgument = valueContentAnalysisResult[protocolsArgumentOperation.Kind, protocolsArgumentOperation.Syntax];
 
                                 if (protocolsArgument.IsLiteralState &&
-                                    !protocolsArgument.LiteralValues.Contains(1))
+                                    !protocolsArgument.LiteralValues.Contains(SharedAccessProtocolHttpsOnly))
                                 {
                                     operationAnalysisContext.ReportDiagnostic(
                                         invocationOperation.CreateDiagnostic(

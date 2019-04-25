@@ -58,16 +58,16 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var microsoftWindowsAzureStorageNamespaceSymbol = compilationStartAnalysisContext
-                            .Compilation
-                            .GlobalNamespace
-                            .GetMembers("Microsoft")
-                            ?.FirstOrDefault()
-                            .GetMembers("WindowsAzure")
-                            .OfType<INamespaceOrTypeSymbol>()
-                            .FirstOrDefault()
-                            .GetMembers("Storage")
-                            .OfType<INamespaceOrTypeSymbol>()
-                            .FirstOrDefault();
+                                                                    .Compilation
+                                                                    .GlobalNamespace
+                                                                    .GetMembers("Microsoft")
+                                                                    ?.FirstOrDefault()
+                                                                    .GetMembers("WindowsAzure")
+                                                                    .OfType<INamespaceSymbol>()
+                                                                    .FirstOrDefault()
+                                                                    .GetMembers("Storage")
+                                                                    .OfType<INamespaceSymbol>()
+                                                                    .FirstOrDefault();
 
                 if (microsoftWindowsAzureStorageNamespaceSymbol == null)
                 {

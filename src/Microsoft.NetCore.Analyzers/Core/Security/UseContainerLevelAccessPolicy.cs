@@ -64,11 +64,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                     .Compilation
                                                                     .GlobalNamespace
                                                                     .GetMembers("Microsoft")
-                                                                    ?.FirstOrDefault()
-                                                                    .GetMembers("WindowsAzure")
+                                                                    .FirstOrDefault()
+                                                                    ?.GetMembers("WindowsAzure")
                                                                     .OfType<INamespaceSymbol>()
                                                                     .FirstOrDefault()
-                                                                    .GetMembers("Storage")
+                                                                    ?.GetMembers("Storage")
                                                                     .OfType<INamespaceSymbol>()
                                                                     .FirstOrDefault();
 
@@ -81,12 +81,17 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 foreach (var (nspace, policyIdentifierName) in NamespaceAndPolicyIdentifierNamePairs)
                 {
-                    namespaceTypeSymbolAndPolicyIdentifierNamePairs.Add(
-                        microsoftWindowsAzureStorageNamespaceSymbol
-                            .GetMembers(nspace)
-                            .OfType<INamespaceSymbol>()
-                            ?.FirstOrDefault(),
-                        policyIdentifierName);
+                    var nspaceTypeSymbol = microsoftWindowsAzureStorageNamespaceSymbol
+                                                .GetMembers(nspace)
+                                                .OfType<INamespaceSymbol>()
+                                                .FirstOrDefault();
+
+                    if (nspaceTypeSymbol == null)
+                    {
+                        continue;
+                    }
+
+                    namespaceTypeSymbolAndPolicyIdentifierNamePairs.Add(nspaceTypeSymbol, policyIdentifierName);
                 }
 
                 if (namespaceTypeSymbolAndPolicyIdentifierNamePairs.Count() == 0)
@@ -122,7 +127,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                         {
                             if (namespaceSymbol.Equals(nspaceTypeSymbol))
                             {
-                                var argumentOperation = invocationOperation.Arguments.FirstOrDefault(s => s.Parameter.Name == policyIdentifierName);
+                                var argumentOperation = invocationOperation.Arguments.FirstOrDefault(
+                                                            s => s.Parameter.Name == policyIdentifierName &&
+                                                            s.Parameter.Type.SpecialType == SpecialType.System_String);
 
                                 if (argumentOperation != null)
                                 {

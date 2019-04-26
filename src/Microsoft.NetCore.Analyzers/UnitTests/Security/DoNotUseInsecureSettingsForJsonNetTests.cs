@@ -57,7 +57,7 @@ class Blah
         }
 
         [Fact]
-        public void Insecure_Definition_DefinitelyDiagnostic()
+        public void Insecure_FieldInitialization_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
 using Newtonsoft.Json;
@@ -66,7 +66,25 @@ class Blah
 {
     public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
 }",
-                GetCSharpResultAt(10, 16, DoNotUseInsecureSettingsForJsonNet.DefinitelyInsecureSettings));
+                GetCSharpResultAt(6, 62, DoNotUseInsecureSettingsForJsonNet.DefinitelyInsecureSettings));
+        }
+
+        [Fact]
+        public void Insecure_FieldInitialization_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public static readonly JsonSerializerSettings Settings = 
+        new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Objects,
+            SerializationBinder = new MyISerializationBinder(),
+        };
+}");
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

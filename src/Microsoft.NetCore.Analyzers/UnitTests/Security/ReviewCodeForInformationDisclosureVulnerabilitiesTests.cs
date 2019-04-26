@@ -125,7 +125,7 @@ public class Class
         }
 
         [Fact]
-        public void TryUsingTryUsingTry()
+        public void TryUsingTryUsingTry_NoDiagnostic()
         {
             this.VerifyCSharp(@"
 using System;

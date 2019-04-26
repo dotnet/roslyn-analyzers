@@ -256,13 +256,13 @@
     <value>Review code for XAML injection vulnerabilities</value>
   </data>
   <data name="JsonNetInsecureSettingsMessage" xml:space="preserve">
-    <value>When deserializing untrusted input with Newtonsoft Json.NET, allowing arbitrary types to be deserialized is insecure.  Use TypeNameHandling.None, or for values other than None, restrict types with a SerializationBinder.</value>
+    <value>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</value>
   </data>
   <data name="JsonNetInsecureSettingsTitle" xml:space="preserve">
     <value>Do not use insecure JsonSerializerSettings</value>
   </data>
   <data name="JsonNetMaybeInsecureSettingsMessage" xml:space="preserve">
-    <value>When deserializing untrusted input with Newtonsoft Json.NET, allowing arbitrary types to be deserialized is insecure.  Use TypeNameHandling.None, or for values other than None, restrict types with a SerializationBinder.</value>
+    <value>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.</value>
   </data>
   <data name="JsonNetMaybeInsecureSettingsTitle" xml:space="preserve">
     <value>Ensure that JsonSerializerSettings are secure</value>

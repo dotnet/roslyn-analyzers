@@ -38,8 +38,8 @@
         <note />
       </trans-unit>
       <trans-unit id="JsonNetInsecureSettingsMessage">
-        <source>When deserializing untrusted input with Newtonsoft Json.NET, allowing arbitrary types to be deserialized is insecure.  Use TypeNameHandling.None, or for values other than None, restrict types with a SerializationBinder.</source>
-        <target state="new">When deserializing untrusted input with Newtonsoft Json.NET, allowing arbitrary types to be deserialized is insecure.  Use TypeNameHandling.None, or for values other than None, restrict types with a SerializationBinder.</target>
+        <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
+        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetInsecureSettingsTitle">
@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="JsonNetMaybeInsecureSettingsMessage">
-        <source>When deserializing untrusted input with Newtonsoft Json.NET, allowing arbitrary types to be deserialized is insecure.  Use TypeNameHandling.None, or for values other than None, restrict types with a SerializationBinder.</source>
-        <target state="new">When deserializing untrusted input with Newtonsoft Json.NET, allowing arbitrary types to be deserialized is insecure.  Use TypeNameHandling.None, or for values other than None, restrict types with a SerializationBinder.</target>
+        <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.</source>
+        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetMaybeInsecureSettingsTitle">

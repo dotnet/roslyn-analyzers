@@ -160,7 +160,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         lock (rootOperationsNeedingAnalysis)
                                         {
                                             rootOperationsNeedingAnalysis.Add(
-                                                (invocationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
+                                                (invocationOperation.GetInnermostFunction(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
                                 },
@@ -176,11 +176,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         lock (rootOperationsNeedingAnalysis)
                                         {
                                             rootOperationsNeedingAnalysis.Add(
-                                                (objectCreationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
+                                                (objectCreationOperation.GetInnermostFunction(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
                                 },
                                 OperationKind.ObjectCreation);
+
+                            operationBlockStartAnalysisContext.RegisterOperationAction(
+                                (OperationAnalysisContext operationAnalysisContext) =>
+                                {
+                                    IReturnOperation returnOperation = (IReturnOperation)operationAnalysisContext.Operation;
+                                    if (jsonSerializerSettingsSymbol.Equals(returnOperation.Type))
+                                    {
+                                        rootOperationsNeedingAnalysis.Add(
+                                            (returnOperation.GetInnermostFunction(), operationAnalysisContext.ContainingSymbol));
+                                    }
+                                },
+                                OperationKind.Return);
                         });
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(

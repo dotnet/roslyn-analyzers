@@ -51,6 +51,11 @@ namespace Microsoft.WindowsAzure.Storage
             {
                 return """";
             }
+
+            public string GetSharedAccessSignature (SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, int protocols, IPAddressOrRange ipAddressOrRange)
+            {
+                return """";
+            }
         }
 
         public sealed class SharedAccessFilePolicy
@@ -124,12 +129,29 @@ class TestClass
         }
 
         [Fact]
+        public void TestGetSharedAccessSignatureNotFromCloudStorageAccountWithProtocolsParameterOfTypeIntNoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.File;
+
+class TestClass
+{
+    public void TestMethod(SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, IPAddressOrRange ipAddressOrRange)
+    {
+        var cloudFile = new CloudFile();
+        cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, 1, ipAddressOrRange); 
+    }
+}");
+        }
+
+        [Fact]
         public void TestGetSharedAccessSignatureOfANormalTypeNoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.WindowsAzure.Storage;
-
 
 class TestClass
 {
@@ -141,6 +163,43 @@ class TestClass
     public void TestMethod(SharedAccessAccountPolicy policy)
     {
         GetSharedAccessSignature(policy);
+    }
+}");
+        }
+
+        [Fact]
+        public void TestWithoutMicrosoftWindowsAzureNamespaceNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestMicrosoftWindowsAzureNamespaceNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using Microsoft.WindowsAzure;
+
+namespace Microsoft.WindowsAzure
+{
+    class A
+    {
+    }
+}
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var a = new A();
     }
 }");
         }

@@ -61,11 +61,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                     .Compilation
                                                                     .GlobalNamespace
                                                                     .GetMembers("Microsoft")
-                                                                    ?.FirstOrDefault()
-                                                                    .GetMembers("WindowsAzure")
+                                                                    .FirstOrDefault()
+                                                                    ?.GetMembers("WindowsAzure")
                                                                     .OfType<INamespaceSymbol>()
                                                                     .FirstOrDefault()
-                                                                    .GetMembers("Storage")
+                                                                    ?.GetMembers("Storage")
                                                                     .OfType<INamespaceSymbol>()
                                                                     .FirstOrDefault();
 
@@ -77,8 +77,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
                 wellKnownTypeProvider.TryGetTypeByMetadataName(
-                                        WellKnownTypeNames.MicrosoftWindowsAzureStorageCloudStorageAccount,
-                                        out INamedTypeSymbol cloudStorageAccountTypeSymbol);
+                    WellKnownTypeNames.MicrosoftWindowsAzureStorageCloudStorageAccount,
+                    out INamedTypeSymbol cloudStorageAccountTypeSymbol);
+
+                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemNullable1, out INamedTypeSymbol nullableTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftWindowsAzureStorageSharedAccessProtocol, out INamedTypeSymbol sharedAccessProtocolTypeSymbol))
+                {
+                    return;
+                }
 
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
@@ -115,7 +121,12 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         if (!typeSymbol.Equals(cloudStorageAccountTypeSymbol))
                         {
-                            var protocolsArgumentOperation = invocationOperation.Arguments.FirstOrDefault(s => s.Parameter.Name == "protocols");
+                            var protocolsArgumentOperation = invocationOperation.Arguments.FirstOrDefault(s => s.Parameter.Name == "protocols" &&
+                                                                                                                s.Parameter.Type is INamedTypeSymbol namedTypeSymbol &&
+                                                                                                                namedTypeSymbol.IsGenericType &&
+                                                                                                                namedTypeSymbol.ConstructedFrom.Equals(nullableTypeSymbol) &&
+                                                                                                                namedTypeSymbol.TypeArguments.Length == 1 &&
+                                                                                                                namedTypeSymbol.TypeArguments.Contains(sharedAccessProtocolTypeSymbol));
 
                             if (protocolsArgumentOperation != null)
                             {

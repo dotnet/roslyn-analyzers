@@ -117,7 +117,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                             "settings",
                             PropertySetCallbacks.HazardousIfAllFlagged)))
                 .Concat(
-                    new HazardousUsageEvaluator(PropertySetCallbacks.HazardousIfAllFlagged)));   // For return values.
+                    new HazardousUsageEvaluator(
+                        HazardousUsageEvaluatorKind.Return,
+                        PropertySetCallbacks.HazardousIfAllFlagged))
+                .Concat(
+                    new HazardousUsageEvaluator(
+                        HazardousUsageEvaluatorKind.Initialization,
+                        PropertySetCallbacks.HazardousIfAllFlagged)));
 
         public override void Initialize(AnalysisContext context)
         {

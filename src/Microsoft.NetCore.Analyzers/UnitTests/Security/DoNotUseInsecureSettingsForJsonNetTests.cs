@@ -32,7 +32,7 @@ class Blah
         return JsonConvert.DeserializeObject(s, settings);
     }
 }",
-                GetCSharpResultAt(10, 16, DoNotUseInsecureSettingsForJsonNet.DefinitelyInsecureSettings));
+                GetCSharpResultAt(10, 16, DefinitelyRule));
         }
 
         [Fact]
@@ -53,7 +53,7 @@ class Blah
         };
     }
 }",
-                GetCSharpResultAt(10, 16, DoNotUseInsecureSettingsForJsonNet.DefinitelyInsecureSettings));
+                GetCSharpResultAt(10, 16, DefinitelyRule));
         }
 
         [Fact]
@@ -66,7 +66,7 @@ class Blah
 {
     public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
 }",
-                GetCSharpResultAt(6, 62, DoNotUseInsecureSettingsForJsonNet.DefinitelyInsecureSettings));
+                GetCSharpResultAt(6, 62, DefinitelyRule));
         }
 
         [Fact]
@@ -85,6 +85,67 @@ class Blah
             SerializationBinder = new MyISerializationBinder(),
         };
 }");
+        }
+
+        [Fact]
+        public void Insecure_PropertyInitialization_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    public static JsonSerializerSettings Settings { get; } = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
+}",
+                GetCSharpResultAt(6, 62, DefinitelyRule));
+        }
+
+        [Fact]
+        public void Insecure_PropertyInitialization_MaybeDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Foo
+{
+    public static Func<ISerializationBinder> GetBinder { get; set; }
+}
+
+class Blah
+{
+    
+    public static JsonSerializerSettings Settings { get; } = new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Objects,
+            SerializationBinder = Foo.GetBinder(),
+        };
+}",
+                GetCSharpResultAt(13, 62, MaybeRule));
+        }
+
+        [Fact]
+        public void Insecure_PropertyInitialization_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Foo
+{
+    public static Func<ISerializationBinder> GetBinder { get; set; }
+}
+
+class Blah
+{
+    
+    public static JsonSerializerSettings Settings { get; } = new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Objects,
+            SerializationBinder = Foo.GetBinder() ?? throw new Exception(),
+        };
+}",
+                GetCSharpResultAt(13, 62, MaybeRule));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

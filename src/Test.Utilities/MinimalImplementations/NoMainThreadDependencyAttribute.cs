@@ -17,5 +17,18 @@ namespace Roslyn.Utilities
     }
 }
 ";
+        public const string VisualBasic = @"
+Namespace Global.Roslyn.Utilities
+    <System.AttributeUsage(System.AttributeTargets.Field Or System.AttributeTargets.Method Or System.AttributeTargets.Parameter Or System.AttributeTargets.Property Or System.AttributeTargets.ReturnValue, AllowMultiple:=False, Inherited:=True)>
+    Friend NotInheritable Class NoMainThreadDependencyAttribute
+        Inherits System.Attribute
+
+        Public Property AlwaysCompleted As Boolean
+        Public Property CapturesContext As Boolean
+        Public Property PerInstance As Boolean
+        Public Property Verified As Boolean = True
+    End Class
+End Namespace
+";
     }
 }

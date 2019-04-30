@@ -3,9 +3,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.NetCore.CSharp.Analyzers.Runtime;
-using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -17,11 +15,8 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class AvoidZeroLengthArrayAllocationsAnalyzerTests : DiagnosticAnalyzerTestBase
+    public class AvoidZeroLengthArrayAllocationsAnalyzerTests
     {
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() { return new CSharpAvoidZeroLengthArrayAllocationsAnalyzer(); }
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer() { return new BasicAvoidZeroLengthArrayAllocationsAnalyzer(); }
-
         /// <summary>
         /// This type isn't defined in all locations where this test runs.  Need to alter the
         /// test code slightly to account for this.
@@ -120,12 +115,12 @@ class C
                 badSource + arrayEmptySource,
                 new[]
                 {
-                    GetCSharpResultAt(8, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(9, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<byte>()"),
-                    GetCSharpResultAt(10, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<C>()"),
-                    GetCSharpResultAt(14, 24, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int[]>()"),
-                    GetCSharpResultAt(15, 28, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int[][][]>()"),
-                    GetCSharpResultAt(17, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int[,]>()")
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(8, 22).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9, 23).WithArguments("Array.Empty<byte>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(10, 20).WithArguments("Array.Empty<C>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14, 24).WithArguments("Array.Empty<int[]>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(15, 28).WithArguments("Array.Empty<int[][][]>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17, 26).WithArguments("Array.Empty<int[,]>()"),
                 },
                 fixedSource + arrayEmptySource);
 
@@ -133,25 +128,27 @@ class C
                 "using System;\r\n" + badSource + arrayEmptySource,
                 new[]
                 {
-                    GetCSharpResultAt(8 + 1, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(9 + 1, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<byte>()"),
-                    GetCSharpResultAt(10 + 1, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<C>()"),
-                    GetCSharpResultAt(14 + 1, 24, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int[]>()"),
-                    GetCSharpResultAt(15 + 1, 28, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int[][][]>()"),
-                    GetCSharpResultAt(17 + 1, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int[,]>()")
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(8 + 1, 22).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9 + 1, 23).WithArguments("Array.Empty<byte>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(10 + 1, 20).WithArguments("Array.Empty<C>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14 + 1, 24).WithArguments("Array.Empty<int[]>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(15 + 1, 28).WithArguments("Array.Empty<int[][][]>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17 + 1, 26).WithArguments("Array.Empty<int[,]>()"),
                 },
                 "using System;\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty") + arrayEmptySource);
         }
 
         [Fact]
-        public void EmptyArrayCSharpError()
+        public async Task EmptyArrayCSharpError()
         {
             const string badSource = @"
 // This is a compile error but we want to ensure analyzer doesn't complain for it.
 [System.Runtime.CompilerServices.Dynamic(new bool[0])]
 ";
 
-            VerifyCSharp(badSource, TestValidationMode.AllowCompileErrors);
+            await VerifyCS.VerifyAnalyzerAsync(
+                badSource,
+                DiagnosticResult.CompilerError("CS0116").WithSpan(3, 54, 3, 55).WithMessage("A namespace cannot directly contain members such as fields or methods"));
         }
 
         [Fact]
@@ -209,12 +206,12 @@ End Class";
                 badSource + arrayEmptySource,
                 new[]
                 {
-                    GetBasicResultAt(7, 33, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Integer)()"),
-                    GetBasicResultAt(8, 30, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Byte)()"),
-                    GetBasicResultAt(9, 27, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of C)()"),
-                    GetBasicResultAt(13, 35, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Integer())()"),
-                    GetBasicResultAt(14, 39, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Integer()()())()"),
-                    GetBasicResultAt(16, 37, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Integer(,))()")
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7, 33).WithArguments("Array.Empty(Of Integer)()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(8, 30).WithArguments("Array.Empty(Of Byte)()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9, 27).WithArguments("Array.Empty(Of C)()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(13, 35).WithArguments("Array.Empty(Of Integer())()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14, 39).WithArguments("Array.Empty(Of Integer()()())()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(16, 37).WithArguments("Array.Empty(Of Integer(,))()"),
                 },
                 fixedSource + arrayEmptySource);
 
@@ -222,12 +219,12 @@ End Class";
                 "Imports System\r\n" + badSource + arrayEmptySource,
                 new[]
                 {
-                    GetBasicResultAt(7 + 1, 33, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Integer)()"),
-                    GetBasicResultAt(8 + 1, 30, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Byte)()"),
-                    GetBasicResultAt(9 + 1, 27, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of C)()"),
-                    GetBasicResultAt(13 + 1, 35, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Integer())()"),
-                    GetBasicResultAt(14 + 1, 39, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Integer()()())()"),
-                    GetBasicResultAt(16 + 1, 37, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty(Of Integer(,))()")
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7 + 1, 33).WithArguments("Array.Empty(Of Integer)()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(8 + 1, 30).WithArguments("Array.Empty(Of Byte)()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9 + 1, 27).WithArguments("Array.Empty(Of C)()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(13 + 1, 35).WithArguments("Array.Empty(Of Integer())()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(14 + 1, 39).WithArguments("Array.Empty(Of Integer()()())()"),
+                    VerifyVB.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(16 + 1, 37).WithArguments("Array.Empty(Of Integer(,))()"),
                 },
                 "Imports System\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty") + arrayEmptySource);
         }
@@ -261,8 +258,8 @@ class C
                 badSource,
                 new[]
                 {
-                    GetCSharpResultAt(6, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(7, 25, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<double>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6, 22).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7, 25).WithArguments("Array.Empty<double>()"),
                 },
                 fixedSource);
 
@@ -270,15 +267,15 @@ class C
                 "using System;\r\n" + badSource,
                 new[]
                 {
-                    GetCSharpResultAt(6 + 1, 22, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(7 + 1, 25, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<double>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6 + 1, 22).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7 + 1, 25).WithArguments("Array.Empty<double>()"),
                 },
                 "using System;\r\n" + fixedSource.Replace("System.Array.Empty", "Array.Empty"));
         }
 
         [WorkItem(10214, "https://github.com/dotnet/roslyn/issues/10214")]
         [Fact]
-        public void EmptyArrayVisualBasic_CompilerGeneratedArrayCreation()
+        public async Task EmptyArrayVisualBasic_CompilerGeneratedArrayCreation()
         {
             const string source = @"
 Class C
@@ -295,12 +292,12 @@ End Class
 
             // Should we be flagging diagnostics on compiler generated code?
             // Should the analyzer even be invoked for compiler generated code?
-            VerifyBasic(source + arrayEmptySource);
+            await VerifyVB.VerifyAnalyzerAsync(source + arrayEmptySource);
         }
 
         [WorkItem(1209, "https://github.com/dotnet/roslyn-analyzers/issues/1209")]
         [Fact]
-        public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInObjectCreation()
+        public async Task EmptyArrayCSharp_CompilerGeneratedArrayCreationInObjectCreation()
         {
             const string source = @"
 namespace N
@@ -324,12 +321,12 @@ namespace N
 
             // Should we be flagging diagnostics on compiler generated code?
             // Should the analyzer even be invoked for compiler generated code?
-            VerifyCSharp(source + arrayEmptySource, referenceFlags: ReferenceFlags.None);
+            await VerifyCS.VerifyAnalyzerAsync(source + arrayEmptySource);
         }
 
         [WorkItem(1209, "https://github.com/dotnet/roslyn-analyzers/issues/1209")]
         [Fact]
-        public void EmptyArrayCSharp_CompilerGeneratedArrayCreationInIndexerAccess()
+        public async Task EmptyArrayCSharp_CompilerGeneratedArrayCreationInIndexerAccess()
         {
             const string source = @"
 public abstract class C
@@ -346,11 +343,11 @@ public abstract class C
 
             // Should we be flagging diagnostics on compiler generated code?
             // Should the analyzer even be invoked for compiler generated code?
-            VerifyCSharp(source + arrayEmptySource, referenceFlags: ReferenceFlags.None);
+            await VerifyCS.VerifyAnalyzerAsync(source + arrayEmptySource);
         }
 
         [Fact]
-        public void EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
+        public async Task EmptyArrayCSharp_UsedInAttribute_NoDiagnostics()
         {
             const string source = @"
 using System;
@@ -369,7 +366,7 @@ class C
 {
 }
 ";
-            VerifyCSharp(source);
+            await VerifyCS.VerifyAnalyzerAsync(source);
         }
 
         [WorkItem(1298, "https://github.com/dotnet/roslyn-analyzers/issues/1298")]
@@ -399,8 +396,8 @@ class C
                 badSource,
                 new[]
                 {
-                    GetCSharpResultAt(6, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(7, 37, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6, 23).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(7, 37).WithArguments("Array.Empty<int>()"),
                 },
                 fixedSource);
         }
@@ -439,8 +436,8 @@ class C
                 badSource,
                 new[]
                 {
-                    GetCSharpResultAt(9, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(10, 14, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9, 14).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(10, 14).WithArguments("Array.Empty<int>()"),
                 },
                 fixedSource);
         }
@@ -491,14 +488,14 @@ class C
                 badSource,
                 new[]
                 {
-                    GetCSharpResultAt(9, 34, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(10, 34, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(11, 42, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(12, 28, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(13, 36, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(15, 29, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(16, 29, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
-                    GetCSharpResultAt(17, 23, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(9, 34).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(10, 34).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(11, 42).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(12, 28).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(13, 36).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(15, 29).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(16, 29).WithArguments("Array.Empty<int>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17, 23).WithArguments("Array.Empty<int>()"),
                 },
                 fixedSource);
         }
@@ -526,7 +523,7 @@ class C
 
             await VerifyCS.VerifyCodeFixAsync(
                 badSource,
-                GetCSharpResultAt(6, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<string>()"),
+                VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(6, 26).WithArguments("Array.Empty<string>()"),
                 fixedSource);
         }
 
@@ -594,10 +591,10 @@ class C
                 badSource,
                 new[]
                 {
-                    GetCSharpResultAt(17, 12, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
-                    GetCSharpResultAt(18, 12, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
-                    GetCSharpResultAt(21, 20, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
-                    GetCSharpResultAt(25, 16, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(17, 12).WithArguments("Array.Empty<object>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(18, 12).WithArguments("Array.Empty<object>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(21, 20).WithArguments("Array.Empty<object>()"),
+                    VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(25, 16).WithArguments("Array.Empty<object>()"),
                 },
                 fixedSource);
         }
@@ -619,7 +616,7 @@ class C
 ";
             await VerifyCS.VerifyCodeFixAsync(
                 badSource,
-                GetCSharpResultAt(4, 26, AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor, "Array.Empty<object>()"),
+                VerifyCS.Diagnostic(AvoidZeroLengthArrayAllocationsAnalyzer.UseArrayEmptyDescriptor).WithLocation(4, 26).WithArguments("Array.Empty<object>()"),
                 fixedSource);
         }
     }

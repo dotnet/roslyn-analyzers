@@ -1,6 +1,14 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis.Diagnostics;
+using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldNotMatchKeywordsAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpIdentifiersShouldNotMatchKeywordsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldNotMatchKeywordsAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicIdentifiersShouldNotMatchKeywordsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -8,8 +16,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     /// Contains those unit tests for the IdentifiersShouldNotMatchKeywords analyzer that
     /// pertain to the MemberRule, which applies to the names of type members.
     /// </summary>
-    public partial class IdentifiersShouldNotMatchKeywordsTests
+    public class IdentifiersShouldNotMatchKeywordsMemberRuleTests : DiagnosticAnalyzerTestBase
     {
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
+        }
+
+        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        {
+            return new IdentifiersShouldNotMatchKeywordsAnalyzer();
+        }
+
         [Fact]
         public void CSharpDiagnosticForKeywordNamedPublicVirtualMethodInPublicClass()
         {

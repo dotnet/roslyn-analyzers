@@ -209,7 +209,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return parameterSymbol.Name == argumentName &&
                        parameterSymbol.ContainingSymbol is IMethodSymbol methodSymbol &&
                        methodNames.Contains(methodSymbol.Name) &&
-                       methodSymbol.ContainingSymbol == assertSymbol;
+                       Equals(methodSymbol.ContainingSymbol, assertSymbol);
             }
 
             bool IsNUnitThrowsArgument(IParameterSymbol parameterSymbol)
@@ -281,7 +281,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 IMethodSymbol methodSymbol = (IMethodSymbol)operationContext.ContainingSymbol;
 
-                return methodSymbol.GetAttributes().Any(attr => attr.AttributeClass == expectedExceptionType);
+                return methodSymbol.GetAttributes().Any(attr => Equals(attr.AttributeClass, expectedExceptionType));
             }
             else
             {

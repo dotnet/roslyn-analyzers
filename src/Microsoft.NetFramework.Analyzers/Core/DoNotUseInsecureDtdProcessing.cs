@@ -45,7 +45,9 @@ namespace Microsoft.NetFramework.Analyzers
         }
 
 
+#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1026 // Enable concurrent execution
         {
             // TODO: Make analyzer thread-safe
             //analysisContext.EnableConcurrentExecution();
@@ -382,7 +384,7 @@ namespace Microsoft.NetFramework.Analyzers
                 SyntaxNode node = objCreation.Syntax;
                 bool isXmlDocumentSecureResolver = false;
 
-                if (objCreation.Constructor.ContainingType != _xmlTypes.XmlDocument)
+                if (!Equals(objCreation.Constructor.ContainingType, _xmlTypes.XmlDocument))
                 {
                     isXmlDocumentSecureResolver = true;
                 }
@@ -456,7 +458,7 @@ namespace Microsoft.NetFramework.Analyzers
                     };
                 }
 
-                if (objCreation.Constructor.ContainingType != _xmlTypes.XmlTextReader)
+                if (!Equals(objCreation.Constructor.ContainingType, _xmlTypes.XmlTextReader))
                 {
                     env.IsDtdProcessingDisabled = true;
                     env.IsSecureResolver = true;

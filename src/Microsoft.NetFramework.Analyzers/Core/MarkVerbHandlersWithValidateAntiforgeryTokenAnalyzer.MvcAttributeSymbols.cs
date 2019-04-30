@@ -108,7 +108,7 @@ namespace Microsoft.NetFramework.Analyzers
                                 }
                             }
                             else if (parameterType.TypeKind == TypeKind.Enum
-                                && parameterType == this.HttpVerbsSymbol)
+                                && Equals(parameterType, this.HttpVerbsSymbol))
                             {
                                 // The [AcceptVerbs(HttpVerbs.Delete)] case.
 
@@ -137,7 +137,7 @@ namespace Microsoft.NetFramework.Analyzers
             /// <returns>True if .NET attribute's type matches the specified type, false otherwise.</returns>
             private static bool IsAttributeClass(AttributeData attributeData, INamedTypeSymbol symbol)
             {
-                return symbol != null && attributeData.AttributeClass == symbol;
+                return symbol != null && Equals(attributeData.AttributeClass, symbol);
             }
         }
     }

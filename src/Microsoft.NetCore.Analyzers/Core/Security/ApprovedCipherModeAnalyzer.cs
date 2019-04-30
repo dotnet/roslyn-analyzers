@@ -71,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 (IFieldReferenceOperation)operationAnalysisContext.Operation;
                             IFieldSymbol fieldSymbol = fieldReferenceOperation.Field;
 
-                            if (fieldSymbol.ContainingType == cipherModeTypeSymbol
+                            if (Equals(fieldSymbol.ContainingType, cipherModeTypeSymbol)
                                 && UnsafeCipherModes.Contains(fieldSymbol.MetadataName))
                             {
                                 operationAnalysisContext.ReportDiagnostic(

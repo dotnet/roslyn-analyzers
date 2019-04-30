@@ -198,6 +198,15 @@
   <data name="DoNotSerializeTypesWithPointerFieldsMessage" xml:space="preserve">
     <value>Pointer field {0} on serializable type.</value>
   </data>
+  <data name="DoNotUseAccountSAS" xml:space="preserve">
+    <value>Do Not Use Account Shared Access Signature</value>
+  </data>
+  <data name="DoNotUseAccountSASDescription" xml:space="preserve">
+    <value>Shared Access Signatures(SAS) are a vital part of the security model for any application using Azure Storage, they should provide limited and safe permissions to your storage account to clients that don't have the account key. All of the operations available via a service SAS are also available via an account SAS, that is, account SAS is too powerful. So it is recommended to use Service SAS to delegate access more carefully.</value>
+  </data>
+  <data name="DoNotUseAccountSASMessage" xml:space="preserve">
+    <value>Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>
@@ -222,6 +231,15 @@
   <data name="DoNotUseMD5Description" xml:space="preserve">
     <value>This type implements MD5, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the MD5 and HMACMD5 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</value>
   </data>
+  <data name="DoNotUseObsoleteKDFAlgorithm" xml:space="preserve">
+    <value>Do not use obsolete key derivation function</value>
+  </data>
+  <data name="DoNotUseObsoleteKDFAlgorithmDescription" xml:space="preserve">
+    <value>Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</value>
+  </data>
+  <data name="DoNotUseObsoleteKDFAlgorithmMessage" xml:space="preserve">
+    <value>Call to obsolete key derivation function {0}.{1}</value>
+  </data>
   <data name="DoNotUseSHA1" xml:space="preserve">
     <value>Do not use insecure cryptographic algorithm SHA1.</value>
   </data>
@@ -237,6 +255,12 @@
   <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>{0} uses a weak cryptographic algorithm {1}</value>
   </data>
+  <data name="DoNotUseXslTransform" xml:space="preserve">
+    <value>Do Not Use XslTransform</value>
+  </data>
+  <data name="DoNotUseXslTransformMessage" xml:space="preserve">
+    <value>Do not use XslTransform. It does not restrict potentially dangerous external references.</value>
+  </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>
   </data>
@@ -245,5 +269,26 @@
   </data>
   <data name="SetViewStateUserKeyMessage" xml:space="preserve">
     <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
+  </data>
+  <data name="UseXmlReaderDescription" xml:space="preserve">
+    <value>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</value>
+  </data>
+  <data name="UseXmlReaderForDataSetReadXml" xml:space="preserve">
+    <value>Use XmlReader For DataSet Read Xml</value>
+  </data>
+  <data name="UseXmlReaderForDeserialize" xml:space="preserve">
+    <value>Use XmlReader For Deserialize</value>
+  </data>
+  <data name="UseXmlReaderForSchemaRead" xml:space="preserve">
+    <value>Use XmlReader For Schema Read</value>
+  </data>
+  <data name="UseXmlReaderForValidatingReader" xml:space="preserve">
+    <value>Use XmlReader For Validating Reader</value>
+  </data>
+  <data name="UseXmlReaderForXPathDocument" xml:space="preserve">
+    <value>Use XmlReader For XPathDocument</value>
+  </data>
+  <data name="UseXmlReaderMessage" xml:space="preserve">
+    <value>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</value>
   </data>
 </root>

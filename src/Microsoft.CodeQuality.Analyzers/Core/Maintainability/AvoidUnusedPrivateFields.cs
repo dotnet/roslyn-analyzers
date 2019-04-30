@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             analysisContext.RegisterCompilationStartAction(
                 (compilationContext) =>
                 {
-                    ConcurrentDictionary<IFieldSymbol, UnusedValue> unreferencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
+                    ConcurrentDictionary<IFieldSymbol, UnusedValue> maybeUnreferencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
                     ConcurrentDictionary<IFieldSymbol, UnusedValue> referencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
 
                     ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
@@ -95,7 +95,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                     }
                                 }
 
-                                unreferencedPrivateFields.TryAdd(field, default);
+                                maybeUnreferencedPrivateFields.TryAdd(field, default);
                             }
                         },
                         SymbolKind.Field);
@@ -107,7 +107,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             if (field.DeclaredAccessibility == Accessibility.Private)
                             {
                                 referencedPrivateFields.TryAdd(field, default);
-                                unreferencedPrivateFields.TryRemove(field, out _);
+                                maybeUnreferencedPrivateFields.TryRemove(field, out _);
                             }
                         },
                         OperationKind.FieldReference);
@@ -115,9 +115,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     compilationContext.RegisterCompilationEndAction(
                         (compilationEndContext) =>
                         {
-                            foreach (IFieldSymbol unreferencedPrivateField in unreferencedPrivateFields.Keys)
+                            foreach (IFieldSymbol maybeUnreferencedPrivateField in maybeUnreferencedPrivateFields.Keys)
                             {
-                                compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, unreferencedPrivateField.Locations[0], unreferencedPrivateField.Name));
+                                if (referencedPrivateFields.ContainsKey(maybeUnreferencedPrivateField))
+                                {
+                                    continue;
+                                }
+
+                                compilationEndContext.ReportDiagnostic(Diagnostic.Create(Rule, maybeUnreferencedPrivateField.Locations[0], maybeUnreferencedPrivateField.Name));
                             }
                         });
                 });

@@ -33,6 +33,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2242-test-for-nan-correctly",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
+        // Disable analyzer when building the FxCop analyzers VSIX as it gets unconditionally turned on by the default ManagedMinimumRecommended ruleset that ships with FxCop.
+        // Rule is not critical to ship in the analyzers VSIX.
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX ? ImmutableArray.Create(Rule) : ImmutableArray<DiagnosticDescriptor>.Empty;
 
         private readonly BinaryOperatorKind[] _comparisonOperators = new[]
@@ -45,7 +47,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             BinaryOperatorKind.NotEquals
         };
 
+#pragma warning disable RS1025 // Configure generated code analysis
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1025 // Configure generated code analysis
         {
             analysisContext.EnableConcurrentExecution();
 

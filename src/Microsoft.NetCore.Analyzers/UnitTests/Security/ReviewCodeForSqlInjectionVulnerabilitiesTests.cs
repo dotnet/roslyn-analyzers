@@ -1238,6 +1238,45 @@ namespace VulnerableWebApp
         }
 
         [Fact]
+        public void SimpleInterproceduralTwice()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+            MyDatabaseLayer layer = new MyDatabaseLayer();
+            layer.MakeSqlInjection(taintedInput);
+            layer.MakeSqlInjection(taintedInput);
+        }
+    }
+
+    public class MyDatabaseLayer
+    {
+        public void MakeSqlInjection(string sqlInjection)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"",
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+                GetCSharpResultAt(28, 17, 15, 35, "string SqlCommand.CommandText", "void MyDatabaseLayer.MakeSqlInjection(string sqlInjection)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
         public void SimpleLocalFunction()
         {
             VerifyCSharpWithDependencies(@"
@@ -2854,7 +2893,7 @@ public class Class1
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1891")]
+        [Fact]
         public void PointsToAnalysisAssertsLocationSetsComparison()
         {
             VerifyCSharp(@"

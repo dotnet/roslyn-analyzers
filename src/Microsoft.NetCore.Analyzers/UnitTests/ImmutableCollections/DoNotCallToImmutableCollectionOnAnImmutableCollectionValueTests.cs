@@ -1,15 +1,20 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
-using Test.Utilities.MinimalImplementations;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.ImmutableCollections.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer,
+    Microsoft.NetCore.Analyzers.ImmutableCollections.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.ImmutableCollections.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer,
+    Microsoft.NetCore.Analyzers.ImmutableCollections.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer>;
 
 namespace Microsoft.NetCore.Analyzers.ImmutableCollections.UnitTests
 {
-    public class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTests : DiagnosticAnalyzerTestBase
+    public class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueTests
     {
         public static readonly TheoryData<string> CollectionNames_Arity1 = new TheoryData<string>
         {
@@ -25,23 +30,13 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections.UnitTests
             nameof(ImmutableSortedDictionary)
         };
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer();
-        }
-
         #region No Diagnostic Tests
 
         [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         [MemberData(nameof(CollectionNames_Arity1))]
-        public void NoDiagnosticCases_Arity1(string collectionName)
+        public async Task NoDiagnosticCases_Arity1(string collectionName)
         {
-            VerifyCSharp($@"
+            await VerifyCS.VerifyAnalyzerAsync($@"
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using static System.Collections.Immutable.{collectionName};
@@ -68,14 +63,20 @@ class C
         p2.To{collectionName}();
         p3.To{collectionName}(comparer); // Potentially modifies the collection
 
+        Extensions.To{collectionName}(p1);
+        Extensions.To{collectionName}(p2);
+        Extensions.To{collectionName}(p3, comparer); // Potentially modifies the collection
+
         // No dataflow
         IEnumerable<int> l1 = p3;
         l1.To{collectionName}();
+
+        Extensions.To{collectionName}(l1);
     }}
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
@@ -98,9 +99,15 @@ Class C
 		p2.To{collectionName}()
         p3.To{collectionName}(comparer) ' Potentially modifies the collection
 
+        Extensions.To{collectionName}(p1)
+        Extensions.To{collectionName}(p2)
+        Extensions.To{collectionName}(p3, comparer) ' Potentially modifies the collection
+
 		' No dataflow
 		Dim l1 As IEnumerable(Of Integer) = p3
 		l1.To{collectionName}()
+
+        Extensions.To{collectionName}(l1)
 	End Sub
 End Class
 ");
@@ -108,9 +115,9 @@ End Class
 
         [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
         [MemberData(nameof(CollectionNames_Arity2))]
-        public void NoDiagnosticCases_Arity2(string collectionName)
+        public async Task NoDiagnosticCases_Arity2(string collectionName)
         {
-            VerifyCSharp($@"
+            await VerifyCS.VerifyAnalyzerAsync($@"
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using static System.Collections.Immutable.{collectionName};
@@ -123,9 +130,9 @@ static class Extensions
      }}
 
     public static {collectionName}<TKey, TValue> To{collectionName}<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> items, IEqualityComparer<TKey> keyComparer)
-     {{
+    {{
          return default({collectionName}<TKey, TValue>);
-     }}
+    }}
 }}
 
 class C
@@ -137,14 +144,20 @@ class C
         p2.To{collectionName}();
         p3.To{collectionName}(keyComparer); // Potentially modifies the collection
 
+        Extensions.To{collectionName}(p1);
+        Extensions.To{collectionName}(p2);
+        Extensions.To{collectionName}(p3, keyComparer); // Potentially modifies the collection
+
         // No dataflow
         IEnumerable<KeyValuePair<int, int>> l1 = p3;
         l1.To{collectionName}();
+
+        Extensions.To{collectionName}(l1);
     }}
 }}
 ");
 
-            VerifyBasic($@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
@@ -167,9 +180,15 @@ Class C
 		p2.To{collectionName}()
         p3.To{collectionName}(keyComparer) ' Potentially modifies the collection
 
+        Extensions.To{collectionName}(p1)
+        Extensions.To{collectionName}(p2)
+        Extensions.To{collectionName}(p3, keyComparer) ' Potentially modifies the collection
+
 		' No dataflow
 		Dim l1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)) = p3
 		l1.To{collectionName}()
+
+        Extensions.To{collectionName}(l1)
 	End Sub
 End Class
 ");
@@ -181,9 +200,9 @@ End Class
 
         [Theory]
         [MemberData(nameof(CollectionNames_Arity1))]
-        public void DiagnosticCases_Arity1(string collectionName)
+        public async Task DiagnosticCases_Arity1(string collectionName)
         {
-            VerifyCSharp(new[] { $@"
+            await VerifyCS.VerifyAnalyzerAsync($@"
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
@@ -201,16 +220,22 @@ class C
     {{
         p1.To{collectionName}().To{collectionName}();
         p3.To{collectionName}();
+
+        Extensions.To{collectionName}(Extensions.To{collectionName}(p1));
+        Extensions.To{collectionName}(p3);
     }}
 }}
-", ImmutableCollectionsSource.CSharp },
-                ReferenceFlags.RemoveImmutable,
+",
                 // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetCSharpResultAt(17, 9, collectionName),
                 // Test0.cs(19,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetCSharpResultAt(18, 9, collectionName));
+                GetCSharpResultAt(18, 9, collectionName),
+                // Test0.cs(20,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(20, 9, collectionName),
+                // Test0.cs(21,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(21, 9, collectionName));
 
-            VerifyBasic(new[] { $@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
@@ -225,21 +250,27 @@ Class C
 	Public Sub M(p1 As IEnumerable(Of Integer), p2 As List(Of Integer), p3 As {collectionName}(Of Integer))
 		p1.To{collectionName}().To{collectionName}()
 		p3.To{collectionName}()
+
+		Extensions.To{collectionName}(Extensions.To{collectionName}(p1))
+		Extensions.To{collectionName}(p3)
 	End Sub
 End Class
-", ImmutableCollectionsSource.Basic },
-                ReferenceFlags.RemoveImmutable,
+",
                 // Test0.vb(14,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetBasicResultAt(14, 3, collectionName),
                 // Test0.vb(15,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetBasicResultAt(15, 3, collectionName));
+                GetBasicResultAt(15, 3, collectionName),
+                // Test0.vb(17,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(17, 3, collectionName),
+                // Test0.vb(18,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(18, 3, collectionName));
         }
 
         [Theory]
         [MemberData(nameof(CollectionNames_Arity2))]
-        public void DiagnosticCases_Arity2(string collectionName)
+        public async Task DiagnosticCases_Arity2(string collectionName)
         {
-            VerifyCSharp(new[] { $@"
+            await VerifyCS.VerifyAnalyzerAsync($@"
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
@@ -257,16 +288,22 @@ class C
     {{
         p1.To{collectionName}().To{collectionName}();
         p3.To{collectionName}();
+
+        Extensions.To{collectionName}(Extensions.To{collectionName}(p1));
+        Extensions.To{collectionName}(p3);
     }}
 }}
-", ImmutableCollectionsSource.CSharp },
-                ReferenceFlags.RemoveImmutable,
+",
                 // Test0.cs(18,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetCSharpResultAt(17, 9, collectionName),
                 // Test0.cs(19,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetCSharpResultAt(18, 9, collectionName));
+                GetCSharpResultAt(18, 9, collectionName),
+                // Test0.cs(20,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(20, 9, collectionName),
+                // Test0.cs(21,9): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetCSharpResultAt(21, 9, collectionName));
 
-            VerifyBasic(new[] { $@"
+            await VerifyVB.VerifyAnalyzerAsync($@"
 Imports System.Collections.Generic
 Imports System.Collections.Immutable
 
@@ -281,34 +318,32 @@ Class C
 	Public Sub M(p1 As IEnumerable(Of KeyValuePair(Of Integer, Integer)), p2 As List(Of KeyValuePair(Of Integer, Integer)), p3 As {collectionName}(Of Integer, Integer))
 		p1.To{collectionName}().To{collectionName}()
 		p3.To{collectionName}()
+
+		Extensions.To{collectionName}(Extensions.To{collectionName}(p1))
+		Extensions.To{collectionName}(p3)
 	End Sub
 End Class
-", ImmutableCollectionsSource.Basic },
-                ReferenceFlags.RemoveImmutable,
+",
                 // Test0.vb(14, 3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
                 GetBasicResultAt(14, 3, collectionName),
                 // Test0.vb(15,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
-                GetBasicResultAt(15, 3, collectionName));
+                GetBasicResultAt(15, 3, collectionName),
+                // Test0.vb(17,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(17, 3, collectionName),
+                // Test0.vb(18,3): warning CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
+                GetBasicResultAt(18, 3, collectionName));
         }
 
         #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column, string collectionName)
         {
-            return GetCSharpResultAt(
-                line,
-                column,
-                DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.RuleId,
-                string.Format(SystemCollectionsImmutableAnalyzersResources.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage, $"To{collectionName}", collectionName));
+            return VerifyCS.Diagnostic(DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.Rule).WithLocation(line, column).WithArguments($"To{collectionName}", collectionName);
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column, string collectionName)
         {
-            return GetBasicResultAt(
-                line,
-                column,
-                DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.RuleId,
-                string.Format(SystemCollectionsImmutableAnalyzersResources.DoNotCallToImmutableCollectionOnAnImmutableCollectionValueMessage, $"To{collectionName}", collectionName));
+            return VerifyVB.Diagnostic(DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.Rule).WithLocation(line, column).WithArguments($"To{collectionName}", collectionName);
         }
     }
 }

@@ -368,12 +368,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return true;
             }
 
-            if (taskSymbol != null && method.ReturnType == taskSymbol)
+            if (taskSymbol != null && Equals(method.ReturnType, taskSymbol))
             {
                 return true;
             }
 
-            if (genericTaskSymbol != null && method.ReturnType.OriginalDefinition == genericTaskSymbol && ((INamedTypeSymbol)method.ReturnType).TypeArguments.Single().SpecialType == SpecialType.System_Int32)
+            if (genericTaskSymbol != null && Equals(method.ReturnType.OriginalDefinition, genericTaskSymbol) && ((INamedTypeSymbol)method.ReturnType).TypeArguments.Single().SpecialType == SpecialType.System_Int32)
             {
                 return true;
             }

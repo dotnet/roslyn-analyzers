@@ -270,4 +270,16 @@
   <data name="CodeMayHaveMainThreadDependencyTitle" xml:space="preserve">
     <value>Code may have main thread dependency</value>
   </data>
+  <data name="MainThreadDependencyShouldBeVerifiedDescription" xml:space="preserve">
+    <value>Main thread dependency should be verified</value>
+  </data>
+  <data name="MainThreadDependencyShouldBeVerifiedFix" xml:space="preserve">
+    <value>Verify main thread dependency</value>
+  </data>
+  <data name="MainThreadDependencyShouldBeVerifiedMessage" xml:space="preserve">
+    <value>Main thread dependency should be verified</value>
+  </data>
+  <data name="MainThreadDependencyShouldBeVerifiedTitle" xml:space="preserve">
+    <value>Main thread dependency should be verified</value>
+  </data>
 </root>

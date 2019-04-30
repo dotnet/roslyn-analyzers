@@ -46,6 +46,12 @@ namespace Roslyn.Diagnostics.Analyzers
         protected ThreadDependencyInfo GetThreadDependencyInfo(ISymbol symbol)
             => GetThreadDependencyInfo(symbol.GetAttributes(), in GetDefaultThreadDependencyInfo(symbol));
 
+        protected static Location TryGetThreadDependencyInfoLocation(ISymbol symbol, CancellationToken cancellationToken)
+            => TryGetThreadDependencyInfoLocation(symbol.GetAttributes(), cancellationToken);
+
+        protected static Location TryGetThreadDependencyInfoLocationForReturn(IMethodSymbol symbol, CancellationToken cancellationToken)
+            => TryGetThreadDependencyInfoLocation(symbol.GetReturnTypeAttributes(), cancellationToken);
+
         protected ThreadDependencyInfo GetThreadDependencyInfoForReturn(IMethodSymbol symbol)
         {
             var result = GetThreadDependencyInfo(symbol.GetReturnTypeAttributes(), in GetDefaultThreadDependencyInfo(symbol.ReturnType));
@@ -146,6 +152,19 @@ namespace Roslyn.Diagnostics.Analyzers
             }
 
             return defaultValue;
+        }
+
+        private static Location TryGetThreadDependencyInfoLocation(ImmutableArray<AttributeData> attributes, CancellationToken cancellationToken)
+        {
+            foreach (var attribute in attributes)
+            {
+                if (attribute.AttributeClass.Name == NoMainThreadDependencyAttributeName)
+                {
+                    return attribute.ApplicationSyntaxReference.GetSyntax(cancellationToken).GetLocation();
+                }
+            }
+
+            return null;
         }
 
         [SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "This type is never used for comparison.")]

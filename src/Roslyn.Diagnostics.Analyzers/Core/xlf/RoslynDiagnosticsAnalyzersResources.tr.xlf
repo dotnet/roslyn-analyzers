@@ -122,6 +122,26 @@
         <target state="new">Test exports should not be discoverable</target>
         <note />
       </trans-unit>
+      <trans-unit id="MainThreadDependencyShouldBeVerifiedDescription">
+        <source>Main thread dependency should be verified</source>
+        <target state="new">Main thread dependency should be verified</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MainThreadDependencyShouldBeVerifiedFix">
+        <source>Verify main thread dependency</source>
+        <target state="new">Verify main thread dependency</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MainThreadDependencyShouldBeVerifiedMessage">
+        <source>Main thread dependency should be verified</source>
+        <target state="new">Main thread dependency should be verified</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MainThreadDependencyShouldBeVerifiedTitle">
+        <source>Main thread dependency should be verified</source>
+        <target state="new">Main thread dependency should be verified</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseSpecializedCollectionsEmptyEnumerableTitle">
         <source>Use SpecializedCollections.EmptyEnumerable()</source>
         <target state="translated">SpecializedCollections.EmptyEnumerable() kullanın</target>

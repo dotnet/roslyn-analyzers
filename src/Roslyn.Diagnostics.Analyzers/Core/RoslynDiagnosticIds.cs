@@ -41,5 +41,6 @@ namespace Roslyn.Diagnostics.Analyzers
 
         public const string ImplementWithNoMainThreadDependencyRuleId = "RS0035";
         public const string CodeMayHaveMainThreadDependencyRuleId = "RS0036";
+        public const string MainThreadDependencyShouldBeVerifiedRuleId = "RS0037";
     }
 }

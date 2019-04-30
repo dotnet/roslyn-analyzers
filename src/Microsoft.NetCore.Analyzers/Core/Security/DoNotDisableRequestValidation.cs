@@ -6,6 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
@@ -49,9 +50,12 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    var validateInputAttributeTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcValidateInputAttribute);
+                    var compilation = compilationStartAnalysisContext.Compilation;
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (validateInputAttributeTypeSymbol == null)
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                                WellKnownTypeNames.SystemWebMvcValidateInputAttribute,
+                                out INamedTypeSymbol validateInputAttributeTypeSymbol))
                     {
                         return;
                     }

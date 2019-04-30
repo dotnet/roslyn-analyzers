@@ -60,8 +60,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
                             var symbol = symbolAnalysisContext.Symbol;
+                            var typeSymbol = symbol.ContainingType;
+
+                            if (typeSymbol == null)
+                            {
+                                return;
+                            }
+
                             var attr = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(validateInputAttributeTypeSymbol));
 
+                            // If the method doesn't have the ValidateInput attribute, check its type.
+                            if (attr == null)
+                            {
+                                symbol = typeSymbol;
+                                attr = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(validateInputAttributeTypeSymbol));
+                            }
+
+                            // By default, request validation is enabled.
                             if (attr == null)
                             {
                                 return;
@@ -76,9 +91,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 symbolAnalysisContext.ReportDiagnostic(
                                     symbol.CreateDiagnostic(
                                         Rule,
+                                        symbol is INamedTypeSymbol namedTypeSymbol ? namedTypeSymbol.TypeKind.ToString() : symbol.Kind.ToString(),
                                         symbol.Name));
                             }
-                        }, SymbolKind.Method, SymbolKind.NamedType);
+                        }, SymbolKind.Method);
                 });
         }
     }

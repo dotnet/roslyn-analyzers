@@ -113,12 +113,12 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
 
         public static bool IsXsltSettingsType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
         {
-            return symbol == xmlTypes.XsltSettings;
+            return Equals(symbol, xmlTypes.XsltSettings);
         }
 
         public static bool IsXmlReaderSettingsType(ITypeSymbol symbol, CompilationSecurityTypes xmlTypes)
         {
-            return symbol == xmlTypes.XmlReaderSettings;
+            return Equals(symbol, xmlTypes.XmlReaderSettings);
         }
 
         public static int GetXmlResolverParameterIndex(IMethodSymbol method, CompilationSecurityTypes xmlTypes)

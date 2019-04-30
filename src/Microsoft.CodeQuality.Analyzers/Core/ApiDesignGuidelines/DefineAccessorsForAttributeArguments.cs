@@ -175,7 +175,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (property.SetMethod != null &&
                             property.SetMethod.DeclaredAccessibility == Accessibility.Public &&
-                            property.ContainingType == attributeType)
+                            Equals(property.ContainingType, attributeType))
                         {
                             // Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'.
                             addDiagnostic(GetRemoveSetterDiagnostic(parameter, property));

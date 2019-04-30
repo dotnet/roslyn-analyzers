@@ -42,7 +42,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
         //ImmutableArray.Create(LocalRule, ParameterRule);
 
+#pragma warning disable RS1025 // Configure generated code analysis
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1025 // Configure generated code analysis
         {
             analysisContext.EnableConcurrentExecution();
 

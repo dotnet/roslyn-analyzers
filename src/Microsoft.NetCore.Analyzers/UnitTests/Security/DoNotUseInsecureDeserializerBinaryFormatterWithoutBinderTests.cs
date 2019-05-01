@@ -604,7 +604,7 @@ class Derived : Base
     }
 }"
             ,
-            GetCSharpResultAt(14, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"),
+            GetCSharpResultAt(14, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"),
             GetCSharpResultAt(27, 13, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"),
             GetCSharpResultAt(29, 23, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"),
             GetCSharpResultAt(34, 16, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
@@ -742,7 +742,7 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(14, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+            GetCSharpResultAt(14, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
 
         [Fact]
@@ -776,7 +776,7 @@ namespace Blah
             GetCSharpResultAt(14, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1853")]
+        [Fact]
         public void OtherMethodInstantiatesWithBinder_NoDiagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
@@ -828,12 +828,12 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(19, 20, BinderMaybeNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+            GetCSharpResultAt(19, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
 
             // Ideally we'd see Binder is never set, rather than maybe not set.
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1852")]
+        [Fact]
         public void OtherMethodDeserializesWithoutBinderUsingDelegate_Diagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
@@ -860,11 +860,11 @@ namespace Blah
             return des(stream);
         }
     }
-}",
-            GetCSharpResultAt(22, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+}");
+            // Ideally we'd be able to detect this, but it's kinda a weird case.
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1853")]
+        [Fact]
         public void OtherMethodDeserializesWithoutBinderUsingBinaryFormatter_Diagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
@@ -881,8 +881,6 @@ namespace Blah
         public object Deserialize(byte[] bytes)
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Binder = new MyBinder();
-            formatter.Deserialize(new MemoryStream(bytes));  // Force DFA.
             formatter.Binder = null;
             return DoDeserialization(formatter, new MemoryStream(bytes));
         }
@@ -893,8 +891,7 @@ namespace Blah
         }
     }
 }",
-            GetCSharpResultAt(23, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+            GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
         }
-
     }
 }

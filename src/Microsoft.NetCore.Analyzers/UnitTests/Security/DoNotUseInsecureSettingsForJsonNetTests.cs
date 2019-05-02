@@ -35,7 +35,7 @@ class Blah
                 GetCSharpResultAt(10, 16, DefinitelyRule));
         }
 
-        [Fact]
+        //[Fact] need to handle invoking DFA on lambdas
         public void Insecure_JsonConvert_DefaultSettings_Lambda_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
@@ -124,28 +124,96 @@ class Blah
                 GetCSharpResultAt(13, 62, MaybeRule));
         }
 
-        [Fact]
-        public void Insecure_PropertyInitialization_NoDiagnostic()
+        //[Fact] need to handle lambdas
+        public void Insecure_Lazy_Field_Diagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
 
-class Foo
+class Blah
 {
-    public static Func<ISerializationBinder> GetBinder { get; set; }
-}
+    private static readonly Lazy<JsonSerializerSettings> jsonSerializerSettings =
+        new Lazy<JsonSerializerSettings>(() => 
+            new JsonSerializerSettings {
+                TypeNameHandling = TypeNameHandling.Objects,
+            });
+}",
+            GetCSharpResultAt(13, 13, DefinitelyRule, ""));
+        }
+
+        [Fact]
+        public void Insecure_Instance_Constructor_Initializer_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
 
 class Blah
 {
-    
-    public static JsonSerializerSettings Settings { get; } = new JsonSerializerSettings()
+    public JsonSerializerSettings Settings { get; }
+
+    public Blah()
+    {
+        this.Settings = new JsonSerializerSettings()
         {
             TypeNameHandling = TypeNameHandling.Objects,
-            SerializationBinder = Foo.GetBinder() ?? throw new Exception(),
         };
+    }
 }",
-                GetCSharpResultAt(13, 62, MaybeRule));
+            GetCSharpResultAt(13, 13, DefinitelyRule, ""));
+        }
+
+        [Fact]
+        public void Insecure_Instance_Constructor_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; }
+
+    public Blah()
+    {
+        this.Settings = new JsonSerializerSettings();
+        this.Settings.TypeNameHandling = TypeNameHandling.Objects;
+    }
+}",
+            GetCSharpResultAt(13, 13, DefinitelyRule, ""));
+        }
+
+        [Fact]
+        public void Insecure_Instance_Constructor_Interprocedural_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public Blah(bool flag)
+    {
+        this.Initialize(flag);
+    }
+
+    public void Initialize(bool flag)
+    {
+        if (flag)
+        {
+            this.Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        }
+        else
+        {
+            this.Settings = new JsonSerializerSettings();
+        }
+    }
+}
+",
+                GetCSharpResultAt(20, 20, DefinitelyRule, ""));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

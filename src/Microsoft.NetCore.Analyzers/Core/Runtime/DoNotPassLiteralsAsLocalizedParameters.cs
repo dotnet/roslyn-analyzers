@@ -142,16 +142,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue> ComputeValueContentAnalysisResult()
                     {
-                        foreach (var operationRoot in operationBlockStartContext.OperationBlocks)
+                        var cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
+                        if (cfg != null)
                         {
-                            IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
-                            if (topmostBlock != null)
-                            {
-                                var cfg = topmostBlock.GetEnclosingControlFlowGraph();
-                                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                                return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
-                                    operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
-                            }
+                            var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
+                            return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                                operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
                         }
 
                         return null;

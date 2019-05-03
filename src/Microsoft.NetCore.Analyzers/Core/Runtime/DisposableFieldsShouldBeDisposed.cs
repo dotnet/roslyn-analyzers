@@ -118,26 +118,24 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 if (lazyPointsToAnalysisResult == null)
                                 {
-                                    if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks,
-                                        containingMethod, operationBlockStartContext.Options, Rule, trackInstanceFields: false,
-                                        trackExceptionPaths: false, operationBlockStartContext.CancellationToken,
-                                        out var disposeAnalysisResult, out var pointsToAnalysisResult))
-                                    {
-                                        Debug.Assert(pointsToAnalysisResult != null);
-                                        Interlocked.CompareExchange(ref lazyPointsToAnalysisResult, pointsToAnalysisResult, null);
-                                    }
+                                    var cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
+                                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
+                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                        operationBlockStartContext.Options, Rule, InterproceduralAnalysisKind.ContextSensitive, operationBlockStartContext.CancellationToken);
+                                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg,
+                                        containingMethod, wellKnownTypeProvider, interproceduralAnalysisConfig,
+                                        interproceduralAnalysisPredicateOpt: null,
+                                        pessimisticAnalysis: false, performCopyAnalysis: false);
+                                    Interlocked.CompareExchange(ref lazyPointsToAnalysisResult, pointsToAnalysisResult, null);
                                 }
 
-                                if (lazyPointsToAnalysisResult != null)
+                                PointsToAbstractValue assignedPointsToValue = lazyPointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
+                                foreach (var location in assignedPointsToValue.Locations)
                                 {
-                                    PointsToAbstractValue assignedPointsToValue = lazyPointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
-                                    foreach (var location in assignedPointsToValue.Locations)
+                                    if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
                                     {
-                                        if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
-                                        {
-                                            addOrUpdateFieldDisposedValue(field, disposed: false);
-                                            break;
-                                        }
+                                        addOrUpdateFieldDisposedValue(field, disposed: false);
+                                        break;
                                     }
                                 }
                             }

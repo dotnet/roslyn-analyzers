@@ -35,6 +35,62 @@ class Blah
                 GetCSharpResultAt(10, 16, DefinitelyRule));
         }
 
+        [Fact]
+        public void Insecure_JsonConvert_DeserializeAnonymousType_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    T Method<T>(string s, T t)
+    {
+        JsonSerializerSettings settings = new JsonSerializerSettings();
+        settings.TypeNameHandling = TypeNameHandling.All;
+        return JsonConvert.DeserializeAnonymousType<T>(s, t, settings);
+    }
+}",
+                GetCSharpResultAt(10, 16, DefinitelyRule));
+        }
+
+        [Fact]
+        public void Insecure_JsonSerializer_Create_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System.IO;
+using Newtonsoft.Json;
+
+class Blah
+{
+    T Deserialize<T>(string s)
+    {
+        JsonSerializerSettings settings = new JsonSerializerSettings();
+        settings.TypeNameHandling = TypeNameHandling.All;
+        JsonSerializer serializer = JsonSerializer.Create(settings);
+        return (T) serializer.Deserialize(new StringReader(s), typeof(T));
+    }
+}",
+                GetCSharpResultAt(11, 37, DefinitelyRule));
+        }
+
+        [Fact]
+        public void Secure_JsonSerializer_CreateDefault_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System.IO;
+using Newtonsoft.Json;
+
+class Blah
+{
+    T Deserialize<T>(string s)
+    {
+        JsonSerializerSettings settings = new JsonSerializerSettings();
+        JsonSerializer serializer = JsonSerializer.Create(settings);
+        return (T) serializer.Deserialize(new StringReader(s), typeof(T));
+    }
+}");
+        }
+
         //[Fact] need to handle invoking DFA on lambdas
         public void Insecure_JsonConvert_DefaultSettings_Lambda_DefinitelyDiagnostic()
         {
@@ -66,11 +122,11 @@ class Blah
 {
     public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
 }",
-                GetCSharpResultAt(6, 62, DefinitelyRule));
+                GetCSharpResultAt(6, 60, DefinitelyRule));
         }
 
         [Fact]
-        public void Insecure_FieldInitialization_NoDiagnostic()
+        public void Secure_FieldInitialization_SerializationBinderSet_NoDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
 using System;
@@ -88,6 +144,24 @@ class Blah
         }
 
         [Fact]
+        public void Secure_FieldInitialization_BinderSet_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public static readonly JsonSerializerSettings Settings = 
+        new JsonSerializerSettings()
+        {
+            TypeNameHandling = TypeNameHandling.Objects,
+            Binder = new MyBinder(),
+        };
+}");
+        }
+
+        [Fact]
         public void Insecure_PropertyInitialization_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
@@ -97,7 +171,7 @@ class Blah
 {
     public static JsonSerializerSettings Settings { get; } = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
 }",
-                GetCSharpResultAt(6, 62, DefinitelyRule));
+                GetCSharpResultAt(6, 60, DefinitelyRule));
         }
 
         [Fact]
@@ -121,7 +195,7 @@ class Blah
             SerializationBinder = Foo.GetBinder(),
         };
 }",
-                GetCSharpResultAt(13, 62, MaybeRule));
+                GetCSharpResultAt(13, 60, MaybeRule));
         }
 
         //[Fact] need to handle lambdas
@@ -139,7 +213,7 @@ class Blah
                 TypeNameHandling = TypeNameHandling.Objects,
             });
 }",
-            GetCSharpResultAt(13, 13, DefinitelyRule, ""));
+            GetCSharpResultAt(13, 13, DefinitelyRule));
         }
 
         [Fact]
@@ -161,7 +235,7 @@ class Blah
         };
     }
 }",
-            GetCSharpResultAt(13, 13, DefinitelyRule, ""));
+            GetCSharpResultAt(11, 9, DefinitelyRule));
         }
 
         [Fact]
@@ -181,7 +255,7 @@ class Blah
         this.Settings.TypeNameHandling = TypeNameHandling.Objects;
     }
 }",
-            GetCSharpResultAt(13, 13, DefinitelyRule, ""));
+            GetCSharpResultAt(11, 9, DefinitelyRule));
         }
 
         [Fact]
@@ -213,7 +287,79 @@ class Blah
     }
 }
 ",
-                GetCSharpResultAt(20, 20, DefinitelyRule, ""));
+                GetCSharpResultAt(18, 13, DefinitelyRule));
+        }
+
+        [Fact]
+        public void Insecure_Field_Initialized_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    private static readonly JsonSerializerSettings Settings;
+
+    static Blah()
+    {
+        Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto };
+    }
+}
+",
+                GetCSharpResultAt(11, 9, DefinitelyRule));
+        }
+
+        [Fact]
+        public void Insecure_UnusedLocalVariable_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public void Initialize(bool flag)
+    {
+        JsonSerializerSettings settings;
+        if (flag)
+        {
+            settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        }
+        else
+        {
+            settings = new JsonSerializerSettings();
+        }
+    }
+}
+");
+        }
+
+        [Fact]
+        public void Insecure_Return_InstanceMethod_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings GetSerializerSettings(bool flag)
+    {
+        JsonSerializerSettings settings;
+        if (flag)
+        {
+            settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        }
+        else
+        {
+            settings = new JsonSerializerSettings();
+        }
+        
+        return settings;
+    }
+}",
+                GetCSharpResultAt(19, 16, DefinitelyRule));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

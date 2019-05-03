@@ -1,29 +1,29 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotDisableHTTPHeaderChecking : DiagnosticAnalyzer
+    public sealed class DoNotUseAccountSAS : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA5365";
+        internal const string DiagnosticId = "CA5375";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableHTTPHeaderChecking),
+            nameof(SystemSecurityCryptographyResources.DoNotUseAccountSAS),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableHTTPHeaderCheckingMessage),
+            nameof(SystemSecurityCryptographyResources.DoNotUseAccountSASMessage),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableHTTPHeaderCheckingDescription),
+            nameof(SystemSecurityCryptographyResources.DoNotUseAccountSASDescription),
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 
@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 s_Message,
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                isEnabledByDefault: false,
                 description: s_Description,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTags.Telemetry);
@@ -49,33 +49,28 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                var compilation = compilationStartAnalysisContext.Compilation;
-                var httpRuntimeSectionTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebConfigurationHttpRuntimeSection);
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                if (httpRuntimeSectionTypeSymbol == null)
+                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                                                WellKnownTypeNames.MicrosoftWindowsAzureStorageCloudStorageAccount,
+                                                out INamedTypeSymbol cloudStorageAccountTypeSymbol))
                 {
                     return;
                 }
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
-                    var simpleAssignmentOperation = (ISimpleAssignmentOperation)operationAnalysisContext.Operation;
+                    var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
+                    var methodSymbol = invocationOperation.TargetMethod;
 
-                    if (simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation)
+                    if (methodSymbol.Name == "GetSharedAccessSignature" &&
+                        methodSymbol.ContainingType.Equals(cloudStorageAccountTypeSymbol))
                     {
-                        var property = propertyReferenceOperation.Property;
-
-                        if (property.Name == "EnableHeaderChecking" &&
-                            property.ContainingType.Equals(httpRuntimeSectionTypeSymbol) &&
-                            simpleAssignmentOperation.Value.ConstantValue.HasValue &&
-                            simpleAssignmentOperation.Value.ConstantValue.Value.Equals(false))
-                        {
-                            operationAnalysisContext.ReportDiagnostic(
-                                    simpleAssignmentOperation.CreateDiagnostic(
-                                        Rule));
-                        }
+                        operationAnalysisContext.ReportDiagnostic(
+                                invocationOperation.CreateDiagnostic(
+                                    Rule));
                     }
-                }, OperationKind.SimpleAssignment);
+                }, OperationKind.Invocation);
             });
         }
     }

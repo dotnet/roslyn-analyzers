@@ -1428,18 +1428,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion.</source>
-        <target state="translated">소비자를 알 수 없고 SynchronizationContext가 필요하지 않은 경우 라이브러리를 작성할 때 ConfigureAwait(false)를 사용하세요. 그러지 않으면 라이브러리 소비자가 차단 상태에서 비동기 메서드를 사용하여 교착 상태가 발생할 수 있습니다.</target>
+        <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <target state="needs-review-translation">소비자를 알 수 없고 SynchronizationContext가 필요하지 않은 경우 라이브러리를 작성할 때 ConfigureAwait(false)를 사용하세요. 그러지 않으면 라이브러리 소비자가 차단 상태에서 비동기 메서드를 사용하여 교착 상태가 발생할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
-        <source>Do not directly await a Task without calling ConfigureAwait</source>
-        <target state="translated">ConfigureAwait를 호출하지 않은 상태에서 작업을 직접 대기하지 마세요.</target>
+        <source>Consider calling ConfigureAwait on the awaited task</source>
+        <target state="needs-review-translation">ConfigureAwait를 호출하지 않은 상태에서 작업을 직접 대기하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
-        <source>Do not directly await a Task</source>
-        <target state="translated">작업을 직접 대기하지 마세요.</target>
+        <source>Consider calling ConfigureAwait on the awaited task</source>
+        <target state="needs-review-translation">작업을 직접 대기하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">

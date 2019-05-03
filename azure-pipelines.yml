@@ -1,10 +1,8 @@
 trigger:
 - 2.6.x
-- 2.9.x
 
 pr:
 - 2.6.x
-- 2.9.x
 
 jobs:
 - job: Windows_NT

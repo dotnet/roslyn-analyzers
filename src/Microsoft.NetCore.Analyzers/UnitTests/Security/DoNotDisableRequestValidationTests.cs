@@ -40,7 +40,7 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(7, 17, DoNotDisableRequestValidation.Rule, "Method", "TestActionMethod"));
+            GetCSharpResultAt(7, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
         }
 
         [Fact]
@@ -58,7 +58,7 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(9, 17, DoNotDisableRequestValidation.Rule, "Method", "TestActionMethod"));
+            GetCSharpResultAt(9, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
         }
 
         [Fact]
@@ -74,7 +74,7 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(5, 7, DoNotDisableRequestValidation.Rule, "Class", "TestControllerClass"));
+            GetCSharpResultAt(5, 7, DoNotDisableRequestValidation.Rule, "TestControllerClass"));
         }
 
         [Fact]
@@ -91,7 +91,7 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(8, 17, DoNotDisableRequestValidation.Rule, "Method", "TestActionMethod"));
+            GetCSharpResultAt(8, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
         }
 
         [Fact]

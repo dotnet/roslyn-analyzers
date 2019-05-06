@@ -95,7 +95,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 symbolAnalysisContext.ReportDiagnostic(
                                     symbol.CreateDiagnostic(
                                         Rule,
-                                        symbol is INamedTypeSymbol namedTypeSymbol ? namedTypeSymbol.TypeKind.ToString() : symbol.Kind.ToString(),
                                         symbol.Name));
                             }
                         }, SymbolKind.Method);

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -7,11 +9,15 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    /// <summary>
+    /// Analyzer for System.AppContext.SetSwitch invocations.
+    /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotDisableSchUseStrongCrypto : DiagnosticAnalyzer
+    public sealed class DoNotSetSwitch : DiagnosticAnalyzer
     {
         internal const string DiagnosticId = "CA5361";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
@@ -27,18 +33,38 @@ namespace Microsoft.NetCore.Analyzers.Security
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                description: s_Description,
-                helpLinkUri: null,
-                customTags: WellKnownDiagnosticTags.Telemetry);
+        internal static DiagnosticDescriptor DoNotDisableSchUseStrongCryptoRule = new DiagnosticDescriptor(
+            DiagnosticId,
+            s_Title,
+            s_Message,
+            DiagnosticCategory.Security,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            description: s_Description,
+            helpLinkUri: null,
+            customTags: WellKnownDiagnosticTags.Telemetry);
+        internal static DiagnosticDescriptor DoNotDisableSpmSecurityProtocolsRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5378",
+            nameof(MicrosoftNetCoreSecurityResources.DoNotDisableUsingServicePointManagerSecurityProtocolsTitle),
+            nameof(MicrosoftNetCoreSecurityResources.DoNotDisableUsingServicePointManagerSecurityProtocolsMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        internal static ImmutableDictionary<string, (bool BadValue, DiagnosticDescriptor Rule)> BadSwitches =
+            ImmutableDictionary.CreateRange(
+                StringComparer.Ordinal,
+                new[] {
+                   ("Switch.System.Net.DontEnableSchUseStrongCrypto",
+                        (true, DoNotDisableSchUseStrongCryptoRule)),
+                   ("Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols",
+                        (true, DoNotDisableSpmSecurityProtocolsRule)),
+                }.Select(
+                    (o) => new KeyValuePair<string, (bool, DiagnosticDescriptor)>(o.Item1, o.Item2)));
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+            DoNotDisableSchUseStrongCryptoRule,
+            DoNotDisableSpmSecurityProtocolsRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -57,12 +83,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
-                var setSwitchMemberWithStringAndStringParameter = appContextTypeSymbol.GetMembers("SetSwitch").OfType<IMethodSymbol>().FirstOrDefault(
-                                                                        methodSymbol => methodSymbol.Parameters.Length == 2 &&
-                                                                                        methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                                                                        methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_Boolean);
+                var setSwitchMemberWithStringAndBoolParameter =
+                    appContextTypeSymbol.GetMembers("SetSwitch").OfType<IMethodSymbol>().FirstOrDefault(
+                        methodSymbol => methodSymbol.Parameters.Length == 2 &&
+                                        methodSymbol.Parameters[0].Type.SpecialType == SpecialType.System_String &&
+                                        methodSymbol.Parameters[1].Type.SpecialType == SpecialType.System_Boolean);
 
-                if (setSwitchMemberWithStringAndStringParameter == null)
+                if (setSwitchMemberWithStringAndBoolParameter == null)
                 {
                     return;
                 }
@@ -72,19 +99,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
                     var methodSymbol = invocationOperation.TargetMethod;
 
-                    if (methodSymbol.Equals(setSwitchMemberWithStringAndStringParameter))
+                    if (setSwitchMemberWithStringAndBoolParameter.Equals(methodSymbol))
                     {
                         var values = invocationOperation.Arguments.Select(s => s.Value.ConstantValue).ToArray();
 
                         if (values[0].HasValue &&
-                            values[0].Value != null &&
-                            values[0].Value.Equals("Switch.System.Net.DontEnableSchUseStrongCrypto") &&
                             values[1].HasValue &&
-                            values[1].Value.Equals(true))
+                            values[0].Value is string switchName &&
+                            BadSwitches.TryGetValue(switchName, out var pair) &&
+                            pair.BadValue.Equals(values[1].Value))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
-                                    Rule,
+                                    pair.Rule,
                                     methodSymbol.Name));
                         }
                     }

@@ -17,16 +17,18 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         /// <param name="titleResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's title.</param>
         /// <param name="messageResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's message.</param>
         /// <param name="isEnabledByDefault">Flag indicating the diagnostic is enabled by default</param>
-        /// <param name="helpLinkUri">Help link URI.</param>
         /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's descrption.</param>
-        /// <returns></returns>
+        /// <param name="helpLinkUri">Help link URI.</param>
+        /// <param name="customTags">Optional custom tags for the diagnostic. See Microsoft.CodeAnalysis.WellKnownDiagnosticTags for some well known tags.</param>
+        /// <returns>New DiagnosticDescriptor.</returns>
         public static DiagnosticDescriptor CreateDiagnosticDescriptor(
             string id,
             string titleResourceStringName,
             string messageResourceStringName,
             bool isEnabledByDefault,
             string helpLinkUri,
-            string descriptionResourceStringName = null)
+            string descriptionResourceStringName = null,
+            params string[] customTags)
         {
             return new DiagnosticDescriptor(
                 id,
@@ -36,7 +38,8 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault,
                 descriptionResourceStringName != null ? GetResourceString(descriptionResourceStringName) : null,
-                helpLinkUri);
+                helpLinkUri,
+                customTags);
         }
 
         /// <summary>

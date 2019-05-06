@@ -88,8 +88,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
-        <source>The method {0} has request validation disabled</source>
-        <target state="new">The method {0} has request validation disabled</target>
+        <source>{0} has request validation disabled</source>
+        <target state="new">{0} has request validation disabled</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">

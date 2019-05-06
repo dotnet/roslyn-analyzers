@@ -1,0 +1,34 @@
+trigger:
+- 2.6.x
+
+pr:
+- 2.6.x
+
+jobs:
+- job: Windows_NT
+  displayName: Windows NT
+  pool:
+    vmImage: vs2017-win2016
+  strategy:
+    matrix:
+      Debug:
+        _BuildConfig: Debug
+      Release:
+        _BuildConfig: Release
+  steps:
+  - checkout: self
+    clean: true
+  - script: .\eng\common\CIBuild.cmd -configuration $(_BuildConfig) -prepareMachine
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: xUnit
+      testResultsFiles: '**/artifacts/TestResults/$(_BuildConfig)/*.xml'
+    condition: always()
+  - task: CopyFiles@2
+    inputs:
+      contents: 'artifacts/**'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: Windows_NT

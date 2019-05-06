@@ -52,6 +52,8 @@ namespace Microsoft.WindowsAzure.Storage
                 return """";
             }
 
+            // This stub API is not a real method of CloudFile.
+            // It is written for testing the case when the signature of method didn't match.
             public string GetSharedAccessSignature (SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, int protocols, IPAddressOrRange ipAddressOrRange)
             {
                 return """";

@@ -16,14 +16,13 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     class DoNotUseInsecureDeserializerNetDataContractSerializerMethods : DoNotUseInsecureDeserializerMethodsBase
     {
-        // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor RealMethodUsedDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2310",
                 nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerMethodUsedTitle),
                 nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerMethodUsedMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2310-do-not-use-insecure-deserializer-netdatacontractserializer",
                 descriptionResourceStringName: nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerMethodUsedDescription));
 
         protected override string DeserializerTypeMetadataName =>

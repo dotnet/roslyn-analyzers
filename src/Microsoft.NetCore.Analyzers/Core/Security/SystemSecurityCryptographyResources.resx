@@ -198,6 +198,15 @@
   <data name="DoNotSerializeTypesWithPointerFieldsMessage" xml:space="preserve">
     <value>Pointer field {0} on serializable type.</value>
   </data>
+  <data name="DoNotUseAccountSAS" xml:space="preserve">
+    <value>Do Not Use Account Shared Access Signature</value>
+  </data>
+  <data name="DoNotUseAccountSASDescription" xml:space="preserve">
+    <value>Shared Access Signatures(SAS) are a vital part of the security model for any application using Azure Storage, they should provide limited and safe permissions to your storage account to clients that don't have the account key. All of the operations available via a service SAS are also available via an account SAS, that is, account SAS is too powerful. So it is recommended to use Service SAS to delegate access more carefully.</value>
+  </data>
+  <data name="DoNotUseAccountSASMessage" xml:space="preserve">
+    <value>Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</value>
+  </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
   </data>

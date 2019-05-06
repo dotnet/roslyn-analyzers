@@ -148,14 +148,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                     false);
                                     var pointsToAbstractValue = pointsToAnalysisResult[argumentOperation.Kind, argumentOperation.Syntax];
 
-                                    if (pointsToAbstractValue.NullState == NullAbstractValue.Null)
+                                    if (pointsToAbstractValue.NullState != NullAbstractValue.Null)
                                     {
-                                        operationAnalysisContext.ReportDiagnostic(
-                                            invocationOperation.CreateDiagnostic(
-                                                Rule,
-                                                methodName));
+                                        return;
                                     }
                                 }
+
+                                operationAnalysisContext.ReportDiagnostic(
+                                            invocationOperation.CreateDiagnostic(
+                                                Rule));
                             }
                         }
                     }, OperationKind.Invocation);

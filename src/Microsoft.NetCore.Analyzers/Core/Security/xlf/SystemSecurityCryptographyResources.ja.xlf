@@ -253,8 +253,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyMessage">
-        <source>Use container-level access policy when creating Shared Access Signature (SAS)</source>
-        <target state="new">Use container-level access policy when creating Shared Access Signature (SAS)</target>
+        <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
+        <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

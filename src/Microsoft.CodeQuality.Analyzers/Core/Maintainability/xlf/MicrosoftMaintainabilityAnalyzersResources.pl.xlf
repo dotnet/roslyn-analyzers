@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">Element „{0}” ma zawsze wartość „{1}”. Usuń lub zrefaktoryzuj warunki w celu uniknięcia nieaktywnego kodu.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
         <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">Element „{0}” nigdy nie ma wartości „{1}”. Usuń lub zrefaktoryzuj warunki w celu uniknięcia nieaktywnego kodu.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeTitle">
         <source>Avoid dead conditional code</source>
-        <target state="new">Avoid dead conditional code</target>
+        <target state="translated">Unikaj nieaktywnego kodu warunkowego</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
@@ -34,11 +34,7 @@
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
         <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="needs-review-translation">Złożoność cyklomatyczna mierzy liczbę liniowo niezależnych ścieżek prowadzących przez metodę, która jest określana przez liczbę i złożoność gałęzi warunkowych. Niska złożoność cyklomatyczna zwykle wskazuje metodę, którą łatwo zrozumieć, testować i utrzymywać. Złożoność cyklomatyczna jest obliczana na podstawie grafu przepływu sterowania metody i podawana w następujący sposób:
-
-złożoność cyklomatyczna = liczba granic - liczba węzłów + 1
-
-gdzie węzeł reprezentuje rozgałęzienie logiki, a granica — linię między węzłami.</target>
+        <target state="translated">Złożoność cyklomatyczna mierzy liczbę liniowo niezależnych ścieżek prowadzących przez metodę, która jest określana przez liczbę i złożoność gałęzi warunkowych. Niska złożoność cyklomatyczna zwykle wskazuje metodę, którą łatwo zrozumieć, testować i utrzymywać. Złożoność cyklomatyczna jest obliczana na podstawie grafu przepływu sterowania metody i podawana w następujący sposób: złożoność cyklomatyczna = liczba granic - liczba węzłów + 1, gdzie węzeł reprezentuje rozgałęzienie logiki, a granica — linię między węzłami.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
@@ -68,8 +64,7 @@ gdzie węzeł reprezentuje rozgałęzienie logiki, a granica — linię między 
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="needs-review-translation">Indeks dostępności jest obliczany przy użyciu następujących metryk: wiersze kodu, ilość programu i złożoność cyklomatyczna. Ilość programu to miara trudności w zrozumieniu symbolu oparta na liczbie operatorów i operandów w kodzie. Złożoność cyklomatyczna to miara złożoności strukturalnej typu lub metody.
-Niski indeks dostępności wskazuje kod, który jest prawdopodobnie trudny w konserwacji. Byłby to dobry kandydat do przeprojektowania.</target>
+        <target state="translated">Indeks dostępności jest obliczany przy użyciu następujących metryk: wiersze kodu, ilość programu i złożoność cyklomatyczna. Ilość programu to miara trudności w zrozumieniu symbolu oparta na liczbie operatorów i operandów w kodzie. Złożoność cyklomatyczna to miara złożoności strukturalnej typu lub metody. Niski indeks dostępności wskazuje kod, który jest prawdopodobnie trudny w konserwacji. Byłby to dobry kandydat do przeprojektowania.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">

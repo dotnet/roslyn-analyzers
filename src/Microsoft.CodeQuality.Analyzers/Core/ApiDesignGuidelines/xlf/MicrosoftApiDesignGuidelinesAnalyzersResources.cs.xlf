@@ -944,12 +944,12 @@
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessagePropertyGetter">
         <source>{0} creates an exception of type {1}, an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</source>
-        <target state="translated">{0} vytváří výjimku typu {1\}, což je typ výjimky, která by neměla být ve vlastnosti vyvolána. Pokud se tato instance výjimky může vyvolat, použijte jiný typ výjimky, převeďte tuto vlastnost na metodu nebo změňte logiku této vlastnosti tak, aby už nevyvolávala výjimku.</target>
+        <target state="new">{0} creates an exception of type {1}, an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions">
         <source>{0} creates an exception of type {1}, an exception type that should not be raised in this type of method. If this exception instance might be raised, either use a different exception type or change this method's logic so that it no longer raises an exception.</source>
-        <target state="translated">{0} vytváří výjimku typu {1\}, což je typ výjimky, která by neměla být v tomto typu metody vyvolána. Pokud se tato instance výjimky může vyvolat, buď použijte jiný typ výjimky, nebo změňte logiku této metody tak, aby už nevyvolávala výjimku.</target>
+        <target state="new">{0} creates an exception of type {1}, an exception type that should not be raised in this type of method. If this exception instance might be raised, either use a different exception type or change this method's logic so that it no longer raises an exception.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions">

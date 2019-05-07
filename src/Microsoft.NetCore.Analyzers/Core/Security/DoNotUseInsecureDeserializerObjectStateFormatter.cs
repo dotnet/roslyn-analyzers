@@ -15,14 +15,13 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class DoNotUseInsecureDeserializerObjectStateFormatter : DoNotUseInsecureDeserializerMethodsBase
     {
-        // TODO paulming: Help link URLs.
         internal static DiagnosticDescriptor RealMethodUsedDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2315",
                 nameof(MicrosoftNetCoreSecurityResources.ObjectStateFormatterMethodUsedTitle),
                 nameof(MicrosoftNetCoreSecurityResources.ObjectStateFormatterMethodUsedMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2315-do-not-use-insecure-deserializer-objectstateformatter");
 
         protected override string DeserializerTypeMetadataName => WellKnownTypeNames.SystemWebUIObjectStateFormatter;
 

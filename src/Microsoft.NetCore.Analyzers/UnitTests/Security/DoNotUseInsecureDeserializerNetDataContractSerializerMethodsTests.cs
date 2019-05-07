@@ -22,6 +22,40 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         }
 
         [Fact]
+        public void DocSample1_CSharp_Violation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Runtime.Serialization;
+
+public class ExampleClass
+{
+    public object MyDeserialize(byte[] bytes)
+    {
+        NetDataContractSerializer serializer = new NetDataContractSerializer();
+        return serializer.Deserialize(new MemoryStream(bytes));
+    }
+}",
+                GetCSharpResultAt(10, 16, Rule, "object NetDataContractSerializer.Deserialize(Stream stream)"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation_Diagnostic()
+        {
+            VerifyBasic(@"
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Public Class ExampleClass
+    Public Function MyDeserialize(bytes As Byte()) As Object
+        Dim serializer As NetDataContractSerializer = New NetDataContractSerializer()
+        Return serializer.Deserialize(New MemoryStream(bytes))
+    End Function
+End Class",
+                GetBasicResultAt(8, 16, Rule, "Function NetDataContractSerializer.Deserialize(stream As Stream) As Object"));
+        }
+
+        [Fact]
         public void Deserialize_Diagnostic()
         {
             VerifyCSharp(@"

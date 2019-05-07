@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="cs" original="../RoslynDiagnosticsAnalyzersResources.resx">
     <body>
+      <trans-unit id="CodeMayHaveMainThreadDependencyCodeFix_ContainingMethodShouldBePerInstance">
+        <source>Mark containing method as PerInstance</source>
+        <target state="new">Mark containing method as PerInstance</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CodeMayHaveMainThreadDependencyCodeFix_ContainingMethodShouldCaptureContext">
+        <source>Mark containing method as ContextDependency.Context</source>
+        <target state="new">Mark containing method as ContextDependency.Context</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CodeMayHaveMainThreadDependencyCodeFix_TargetMissingAttribute">
+        <source>Mark target with [ThreadDependency]</source>
+        <target state="new">Mark target with [ThreadDependency]</target>
+        <note />
+      </trans-unit>
       <trans-unit id="CodeMayHaveMainThreadDependencyDescription">
         <source>Code may have main thread dependency</source>
         <target state="new">Code may have main thread dependency</target>

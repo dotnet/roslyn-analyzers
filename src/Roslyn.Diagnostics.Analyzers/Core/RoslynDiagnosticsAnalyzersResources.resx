@@ -282,4 +282,13 @@
   <data name="MainThreadDependencyShouldBeVerifiedTitle" xml:space="preserve">
     <value>Main thread dependency should be verified</value>
   </data>
+  <data name="CodeMayHaveMainThreadDependencyCodeFix_ContainingMethodShouldCaptureContext" xml:space="preserve">
+    <value>Mark containing method as ContextDependency.Context</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyCodeFix_TargetMissingAttribute" xml:space="preserve">
+    <value>Mark target with [ThreadDependency]</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyCodeFix_ContainingMethodShouldBePerInstance" xml:space="preserve">
+    <value>Mark containing method as PerInstance</value>
+  </data>
 </root>

@@ -3,7 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -59,30 +61,57 @@ namespace Roslyn.Diagnostics.Analyzers
                 return;
             }
 
+            ImmutableDictionary<string, string> propertiesOverride = null;
+            if (!valueThreadDependencyInfo.IsExplicit)
+            {
+                propertiesOverride = ScenarioProperties.TargetMissingAttribute;
+                if (threadDependencyInfo.CapturesContext)
+                {
+                    propertiesOverride = ScenarioProperties.WithCapturesContext(propertiesOverride);
+                }
+
+                if (IsReceiverMarkedPerInstance(awaitOperation.Operation))
+                {
+                    propertiesOverride = ScenarioProperties.WithPerInstance(propertiesOverride);
+                }
+            }
+
             if (!valueThreadDependencyInfo.AlwaysCompleted)
             {
                 if (threadDependencyInfo.AlwaysCompleted)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, awaitOperation, context.CancellationToken), properties: propertiesOverride));
                     return;
                 }
 
                 if (valueThreadDependencyInfo.CapturesContext && !threadDependencyInfo.CapturesContext)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, awaitOperation, context.CancellationToken), properties: propertiesOverride ?? ScenarioProperties.ContainingMethodShouldCaptureContext));
                     return;
                 }
             }
 
             if (valueThreadDependencyInfo.MayDirectlyRequireMainThread && !threadDependencyInfo.MayDirectlyRequireMainThread)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, awaitOperation, context.CancellationToken), properties: propertiesOverride));
                 return;
             }
 
             if (valueThreadDependencyInfo.PerInstance && !threadDependencyInfo.PerInstance)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation()));
+                var properties = propertiesOverride;
+                var locationSyntax = context.Operation.Syntax;
+                if (properties is null && !IsReceiverMarkedPerInstance(awaitOperation.Operation))
+                {
+                    var receiverOperation = GetReceiver(awaitOperation.Operation);
+                    if (receiverOperation is object && !HasExplicitThreadDependencyInfo(receiverOperation))
+                    {
+                        locationSyntax = receiverOperation.Syntax;
+                        properties = ScenarioProperties.TargetMissingAttribute;
+                    }
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(Rule, locationSyntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, awaitOperation, context.CancellationToken), properties: properties));
                 return;
             }
         }
@@ -147,6 +176,143 @@ namespace Roslyn.Diagnostics.Analyzers
             }
 
             return ThreadDependencyInfo.DefaultAsynchronous;
+        }
+
+        private IOperation GetReceiver(IOperation operation)
+        {
+            while (operation is IConversionOperation conversion)
+            {
+                if (conversion.OperatorMethod is object)
+                {
+                    return GetReceiver(conversion.Operand);
+                }
+
+                operation = conversion.Operand;
+            }
+
+            if (operation is IInvocationOperation invocation)
+            {
+                if (invocation.TargetMethod?.Name == nameof(Task.ConfigureAwait))
+                {
+                    return GetReceiver(invocation.Instance);
+                }
+                else
+                {
+                    return GetReceiver(invocation.Instance);
+                }
+            }
+
+            if (operation is IParameterReferenceOperation)
+            {
+                return operation;
+            }
+
+            return null;
+        }
+
+        private bool IsReceiverMarkedPerInstance(IOperation operation)
+        {
+            while (operation is IConversionOperation conversion)
+            {
+                if (conversion.OperatorMethod is object)
+                {
+                    return GetThreadDependencyInfo(operation, captureContextUnlessConfigured: false).PerInstance;
+                }
+
+                operation = conversion.Operand;
+            }
+
+            if (operation is IInvocationOperation invocation)
+            {
+                if (invocation.TargetMethod?.Name == nameof(Task.ConfigureAwait))
+                {
+                    return IsReceiverMarkedPerInstance(invocation.Instance);
+                }
+                else
+                {
+                    return HasExplicitThreadDependencyInfo(invocation.Instance);
+                }
+            }
+
+            if (operation is IParameterReferenceOperation)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
+        private bool HasExplicitThreadDependencyInfo(IOperation operation)
+        {
+            while (operation is IConversionOperation conversion)
+            {
+                if (conversion.OperatorMethod is object)
+                {
+                    return GetThreadDependencyInfo(operation, captureContextUnlessConfigured: false).IsExplicit;
+                }
+
+                operation = conversion.Operand;
+            }
+
+            if (operation is IInvocationOperation invocation)
+            {
+                if (invocation.TargetMethod?.Name == nameof(Task.ConfigureAwait))
+                {
+                    return HasExplicitThreadDependencyInfo(invocation.Instance);
+                }
+                else
+                {
+                    return GetThreadDependencyInfo(invocation.Instance, captureContextUnlessConfigured: false).IsExplicit;
+                }
+            }
+
+            return GetThreadDependencyInfo(operation, captureContextUnlessConfigured: false).IsExplicit;
+        }
+
+        private IEnumerable<Location> GetAdditionalLocations(ISymbol containingSymbol, IOperation operation, CancellationToken cancellationToken)
+        {
+            if (operation is IAwaitOperation || operation is IReturnOperation)
+            {
+                if (containingSymbol is IMethodSymbol method)
+                {
+                    var returnLocation = TryGetThreadDependencyInfoLocationForReturn(method, cancellationToken);
+                    if (returnLocation is object)
+                    {
+                        return new[] { returnLocation };
+                    }
+                }
+            }
+
+            var location = TryGetThreadDependencyInfoLocation(containingSymbol, cancellationToken);
+            if (location is object)
+            {
+                return new[] { location };
+            }
+
+            return Enumerable.Empty<Location>();
+        }
+
+        internal static class Scenario
+        {
+            public const string ContainingMethodShouldCaptureContext = nameof(ContainingMethodShouldCaptureContext);
+            public const string ContainingMethodShouldBePerInstance = nameof(ContainingMethodShouldBePerInstance);
+            public const string TargetMissingAttribute = nameof(TargetMissingAttribute);
+        }
+
+        private static class ScenarioProperties
+        {
+            public static readonly ImmutableDictionary<string, string> ContainingMethodShouldCaptureContext = ImmutableDictionary.Create<string, string>().Add(nameof(Scenario), nameof(ContainingMethodShouldCaptureContext));
+            public static readonly ImmutableDictionary<string, string> ContainingMethodShouldBePerInstance = ImmutableDictionary.Create<string, string>().Add(nameof(Scenario), nameof(ContainingMethodShouldBePerInstance));
+            public static readonly ImmutableDictionary<string, string> TargetMissingAttribute = ImmutableDictionary.Create<string, string>().Add(nameof(Scenario), nameof(TargetMissingAttribute));
+
+            public static ImmutableDictionary<string, string> WithCapturesContext(ImmutableDictionary<string, string> properties)
+                => properties.SetItem(nameof(ContextDependency), nameof(ContextDependency.Context));
+
+            public static ImmutableDictionary<string, string> WithAlwaysCompleted(ImmutableDictionary<string, string> properties)
+                => properties.SetItem("AlwaysCompleted", "true");
+
+            public static ImmutableDictionary<string, string> WithPerInstance(ImmutableDictionary<string, string> properties)
+                => properties.SetItem("PerInstance", bool.TrueString);
         }
     }
 }

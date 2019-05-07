@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">"{0}" всегда является "{1}". Удалите эти условия или выполните их рефакторинг, чтобы избежать появления неиспользуемого кода.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
         <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">"{0}" никогда не является "{1}". Удалите эти условия или выполните их рефакторинг, чтобы избежать появления неиспользуемого кода.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeTitle">
         <source>Avoid dead conditional code</source>
-        <target state="new">Avoid dead conditional code</target>
+        <target state="translated">Предотвращение появления неиспользуемого условного кода</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
@@ -34,11 +34,7 @@
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
         <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="needs-review-translation">Цикломатическая сложность измеряется числом линейно независимых путей в методе, которое определяется числом и сложностью условных ветвей. Низкая цикломатическая сложность обычно означает, что метод прост для понимания и удобен для тестирования и поддержки. Цикломатическая сложность вычисляется из графа управления потоком метода и определяется следующим образом:
-
-цикломатическая сложность = количество ребер – количество узлов + 1,
-
-где узел — это точка логической ветви, а ребро — линия между узлами.</target>
+        <target state="translated">Цикломатическая сложность измеряет число линейно-независимых путей через метод, что определяется числом и сложностью условных ветвлений. Низкая цикломатическая сложность обычно указывает на метод, который легко понять, тестировать и обслуживать. Цикломатическая сложность вычисляется по графу потока управления по следующей формуле: "цикломатическая сложность = число краев – число узлов + 1", где узел представляет логическую точку ветвления, а край — линию между узлами.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
@@ -68,8 +64,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="needs-review-translation">Индекс удобства поддержки вычисляется с использованием следующих метрик: количество строк кода, объем программы и цикломатическая сложность. Объем программы — это мера сложности понимания символа, которая основана на количестве операторов и операндов в коде. Цикломатическая сложность — это мера структурной сложности типа или метода.
-Низкий индекс удобства поддержки указывает, что код, вероятно, будет сложно поддерживать и что этот код следует оптимизировать.</target>
+        <target state="translated">Индекс удобства поддержки вычисляется с помощью следующих метрик: строк кода, объема программы и цикломатической сложности. Объем программы — это мера сложности понимания символа, основанная на количестве операторов и операндов в коде. Цикломатическая сложность — это мера структурной сложности типа или метода. Низкий индекс удобства поддержки означает, что код, скорее всего, сложно обслуживать, поэтому следует рассмотреть возможность его переработки.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">

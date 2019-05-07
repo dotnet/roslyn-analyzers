@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../SystemDataAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../SystemDataAnalyzersResources.resx">
     <body>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
-        <target state="new">SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</target>
+        <target state="translated">直接利用使用者輸入的 SQL 查詢，有可能會受到插入 SQL 的攻擊。請檢閱此 SQL 查詢是否有潛在的弱點，並請考慮使用參數化的 SQL 查詢。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesMessageNoNonLiterals">
         <source>Review if the query string passed to '{0}' in '{1}', accepts any user input.</source>
-        <target state="new">Review if the query string passed to '{0}' in '{1}', accepts any user input.</target>
+        <target state="translated">檢閱查詢字串是否已傳遞到 '{1}' 中的 '{0}'，接受所有使用者輸入。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesTitle">
         <source>Review SQL queries for security vulnerabilities</source>
-        <target state="new">Review SQL queries for security vulnerabilities</target>
+        <target state="translated">必須檢閱 SQL 查詢中是否有安全性弱點</target>
         <note />
       </trans-unit>
     </body>

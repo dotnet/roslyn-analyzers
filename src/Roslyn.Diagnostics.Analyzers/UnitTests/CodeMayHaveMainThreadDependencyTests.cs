@@ -68,7 +68,7 @@ interface IInterface {
 }
 
 class Class {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
         [|await obj.MethodAsync()|];
     }
@@ -90,7 +90,7 @@ Interface IInterface
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
         [|Await obj.MethodAsync()|]
     End Function
@@ -112,7 +112,7 @@ interface IInterface {
 }
 
 class Class {
-    [NoMainThreadDependency(CapturesContext = true)]
+    [ThreadDependency(ContextDependency.Context)]
     async Task OperationAsync(IInterface obj) {
         [|await obj.MethodAsync()|];
     }
@@ -134,7 +134,7 @@ Interface IInterface
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency(CapturesContext:=True)>
+    <ThreadDependency(ContextDependency.Context)>
     Async Function OperationAsync(obj As IInterface) As Task
         [|Await obj.MethodAsync()|]
     End Function
@@ -152,12 +152,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface IInterface {
-    [NoMainThreadDependency(CapturesContext = true)]
+    [ThreadDependency(ContextDependency.Context)]
     Task MethodAsync();
 }
 
 class Class {
-    [NoMainThreadDependency(CapturesContext = true)]
+    [ThreadDependency(ContextDependency.Context)]
     async Task OperationAsync(IInterface obj) {
         await obj.MethodAsync();
     }
@@ -175,12 +175,12 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Interface IInterface
-    <NoMainThreadDependency(CapturesContext:=True)>
+    <ThreadDependency(ContextDependency.Context)>
     Function MethodAsync() As Task
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency(CapturesContext:=True)>
+    <ThreadDependency(ContextDependency.Context)>
     Async Function OperationAsync(obj As IInterface) As Task
         Await obj.MethodAsync()
     End Function
@@ -198,12 +198,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface IInterface {
-    [NoMainThreadDependency(CapturesContext = true)]
+    [ThreadDependency(ContextDependency.Context)]
     Task MethodAsync();
 }
 
 class Class {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
         [|await obj.MethodAsync()|];
     }
@@ -221,12 +221,12 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Interface IInterface
-    <NoMainThreadDependency(CapturesContext:=True)>
+    <ThreadDependency(ContextDependency.Context)>
     Function MethodAsync() As Task
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
         [|Await obj.MethodAsync()|]
     End Function
@@ -244,12 +244,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface IInterface {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     Task MethodAsync();
 }
 
 class Class {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
         [|await obj.MethodAsync()|];
     }
@@ -267,12 +267,12 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Interface IInterface
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Function MethodAsync() As Task
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
         [|Await obj.MethodAsync()|]
     End Function
@@ -290,12 +290,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface IInterface {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     Task MethodAsync();
 }
 
 class Class {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
         [|await obj.MethodAsync().ConfigureAwait(true)|];
     }
@@ -313,12 +313,12 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Interface IInterface
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Function MethodAsync() As Task
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
         [|Await obj.MethodAsync().ConfigureAwait(True)|]
     End Function
@@ -336,12 +336,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface IInterface {
-    [NoMainThreadDependency(AlwaysCompleted = true)]
+    [ThreadDependency(ContextDependency.Context, AlwaysCompleted = true)]
     Task MethodAsync();
 }
 
 class Class {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
         await obj.MethodAsync();
     }
@@ -359,12 +359,12 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Interface IInterface
-    <NoMainThreadDependency(AlwaysCompleted:=True)>
+    <ThreadDependency(ContextDependency.None, AlwaysCompleted:=True)>
     Function MethodAsync() As Task
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
         Await obj.MethodAsync()
     End Function
@@ -382,13 +382,13 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface IInterface {
-    [NoMainThreadDependency(PerInstance = true)]
+    [ThreadDependency(ContextDependency.None, PerInstance = true)]
     Task MethodAsync();
 }
 
 class Class {
-    [NoMainThreadDependency]
-    async Task OperationAsync([NoMainThreadDependency] IInterface obj) {
+    [ThreadDependency(ContextDependency.None)]
+    async Task OperationAsync([ThreadDependency(ContextDependency.None)] IInterface obj) {
         await obj.MethodAsync().ConfigureAwait(false);
     }
 }
@@ -405,13 +405,13 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Interface IInterface
-    <NoMainThreadDependency(PerInstance:=True)>
+    <ThreadDependency(ContextDependency.None, PerInstance:=True)>
     Function MethodAsync() As Task
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency>
-    Async Function OperationAsync(<NoMainThreadDependency> obj As IInterface) As Task
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync(<ThreadDependency(ContextDependency.None)> obj As IInterface) As Task
         Await obj.MethodAsync().ConfigureAwait(False)
     End Function
 End Class
@@ -428,12 +428,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface IInterface {
-    [NoMainThreadDependency(PerInstance = true)]
+    [ThreadDependency(ContextDependency.None, PerInstance = true)]
     Task MethodAsync();
 }
 
 class Class {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
         [|await obj.MethodAsync()|];
     }
@@ -451,12 +451,12 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Interface IInterface
-    <NoMainThreadDependency(PerInstance:=True)>
+    <ThreadDependency(ContextDependency.None, PerInstance:=True)>
     Function MethodAsync() As Task
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
         [|Await obj.MethodAsync()|]
     End Function
@@ -478,8 +478,8 @@ interface IInterface {
 }
 
 class Class {
-    [NoMainThreadDependency]
-    async Task OperationAsync([NoMainThreadDependency] IInterface obj) {
+    [ThreadDependency(ContextDependency.None)]
+    async Task OperationAsync([ThreadDependency(ContextDependency.None)] IInterface obj) {
         [|await obj.MethodAsync()|];
     }
 }
@@ -500,8 +500,8 @@ Interface IInterface
 End Interface
 
 Class [Class]
-    <NoMainThreadDependency>
-    Async Function OperationAsync(<NoMainThreadDependency> obj As IInterface) As Task
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync(<ThreadDependency(ContextDependency.None)> obj As IInterface) As Task
         [|Await obj.MethodAsync()|]
     End Function
 End Class

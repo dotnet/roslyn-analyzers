@@ -14,11 +14,19 @@ namespace Roslyn.Diagnostics.Analyzers
     {
         protected const string AsyncEntryAttributeFullName = "Roslyn.Utilities.AsyncEntryAttribute";
         protected const string AsyncEntryAttributeName = "AsyncEntryAttribute";
-        protected const string NoMainThreadDependencyAttributeFullName = "Roslyn.Utilities.NoMainThreadDependencyAttribute";
-        protected const string NoMainThreadDependencyAttributeName = "NoMainThreadDependencyAttribute";
+        protected const string ThreadDependencyAttributeFullName = "Roslyn.Utilities.ThreadDependencyAttribute";
+        protected const string ThreadDependencyAttributeName = "ThreadDependencyAttribute";
 
         private protected AbstractThreadDependencyAnalyzer()
         {
+        }
+
+        protected enum ContextDependency
+        {
+            Default,
+            None,
+            Context,
+            Any,
         }
 
         public sealed override void Initialize(AnalysisContext context)
@@ -29,19 +37,19 @@ namespace Roslyn.Diagnostics.Analyzers
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
-                var noMainThreadDependencyAttribute = compilation.GetTypeByMetadataName(NoMainThreadDependencyAttributeFullName);
+                var threadDependencyAttribute = compilation.GetTypeByMetadataName(ThreadDependencyAttributeFullName);
 
                 // Bail if NoMainThreadDependencyAttribute is not defined
-                if (noMainThreadDependencyAttribute is null)
+                if (threadDependencyAttribute is null)
                 {
                     return;
                 }
 
-                HandleCompilationStart(compilationStartContext, noMainThreadDependencyAttribute);
+                HandleCompilationStart(compilationStartContext, threadDependencyAttribute);
             });
         }
 
-        protected abstract void HandleCompilationStart(CompilationStartAnalysisContext context, INamedTypeSymbol noMainThreadDependencyAttribute);
+        protected abstract void HandleCompilationStart(CompilationStartAnalysisContext context, INamedTypeSymbol threadDependencyAttribute);
 
         protected ThreadDependencyInfo GetThreadDependencyInfo(ISymbol symbol)
             => GetThreadDependencyInfo(symbol.GetAttributes(), in GetDefaultThreadDependencyInfo(symbol));
@@ -108,22 +116,40 @@ namespace Roslyn.Diagnostics.Analyzers
                     continue;
                 }
 
-                if (attribute.AttributeClass.Name == NoMainThreadDependencyAttributeName)
+                if (attribute.AttributeClass.Name == ThreadDependencyAttributeName)
                 {
                     bool mayDirectlyRequireMainThread = false;
                     bool alwaysCompleted = false;
                     bool perInstance = false;
                     bool capturesContext = false;
                     bool verified = true;
+                    foreach (var positionalArgument in attribute.ConstructorArguments)
+                    {
+                        var contextDependency = (ContextDependency)(positionalArgument.Value as int? ?? 0);
+                        switch (contextDependency)
+                        {
+                            case ContextDependency.Default:
+                            default:
+                                capturesContext = defaultValue.CapturesContext;
+                                break;
+
+                            case ContextDependency.None:
+                                capturesContext = false;
+                                break;
+
+                            case ContextDependency.Context:
+                            case ContextDependency.Any:
+                                capturesContext = true;
+                                break;
+                        }
+                    }
+
                     foreach (var namedArgument in attribute.NamedArguments)
                     {
                         switch (namedArgument.Key)
                         {
                             case "AlwaysCompleted":
                                 alwaysCompleted = (namedArgument.Value.Value as bool?) ?? alwaysCompleted;
-                                break;
-                            case "CapturesContext":
-                                capturesContext = (namedArgument.Value.Value as bool?) ?? capturesContext;
                                 break;
                             case "PerInstance":
                                 perInstance = (namedArgument.Value.Value as bool?) ?? perInstance;
@@ -158,7 +184,7 @@ namespace Roslyn.Diagnostics.Analyzers
         {
             foreach (var attribute in attributes)
             {
-                if (attribute.AttributeClass.Name == NoMainThreadDependencyAttributeName)
+                if (attribute.AttributeClass.Name == ThreadDependencyAttributeName)
                 {
                     return attribute.ApplicationSyntaxReference.GetSyntax(cancellationToken).GetLocation();
                 }

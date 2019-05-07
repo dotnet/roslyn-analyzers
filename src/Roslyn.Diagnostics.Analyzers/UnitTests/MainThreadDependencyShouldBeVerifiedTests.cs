@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 class Class {
-    [[|NoMainThreadDependency(Verified = false)|]]
+    [[|ThreadDependency(ContextDependency.None, Verified = false)|]]
     Task OperationAsync() => Task.CompletedTask;
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 class Class {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     Task OperationAsync() => Task.CompletedTask;
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -47,7 +47,7 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Class [Class]
-    <[|NoMainThreadDependency(Verified:=False)|]>
+    <[|ThreadDependency(ContextDependency.None, Verified:=False)|]>
     Function OperationAsync() As Task
         Return Task.CompletedTask
     End Function
@@ -58,7 +58,7 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Class [Class]
-    <NoMainThreadDependency>
+    <ThreadDependency(ContextDependency.None)>
     Function OperationAsync() As Task
         Return Task.CompletedTask
     End Function
@@ -76,7 +76,7 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 class Class {
-    [[|NoMainThreadDependency(CapturesContext = true, Verified = false)|]]
+    [[|ThreadDependency(ContextDependency.Context, Verified = false)|]]
     Task OperationAsync() => Task.CompletedTask;
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -85,7 +85,7 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 class Class {
-    [NoMainThreadDependency(CapturesContext = true)]
+    [ThreadDependency(ContextDependency.Context)]
     Task OperationAsync() => Task.CompletedTask;
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -101,7 +101,7 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Class [Class]
-    <[|NoMainThreadDependency(CapturesContext:=True, Verified:=False)|]>
+    <[|ThreadDependency(ContextDependency.Context, Verified:=False)|]>
     Function OperationAsync() As Task
         Return Task.CompletedTask
     End Function
@@ -112,7 +112,7 @@ Imports System.Threading.Tasks
 Imports Roslyn.Utilities
 
 Class [Class]
-    <NoMainThreadDependency(CapturesContext:=True)>
+    <ThreadDependency(ContextDependency.Context)>
     Function OperationAsync() As Task
         Return Task.CompletedTask
     End Function

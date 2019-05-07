@@ -14,7 +14,7 @@ Namespace Roslyn.Diagnostics.VisualBasic.Analyzers
 
         Protected Overrides Function IsAttributeArgumentNamedVerified(attributeArgument As SyntaxNode) As Boolean
             Dim syntax = TryCast(attributeArgument, SimpleArgumentSyntax)
-            Return CaseInsensitiveComparison.Comparer.Equals(syntax?.NameColonEquals.Name.Identifier.ValueText, "Verified")
+            Return CaseInsensitiveComparison.Comparer.Equals(syntax?.NameColonEquals?.Name.Identifier.ValueText, "Verified")
         End Function
     End Class
 End Namespace

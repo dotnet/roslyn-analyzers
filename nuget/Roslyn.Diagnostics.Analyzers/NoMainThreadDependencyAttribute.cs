@@ -5,22 +5,54 @@ using System;
 
 namespace Roslyn.Utilities
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = true)]
-    internal sealed class NoMainThreadDependencyAttribute : Attribute
+    internal enum ContextDependency
     {
+        /// <summary>
+        /// The default dependency value. For synchronous operations and values, the default is <see cref="None"/>. For
+        /// asynchronous operations and values, the default is <see cref="Any"/>.
+        /// </summary>
+        Default,
+
+        /// <summary>
+        /// The operation or value is not allowed to depend on the execution of the main thread to produce a result.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// The operation on value is only allowed to depend on the main thread to produce a result only when accessed
+        /// from the main thread.
+        /// </summary>
+        Context,
+
+        /// <summary>
+        /// The operation or value is allowed to depend on the main thread to produce a result.
+        /// </summary>
+        Any,
+    }
+
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.ReturnValue, AllowMultiple = false, Inherited = true)]
+    internal sealed class ThreadDependencyAttribute : Attribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThreadDependencyAttribute"/> class with the specified
+        /// dependency type.
+        /// </summary>
+        /// <param name="contextDependency">The dependency type for the operation or value.</param>
+        public ThreadDependencyAttribute(ContextDependency contextDependency)
+        {
+            ContextDependency = contextDependency;
+        }
+
+        /// <summary>
+        /// Gets the dependency type for the operation or value.
+        /// </summary>
+        public ContextDependency ContextDependency { get; }
+
         /// <summary>
         /// <para>Gets or sets a value indicating whether the task is always completed.</para>
         /// <para>The default value is <see langword="false"/>.</para>
         /// </summary>
         public bool AlwaysCompleted { get; set; }
-
-        /// <summary>
-        /// <para>Gets or sets a value indicating whether the dependency claim further depends on the current context at
-        /// method entry. Such operations only have no main thread dependency if they are invoked from a background
-        /// thread.</para>
-        /// <para>The default value is <see langword="false"/>.</para>
-        /// </summary>
-        public bool CapturesContext { get; set; }
 
         /// <summary>
         /// <para>Gets or sets a value indicating whether the dependency claim applies only when the target instance of

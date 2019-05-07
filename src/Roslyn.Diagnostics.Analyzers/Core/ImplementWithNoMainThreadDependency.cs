@@ -37,7 +37,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        protected override void HandleCompilationStart(CompilationStartAnalysisContext context, INamedTypeSymbol noMainThreadDependencyAttribute)
+        protected override void HandleCompilationStart(CompilationStartAnalysisContext context, INamedTypeSymbol threadDependencyAttribute)
         {
             context.RegisterSymbolAction(HandleMethod, SymbolKind.Method);
             context.RegisterSymbolAction(HandleProperty, SymbolKind.Property);

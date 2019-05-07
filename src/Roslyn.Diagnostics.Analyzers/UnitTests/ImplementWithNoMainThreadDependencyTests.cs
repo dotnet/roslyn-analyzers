@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface Interface {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     Task MethodAsync();
 }
 
 class Class : Interface {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     public Task MethodAsync() => throw null;
 }
 ";
@@ -55,7 +55,7 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface Interface {
-    [NoMainThreadDependency]
+    [ThreadDependency(ContextDependency.None)]
     Task MethodAsync();
 }
 
@@ -84,12 +84,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface Interface {
-    [return: NoMainThreadDependency]
+    [return: ThreadDependency(ContextDependency.None)]
     Task MethodAsync();
 }
 
 class Class : Interface {
-    [|[return: NoMainThreadDependency(CapturesContext = true)]
+    [|[return: ThreadDependency(ContextDependency.Context)]
     public Task MethodAsync() => throw null;|]
 }
 ";
@@ -114,12 +114,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface Interface {
-    [NoMainThreadDependency(Verified = false)]
+    [ThreadDependency(ContextDependency.None, Verified = false)]
     Task MethodAsync();
 }
 
 class Class : Interface {
-    [NoMainThreadDependency(Verified = false)]
+    [ThreadDependency(ContextDependency.None, Verified = false)]
     public Task MethodAsync() => throw null;
 }
 ";
@@ -144,12 +144,12 @@ using System.Threading.Tasks;
 using Roslyn.Utilities;
 
 interface Interface {
-    [return: NoMainThreadDependency]
+    [return: ThreadDependency(ContextDependency.None)]
     Task MethodAsync();
 }
 
 class Class : Interface {
-    [|[return: NoMainThreadDependency(Verified = false)]
+    [|[return: ThreadDependency(ContextDependency.None, Verified = false)]
     public Task MethodAsync() => throw null;|]
 }
 ";

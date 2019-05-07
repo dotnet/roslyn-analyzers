@@ -265,7 +265,7 @@
     <value>Use Container Level Access Policy</value>
   </data>
   <data name="UseContainerLevelAccessPolicyDescription" xml:space="preserve">
-    <value>No access policy identifier is used which makes it a non-revocable token limiting the SAS access to only the request customer's id. To grant longer-term permissions or to retain the ability to modify or revoke permissions after handing URL out, it's better to use container-level access policies.</value>
+    <value>No access policy identifier is specified, making tokens non-revocable.</value>
   </data>
   <data name="UseContainerLevelAccessPolicyMessage" xml:space="preserve">
     <value>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</value>

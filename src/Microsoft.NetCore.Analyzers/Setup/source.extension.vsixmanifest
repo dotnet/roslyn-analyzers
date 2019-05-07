@@ -2,7 +2,7 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="8e93bd53-8b59-4c05-ae8a-b8e16de6a5d6" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft" />
+    <Identity Id="8e93bd53-8b59-4c05-ae8a-b8e16de6a5d6" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft DevLabs" />
     <DisplayName>Microsoft.NetCore Analyzers</DisplayName>
     <Description xml:space="preserve">Analyzers for .NetCore APIs.</Description>
   </Metadata>

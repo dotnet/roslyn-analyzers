@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis;
+using System.Threading;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -62,6 +63,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Disposable fields with initializer at declaration must be disposed.
                 compilationContext.RegisterOperationAction(operationContext =>
                 {
+                    if (!ShouldAnalyze(operationContext.ContainingSymbol.ContainingType))
+                    {
+                        return;
+                    }
+
                     var initializedFields = ((IFieldInitializerOperation)operationContext.Operation).InitializedFields;
                     foreach (var field in initializedFields)
                     {
@@ -77,57 +83,64 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Instance fields initialized in constructor/method body with a locally created disposable object must be disposed.
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
-                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod))
+                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod) ||
+                        !ShouldAnalyze(containingMethod.ContainingType))
                     {
                         return;
                     }
 
                     if (disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockStartContext.OperationBlocks, containingMethod))
                     {
-                        if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks,
-                            containingMethod, operationBlockStartContext.Options, Rule, trackInstanceFields: false,
-                            trackExceptionPaths: false, operationBlockStartContext.CancellationToken,
-                            out var disposeAnalysisResult, out var pointsToAnalysisResult))
+                        PointsToAnalysisResult lazyPointsToAnalysisResult = null;
+
+                        operationBlockStartContext.RegisterOperationAction(operationContext =>
                         {
-                            Debug.Assert(disposeAnalysisResult != null);
-                            Debug.Assert(pointsToAnalysisResult != null);
+                            var fieldReference = (IFieldReferenceOperation)operationContext.Operation;
+                            var field = fieldReference.Field;
 
-                            operationBlockStartContext.RegisterOperationAction(operationContext =>
+                            // Only track instance fields on the current instance.
+                            if (field.IsStatic || fieldReference.Instance?.Kind != OperationKind.InstanceReference)
                             {
-                                var fieldReference = (IFieldReferenceOperation)operationContext.Operation;
-                                var field = fieldReference.Field;
+                                return;
+                            }
 
-                                // Only track instance fields on the current instance.
-                                if (field.IsStatic || fieldReference.Instance?.Kind != OperationKind.InstanceReference)
+                            // Check if this is a Disposable field that is not currently being tracked.
+                            if (fieldDisposeValueMap.ContainsKey(field) ||
+                                !disposeAnalysisHelper.GetDisposableFields(field.ContainingType).Contains(field))
+                            {
+                                return;
+                            }
+
+                            // We have a field reference for a disposable field.
+                            // Check if it is being assigned a locally created disposable object.
+                            if (fieldReference.Parent is ISimpleAssignmentOperation simpleAssignmentOperation &&
+                                simpleAssignmentOperation.Target == fieldReference)
+                            {
+                                if (lazyPointsToAnalysisResult == null)
                                 {
-                                    return;
+                                    var cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
+                                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
+                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                        operationBlockStartContext.Options, Rule, InterproceduralAnalysisKind.ContextSensitive, operationBlockStartContext.CancellationToken);
+                                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg,
+                                        containingMethod, wellKnownTypeProvider, interproceduralAnalysisConfig,
+                                        interproceduralAnalysisPredicateOpt: null,
+                                        pessimisticAnalysis: false, performCopyAnalysis: false);
+                                    Interlocked.CompareExchange(ref lazyPointsToAnalysisResult, pointsToAnalysisResult, null);
                                 }
 
-                                // Check if this is a Disposable field that is not currently being tracked.
-                                if (fieldDisposeValueMap.ContainsKey(field) ||
-                                    !disposeAnalysisHelper.GetDisposableFields(field.ContainingType).Contains(field))
+                                PointsToAbstractValue assignedPointsToValue = lazyPointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
+                                foreach (var location in assignedPointsToValue.Locations)
                                 {
-                                    return;
-                                }
-
-                                // We have a field reference for a disposable field.
-                                // Check if it is being assigned a locally created disposable object.
-                                if (fieldReference.Parent is ISimpleAssignmentOperation simpleAssignmentOperation &&
-                                    simpleAssignmentOperation.Target == fieldReference)
-                                {
-                                    PointsToAbstractValue assignedPointsToValue = pointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
-                                    foreach (var location in assignedPointsToValue.Locations)
+                                    if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
                                     {
-                                        if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
-                                        {
-                                            addOrUpdateFieldDisposedValue(field, disposed: false);
-                                            break;
-                                        }
+                                        addOrUpdateFieldDisposedValue(field, disposed: false);
+                                        break;
                                     }
                                 }
-                            },
-                            OperationKind.FieldReference);
-                        }
+                            }
+                        },
+                        OperationKind.FieldReference);
                     }
 
                     // Mark fields disposed in Dispose method(s).
@@ -194,6 +207,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
                 });
+
+                return;
+
+                // Local functions
+                bool ShouldAnalyze(INamedTypeSymbol namedType)
+                {
+                    // We only want to analyze types which are disposable (implement System.IDisposable directly or indirectly)
+                    // and have at least one disposable field.
+                    return namedType.IsDisposable(disposeAnalysisHelper.IDisposable) &&
+                        !disposeAnalysisHelper.GetDisposableFields(namedType).IsEmpty;
+                }
             });
         }
     }

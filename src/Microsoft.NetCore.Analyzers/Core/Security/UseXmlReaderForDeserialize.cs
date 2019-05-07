@@ -10,14 +10,22 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseXmlReaderForDeserialize : UseXmlReaderBase
     {
-        internal static readonly DiagnosticDescriptor RealRule =
-            SecurityHelpers.CreateDiagnosticDescriptor(
-                "CA5369",
-                nameof(SystemSecurityCryptographyResources.UseXmlReaderForDeserialize),
-                nameof(SystemSecurityCryptographyResources.UseXmlReaderMessage),
+        internal const string DiagnosticId = "CA5369";
+        private static readonly LocalizableString s_Title = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.UseXmlReaderForDeserialize),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+
+        internal static DiagnosticDescriptor RealRule = new DiagnosticDescriptor(
+                DiagnosticId,
+                s_Title,
+                Message,
+                DiagnosticCategory.Security,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                description: Description,
                 helpLinkUri: null,
-                nameof(SystemSecurityCryptographyResources.UseXmlReaderDescription));
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
         protected override string TypeMetadataName => WellKnownTypeNames.SystemXmlSerializationXmlSerializer;
 

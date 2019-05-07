@@ -55,10 +55,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 context.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
-                    if (operationBlockStartContext.OwningSymbol is IMethodSymbol method &&
-                        method.IsAsync)
+                    if (operationBlockStartContext.OwningSymbol is IMethodSymbol method)
                     {
-                        if (method.ReturnsVoid &&
+                        if (method.IsAsync &&
+                            method.ReturnsVoid &&
                             operationBlockStartContext.Options.GetBoolOptionValue(
                                 optionName: EditorConfigOptionNames.ExcludeAsyncVoidMethods,
                                 rule: Rule,

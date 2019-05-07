@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                         s_localizableNotDisposedMessage,
                                                                                         DiagnosticCategory.Reliability,
                                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                        isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                         description: s_localizableDescription,
                                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                           s_localizableMayBeDisposedMessage,
                                                                                           DiagnosticCategory.Reliability,
                                                                                           DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                          isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                           description: s_localizableDescription,
                                                                                           helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                           customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                         s_localizableNotDisposedOnExceptionPathsMessage,
                                                                                                         DiagnosticCategory.Reliability,
                                                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                                        isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                                         description: s_localizableDescription,
                                                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -62,7 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                           s_localizableMayBeDisposedOnExceptionPathsMessage,
                                                                                                           DiagnosticCategory.Reliability,
                                                                                                           DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                                          isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                                           description: s_localizableDescription,
                                                                                                           helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                                           customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);

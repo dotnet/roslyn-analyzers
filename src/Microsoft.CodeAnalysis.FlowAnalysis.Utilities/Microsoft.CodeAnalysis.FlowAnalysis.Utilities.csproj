@@ -6,7 +6,7 @@
       PackageId is used by Restore. If we set it to DotNetAnalyzers.BannedApiAnalyzer,
       Restore would conclude that there is a cyclic dependency between us and the DotNetAnalyzers.BannedApiAnalyzer package.
     -->
-    <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
+    <PackageId>*$(MSBuildProjectFile)*</PackageId>
     <ExcludeInternalFlowAnalyses>true</ExcludeInternalFlowAnalyses>
     <ExcludeCodeMetricsUtilities>true</ExcludeCodeMetricsUtilities>
 

@@ -6,7 +6,7 @@
       PackageId is used by Restore. If we set it to MetaCompilation.Analyzers,
       Restore would conclude that there is a cyclic dependency between us and the MetaCompilation.Analyzers nuget package.
     -->
-    <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
+    <PackageId>*$(MSBuildProjectFile)*</PackageId>
     <NoWarn>$(NoWarn);IDE0019</NoWarn>
   </PropertyGroup>
   <ItemGroup>

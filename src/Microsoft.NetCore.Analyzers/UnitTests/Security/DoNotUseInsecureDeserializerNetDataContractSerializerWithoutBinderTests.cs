@@ -57,6 +57,309 @@ namespace Blah
         }
 
         [Fact]
+        public void DocSample1_CSharp_Violation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+[DataContract]
+public class BookRecord
+{
+    [DataMember]
+    public string Title { get; set; }
+
+    [DataMember]
+    public string Author { get; set; }
+
+    [DataMember]
+    public int PageCount { get; set; }
+
+    [DataMember]
+    public AisleLocation Location { get; set; }
+}
+
+[DataContract]
+public class AisleLocation
+{
+    [DataMember]
+    public char Aisle { get; set; }
+
+    [DataMember]
+    public byte Shelf { get; set; }
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(byte[] bytes)
+    {
+        NetDataContractSerializer serializer = new NetDataContractSerializer();
+        using (MemoryStream ms = new MemoryStream(bytes))
+        {
+            return (BookRecord) serializer.Deserialize(ms);
+        }
+    }
+}",
+                GetCSharpResultAt(39, 33, BinderNotSetRule, "object NetDataContractSerializer.Deserialize(Stream stream)"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation_Diagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+<DataContract()>
+Public Class BookRecord
+    <DataMember()>
+    Public Property Title As String
+
+    <DataMember()>
+    Public Property Author As String
+
+    <DataMember()>
+    Public Property Location As AisleLocation
+End Class
+
+<DataContract()>
+Public Class AisleLocation
+    <DataMember()>
+    Public Property Aisle As Char
+
+    <DataMember()>
+    Public Property Shelf As Byte
+End Class
+
+Public Class ExampleClass
+    Public Function DeserializeBookRecord(bytes As Byte()) As BookRecord
+        Dim serializer As NetDataContractSerializer = New NetDataContractSerializer()
+        Using ms As MemoryStream = New MemoryStream(bytes)
+            Return CType(serializer.Deserialize(ms), BookRecord)
+        End Using
+    End Function
+End Class",
+                GetBasicResultAt(31, 26, BinderNotSetRule, "Function NetDataContractSerializer.Deserialize(stream As Stream) As Object"));
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Solution_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+public class BookRecordSerializationBinder : SerializationBinder
+{
+    public override Type BindToType(string assemblyName, string typeName)
+    {
+        // One way to discover expected types is through testing deserialization
+        // of **valid** data and logging the types used.
+
+        ////Console.WriteLine($""BindToType('{assemblyName}', '{typeName}')"");
+
+        if (typeName == ""BookRecord"" || typeName == ""AisleLocation"")
+        {
+            return null;
+        }
+        else
+        {
+            throw new ArgumentException(""Unexpected type"", nameof(typeName));
+        }
+    }
+}
+
+[DataContract]
+public class BookRecord
+{
+    [DataMember]
+    public string Title { get; set; }
+
+    [DataMember]
+    public string Author { get; set; }
+
+    [DataMember]
+    public int PageCount { get; set; }
+
+    [DataMember]
+    public AisleLocation Location { get; set; }
+}
+
+[DataContract]
+public class AisleLocation
+{
+    [DataMember]
+    public char Aisle { get; set; }
+
+    [DataMember]
+    public byte Shelf { get; set; }
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(byte[] bytes)
+    {
+        NetDataContractSerializer serializer = new NetDataContractSerializer();
+        serializer.Binder = new BookRecordSerializationBinder();
+        using (MemoryStream ms = new MemoryStream(bytes))
+        {
+            return (BookRecord) serializer.Deserialize(ms);
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void DocSample1_VB_Solution_NoDiagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Public Class BookRecordSerializationBinder
+    Inherits SerializationBinder
+
+    Public Overrides Function BindToType(assemblyName As String, typeName As String) As Type
+        ' One way to discover expected types is through testing deserialization
+        ' of **valid** data and logging the types used.
+
+        'Console.WriteLine($""BindToType('{assemblyName}', '{typeName}')"")
+
+        If typeName = ""BinaryFormatterVB.BookRecord"" Or typeName = ""BinaryFormatterVB.AisleLocation"" Then
+            Return Nothing
+        Else
+            Throw New ArgumentException(""Unexpected type"", NameOf(typeName))
+        End If
+    End Function
+End Class
+
+<DataContract()>
+Public Class BookRecord
+    <DataMember()>
+    Public Property Title As String
+
+    <DataMember()>
+    Public Property Author As String
+
+    <DataMember()>
+    Public Property Location As AisleLocation
+End Class
+
+<DataContract()>
+Public Class AisleLocation
+    <DataMember()>
+    Public Property Aisle As Char
+
+    <DataMember()>
+    Public Property Shelf As Byte
+End Class
+
+Public Class ExampleClass
+    Public Function DeserializeBookRecord(bytes As Byte()) As BookRecord
+        Dim serializer As NetDataContractSerializer = New NetDataContractSerializer()
+        serializer.Binder = New BookRecordSerializationBinder()
+        Using ms As MemoryStream = New MemoryStream(bytes)
+            Return CType(serializer.Deserialize(ms), BookRecord)
+        End Using
+    End Function
+End Class");
+        }
+
+        [Fact]
+        public void DocSample2_CSharp_Violation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+[DataContract]
+public class BookRecord
+{
+    [DataMember]
+    public string Title { get; set; }
+
+    [DataMember]
+    public string Author { get; set; }
+
+    [DataMember]
+    public int PageCount { get; set; }
+
+    [DataMember]
+    public AisleLocation Location { get; set; }
+}
+
+[DataContract]
+public class AisleLocation
+{
+    [DataMember]
+    public char Aisle { get; set; }
+
+    [DataMember]
+    public byte Shelf { get; set; }
+}
+
+public class ExampleClass
+{
+    public NetDataContractSerializer Serializer { get; set; }
+
+    public BookRecord DeserializeBookRecord(byte[] bytes)
+    {
+        using (MemoryStream ms = new MemoryStream(bytes))
+        {
+            return (BookRecord) this.Serializer.Deserialize(ms);
+        }
+    }
+}",
+                GetCSharpResultAt(40, 33, BinderMaybeNotSetRule, "object NetDataContractSerializer.Deserialize(Stream stream)"));
+        }
+
+        [Fact]
+        public void DocSample2_VB_Violation_Diagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+<DataContract()>
+Public Class BookRecord
+    <DataMember()>
+    Public Property Title As String
+
+    <DataMember()>
+    Public Property Author As String
+
+    <DataMember()>
+    Public Property Location As AisleLocation
+End Class
+
+<DataContract()>
+Public Class AisleLocation
+    <DataMember()>
+    Public Property Aisle As Char
+
+    <DataMember()>
+    Public Property Shelf As Byte
+End Class
+
+Public Class ExampleClass
+    Public Property Serializer As NetDataContractSerializer
+
+    Public Function DeserializeBookRecord(bytes As Byte()) As BookRecord
+        Using ms As MemoryStream = New MemoryStream(bytes)
+            Return CType(Me.Serializer.Deserialize(ms), BookRecord)
+        End Using
+    End Function
+End Class",
+                GetBasicResultAt(32, 26, BinderMaybeNotSetRule, "Function NetDataContractSerializer.Deserialize(stream As Stream) As Object"));
+        }
+
+        [Fact]
         public void Deserialize_Diagnostic()
         {
             VerifyCSharp(@"

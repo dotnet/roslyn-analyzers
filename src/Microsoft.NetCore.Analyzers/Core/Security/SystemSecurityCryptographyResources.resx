@@ -169,7 +169,7 @@
     <value>Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</value>
   </data>
   <data name="DoNotDisableRequestValidationMessage" xml:space="preserve">
-    <value>The method {0} has request validation disabled</value>
+    <value>{0} has request validation disabled</value>
   </data>
   <data name="DoNotDisableSchUseStrongCrypto" xml:space="preserve">
     <value>Do Not Disable SChannel Use of Strong Crypto</value>
@@ -197,6 +197,15 @@
   </data>
   <data name="DoNotSerializeTypesWithPointerFieldsMessage" xml:space="preserve">
     <value>Pointer field {0} on serializable type.</value>
+  </data>
+  <data name="DoNotUseAccountSAS" xml:space="preserve">
+    <value>Do Not Use Account Shared Access Signature</value>
+  </data>
+  <data name="DoNotUseAccountSASDescription" xml:space="preserve">
+    <value>Shared Access Signatures(SAS) are a vital part of the security model for any application using Azure Storage, they should provide limited and safe permissions to your storage account to clients that don't have the account key. All of the operations available via a service SAS are also available via an account SAS, that is, account SAS is too powerful. So it is recommended to use Service SAS to delegate access more carefully.</value>
+  </data>
+  <data name="DoNotUseAccountSASMessage" xml:space="preserve">
+    <value>Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</value>
   </data>
   <data name="DoNotUseBrokenCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Broken Cryptographic Algorithms</value>
@@ -260,6 +269,15 @@
   </data>
   <data name="SetViewStateUserKeyMessage" xml:space="preserve">
     <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
+  </data>
+  <data name="UseSharedAccessProtocolHttpsOnly" xml:space="preserve">
+    <value>Use SharedAccessProtocol HttpsOnly</value>
+  </data>
+  <data name="UseSharedAccessProtocolHttpsOnlyDescription" xml:space="preserve">
+    <value>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</value>
+  </data>
+  <data name="UseSharedAccessProtocolHttpsOnlyMessage" xml:space="preserve">
+    <value>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</value>
   </data>
   <data name="UseXmlReaderDescription" xml:space="preserve">
     <value>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</value>

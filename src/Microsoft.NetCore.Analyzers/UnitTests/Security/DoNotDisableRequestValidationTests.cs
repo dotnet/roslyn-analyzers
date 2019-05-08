@@ -12,8 +12,6 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
         {
             string validateInputAttributeCSharpSourceCode = @"
-using System.IO;
-
 namespace System.Web.Mvc
 {
     [System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method, AllowMultiple=false, Inherited=true)]
@@ -33,7 +31,6 @@ namespace System.Web.Mvc
         public void TestLiteralAtActionLevelDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
-using System;
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -43,14 +40,13 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(8, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
+            GetCSharpResultAt(7, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
         }
 
         [Fact]
         public void TestConstAtActionLevelDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
-using System;
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -62,14 +58,13 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(10, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
+            GetCSharpResultAt(9, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
         }
 
         [Fact]
         public void TestLiteralAtControllerLevelDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
-using System;
 using System.Web.Mvc;
 
 [ValidateInput(false)]
@@ -79,14 +74,30 @@ class TestControllerClass
     {
     }
 }",
-            GetCSharpResultAt(6, 7, DoNotDisableRequestValidation.Rule, "TestControllerClass"));
+            GetCSharpResultAt(5, 7, DoNotDisableRequestValidation.Rule, "TestControllerClass"));
+        }
+
+        [Fact]
+        public void TestSetBothControllerLevelAndActionLevelDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Web.Mvc;
+
+[ValidateInput(true)]
+class TestControllerClass
+{
+    [ValidateInput(false)]
+    public void TestActionMethod()
+    {
+    }
+}",
+            GetCSharpResultAt(8, 17, DoNotDisableRequestValidation.Rule, "TestActionMethod"));
         }
 
         [Fact]
         public void TestLiteralAtActionLevelNoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
-using System;
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -102,7 +113,6 @@ class TestControllerClass
         public void TestConstAtActionLevelNoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
-using System;
 using System.Web.Mvc;
 
 class TestControllerClass
@@ -120,10 +130,39 @@ class TestControllerClass
         public void TestLiteralAtControllerLevelNoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
-using System;
 using System.Web.Mvc;
 
 [ValidateInput(true)]
+class TestControllerClass
+{
+    public void TestActionMethod()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestSetBothControllerLevelAndActionLevelNoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Web.Mvc;
+
+[ValidateInput(false)]
+class TestControllerClass
+{
+    [ValidateInput(true)]
+    public void TestActionMethod()
+    {
+    }
+}");
+        }
+
+        [Fact]
+        public void TestWithoutValidateInputAttributeNoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Web.Mvc;
+
 class TestControllerClass
 {
     public void TestActionMethod()

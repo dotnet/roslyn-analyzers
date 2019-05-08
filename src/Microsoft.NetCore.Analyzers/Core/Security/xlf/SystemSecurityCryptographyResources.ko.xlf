@@ -19,17 +19,17 @@
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
-        <target state="new">Do Not Add Schema By URL</target>
+        <target state="translated">URL로 스키마를 추가하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURLDescription">
         <source>This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</source>
-        <target state="new">This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</target>
+        <target state="translated">XmlSchemaCollection.Add 메서드의 이 오버로드는 사용되는 XML 판독기에서 내부적으로 DTD 처리를 사용하도록 설정하고 UrlResolver를 사용하여 외부 XML 엔터티를 확인합니다. 결과는 정보 공개입니다. XML을 처리하는 머신에 대한 파일 시스템 또는 네트워크 공유의 콘텐츠가 공격자에게 공개될 수 있습니다. 또한 공격자가 이 취약성을 DoS 벡터로 사용할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURLMessage">
         <source>This overload of the Add method is potentially unsafe because it may resolve dangerous external references</source>
-        <target state="new">This overload of the Add method is potentially unsafe because it may resolve dangerous external references</target>
+        <target state="translated">Add 메서드의 이 오버로드는 위험한 외부 참조를 확인할 수 있으므로 잠재적으로 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
@@ -49,7 +49,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">
         <source>Do Not Disable Certificate Validation</source>
-        <target state="needs-review-translation">인증 유효성 검사를 비활성화하면 안 됨</target>
+        <target state="translated">인증서 유효성 검사를 비활성화하지 않음</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationDescription">
@@ -64,77 +64,91 @@
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
         <source>Do Not Disable HTTP Header Checking</source>
-        <target state="new">Do Not Disable HTTP Header Checking</target>
+        <target state="translated">HTTP 헤더 검사를 사용하지 않도록 설정하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderCheckingDescription">
         <source>HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
-        <target state="new">HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
+        <target state="translated">HTTP 헤더 검사를 사용하면 응답 헤더에 있는 캐리지 리턴 및 줄 바꿈 문자 \r 및 \n을 인코딩할 수 있습니다. 이 인코딩을 수행하면 헤더에 포함된 신뢰할 수 없는 데이터를 에코하는 애플리케이션을 악용하는 삽입 공격을 방지할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
         <source>Do not disable HTTP header checking</source>
-        <target state="new">Do not disable HTTP header checking</target>
+        <target state="translated">HTTP 헤더 검사를 사용하지 않도록 설정하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
         <source>Do Not Disable Request Validation</source>
-        <target state="new">Do Not Disable Request Validation</target>
+        <target state="translated">요청 유효성 검사를 사용하지 않도록 설정하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationDescription">
         <source>Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</source>
-        <target state="new">Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</target>
+        <target state="translated">요청 유효성 검사는 HTTP 요청을 검사하고 잠재적으로 위험한 콘텐츠가 포함되는지 확인하는 ASP.NET 기능입니다. 이 검사는 악의적인 목적으로 추가되었을 수 있는 URL 쿼리 문자열, 쿠키 또는 게시된 양식 값에 있는 태그 또는 코드에서 보호를 추가합니다. 따라서 일반적으로 이 검사를 수행하는 것이 좋고 심층 방어를 위해 사용하도록 설정해 두어야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
-        <source>The method {0} has request validation disabled</source>
-        <target state="new">The method {0} has request validation disabled</target>
+        <source>{0} has request validation disabled</source>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
         <source>Do Not Disable SChannel Use of Strong Crypto</source>
-        <target state="new">Do Not Disable SChannel Use of Strong Crypto</target>
+        <target state="translated">SChannel의 강력한 암호화 사용을 비활성화하지 않음</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCryptoDescription">
         <source>Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommeded to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.</source>
-        <target state="new">Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommeded to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.</target>
+        <target state="translated">.NET Framework 4.6부터 System.Net.ServicePointManager 및 System.Net.Security.SslStream 클래스의 경우 새 프로토콜을 사용하는 것이 좋습니다. 프로토콜 약점이 있는 기존 프로토콜은 지원되지 않습니다. Switch.System.Net.DontEnableSchUseStrongCrypto를 true로 설정하면 이전의 취약한 암호화 검사를 사용하여 프로토콜 마이그레이션을 옵트아웃합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCryptoMessage">
         <source>{0} disables TLS 1.2 and enables SSLv3</source>
-        <target state="new">{0} disables TLS 1.2 and enables SSLv3</target>
+        <target state="translated">{0}이(가) TLS 1.2를 사용하지 않도록, SSLv3를 사용하도록 설정합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">
         <source>Do Not Refer Self In Serializable Class</source>
-        <target state="new">Do Not Refer Self In Serializable Class</target>
+        <target state="translated">직렬화 가능 클래스에서 자체 참조하지 않음</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClassDescription">
         <source>This can allow an attacker to DOS or exhaust the memory of the process.</source>
-        <target state="new">This can allow an attacker to DOS or exhaust the memory of the process.</target>
+        <target state="translated">이를 통해 공격자는 DOS 공격을 수행하거나 프로세스의 메모리를 모두 사용할 수 있습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClassMessage">
         <source>{0} participates in a potential reference cycle</source>
-        <target state="new">{0} participates in a potential reference cycle</target>
+        <target state="translated">{0}이(가) 잠재적 참조 순환에 참여합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotSerializeTypesWithPointerFields">
         <source>Do Not Serialize Types With Pointer Fields</source>
-        <target state="new">Do Not Serialize Types With Pointer Fields</target>
+        <target state="translated">포인터 필드를 사용하여 형식을 직렬화하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotSerializeTypesWithPointerFieldsDescription">
         <source>Pointers are not "type safe" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.</source>
-        <target state="new">Pointers are not "type safe" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.</target>
+        <target state="translated">포인터는 가리키는 메모리의 정확성을 보장할 수 없다는 점에서 "형식이 안전"하지 않습니다. 따라서 공격자가 포인터를 제어하게 될 수 있으므로 포인터 필드를 사용하여 형식을 직렬화하는 것은 위험합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotSerializeTypesWithPointerFieldsMessage">
         <source>Pointer field {0} on serializable type.</source>
-        <target state="new">Pointer field {0} on serializable type.</target>
+        <target state="translated">serializable 형식의 포인터 필드 {0}.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseAccountSAS">
+        <source>Do Not Use Account Shared Access Signature</source>
+        <target state="translated">계정 공유 액세스 서명 사용 안 함</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseAccountSASDescription">
+        <source>Shared Access Signatures(SAS) are a vital part of the security model for any application using Azure Storage, they should provide limited and safe permissions to your storage account to clients that don't have the account key. All of the operations available via a service SAS are also available via an account SAS, that is, account SAS is too powerful. So it is recommended to use Service SAS to delegate access more carefully.</source>
+        <target state="translated">SAS(공유 액세스 서명)는 Azure Storage를 사용하는 애플리케이션에 대한 보안 모델의 필수적인 부분으로, 계정 키가 없는 클라이언트에 스토리지 계정에 대한 제한되고 안전한 권한을 제공해야 합니다. 서비스 SAS를 통해 사용할 수 있는 모든 작업은 계정 SAS를 통해서도 사용할 수 있습니다. 즉, 계정 SAS는 권한이 너무 강력합니다. 따라서 서비스 SAS를 사용하여 액세스 권한을 더욱 신중하게 위임하는 것이 좋습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseAccountSASMessage">
+        <source>Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</source>
+        <target state="translated">세분화된 액세스 제어와 컨테이너 수준 액세스 정책을 위해 계정 SAS가 아닌 서비스 SAS 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
@@ -154,17 +168,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
         <source>Do Not Use Deprecated Security Protocols</source>
-        <target state="new">Do Not Use Deprecated Security Protocols</target>
+        <target state="translated">사용되지 않는 보안 프로토콜을 사용하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
         <source>Using a deprecated security protocol rather than the system default is risky.</source>
-        <target state="new">Using a deprecated security protocol rather than the system default is risky.</target>
+        <target state="translated">시스템 기본값이 아닌 사용되지 않는 보안 프로토콜을 사용하는 것은 위험합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
         <source>Hard-coded use of deprecated security protocol {0}</source>
-        <target state="new">Hard-coded use of deprecated security protocol {0}</target>
+        <target state="translated">사용되지 않는 보안 프로토콜 {0}의 하드 코드된 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5">
@@ -179,17 +193,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
         <source>Do not use obsolete key derivation function</source>
-        <target state="new">Do not use obsolete key derivation function</target>
+        <target state="translated">사용되지 않는 키 파생 함수 사용 안 함</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseObsoleteKDFAlgorithmDescription">
         <source>Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</source>
-        <target state="new">Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</target>
+        <target state="translated">암호 기반 키 파생은 PBKDF2와 SHA-2를 사용해야 합니다. PasswordDeriveBytes는 PBKDF1 키를 생성하므로 사용하지 마세요. Rfc2898DeriveBytes.CryptDeriveKey는 반복 횟수 또는 솔트를 사용하지 않으므로 사용하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
         <source>Call to obsolete key derivation function {0}.{1}</source>
-        <target state="new">Call to obsolete key derivation function {0}.{1}</target>
+        <target state="translated">사용되지 않는 키 파생 함수 {0}.{1}에 대한 호출</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1">
@@ -219,62 +233,74 @@
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
         <source>Do Not Use XslTransform</source>
-        <target state="new">Do Not Use XslTransform</target>
+        <target state="translated">XslTransform 사용 안 함</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransformMessage">
         <source>Do not use XslTransform. It does not restrict potentially dangerous external references.</source>
-        <target state="new">Do not use XslTransform. It does not restrict potentially dangerous external references.</target>
+        <target state="translated">XslTransform을 사용하지 마세요. 잠재적으로 위험한 외부 참조를 제한하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
         <source>Set ViewStateUserKey For Classes Derived From Page</source>
-        <target state="new">Set ViewStateUserKey For Classes Derived From Page</target>
+        <target state="translated">Page에서 파생된 클래스의 ViewStateUserKey 설정</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyDescription">
         <source>Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</source>
-        <target state="new">Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</target>
+        <target state="translated">ViewStateUserKey 속성을 설정하면 공격을 생성하는 데 변수를 사용할 수 없도록 개별 사용자의 뷰 상태 변수에 식별자를 할당할 수 있어 애플리케이션에 대한 공격을 방지할 수 있습니다. 그렇지 않으면 교차 사이트 요청 위조 취약성이 발생합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
         <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="new">The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</target>
+        <target state="translated">Page의 서브클래스 {0}은(는) OnInit 메서드에서 ViewStateUserKey 속성을 설정하지 않습니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSharedAccessProtocolHttpsOnly">
+        <source>Use SharedAccessProtocol HttpsOnly</source>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
+        <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
+        <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
-        <target state="new">Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</target>
+        <target state="translated">신뢰할 수 없는 데이터의 XML을 처리하면 위험한 외부 참조가 로드될 수 있습니다. 위험한 외부 참조는 안전한 확인자와 함께 또는 DTD 처리를 사용하지 않도록 설정한 상태로 XmlReader를 사용하여 제한해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXml">
         <source>Use XmlReader For DataSet Read Xml</source>
-        <target state="new">Use XmlReader For DataSet Read Xml</target>
+        <target state="translated">데이터 세트 읽기 Xml에 XmlReader 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDeserialize">
         <source>Use XmlReader For Deserialize</source>
-        <target state="new">Use XmlReader For Deserialize</target>
+        <target state="translated">Deserialize에 XmlReader 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForSchemaRead">
         <source>Use XmlReader For Schema Read</source>
-        <target state="new">Use XmlReader For Schema Read</target>
+        <target state="translated">스키마 읽기에 XmlReader 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForValidatingReader">
         <source>Use XmlReader For Validating Reader</source>
-        <target state="new">Use XmlReader For Validating Reader</target>
+        <target state="translated">판독기 유효성 검사에 XmlReader 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForXPathDocument">
         <source>Use XmlReader For XPathDocument</source>
-        <target state="new">Use XmlReader For XPathDocument</target>
+        <target state="translated">XPathDocument에 XmlReader 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderMessage">
         <source>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</source>
-        <target state="new">This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</target>
+        <target state="translated">{0}.{1} 메서드의 이 오버로드는 안전하지 않을 수 있으므로 대신 XmlReader 인스턴스를 사용하는 오버로드를 사용하세요.</target>
         <note />
       </trans-unit>
     </body>

@@ -55,10 +55,30 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
-                if (compilation.GetTypeByMetadataName(ImmutableArrayMetadataName) == null)
+                var immutableArraySymbol = compilation.GetTypeByMetadataName(ImmutableArrayMetadataName);
+                if (immutableArraySymbol is null)
+                {
+                    var systemNamespace = compilation.GlobalNamespace.GetMembers(nameof(System)).OfType<INamespaceSymbol>().SingleOrDefault();
+                    var systemCollectionsNamespace = systemNamespace?.GetMembers(nameof(System.Collections)).OfType<INamespaceSymbol>().SingleOrDefault();
+                    var systemCollectionsImmutableNamespace = systemCollectionsNamespace?.GetMembers(nameof(System.Collections.Immutable)).OfType<INamespaceSymbol>().SingleOrDefault();
+                    if (systemCollectionsImmutableNamespace is null)
+                    {
+                        return;
+                    }
+
+                    var immutableArrayTypes = systemCollectionsImmutableNamespace.GetMembers(nameof(ImmutableArray)).OfType<INamedTypeSymbol>().Where(type => type.MetadataName == typeof(ImmutableArray<>).Name).ToArray();
+                    var localSymbol = immutableArrayTypes.FirstOrDefault(type => type.ContainingAssembly.Equals(compilation.Assembly));
+                    var publicSymbol = immutableArrayTypes.FirstOrDefault(type => type.DeclaredAccessibility == Accessibility.Public);
+                    var fallbackSymbol = immutableArrayTypes.FirstOrDefault();
+                    immutableArraySymbol = localSymbol ?? publicSymbol ?? fallbackSymbol;
+                }
+
+                if (immutableArraySymbol is null)
                 {
                     return;
                 }
+
+                var immutableCollectionsAssembly = immutableArraySymbol.ContainingAssembly;
 
                 compilationStartContext.RegisterOperationAction(operationContext =>
                 {
@@ -79,7 +99,7 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                         return;
                     }
 
-                    var immutableCollectionType = compilation.GetTypeByMetadataName(metadataName);
+                    var immutableCollectionType = immutableCollectionsAssembly.GetTypeByMetadataName(metadataName);
                     if (immutableCollectionType == null)
                     {
                         // The user might be running against a custom system assembly that defines ImmutableArray,

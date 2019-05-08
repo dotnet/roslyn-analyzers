@@ -1409,7 +1409,7 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">Przesłoń funkcję Object.Equals(object), implementując interfejs IEquatable&lt;T&gt;</target>
+        <target state="translated">Przesłoń metodę Object.Equals(object) przy implementowaniu interfejsu IEquatable&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1428,18 +1428,15 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
-        <source>While authoring a library where the consumer is not known and when there is no need for a SynchronizationContext,  consider using ConfigureAwait(false). Otherwise, the consumers of the library may face deadlocks by consuming the asynchronous methods in a blocking fashion.</source>
-        <target state="translated">Podczas tworzenia biblioteki, której klienci nie są znani i która nie potrzebuje klasy SynchronizationContext, rozważ użycie metody ConfigureAwait(false). W przeciwnym razie użytkownicy biblioteki mogą napotkać zakleszczenia wynikające z użycia metod asynchronicznych w sposób powodujący blokowanie.</target>
+        <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
-        <source>Do not directly await a Task without calling ConfigureAwait</source>
-        <target state="translated">Nie wywołuj bezpośrednio metody await dla obiektu Task bez wywołania metody ConfigureAwait</target>
+        <source>Consider calling ConfigureAwait on the awaited task</source>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
-        <source>Do not directly await a Task</source>
-        <target state="translated">Nie wywołuj bezpośrednio metody await dla obiektu Task</target>
+        <source>Consider calling ConfigureAwait on the awaited task</source>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
@@ -1449,7 +1446,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Gdy typ T przesłania metodę Object.Equals(object), implementacja musi rzutować obiekt będący argumentem na poprawny typ T przed wykonaniem porównania. Jeśli typ implementuje interfejs IEquatable&lt;T&gt;, a więc oferuje metodę T.Equals(T), a o argumencie wiadomo w chwili kompilacji, że jest typu T, kompilator może wywołać metodę IEquatable&lt;T&gt;.Equals(T) zamiast metody Object.Equals(object) bez konieczności wykonywania rzutowania, co poprawia wydajność.</target>
+        <target state="translated">Gdy typ T przesłania metodę Object.Equals(object), implementacja musi rzutować obiekt będący argumentem na poprawny typ T przed wykonaniem porównania. Jeśli typ implementuje interfejs IEquatable&lt;T&gt;, a więc oferuje metodę T.Equals(T), i jeśli o argumencie wiadomo w chwili kompilacji, że jest typu T, kompilator może wywołać metodę IEquatable&lt;T&gt;.Equals(T) zamiast metody Object.Equals(object) bez konieczności wykonywania rzutowania, co poprawia wydajność.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
@@ -1489,7 +1486,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Zmień zdarzenie „{0}”, aby zamienić typ „{1}” na ogólną procedurę EventHandler, np. EventHandler&lt;T&gt;, gdzie T to prawidłowe argumenty zdarzenia</target>
+        <target state="translated">Zmień zdarzenie „{0}”, aby zamienić typ „{1}” na ogólną procedurę EventHandler, np. EventHandler&lt;T&gt;, gdzie T to prawidłowy element EventArgs (argumenty zdarzenia)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

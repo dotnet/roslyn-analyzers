@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-Hans" original="../MicrosoftMaintainabilityAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-HANS" original="../MicrosoftMaintainabilityAnalyzersResources.resx">
     <body>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">“{0}”始终是“{1}”。删除或重构条件以避免死代码。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
         <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">“{0}”永远不会是“{1}”。删除或重构条件以避免死代码。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeTitle">
         <source>Avoid dead conditional code</source>
-        <target state="new">Avoid dead conditional code</target>
+        <target state="translated">避免死条件代码</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
@@ -34,11 +34,7 @@
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
         <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="needs-review-translation">圈复杂度通过该方法度量线性无关路径的数量，该数量由条件分支的数量和复杂度决定。圈复杂度低通常表示易于理解、测试和维护的方法。圈复杂度由该方法的控制流图计算得出，计算方式如下:
-
-圈复杂度 = 边数 - 节点数 + 1
-
-其中节点表示逻辑分支点，边表示节点间的直线。</target>
+        <target state="translated">圈复杂度通过此方法测量线性独立路径的数量，它由条件分支的数量和复杂度决定。低圈复杂度通常表示易于理解、测试和维护的方法。圈复杂度是由该方法的控制流图形计算得出，并如下给出:“圈复杂度 = 边缘数 - 节点数 + 1”，其中节点表示逻辑分支点，边缘表示节点之间的行。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
@@ -68,8 +64,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="needs-review-translation">可维护性指数通过以下指标计算得出: 代码行数、程序容量和圈复杂度。程序容量用于衡量在根据代码中的运算符和操作数来理解符号时的难易程度。圈复杂度用于衡量类型或方法的结构复杂度。
-如果可维护性指数低，则表示代码可能难以维护，重新设计代码会是一个好的选择。</target>
+        <target state="translated">使用以下指标计算可维护性指数: 行代码、程序量和圈复杂度。程序量是基于代码中的运算符和操作数数量来理解符号的难度的度量值。圈复杂度是类型或方法的结构化复杂度的度量值。可维护性指数低表示代码可能难以维护，适合重新设计。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">

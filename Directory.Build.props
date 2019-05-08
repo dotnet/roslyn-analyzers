@@ -9,8 +9,8 @@
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
-    <LangVersion Condition="'$(Language)' == 'C#'">7.2</LangVersion>
-    <LangVersion Condition="'$(Language)' == 'VB'">15.5</LangVersion>
+    <LangVersion Condition="'$(Language)' == 'C#'">8</LangVersion>
+    <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -30,6 +30,12 @@
   <PropertyGroup>
     <!-- We generate per-project assembly attributes files, so we can safely delete them when cleaning the project -->
     <TargetFrameworkMonikerAssemblyAttributesFileClean>true</TargetFrameworkMonikerAssemblyAttributesFileClean>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- The version of XliffTasks pulled in by Arcade is fairly old, so here we specify a newer version. -->
+    <!-- This should be removed when the version in Arcade catches up. -->
+    <XliffTasksVersion>1.0.0-beta.19253.2</XliffTasksVersion>
   </PropertyGroup>
 
   <!-- Workaround to enable .editorconfig based analyzer configuration until dotnet compilers support .editorconfig based configuration -->

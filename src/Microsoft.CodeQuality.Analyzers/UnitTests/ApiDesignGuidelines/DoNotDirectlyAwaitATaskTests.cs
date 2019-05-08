@@ -379,6 +379,27 @@ public class C
             VerifyCSharp(code, GetEditorConfigAdditionalFile(editorConfigText), compilationOptions, parseOptions: null, expected: GetCSharpResultAt(9, 15));
         }
 
+        [Fact, WorkItem(2393, "https://github.com/dotnet/roslyn-analyzers/issues/2393")]
+        public void CSharpSimpleAwaitTaskInLocalFunction()
+        {
+            var code = @"
+using System.Threading.Tasks;
+
+public class C
+{
+    public void M()
+    {
+        async Task CoreAsync()
+        {
+            Task t = null;
+            await t;
+        }
+    }
+}
+";
+            VerifyCSharp(code, GetCSharpResultAt(11, 19));
+        }
+
         private DiagnosticResult GetCSharpResultAt(int line, int column)
         {
             return GetCSharpResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDirectlyAwaitATaskMessage);

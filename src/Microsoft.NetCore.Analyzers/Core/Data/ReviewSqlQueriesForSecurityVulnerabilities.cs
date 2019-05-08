@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Data
                                                                              s_localizableMessageNoNonLiterals,
                                                                              DiagnosticCategory.Security,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2100-review-sql-queries-for-security-vulnerabilities",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -92,7 +92,7 @@ namespace Microsoft.NetCore.Analyzers.Data
 
                         // If we're calling another constructor in the same class from this constructor, assume that all parameters are safe and skip analysis. Parameter usage
                         // will be analyzed there
-                        if (invocation.TargetMethod.ContainingType == symbol.ContainingType)
+                        if (Equals(invocation.TargetMethod.ContainingType, symbol.ContainingType))
                         {
                             return;
                         }
@@ -240,11 +240,11 @@ namespace Microsoft.NetCore.Analyzers.Data
             implementsDataCommand = false;
             foreach (var @interface in containingType.AllInterfaces)
             {
-                if (@interface == iDbCommandType)
+                if (Equals(@interface, iDbCommandType))
                 {
                     implementsDbCommand = true;
                 }
-                else if (@interface == iDataAdapterType)
+                else if (Equals(@interface, iDataAdapterType))
                 {
                     implementsDataCommand = true;
                 }

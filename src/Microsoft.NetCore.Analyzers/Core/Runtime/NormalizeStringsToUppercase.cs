@@ -59,7 +59,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // We want to flag calls to "ToLowerInvariant" and "ToLower(CultureInfo.InvariantCulture)".
                 var toLowerInvariant = stringType.GetMembers("ToLowerInvariant").OfType<IMethodSymbol>().FirstOrDefault();
                 var toLowerWithCultureInfo = cultureInfo != null ?
-                    stringType.GetMembers("ToLower").OfType<IMethodSymbol>().FirstOrDefault(m => m.Parameters.Length == 1 && m.Parameters[0].Type == cultureInfo) :
+                    stringType.GetMembers("ToLower").OfType<IMethodSymbol>().FirstOrDefault(m => m.Parameters.Length == 1 && Equals(m.Parameters[0].Type, cultureInfo)) :
                     null;
 
                 if (toLowerInvariant == null && toLowerWithCultureInfo == null)
@@ -70,7 +70,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // We want to recommend calling "ToUpperInvariant" or "ToUpper(CultureInfo.InvariantCulture)".
                 var toUpperInvariant = stringType.GetMembers("ToUpperInvariant").OfType<IMethodSymbol>().FirstOrDefault();
                 var toUpperWithCultureInfo = cultureInfo != null ?
-                    stringType.GetMembers("ToUpper").OfType<IMethodSymbol>().FirstOrDefault(m => m.Parameters.Length == 1 && m.Parameters[0].Type == cultureInfo) :
+                    stringType.GetMembers("ToUpper").OfType<IMethodSymbol>().FirstOrDefault(m => m.Parameters.Length == 1 && Equals(m.Parameters[0].Type, cultureInfo)) :
                     null; ;
 
                 if (toUpperInvariant == null && toUpperWithCultureInfo == null)

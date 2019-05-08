@@ -683,6 +683,22 @@ public class MyClass
 }");
         }
 
+        [Fact, WorkItem(2414, "https://github.com/dotnet/roslyn-analyzers/issues/2414")]
+        public async Task CSharp_ErrorCase_MethodWithThrowNotInCatch()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.IO;
+
+class C
+{
+    private void Validate()
+    {
+        throw;
+    }
+}",
+            DiagnosticResult.CompilerError("CS0156").WithLocation(8, 9).WithMessage("A throw statement with no arguments is not allowed outside of a catch clause"));
+        }
+
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
         {
             return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(symbolName);

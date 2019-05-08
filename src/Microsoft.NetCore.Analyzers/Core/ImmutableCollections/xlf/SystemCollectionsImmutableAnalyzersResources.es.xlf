@@ -19,7 +19,7 @@
       </trans-unit>
       <trans-unit id="RemoveRedundantCall">
         <source>Remove redundant call</source>
-        <target state="new">Remove redundant call</target>
+        <target state="translated">Quitar llamada redundante</target>
         <note />
       </trans-unit>
     </body>

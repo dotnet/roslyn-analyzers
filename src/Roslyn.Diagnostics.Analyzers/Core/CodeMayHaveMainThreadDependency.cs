@@ -48,7 +48,77 @@ namespace Roslyn.Diagnostics.Analyzers
                 return;
             }
 
+            context.RegisterOperationAction(context => HandleReturnOperation(context, threadDependencyInfo), OperationKind.Return);
             context.RegisterOperationAction(ctx => HandleAwaitOperation(ctx, threadDependencyInfo), OperationKind.Await);
+        }
+
+        private void HandleReturnOperation(OperationAnalysisContext context, ThreadDependencyInfo threadDependencyInfo)
+        {
+            var returnOperation = (IReturnOperation)context.Operation;
+            if (returnOperation.ReturnedValue is null || returnOperation.IsImplicit)
+            {
+                return;
+            }
+
+            var valueThreadDependencyInfo = GetThreadDependencyInfo(returnOperation.ReturnedValue, captureContextUnlessConfigured: false);
+            if (valueThreadDependencyInfo.AlwaysCompleted)
+            {
+                return;
+            }
+
+            ImmutableDictionary<string, string> propertiesOverride = null;
+            if (!valueThreadDependencyInfo.IsExplicit)
+            {
+                propertiesOverride = ScenarioProperties.TargetMissingAttribute;
+                if (threadDependencyInfo.CapturesContext)
+                {
+                    propertiesOverride = ScenarioProperties.WithCapturesContext(propertiesOverride);
+                }
+
+                if (IsReceiverMarkedPerInstance(returnOperation.ReturnedValue))
+                {
+                    propertiesOverride = ScenarioProperties.WithPerInstance(propertiesOverride);
+                }
+            }
+
+            if (!valueThreadDependencyInfo.AlwaysCompleted)
+            {
+                if (threadDependencyInfo.AlwaysCompleted)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, returnOperation, context.CancellationToken), properties: propertiesOverride));
+                    return;
+                }
+
+                if (valueThreadDependencyInfo.CapturesContext && !threadDependencyInfo.CapturesContext)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, returnOperation, context.CancellationToken), properties: propertiesOverride ?? ScenarioProperties.ContainingMethodShouldCaptureContext));
+                    return;
+                }
+            }
+
+            if (valueThreadDependencyInfo.MayDirectlyRequireMainThread && !threadDependencyInfo.MayDirectlyRequireMainThread)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, returnOperation, context.CancellationToken), properties: propertiesOverride));
+                return;
+            }
+
+            if (valueThreadDependencyInfo.PerInstance && !threadDependencyInfo.PerInstance)
+            {
+                var properties = propertiesOverride;
+                var locationSyntax = context.Operation.Syntax;
+                if (properties is null && !IsReceiverMarkedPerInstance(returnOperation.ReturnedValue))
+                {
+                    var receiverOperation = GetReceiver(returnOperation.ReturnedValue);
+                    if (receiverOperation is object && !HasExplicitThreadDependencyInfo(receiverOperation))
+                    {
+                        locationSyntax = receiverOperation.Syntax;
+                        properties = ScenarioProperties.TargetMissingAttribute;
+                    }
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(Rule, locationSyntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, returnOperation, context.CancellationToken), properties: properties));
+                return;
+            }
         }
 
         private void HandleAwaitOperation(OperationAnalysisContext context, ThreadDependencyInfo threadDependencyInfo)

@@ -25,21 +25,20 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     class DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver : DiagnosticAnalyzer
     {
-        // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor DefinitelyWithSimpleTypeResolver =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2321",
                 nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerWithSimpleTypeResolverTitle),
                 nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerWithSimpleTypeResolverMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2321");
         internal static readonly DiagnosticDescriptor MaybeWithSimpleTypeResolver =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2322",
                 nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerMaybeWithSimpleTypeResolverTitle),
                 nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerMaybeWithSimpleTypeResolverMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2322");
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(

@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="VersionCheckDescription">
         <source>Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
-        <target state="new">Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions to install the correct analyzer version.</target>
+        <target state="translated">このパッケージのアナライザーを正しく実行するには、特定のバージョン以上の Microsoft.CodeAnalysis が必要です。正しいアナライザー バージョンをインストールするには、https://docs.microsoft.com/ja-jp/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions を参照してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckMessage">
         <source>Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
-        <target state="new">Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions to install the correct analyzer version.</target>
+        <target state="translated">アナライザー パッケージ '{0}' と Microsoft.CodeAnalysis '{1}' のバージョンが一致しません。このパッケージの特定のアナライザーは、バージョンの不一致が解決されるまで実行されません。正しいバージョンのアナライザーをインストールするには、https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions を参照してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckTitle">
         <source>Analyzer version mismatch</source>
-        <target state="new">Analyzer version mismatch</target>
+        <target state="translated">アナライザー バージョンの不一致</target>
         <note />
       </trans-unit>
     </body>

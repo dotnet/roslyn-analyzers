@@ -42,5 +42,6 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string LinkedEnumerationShouldHaveAllMembersRuleId = "RS0035";
         public const string LinkedEnumerationShouldMatchValueRuleId = "RS0036";
         public const string LinkedEnumerationShouldMatchNameRuleId = "RS0037";
+        public const string ExternalApiShouldBeAccessibleRuleId = "RS0038";
     }
 }

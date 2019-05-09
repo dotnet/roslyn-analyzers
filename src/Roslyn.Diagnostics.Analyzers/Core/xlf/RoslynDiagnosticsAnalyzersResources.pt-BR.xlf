@@ -26,6 +26,21 @@
         <source>Exported parts should have [ImportingConstructor]</source>
         <note />
       </trans-unit>
+      <trans-unit id="ExternalApiShouldBeAccessibleDescription">
+        <source>External API should be accessible</source>
+        <target state="new">External API should be accessible</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExternalApiShouldBeAccessibleMessage">
+        <source>External API references internal symbol '{0}'</source>
+        <target state="new">External API references internal symbol '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ExternalApiShouldBeAccessibleTitle">
+        <source>External API should be accessible</source>
+        <target state="new">External API should be accessible</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ImportingConstructorShouldBeObsoleteCodeFix_ErrorSetToFalse">
         <source>Set ObsoleteAttribute.Error to true</source>
         <note />

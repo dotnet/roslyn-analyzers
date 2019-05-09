@@ -288,4 +288,13 @@
   <data name="LinkedEnumerationShouldMatchValueFix" xml:space="preserve">
     <value>Synchronize value</value>
   </data>
+  <data name="ExternalApiShouldBeAccessibleDescription" xml:space="preserve">
+    <value>External API should be accessible</value>
+  </data>
+  <data name="ExternalApiShouldBeAccessibleMessage" xml:space="preserve">
+    <value>External API references internal symbol '{0}'</value>
+  </data>
+  <data name="ExternalApiShouldBeAccessibleTitle" xml:space="preserve">
+    <value>External API should be accessible</value>
+  </data>
 </root>

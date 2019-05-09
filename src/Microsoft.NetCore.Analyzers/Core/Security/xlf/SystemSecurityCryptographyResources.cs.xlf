@@ -242,8 +242,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
-        <source>{0} created without an approved hash algorithm. Use SHA256, SHA384 or SHA512 to create a strong key from password</source>
-        <target state="new">{0} created without an approved hash algorithm. Use SHA256, SHA384 or SHA512 to create a strong key from password</target>
+        <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
+        <target state="new">{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">

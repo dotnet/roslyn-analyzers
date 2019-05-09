@@ -41,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        private static readonly ImmutableHashSet<string> s_UnapprovedHashAlgorithmNames = ImmutableHashSet.Create("MD5", "SHA1");
+        private static readonly ImmutableHashSet<string> s_WeakHashAlgorithmNames = ImmutableHashSet.Create("MD5", "SHA1");
 
         public override void Initialize(AnalysisContext context)
         {
@@ -81,12 +81,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
                     }
 
-                    var protocolsArgumentOperation = objectCreationOperation.Arguments.FirstOrDefault(s => s.Parameter.Name == "hashAlgorithm");
+                    var hashAlgorithmNameArgumentOperation = objectCreationOperation.Arguments.FirstOrDefault(s => s.Parameter.Name == "hashAlgorithm");
 
-                    if (protocolsArgumentOperation != null)
+                    if (hashAlgorithmNameArgumentOperation != null)
                     {
-                        if (protocolsArgumentOperation.Value is IPropertyReferenceOperation propertyReferenceOperation &&
-                            !s_UnapprovedHashAlgorithmNames.Contains(propertyReferenceOperation.Property.Name) &&
+                        if (hashAlgorithmNameArgumentOperation.Value is IPropertyReferenceOperation propertyReferenceOperation &&
+                            !s_WeakHashAlgorithmNames.Contains(propertyReferenceOperation.Property.Name) &&
                             hashAlgorithmNameTypeSymbol != null &&
                             hashAlgorithmNameTypeSymbol.Equals(propertyReferenceOperation.Property.ContainingType))
                         {

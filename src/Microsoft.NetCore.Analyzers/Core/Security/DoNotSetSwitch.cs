@@ -19,29 +19,14 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotSetSwitch : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA5361";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
+        internal static DiagnosticDescriptor DoNotDisableSchUseStrongCryptoRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5361",
+            typeof(SystemSecurityCryptographyResources),
             nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCrypto),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
             nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-
-        internal static DiagnosticDescriptor DoNotDisableSchUseStrongCryptoRule = new DiagnosticDescriptor(
-            DiagnosticId,
-            s_Title,
-            s_Message,
-            DiagnosticCategory.Security,
-            DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: s_Description,
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: null,
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
             customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor DoNotDisableSpmSecurityProtocolsRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5378",

@@ -252,4 +252,40 @@
   <data name="TestExportsShouldNotBeDiscoverableCodeFix" xml:space="preserve">
     <value>Apply PartNotDiscoverableAttribute</value>
   </data>
+  <data name="LinkedEnumerationShouldHaveAllMembersDescription" xml:space="preserve">
+    <value>Linked enumeration should have all members</value>
+  </data>
+  <data name="LinkedEnumerationShouldHaveAllMembersMessage" xml:space="preserve">
+    <value>Linked enumeration should have all members</value>
+  </data>
+  <data name="LinkedEnumerationShouldHaveAllMembersTitle" xml:space="preserve">
+    <value>Linked enumeration should have all members</value>
+  </data>
+  <data name="LinkedEnumerationShouldMatchNameDescription" xml:space="preserve">
+    <value>Linked enumeration member should be present in the source enumeration</value>
+  </data>
+  <data name="LinkedEnumerationShouldMatchNameMessage" xml:space="preserve">
+    <value>Linked enumeration member should be present in the source enumeration</value>
+  </data>
+  <data name="LinkedEnumerationShouldMatchNameTitle" xml:space="preserve">
+    <value>Linked enumeration member should be present in the source enumeration</value>
+  </data>
+  <data name="LinkedEnumerationShouldMatchValueDescription" xml:space="preserve">
+    <value>Linked enumeration member should match the value of the source enumeration member</value>
+  </data>
+  <data name="LinkedEnumerationShouldMatchValueMessage" xml:space="preserve">
+    <value>Linked enumeration member should match the value of the source enumeration member</value>
+  </data>
+  <data name="LinkedEnumerationShouldMatchValueTitle" xml:space="preserve">
+    <value>Linked enumeration member should match the value of the source enumeration member</value>
+  </data>
+  <data name="LinkedEnumerationShouldHaveAllMembersFix" xml:space="preserve">
+    <value>Synchronize missing members</value>
+  </data>
+  <data name="LinkedEnumerationShouldMatchNameFix" xml:space="preserve">
+    <value>Synchronize name</value>
+  </data>
+  <data name="LinkedEnumerationShouldMatchValueFix" xml:space="preserve">
+    <value>Synchronize value</value>
+  </data>
 </root>

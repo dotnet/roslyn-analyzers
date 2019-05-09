@@ -58,6 +58,66 @@
         <source>Importing constructor should be [Obsolete]</source>
         <note />
       </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldHaveAllMembersDescription">
+        <source>Linked enumeration should have all members</source>
+        <target state="new">Linked enumeration should have all members</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldHaveAllMembersFix">
+        <source>Synchronize missing members</source>
+        <target state="new">Synchronize missing members</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldHaveAllMembersMessage">
+        <source>Linked enumeration should have all members</source>
+        <target state="new">Linked enumeration should have all members</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldHaveAllMembersTitle">
+        <source>Linked enumeration should have all members</source>
+        <target state="new">Linked enumeration should have all members</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldMatchNameDescription">
+        <source>Linked enumeration member should be present in the source enumeration</source>
+        <target state="new">Linked enumeration member should be present in the source enumeration</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldMatchNameFix">
+        <source>Synchronize name</source>
+        <target state="new">Synchronize name</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldMatchNameMessage">
+        <source>Linked enumeration member should be present in the source enumeration</source>
+        <target state="new">Linked enumeration member should be present in the source enumeration</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldMatchNameTitle">
+        <source>Linked enumeration member should be present in the source enumeration</source>
+        <target state="new">Linked enumeration member should be present in the source enumeration</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldMatchValueDescription">
+        <source>Linked enumeration member should match the value of the source enumeration member</source>
+        <target state="new">Linked enumeration member should match the value of the source enumeration member</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldMatchValueFix">
+        <source>Synchronize value</source>
+        <target state="new">Synchronize value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldMatchValueMessage">
+        <source>Linked enumeration member should match the value of the source enumeration member</source>
+        <target state="new">Linked enumeration member should match the value of the source enumeration member</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="LinkedEnumerationShouldMatchValueTitle">
+        <source>Linked enumeration member should match the value of the source enumeration member</source>
+        <target state="new">Linked enumeration member should match the value of the source enumeration member</target>
+        <note />
+      </trans-unit>
       <trans-unit id="TestExportsShouldNotBeDiscoverableCodeFix">
         <source>Apply PartNotDiscoverableAttribute</source>
         <note />

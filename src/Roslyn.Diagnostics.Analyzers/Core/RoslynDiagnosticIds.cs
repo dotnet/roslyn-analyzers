@@ -38,5 +38,9 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string TestExportsShouldNotBeDiscoverableRuleId = "RS0032";
         public const string ImportingConstructorShouldBeObsoleteRuleId = "RS0033";
         public const string ExportedPartsShouldHaveImportingConstructorRuleId = "RS0034";
+
+        public const string LinkedEnumerationShouldHaveAllMembersRuleId = "RS0035";
+        public const string LinkedEnumerationShouldMatchValueRuleId = "RS0036";
+        public const string LinkedEnumerationShouldMatchNameRuleId = "RS0037";
     }
 }

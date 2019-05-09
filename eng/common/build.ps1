@@ -144,7 +144,7 @@ function LocateVisualStudio {
   $vsInstallDir = & $vsWhereExe -latest -prerelease -property installationPath -requires Microsoft.Component.MSBuild -requires Microsoft.VisualStudio.Component.VSSDK -requires Microsoft.Net.Component.4.6.TargetingPack -requires Microsoft.VisualStudio.Component.Roslyn.Compiler
 
   if ($lastExitCode -ne 0 -or [String]::IsNullOrEmpty($vsInstallDir)) {
-    Write-Host "Failed to locate Visual Studio (exit code '$lastExitCode').  Ensure you have all required Visual Studio components." -ForegroundColor Red
+    Write-Host "Failed to locate Visual Studio (exit code '$lastExitCode').  Ensure you have all required Visual Studio components (Microsoft.Component.MSBuild, Microsoft.VisualStudio.Component.VSSDK, Microsoft.Net.Component.4.6.TargetingPack, Microsoft.VisualStudio.Component.Roslyn.Compiler)." -ForegroundColor Red
     exit $lastExitCode
   }
 

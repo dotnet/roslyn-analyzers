@@ -90,6 +90,7 @@
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
         <note />
+        <target state="translated">El método {0} tiene deshabilitada la validación de solicitudes.</target>
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
         <source>Do Not Disable SChannel Use of Strong Crypto</source>
@@ -289,14 +290,17 @@
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
         <note />
+        <target state="translated">Usar HttpsOnly de SharedAccessProtocol</target>
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
         <note />
+        <target state="translated">HTTPS cifra el tráfico de red. Use HttpsOnly, en lugar de HttpOrHttps, para asegurarse de que el tráfico de red esté siempre cifrado para ayudar a evitar la revelación de datos confidenciales.</target>
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
         <note />
+        <target state="translated">Considere la posibilidad de usar el control de acceso basado en roles de Azure en lugar de una firma de acceso compartido (SAS) si es posible. Si aún necesita usar una SAS, especifique SharedAccessProtocol. HttpsOnly</target>
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>

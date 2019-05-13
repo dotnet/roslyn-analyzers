@@ -63,6 +63,24 @@ class TestClass
         }
 
         [Fact]
+        public void TestStringCaseSensitiveDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var storeName = ""rooT""; 
+        var x509Store = new X509Store(storeName);
+        x509Store.Add(new X509Certificate2());
+    }
+}",
+            GetCSharpResultAt(10, 9, DoNotInstallRootCert.Rule));
+        }
+
+        [Fact]
         public void TestConstructorWithStringAndStoreLocationParametersDiagnostic()
         {
             VerifyCSharp(@"

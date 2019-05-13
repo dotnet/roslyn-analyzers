@@ -107,8 +107,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCert">
-        <source>Do Not Add Certificate To Root Store</source>
-        <target state="new">Do Not Add Certificate To Root Store</target>
+        <source>Do Not Add Certificates To Root Store</source>
+        <target state="new">Do Not Add Certificates To Root Store</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
@@ -117,8 +117,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertMessage">
-        <source>It is not recommended to install additional certificate into your operating system's Root certificate store/keychain</source>
-        <target state="new">It is not recommended to install additional certificate into your operating system's Root certificate store/keychain</target>
+        <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
+        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">

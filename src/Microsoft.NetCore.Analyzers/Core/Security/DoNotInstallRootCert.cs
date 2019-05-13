@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -105,7 +106,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol) &&
                                     valueContent.Contains(6) ||
                                     constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                    valueContent.Contains("Root"))
+                                    valueContent.Any(s => s.ToString().ToLower().Equals("root", StringComparison.Ordinal)))
                                 {
                                     kind = PropertySetAbstractValueKind.Flagged;
                                 }

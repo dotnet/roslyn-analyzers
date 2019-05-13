@@ -121,7 +121,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     var cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
                                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
                                     var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                        operationBlockStartContext.Options, Rule, InterproceduralAnalysisKind.ContextSensitive, operationBlockStartContext.CancellationToken);
+                                        operationBlockStartContext.Options, Rule, InterproceduralAnalysisKind.None, operationBlockStartContext.CancellationToken);
                                     var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg,
                                         containingMethod, wellKnownTypeProvider, interproceduralAnalysisConfig,
                                         interproceduralAnalysisPredicateOpt: null,

@@ -89,6 +89,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
+        <target state="translated">{0} metodunun istek doğrulama özelliği devre dışı</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
@@ -288,14 +289,17 @@
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
+        <target state="translated">SharedAccessProtocol HttpsOnly kullanın</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
+        <target state="translated">HTTPS ağ trafiğini şifreler. Hassas verilerin açıklanmasını önlemeye yardımcı olmak için, ağ trafiğinin her zaman şifrelenmesini sağlamak amacıyla, HttpOrHttps yerine HttpsOnly kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
+        <target state="translated">Mümkünse paylaşılan erişim Imzası (SAS) yerine, Azure 'un rol tabanlı erişim denetimini kullanmayı düşünün. Hala SAS kullanmanız gerekiyorsa, SharedAccessProtocol. HttpsOnly belirtin</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

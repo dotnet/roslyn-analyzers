@@ -89,8 +89,8 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
-        <note />
         <target state="translated">La validation de requête est désactivée pour la méthode {0}</target>
+        <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
         <source>Do Not Disable SChannel Use of Strong Crypto</source>
@@ -289,18 +289,18 @@
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
-        <note />
         <target state="translated">Utiliser SharedAccessProtocol HttpsOnly</target>
+        <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
-        <note />
         <target state="translated">HTTPs chiffre le trafic réseau. Utilisez HttpsOnly plutôt que HttpOrHttps pour garantir que le trafic réseau est toujours chiffré afin d’éviter la divulgation de données sensibles.</target>
+        <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
-        <note />
         <target state="translated">Si possible, utilisez le contrôle d’accès basé sur les rôles Azure plutôt qu’une signature d’accès partagé (SAS). Si vous avez toujours besoin d’utiliser une SAS, spécifiez SharedAccessProtocol. HttpsOnly</target>
+        <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>

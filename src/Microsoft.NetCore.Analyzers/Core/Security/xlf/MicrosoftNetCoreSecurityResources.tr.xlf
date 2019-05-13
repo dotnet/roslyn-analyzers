@@ -17,6 +17,16 @@
         <target state="translated">Güvenli olmayan seri kaldırıcı BinaryFormatter kullanmayın</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage">
+        <source>Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</source>
+        <target state="new">Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle">
+        <source>Do not disable ServicePointManagerSecurityProtocols</source>
+        <target state="new">Do not disable ServicePointManagerSecurityProtocols</target>
+        <note />
+      </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</source>
         <target state="translated">'{0}' metodu, SimpleTypeResolver ile başlatılmış bir JavaScriptSerializer ile güvenilmeyen veriler seri durumdan çıkarılırken güvenli değil. JavaScriptSerializer'ın JavaScriptTypeResolver belirtilmeden başlatıldığından veya seri durumdan çıkarılan nesne grafındaki nesne türlerini sınırlayan bir JavaScriptTypeResolver ile başlatıldığından emin olun.</target>

@@ -17,6 +17,16 @@
         <target state="translated">安全でないデシリアライザー BinaryFormatter を使用しない</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage">
+        <source>Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</source>
+        <target state="new">Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle">
+        <source>Do not disable ServicePointManagerSecurityProtocols</source>
+        <target state="new">Do not disable ServicePointManagerSecurityProtocols</target>
+        <note />
+      </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</source>
         <target state="translated">SimpleTypeResolver で初期化された JavaScriptSerializer で信頼されていないデータを逆シリアル化している場合、メソッド '{0}' は安全ではありません。JavaScriptTypeResolver が指定されずに JavaScriptSerializer が初期化されていること、または逆シリアル化されたオブジェクト グラフ内のオブジェクトの種類を制限する JavaScriptTypeResolver で初期化されていることを確認してください。</target>

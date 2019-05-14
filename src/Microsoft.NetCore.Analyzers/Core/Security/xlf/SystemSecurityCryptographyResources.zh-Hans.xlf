@@ -17,6 +17,16 @@
         <target state="translated">它使用不安全的密码模式 {0} .</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
+        <source>Use Secure Cookies In ASP.Net Core</source>
+        <target state="new">Use Secure Cookies In ASP.Net Core</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseSecureCookiesASPNetCoreMessage">
+        <source>Set CookieOptions.Secure = true when creating a cookie</source>
+        <target state="new">Set CookieOptions.Secure = true when creating a cookie</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
         <target state="translated">请勿通过 URL 添加架构</target>
@@ -256,6 +266,16 @@
         <target state="translated">请勿使用 XslTransform。它对具有潜在危险的外部引用并没有限制。</target>
         <note />
       </trans-unit>
+      <trans-unit id="MaybeUseSecureCookiesASPNetCore">
+        <source>Ensure Use Secure Cookies In ASP.Net Core</source>
+        <target state="new">Ensure Use Secure Cookies In ASP.Net Core</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseSecureCookiesASPNetCoreMessage">
+        <source>Ensure That Set CookieOptions.Secure = true when creating a cookie</source>
+        <target state="new">Ensure That Set CookieOptions.Secure = true when creating a cookie</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SetViewStateUserKey">
         <source>Set ViewStateUserKey For Classes Derived From Page</source>
         <target state="translated">针对派生自 Page 的类设置 ViewStateUserKey</target>
@@ -286,19 +306,9 @@
         <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</target>
         <note />
       </trans-unit>
-      <trans-unit id="UseSecureCookiesASPNetCore">
-        <source>Use Secure Cookies In ASP Net Core</source>
-        <target state="new">Use Secure Cookies In ASP Net Core</target>
-        <note />
-      </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">
         <source>Applications available over HTTPS must use secure cookies.</source>
         <target state="new">Applications available over HTTPS must use secure cookies.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="UseSecureCookiesASPNetCoreMessage">
-        <source>Set CookieOptions.Secure = true when creating a cookie</source>
-        <target state="new">Set CookieOptions.Secure = true when creating a cookie</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">

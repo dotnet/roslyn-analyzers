@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -11,38 +13,39 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseSecureCookiesASPNetCore : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA5381";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCore),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCoreMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCoreDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+        internal static DiagnosticDescriptor DefinitelyUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5382",
+            typeof(SystemSecurityCryptographyResources),
+            nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCore),
+            nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCoreMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+        internal static DiagnosticDescriptor MaybeUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5383",
+            typeof(SystemSecurityCryptographyResources),
+            nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCore),
+            nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCoreMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                description: s_Description,
-                helpLinkUri: null,
-                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+                                                                                        DefinitelyUseSecureCookiesASPNetCoreRule,
+                                                                                        MaybeUseSecureCookiesASPNetCoreRule);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        private static readonly ConstructorMapper constructorMapper = new ConstructorMapper(
+                                                                        ImmutableArray.Create<PropertySetAbstractValueKind>(
+                                                                            PropertySetAbstractValueKind.Flagged));
 
         private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
             new PropertyMapper(
@@ -111,11 +114,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                     wellKnownTypeProvider.TryGetTypeByMetadataName(
                         WellKnownTypeNames.MicrosoftAspNetCoreHttpCookieOptions,
                         out var cookieOptionsTypeSymbol);
-
-                    var constructorMapper = new ConstructorMapper(
-                        ImmutableArray.Create<PropertySetAbstractValueKind>(
-                            PropertySetAbstractValueKind.Flagged));
-
                     var rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
 
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
@@ -135,7 +133,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         {
                                             operationAnalysisContext.ReportDiagnostic(
                                                 invocationOperation.CreateDiagnostic(
-                                                    Rule));
+                                                    DefinitelyUseSecureCookiesASPNetCoreRule));
                                         }
                                         else
                                         {
@@ -197,17 +195,31 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     return;
                                 }
 
-                                foreach (var kvp in allResults)
+                                foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                    in allResults)
                                 {
-                                    if (kvp.Value.Equals(HazardousUsageEvaluationResult.Flagged))
+                                    DiagnosticDescriptor descriptor;
+                                    switch (kvp.Value)
                                     {
-                                        compilationAnalysisContext.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                Rule,
-                                                kvp.Key.Location,
-                                                kvp.Key.Method.ToDisplayString(
-                                                    SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                        case HazardousUsageEvaluationResult.Flagged:
+                                            descriptor = DefinitelyUseSecureCookiesASPNetCoreRule;
+                                            break;
+
+                                        case HazardousUsageEvaluationResult.MaybeFlagged:
+                                            descriptor = MaybeUseSecureCookiesASPNetCoreRule;
+                                            break;
+
+                                        default:
+                                            Debug.Fail($"Unhandled result value {kvp.Value}");
+                                            continue;
                                     }
+
+                                    compilationAnalysisContext.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            descriptor,
+                                            kvp.Key.Location,
+                                            kvp.Key.Method.ToDisplayString(
+                                                SymbolDisplayFormat.MinimallyQualifiedFormat)));
                                 }
                             }
                             finally

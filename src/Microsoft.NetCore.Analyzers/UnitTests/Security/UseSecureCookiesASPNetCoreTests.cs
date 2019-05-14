@@ -66,7 +66,61 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.Rule));
+            GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+        }
+
+        [Fact]
+        public void TestHasWrongSecurePropertyAssignmentMaybeFlaggedDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.AspNetCore.Http;
+
+class TestClass
+{
+    public void TestMethod(string key, string value)
+    {
+        var cookieOptions = new CookieOptions();
+        cookieOptions.Secure = false;
+        Random r = new Random();
+
+        if (r.Next(6) == 4)
+        {
+            cookieOptions.Secure = true;
+        }
+
+        var responseCookies = new ResponseCookies(); 
+        responseCookies.Append(key, value, cookieOptions);
+    }
+}",
+            GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+        }
+
+        [Fact]
+        public void TestHasWrongSecurePropertyAssignmentMaybeFlagged2Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.AspNetCore.Http;
+
+class TestClass
+{
+    public void TestMethod(string key, string value)
+    {
+        var cookieOptions = new CookieOptions();
+        cookieOptions.Secure = true;
+        Random r = new Random();
+
+        if (r.Next(6) == 4)
+        {
+            cookieOptions.Secure = false;
+        }
+
+        var responseCookies = new ResponseCookies(); 
+        responseCookies.Append(key, value, cookieOptions);
+    }
+}",
+            GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -84,7 +138,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.Rule));
+            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -102,7 +156,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.Rule));
+            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -119,7 +173,7 @@ class TestClass
         responseCookies.Append(key, value);
     }
 }",
-            GetCSharpResultAt(9, 9, UseSecureCookiesASPNetCore.Rule));
+            GetCSharpResultAt(9, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -144,7 +198,7 @@ class TestClass
         return cookieOptions;
     }
 }",
-            GetCSharpResultAt(9, 9, UseSecureCookiesASPNetCore.Rule));
+            GetCSharpResultAt(9, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -168,7 +222,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(16, 9, UseSecureCookiesASPNetCore.Rule));
+            GetCSharpResultAt(16, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]

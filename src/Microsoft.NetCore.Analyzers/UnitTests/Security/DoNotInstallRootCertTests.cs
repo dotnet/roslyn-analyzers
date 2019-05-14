@@ -23,7 +23,33 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(10, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
+        }
+
+        [Fact]
+        public void TestConstructorWithStoreNameParameterMaybeFlaggedDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var storeName = StoreName.Root; 
+        Random r = new Random();
+
+        if (r.Next(6) == 4)
+        {
+            storeName = StoreName.My;
+        }
+
+        var x509Store = new X509Store(storeName);
+        x509Store.Add(new X509Certificate2());
+    }
+}",
+            GetCSharpResultAt(18, 9, DoNotInstallRootCert.MaybeInstallRootCertRule));
         }
 
         [Fact]
@@ -41,7 +67,7 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(10, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -59,7 +85,7 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(10, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -77,7 +103,7 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(10, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -95,7 +121,7 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(10, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -111,7 +137,7 @@ class TestClass
         new X509Store(StoreName.Root).Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(8, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -127,7 +153,7 @@ class TestClass
         new X509Store(""Root"").Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(8, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -150,7 +176,7 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(15, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(15, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -168,7 +194,7 @@ class TestClass
         X509Store GetX509Store() => new X509Store(StoreName.Root);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(8, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -189,7 +215,7 @@ class TestClass
         return new X509Store(StoreName.Root);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotInstallRootCert.Rule));
+            GetCSharpResultAt(8, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
         }
 
         [Fact]
@@ -224,28 +250,6 @@ class TestClass
         }
 
         [Fact]
-        public void TestInstallCertToOtherStoreInOtherMethodNoDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography.X509Certificates;
-
-class TestClass
-{
-    public void TestMethod()
-    {
-        var storeName = StoreName.My; 
-        var x509Store = new X509Store(storeName);
-        TestMethod2(x509Store); 
-    }
-
-    public void TestMethod2(X509Store x509Store)
-    {
-        x509Store.Add(new X509Certificate2());
-    }
-}");
-        }
-
-        [Fact]
         public void TestCreateAStoreWithoutSettingStoreNameNoDiagnostic()
         {
             VerifyCSharp(@"
@@ -262,7 +266,7 @@ class TestClass
         }
 
         [Fact]
-        public void TestPassObjectAsParameterInterproceduralNoDiagnostic()
+        public void TestPassX509StoreAsParameterInterproceduralNoDiagnostic()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography.X509Certificates;

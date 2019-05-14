@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -14,38 +15,35 @@ using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotInstallRootCert : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA5380";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotInstallRootCert),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotInstallRootCertMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotInstallRootCertDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+        internal static DiagnosticDescriptor DefinitelyInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5380",
+            typeof(SystemSecurityCryptographyResources),
+            nameof(SystemSecurityCryptographyResources.DefinitelyInstallRootCert),
+            nameof(SystemSecurityCryptographyResources.DefinitelyInstallRootCertMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotInstallRootCertDescription),
+            customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+        internal static DiagnosticDescriptor MaybeInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5381",
+            typeof(SystemSecurityCryptographyResources),
+            nameof(SystemSecurityCryptographyResources.MaybeInstallRootCert),
+            nameof(SystemSecurityCryptographyResources.MaybeInstallRootCertMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotInstallRootCertDescription),
+            customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                description: s_Description,
-                helpLinkUri: null,
-                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+                                                                                        DefinitelyInstallRootCertRule,
+                                                                                        MaybeInstallRootCertRule);
 
         private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
             new PropertyMapper(
@@ -59,11 +57,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                 case PropertySetAbstractValueKind.Flagged:
                     return HazardousUsageEvaluationResult.Flagged;
 
-                case PropertySetAbstractValueKind.Unflagged:
-                    return HazardousUsageEvaluationResult.Unflagged;
+                case PropertySetAbstractValueKind.MaybeFlagged:
+                    return HazardousUsageEvaluationResult.MaybeFlagged;
 
                 default:
-                    return HazardousUsageEvaluationResult.MaybeFlagged;
+                    return HazardousUsageEvaluationResult.Unflagged;
             }
         }
 
@@ -106,9 +104,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol) &&
                                     valueContent.Contains(6) ||
                                     constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                    valueContent.Any(s => s.ToString().ToLower().Equals("root", StringComparison.Ordinal)))
+                                    valueContent.Any(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
                                 {
-                                    kind = PropertySetAbstractValueKind.Flagged;
+                                    kind = valueContent.Count == 1 ? PropertySetAbstractValueKind.Flagged : PropertySetAbstractValueKind.MaybeFlagged;
                                 }
                             }
 
@@ -185,17 +183,31 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     return;
                                 }
 
-                                foreach (var kvp in allResults)
+                                foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
+                                    in allResults)
                                 {
-                                    if (kvp.Value.Equals(HazardousUsageEvaluationResult.Flagged))
+                                    DiagnosticDescriptor descriptor;
+                                    switch (kvp.Value)
                                     {
-                                        compilationAnalysisContext.ReportDiagnostic(
-                                            Diagnostic.Create(
-                                                Rule,
-                                                kvp.Key.Location,
-                                                kvp.Key.Method.ToDisplayString(
-                                                    SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                        case HazardousUsageEvaluationResult.Flagged:
+                                            descriptor = DefinitelyInstallRootCertRule;
+                                            break;
+
+                                        case HazardousUsageEvaluationResult.MaybeFlagged:
+                                            descriptor = MaybeInstallRootCertRule;
+                                            break;
+
+                                        default:
+                                            Debug.Fail($"Unhandled result value {kvp.Value}");
+                                            continue;
                                     }
+
+                                    compilationAnalysisContext.ReportDiagnostic(
+                                        Diagnostic.Create(
+                                            descriptor,
+                                            kvp.Key.Location,
+                                            kvp.Key.Method.ToDisplayString(
+                                                SymbolDisplayFormat.MinimallyQualifiedFormat)));
                                 }
                             }
                             finally

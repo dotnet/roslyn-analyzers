@@ -17,6 +17,16 @@
         <target state="translated">Používá nezabezpečený režim šifrování {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefinitelyInstallRootCert">
+        <source>Do Not Add Certificates To Root Store</source>
+        <target state="new">Do Not Add Certificates To Root Store</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyInstallRootCertMessage">
+        <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
+        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
         <target state="translated">Nepřidávejte schéma pomocí adresy URL.</target>
@@ -106,19 +116,9 @@
         <target state="translated">{0} zakazuje TLS 1.2 a povoluje SSLv3.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotInstallRootCert">
-        <source>Do Not Add Certificates To Root Store</source>
-        <target state="new">Do Not Add Certificates To Root Store</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
         <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
         <target state="new">By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotInstallRootCertMessage">
-        <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">
@@ -269,6 +269,16 @@
       <trans-unit id="DoNotUseXslTransformMessage">
         <source>Do not use XslTransform. It does not restrict potentially dangerous external references.</source>
         <target state="translated">Nepoužije XslTransform. Neomezí se tím potenciálně nebezpečné externí odkazy.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeInstallRootCert">
+        <source>Ensure Certificates Are Not Added To Root Store</source>
+        <target state="new">Ensure Certificates Are Not Added To Root Store</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeInstallRootCertMessage">
+        <source>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</source>
+        <target state="new">Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">

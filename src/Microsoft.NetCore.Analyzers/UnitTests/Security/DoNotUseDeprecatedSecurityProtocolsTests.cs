@@ -96,6 +96,23 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public void TestUse192Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol |= (SecurityProtocolType)192;
+    }
+}",
+                GetCSharpResultAt(9, 17, DoNotUseDeprecatedSecurityProtocols.Rule, "192"));
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotUseDeprecatedSecurityProtocols();

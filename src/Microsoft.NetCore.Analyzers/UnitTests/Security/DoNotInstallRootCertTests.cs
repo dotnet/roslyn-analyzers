@@ -198,7 +198,7 @@ class TestClass
         }
 
         [Fact]
-        public void TestGetX509StoreFromOtherMethodInterproceduralDiagnostic()
+        public void TestReturnX509StoreInterproceduralDiagnostic()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography.X509Certificates;
@@ -305,7 +305,7 @@ class TestClass
         }
 
         [Fact]
-        public void TestReturnObjectInterproceduralNoDiagnostic()
+        public void TestReturnX509StoreInterproceduralNoDiagnostic()
         {
             VerifyCSharp(@"
 using System.Security.Cryptography.X509Certificates;

@@ -2,7 +2,7 @@
 trigger:
 - master
 
-# Branch(es) that trigger build(s) on PR
+# Branch(es) that trigger(s) build(s) on PR
 pr:
 - master
 

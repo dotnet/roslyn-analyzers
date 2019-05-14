@@ -89,6 +89,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
+        <target state="translated">{0} metodunun istek doğrulama özelliği devre dışı</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
@@ -231,6 +232,21 @@
         <target state="translated">{0} zayıf {1} kriptografik algoritmasını kullanıyor</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFAlgorithm">
+        <source>Do Not Use Weak Key Derivation Function Algorithm</source>
+        <target state="new">Do Not Use Weak Key Derivation Function Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
+        <source>Some implementations of the Rfc2898DeriveBytes class allow for a hashAlgorithm to be specified in the constructor parameter or overwritten in HashAlgorithm property. If this exists, then it should be used with SHA-256 or higher as the hashAlgorithm parameter.</source>
+        <target state="new">Some implementations of the Rfc2898DeriveBytes class allow for a hashAlgorithm to be specified in the constructor parameter or overwritten in HashAlgorithm property. If this exists, then it should be used with SHA-256 or higher as the hashAlgorithm parameter.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
+        <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
+        <target state="new">{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
         <source>Do Not Use XslTransform</source>
         <target state="translated">XslTransform Kullanma</target>
@@ -256,16 +272,34 @@
         <target state="translated">Sayfanın {0} alt sınıfı OnInit metodunda ViewStateUserKey özelliğini ayarlamıyor</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicy">
+        <source>Use Container Level Access Policy</source>
+        <target state="new">Use Container Level Access Policy</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicyDescription">
+        <source>No access policy identifier is specified, making tokens non-revocable.</source>
+        <target state="new">No access policy identifier is specified, making tokens non-revocable.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicyMessage">
+        <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
+        <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
+        <target state="translated">SharedAccessProtocol HttpsOnly kullanın</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
+        <target state="translated">HTTPS ağ trafiğini şifreler. Hassas verilerin açıklanmasını önlemeye yardımcı olmak için, ağ trafiğinin her zaman şifrelenmesini sağlamak amacıyla, HttpOrHttps yerine HttpsOnly kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
+        <target state="translated">Mümkünse paylaşılan erişim Imzası (SAS) yerine, Azure 'un rol tabanlı erişim denetimini kullanmayı düşünün. Hala SAS kullanmanız gerekiyorsa, SharedAccessProtocol. HttpsOnly belirtin</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

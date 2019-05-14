@@ -1,17 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
-    public class DoNotDisableSchUseStrongCryptoTests : DiagnosticAnalyzerTestBase
+    public class DoNotDisableUsingServicePointManagerSecurityProtocolsTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
         public void TestBoolDiagnostic()
@@ -23,10 +18,10 @@ class TestClass
 {
     public void TestMethod()
     {
-        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true);
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
         }
 
         [Fact]
@@ -39,10 +34,10 @@ class TestClass
 {
     public void TestMethod()
     {
-        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", 1 + 2 == 3);
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", 1 + 2 == 3);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
         }
 
         [Fact]
@@ -55,10 +50,10 @@ class TestClass
 {
     public void TestMethod()
     {
-        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", 1 == 1 ? true : false);
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", 1 == 1 ? true : false);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
         }
 
         [Fact]
@@ -71,11 +66,11 @@ class TestClass
 {
     public void TestMethod()
     {
-        const string constSwitchName = ""Switch.System.Net.DontEnableSchUseStrongCrypto"";
+        const string constSwitchName = ""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"";
         AppContext.SetSwitch(constSwitchName, true);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
         }
 
         [Fact]
@@ -88,7 +83,7 @@ class TestClass
 {
     public void TestMethod()
     {
-        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", false);
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", false);
     }
 }");
         }
@@ -103,7 +98,7 @@ class TestClass
 {
     public void TestMethod()
     {
-        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", 1 + 2 != 3);
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", 1 + 2 != 3);
     }
 }");
         }
@@ -118,7 +113,7 @@ class TestClass
 {
     public void TestMethod()
     {
-        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", 1 == 1 ? false : true);
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", 1 == 1 ? false : true);
     }
 }");
         }
@@ -149,7 +144,7 @@ class TestClass
 {
     public void TestMethod()
     {
-        string switchName = ""Switch.System.Net.DontEnableSchUseStrongCrypto"";
+        string switchName = ""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"";
         AppContext.SetSwitch(switchName, true);
     }
 }");
@@ -166,7 +161,7 @@ class TestClass
 {
     public void TestMethod()
     {
-        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", bool.Parse(""true""));
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", bool.Parse(""true""));
     }
 }");
         }

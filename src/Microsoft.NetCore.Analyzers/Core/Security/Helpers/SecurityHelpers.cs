@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Resources;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 
@@ -17,26 +20,62 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         /// <param name="titleResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's title.</param>
         /// <param name="messageResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's message.</param>
         /// <param name="isEnabledByDefault">Flag indicating the diagnostic is enabled by default</param>
-        /// <param name="helpLinkUri">Help link URI.</param>
         /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's descrption.</param>
-        /// <returns></returns>
+        /// <param name="helpLinkUri">Help link URI.</param>
+        /// <param name="customTags">Optional custom tags for the diagnostic. See Microsoft.CodeAnalysis.WellKnownDiagnosticTags for some well known tags.</param>
+        /// <returns>New DiagnosticDescriptor.</returns>
         public static DiagnosticDescriptor CreateDiagnosticDescriptor(
             string id,
             string titleResourceStringName,
             string messageResourceStringName,
             bool isEnabledByDefault,
             string helpLinkUri,
-            string descriptionResourceStringName = null)
+            string descriptionResourceStringName = null,
+            params string[] customTags)
+        {
+            return CreateDiagnosticDescriptor(
+                id,
+                typeof(MicrosoftNetCoreSecurityResources),
+                titleResourceStringName,
+                messageResourceStringName,
+                isEnabledByDefault,
+                helpLinkUri,
+                descriptionResourceStringName,
+                customTags);
+        }
+
+        /// <summary>
+        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from <see cref="MicrosoftNetCoreSecurityResources"/>.
+        /// </summary>
+        /// <param name="id">Diagnostic identifier.</param>
+        /// <param name="resourceSource">Type containing the resource strings.</param>
+        /// <param name="titleResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's title.</param>
+        /// <param name="messageResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's message.</param>
+        /// <param name="isEnabledByDefault">Flag indicating the diagnostic is enabled by default</param>
+        /// <param name="descriptionResourceStringName">Name of the resource string inside <paramref name="resourceSource"/> for the diagnostic's descrption.</param>
+        /// <param name="helpLinkUri">Help link URI.</param>
+        /// <param name="customTags">Optional custom tags for the diagnostic. See Microsoft.CodeAnalysis.WellKnownDiagnosticTags for some well known tags.</param>
+        /// <returns>New DiagnosticDescriptor.</returns>
+        public static DiagnosticDescriptor CreateDiagnosticDescriptor(
+            string id,
+            Type resourceSource,
+            string titleResourceStringName,
+            string messageResourceStringName,
+            bool isEnabledByDefault,
+            string helpLinkUri,
+            string descriptionResourceStringName = null,
+            params string[] customTags)
         {
             return new DiagnosticDescriptor(
                 id,
-                GetResourceString(titleResourceStringName),
-                GetResourceString(messageResourceStringName),
+                GetResourceString(resourceSource, titleResourceStringName),
+                GetResourceString(resourceSource, messageResourceStringName),
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault,
-                descriptionResourceStringName != null ? GetResourceString(descriptionResourceStringName) : null,
-                helpLinkUri);
+                descriptionResourceStringName != null ? GetResourceString(resourceSource, descriptionResourceStringName) : null,
+                helpLinkUri,
+                customTags);
         }
 
         /// <summary>
@@ -71,17 +110,41 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 "Deserialize",
                 "DeserializeObject");
 
+        private static readonly ImmutableDictionary<Type, ResourceManager> ResourceManagerMapping =
+            ImmutableDictionary.CreateRange<Type, ResourceManager>(
+                new[]
+                {
+                    (typeof(MicrosoftNetCoreSecurityResources), MicrosoftNetCoreSecurityResources.ResourceManager),
+                    (typeof(SystemSecurityCryptographyResources), SystemSecurityCryptographyResources.ResourceManager),
+                }.Select(o => new KeyValuePair<Type, ResourceManager>(o.Item1, o.Item2)));
+
         /// <summary>
         /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreSecurityResources"/>.
         /// </summary>
+        /// <param name="resourceSource">Type containing the resource strings.</param>
         /// <param name="name">Name of the resource string to retrieve.</param>
         /// <returns>The corresponding <see cref="LocalizableResourceString"/>.</returns>
-        private static LocalizableResourceString GetResourceString(string name)
+        private static LocalizableResourceString GetResourceString(Type resourceSource, string name)
         {
-            return new LocalizableResourceString(
-                    name,
-                    MicrosoftNetCoreSecurityResources.ResourceManager,
-                    typeof(MicrosoftNetCoreSecurityResources));
+            if (resourceSource == null)
+            {
+                throw new ArgumentNullException(nameof(resourceSource));
+            }
+
+            if (!ResourceManagerMapping.TryGetValue(resourceSource, out ResourceManager resourceManager))
+            {
+                throw new ArgumentException($"No mapping found for {resourceSource}", nameof(resourceSource));
+            }
+
+#if DEBUG
+            if (resourceManager.GetString(name, System.Globalization.CultureInfo.InvariantCulture) == null)
+            {
+                throw new ArgumentException($"Resource string '{name}' not found in {resourceSource}", nameof(name));
+            }
+#endif
+
+            LocalizableResourceString localizableResourceString = new LocalizableResourceString(name, resourceManager, resourceSource);
+            return localizableResourceString;
         }
     }
 }

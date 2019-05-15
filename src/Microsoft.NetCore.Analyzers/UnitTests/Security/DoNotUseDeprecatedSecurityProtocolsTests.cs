@@ -97,7 +97,7 @@ class TestClass
         }
 
         [Fact]
-        public void TestUse192Diagnostic()
+        public void TestUse192CompoundAssignmentDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -110,7 +110,75 @@ class TestClass
         ServicePointManager.SecurityProtocol |= (SecurityProtocolType)192;
     }
 }",
-                GetCSharpResultAt(9, 17, DoNotUseDeprecatedSecurityProtocols.Rule, "192"));
+                GetCSharpResultAt(9, 49, DoNotUseDeprecatedSecurityProtocols.Rule, "192"));
+        }
+
+        [Fact]
+        public void TestUse384SimpleAssignmentDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType)384;
+    }
+}",
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.Rule, "384"));
+        }
+
+        [Fact]
+        public void TestUse768DeconstructionAssignmentNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        int i;
+        (ServicePointManager.SecurityProtocol, i) = ((SecurityProtocolType)384, 384);
+    }
+}");
+            // Ideally we'd handle the IDeconstructionAssignment, but this code pattern seems unlikely.
+        }
+
+        [Fact]
+        public void TestUse24Plus24SimpleAssignmentDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType)(24 + 24);
+    }
+}",
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.Rule, "48"));
+        }
+
+        [Fact]
+        public void TestUse768NotSecurityProtocolTypeNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        int i = 384 | 768;
+    }
+}");
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

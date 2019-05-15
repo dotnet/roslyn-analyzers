@@ -216,6 +216,21 @@
         <target state="translated">此類型會實作 SHA1，此雜湊函數在密碼編譯方面有安全性疑慮。SHA-1 與 SHA-0 演算法在運算方面可能會發生雜湊衝突。請以 SHA-2 系列雜湊演算法 (SHA512、SHA384、SHA256) 取代此用法。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithm">
+        <source>Do Not Use Weak Asymmetric Algorithm</source>
+        <target state="new">Do Not Use Weak Asymmetric Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithmDescription">
+        <source>Finds creation of asymmetric algorithms that are weak or have insufficient key size.</source>
+        <target state="new">Finds creation of asymmetric algorithms that are weak or have insufficient key size.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithmMessage">
+        <source>Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
+        <target state="new">Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithms">
         <source>Do Not Use Weak Cryptographic Algorithms</source>
         <target state="translated">請勿使用弱式密碼編譯演算法</target>

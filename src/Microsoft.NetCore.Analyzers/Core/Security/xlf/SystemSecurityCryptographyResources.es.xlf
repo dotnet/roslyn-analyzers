@@ -216,6 +216,21 @@
         <target state="translated">Este tipo implementa SHA1, una función hash no segura criptográficamente. Las colisiones de hash son computacionalmente factibles para los algoritmos SHA-1 y SHA-0. Reemplace este uso por un algoritmo de hash de la familia SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithm">
+        <source>Do Not Use Weak Asymmetric Algorithm</source>
+        <target state="new">Do Not Use Weak Asymmetric Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithmDescription">
+        <source>Finds creation of asymmetric algorithms that are weak or have insufficient key size.</source>
+        <target state="new">Finds creation of asymmetric algorithms that are weak or have insufficient key size.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithmMessage">
+        <source>Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
+        <target state="new">Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithms">
         <source>Do Not Use Weak Cryptographic Algorithms</source>
         <target state="translated">No usar algoritmos criptográficos poco seguros</target>

@@ -216,6 +216,21 @@
         <target state="translated">この型は、暗号として安全でないハッシュ関数である SHA1 を実装しています。SHA-1 と SHA-0 アルゴリズムでは、計算上、ハッシュの競合が起こる可能性があります。この使用を SHA-2 ファミリのハッシュ アルゴリズム (SHA512、SHA384、SHA256) に置き換えてください。</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithm">
+        <source>Do Not Use Weak Asymmetric Algorithm</source>
+        <target state="new">Do Not Use Weak Asymmetric Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithmDescription">
+        <source>Finds creation of asymmetric algorithms that are weak or have insufficient key size.</source>
+        <target state="new">Finds creation of asymmetric algorithms that are weak or have insufficient key size.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithmMessage">
+        <source>Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
+        <target state="new">Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithms">
         <source>Do Not Use Weak Cryptographic Algorithms</source>
         <target state="translated">脆弱な暗号アルゴリズムを使用しない</target>

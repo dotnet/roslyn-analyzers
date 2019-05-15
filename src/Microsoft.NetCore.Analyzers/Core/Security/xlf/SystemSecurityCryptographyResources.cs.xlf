@@ -216,6 +216,21 @@
         <target state="translated">Tento typ implementuje SHA1, což je kryptograficky nezabezpečená hashovací funkce. Kolize hashovací funkce jsou výpočetně schůdné u algoritmů SHA-1 a SHA-0. Nahraďte toto použití hashovacím algoritmem z řady SHA-2 (SHA512, SHA384, SHA256).</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithm">
+        <source>Do Not Use Weak Asymmetric Algorithm</source>
+        <target state="new">Do Not Use Weak Asymmetric Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithmDescription">
+        <source>Finds creation of asymmetric algorithms that are weak or have insufficient key size.</source>
+        <target state="new">Finds creation of asymmetric algorithms that are weak or have insufficient key size.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakAsymmetricAlgorithmMessage">
+        <source>Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
+        <target state="new">Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseWeakCryptographicAlgorithms">
         <source>Do Not Use Weak Cryptographic Algorithms</source>
         <target state="translated">Nepoužívejte slabé kryptografické algoritmy</target>

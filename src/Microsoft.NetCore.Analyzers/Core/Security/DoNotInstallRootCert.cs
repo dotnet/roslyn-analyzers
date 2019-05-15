@@ -101,12 +101,22 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 var valueContent = argumentValueContentAbstractValues[0].LiteralValues;
 
-                                if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol) &&
-                                    valueContent.Contains(6) ||
-                                    constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                    valueContent.Any(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
+                                switch (argumentValueContentAbstractValues[0].NonLiteralState)
                                 {
-                                    kind = valueContent.Count == 1 ? PropertySetAbstractValueKind.Flagged : PropertySetAbstractValueKind.MaybeFlagged;
+                                    case ValueContainsNonLiteralState.No:
+                                    case ValueContainsNonLiteralState.Maybe:
+                                        if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol) &&
+                                            valueContent.Contains(6) ||
+                                            constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String &&
+                                            valueContent.Any(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
+                                        {
+                                            kind = PropertySetAbstractValueKind.Flagged;
+                                        }
+                                        break;
+
+                                    default:
+                                        kind = PropertySetAbstractValueKind.Unknown;
+                                        break;
                                 }
                             }
 

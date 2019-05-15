@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(SystemSecurityCryptographyResources),
             nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCore),
             nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCoreMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
@@ -34,7 +34,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(SystemSecurityCryptographyResources),
             nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCore),
             nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCoreMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);

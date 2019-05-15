@@ -112,6 +112,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         {
                                             kind = PropertySetAbstractValueKind.Flagged;
                                         }
+                                        else
+                                        {
+                                            kind = argumentValueContentAbstractValues[0].NonLiteralState == ValueContainsNonLiteralState.No ? PropertySetAbstractValueKind.Unflagged : PropertySetAbstractValueKind.Unknown;
+                                        }
+
                                         break;
 
                                     default:

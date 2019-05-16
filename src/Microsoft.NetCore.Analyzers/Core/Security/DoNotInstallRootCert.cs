@@ -104,17 +104,53 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 switch (argumentValueContentAbstractValues[0].NonLiteralState)
                                 {
                                     case ValueContainsNonLiteralState.No:
-                                    case ValueContainsNonLiteralState.Maybe:
-                                        if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol) &&
-                                            valueContent.Contains(6) ||
-                                            constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String &&
-                                            valueContent.Any(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
+                                        if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol))
                                         {
-                                            kind = PropertySetAbstractValueKind.Flagged;
+                                            if (valueContent.All(s => s.Equals(6)))
+                                            {
+                                                kind = PropertySetAbstractValueKind.Flagged;
+                                            }
+                                            else if (valueContent.Any(s => s.Equals(6)))
+                                            {
+                                                kind = PropertySetAbstractValueKind.MaybeFlagged;
+                                            }
                                         }
-                                        else
+                                        else if (constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
                                         {
-                                            kind = argumentValueContentAbstractValues[0].NonLiteralState == ValueContainsNonLiteralState.No ? PropertySetAbstractValueKind.Unflagged : PropertySetAbstractValueKind.Unknown;
+                                            if (valueContent.All(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
+                                            {
+                                                kind = PropertySetAbstractValueKind.Flagged;
+                                            }
+                                            else if (valueContent.Any(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
+                                            {
+                                                kind = PropertySetAbstractValueKind.MaybeFlagged;
+                                            }
+                                        }
+
+                                        break;
+
+                                    case ValueContainsNonLiteralState.Maybe:
+                                        if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol))
+                                        {
+                                            if (valueContent.Any(s => s.Equals(6)))
+                                            {
+                                                kind = PropertySetAbstractValueKind.MaybeFlagged;
+                                            }
+                                            else
+                                            {
+                                                kind = PropertySetAbstractValueKind.Unknown;
+                                            }
+                                        }
+                                        else if (constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
+                                        {
+                                            if (valueContent.Any(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
+                                            {
+                                                kind = PropertySetAbstractValueKind.MaybeFlagged;
+                                            }
+                                            else
+                                            {
+                                                kind = PropertySetAbstractValueKind.Unknown;
+                                            }
                                         }
 
                                         break;

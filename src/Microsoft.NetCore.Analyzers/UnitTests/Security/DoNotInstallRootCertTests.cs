@@ -49,11 +49,11 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(18, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
+            GetCSharpResultAt(18, 9, DoNotInstallRootCert.MaybeInstallRootCertRule));
         }
 
         [Fact]
-        public void TestConstructorWithStoreNameParameterUnassignedMaybeChangedDiagnostic()
+        public void TestConstructorWithStoreNameParameterUnassignedMaybeChangedWithRootDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -74,7 +74,7 @@ class TestClass
         x509Store.Add(new X509Certificate2());
     }
 }",
-            GetCSharpResultAt(17, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule));
+            GetCSharpResultAt(17, 9, DoNotInstallRootCert.MaybeInstallRootCertRule));
         }
 
         [Fact]
@@ -300,6 +300,30 @@ class TestClass
 {
     public void TestMethod(StoreName storeName)
     {
+        var x509Store = new X509Store(storeName);
+        x509Store.Add(new X509Certificate2());
+    }
+}");
+        }
+
+        [Fact]
+        public void TestConstructorWithStoreNameParameterUnassignedMaybeChangedWithMyNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod(StoreName storeName)
+    {
+        Random r = new Random();
+
+        if (r.Next(6) == 4)
+        {
+            storeName = StoreName.My;
+        }
+
         var x509Store = new X509Store(storeName);
         x509Store.Add(new X509Certificate2());
     }

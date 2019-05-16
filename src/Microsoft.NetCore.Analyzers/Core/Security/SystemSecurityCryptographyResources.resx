@@ -225,6 +225,15 @@
   <data name="DoNotUseDeprecatedSecurityProtocolsMessage" xml:space="preserve">
     <value>Hard-coded use of deprecated security protocol {0}</value>
   </data>
+  <data name="DoNotUseDSA" xml:space="preserve">
+    <value>Do Not Use Digital Signature Algorithm (DSA)</value>
+  </data>
+  <data name="DoNotUseDSADescription" xml:space="preserve">
+    <value>DSA is an asymmetric algorithms that are weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>
+  </data>
+  <data name="DoNotUseDSAMessage" xml:space="preserve">
+    <value>Weak asymmetric encryption algorithm {0} is banned by the SDL</value>
+  </data>
   <data name="DoNotUseMD5" xml:space="preserve">
     <value>Do not use insecure cryptographic algorithm MD5.</value>
   </data>
@@ -245,15 +254,6 @@
   </data>
   <data name="DoNotUseSHA1Description" xml:space="preserve">
     <value>This type implements SHA1, a cryptographically insecure hashing function. Hash collisions are computationally feasible for the SHA-1 and SHA-0 algorithms. Replace this usage with a SHA-2 family hash algorithm (SHA512, SHA384, SHA256).</value>
-  </data>
-  <data name="DoNotUseWeakAsymmetricAlgorithm" xml:space="preserve">
-    <value>Do Not Use Weak Asymmetric Algorithm</value>
-  </data>
-  <data name="DoNotUseWeakAsymmetricAlgorithmDescription" xml:space="preserve">
-    <value>Finds creation of asymmetric algorithms that are weak or have insufficient key size.</value>
-  </data>
-  <data name="DoNotUseWeakAsymmetricAlgorithmMessage" xml:space="preserve">
-    <value>Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</value>
   </data>
   <data name="DoNotUseWeakCryptographicAlgorithms" xml:space="preserve">
     <value>Do Not Use Weak Cryptographic Algorithms</value>

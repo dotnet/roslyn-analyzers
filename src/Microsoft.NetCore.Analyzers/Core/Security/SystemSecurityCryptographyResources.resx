@@ -229,7 +229,7 @@
     <value>Do Not Use Digital Signature Algorithm (DSA)</value>
   </data>
   <data name="DoNotUseDSADescription" xml:space="preserve">
-    <value>Finds creation or return of DSA.</value>
+    <value>DSA is too weak to use. Any creation or return of DSA will be flagged a diagnositc.</value>
   </data>
   <data name="DoNotUseDSAMessage" xml:space="preserve">
     <value>Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</value>
@@ -331,9 +331,9 @@
     <value>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</value>
   </data>
   <data name="UseRSAWithSufficientKeySizeDescription" xml:space="preserve">
-    <value>It's weak and could be attacked when RSA's key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>
+    <value>Encryption algorithms are vulnerable to brute force attack when too small a key size is used.</value>
   </data>
   <data name="UseRSAWithSufficientKeySizeMessage" xml:space="preserve">
-    <value>Finds creation of RSA whose key size is less than 2048, and return of RSA.</value>
+    <value>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>
   </data>
 </root>

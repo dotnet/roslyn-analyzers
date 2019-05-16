@@ -172,8 +172,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSADescription">
-        <source>Finds creation or return of DSA.</source>
-        <target state="new">Finds creation or return of DSA.</target>
+        <source>DSA is too weak to use. Any creation or return of DSA will be flagged a diagnositc.</source>
+        <target state="new">DSA is too weak to use. Any creation or return of DSA will be flagged a diagnositc.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSAMessage">
@@ -307,13 +307,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeDescription">
-        <source>It's weak and could be attacked when RSA's key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
-        <target state="new">It's weak and could be attacked when RSA's key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</target>
+        <source>Encryption algorithms are vulnerable to brute force attack when too small a key size is used.</source>
+        <target state="new">Encryption algorithms are vulnerable to brute force attack when too small a key size is used.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeMessage">
-        <source>Finds creation of RSA whose key size is less than 2048, and return of RSA.</source>
-        <target state="new">Finds creation of RSA whose key size is less than 2048, and return of RSA.</target>
+        <source>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
+        <target state="new">Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">

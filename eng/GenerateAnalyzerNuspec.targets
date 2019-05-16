@@ -58,7 +58,7 @@
   <Target Name="GenerateAnalyzerNuspecFile"
           BeforeTargets="GenerateNuspec"
           DependsOnTargets="InitializeSourceControlInformation;GenerateAnalyzerRulesets" 
-          Condition="'@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgFolder)' != '' or '@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != '' or '@(AnalyzerNupkgLibrary)' != ''">
+          Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' and ('@(AnalyzerNupkgFile)' != '' or '@(AnalyzerNupkgFolder)' != '' or '@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != '' or '@(AnalyzerNupkgLibrary)' != '')">
     <ItemGroup>
       <_NuspecMetadata Include="version=$(PackageVersion)" />
       <_NuspecMetadata Include="id=$(NuspecPackageId)" />

@@ -89,6 +89,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
+        <target state="translated">Für die Methode "{0}" wurde die Anforderungsüberprüfung deaktiviert.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
@@ -288,14 +289,17 @@
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
+        <target state="translated">SharedAccessProtocol HttpsOnly verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
+        <target state="translated">HTTPS verschlüsselt den Netzwerkdatenverkehr. Verwenden Sie HttpsOnly anstelle von HttpOrHttps, um sicherzustellen, dass der Netzwerkdatenverkehr immer verschlüsselt ist, um die Offenlegung vertraulicher Daten zu verhindern.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
+        <target state="translated">Erwägen Sie, wenn möglich, die rollenbasierte Zugriffssteuerung von Azure anstelle einer Shared Access Signature (SAS) zu verwenden. Wenn Sie noch eine SAS verwenden müssen, geben Sie "SharedAccessProtocol. HttpsOnly" an.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

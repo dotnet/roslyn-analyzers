@@ -89,6 +89,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
+        <target state="translated">메서드 {0}에서 요청 유효성 검사가 사용하지 않도록 설정되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
@@ -288,14 +289,17 @@
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
+        <target state="translated">SharedAccessProtocol HttpsOnly 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
+        <target state="translated">HTTPS는 네트워크 트래픽을 암호화 합니다. 중요 한 데이터가 공개 되지 않도록 하려면 HttpOrHttps 대신 HttpsOnly를 사용 하 여 네트워크 트래픽이 항상 암호화 되도록 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
+        <target state="translated">가능한 경우 SA (공유 액세스 서명) 대신 Azure의 역할 기반 액세스 제어를 사용 하십시오. 여전히 SA를 사용 해야 하는 경우 SharedAccessProtocol을 지정 합니다. HttpsOnly</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

@@ -52,18 +52,39 @@ namespace Microsoft.NetCore.Analyzers.Security
                 "Secure",
                 (ValueContentAbstractValue valueContentAbstractValue) =>
                 {
+                    var valueContent = valueContentAbstractValue.LiteralValues;
+
                     switch (valueContentAbstractValue.NonLiteralState)
                     {
                         case ValueContainsNonLiteralState.No:
-                            // We know all values, so we can say Flagged or Unflagged.
-                            return valueContentAbstractValue.LiteralValues.Contains(true)
-                                ? PropertySetAbstractValueKind.Unflagged
-                                : PropertySetAbstractValueKind.Flagged;
+                            if (valueContent.All(s => s.Equals(false)))
+                            {
+                                // We know all values are bad, so we can say Flagged.
+                                return PropertySetAbstractValueKind.Flagged;
+                            }
+                            else if (valueContent.Any(s => s.Equals(false)))
+                            {
+                                // We know all values but some values are bad, so we can say MaybeFlagged.
+                                return PropertySetAbstractValueKind.MaybeFlagged;
+                            }
+                            else
+                            {
+                                // We know all values are good, so we can say Unflagged.
+                                return PropertySetAbstractValueKind.Unflagged;
+                            }
+
                         case ValueContainsNonLiteralState.Maybe:
-                            // We don't know all values, so we can say Flagged, or who knows.
-                            return valueContentAbstractValue.LiteralValues.Contains(true)
-                                ? PropertySetAbstractValueKind.Unflagged
-                                : PropertySetAbstractValueKind.Unknown;
+                            if (valueContent.Any(s => s.Equals(false)))
+                            {
+                                // We don't know all values but know some values are bad, so we can say MaybeFlagged.
+                                return PropertySetAbstractValueKind.MaybeFlagged;
+                            }
+                            else
+                            {
+                                // We don't know all values but didn't find any bad value, so we can say who knows.
+                                return PropertySetAbstractValueKind.Unknown;
+                            }
+
                         default:
                             return PropertySetAbstractValueKind.Unknown;
                     }
@@ -76,11 +97,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                 case PropertySetAbstractValueKind.Flagged:
                     return HazardousUsageEvaluationResult.Flagged;
 
-                case PropertySetAbstractValueKind.Unflagged:
-                    return HazardousUsageEvaluationResult.Unflagged;
+                case PropertySetAbstractValueKind.MaybeFlagged:
+                    return HazardousUsageEvaluationResult.MaybeFlagged;
 
                 default:
-                    return HazardousUsageEvaluationResult.MaybeFlagged;
+                    return HazardousUsageEvaluationResult.Unflagged;
             }
         }
 

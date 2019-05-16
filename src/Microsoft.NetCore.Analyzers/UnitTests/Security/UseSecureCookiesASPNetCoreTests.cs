@@ -70,7 +70,7 @@ class TestClass
         }
 
         [Fact]
-        public void TestHasWrongSecurePropertyAssignmentMaybeFlaggedDiagnostic()
+        public void TestHasWrongSecurePropertyAssignmentMaybeChangedRightDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -97,7 +97,7 @@ class TestClass
         }
 
         [Fact]
-        public void TestHasWrongSecurePropertyAssignmentMaybeFlagged2Diagnostic()
+        public void TestHasRightSecurePropertyAssignmentMaybeChangedWrongDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -121,6 +121,88 @@ class TestClass
     }
 }",
             GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+        }
+
+        [Fact]
+        public void TestAssignSecurePropertyAnUnassignedVariableMaybeChangedWrongDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.AspNetCore.Http;
+
+class TestClass
+{
+    public void TestMethod(string key, string value, bool secure)
+    {
+        var cookieOptions = new CookieOptions();
+        cookieOptions.Secure = secure;
+        Random r = new Random();
+
+        if (r.Next(6) == 4)
+        {
+            cookieOptions.Secure = false;
+        }
+
+        var responseCookies = new ResponseCookies(); 
+        responseCookies.Append(key, value, cookieOptions);
+    }
+}",
+            GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+        }
+
+        [Fact]
+        public void TestAssignSecurePropertyAnUnassignedVariableMaybeChangedRightDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.AspNetCore.Http;
+
+class TestClass
+{
+    public void TestMethod(string key, string value, bool secure)
+    {
+        var cookieOptions = new CookieOptions();
+        cookieOptions.Secure = secure;
+        Random r = new Random();
+
+        if (r.Next(6) == 4)
+        {
+            cookieOptions.Secure = true;
+        }
+
+        var responseCookies = new ResponseCookies(); 
+        responseCookies.Append(key, value, cookieOptions);
+    }
+}",
+            GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+        }
+
+        [Fact]
+        public void TestAssignSecurePropertyAnAssignedVariableMaybeChangedDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.AspNetCore.Http;
+
+class TestClass
+{
+    public void TestMethod(string key, string value)
+    {
+        var cookieOptions = new CookieOptions();
+        var secure = true;
+        Random r = new Random();
+
+        if (r.Next(6) == 4)
+        {
+            secure = false;
+        }
+        
+        cookieOptions.Secure = secure;
+        var responseCookies = new ResponseCookies(); 
+        responseCookies.Append(key, value, cookieOptions);
+    }
+}",
+            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]

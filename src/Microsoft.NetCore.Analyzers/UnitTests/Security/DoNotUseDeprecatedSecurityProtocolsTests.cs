@@ -116,6 +116,7 @@ class TestClass
         [Fact]
         public void TestUse384SimpleAssignmentDiagnostic()
         {
+            // 384 = SchProtocols.Tls11Server | SchProtocols.Tls10Client
             VerifyCSharp(@"
 using System;
 using System.Net;
@@ -128,6 +129,23 @@ class TestClass
     }
 }",
                 GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.Rule, "384"));
+        }
+
+        [Fact]
+        public void TestUse768SimpleAssignmentOrExpressionDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol | (SecurityProtocolType)768;
+    }
+}",
+                GetCSharpResultAt(9, 87, DoNotUseDeprecatedSecurityProtocols.Rule, "768"));
         }
 
         [Fact]

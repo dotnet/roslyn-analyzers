@@ -269,6 +269,23 @@ class TestClass
         }
 
         [Fact]
+        public void TestCaseSensitiveDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var cryptoConfig = CryptoConfig.CreateFromName(""system.security.cryptography.asymmetricalgorithm"", new Object[]{1024});
+    }
+}",
+            GetCSharpResultAt(9, 28, UseRSAWithSufficientKeySize.Rule, "system.security.cryptography.asymmetricalgorithm"));
+        }
+
+        [Fact]
         public void TestCreateObjectOfRSADerivedClassWithInt32ParameterNoDiagnostic()
         {
             VerifyCSharp(@"

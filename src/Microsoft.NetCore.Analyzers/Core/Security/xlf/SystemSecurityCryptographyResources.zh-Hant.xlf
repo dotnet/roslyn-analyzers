@@ -172,13 +172,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSADescription">
-        <source>DSA is too weak to use. Any creation or return of DSA will be flagged a diagnositc.</source>
-        <target state="new">DSA is too weak to use. Any creation or return of DSA will be flagged a diagnositc.</target>
+        <source>DSA is too weak to use.</source>
+        <target state="new">DSA is too weak to use.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSAMessage">
-        <source>Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
-        <target state="new">Weak asymmetric encryption algorithm {0} is banned by the SDL. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
+        <target state="new">Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">

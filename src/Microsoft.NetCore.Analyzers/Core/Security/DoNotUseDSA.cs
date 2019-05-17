@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -138,7 +139,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         var argValue = arguments[0].Value.ConstantValue.Value;
 
-                        if (s_DSAAlgorithmNames.Contains(argValue))
+                        if (s_DSAAlgorithmNames.Any(
+                                s => string.Equals(
+                                    s,
+                                    argValue.ToString(), StringComparison.OrdinalIgnoreCase)))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
@@ -154,7 +158,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         var argValue = arguments[0].Value.ConstantValue.Value;
 
-                        if (s_DSAAlgorithmNames.Contains(argValue))
+                        if (s_DSAAlgorithmNames.Any(
+                                s => string.Equals(
+                                    s,
+                                    argValue.ToString(), StringComparison.OrdinalIgnoreCase)))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(

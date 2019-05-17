@@ -121,6 +121,22 @@ class TestClass
         }
 
         [Fact]
+        public void TestCaseSensitiveDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var asymmetricAlgorithm = AsymmetricAlgorithm.Create(""dSa"");
+    }
+}",
+            GetCSharpResultAt(8, 35, DoNotUseDSA.Rule, "dSa"));
+        }
+
+        [Fact]
         public void TestCreateWithSystemSecurityCryptographyDSAArgDiagnostic()
         {
             VerifyCSharp(@"

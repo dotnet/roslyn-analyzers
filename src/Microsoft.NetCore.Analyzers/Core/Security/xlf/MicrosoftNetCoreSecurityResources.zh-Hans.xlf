@@ -17,6 +17,16 @@
         <target state="translated">请勿使用不安全的反序列化程序 BinaryFormatter</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage">
+        <source>Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</source>
+        <target state="new">Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle">
+        <source>Do not disable ServicePointManagerSecurityProtocols</source>
+        <target state="new">Do not disable ServicePointManagerSecurityProtocols</target>
+        <note />
+      </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</source>
         <target state="translated">使用通过 SimpleTypeResolver 初始化的 JavaScriptSerializer 反序列化不可信数据时，{0} 方法不安全。请确保初始化 JavaScriptSerializer 但不指定 JavaScriptTypeResolver，或使用限制为反序列化对象图形中的对象类型的 JavaScriptTypeResolver 初始化该对象。</target>

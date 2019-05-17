@@ -2,7 +2,7 @@
 trigger:
 - master
 
-# Branches that trigger builds on PR
+# Branch(es) that trigger(s) build(s) on PR
 pr:
 - master
 
@@ -16,7 +16,7 @@ jobs:
       Release:
         _configuration: Release
   pool:
-    name: NetCorePublic-Int-Pool
+    name: NetCorePublic-Pool
     queue: buildpool.windows.10.amd64.vs2017.open
   timeoutInMinutes: 20
 

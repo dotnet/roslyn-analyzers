@@ -275,6 +275,22 @@ class TestClass
         }
 
         [Fact]
+        public void TestInstallCertToNullStoreNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var x509Store = new X509Store(null);
+        x509Store.Add(new X509Certificate2());
+    }
+}");
+        }
+
+        [Fact]
         public void TestCreateAStoreWithoutSettingStoreNameNoDiagnostic()
         {
             VerifyCSharp(@"

@@ -99,65 +99,15 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             if (constructorMethod.Parameters.Length > 0)
                             {
-                                var valueContent = argumentValueContentAbstractValues[0].LiteralValues;
-
-                                switch (argumentValueContentAbstractValues[0].NonLiteralState)
+                                if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol))
                                 {
-                                    case ValueContainsNonLiteralState.No:
-                                        if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol))
-                                        {
-                                            if (valueContent.All(s => s.Equals(6)))
-                                            {
-                                                kind = PropertySetAbstractValueKind.Flagged;
-                                            }
-                                            else if (valueContent.Any(s => s.Equals(6)))
-                                            {
-                                                kind = PropertySetAbstractValueKind.MaybeFlagged;
-                                            }
-                                        }
-                                        else if (constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
-                                        {
-                                            if (valueContent.All(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
-                                            {
-                                                kind = PropertySetAbstractValueKind.Flagged;
-                                            }
-                                            else if (valueContent.Any(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
-                                            {
-                                                kind = PropertySetAbstractValueKind.MaybeFlagged;
-                                            }
-                                        }
-
-                                        break;
-
-                                    case ValueContainsNonLiteralState.Maybe:
-                                        if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol))
-                                        {
-                                            if (valueContent.Any(s => s.Equals(6)))
-                                            {
-                                                kind = PropertySetAbstractValueKind.MaybeFlagged;
-                                            }
-                                            else
-                                            {
-                                                kind = PropertySetAbstractValueKind.Unknown;
-                                            }
-                                        }
-                                        else if (constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
-                                        {
-                                            if (valueContent.Any(s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase)))
-                                            {
-                                                kind = PropertySetAbstractValueKind.MaybeFlagged;
-                                            }
-                                            else
-                                            {
-                                                kind = PropertySetAbstractValueKind.Unknown;
-                                            }
-                                        }
-
-                                        break;
-
-                                    default:
-                                        kind = PropertySetAbstractValueKind.Unknown;
-                                        break;
+                                    kind = PropertySetAnalysis.EvaluateLiteralValues(argumentValueContentAbstractValues[0], o => o.Equals(6));
+                                }
+                                else if (constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
+                                {
+                                    kind = PropertySetAnalysis.EvaluateLiteralValues(
+                                        argumentValueContentAbstractValues[0],
+                                        s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase));
                                 }
                             }
 

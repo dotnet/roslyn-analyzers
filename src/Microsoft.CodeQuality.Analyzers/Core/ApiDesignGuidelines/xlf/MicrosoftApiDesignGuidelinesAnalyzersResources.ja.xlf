@@ -1429,14 +1429,17 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <target state="translated">非同期メソッドがタスクを直接待機すると、タスクを作成したのと同じスレッドで継続が発生します。継続の意図を示すには、Task.ConfigureAwait(Boolean) の呼び出しを検討してください。タスクで ConfigureAwait(false) を呼び出して、スレッド プールへの継続をスケジュールします。その結果、UI スレッドのデッドロックを回避できます。アプリに依存しないライブラリでは、false を渡すことが適切なオプションです。タスクで ConfigureAwait(true) を呼び出すと、ConfigureAwait を明示的に呼び出さない場合と動作が同じになります。このメソッドを明示的に呼び出すことにより、元の同期コンテキストで意図的に継続を実行していることを閲覧者に示します。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling ConfigureAwait on the awaited task</source>
+        <target state="translated">待機中のタスクでの ConfigureAwait の呼び出しを検討してください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling ConfigureAwait on the awaited task</source>
+        <target state="translated">待機中のタスクでの ConfigureAwait の呼び出しを検討してください</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">

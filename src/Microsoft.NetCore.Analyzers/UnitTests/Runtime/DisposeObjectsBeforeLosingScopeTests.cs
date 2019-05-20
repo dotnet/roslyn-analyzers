@@ -10183,5 +10183,32 @@ class C
             // Test0.cs(10,22): warning CA2000: Call System.IDisposable.Dispose on object created by 'GetStream()' before all references to it are out of scope.
             GetCSharpResultAt(10, 22, "GetStream()"));
         }
+
+        [Fact]
+        public void PointsToAnalysisAssert_UninitializedLocalPassedToInvocation()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    void M1()
+    {
+        IDisposable local;
+        M2(local);
+        local = new C();
+    }
+
+    void M2(IDisposable param)
+    {
+    }
+
+    public void Dispose()
+    {
+    }
+}", TestValidationMode.AllowCompileErrors,
+            // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+            GetCSharpResultAt(10, 17, "new C()"));
+        }
     }
 }

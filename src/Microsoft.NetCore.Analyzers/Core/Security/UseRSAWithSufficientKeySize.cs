@@ -42,6 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static readonly ImmutableHashSet<string> s_RSAAlgorithmNames =
             ImmutableHashSet.Create(
+                StringComparer.OrdinalIgnoreCase,
                 "RSA",
                 "System.Security.Cryptography.RSA",
                 "System.Security.Cryptography.AsymmetricAlgorithm");
@@ -158,10 +159,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         var argValue = arguments[0].Value.ConstantValue.Value;
 
-                        if (s_RSAAlgorithmNames.Any(
-                                s => string.Equals(
-                                    s,
-                                    argValue.ToString(), StringComparison.OrdinalIgnoreCase)))
+                        if (s_RSAAlgorithmNames.Contains(argValue.ToString()))
                         {
                             // Use AsymmetricAlgorithm.Create(string) to create RSA whose default key size is 1024.
                             operationAnalysisContext.ReportDiagnostic(
@@ -179,10 +177,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         // Use CryptoConfig.CreateFromName(string, ...).
                         var argValue = arguments[0].Value.ConstantValue.Value;
 
-                        if (s_RSAAlgorithmNames.Any(
-                                s => string.Equals(
-                                    s,
-                                    argValue.ToString(), StringComparison.OrdinalIgnoreCase)))
+                        if (s_RSAAlgorithmNames.Contains(argValue.ToString()))
                         {
                             // Create RSA.
                             if (arguments.Length == 1 /* The default key size is 1024 */ ||

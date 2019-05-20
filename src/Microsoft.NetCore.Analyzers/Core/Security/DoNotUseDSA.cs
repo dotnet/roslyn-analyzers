@@ -42,6 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static readonly ImmutableHashSet<string> s_DSAAlgorithmNames =
             ImmutableHashSet.Create(
+                StringComparer.OrdinalIgnoreCase,
                 "DSA",
                 "System.Security.Cryptography.DSA");
 
@@ -139,10 +140,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         var argValue = arguments[0].Value.ConstantValue.Value;
 
-                        if (s_DSAAlgorithmNames.Any(
-                                s => string.Equals(
-                                    s,
-                                    argValue.ToString(), StringComparison.OrdinalIgnoreCase)))
+                        if (s_DSAAlgorithmNames.Contains(argValue.ToString()))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
@@ -158,10 +156,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         var argValue = arguments[0].Value.ConstantValue.Value;
 
-                        if (s_DSAAlgorithmNames.Any(
-                                s => string.Equals(
-                                    s,
-                                    argValue.ToString(), StringComparison.OrdinalIgnoreCase)))
+                        if (s_DSAAlgorithmNames.Contains(argValue.ToString()))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(

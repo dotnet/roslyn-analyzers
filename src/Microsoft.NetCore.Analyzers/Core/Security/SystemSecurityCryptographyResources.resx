@@ -136,7 +136,7 @@
     <value>Use Secure Cookies In ASP.Net Core</value>
   </data>
   <data name="DefinitelyUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
-    <value>Set CookieOptions.Secure = true when creating a cookie</value>
+    <value>Set CookieOptions.Secure = true when setting a cookie</value>
   </data>
   <data name="DoNotAddSchemaByURL" xml:space="preserve">
     <value>Do Not Add Schema By URL</value>
@@ -295,7 +295,7 @@
     <value>Ensure Use Secure Cookies In ASP.Net Core</value>
   </data>
   <data name="MaybeUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
-    <value>Ensure that Set CookieOptions.Secure = true when creating a cookie</value>
+    <value>Ensure that Set CookieOptions.Secure = true when setting a cookie</value>
   </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>

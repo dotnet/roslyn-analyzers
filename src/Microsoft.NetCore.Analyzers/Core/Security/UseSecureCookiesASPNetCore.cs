@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCoreMessage),
             false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCoreDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor MaybeUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5383",
@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCoreMessage),
             false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCoreDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(

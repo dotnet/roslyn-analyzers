@@ -82,7 +82,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             // If there are more classes implement IResponseCookies, add them here later.
             HazardousUsageEvaluatorCollection hazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
                 new HazardousUsageEvaluator(
-                    WellKnownTypeNames.MicrosoftAspNetCoreHttpResponseCookies,
+                    WellKnownTypeNames.MicrosoftAspNetCoreHttpInternalResponseCookies,
                     "Append",
                     "options",
                     HazardousUsageCallback));

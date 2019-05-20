@@ -21,21 +21,6 @@ namespace Microsoft.AspNetCore.Http
         void Append(string key, string value, CookieOptions options);
     }
 
-    public class ResponseCookies : IResponseCookies
-    {
-        public ResponseCookies()
-        {
-        }
-
-        public void Append(string key, string value)
-        {
-        }
-
-        public void Append(string key, string value, CookieOptions options)
-        {
-        }
-    }
-
     public class CookieOptions
     {
         public CookieOptions()
@@ -43,6 +28,24 @@ namespace Microsoft.AspNetCore.Http
         }
 
         public bool Secure { get; set; }
+    }
+
+    namespace Internal
+    {
+        public class ResponseCookies : IResponseCookies
+        {
+            public ResponseCookies()
+            {
+            }
+
+            public void Append(string key, string value)
+            {
+            }
+
+            public void Append(string key, string value, CookieOptions options)
+            {
+            }
+        }
     }
 }";
             this.VerifyCSharp(
@@ -55,6 +58,7 @@ namespace Microsoft.AspNetCore.Http
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -66,7 +70,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(12, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -75,6 +79,7 @@ class TestClass
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -93,7 +98,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -102,6 +107,7 @@ class TestClass
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -120,7 +126,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -129,6 +135,7 @@ class TestClass
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -147,7 +154,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -156,6 +163,7 @@ class TestClass
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -174,7 +182,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(19, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -183,6 +191,7 @@ class TestClass
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -202,7 +211,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(20, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(21, 9, UseSecureCookiesASPNetCore.MaybeUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -210,6 +219,7 @@ class TestClass
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -220,7 +230,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -228,6 +238,7 @@ class TestClass
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -238,7 +249,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(11, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -246,6 +257,7 @@ class TestClass
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -255,7 +267,7 @@ class TestClass
         responseCookies.Append(key, value);
     }
 }",
-            GetCSharpResultAt(9, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -263,6 +275,7 @@ class TestClass
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -280,7 +293,7 @@ class TestClass
         return cookieOptions;
     }
 }",
-            GetCSharpResultAt(9, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(10, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -288,6 +301,7 @@ class TestClass
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -304,7 +318,7 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }",
-            GetCSharpResultAt(16, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
+            GetCSharpResultAt(17, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule));
         }
 
         [Fact]
@@ -312,6 +326,7 @@ class TestClass
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {
@@ -330,6 +345,7 @@ class TestClass
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 class TestClass
 {

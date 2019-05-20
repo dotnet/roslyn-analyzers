@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
@@ -18,44 +20,35 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UseSecureCookiesASPNetCore : DiagnosticAnalyzer
+    public sealed class DoNotInstallRootCert : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor DefinitelyUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5382",
+        internal static DiagnosticDescriptor DefinitelyInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5380",
             typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCore),
-            nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCoreMessage),
-            false,
+            nameof(SystemSecurityCryptographyResources.DefinitelyInstallRootCert),
+            nameof(SystemSecurityCryptographyResources.DefinitelyInstallRootCertMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotInstallRootCertDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
-        internal static DiagnosticDescriptor MaybeUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5383",
+        internal static DiagnosticDescriptor MaybeInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5381",
             typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCore),
-            nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCoreMessage),
-            false,
+            nameof(SystemSecurityCryptographyResources.MaybeInstallRootCert),
+            nameof(SystemSecurityCryptographyResources.MaybeInstallRootCertMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotInstallRootCertDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
-                                                                                        DefinitelyUseSecureCookiesASPNetCoreRule,
-                                                                                        MaybeUseSecureCookiesASPNetCoreRule);
-
-        private static readonly ConstructorMapper constructorMapper = new ConstructorMapper(
-                                                                        ImmutableArray.Create<PropertySetAbstractValueKind>(
-                                                                            PropertySetAbstractValueKind.Flagged));
+                                                                                        DefinitelyInstallRootCertRule,
+                                                                                        MaybeInstallRootCertRule);
 
         private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
             new PropertyMapper(
-                "Secure",
-                (ValueContentAbstractValue valueContentAbstractValue) =>
-                {
-                    var valueContent = valueContentAbstractValue.LiteralValues;
-
-                    return PropertySetAnalysis.EvaluateLiteralValues(valueContentAbstractValue, o => o.Equals(false));
-                }));
+                "...dummy name",    // There isn't *really* a property for what we're tracking; just the constructor argument.
+                (PointsToAbstractValue v) => PropertySetAbstractValueKind.Unknown));
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
@@ -79,29 +72,48 @@ namespace Microsoft.NetCore.Analyzers.Security
             // Security analyzer - analyze and report diagnostics on generated code.
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
-            // If there are more classes implement IResponseCookies, add them here later.
             HazardousUsageEvaluatorCollection hazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
-                new HazardousUsageEvaluator(
-                    WellKnownTypeNames.MicrosoftAspNetCoreHttpResponseCookies,
-                    "Append",
-                    "options",
-                    HazardousUsageCallback));
+                new HazardousUsageEvaluator("Add", HazardousUsageCallback));
 
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
-                            WellKnownTypeNames.MicrosoftAspNetCoreHttpIResponseCookies,
-                            out var iResponseCookiesTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Store, out var x509TypeSymbol))
                     {
                         return;
                     }
 
-                    wellKnownTypeProvider.TryGetTypeByMetadataName(
-                        WellKnownTypeNames.MicrosoftAspNetCoreHttpCookieOptions,
-                        out var cookieOptionsTypeSymbol);
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesStoreName, out var storeNameTypeSymbol))
+                    {
+                        return;
+                    }
+
+                    // If X509Store is initialized with Root store, then that instance is flagged.
+                    var constructorMapper = new ConstructorMapper(
+                        (IMethodSymbol constructorMethod, IReadOnlyList<ValueContentAbstractValue> argumentValueContentAbstractValues,
+                        IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
+                        {
+                            var kind = PropertySetAbstractValueKind.Unflagged;
+
+                            if (constructorMethod.Parameters.Length > 0)
+                            {
+                                if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol))
+                                {
+                                    kind = PropertySetAnalysis.EvaluateLiteralValues(argumentValueContentAbstractValues[0], o => o.Equals(6));
+                                }
+                                else if (constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
+                                {
+                                    kind = PropertySetAnalysis.EvaluateLiteralValues(
+                                        argumentValueContentAbstractValues[0],
+                                        s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase));
+                                }
+                            }
+
+                            return PropertySetAbstractValue.GetInstance(kind);
+                        });
+
                     var rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
 
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
@@ -111,24 +123,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
                                     var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
-                                    var methodSymbol = invocationOperation.TargetMethod;
 
-                                    if (methodSymbol.ContainingType is INamedTypeSymbol namedTypeSymbol &&
-                                        namedTypeSymbol.Interfaces.Contains(iResponseCookiesTypeSymbol) &&
-                                        invocationOperation.TargetMethod.Name == "Append")
+                                    if (x509TypeSymbol.Equals(invocationOperation.Instance?.Type) &&
+                                        invocationOperation.TargetMethod.Name == "Add")
                                     {
-                                        if (methodSymbol.Parameters.Length < 3)
+                                        lock (rootOperationsNeedingAnalysis)
                                         {
-                                            operationAnalysisContext.ReportDiagnostic(
-                                                invocationOperation.CreateDiagnostic(
-                                                    DefinitelyUseSecureCookiesASPNetCoreRule));
-                                        }
-                                        else
-                                        {
-                                            lock (rootOperationsNeedingAnalysis)
-                                            {
-                                                rootOperationsNeedingAnalysis.Add((invocationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
-                                            }
+                                            rootOperationsNeedingAnalysis.Add((invocationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
                                 },
@@ -139,7 +140,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     var argumentOperation = (IArgumentOperation)operationAnalysisContext.Operation;
 
-                                    if (argumentOperation.Parameter.Type.Equals(cookieOptionsTypeSymbol))
+                                    if (x509TypeSymbol.Equals(argumentOperation.Parameter.Type))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
@@ -167,7 +168,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
-                                        WellKnownTypeNames.MicrosoftAspNetCoreHttpCookieOptions,
+                                        WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Store,
                                         constructorMapper,
                                         PropertyMappers,
                                         hazardousUsageEvaluators,
@@ -190,11 +191,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     switch (kvp.Value)
                                     {
                                         case HazardousUsageEvaluationResult.Flagged:
-                                            descriptor = DefinitelyUseSecureCookiesASPNetCoreRule;
+                                            descriptor = DefinitelyInstallRootCertRule;
                                             break;
 
                                         case HazardousUsageEvaluationResult.MaybeFlagged:
-                                            descriptor = MaybeUseSecureCookiesASPNetCoreRule;
+                                            descriptor = MaybeInstallRootCertRule;
                                             break;
 
                                         default:

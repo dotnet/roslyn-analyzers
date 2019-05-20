@@ -1429,14 +1429,17 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
+        <target state="translated">当异步方法直接等待任务时，在创建该任务的同一线程中执行继续操作。请考虑调用 Task.ConfigureAwait(Boolean)以告知你打算继续。对任务调用 ConfigureAwait(false)以将继续操作安排到线程池，从而避免 UI 线程上出现死锁。对于独立于应用的库，最好选择传递 false。对任务调用 ConfigureAwait(true) 的行为与不显式调用 ConfigureAwait 相同。通过显式调用此方法，可以让读者知道你有意要对原始同步上下文执行继续操作。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling ConfigureAwait on the awaited task</source>
+        <target state="translated">考虑对等待的任务调用 ConfigureAwait</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling ConfigureAwait on the awaited task</source>
+        <target state="translated">考虑对等待的任务调用 ConfigureAwait</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">

@@ -2457,5 +2457,56 @@ Enum SyntaxKind
 End Enum
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void PointsToAnalysisForLoopOnStructFields()
+        {
+            VerifyCSharp(@"
+using System.IO;
+
+namespace ClassLibrary14
+{
+    public class Class2
+    {
+        struct S
+        {
+            public string f1;
+            public string f2;
+            public bool f3;
+            public bool f4;
+            public bool f5;
+            public bool f6;
+        };
+
+        public void M(Class2 c)
+        {
+            c?.M(null);
+            S[] filesToReplace = new[]
+            {
+                new S { f1=""file1"", f2=@""string1"",f3=true, f4=true, f5=false, f6=true},
+                new S { f1=""file2"",f2=@""string2"", f3=true, f4=true, f5=false, f6=true},
+                new S { f1=""file3"", f2=@""string2"",f3=false, f4=false, f5=false, f6=true},
+                new S { f1=""file4"", f2=@""string2"", f3=false, f4=false, f5=true, f6=true},
+                new S { f1=""file5"", f2=@""string2"", f3=false, f4=false, f5=true, f6=false}
+            };
+
+            foreach (S fileDetails in filesToReplace)
+            {
+                bool fileIsUpToDate = false;
+                var x1 = fileDetails.f1;
+                var destinationDir = fileDetails.f2;
+                var x3 = Path.Combine(destinationDir, fileDetails.f1);
+                var x4 = fileDetails.f1;
+
+                foreach (var residual in Directory.GetFiles(destinationDir, fileDetails.f1 + "".delete.*""))
+                {                    
+                }
+            }
+        }
+    }
+}
+");
+        }
     }
 }

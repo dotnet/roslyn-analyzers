@@ -17,6 +17,16 @@
         <target state="translated">안전하지 않은 암호화 모드 {0}을(를) 사용합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefinitelyInstallRootCert">
+        <source>Do Not Add Certificates To Root Store</source>
+        <target state="new">Do Not Add Certificates To Root Store</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyInstallRootCertMessage">
+        <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
+        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
         <source>Use Secure Cookies In ASP.Net Core</source>
         <target state="new">Use Secure Cookies In ASP.Net Core</target>
@@ -99,6 +109,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
+        <target state="translated">메서드 {0}에서 요청 유효성 검사가 사용하지 않도록 설정되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
@@ -114,6 +125,11 @@
       <trans-unit id="DoNotDisableSchUseStrongCryptoMessage">
         <source>{0} disables TLS 1.2 and enables SSLv3</source>
         <target state="translated">{0}이(가) TLS 1.2를 사용하지 않도록, SSLv3를 사용하도록 설정합니다.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotInstallRootCertDescription">
+        <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
+        <target state="new">By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">
@@ -266,14 +282,24 @@
         <target state="translated">XslTransform을 사용하지 마세요. 잠재적으로 위험한 외부 참조를 제한하지 않습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="MaybeInstallRootCert">
+        <source>Ensure Certificates Are Not Added To Root Store</source>
+        <target state="new">Ensure Certificates Are Not Added To Root Store</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeInstallRootCertMessage">
+        <source>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</source>
+        <target state="new">Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCore">
         <source>Ensure Use Secure Cookies In ASP.Net Core</source>
         <target state="new">Ensure Use Secure Cookies In ASP.Net Core</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCoreMessage">
-        <source>Ensure That Set CookieOptions.Secure = true when creating a cookie</source>
-        <target state="new">Ensure That Set CookieOptions.Secure = true when creating a cookie</target>
+        <source>Ensure that Set CookieOptions.Secure = true when creating a cookie</source>
+        <target state="new">Ensure that Set CookieOptions.Secure = true when creating a cookie</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -313,14 +339,17 @@
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
+        <target state="translated">SharedAccessProtocol HttpsOnly 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
+        <target state="translated">HTTPS는 네트워크 트래픽을 암호화 합니다. 중요 한 데이터가 공개 되지 않도록 하려면 HttpOrHttps 대신 HttpsOnly를 사용 하 여 네트워크 트래픽이 항상 암호화 되도록 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
+        <target state="translated">가능한 경우 SA (공유 액세스 서명) 대신 Azure의 역할 기반 액세스 제어를 사용 하십시오. 여전히 SA를 사용 해야 하는 경우 SharedAccessProtocol을 지정 합니다. HttpsOnly</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

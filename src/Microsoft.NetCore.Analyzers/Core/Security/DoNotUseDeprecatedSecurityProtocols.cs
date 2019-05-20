@@ -32,6 +32,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 "SystemDefault",
                 "Tls12");
 
+        private const int UnsafeBits = 48 | 192 | 768;    // SecurityProtocols Ssl3 Tls10 Tls11
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
                 s_Title,
@@ -83,6 +85,30 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         constantValue));
                             }
                         }, OperationKind.FieldReference);
+                    compilationStartAnalysisContext.RegisterOperationAction(
+                        (OperationAnalysisContext operationAnalysisContext) =>
+                        {
+                            var assignmentOperation = (IAssignmentOperation)operationAnalysisContext.Operation;
+                            if (!securityProtocolTypeTypeSymbol.Equals(assignmentOperation.Target.Type))
+                            {
+                                return;
+                            }
+
+                            if (assignmentOperation.Value.HasAnyOperationDescendant(
+                                    (IOperation childOperation) =>
+                                        childOperation.ConstantValue.HasValue
+                                        && childOperation.ConstantValue.Value is int integerValue
+                                        && (integerValue & UnsafeBits) != 0,
+                                    out IOperation foundOperation))
+                            {
+                                operationAnalysisContext.ReportDiagnostic(
+                                    foundOperation.CreateDiagnostic(
+                                        Rule,
+                                        foundOperation.ConstantValue));
+                            }
+                        },
+                        OperationKind.SimpleAssignment,
+                        OperationKind.CompoundAssignment);
                 });
         }
     }

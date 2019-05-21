@@ -295,7 +295,7 @@
     <value>Ensure Use Secure Cookies In ASP.Net Core</value>
   </data>
   <data name="MaybeUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
-    <value>Ensure that Set CookieOptions.Secure = true when setting a cookie</value>
+    <value>Ensure that CookieOptions.Secure = true when setting a cookie</value>
   </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>

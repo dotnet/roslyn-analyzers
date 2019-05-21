@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 "Secure",
                 (ValueContentAbstractValue valueContentAbstractValue) =>
                 {
-                    return PropertySetAnalysis.EvaluateLiteralValues(valueContentAbstractValue.LiteralValues, o => o.Equals(false));
+                    return PropertySetAnalysis.EvaluateLiteralValues(valueContentAbstractValue, o => o.Equals(false));
                 }));
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)

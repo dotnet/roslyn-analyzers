@@ -240,6 +240,15 @@
   <data name="DoNotUseDeprecatedSecurityProtocolsMessage" xml:space="preserve">
     <value>Hard-coded use of deprecated security protocol {0}</value>
   </data>
+  <data name="DoNotUseDSA" xml:space="preserve">
+    <value>Do Not Use Digital Signature Algorithm (DSA)</value>
+  </data>
+  <data name="DoNotUseDSADescription" xml:space="preserve">
+    <value>DSA is too weak to use.</value>
+  </data>
+  <data name="DoNotUseDSAMessage" xml:space="preserve">
+    <value>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</value>
+  </data>
   <data name="DoNotUseMD5" xml:space="preserve">
     <value>Do not use insecure cryptographic algorithm MD5.</value>
   </data>
@@ -347,5 +356,14 @@
   </data>
   <data name="UseXmlReaderMessage" xml:space="preserve">
     <value>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</value>
+  </data>
+  <data name="UseRSAWithSufficientKeySize" xml:space="preserve">
+    <value>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</value>
+  </data>
+  <data name="UseRSAWithSufficientKeySizeDescription" xml:space="preserve">
+    <value>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</value>
+  </data>
+  <data name="UseRSAWithSufficientKeySizeMessage" xml:space="preserve">
+    <value>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>
   </data>
 </root>

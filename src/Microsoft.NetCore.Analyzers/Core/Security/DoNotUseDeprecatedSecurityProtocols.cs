@@ -186,9 +186,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                             if (foundHardCodedOperation != null && !foundHardCodedReference)
                             {
                                 operationAnalysisContext.ReportDiagnostic(
-                                    foundDeprecatedOperation.CreateDiagnostic(
+                                    foundHardCodedOperation.CreateDiagnostic(
                                         HardCodedRule,
-                                        foundDeprecatedOperation.ConstantValue));
+                                        foundHardCodedOperation.ConstantValue));
                             }
                         },
                         OperationKind.SimpleAssignment,

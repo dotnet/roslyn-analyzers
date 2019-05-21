@@ -6558,7 +6558,7 @@ public class C
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
-       public void ArrayInitializerNotParentedByArrayCreation()
+        public void ArrayInitializerNotParentedByArrayCreation()
         {
             VerifyBasic(@"
 Class C

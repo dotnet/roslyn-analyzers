@@ -145,7 +145,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         typeSymbol.Equals(asymmetricAlgorithmTypeSymbol) &&
                         arguments.Length == 0)
                     {
-                        // AsymmetricAlgorithm.Create() creates RSA and the default key size is 1024.
+                        // Use AsymmetricAlgorithm.Create() to create RSA and the default key size is 1024.
                         operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
                                     Rule,
@@ -161,7 +161,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         if (s_RSAAlgorithmNames.Contains(argValue.ToString()))
                         {
-                            // Use AsymmetricAlgorithm.Create(string) to create RSA whose default key size is 1024.
+                            // Use AsymmetricAlgorithm.Create(string) to create RSA and the default key size is 1024.
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
                                     Rule,
@@ -186,7 +186,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 arrayCreationOperation.Initializer.ElementValues.Any(
                                     s => s is IConversionOperation conversionOperation &&
                                         conversionOperation.Operand.ConstantValue.HasValue &&
-                                        Convert.ToInt32(conversionOperation.Operand.ConstantValue.Value) < 2048) /* Specify the key size is smaller than 2048 explictly */ )
+                                        Convert.ToInt32(conversionOperation.Operand.ConstantValue.Value) < 2048) /* Specify the key size is smaller than 2048 explicitly */ )
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(

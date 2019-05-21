@@ -272,6 +272,16 @@
         <target state="translated">XslTransform을 사용하지 마세요. 잠재적으로 위험한 외부 참조를 제한하지 않습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="HardCodedSecurityProtocolMessage">
+        <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
+        <target state="new">Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardCodedSecurityProtocolTitle">
+        <source>Avoid hardcoding SecurityProtocolType value</source>
+        <target state="new">Avoid hardcoding SecurityProtocolType value</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
         <source>Ensure Certificates Are Not Added To Root Store</source>
         <target state="new">Ensure Certificates Are Not Added To Root Store</target>

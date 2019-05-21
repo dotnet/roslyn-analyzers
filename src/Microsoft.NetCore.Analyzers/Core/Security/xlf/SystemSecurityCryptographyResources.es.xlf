@@ -333,8 +333,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeDescription">
-        <source>Encryption algorithms are vulnerable to brute force attack when too small a key size is used.</source>
-        <target state="new">Encryption algorithms are vulnerable to brute force attack when too small a key size is used.</target>
+        <source>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</source>
+        <target state="new">Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeMessage">

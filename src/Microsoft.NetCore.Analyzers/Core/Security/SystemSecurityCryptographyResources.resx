@@ -346,7 +346,7 @@
     <value>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</value>
   </data>
   <data name="UseRSAWithSufficientKeySizeDescription" xml:space="preserve">
-    <value>Encryption algorithms are vulnerable to brute force attack when too small a key size is used.</value>
+    <value>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</value>
   </data>
   <data name="UseRSAWithSufficientKeySizeMessage" xml:space="preserve">
     <value>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>

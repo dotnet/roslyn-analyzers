@@ -27,6 +27,16 @@
         <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
+        <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
+        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
+        <source>Default iteration count 1000 needs to be overwritten in this object creation. Use at least 100k iterations when deriving cryptographic key from password</source>
+        <target state="new">Default iteration count 1000 needs to be overwritten in this object creation. Use at least 100k iterations when deriving cryptographic key from password</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
         <target state="translated">URL'ye Göre Şema Eklemeyin</target>
@@ -277,6 +287,11 @@
         <target state="new">{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
+        <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
+        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
         <source>Do Not Use XslTransform</source>
         <target state="translated">XslTransform Kullanma</target>
@@ -295,6 +310,16 @@
       <trans-unit id="MaybeInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</source>
         <target state="new">Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
+        <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
+        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
+        <source>Default iteration count 1000 needs to be overwritten in this object creation. Ensure that it is using at least 100k iterations when deriving cryptographic key</source>
+        <target state="new">Default iteration count 1000 needs to be overwritten in this object creation. Ensure that it is using at least 100k iterations when deriving cryptographic key</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">

@@ -132,6 +132,12 @@
   <data name="DefinitelyInstallRootCertMessage" xml:space="preserve">
     <value>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</value>
   </data>
+  <data name="DefinitelyUseWeakKDFInsufficientIterationCount" xml:space="preserve">
+    <value>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</value>
+  </data>
+  <data name="DefinitelyUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
+    <value>Default iteration count 1000 needs to be overwritten in this object creation. Use at least 100k iterations when deriving cryptographic key from password</value>
+  </data>
   <data name="DoNotAddSchemaByURL" xml:space="preserve">
     <value>Do Not Add Schema By URL</value>
   </data>
@@ -282,6 +288,9 @@
   <data name="DoNotUseWeakKDFAlgorithmMessage" xml:space="preserve">
     <value>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</value>
   </data>
+  <data name="DoNotUseWeakKDFInsufficientIterationCountDescription" xml:space="preserve">
+    <value>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</value>
+  </data>
   <data name="DoNotUseXslTransform" xml:space="preserve">
     <value>Do Not Use XslTransform</value>
   </data>
@@ -293,6 +302,12 @@
   </data>
   <data name="MaybeInstallRootCertMessage" xml:space="preserve">
     <value>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</value>
+  </data>
+  <data name="MaybeUseWeakKDFInsufficientIterationCount" xml:space="preserve">
+    <value>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</value>
+  </data>
+  <data name="MaybeUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
+    <value>Default iteration count 1000 needs to be overwritten in this object creation. Ensure that it is using at least 100k iterations when deriving cryptographic key</value>
   </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>

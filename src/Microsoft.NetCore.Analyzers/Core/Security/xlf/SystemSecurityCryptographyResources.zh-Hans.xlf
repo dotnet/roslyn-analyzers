@@ -278,8 +278,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
-        <source>Some implementations of the Rfc2898DeriveBytes class allow for a hashAlgorithm to be specified in the constructor parameter or overwritten in HashAlgorithm property. If this exists, then it should be used with SHA-256 or higher as the hashAlgorithm parameter.</source>
-        <target state="new">Some implementations of the Rfc2898DeriveBytes class allow for a hashAlgorithm to be specified in the constructor parameter or overwritten in HashAlgorithm property. If this exists, then it should be used with SHA-256 or higher as the hashAlgorithm parameter.</target>
+        <source>Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</source>
+        <target state="new">Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">

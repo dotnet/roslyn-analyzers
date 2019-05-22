@@ -8,6 +8,8 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class DoNotUseWeakKDFInsufficientIterationCountTests : DiagnosticAnalyzerTestBase
     {
+        private const int SufficientIterationCount = 100000;
+
         [Fact]
         public void TestConstructorWithStringAndByteArrayParametersDiagnostic()
         {
@@ -22,7 +24,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -40,7 +42,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(10, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(10, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -66,7 +68,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(18, 9, DoNotUseWeakKDFInsufficientIterationCount.MaybeUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(18, 9, DoNotUseWeakKDFInsufficientIterationCount.MaybeUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -92,7 +94,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(18, 9, DoNotUseWeakKDFInsufficientIterationCount.MaybeUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(18, 9, DoNotUseWeakKDFInsufficientIterationCount.MaybeUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -115,7 +117,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(15, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(15, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -140,7 +142,7 @@ class TestClass
         return rfc2898DeriveBytes;
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -157,7 +159,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -174,7 +176,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -191,7 +193,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -208,7 +210,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -225,7 +227,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -242,7 +244,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]
@@ -259,7 +261,7 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule));
+            GetCSharpResultAt(9, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount));
         }
 
         [Fact]

@@ -33,8 +33,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
-        <source>Default iteration count 1000 needs to be overwritten in this object creation. Use at least 100k iterations when deriving cryptographic key from password</source>
-        <target state="new">Default iteration count 1000 needs to be overwritten in this object creation. Use at least 100k iterations when deriving cryptographic key from password</target>
+        <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -318,8 +318,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
-        <source>Default iteration count 1000 needs to be overwritten in this object creation. Ensure that it is using at least 100k iterations when deriving cryptographic key</source>
-        <target state="new">Default iteration count 1000 needs to be overwritten in this object creation. Ensure that it is using at least 100k iterations when deriving cryptographic key</target>
+        <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">

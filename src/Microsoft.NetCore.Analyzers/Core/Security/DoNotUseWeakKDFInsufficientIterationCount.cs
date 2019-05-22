@@ -45,16 +45,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                                         DefinitelyUseWeakKDFInsufficientIterationCountRule,
                                                                                         MaybeUseWeakKDFInsufficientIterationCountRule);
 
-        private const int SufficientIterationCount = 100000;
-
-        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
-            new PropertyMapper(
-                "IterationCount",
-                (ValueContentAbstractValue valueContentAbstractValue) =>
-                {
-                    return PropertySetAnalysis.EvaluateLiteralValues(valueContentAbstractValue, o => Convert.ToInt32(o) < SufficientIterationCount);
-                }));
-
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
             switch (propertySetAbstractValue[0])
@@ -90,6 +80,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
+                    var cancellationToken = compilationStartAnalysisContext.CancellationToken;
+                    var sufficientIterationCount = compilationStartAnalysisContext.Options.GetUnsignedIntegralOptionValue(
+                        optionName: EditorConfigOptionNames.SufficientIterationCountForWeakKDFAlgorithm,
+                        rule: DefinitelyUseWeakKDFInsufficientIterationCountRule,
+                        defaultValue: 100000,
+                        cancellationToken: cancellationToken);
                     var constructorMapper = new ConstructorMapper(
                         (IMethodSymbol constructorMethod, IReadOnlyList<ValueContentAbstractValue> argumentValueContentAbstractValues,
                         IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
@@ -101,13 +97,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 if (constructorMethod.Parameters[2].Name == "iterations" &&
                                     constructorMethod.Parameters[2].Type.SpecialType == SpecialType.System_Int32)
                                 {
-                                    kind = PropertySetAnalysis.EvaluateLiteralValues(argumentValueContentAbstractValues[2], o => Convert.ToInt32(o) < SufficientIterationCount);
+                                    kind = PropertySetAnalysis.EvaluateLiteralValues(argumentValueContentAbstractValues[2], o => Convert.ToInt32(o) < sufficientIterationCount);
                                 }
                             }
 
                             return PropertySetAbstractValue.GetInstance(kind);
                         });
-
+                    var propertyMappers = new PropertyMapperCollection(
+                        new PropertyMapper(
+                            "IterationCount",
+                            (ValueContentAbstractValue valueContentAbstractValue) =>
+                            {
+                                return PropertySetAnalysis.EvaluateLiteralValues(valueContentAbstractValue, o => Convert.ToInt32(o) < sufficientIterationCount);
+                            }));
                     var rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
 
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
@@ -164,13 +166,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         rootOperationsNeedingAnalysis,
                                         WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
                                         constructorMapper,
-                                        PropertyMappers,
+                                        propertyMappers,
                                         hazardousUsageEvaluators,
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                            cancellationToken: compilationAnalysisContext.CancellationToken));
+                                            cancellationToken: cancellationToken));
                                 }
 
                                 if (allResults == null)
@@ -201,8 +203,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         Diagnostic.Create(
                                             descriptor,
                                             kvp.Key.Location,
-                                            kvp.Key.Method.ToDisplayString(
-                                                SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                                            sufficientIterationCount));
                                 }
                             }
                             finally

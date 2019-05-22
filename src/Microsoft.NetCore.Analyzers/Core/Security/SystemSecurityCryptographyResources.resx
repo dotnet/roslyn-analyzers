@@ -136,7 +136,7 @@
     <value>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</value>
   </data>
   <data name="DefinitelyUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
-    <value>Default iteration count 1000 needs to be overwritten in this object creation. Use at least 100k iterations when deriving cryptographic key from password</value>
+    <value>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</value>
   </data>
   <data name="DoNotAddSchemaByURL" xml:space="preserve">
     <value>Do Not Add Schema By URL</value>
@@ -307,7 +307,7 @@
     <value>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</value>
   </data>
   <data name="MaybeUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
-    <value>Default iteration count 1000 needs to be overwritten in this object creation. Ensure that it is using at least 100k iterations when deriving cryptographic key</value>
+    <value>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</value>
   </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>

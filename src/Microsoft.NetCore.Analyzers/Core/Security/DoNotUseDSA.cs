@@ -88,7 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var baseTypesAndThis = typeSymbol.GetBaseTypesAndThis();
 
-                    if (baseTypesAndThis.Contains(dsaTypeSymbol))
+                    if (dsaTypeSymbol != null && baseTypesAndThis.Contains(dsaTypeSymbol))
                     {
                         operationAnalysisContext.ReportDiagnostic(
                             objectCreationOperation.CreateDiagnostic(
@@ -109,7 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var baseTypesAndThis = typeSymbol.GetBaseTypesAndThis();
 
-                    if (baseTypesAndThis.Contains(dsaTypeSymbol))
+                    if (dsaTypeSymbol != null && baseTypesAndThis.Contains(dsaTypeSymbol))
                     {
                         operationAnalysisContext.ReportDiagnostic(
                             returnOperation.CreateDiagnostic(

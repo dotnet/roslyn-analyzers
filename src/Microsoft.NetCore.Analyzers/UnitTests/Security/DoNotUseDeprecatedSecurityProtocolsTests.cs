@@ -1,18 +1,45 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Text;
+using System.Linq;
+using System.Net;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
+    public class FactUnlessTls13UnavailableAttribute : FactAttribute
+    {
+        public override string Skip
+        {
+            get
+            {
+                if (!typeof(SecurityProtocolType).GetEnumNames().Any(s => s == "Tls13"))
+                {
+                    return "SecurityProtocolType.Tls13 is unavailable";
+                }
+                else
+                {
+                    return base.Skip;
+                }
+            }
+
+            set
+            {
+                base.Skip = value;
+            }
+        }
+    }
+
     public class DoNotUseDeprecatedSecurityProtocolsTests : DiagnosticAnalyzerTestBase
     {
+        public DoNotUseDeprecatedSecurityProtocolsTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         [Fact]
         public void TestUseSsl3Diagnostic()
         {
@@ -97,7 +124,7 @@ class TestClass
                 GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
         }
 
-        [Fact]
+        [FactUnlessTls13Unavailable]
         public void TestUseTls13Diagnostic()
         {
             VerifyCSharp(@"
@@ -199,6 +226,42 @@ class TestClass
     }
 }",
                 GetCSharpResultAt(9, 87, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "12288"));
+        }
+
+        [Fact]
+        public void TestUseTls12OrTls11Or192Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | (SecurityProtocolType)192;
+    }
+}",
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"),
+                GetCSharpResultAt(9, 77, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"));
+        }
+
+        [Fact]
+        public void TestUseTls12Or192Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | (SecurityProtocolType)192;
+    }
+}",
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"),
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "3264"));
         }
 
         [Fact]

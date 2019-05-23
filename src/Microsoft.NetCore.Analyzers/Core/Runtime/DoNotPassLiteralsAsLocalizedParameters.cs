@@ -39,7 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Globalization,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1303-do-not-pass-literals-as-localized-parameters",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -142,16 +142,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue> ComputeValueContentAnalysisResult()
                     {
-                        foreach (var operationRoot in operationBlockStartContext.OperationBlocks)
+                        var cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
+                        if (cfg != null)
                         {
-                            IBlockOperation topmostBlock = operationRoot.GetTopmostParentBlock();
-                            if (topmostBlock != null)
-                            {
-                                var cfg = topmostBlock.GetEnclosingControlFlowGraph();
-                                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                                return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
-                                    operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
-                            }
+                            var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
+                            return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                                operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
                         }
 
                         return null;

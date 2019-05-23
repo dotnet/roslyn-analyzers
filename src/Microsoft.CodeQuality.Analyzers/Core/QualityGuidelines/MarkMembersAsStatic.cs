@@ -166,7 +166,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // FxCop doesn't check for the fully qualified name for these attributes - so we'll do the same.
-            if (methodSymbol.GetAttributes().Any(attribute => skippedAttributes.Contains(attribute.AttributeClass)))
+            if (methodSymbol.GetAttributes().Any(attribute => skippedAttributes.Any(attr => attribute.AttributeClass.Inherits(attr))))
             {
                 return false;
             }
@@ -250,7 +250,6 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // XUnit attributes
             Add(WellKnownTypes.XunitFact(compilation));
-            Add(WellKnownTypes.XunitTheory(compilation));
 
             // NUnit Attributes
             Add(WellKnownTypes.NunitSetUp(compilation));

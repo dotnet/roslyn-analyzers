@@ -58,10 +58,10 @@ class TestClass
 {
     public void TestMethod()
     {
-        var a = SecurityProtocolType.Tls11;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
     }
 }",
-            GetCSharpResultAt(9, 17, DoNotUseDeprecatedSecurityProtocols.Rule, "Tls11"));
+            GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.Rule, "Tls11"));
         }
 
         [Fact]
@@ -91,7 +91,127 @@ class TestClass
 {
     public void TestMethod()
     {
-        var a = SecurityProtocolType.Tls12;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+    }
+}");
+        }
+
+        [Fact]
+        public void TestUseTls12OrdTls11Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+    }
+}",
+                GetCSharpResultAt(9, 77, DoNotUseDeprecatedSecurityProtocols.Rule, "Tls11"));
+        }
+
+        [Fact]
+        public void TestUse192CompoundAssignmentDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol |= (SecurityProtocolType)192;
+    }
+}",
+                GetCSharpResultAt(9, 49, DoNotUseDeprecatedSecurityProtocols.Rule, "192"));
+        }
+
+        [Fact]
+        public void TestUse384SimpleAssignmentDiagnostic()
+        {
+            // 384 = SchProtocols.Tls11Server | SchProtocols.Tls10Client
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType)384;
+    }
+}",
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.Rule, "384"));
+        }
+
+        [Fact]
+        public void TestUse768SimpleAssignmentOrExpressionDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol | (SecurityProtocolType)768;
+    }
+}",
+                GetCSharpResultAt(9, 87, DoNotUseDeprecatedSecurityProtocols.Rule, "768"));
+        }
+
+        [Fact]
+        public void TestUse768DeconstructionAssignmentNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        int i;
+        (ServicePointManager.SecurityProtocol, i) = ((SecurityProtocolType)384, 384);
+    }
+}");
+            // Ideally we'd handle the IDeconstructionAssignment, but this code pattern seems unlikely.
+        }
+
+        [Fact]
+        public void TestUse24Plus24SimpleAssignmentDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType)(24 + 24);
+    }
+}",
+                GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.Rule, "48"));
+        }
+
+        [Fact]
+        public void TestUse768NotSecurityProtocolTypeNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        int i = 384 | 768;
     }
 }");
         }

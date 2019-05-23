@@ -6,8 +6,11 @@ using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
 
@@ -79,6 +82,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
+                PooledHashSet<(IInvocationOperation, ISymbol)> operationsForValueContentAnalysis =
+                    PooledHashSet<(IInvocationOperation, ISymbol)>.GetInstance();
+
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
                     var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
@@ -89,18 +95,84 @@ namespace Microsoft.NetCore.Analyzers.Security
                         var values = invocationOperation.Arguments.Select(s => s.Value.ConstantValue).ToArray();
 
                         if (values[0].HasValue &&
-                            values[1].HasValue &&
-                            values[0].Value is string switchName &&
-                            BadSwitches.TryGetValue(switchName, out var pair) &&
-                            pair.BadValue.Equals(values[1].Value))
+                            values[1].HasValue)
                         {
-                            operationAnalysisContext.ReportDiagnostic(
-                                invocationOperation.CreateDiagnostic(
-                                    pair.Rule,
-                                    methodSymbol.Name));
+                            if (values[0].Value is string switchName &&
+                                BadSwitches.TryGetValue(switchName, out var pair) &&
+                                pair.BadValue.Equals(values[1].Value))
+                            {
+                                operationAnalysisContext.ReportDiagnostic(
+                                    invocationOperation.CreateDiagnostic(
+                                        pair.Rule,
+                                        methodSymbol.Name));
+                            }
+                        }
+                        else
+                        {
+                            lock (operationsForValueContentAnalysis)
+                            {
+                                operationsForValueContentAnalysis.Add(
+                                    (invocationOperation, operationAnalysisContext.ContainingSymbol));
+                            }
                         }
                     }
                 }, OperationKind.Invocation);
+
+                compilationStartAnalysisContext.RegisterCompilationEndAction(compilationAnalysisContext =>
+                {
+                    try
+                    {
+                        lock (operationsForValueContentAnalysis)
+                        {
+                            if (!operationsForValueContentAnalysis.Any())
+                            {
+                                return;
+                            }
+
+                            var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(
+                                compilationAnalysisContext.Compilation);
+
+                            foreach ((IInvocationOperation invocationOperation, ISymbol owningSymbol)
+                                in operationsForValueContentAnalysis)
+                            {
+                                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(
+                                    invocationOperation.GetEnclosingControlFlowGraph(),
+                                    owningSymbol,
+                                    wellKnownTypeProvider,
+                                    InterproceduralAnalysisConfiguration.Create(
+                                        compilationAnalysisContext.Options,
+                                        SupportedDiagnostics,
+                                        InterproceduralAnalysisKind.None,   // Just looking for simple cases.
+                                        compilationAnalysisContext.CancellationToken),
+                                    out _,
+                                    out _);
+
+                                var switchNameValueContent = valueContentResult[
+                                    OperationKind.Argument,
+                                    invocationOperation.Arguments[0].Syntax];
+                                var switchValueValueContent = valueContentResult[
+                                    OperationKind.Argument,
+                                    invocationOperation.Arguments[1].Syntax];
+
+                                // Just check for simple cases with one possible literal value.
+                                if (switchNameValueContent.TryGetSingleLiteral<string>(out var switchName) &&
+                                    switchValueValueContent.TryGetSingleLiteral<bool>(out var switchValue) &&
+                                    BadSwitches.TryGetValue(switchName, out var pair) &&
+                                    pair.BadValue.Equals(switchValue))
+                                {
+                                    compilationAnalysisContext.ReportDiagnostic(
+                                        invocationOperation.CreateDiagnostic(
+                                            pair.Rule,
+                                            invocationOperation.TargetMethod.Name));
+                                }
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        operationsForValueContentAnalysis.Free();
+                    }
+                });
             });
         }
     }

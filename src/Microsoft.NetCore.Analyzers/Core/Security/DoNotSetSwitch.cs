@@ -82,97 +82,68 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
-                PooledHashSet<(IInvocationOperation, ISymbol)> operationsForValueContentAnalysis =
-                    PooledHashSet<(IInvocationOperation, ISymbol)>.GetInstance();
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
                     var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
                     var methodSymbol = invocationOperation.TargetMethod;
 
-                    if (setSwitchMemberWithStringAndBoolParameter.Equals(methodSymbol))
+                    if (!setSwitchMemberWithStringAndBoolParameter.Equals(methodSymbol))
                     {
-                        var values = invocationOperation.Arguments.Select(s => s.Value.ConstantValue).ToArray();
+                        return;
+                    }
 
-                        if (values[0].HasValue &&
-                            values[1].HasValue)
+                    var values = invocationOperation.Arguments.Select(s => s.Value.ConstantValue).ToArray();
+
+                    if (values[0].HasValue &&
+                        values[1].HasValue)
+                    {
+                        if (values[0].Value is string switchName &&
+                            BadSwitches.TryGetValue(switchName, out var pair) &&
+                            pair.BadValue.Equals(values[1].Value))
                         {
-                            if (values[0].Value is string switchName &&
-                                BadSwitches.TryGetValue(switchName, out var pair) &&
-                                pair.BadValue.Equals(values[1].Value))
-                            {
-                                operationAnalysisContext.ReportDiagnostic(
-                                    invocationOperation.CreateDiagnostic(
-                                        pair.Rule,
-                                        methodSymbol.Name));
-                            }
-                        }
-                        else
-                        {
-                            lock (operationsForValueContentAnalysis)
-                            {
-                                operationsForValueContentAnalysis.Add(
-                                    (invocationOperation, operationAnalysisContext.ContainingSymbol));
-                            }
+                            operationAnalysisContext.ReportDiagnostic(
+                                invocationOperation.CreateDiagnostic(
+                                    pair.Rule,
+                                    methodSymbol.Name));
                         }
                     }
-                }, OperationKind.Invocation);
-
-                compilationStartAnalysisContext.RegisterCompilationEndAction(compilationAnalysisContext =>
-                {
-                    try
+                    else
                     {
-                        lock (operationsForValueContentAnalysis)
+                        var valueContentResult = ValueContentAnalysis.GetOrComputeResult(
+                            invocationOperation.GetEnclosingControlFlowGraph(),
+                            operationAnalysisContext.ContainingSymbol,
+                            wellKnownTypeProvider,
+                            InterproceduralAnalysisConfiguration.Create(
+                                operationAnalysisContext.Options,
+                                SupportedDiagnostics,
+                                InterproceduralAnalysisKind.None,   // Just looking for simple cases.
+                                operationAnalysisContext.CancellationToken),
+                            out _,
+                            out _);
+
+                        var switchNameValueContent = valueContentResult[
+                            OperationKind.Argument,
+                            invocationOperation.Arguments[0].Syntax];
+                        var switchValueValueContent = valueContentResult[
+                            OperationKind.Argument,
+                            invocationOperation.Arguments[1].Syntax];
+
+                        // Just check for simple cases with one possible literal value.
+                        if (switchNameValueContent.TryGetSingleLiteral<string>(out var switchName) &&
+                            switchValueValueContent.TryGetSingleLiteral<bool>(out var switchValue) &&
+                            BadSwitches.TryGetValue(switchName, out var pair) &&
+                            pair.BadValue.Equals(switchValue))
                         {
-                            if (!operationsForValueContentAnalysis.Any())
-                            {
-                                return;
-                            }
-
-                            var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(
-                                compilationAnalysisContext.Compilation);
-
-                            foreach ((IInvocationOperation invocationOperation, ISymbol owningSymbol)
-                                in operationsForValueContentAnalysis)
-                            {
-                                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(
-                                    invocationOperation.GetEnclosingControlFlowGraph(),
-                                    owningSymbol,
-                                    wellKnownTypeProvider,
-                                    InterproceduralAnalysisConfiguration.Create(
-                                        compilationAnalysisContext.Options,
-                                        SupportedDiagnostics,
-                                        InterproceduralAnalysisKind.None,   // Just looking for simple cases.
-                                        compilationAnalysisContext.CancellationToken),
-                                    out _,
-                                    out _);
-
-                                var switchNameValueContent = valueContentResult[
-                                    OperationKind.Argument,
-                                    invocationOperation.Arguments[0].Syntax];
-                                var switchValueValueContent = valueContentResult[
-                                    OperationKind.Argument,
-                                    invocationOperation.Arguments[1].Syntax];
-
-                                // Just check for simple cases with one possible literal value.
-                                if (switchNameValueContent.TryGetSingleLiteral<string>(out var switchName) &&
-                                    switchValueValueContent.TryGetSingleLiteral<bool>(out var switchValue) &&
-                                    BadSwitches.TryGetValue(switchName, out var pair) &&
-                                    pair.BadValue.Equals(switchValue))
-                                {
-                                    compilationAnalysisContext.ReportDiagnostic(
-                                        invocationOperation.CreateDiagnostic(
-                                            pair.Rule,
-                                            invocationOperation.TargetMethod.Name));
-                                }
-                            }
+                            operationAnalysisContext.ReportDiagnostic(
+                                invocationOperation.CreateDiagnostic(
+                                    pair.Rule,
+                                    invocationOperation.TargetMethod.Name));
                         }
                     }
-                    finally
-                    {
-                        operationsForValueContentAnalysis.Free();
-                    }
-                });
+                },
+                OperationKind.Invocation);
             });
         }
     }

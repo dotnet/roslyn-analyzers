@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -38,10 +37,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            // You would need to register an operation action for OperationKind.SimpleAssignment
             analysisContext.RegisterOperationAction(operationContext =>
             {
-                //referencing the same property symbol and whose Instance is an IInstanceReferenceOperation whose ReferenceKind is InstanceReferenceKind.ContainingTypeInstance
                 var assignmentOperation = (IAssignmentOperation)operationContext.Operation;
 
                 var operationTarget = (IPropertyReferenceOperation)assignmentOperation?.Target;
@@ -50,8 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return;
                 }
 
-                var operationValue = (IPropertyReferenceOperation)assignmentOperation.Value;
-                if (operationValue == null)
+                if (!(assignmentOperation.Value is IPropertyReferenceOperation operationValue))
                 {
                     return;
                 }

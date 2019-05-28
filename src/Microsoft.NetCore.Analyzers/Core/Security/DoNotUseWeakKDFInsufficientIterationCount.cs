@@ -45,6 +45,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                                         DefinitelyUseWeakKDFInsufficientIterationCountRule,
                                                                                         MaybeUseWeakKDFInsufficientIterationCountRule);
 
+        private const int DefaultIterationCount = 1000;
+
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
             switch (propertySetAbstractValue[0])
@@ -90,7 +92,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (IMethodSymbol constructorMethod, IReadOnlyList<ValueContentAbstractValue> argumentValueContentAbstractValues,
                         IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
                         {
-                            var kind = PropertySetAbstractValueKind.Flagged;
+                            var kind = DefaultIterationCount >= sufficientIterationCount ? PropertySetAbstractValueKind.Unflagged : PropertySetAbstractValueKind.Flagged;
 
                             if (constructorMethod.Parameters.Length >= 3)
                             {

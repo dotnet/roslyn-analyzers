@@ -10210,5 +10210,86 @@ class C : IDisposable
             // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
             GetCSharpResultAt(10, 17, "new C()"));
         }
+
+        [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
+        public void UsingStatementInCatch()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        try
+        {
+        }
+        catch (Exception)
+        {
+            using (var c = new C())
+            {
+            }
+        }
+    }
+}");
+        }
+
+        [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
+        public void TryFinallyStatementInCatch()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        try
+        {
+        }
+        catch (Exception)
+        {
+            C c = null;
+            try
+            {
+                c = new C();
+            }
+            finally
+            {
+                c.Dispose();
+            }
+        }
+    }
+}");
+        }
+
+        [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
+        public void UsingStatementInFinally()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        try
+        {
+        }
+        finally
+        {
+            using (var c = new C())
+            {
+            }
+        }
+    }
+}");
+        }
     }
 }

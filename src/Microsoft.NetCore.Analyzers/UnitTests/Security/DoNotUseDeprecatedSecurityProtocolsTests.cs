@@ -58,10 +58,10 @@ class TestClass
 {
     public void TestMethod()
     {
-        var a = SecurityProtocolType.Tls11;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
     }
 }",
-            GetCSharpResultAt(9, 17, DoNotUseDeprecatedSecurityProtocols.Rule, "Tls11"));
+            GetCSharpResultAt(9, 48, DoNotUseDeprecatedSecurityProtocols.Rule, "Tls11"));
         }
 
         [Fact]
@@ -91,9 +91,26 @@ class TestClass
 {
     public void TestMethod()
     {
-        var a = SecurityProtocolType.Tls12;
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
     }
 }");
+        }
+
+        [Fact]
+        public void TestUseTls12OrdTls11Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+    }
+}",
+                GetCSharpResultAt(9, 77, DoNotUseDeprecatedSecurityProtocols.Rule, "Tls11"));
         }
 
         [Fact]

@@ -64,27 +64,25 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
+                    bool IsReferencingDeprecatedProtocol(IFieldReferenceOperation fieldReferenceOperation)
+                    {
+                        return securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType)
+                            && !SafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name);
+                    }
+
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
                             var fieldReferenceOperation = (IFieldReferenceOperation)operationAnalysisContext.Operation;
-                            var fieldSymbol = fieldReferenceOperation.Field;
-
-                            if (!fieldSymbol.ContainingType.Equals(securityProtocolTypeTypeSymbol))
-                            {
-                                return;
-                            }
-
-                            var constantValue = fieldSymbol.Name;
-
-                            if (!SafeProtocolMetadataNames.Contains(constantValue))
+                            if (IsReferencingDeprecatedProtocol(fieldReferenceOperation))
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                     fieldReferenceOperation.CreateDiagnostic(
                                         Rule,
-                                        constantValue));
+                                        fieldReferenceOperation.Field.Name));
                             }
                         }, OperationKind.FieldReference);
+
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
@@ -94,12 +92,28 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 return;
                             }
 
-                            if (assignmentOperation.Value.HasAnyOperationDescendant(
-                                    (IOperation childOperation) =>
-                                        childOperation.ConstantValue.HasValue
-                                        && childOperation.ConstantValue.Value is int integerValue
-                                        && (integerValue & UnsafeBits) != 0,
-                                    out IOperation foundOperation))
+                            // Find the topmost operation with a bad bit set, unless we find an operation that would've been
+                            // flagged by the FieldReference callback above.
+                            IOperation foundOperation = null;
+                            foreach (IOperation childOperation in assignmentOperation.Value.DescendantsAndSelf())
+                            {
+                                if (childOperation is IFieldReferenceOperation fieldReferenceOperation
+                                    && IsReferencingDeprecatedProtocol(fieldReferenceOperation))
+                                {
+                                    // This assignment is handled by the FieldReference callback above.
+                                    return;
+                                }
+
+                                if (foundOperation == null    // Only want the first.
+                                    && childOperation.ConstantValue.HasValue
+                                    && childOperation.ConstantValue.Value is int integerValue
+                                    && (integerValue & UnsafeBits) != 0)
+                                {
+                                    foundOperation = childOperation;
+                                }
+                            }
+
+                            if (foundOperation != null)
                             {
                                 operationAnalysisContext.ReportDiagnostic(
                                     foundOperation.CreateDiagnostic(

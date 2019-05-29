@@ -514,6 +514,21 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public void TestReturnVoidNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(RSA rsa)
+    {
+        return;
+    }
+}");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new UseRSAWithSufficientKeySize();

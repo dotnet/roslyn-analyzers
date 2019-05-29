@@ -109,7 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
                     var returnOperation = (IReturnOperation)operationAnalysisContext.Operation;
-                    var typeSymbol = returnOperation.ReturnedValue.Type;
+                    var typeSymbol = returnOperation.ReturnedValue?.Type;
 
                     if (typeSymbol == null)
                     {

@@ -229,6 +229,21 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public void TestReturnVoidNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(DSA dsa)
+    { 
+        return;
+    }
+}");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotUseDSA();

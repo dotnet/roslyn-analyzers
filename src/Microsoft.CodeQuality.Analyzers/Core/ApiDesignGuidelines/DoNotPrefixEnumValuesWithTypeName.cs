@@ -31,8 +31,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 s_localizableTitle,
                 s_localizableMessage,
                 DiagnosticCategory.Naming,
-                DiagnosticSeverity.Error,
-                isEnabledByDefault: true,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_localizableDescription,
                 helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1712-do-not-prefix-enum-values-with-type-name",
                 customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);

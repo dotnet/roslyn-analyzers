@@ -209,7 +209,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var isNotDisposed = disposeValue.Kind == DisposeAbstractValueKind.NotDisposed ||
                     (disposeValue.DisposingOrEscapingOperations.Count > 0 &&
-                     disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph)));
+                     disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph) && !location.CreationOpt.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph)));
                 var isMayBeNotDisposed = !isNotDisposed && (disposeValue.Kind == DisposeAbstractValueKind.MaybeDisposed || disposeValue.Kind == DisposeAbstractValueKind.NotDisposedOrEscaped);
 
                 if (isNotDisposed ||

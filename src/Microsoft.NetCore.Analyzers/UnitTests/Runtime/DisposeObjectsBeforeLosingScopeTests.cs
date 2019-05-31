@@ -6109,9 +6109,7 @@ Class Test
         New A().M()
         Dim x = New A().X
     End Sub
-End Class", TestValidationMode.AllowCompileErrors,
-            // Test0.vb(19,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(19, 17, "New A()"));
+End Class", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -7335,7 +7333,7 @@ End Class
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public void DisposableObjectInErrorCode_NotDisposed_Diagnostic()
+        public void DisposableObjectInErrorCode_NotDisposed_BailOut_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -7356,13 +7354,11 @@ class B : IDisposable
         = x
     }
 }
-", TestValidationMode.AllowCompileErrors,
-            // Test0.cs(16,15): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 15, "new A()"));
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public void DisposableObjectInErrorCode_02_NotDisposed_Diagnostic()
+        public void DisposableObjectInErrorCode_02_NotDisposed_BailOut_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -7391,9 +7387,7 @@ class Test
     {
     }
 }
-", TestValidationMode.AllowCompileErrors,
-            // Test0.cs(20,22): warning CA2000: Call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
-            GetCSharpResultAt(20, 22, "new StringWriter(builder)"));
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]

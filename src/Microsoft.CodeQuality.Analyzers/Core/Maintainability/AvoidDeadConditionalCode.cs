@@ -79,10 +79,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                             var cfg = operationBlockContext.GetControlFlowGraph(operationRoot);
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
-                            var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
+                            var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
                                     operationBlockContext.Options, AlwaysTrueFalseOrNullRule, operationBlockContext.CancellationToken,
                                     out var copyAnalysisResultOpt, out var pointsToAnalysisResult,
                                     performCopyAnalysisIfNotUserConfigured: false); // TODO: Enable copy analysis by default.
+                            if (valueContentAnalysisResult == null)
+                            {
+                                continue;
+                            }
 
                             Debug.Assert(pointsToAnalysisResult != null);
 

@@ -10285,5 +10285,25 @@ class C : IDisposable
     }
 }");
         }
+
+        [Fact, WorkItem(2506, "https://github.com/dotnet/roslyn-analyzers/issues/2506")]
+        public void ErroroneousCodeWithBrokenIfCondition()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        var c = new C();
+        if()
+    }
+}", TestValidationMode.AllowCompileErrors,
+            // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+            GetCSharpResultAt(10, 17, "new C()"));
+        }
     }
 }

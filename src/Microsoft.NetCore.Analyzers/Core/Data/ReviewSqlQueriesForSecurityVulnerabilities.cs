@@ -211,13 +211,16 @@ namespace Microsoft.NetCore.Analyzers.Data
                 // We have a candidate for diagnostic. perform more precise dataflow analysis.
                 var cfg = argumentValue.GetEnclosingControlFlowGraph();
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
-                var valueContentResult = ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
                     operationContext.Options, Rule, operationContext.CancellationToken);
-                ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
-                if (value.NonLiteralState == ValueContainsNonLiteralState.No)
+                if (valueContentResult != null)
                 {
-                    // The value is a constant literal or default/unitialized, so avoid flagging this usage.
-                    return false;
+                    ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
+                    if (value.NonLiteralState == ValueContainsNonLiteralState.No)
+                    {
+                        // The value is a constant literal or default/unitialized, so avoid flagging this usage.
+                        return false;
+                    }
                 }
 
                 // Review if the symbol passed to {invocation} in {method/field/constructor/etc} has user input.

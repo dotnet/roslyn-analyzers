@@ -91,7 +91,7 @@ class Blah
 }");
         }
 
-        //[Fact] need to handle invoking DFA on lambdas
+        [Fact]
         public void Insecure_JsonConvert_DefaultSettings_Lambda_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
@@ -102,6 +102,29 @@ class Blah
     void Method()
     {
         JsonConvert.DefaultSettings = () =>
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = TypeNameHandling.All;
+            return settings;
+        };
+    }
+}",
+                GetCSharpResultAt(10, 16, DefinitelyRule));
+        }
+
+        [Fact]
+        public void Insecure_JsonConvert_DefaultSettings_LocalFunction_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    void Method()
+    {
+        JsonConvert.DefaultSettings = GetSettings;
+
+        JsonSerializerSettings GetSettings()
         {
             JsonSerializerSettings settings = new JsonSerializerSettings();
             settings.TypeNameHandling = TypeNameHandling.All;
@@ -198,7 +221,7 @@ class Blah
                 GetCSharpResultAt(13, 60, MaybeRule));
         }
 
-        //[Fact] need to handle lambdas
+        [Fact]
         public void Insecure_Lazy_Field_Diagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"

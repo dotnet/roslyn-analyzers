@@ -54,6 +54,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
                 var comparerTypes = s_comparerTypeFullName
                     .Select(comparerTypeFullName => compilation.GetTypeByMetadataName(comparerTypeFullName))
+                    .WhereNotNull()
                     .ToImmutableArray();
 
                 if (comparerTypes.IsDefaultOrEmpty)

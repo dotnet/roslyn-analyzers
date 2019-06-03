@@ -294,6 +294,12 @@
   <data name="DoNotUseXslTransformMessage" xml:space="preserve">
     <value>Do not use XslTransform. It does not restrict potentially dangerous external references.</value>
   </data>
+  <data name="HardCodedSecurityProtocolMessage" xml:space="preserve">
+    <value>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</value>
+  </data>
+  <data name="HardCodedSecurityProtocolTitle" xml:space="preserve">
+    <value>Avoid hardcoding SecurityProtocolType value</value>
+  </data>
   <data name="MaybeInstallRootCert" xml:space="preserve">
     <value>Ensure Certificates Are Not Added To Root Store</value>
   </data>

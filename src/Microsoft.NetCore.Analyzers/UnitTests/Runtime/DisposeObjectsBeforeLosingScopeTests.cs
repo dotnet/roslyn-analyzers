@@ -6109,9 +6109,7 @@ Class Test
         New A().M()
         Dim x = New A().X
     End Sub
-End Class", TestValidationMode.AllowCompileErrors,
-            // Test0.vb(19,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(19, 17, "New A()"));
+End Class", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -7335,7 +7333,7 @@ End Class
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public void DisposableObjectInErrorCode_NotDisposed_Diagnostic()
+        public void DisposableObjectInErrorCode_NotDisposed_BailOut_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -7356,13 +7354,11 @@ class B : IDisposable
         = x
     }
 }
-", TestValidationMode.AllowCompileErrors,
-            // Test0.cs(16,15): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 15, "new A()"));
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public void DisposableObjectInErrorCode_02_NotDisposed_Diagnostic()
+        public void DisposableObjectInErrorCode_02_NotDisposed_BailOut_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -7391,9 +7387,7 @@ class Test
     {
     }
 }
-", TestValidationMode.AllowCompileErrors,
-            // Test0.cs(20,22): warning CA2000: Call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
-            GetCSharpResultAt(20, 22, "new StringWriter(builder)"));
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -10205,6 +10199,130 @@ class C : IDisposable
 
     public void Dispose()
     {
+    }
+}", TestValidationMode.AllowCompileErrors,
+            // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
+            GetCSharpResultAt(10, 17, "new C()"));
+        }
+
+        [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
+        public void UsingStatementInCatch()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        try
+        {
+        }
+        catch (Exception)
+        {
+            using (var c = new C())
+            {
+            }
+        }
+    }
+}");
+        }
+
+        [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
+        public void TryFinallyStatementInCatch()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        try
+        {
+        }
+        catch (Exception)
+        {
+            C c = null;
+            try
+            {
+                c = new C();
+            }
+            finally
+            {
+                c.Dispose();
+            }
+        }
+    }
+}");
+        }
+
+        [Fact, WorkItem(2497, "https://github.com/dotnet/roslyn-analyzers/issues/2497")]
+        public void UsingStatementInFinally()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        try
+        {
+        }
+        finally
+        {
+            using (var c = new C())
+            {
+            }
+        }
+    }
+}");
+        }
+
+        [Fact, WorkItem(2506, "https://github.com/dotnet/roslyn-analyzers/issues/2506")]
+        public void ErroroneousCodeWithBrokenIfCondition_BailOut_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        var c = new C();
+        if()
+    }
+}", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(2506, "https://github.com/dotnet/roslyn-analyzers/issues/2506")]
+        public void ErroroneousCodeWithBrokenIfCondition_Interprocedural_BailOut_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        var c = new C();
+        M2(c);
+    }
+
+    void M2(C c)
+    {
+        if()
     }
 }", TestValidationMode.AllowCompileErrors,
             // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.

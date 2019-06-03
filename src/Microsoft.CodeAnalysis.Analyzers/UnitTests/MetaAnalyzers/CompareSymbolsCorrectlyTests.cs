@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
@@ -144,6 +145,20 @@ Class Symbol
     End Operator
 End Class
 ";
+
+        private const string MinimumComparerDeclarationCSharp =
+@"
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+
+class EqualityComparer : IEqualityComparer<ISymbol>, IComparer<ISymbol>
+{
+    public static EqualityComparer Instance = new EqualityComparer();
+
+    public int Compare(ISymbol x, ISymbol y) => 0;
+    public bool Equals(ISymbol x, ISymbol y) => false;
+    public int GetHashCode(ISymbol obj) => 0;
+}";
 
         [Theory]
         [InlineData(nameof(ISymbol))]
@@ -371,6 +386,47 @@ End Class
 ";
 
             await VerifyVB.VerifyAnalyzerAsync(source);
+        }
+
+        [Theory]
+        [InlineData("Dictionary<ISymbol, string>")]
+        [InlineData("SortedDictionary<ISymbol, string>")]
+        [InlineData("SortedSet<ISymbol>")]
+        [InlineData("HashSet<ISymbol>")]
+        public async Task CompareSymbolWithComparisonTypes_WithComparer_CSharp(string dataType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+class TestClass {{
+    private {dataType} testData = new {dataType}(EqualityComparer.Instance);
+}}
+";
+            await new VerifyCS.Test()
+            {
+                TestState = { Sources = { source, MinimumComparerDeclarationCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("Dictionary<ISymbol, string>", 52)]
+        [InlineData("SortedDictionary<ISymbol, string>", 58)]
+        [InlineData("SortedSet<ISymbol>", 43)]
+        [InlineData("HashSet<ISymbol>", 41)]
+        public async Task CompareSymbolWithComparisonTypes_WithoutComparer_CSharp(string dataType, int column)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+class TestClass {{
+    private {dataType} testData = new {dataType}();
+}}
+";
+            const int line = 5;
+
+            await VerifyCS.VerifyAnalyzerAsync(source,
+                DiagnosticResult.CompilerWarning(DiagnosticIds.CompareSymbolsCorrectlyRuleId)
+                    .WithLocation(line, column));
         }
     }
 }

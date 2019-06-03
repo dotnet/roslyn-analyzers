@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -16,6 +18,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
 
         private static readonly string s_symbolTypeFullName = typeof(ISymbol).FullName;
+        private static readonly string[] s_comparerTypeFullName = new[] {
+            typeof(IEqualityComparer<>).FullName,
+            typeof(IComparer<>).FullName
+        };
 
         public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             DiagnosticIds.CompareSymbolsCorrectlyRuleId,
@@ -38,13 +44,58 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             {
                 var compilation = context.Compilation;
                 var symbolType = compilation.GetTypeByMetadataName(s_symbolTypeFullName);
+
                 if (symbolType is null)
                 {
                     return;
                 }
 
                 context.RegisterOperationAction(context => HandleBinaryOperator(in context, symbolType), OperationKind.BinaryOperator);
+
+                var comparerTypes = s_comparerTypeFullName
+                    .Select(comparerTypeFullName => compilation.GetTypeByMetadataName(comparerTypeFullName))
+                    .ToImmutableArray();
+
+                if (comparerTypes.IsDefaultOrEmpty)
+                {
+                    return;
+                }
+
+                context.RegisterOperationAction(context => HandleOperation(in context, comparerTypes), OperationKind.ObjectCreation);
             });
+        }
+
+        private void HandleOperation(in OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> comparerTypes)
+        {
+            if (context.Operation is IObjectCreationOperation objectCreation)
+            {
+                var typeBeingCreated = (INamedTypeSymbol)objectCreation.Type;
+
+                // Does the type have constructors that take comparers? 
+                var constructorsWithComparers = typeBeingCreated.Constructors.WhereAsArray(constructor => hasSymbolComparer(constructor, comparerTypes));
+
+                if (constructorsWithComparers.Length == 0)
+                {
+                    return;
+                }
+
+                // Is the constructor being used one of the ones that takes a comparer? 
+                var correctConstructorBeingUsed = constructorsWithComparers.Contains(objectCreation.Constructor);
+
+                if (!correctConstructorBeingUsed)
+                {
+                    context.ReportDiagnostic(objectCreation.Syntax.GetLocation().CreateDiagnostic(Rule));
+                }
+            }
+
+            // Local functions
+
+            static bool hasSymbolComparer(IMethodSymbol methodSymbol, ImmutableArray<INamedTypeSymbol> comparerTypes)
+                => methodSymbol.Parameters
+                    .Select(param => param.Type)
+                    .OfType<INamedTypeSymbol>()
+                    .WhereAsArray(t => comparerTypes.Contains(t.ConstructedFrom))
+                    .Any();
         }
 
         private void HandleBinaryOperator(in OperationAnalysisContext context, INamedTypeSymbol symbolType)

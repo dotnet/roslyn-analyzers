@@ -226,7 +226,7 @@ End Class";
 using Microsoft.CodeAnalysis;
 class TestClass {{
     bool Method({symbolType} x, {symbolType} y) {{
-        return [|x == y|];
+        return {{|{DiagnosticIds.CompareSymbolsCorrectlyRuleId}:x == y|}};
     }}
 }}
 ";
@@ -294,7 +294,7 @@ class TestClass {{
 using Microsoft.CodeAnalysis;
 class TestClass {{
     bool Method(Symbol x, {symbolType} y) {{
-        return {{{DiagnosticIds.CompareSymbolsCorrectlyRuleId}:[|x == y|]}};
+        return {{|{DiagnosticIds.CompareSymbolsCorrectlyRuleId}:x == y|}};
     }}
 }}
 ";
@@ -363,7 +363,7 @@ class TestClass {{
 Imports Microsoft.CodeAnalysis
 Class TestClass
     Function Method(x As {symbolType}, y As {symbolType}) As Boolean
-        Return [|x Is y|]
+        Return {{|{DiagnosticIds.CompareSymbolsCorrectlyRuleId}:x Is y|}}
     End Function
 End Class
 ";

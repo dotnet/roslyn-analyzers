@@ -337,6 +337,21 @@
         <target state="translated">Le DiagnosticId pour les analyseurs doit être au format spécifié.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSymbolComparerDescription">
+        <source>Types that accept a comparison type for symbols should use an explicit comparer. </source>
+        <target state="new">Types that accept a comparison type for symbols should use an explicit comparer. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSymbolComparerMessage">
+        <source>Use comparer for symbols</source>
+        <target state="new">Use comparer for symbols</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSymbolComparerTitle">
+        <source>Use comparer for symbols</source>
+        <target state="new">Use comparer for symbols</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseUniqueDiagnosticIdTitle">
         <source>DiagnosticId must be unique across analyzers.</source>
         <target state="translated">Le DiagnosticId doit être unique sur l'ensemble des analyseurs.</target>

@@ -337,6 +337,21 @@
         <target state="translated">분석기에 대한 진단 ID는 지정된 형식이어야 합니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseSymbolComparerDescription">
+        <source>Types that accept a comparison type for symbols should use an explicit comparer. </source>
+        <target state="new">Types that accept a comparison type for symbols should use an explicit comparer. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSymbolComparerMessage">
+        <source>Use comparer for symbols</source>
+        <target state="new">Use comparer for symbols</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSymbolComparerTitle">
+        <source>Use comparer for symbols</source>
+        <target state="new">Use comparer for symbols</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseUniqueDiagnosticIdTitle">
         <source>DiagnosticId must be unique across analyzers.</source>
         <target state="translated">진단 ID는 분석기 간에 고유해야 합니다.</target>

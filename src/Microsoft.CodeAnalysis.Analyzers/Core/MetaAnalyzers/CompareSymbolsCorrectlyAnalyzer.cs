@@ -13,27 +13,41 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class CompareSymbolsCorrectlyAnalyzer : DiagnosticAnalyzer
     {
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-
         private static readonly string s_symbolTypeFullName = typeof(ISymbol).FullName;
         private static readonly string[] s_comparerTypeFullName = new[] {
             typeof(IEqualityComparer<>).FullName,
             typeof(IComparer<>).FullName
         };
 
-        public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+        private static readonly LocalizableString s_localizableEqualityTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableEqualityMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableEqualityDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+
+        public static readonly DiagnosticDescriptor CompareSymbolsRule = new DiagnosticDescriptor(
             DiagnosticIds.CompareSymbolsCorrectlyRuleId,
-            s_localizableTitle,
-            s_localizableMessage,
+            s_localizableEqualityTitle,
+            s_localizableEqualityMessage,
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            description: s_localizableDescription,
+            description: s_localizableEqualityDescription,
             customTags: WellKnownDiagnosticTags.Telemetry);
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        private static readonly LocalizableString s_localizableComparerTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.UseSymbolComparerTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableComparerMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.UseSymbolComparerMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableComparerDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.UseSymbolComparerDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+
+        public static readonly DiagnosticDescriptor UseSymbolComparerRule = new DiagnosticDescriptor(
+            DiagnosticIds.UseComparersForSymbols,
+            s_localizableComparerTitle,
+            s_localizableComparerMessage,
+            DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
+            isEnabledByDefault: false,
+            description: s_localizableComparerDescription,
+            customTags: WellKnownDiagnosticTags.Telemetry);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(CompareSymbolsRule, UseSymbolComparerRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -68,25 +82,23 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         private void HandleOperation(in OperationAnalysisContext context, ImmutableArray<INamedTypeSymbol> comparerTypes)
         {
-            if (context.Operation is IObjectCreationOperation objectCreation)
+            var objectCreation = (IObjectCreationOperation)context.Operation;
+            var typeBeingCreated = (INamedTypeSymbol)objectCreation.Type;
+
+            // Does the type have constructors that take comparers? 
+            var constructorsWithComparers = typeBeingCreated.Constructors.WhereAsArray(constructor => hasSymbolComparer(constructor, comparerTypes));
+
+            if (constructorsWithComparers.Length == 0)
             {
-                var typeBeingCreated = (INamedTypeSymbol)objectCreation.Type;
+                return;
+            }
 
-                // Does the type have constructors that take comparers? 
-                var constructorsWithComparers = typeBeingCreated.Constructors.WhereAsArray(constructor => hasSymbolComparer(constructor, comparerTypes));
+            // Is the constructor being used one of the ones that takes a comparer? 
+            var correctConstructorBeingUsed = constructorsWithComparers.Contains(objectCreation.Constructor);
 
-                if (constructorsWithComparers.Length == 0)
-                {
-                    return;
-                }
-
-                // Is the constructor being used one of the ones that takes a comparer? 
-                var correctConstructorBeingUsed = constructorsWithComparers.Contains(objectCreation.Constructor);
-
-                if (!correctConstructorBeingUsed)
-                {
-                    context.ReportDiagnostic(objectCreation.Syntax.GetLocation().CreateDiagnostic(Rule));
-                }
+            if (!correctConstructorBeingUsed)
+            {
+                context.ReportDiagnostic(objectCreation.Syntax.GetLocation().CreateDiagnostic(UseSymbolComparerRule));
             }
 
             // Local functions
@@ -95,8 +107,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 => methodSymbol.Parameters
                     .Select(param => param.Type)
                     .OfType<INamedTypeSymbol>()
-                    .WhereAsArray(t => comparerTypes.Contains(t.ConstructedFrom))
-                    .Any();
+                    .Any(t => comparerTypes.Contains(t.ConstructedFrom));
         }
 
         private void HandleBinaryOperator(in OperationAnalysisContext context, INamedTypeSymbol symbolType)
@@ -139,7 +150,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 return;
             }
 
-            context.ReportDiagnostic(binary.Syntax.GetLocation().CreateDiagnostic(Rule));
+            context.ReportDiagnostic(binary.Syntax.GetLocation().CreateDiagnostic(CompareSymbolsRule));
         }
 
         private static bool IsSymbolType(IOperation operation, INamedTypeSymbol symbolType)

@@ -151,14 +151,71 @@ End Class
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 
-class EqualityComparer : IEqualityComparer<ISymbol>, IComparer<ISymbol>
+public class EqualityComparer : IEqualityComparer<ISymbol>
 {
     public static EqualityComparer Instance = new EqualityComparer();
+
+    public bool Equals(ISymbol x, ISymbol y) => false;
+    public int GetHashCode(ISymbol obj) => 0;
+}
+
+public class SimpleComparer : IComparer<ISymbol>
+{
+    public static SimpleComparer Instance = new SimpleComparer();
+    public int Compare(ISymbol x, ISymbol y) => 0;
+}
+
+public class EqualityComparerAndComparer : IEqualityComparer<ISymbol>, IComparer<ISymbol>
+{
+    public static EqualityComparerAndComparer Instance = new EqualityComparerAndComparer();
 
     public int Compare(ISymbol x, ISymbol y) => 0;
     public bool Equals(ISymbol x, ISymbol y) => false;
     public int GetHashCode(ISymbol obj) => 0;
 }";
+
+        private const string MinimumComparerDeclarationVB =
+@"
+Imports System
+Imports System.Collections.Generic
+Imports Microsoft.CodeAnalysis
+
+Class EqualityComparer
+    Implements IEqualityComparer(Of ISymbol)
+
+    Public Function Equals(x As ISymbol, y As ISymbol) As Boolean Implements IEqualityComparer(Of ISymbol).Equals
+        Throw New NotImplementedException()
+    End Function
+
+    Public Function GetHashCode(obj As ISymbol) As Integer Implements IEqualityComparer(Of ISymbol).GetHashCode
+        Throw New NotImplementedException()
+    End Function
+End Class
+
+Class SimpleComparer
+    Implements IComparer(Of ISymbol)
+
+    Public Function Compare(x As ISymbol, y As ISymbol) As Integer Implements IComparer(Of ISymbol).Compare
+        Throw New NotImplementedException()
+    End Function
+End Class
+
+Class EqualityComparerAndComparer
+    Implements IEqualityComparer(Of ISymbol)
+    Implements IComparer(Of ISymbol)
+
+    Public Function Compare(x As ISymbol, y As ISymbol) As Integer Implements IComparer(Of ISymbol).Compare
+        Throw New NotImplementedException()
+    End Function
+
+    Public Function Equals(x As ISymbol, y As ISymbol) As Boolean Implements IEqualityComparer(Of ISymbol).Equals
+        Throw New NotImplementedException()
+    End Function
+
+    Public Function GetHashCode(obj As ISymbol) As Integer Implements IEqualityComparer(Of ISymbol).GetHashCode
+        Throw New NotImplementedException()
+    End Function
+End Class";
 
         [Theory]
         [InlineData(nameof(ISymbol))]
@@ -237,7 +294,7 @@ class TestClass {{
 using Microsoft.CodeAnalysis;
 class TestClass {{
     bool Method(Symbol x, {symbolType} y) {{
-        return [|x == y|];
+        return {{{DiagnosticIds.CompareSymbolsCorrectlyRuleId}:[|x == y|]}};
     }}
 }}
 ";
@@ -389,17 +446,21 @@ End Class
         }
 
         [Theory]
-        [InlineData("Dictionary<ISymbol, string>")]
-        [InlineData("SortedDictionary<ISymbol, string>")]
-        [InlineData("SortedSet<ISymbol>")]
-        [InlineData("HashSet<ISymbol>")]
-        public async Task CompareSymbolWithComparisonTypes_WithComparer_CSharp(string dataType)
+        [InlineData("Dictionary<ISymbol, string>", "EqualityComparer")]
+        [InlineData("Dictionary<ISymbol, string>", "EqualityComparerAndComparer")]
+        [InlineData("SortedDictionary<ISymbol, string>", "SimpleComparer")]
+        [InlineData("SortedDictionary<ISymbol, string>", "EqualityComparerAndComparer")]
+        [InlineData("SortedSet<ISymbol>", "SimpleComparer")]
+        [InlineData("SortedSet<ISymbol>", "EqualityComparerAndComparer")]
+        [InlineData("HashSet<ISymbol>", "EqualityComparer")]
+        [InlineData("HashSet<ISymbol>", "EqualityComparerAndComparer")]
+        public async Task CompareSymbolWithComparisonTypes_WithComparer_CSharp(string dataType, string comparisonType)
         {
             var source = $@"
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 class TestClass {{
-    private {dataType} testData = new {dataType}(EqualityComparer.Instance);
+    private {dataType} testData = new {dataType}({comparisonType}.Instance);
 }}
 ";
             await new VerifyCS.Test()
@@ -425,7 +486,60 @@ class TestClass {{
             const int line = 5;
 
             await VerifyCS.VerifyAnalyzerAsync(source,
-                DiagnosticResult.CompilerWarning(DiagnosticIds.CompareSymbolsCorrectlyRuleId)
+                DiagnosticResult.CompilerWarning(DiagnosticIds.UseComparersForSymbols)
+                    .WithLocation(line, column));
+        }
+
+        [Theory]
+        [InlineData("Dictionary(Of ISymbol, String)", "EqualityComparer")]
+        [InlineData("Dictionary(Of ISymbol, String)", "EqualityComparerAndComparer")]
+        [InlineData("SortedDictionary(Of ISymbol, String)", "SimpleComparer")]
+        [InlineData("SortedDictionary(Of ISymbol, string)", "EqualityComparerAndComparer")]
+        [InlineData("SortedSet(Of ISymbol)", "SimpleComparer")]
+        [InlineData("SortedSet(Of ISymbol)", "EqualityComparerAndComparer")]
+        [InlineData("HashSet(Of ISymbol)", "EqualityComparer")]
+        [InlineData("HashSet(Of ISymbol)", "EqualityComparerAndComparer")]
+        public async Task CompareSymbolWithComparisonTypes_WithComparer_VB(string dataType, string comparerType)
+        {
+            var source = $@"
+Imports System.Collections.Generic
+Imports Microsoft.CodeAnalysis
+
+Class TestClass
+    Public Sub T()
+        Dim comparer As New {comparerType}()
+        Dim col As New {dataType}(comparer)
+    End Sub
+End Class";
+
+            await new VerifyVB.Test()
+            {
+                TestState = { Sources = { source, MinimumComparerDeclarationVB } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData("Dictionary(Of ISymbol, String)")]
+        [InlineData("SortedDictionary(Of ISymbol, String)")]
+        [InlineData("SortedSet(Of ISymbol)")]
+        [InlineData("HashSet(Of ISymbol)")]
+        public async Task CompareSymbolWithComparisonTypes_WithoutComparer_VB(string dataType)
+        {
+            var source = $@"
+Imports System.Collections.Generic
+Imports Microsoft.CodeAnalysis
+
+Class TestClass
+    Public Sub T()
+        Dim col As New {dataType}()
+    End Sub
+End Class";
+
+            const int line = 7;
+            const int column = 20;
+
+            await VerifyVB.VerifyAnalyzerAsync(source,
+                DiagnosticResult.CompilerWarning(DiagnosticIds.UseComparersForSymbols)
                     .WithLocation(line, column));
         }
     }

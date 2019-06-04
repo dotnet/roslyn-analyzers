@@ -363,6 +363,11 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName(typeof(System.Collections.Generic.IEqualityComparer<>).FullName);
         }
 
+        public static INamedTypeSymbol GenericIComparer(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName(typeof(System.Collections.Generic.IComparer<>).FullName);
+        }
+
         public static INamedTypeSymbol GenericIEquatable(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);

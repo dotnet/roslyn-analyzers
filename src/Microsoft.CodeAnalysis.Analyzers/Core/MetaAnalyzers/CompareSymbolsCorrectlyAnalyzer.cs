@@ -14,10 +14,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
     public class CompareSymbolsCorrectlyAnalyzer : DiagnosticAnalyzer
     {
         private static readonly string s_symbolTypeFullName = typeof(ISymbol).FullName;
-        private static readonly string[] s_comparerTypeFullName = new[] {
-            typeof(IEqualityComparer<>).FullName,
-            typeof(IComparer<>).FullName
-        };
 
         private static readonly LocalizableString s_localizableEqualityTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
         private static readonly LocalizableString s_localizableEqualityMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
@@ -66,8 +62,11 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
                 context.RegisterOperationAction(context => HandleBinaryOperator(in context, symbolType), OperationKind.BinaryOperator);
 
-                var comparerTypes = s_comparerTypeFullName
-                    .Select(comparerTypeFullName => compilation.GetTypeByMetadataName(comparerTypeFullName))
+                var comparerTypes = new[]
+                    {
+                        WellKnownTypes.GenericIEqualityComparer(compilation),
+                        WellKnownTypes.GenericIComparer(compilation)
+                    }
                     .WhereNotNull()
                     .ToImmutableArray();
 
@@ -86,7 +85,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             var typeBeingCreated = (INamedTypeSymbol)objectCreation.Type;
 
             // Does the type have constructors that take comparers? 
-            var constructorsWithComparers = typeBeingCreated.Constructors.WhereAsArray(constructor => hasSymbolComparer(constructor, comparerTypes));
+            var constructorsWithComparers = typeBeingCreated.Constructors.WhereAsArray(constructor => HasSymbolComparer(constructor, comparerTypes));
 
             if (constructorsWithComparers.Length == 0)
             {
@@ -103,7 +102,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
             // Local functions
 
-            static bool hasSymbolComparer(IMethodSymbol methodSymbol, ImmutableArray<INamedTypeSymbol> comparerTypes)
+            static bool HasSymbolComparer(IMethodSymbol methodSymbol, ImmutableArray<INamedTypeSymbol> comparerTypes)
                 => methodSymbol.Parameters
                     .Select(param => param.Type)
                     .OfType<INamedTypeSymbol>()

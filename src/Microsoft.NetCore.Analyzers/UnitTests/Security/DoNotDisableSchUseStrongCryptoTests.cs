@@ -139,6 +139,7 @@ class TestClass
         }
 
         [Fact]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
         public void TestSwitchNameVariableNoDiagnostic()
         {
             VerifyCSharp(@"

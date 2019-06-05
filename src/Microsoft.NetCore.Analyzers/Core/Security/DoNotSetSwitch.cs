@@ -111,7 +111,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
                     else
                     {
-                        var valueContentResult = ValueContentAnalysis.GetOrComputeResult(
+                        var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(
                             invocationOperation.GetEnclosingControlFlowGraph(),
                             operationAnalysisContext.ContainingSymbol,
                             wellKnownTypeProvider,

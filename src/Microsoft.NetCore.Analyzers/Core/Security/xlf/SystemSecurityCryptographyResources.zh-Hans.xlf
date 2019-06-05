@@ -48,8 +48,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
-        <source>Make sure to sanitize relative archive item path '{0}{1}' before creating path for '{2}{3}' to extract file if the source is an untrusted zip archive</source>
-        <target state="new">Make sure to sanitize relative archive item path '{0}{1}' before creating path for '{2}{3}' to extract file if the source is an untrusted zip archive</target>
+        <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
+        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">

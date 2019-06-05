@@ -53,7 +53,7 @@ class TestClass
         zipArchiveEntry.ExtractToFile(zipArchiveEntry.FullName);
     }
 }",
-            GetCSharpResultAt(8, 39, 8, 9, "string ZipArchiveEntry.FullName", "", "void ZipFileExtensions.ExtractToFile(ZipArchiveEntry source, string destinationFileName)", ""));
+            GetCSharpResultAt(8, 9, 8, 39, "void ZipFileExtensions.ExtractToFile(ZipArchiveEntry source, string destinationFileName)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)"));
         }
 
         [Fact]
@@ -70,7 +70,7 @@ class TestClass
         File.Open(zipArchiveEntry.FullName, mode);
     }
 }",
-            GetCSharpResultAt(9, 19, 9, 9, "string ZipArchiveEntry.FullName", "", "FileStream File.Open(string path, FileMode mode)", ""));
+            GetCSharpResultAt(9, 9, 9, 19, "FileStream File.Open(string path, FileMode mode)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry, FileMode mode)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry, FileMode mode)"));
         }
 
         [Fact]
@@ -87,7 +87,7 @@ class TestClass
         File.Open(zipArchiveEntry.FullName, mode, access);
     }
 }",
-            GetCSharpResultAt(9, 19, 9, 9, "string ZipArchiveEntry.FullName", "", "FileStream File.Open(string path, FileMode mode, FileAccess access)", ""));
+            GetCSharpResultAt(9, 9, 9, 19, "FileStream File.Open(string path, FileMode mode, FileAccess access)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry, FileMode mode, FileAccess access)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry, FileMode mode, FileAccess access)"));
         }
 
         [Fact]
@@ -104,7 +104,7 @@ class TestClass
         File.Open(zipArchiveEntry.FullName, mode, access, share);
     }
 }",
-            GetCSharpResultAt(9, 19, 9, 9, "string ZipArchiveEntry.FullName", "", "FileStream File.Open(string path, FileMode mode, FileAccess access, FileShare share)", ""));
+            GetCSharpResultAt(9, 9, 9, 19, "FileStream File.Open(string path, FileMode mode, FileAccess access, FileShare share)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry, FileMode mode, FileAccess access, FileShare share)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry, FileMode mode, FileAccess access, FileShare share)"));
         }
 
         [Fact]
@@ -121,7 +121,7 @@ class TestClass
         var fileStream = new FileStream(zipArchiveEntry.FullName, mode);
     }
 }",
-            GetCSharpResultAt(9, 41, 9, 26, "string ZipArchiveEntry.FullName", "", "FileStream.FileStream(string path, FileMode mode)", ""));
+            GetCSharpResultAt(9, 26, 9, 41, "FileStream.FileStream(string path, FileMode mode)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry, FileMode mode)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry, FileMode mode)"));
         }
 
         [Fact]
@@ -138,7 +138,7 @@ class TestClass
         var fileInfo = new FileInfo(zipArchiveEntry.FullName);
     }
 }",
-            GetCSharpResultAt(9, 37, 9, 24, "string ZipArchiveEntry.FullName", "", "FileInfo.FileInfo(string fileName)", ""));
+            GetCSharpResultAt(9, 24, 9, 37, "FileInfo.FileInfo(string fileName)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)"));
         }
 
         //Ideally, we wouldn't generate a diagnostic in this case.
@@ -161,7 +161,7 @@ class TestClass
         }
     }
 }",
-            GetCSharpResultAt(9, 35, 13, 13, "string ZipArchiveEntry.FullName", "", "void ZipFileExtensions.ExtractToFile(ZipArchiveEntry source, string destinationFileName)", ""));
+            GetCSharpResultAt(13, 13, 9, 35, "void ZipFileExtensions.ExtractToFile(ZipArchiveEntry source, string destinationFileName)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)"));
         }
 
         [Fact]

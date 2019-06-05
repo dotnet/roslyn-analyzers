@@ -7,45 +7,42 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseDeprecatedSecurityProtocols : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA5364";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
+        internal static DiagnosticDescriptor DeprecatedRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5364",
+            typeof(SystemSecurityCryptographyResources),
             nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocols),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
             nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsDescription),
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            customTags: WellKnownDiagnosticTags.Telemetry);
+        internal static DiagnosticDescriptor HardCodedRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5386",
+            typeof(SystemSecurityCryptographyResources),
+            nameof(SystemSecurityCryptographyResources.HardCodedSecurityProtocolTitle),
+            nameof(SystemSecurityCryptographyResources.HardCodedSecurityProtocolMessage),
+            isEnabledByDefault: false,
+            helpLinkUri: null,
+            customTags: WellKnownDiagnosticTags.Telemetry);
 
-        private readonly ImmutableHashSet<string> SafeProtocolMetadataNames = ImmutableHashSet.Create(
-                StringComparer.Ordinal,
-                "SystemDefault",
-                "Tls12");
+        private readonly ImmutableHashSet<string> HardCodedSafeProtocolMetadataNames = ImmutableHashSet.Create(
+            StringComparer.Ordinal,
+            "Tls12",
+            "Tls13");
+        private const string SystemDefaultName = "SystemDefault";
 
-        private const int UnsafeBits = 48 | 192 | 768;    // SecurityProtocols Ssl3 Tls10 Tls11
+        private const int UnsafeBits = 48 | 192 | 768;    // SecurityProtocolType Ssl3 Tls10 Tls11
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                description: s_Description,
-                helpLinkUri: null,
-                customTags: WellKnownDiagnosticTags.Telemetry);
+        private const int HardCodedBits = 3072 | 12288;    // SecurityProtocolType Tls12 Tls13
 
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DeprecatedRule, HardCodedRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -64,22 +61,62 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
-                    bool IsReferencingDeprecatedProtocol(IFieldReferenceOperation fieldReferenceOperation)
+                    bool IsReferencingSecurityProtocolType(
+                        IFieldReferenceOperation fieldReferenceOperation,
+                        out bool isDeprecatedProtocol,
+                        out bool isHardCodedOkayProtocol)
                     {
-                        return securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType)
-                            && !SafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name);
+                        if (securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
+                        {
+                            if (HardCodedSafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name))
+                            {
+                                isHardCodedOkayProtocol = true;
+                                isDeprecatedProtocol = false;
+                            }
+                            else if (fieldReferenceOperation.Field.Name == SystemDefaultName)
+                            {
+                                isHardCodedOkayProtocol = false;
+                                isDeprecatedProtocol = false;
+                            }
+                            else
+                            {
+                                isDeprecatedProtocol = true;
+                                isHardCodedOkayProtocol = false;
+                            }
+
+                            return true;
+                        }
+                        else
+                        {
+                            isHardCodedOkayProtocol = false;
+                            isDeprecatedProtocol = false;
+                            return false;
+                        }
                     }
 
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
                             var fieldReferenceOperation = (IFieldReferenceOperation)operationAnalysisContext.Operation;
-                            if (IsReferencingDeprecatedProtocol(fieldReferenceOperation))
+                            if (IsReferencingSecurityProtocolType(
+                                    fieldReferenceOperation,
+                                    out var isDeprecatedProtocol,
+                                    out var isHardCodedOkayProtocol))
                             {
-                                operationAnalysisContext.ReportDiagnostic(
-                                    fieldReferenceOperation.CreateDiagnostic(
-                                        Rule,
-                                        fieldReferenceOperation.Field.Name));
+                                if (isDeprecatedProtocol)
+                                {
+                                    operationAnalysisContext.ReportDiagnostic(
+                                        fieldReferenceOperation.CreateDiagnostic(
+                                            DeprecatedRule,
+                                            fieldReferenceOperation.Field.Name));
+                                }
+                                else if (isHardCodedOkayProtocol)
+                                {
+                                    operationAnalysisContext.ReportDiagnostic(
+                                        fieldReferenceOperation.CreateDiagnostic(
+                                            HardCodedRule,
+                                            fieldReferenceOperation.Field.Name));
+                                }
                             }
                         }, OperationKind.FieldReference);
 
@@ -94,31 +131,64 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             // Find the topmost operation with a bad bit set, unless we find an operation that would've been
                             // flagged by the FieldReference callback above.
-                            IOperation foundOperation = null;
+                            IOperation foundDeprecatedOperation = null;
+                            bool foundDeprecatedReference = false;
+                            IOperation foundHardCodedOperation = null;
+                            bool foundHardCodedReference = false;
                             foreach (IOperation childOperation in assignmentOperation.Value.DescendantsAndSelf())
                             {
                                 if (childOperation is IFieldReferenceOperation fieldReferenceOperation
-                                    && IsReferencingDeprecatedProtocol(fieldReferenceOperation))
+                                    && IsReferencingSecurityProtocolType(
+                                        fieldReferenceOperation,
+                                        out var isDeprecatedProtocol,
+                                        out var isHardCodedOkayProtocol))
                                 {
-                                    // This assignment is handled by the FieldReference callback above.
-                                    return;
+                                    if (isDeprecatedProtocol)
+                                    {
+                                        foundDeprecatedReference = true;
+                                    }
+                                    else if (isHardCodedOkayProtocol)
+                                    {
+                                        foundHardCodedReference = true;
+                                    }
+
+                                    if (foundDeprecatedReference && foundHardCodedReference)
+                                    {
+                                        return;
+                                    }
                                 }
 
-                                if (foundOperation == null    // Only want the first.
-                                    && childOperation.ConstantValue.HasValue
-                                    && childOperation.ConstantValue.Value is int integerValue
-                                    && (integerValue & UnsafeBits) != 0)
+                                if (childOperation.ConstantValue.HasValue
+                                    && childOperation.ConstantValue.Value is int integerValue)
                                 {
-                                    foundOperation = childOperation;
+                                    if (foundDeprecatedOperation == null    // Only want the first.
+                                        && (integerValue & UnsafeBits) != 0)
+                                    {
+                                        foundDeprecatedOperation = childOperation;
+                                    }
+
+                                    if (foundHardCodedOperation == null    // Only want the first.
+                                        && (integerValue & HardCodedBits) != 0)
+                                    {
+                                        foundHardCodedOperation = childOperation;
+                                    }
                                 }
                             }
 
-                            if (foundOperation != null)
+                            if (foundDeprecatedOperation != null && !foundDeprecatedReference)
                             {
                                 operationAnalysisContext.ReportDiagnostic(
-                                    foundOperation.CreateDiagnostic(
-                                        Rule,
-                                        foundOperation.ConstantValue));
+                                    foundDeprecatedOperation.CreateDiagnostic(
+                                        DeprecatedRule,
+                                        foundDeprecatedOperation.ConstantValue));
+                            }
+
+                            if (foundHardCodedOperation != null && !foundHardCodedReference)
+                            {
+                                operationAnalysisContext.ReportDiagnostic(
+                                    foundHardCodedOperation.CreateDiagnostic(
+                                        HardCodedRule,
+                                        foundHardCodedOperation.ConstantValue));
                             }
                         },
                         OperationKind.SimpleAssignment,

@@ -366,4 +366,13 @@
   <data name="UseRSAWithSufficientKeySizeMessage" xml:space="preserve">
     <value>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>
   </data>
+  <data name="DoNotAddArchiveItemPathToTheTargetFileSystemPath" xml:space="preserve">
+    <value>Do Not Add Archive Item's Path To The Target File System Path</value>
+  </data>
+  <data name="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription" xml:space="preserve">
+    <value>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</value>
+  </data>
+  <data name="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage" xml:space="preserve">
+    <value>Make sure to sanitize relative archive item path '{0}{1}' before creating path for '{2}{3}' to extract file if the source is an untrusted zip archive</value>
+  </data>
 </root>

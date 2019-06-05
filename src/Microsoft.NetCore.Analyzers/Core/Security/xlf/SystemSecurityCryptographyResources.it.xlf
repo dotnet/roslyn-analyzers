@@ -37,6 +37,21 @@
         <target state="new">Set CookieOptions.Secure = true when setting a cookie</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
+        <source>Do Not Add Archive Item's Path To The Target File System Path</source>
+        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
+        <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
+        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
+        <source>Make sure to sanitize relative archive item path '{0}{1}' before creating path for '{2}{3}' to extract file if the source is an untrusted zip archive</source>
+        <target state="new">Make sure to sanitize relative archive item path '{0}{1}' before creating path for '{2}{3}' to extract file if the source is an untrusted zip archive</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
         <target state="translated">Non aggiungere lo schema in base all'URL</target>

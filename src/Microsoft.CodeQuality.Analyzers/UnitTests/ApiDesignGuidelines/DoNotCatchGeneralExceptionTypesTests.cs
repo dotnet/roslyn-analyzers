@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
 using Test.Utilities;
 using Xunit;
@@ -37,13 +35,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         catch (IOException e)
                         {
                         }
-                        catch
+                        [|catch|]
                         {
                         }
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(18, 25, "TestMethod"));
+            }");
         }
 
         [Fact]
@@ -58,13 +55,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         Try
                             Dim fileStream As New FileStream(""name"", FileMode.Create)
                         Catch e As IOException
-                        Catch
+                        [|Catch|]
                         End Try
                     End Sub
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(10, 25, "TestMethod"));
+            ");
         }
 
         [Fact]
@@ -89,15 +85,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                             catch (IOException e)
                             {
                             }
-                            catch
+                            [|catch|]
                             {
                             }
                             return 0;
                         }
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(20, 29, "get_TestProperty"));
+            }");
         }
 
         [Fact]
@@ -113,15 +108,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                             Try
                                 Dim fileStream As New FileStream(""name"", FileMode.Create)
                             Catch e As IOException
-                            Catch
+                            [|Catch|]
                             End Try
                             Return 0
                         End Get
                     End Property
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(11, 29, "get_X"));
+            ");
         }
 
         [Fact]
@@ -245,13 +239,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         {
                             throw;
                         }
-                        catch
+                        [|catch|]
                         {
                         }
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(19, 25, "TestMethod"));
+            }");
         }
 
         [Fact]
@@ -267,13 +260,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                             Dim fileStream As New FileStream(""name"", FileMode.Create)
                         Catch e As IOException
                             Throw
-                        Catch
+                        [|Catch|]
                         End Try
                     End Sub
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(11, 25, "TestMethod"));
+            ");
         }
 
         [Fact]
@@ -293,13 +285,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         {
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
-                        catch (Exception e)
+                        [|catch|] (Exception e)
                         {
                         }
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(15, 25, "TestMethod"));
+            }");
         }
 
         [Fact]
@@ -314,13 +305,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     Public Shared Sub TestMethod()
                         Try
                             Dim fileStream As New FileStream(""name"", FileMode.Create)
-                        Catch e As Exception
+                        [|Catch|] e As Exception
                         End Try
                     End Sub
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(10, 25, "TestMethod"));
+            ");
         }
 
         [Fact]
@@ -434,13 +424,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         {
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
-                        catch (SystemException e)
+                        [|catch|] (SystemException e)
                         {
                         }
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(15, 25, "TestMethod"));
+            }");
         }
 
         [Fact]
@@ -454,13 +443,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     Public Shared Sub TestMethod()
                         Try
                             Dim fileStream As New FileStream(""name"", FileMode.Create)
-                        Catch e As System.Exception
+                        [|Catch|] e As System.Exception
                         End Try
                     End Sub
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(9, 25, "TestMethod"));
+            ");
         }
 
         [Fact]
@@ -479,13 +467,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         {
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
-                        catch when (true)
+                        [|catch|] when (true)
                         {
                         }
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(14, 25, "TestMethod"));
+            }");
         }
 
         [Fact]
@@ -498,13 +485,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     Public Shared Sub TestMethod()
                         Try
                             Dim fileStream As New FileStream(""name"", FileMode.Create)
-                        Catch When True
+                        [|Catch|] When True
                         End Try
                     End Sub
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(8, 25, "TestMethod"));
+            ");
         }
 
         [Fact]
@@ -523,13 +509,12 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         {
                             FileStream fileStream = new FileStream(""name"", FileMode.Create);
                         }
-                        catch (Exception) when (true)
+                        [|catch|] (Exception) when (true)
                         {
                         }
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(14, 25, "TestMethod"));
+            }");
         }
 
         [Fact]
@@ -594,14 +579,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                             {
                                 FileStream fileStream = new FileStream(""name"", FileMode.Create);
                             }
-                            catch
+                            [|catch|]
                             {
                             }
                         };
                     }
                 }
-            }",
-            GetCA1031CSharpResultAt(17, 29, "TestMethod"));
+            }");
         }
 
         [Fact]
@@ -617,14 +601,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         Dim action As Action = Function() 
                             Try
                                 Dim fileStream As New FileStream(""name"", FileMode.Create)
-                            Catch
+                            [|Catch|]
                             End Try
                         End Function
                     End Sub
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(11, 29, "TestMethod"));
+            ");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
@@ -636,15 +619,14 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                         Dim action As Action = Function() 
                             Try
                                 Dim fileStream As New FileStream(""name"", FileMode.Create)
-                            Catch
+                            [|Catch|]
                             End Try
                             Return 0
                         End Function
                     End Function
                 End Class
             End Namespace
-            ",
-            GetCA1031BasicResultAt(11, 29, "TestMethod"));
+            ");
         }
 
         [Fact, WorkItem(2518, "https://github.com/dotnet/roslyn-analyzers/issues/2518")]
@@ -680,77 +662,44 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
         [InlineData(@"dotnet_code_quality.disallowed_symbol_names = T:System.NullReferenceException")]
         public async Task EditorConfigConfiguration_DisallowedExceptionTypes(string editorConfigText)
         {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length > 0)
-            {
-                expected = new DiagnosticResult[]
-                {
-                    GetCA1031CSharpResultAt(7, 9, "M1")
-                };
-            }
-
-            var csTest = new VerifyCS.Test
+            await new VerifyCS.Test
             {
                 TestState =
                 {
                     Sources =
                     {
-                        @"
+                        $@"
 class Test
-{
+{{
     void M1(string param)
-    {
-        try { }
-        catch (System.NullReferenceException ex) { }
-    }
-}"
+    {{
+        try {{ }}
+        {(editorConfigText.Length > 0 ? "[|catch|]" : "catch")} (System.NullReferenceException ex) {{ }}
+    }}
+}}"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) }
                 },
-            };
-            csTest.ExpectedDiagnostics.AddRange(expected);
-            await csTest.RunAsync();
+            }.RunAsync();
 
-            expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length > 0)
-            {
-                expected = new DiagnosticResult[]
-                {
-                    GetCA1031BasicResultAt(5, 9, "M1")
-
-                };
-            }
-
-            var vbTest = new VerifyVB.Test
+            await new VerifyVB.Test
             {
                 TestState =
                 {
                     Sources =
                     {
-                        @"
+                        $@"
 Class Test
     Private Sub M1(param As String)
         Try
-        Catch ex As System.NullReferenceException
+        {(editorConfigText.Length > 0 ? "[|Catch|]" : "Catch")} ex As System.NullReferenceException
         End Try
     End Sub
 End Class"
                     },
                     AdditionalFiles = { (".editorconfig", editorConfigText) }
                 }
-            };
-            vbTest.ExpectedDiagnostics.AddRange(expected);
-            await vbTest.RunAsync();
+            }.RunAsync();
         }
-
-        private static DiagnosticResult GetCA1031CSharpResultAt(int line, int column, string signature)
-            => VerifyCS.Diagnostic(DoNotCatchGeneralExceptionTypesAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithArguments(signature);
-
-        private static DiagnosticResult GetCA1031BasicResultAt(int line, int column, string signature)
-            => VerifyVB.Diagnostic(DoNotCatchGeneralExceptionTypesAnalyzer.Rule)
-                .WithLocation(line, column)
-                .WithArguments(signature);
     }
 }

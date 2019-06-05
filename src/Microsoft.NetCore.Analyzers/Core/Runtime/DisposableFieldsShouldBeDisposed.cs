@@ -60,6 +60,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         updateValueFactory: (f, currentValue) => currentValue || disposed);
                 };
 
+                var hasErrors = false;
+                compilationContext.RegisterOperationAction(_ => hasErrors = true, OperationKind.Invalid);
+
                 // Disposable fields with initializer at declaration must be disposed.
                 compilationContext.RegisterOperationAction(operationContext =>
                 {
@@ -122,10 +125,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
                                     var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                                         operationBlockStartContext.Options, Rule, InterproceduralAnalysisKind.None, operationBlockStartContext.CancellationToken);
-                                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(cfg,
+                                    var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(cfg,
                                         containingMethod, wellKnownTypeProvider, interproceduralAnalysisConfig,
                                         interproceduralAnalysisPredicateOpt: null,
                                         pessimisticAnalysis: false, performCopyAnalysis: false);
+                                    if (pointsToAnalysisResult == null)
+                                    {
+                                        hasErrors = true;
+                                        return;
+                                    }
+
                                     Interlocked.CompareExchange(ref lazyPointsToAnalysisResult, pointsToAnalysisResult, null);
                                 }
 
@@ -192,6 +201,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationContext.RegisterCompilationEndAction(compilationEndContext =>
                 {
+                    if (hasErrors)
+                    {
+                        return;
+                    }
+
                     foreach (var kvp in fieldDisposeValueMap)
                     {
                         IFieldSymbol field = kvp.Key;
@@ -215,7 +229,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     // We only want to analyze types which are disposable (implement System.IDisposable directly or indirectly)
                     // and have at least one disposable field.
-                    return namedType.IsDisposable(disposeAnalysisHelper.IDisposable) &&
+                    return !hasErrors &&
+                        namedType.IsDisposable(disposeAnalysisHelper.IDisposable) &&
                         !disposeAnalysisHelper.GetDisposableFields(namedType).IsEmpty;
                 }
             });

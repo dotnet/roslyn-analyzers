@@ -133,7 +133,6 @@ class TestClass
 }");
         }
 
-        //Ideally, we would generate a diagnostic in this case.
         [Fact]
         public void TestSwitchNameVariableNoDiagnostic()
         {
@@ -147,7 +146,8 @@ class TestClass
         string switchName = ""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"";
         AppContext.SetSwitch(switchName, true);
     }
-}");
+}",
+                GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
         }
 
         //Ideally, we would generate a diagnostic in this case.

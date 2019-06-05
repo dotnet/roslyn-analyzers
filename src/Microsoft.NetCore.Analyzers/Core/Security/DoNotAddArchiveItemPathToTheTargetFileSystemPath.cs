@@ -100,7 +100,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                     foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                     {
-                                        var taintedDataAnalysisResult = TaintedDataAnalysis.GetOrComputeResult(
+                                        var taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
                                             rootOperation.GetEnclosingControlFlowGraph(),
                                             operationBlockAnalysisContext.Compilation,
                                             operationBlockAnalysisContext.OwningSymbol,

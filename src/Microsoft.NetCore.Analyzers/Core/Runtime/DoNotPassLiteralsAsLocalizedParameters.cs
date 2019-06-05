@@ -95,7 +95,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
                     {
-                        if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore))
+                        if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
+                            lazyValueContentResult.Value != null)
                         {
                             ValueContentAbstractValue stringContentValue = lazyValueContentResult.Value[operation.Kind, operation.Syntax];
                             if (stringContentValue.IsLiteralState)
@@ -146,7 +147,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (cfg != null)
                         {
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                            return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                            return ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
                                 operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
                         }
 

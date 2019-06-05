@@ -3,11 +3,17 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ReviewCodeForXPathInjectionVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        public ReviewCodeForXPathInjectionVulnerabilitiesTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticDescriptor Rule => ReviewCodeForXPathInjectionVulnerabilities.Rule;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

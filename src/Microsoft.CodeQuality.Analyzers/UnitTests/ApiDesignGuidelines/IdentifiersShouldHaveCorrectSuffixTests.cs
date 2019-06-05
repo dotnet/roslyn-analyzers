@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using Xunit.Abstractions;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldHaveCorrectSuffixAnalyzer,
     Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpIdentifiersShouldHaveCorrectSuffixFixer>;
@@ -15,6 +16,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class IdentifiersShouldHaveCorrectSuffixTests : DiagnosticAnalyzerTestBase
     {
+        public IdentifiersShouldHaveCorrectSuffixTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new IdentifiersShouldHaveCorrectSuffixAnalyzer();
@@ -426,7 +432,6 @@ public class MyCollectionDataTable : DataTable, IEnumerable
         [Fact]
         public void CA1710_AllScenarioDiagnostics_VisualBasic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyBasic(@"
 Imports System
 Imports System.Collections
@@ -778,7 +783,6 @@ GetCA1710BasicResultAt(line: 263, column: 14, symbolName: "WronglyNamedType", re
         [Fact]
         public void CA1710_NoDiagnostics_VisualBasic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             VerifyBasic(@"
 Imports System
 Imports System.Collections

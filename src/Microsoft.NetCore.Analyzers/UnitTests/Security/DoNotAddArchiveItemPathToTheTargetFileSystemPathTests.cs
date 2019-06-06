@@ -1,9 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -18,9 +17,9 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 
         protected override DiagnosticDescriptor Rule => DoNotAddArchiveItemPathToTheTargetFileSystemPath.Rule;
 
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            string zipArchiveEntryAndZipFileExtensionsCSharpSourceCode = @"
+        protected override IEnumerable<string> AdditionalCSharpSources => new string[] { zipArchiveEntryAndZipFileExtensionsCSharpSourceCode };
+
+        public const string zipArchiveEntryAndZipFileExtensionsCSharpSourceCode = @"
 namespace System.IO.Compression
 {
     public class ZipArchiveEntry
@@ -35,10 +34,6 @@ namespace System.IO.Compression
         }
     }
 }";
-            this.VerifyCSharp(
-                new[] { source, zipArchiveEntryAndZipFileExtensionsCSharpSourceCode }.ToFileAndSource(),
-                expected);
-        }
 
         [Fact]
         public void Test_Sink_ZipArchiveEntry_ExtractToFile_Diagnostic()

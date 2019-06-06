@@ -52,6 +52,21 @@
         <target state="new">Avoid excessive parameters on generic types</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidOutParametersDescription">
+        <source>Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. The difference between out and ref is not widely understood.</source>
+        <target state="new">Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. The difference between out and ref is not widely understood.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidOutParametersMessage">
+        <source>Avoid out parameters</source>
+        <target state="new">Avoid out parameters</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidOutParametersTitle">
+        <source>Avoid out parameters</source>
+        <target state="new">Avoid out parameters</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
         <target state="translated">In un'istruzione catch è stata rilevata un'eccezione generale, come System.Exception o System.SystemException, oppure viene usata una clausola catch generale. Le eccezioni generali non dovrebbero essere rilevate.</target>

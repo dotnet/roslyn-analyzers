@@ -11,7 +11,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class UseGenericsWhereAppropriate
+    public class UseGenericsWhereAppropriateTests
     {
         [Fact]
         public async Task PublicRefObject_Warns()

@@ -1070,4 +1070,13 @@
   <data name="UseGenericsWhereAppropriateTitle" xml:space="preserve">
     <value>Use generics where appropriate</value>
   </data>
+  <data name="AvoidOutParametersDescription" xml:space="preserve">
+    <value>Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. The difference between out and ref is not widely understood.</value>
+  </data>
+  <data name="AvoidOutParametersMessage" xml:space="preserve">
+    <value>Avoid out parameters</value>
+  </data>
+  <data name="AvoidOutParametersTitle" xml:space="preserve">
+    <value>Avoid out parameters</value>
+  </data>
 </root>

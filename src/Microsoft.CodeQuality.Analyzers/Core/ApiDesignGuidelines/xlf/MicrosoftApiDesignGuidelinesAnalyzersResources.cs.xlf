@@ -53,13 +53,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsDescription">
-        <source>List&lt;T&gt; is a generic collection that is designed for performance, not inheritance; it does not contain any virtual members. Generic collections that are designed for inheritance should be exposed instead.</source>
-        <target state="new">List&lt;T&gt; is a generic collection that is designed for performance, not inheritance; it does not contain any virtual members. Generic collections that are designed for inheritance should be exposed instead.</target>
+        <source>List&lt;T&gt; is a generic collection that is designed for performance, not inheritance; it does not contain any virtual members. Generic collections that are designed for inheritance, like Collection&lt;T&gt;, should be exposed instead.</source>
+        <target state="new">List&lt;T&gt; is a generic collection that is designed for performance, not inheritance; it does not contain any virtual members. Generic collections that are designed for inheritance, like Collection&lt;T&gt;, should be exposed instead.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsMessage">
-        <source>Expose collections that are designed for better customization, like Collection&lt;T&gt;.</source>
-        <target state="new">Expose collections that are designed for better customization, like Collection&lt;T&gt;.</target>
+        <source>Expose inheritance-friendly collection types like Collection&lt;T&gt; instead of List&lt;T&gt;.</source>
+        <target state="new">Expose inheritance-friendly collection types like Collection&lt;T&gt; instead of List&lt;T&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotExposeGenericListsTitle">
@@ -110,6 +110,21 @@
       <trans-unit id="DoNotStoreAsyncLambdasAsVoidReturningDelegateTypesMessage">
         <source>Don't Store Async Lambdas as Void Returning Delegate Types</source>
         <target state="translated">Neukládejte asynchronní výrazy lambda jako typy delegátů vracející hodnotu Void.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GenericMethodsShouldProvideTypeParameterDescription">
+        <source>When a generic type parameter is not used as the type of a method parameter, it is not able to be inferred from the method's arguments, making using the method more complicated.</source>
+        <target state="new">When a generic type parameter is not used as the type of a method parameter, it is not able to be inferred from the method's arguments, making using the method more complicated.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GenericMethodsShouldProvideTypeParameterMessage">
+        <source>Method '{0}' contains generic type parameter '{1}' which is not used as the type of a parameter to the method.</source>
+        <target state="new">Method '{0}' contains generic type parameter '{1}' which is not used as the type of a parameter to the method.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="GenericMethodsShouldProvideTypeParameterTitle">
+        <source>Generic methods should provide type parameter</source>
+        <target state="new">Generic methods should provide type parameter</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIDisposableCorrectlyMessageFinalizeOverride">

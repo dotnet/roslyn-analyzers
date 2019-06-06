@@ -1034,4 +1034,13 @@
   <data name="DoNotExposeGenericListsTitle" xml:space="preserve">
     <value>Do not expose generic lists</value>
   </data>
+  <data name="GenericMethodsShouldProvideTypeParameterDescription" xml:space="preserve">
+    <value>When a generic type parameter is not used as the type of a method parameter, it is not able to be inferred from the method's arguments, making using the method more complicated.</value>
+  </data>
+  <data name="GenericMethodsShouldProvideTypeParameterMessage" xml:space="preserve">
+    <value>Method '{0}' contains generic type parameter '{1}' which is not used as the type of a parameter to the method.</value>
+  </data>
+  <data name="GenericMethodsShouldProvideTypeParameterTitle" xml:space="preserve">
+    <value>Generic methods should provide type parameter</value>
+  </data>
 </root>

@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task PrivateListProperty_NoWarns()
+        public async Task PrivateListProperty_NoWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class

@@ -1025,4 +1025,13 @@
   <data name="DoNotPrefixEnumValuesWithTypeNameTitle" xml:space="preserve">
     <value>Do not prefix enum values with type name</value>
   </data>
+  <data name="DoNotExposeGenericListsDescription" xml:space="preserve">
+    <value>List&lt;T&gt; is a generic collection that is designed for performance, not inheritance; it does not contain any virtual members. Generic collections that are designed for inheritance, like Collection&lt;T&gt;, should be exposed instead.</value>
+  </data>
+  <data name="DoNotExposeGenericListsMessage" xml:space="preserve">
+    <value>Expose inheritance-friendly collection types like Collection&lt;T&gt; instead of List&lt;T&gt;.</value>
+  </data>
+  <data name="DoNotExposeGenericListsTitle" xml:space="preserve">
+    <value>Do not expose generic lists</value>
+  </data>
 </root>

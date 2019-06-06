@@ -55,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 if (!method.Parameters.Any(p => p.Type.Equals(typeArgument)))
                 {
-                    context.ReportDiagnostic(context.Symbol.CreateDiagnostic(Rule));
+                    context.ReportDiagnostic(context.Symbol.CreateDiagnostic(Rule, method.ToDisplayString(), typeArgument.ToDisplayString()));
                 }
             }
         }

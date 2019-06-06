@@ -106,7 +106,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
 
         [Fact]
-        public async Task PublicListReturnValue_Warns()
+        public async Task PublicListReturn_Warns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class
@@ -123,7 +123,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task PrivateListReturnValue_NoWarn()
+        public async Task PrivateListReturn_NoWarn()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class
@@ -140,7 +140,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task ProtectedListReturnValue_Warns()
+        public async Task ProtectedListReturn_Warns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Class

@@ -1044,7 +1044,7 @@
     <value>Generic methods should provide type parameter</value>
   </data>
   <data name="AvoidExcessiveParametersOnGenericTypesDescription" xml:space="preserve">
-    <value>The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If  more than two type parameters exist, the difficulty becomes too great for most users.</value>
+    <value>The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If more than two type parameters exist, the difficulty becomes too great for most users.</value>
   </data>
   <data name="AvoidExcessiveParametersOnGenericTypesMessage" xml:space="preserve">
     <value>Generic types should not have more than two type arguments.</value>
@@ -1052,5 +1052,22 @@
   <data name="AvoidExcessiveParametersOnGenericTypesTitle" xml:space="preserve">
     <value>Avoid excessive parameters on generic types</value>
   </data>
-
+  <data name="DoNotNestGenericTypesInMemberSignaturesDescription" xml:space="preserve">
+    <value>The required procedure and syntax to call a member whose signature contains a nested type argument are complex and should be avoided.</value>
+  </data>
+  <data name="DoNotNestGenericTypesInMemberSignaturesMessage" xml:space="preserve">
+    <value>Do not nest generic types in member signatures</value>
+  </data>
+  <data name="DoNotNestGenericTypesInMemberSignaturesTitle" xml:space="preserve">
+    <value>Do not nest generic types in member signatures</value>
+  </data>
+  <data name="UseGenericsWhereAppropriateDescription" xml:space="preserve">
+    <value>The argument type that is supplied for a ref parameter must exactly match the parameter type. To use a derived type, it must first be cast and assigned to a variable of the ref parameter type. Use of a generic method allows all types to be passed to the method without casting the type.</value>
+  </data>
+  <data name="UseGenericsWhereAppropriateMessage" xml:space="preserve">
+    <value>Use a generic type instead of System.Object when using ref parameters</value>
+  </data>
+  <data name="UseGenericsWhereAppropriateTitle" xml:space="preserve">
+    <value>Use generics where appropriate</value>
+  </data>
 </root>

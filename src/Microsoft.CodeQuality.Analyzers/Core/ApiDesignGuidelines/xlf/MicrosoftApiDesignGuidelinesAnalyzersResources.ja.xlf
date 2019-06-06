@@ -38,8 +38,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveParametersOnGenericTypesDescription">
-        <source>The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If  more than two type parameters exist, the difficulty becomes too great for most users.</source>
-        <target state="new">The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If  more than two type parameters exist, the difficulty becomes too great for most users.</target>
+        <source>The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If more than two type parameters exist, the difficulty becomes too great for most users.</source>
+        <target state="new">The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If more than two type parameters exist, the difficulty becomes too great for most users.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveParametersOnGenericTypesMessage">
@@ -80,6 +80,21 @@
       <trans-unit id="DoNotExposeGenericListsTitle">
         <source>Do not expose generic lists</source>
         <target state="new">Do not expose generic lists</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotNestGenericTypesInMemberSignaturesDescription">
+        <source>The required procedure and syntax to call a member whose signature contains a nested type argument are complex and should be avoided.</source>
+        <target state="new">The required procedure and syntax to call a member whose signature contains a nested type argument are complex and should be avoided.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotNestGenericTypesInMemberSignaturesMessage">
+        <source>Do not nest generic types in member signatures</source>
+        <target state="new">Do not nest generic types in member signatures</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotNestGenericTypesInMemberSignaturesTitle">
+        <source>Do not nest generic types in member signatures</source>
+        <target state="new">Do not nest generic types in member signatures</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
@@ -330,6 +345,21 @@
       <trans-unit id="DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility">
         <source>If {0} is the property accessor for positional argument {1}, make it public.</source>
         <target state="translated">{0} が位置引数 {1} のプロパティ アクセサーである場合は、パブリックにしてください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericsWhereAppropriateDescription">
+        <source>The argument type that is supplied for a ref parameter must exactly match the parameter type. To use a derived type, it must first be cast and assigned to a variable of the ref parameter type. Use of a generic method allows all types to be passed to the method without casting the type.</source>
+        <target state="new">The argument type that is supplied for a ref parameter must exactly match the parameter type. To use a derived type, it must first be cast and assigned to a variable of the ref parameter type. Use of a generic method allows all types to be passed to the method without casting the type.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericsWhereAppropriateMessage">
+        <source>Use a generic type instead of System.Object when using ref parameters</source>
+        <target state="new">Use a generic type instead of System.Object when using ref parameters</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseGenericsWhereAppropriateTitle">
+        <source>Use generics where appropriate</source>
+        <target state="new">Use generics where appropriate</target>
         <note />
       </trans-unit>
       <trans-unit id="UsePropertiesWhereAppropriateTitle">

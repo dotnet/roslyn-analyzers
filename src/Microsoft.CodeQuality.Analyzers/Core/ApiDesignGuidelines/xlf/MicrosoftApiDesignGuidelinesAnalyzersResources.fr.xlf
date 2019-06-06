@@ -37,6 +37,21 @@
         <target state="translated">Les noms de méthodes Async doivent finir par Async</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidExcessiveParametersOnGenericTypesDescription">
+        <source>The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If  more than two type parameters exist, the difficulty becomes too great for most users.</source>
+        <target state="new">The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If  more than two type parameters exist, the difficulty becomes too great for most users.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidExcessiveParametersOnGenericTypesMessage">
+        <source>Generic types should not have more than two type arguments.</source>
+        <target state="new">Generic types should not have more than two type arguments.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidExcessiveParametersOnGenericTypesTitle">
+        <source>Avoid excessive parameters on generic types</source>
+        <target state="new">Avoid excessive parameters on generic types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
         <target state="translated">Une exception générale de type System.Exception ou System.SystemException est interceptée dans une instruction catch, ou une clause catch générale est utilisée. Les exceptions générales ne doivent pas être interceptées.</target>

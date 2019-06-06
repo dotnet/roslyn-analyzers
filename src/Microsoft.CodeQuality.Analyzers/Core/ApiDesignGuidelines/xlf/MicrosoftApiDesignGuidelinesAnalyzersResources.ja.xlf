@@ -37,6 +37,21 @@
         <target state="translated">非同期メソッド名は Async で終わる必要があります</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidExcessiveParametersOnGenericTypesDescription">
+        <source>The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If  more than two type parameters exist, the difficulty becomes too great for most users.</source>
+        <target state="new">The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If  more than two type parameters exist, the difficulty becomes too great for most users.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidExcessiveParametersOnGenericTypesMessage">
+        <source>Generic types should not have more than two type arguments.</source>
+        <target state="new">Generic types should not have more than two type arguments.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidExcessiveParametersOnGenericTypesTitle">
+        <source>Avoid excessive parameters on generic types</source>
+        <target state="new">Avoid excessive parameters on generic types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
         <target state="translated">System.Exception または System.SystemException などの一般的な例外は catch ステートメントでキャッチされます。または一般的な catch 句を使用します。一般的な例外をキャッチしないでください。</target>

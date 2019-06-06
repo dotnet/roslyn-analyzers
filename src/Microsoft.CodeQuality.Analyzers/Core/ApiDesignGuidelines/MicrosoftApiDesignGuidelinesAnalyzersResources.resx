@@ -1043,4 +1043,14 @@
   <data name="GenericMethodsShouldProvideTypeParameterTitle" xml:space="preserve">
     <value>Generic methods should provide type parameter</value>
   </data>
+  <data name="AvoidExcessiveParametersOnGenericTypesDescription" xml:space="preserve">
+    <value>The more type parameters a generic type contains, the more difficult it is to know and remember what each type parameter represents. If  more than two type parameters exist, the difficulty becomes too great for most users.</value>
+  </data>
+  <data name="AvoidExcessiveParametersOnGenericTypesMessage" xml:space="preserve">
+    <value>Generic types should not have more than two type arguments.</value>
+  </data>
+  <data name="AvoidExcessiveParametersOnGenericTypesTitle" xml:space="preserve">
+    <value>Avoid excessive parameters on generic types</value>
+  </data>
+
 </root>

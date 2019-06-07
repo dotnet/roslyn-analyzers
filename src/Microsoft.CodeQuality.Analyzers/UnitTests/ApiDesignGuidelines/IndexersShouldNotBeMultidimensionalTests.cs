@@ -5,66 +5,74 @@ using Microsoft.CodeAnalysis;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UseGenericsWhereAppropriateAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IndexersShouldNotBeMultidimensionalAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
-    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UseGenericsWhereAppropriateAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IndexersShouldNotBeMultidimensionalAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class UseGenericsWhereAppropriateTests
+    public class IndexersShouldNotBeMultidimensionalTests
     {
         [Theory]
         [AccessibilityData(Accessibility.Public, true)]
         [AccessibilityData(Accessibility.Protected, true)]
         [AccessibilityData(Accessibility.Internal, false)]
         [AccessibilityData(Accessibility.Private, false)]
-        public async Task RefObject_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        public async Task MultidimensionalIndexer_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} void {left}Swap{right}(ref object o1, ref object o2) {{ }}
+                    {visibilityCS} int {left}this{right}[int x, int y] => 0;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Sub {left}Swap{right}(ByRef o1 As Object, ByRef o2 As Object)
-                    End Sub
-                End Class");
-
-        }
-
-        [Fact]
-        public async Task PublicRefInt_NoWarn()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Test
-                {
-                    public void Swap(ref int o1, ref int o2) { }
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class Test
-                    Public Sub Swap(ByRef o1 As Integer, ByRef o2 As Integer)
-                    End Sub
+                    {visibilityVB} ReadOnly Property {left}Int{right}(x As Integer, y As Integer) As Integer
+                        Get
+                            Return 0
+                        End Get
+                    End Property
                 End Class");
         }
 
         [Fact]
-        public async Task PublicValObject_NoWarn()
+        public async Task SingleDimensionalIndexer_NeverWarns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
                 {
-                    public void Swap(object o1, object o2) { }
+                    public int this[int x] => 0;
                 }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class Test
-                    Public Sub Swap(o1 As Object, o2 As Object)
-                    End Sub
+                    Public ReadOnly Default Property This(x As Integer) As Integer
+                        Get
+                            Return 0
+                        End Get
+                    End Property
+                End Class");
+        }
+
+        [Fact]
+        public async Task NonParameterfulProperty_NeverWarns()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+                public class Test
+                {
+                    public int Int => 0;
+                }");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+                Public Class Test
+                    Public ReadOnly Property Int As Integer
+                        Get
+                            Return 0
+                        End Get
+                    End Property
                 End Class");
         }
     }

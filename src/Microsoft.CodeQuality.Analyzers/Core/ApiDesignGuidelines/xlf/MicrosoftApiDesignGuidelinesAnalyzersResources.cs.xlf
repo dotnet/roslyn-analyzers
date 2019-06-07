@@ -177,6 +177,21 @@
         <target state="translated">Odeberte finalizační metodu z typu {0}, přepište Dispose(bool disposing) a vložte finalizační logiku do cesty kódu, kde je disposing hodnoty false. V opačném případě by to mohlo vést k duplicitním voláním Dispose, protože základní typ {1} také poskytuje finalizační metodu.</target>
         <note />
       </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalDescription">
+        <source>Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </source>
+        <target state="new">Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalMessage">
+        <source>Indexers should not be multidimensional</source>
+        <target state="new">Indexers should not be multidimensional</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalTitle">
+        <source>Indexers should not be multidimensional</source>
+        <target state="new">Indexers should not be multidimensional</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">Když je to možné, rozšiřte objekty CancellationToken.</target>

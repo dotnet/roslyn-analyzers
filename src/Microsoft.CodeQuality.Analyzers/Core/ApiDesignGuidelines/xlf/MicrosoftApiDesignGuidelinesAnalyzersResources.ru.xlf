@@ -177,6 +177,21 @@
         <target state="translated">Удалите метод завершения из типа '{0}', переопределите Dispose(bool disposing) и поместите логику завершения в путь кода, туда где 'disposing' имеет значение false. В противном случае это может привести к дублированию вызовов метода Dispose, так как базовый тип '{1}' также предоставляет метод завершения.</target>
         <note />
       </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalDescription">
+        <source>Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </source>
+        <target state="new">Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalMessage">
+        <source>Indexers should not be multidimensional</source>
+        <target state="new">Indexers should not be multidimensional</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalTitle">
+        <source>Indexers should not be multidimensional</source>
+        <target state="new">Indexers should not be multidimensional</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">По мере возможности распространяйте токены CancellationToken</target>

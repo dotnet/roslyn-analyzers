@@ -1079,4 +1079,13 @@
   <data name="AvoidOutParametersTitle" xml:space="preserve">
     <value>Avoid out parameters</value>
   </data>
+  <data name="IndexersShouldNotBeMultidimensionalDescription" xml:space="preserve">
+    <value>Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </value>
+  </data>
+  <data name="IndexersShouldNotBeMultidimensionalMessage" xml:space="preserve">
+    <value>Indexers should not be multidimensional</value>
+  </data>
+  <data name="IndexersShouldNotBeMultidimensionalTitle" xml:space="preserve">
+    <value>Indexers should not be multidimensional</value>
+  </data>
 </root>

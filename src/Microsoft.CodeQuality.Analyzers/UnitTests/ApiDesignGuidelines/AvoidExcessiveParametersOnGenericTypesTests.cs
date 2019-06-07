@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.AvoidExcessiveParametersOnGenericTypesAnalyzer,
@@ -13,70 +15,50 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class AvoidExcessiveParametersOnGenericTypesTests
     {
-        [Fact]
-        public async Task PublicType_NoArguments_NoWarn()
+        [Theory]
+        [AccessibilityData(Accessibility.Public, true)]
+        [AccessibilityData(Accessibility.Internal, false)]
+        public async Task ThreeArguments_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                {visibilityCS} class {left}Test{right}<T1, T2, T3>
+                {{
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                {visibilityVB} Class {left}Test{right}(Of T1, T2, T3)
                 End Class");
         }
 
-
-        [Fact]
-        public async Task PublicGenericType_OneArgument_NoWarn()
+        [Theory]
+        [InlineData("", "")]
+        [InlineData("<T>", "(Of T)")]
+        [InlineData("<T1, T2>", "(Of T1, T2)")]
+        public async Task LessThanThreeArguments_NeverWarns(string arityCS, string arityVB)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class<T>
-                {
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                public class Test{arityCS}
+                {{
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass](Of T)
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                Public Class Test{arityVB}
                 End Class");
         }
 
-        [Fact]
-        public async Task PublicGenericType_TwoArguments_NoWarn()
+        [Theory]
+        [InlineData("<T1, T2, T3>", "(Of T1, T2, T3)")]
+        [InlineData("<T1, T2, T3, T4>", "(Of T1, T2, T3, T4)")]
+        [InlineData("<T1, T2, T3, T4, T5>", "(Of T1, T2, T3, T4, T5)")]
+        public async Task MoreThanTwoArguments_WarnsWhenExposed(string arityCS, string arityVB)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class<T1, T2>
-                {
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                public class [|Test|]{arityCS}
+                {{
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass](Of T1, T2)
-                End Class");
-        }
-
-        [Fact]
-        public async Task PublicGenericType_ThreeArguments_Warns()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class [|Class|]<T1, T2, T3>
-                {
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [|[MyClass]|](Of T1, T2, T3)
-                End Class");
-        }
-
-
-        [Fact]
-        public async Task InternalGenericType_ThreeArguments_NoWarn()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                internal class Class<T1, T2, T3>
-                {
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Friend Class [MyClass](Of T1, T2, T3)
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                Public Class [|Test|]{arityVB}
                 End Class");
         }
     }

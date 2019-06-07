@@ -177,6 +177,21 @@
         <target state="translated">Usuń finalizator z typu „{0}”, przesłoń funkcję Dispose(bool disposing) i umieść logikę finalizacji w ścieżce kodu, gdzie element „disposing” ma wartość false. W przeciwnym razie mogą pojawić się zduplikowane wywołania funkcji Dispose, ponieważ typ bazowy „{1}” także udostępnia finalizator.</target>
         <note />
       </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalDescription">
+        <source>Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </source>
+        <target state="new">Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalMessage">
+        <source>Indexers should not be multidimensional</source>
+        <target state="new">Indexers should not be multidimensional</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="IndexersShouldNotBeMultidimensionalTitle">
+        <source>Indexers should not be multidimensional</source>
+        <target state="new">Indexers should not be multidimensional</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">Propaguj elementy CancellationToken, jeśli to możliwe</target>

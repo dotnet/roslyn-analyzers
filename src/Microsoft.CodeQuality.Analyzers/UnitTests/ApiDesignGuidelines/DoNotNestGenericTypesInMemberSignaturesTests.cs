@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotNestGenericTypesInMemberSignaturesAnalyzer,
@@ -13,257 +15,145 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class DoNotNestGenericTypesInMemberSignaturesTests
     {
-        [Fact]
-        public async Task PublicNestedProperty_Warns()
+        [Theory]
+        [AccessibilityData(Accessibility.Public, true)]
+        [AccessibilityData(Accessibility.Protected, true)]
+        [AccessibilityData(Accessibility.Internal, false)]
+        [AccessibilityData(Accessibility.Private, false)]
+        public async Task NestedProperty_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    public System.Action<System.Action<int>> [|Actions|] { get; }
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                public class Test
+                {{
+                    {visibilityCS} System.Action<System.Action<int>> {left}Actions{right} => null;
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Property [|Actions|] As System.Action(Of System.Action(Of Integer))
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                Public Class Test
+                    {visibilityVB} Property {left}Actions{right} As System.Action(Of System.Action(Of Integer))
                 End Class");
         }
 
         [Fact]
-        public async Task PublicNonNestedProperty_NoWarn()
+        public async Task NonNestedProperty_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    public System.Action<int> Action { get; }
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                public class Test
+                {{
+                    public System.Action<int> Actions => null;
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Property Action As System.Action(Of Integer)
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                Public Class Test
+                    Public Property Actions As System.Action(Of Integer)
                 End Class");
         }
 
-
-        [Fact]
-        public async Task PrivateNestedProperty_NoWarn()
+        [Theory]
+        [AccessibilityData(Accessibility.Public, true)]
+        [AccessibilityData(Accessibility.Protected, true)]
+        [AccessibilityData(Accessibility.Internal, false)]
+        [AccessibilityData(Accessibility.Private, false)]
+        public async Task NestedField_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    private System.Action<System.Action<int>> Actions { get; }
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                public class Test
+                {{
+                    {visibilityCS} System.Action<System.Action<int>> {left}Actions{right};
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Private Property Actions As System.Action(Of System.Action(Of Integer))
-                End Class");
-        }
-
-        [Fact]
-        public async Task ProtectedNestedProperty_Warns()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    protected System.Action<System.Action<int>> [|Actions|] { get; }
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Protected Property [|Actions|] As System.Action(Of System.Action(Of Integer))
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                Public Class Test
+                    {visibilityVB} {left}Actions{right} As System.Action(Of System.Action(Of Integer))
                 End Class");
         }
 
         [Fact]
-        public async Task PublicNestedField_Warns()
+        public async Task NonNestedField_NeverWarns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    public System.Action<System.Action<int>> [|Actions|];
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public [|Actions|] As System.Action(Of System.Action(Of Integer))
-                End Class");
-        }
-
-        [Fact]
-        public async Task PublicNonNestedField_NoWarn()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
+                public class Test
                 {
                     public System.Action<int> Action;
                 }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
+                Public Class Test
                     Public Action As System.Action(Of Integer)
                 End Class");
         }
 
 
-        [Fact]
-        public async Task PrivateNestedField_NoWarn()
+        [Theory]
+        [AccessibilityData(Accessibility.Public, true)]
+        [AccessibilityData(Accessibility.Protected, true)]
+        [AccessibilityData(Accessibility.Internal, false)]
+        [AccessibilityData(Accessibility.Private, false)]
+        public async Task NestedReturn_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    private System.Action<System.Action<int>> Actions;
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                public class Test
+                {{
+                    {visibilityCS} System.Action<System.Action<int>> {left}Actions{right}() => null;
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Private Actions As System.Action(Of System.Action(Of Integer))
-                End Class");
-        }
-
-        [Fact]
-        public async Task ProtectedNestedField_Warns()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    protected System.Action<System.Action<int>> [|Actions|];
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Protected [|Actions|] As System.Action(Of System.Action(Of Integer))
-                End Class");
-        }
-
-        [Fact]
-        public async Task PublicNestedReturn_Warns()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    public System.Action<System.Action<int>> [|Actions|]() { return null; }
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Function [|Actions|] As System.Action(Of System.Action(Of Integer))
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                Public Class Test
+                    {visibilityVB} Function {left}Actions{right} As System.Action(Of System.Action(Of Integer))
                         Return Nothing
                     End Function
                 End Class");
         }
 
         [Fact]
-        public async Task PublicNonNestedReturn_NoWarn()
+        public async Task NonNestedReturn_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    public System.Action<int> Actions() { return null; }
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                public class Test
+                {{
+                    public System.Action<int> Actions() => null;
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                Public Class Test
                     Public Function Actions As System.Action(Of Integer)
-                        Return Nothing
+                            Return Nothing
                     End Function
                 End Class");
         }
 
-
-        [Fact]
-        public async Task PrivateNestedReturn_NoWarn()
+        [Theory]
+        [AccessibilityData(Accessibility.Public, true)]
+        [AccessibilityData(Accessibility.Protected, true)]
+        [AccessibilityData(Accessibility.Internal, false)]
+        [AccessibilityData(Accessibility.Private, false)]
+        public async Task NestedParameter_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
         {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    private System.Action<System.Action<int>> Actions() { return null; }
-                }");
+            await VerifyCS.VerifyAnalyzerAsync($@"
+                public class Test
+                {{
+                    {visibilityCS} void Actions(System.Action<System.Action<int>> {left}action{right}) {{ }}
+                }}");
 
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Private Function Actions As System.Action(Of System.Action(Of Integer))
-                        Return Nothing
-                    End Function
-                End Class");
-        }
-
-        [Fact]
-        public async Task ProtectedNestedReturn_Warns()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    protected System.Action<System.Action<int>> [|Actions|]() { return null; }
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Protected Function [|Actions|] As System.Action(Of System.Action(Of Integer))
-                        Return Nothing
-                    End Function
-                End Class");
-        }
-
-        [Fact]
-        public async Task PublicNestedParameter_Warns()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    public void DoActions(System.Action<System.Action<int>> [|action|]) { }
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Public Sub DoActions([|action|] As System.Action(Of System.Action(Of Integer)))
+            await VerifyVB.VerifyAnalyzerAsync($@"
+                Public Class Test
+                    {visibilityVB} Sub Actions({left}action{right} As System.Action(Of System.Action(Of Integer)))
                     End Sub
                 End Class");
         }
 
         [Fact]
-        public async Task PublicNonNestedParameter_NoWarn()
+        public async Task NonNestedParameter_NeverWarns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
+                public class Test
                 {
                     public void DoActions(System.Action<int> action) { }
                 }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
+                Public Class Test
                     Public Sub DoActions(action As System.Action(Of Integer))
-                    End Sub
-                End Class");
-        }
-
-        [Fact]
-        public async Task PrivateNestedParameter_NoWarn()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    private void DoActions(System.Action<System.Action<int>> action) { }
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Private Sub DoActions(action As System.Action(Of System.Action(Of Integer)))
-                    End Sub
-                End Class");
-        }
-
-        [Fact]
-        public async Task ProtectedNestedParameter_Warns()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-                public class Class
-                {
-                    protected void DoActions(System.Action<System.Action<int>> [|action|]) { }
-                }");
-
-            await VerifyVB.VerifyAnalyzerAsync(@"
-                Public Class [MyClass]
-                    Protected Sub DoActions([|action|] As System.Action(Of System.Action(Of Integer)))
                     End Sub
                 End Class");
         }

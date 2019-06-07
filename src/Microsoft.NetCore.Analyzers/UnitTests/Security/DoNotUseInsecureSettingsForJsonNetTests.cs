@@ -109,7 +109,7 @@ class Blah
         };
     }
 }",
-                GetCSharpResultAt(10, 16, DefinitelyRule));
+                GetCSharpResultAt(12, 20, DefinitelyRule));
         }
 
         [Fact]
@@ -132,7 +132,7 @@ class Blah
         };
     }
 }",
-                GetCSharpResultAt(10, 16, DefinitelyRule));
+                GetCSharpResultAt(14, 20, DefinitelyRule));
         }
 
         [Fact]
@@ -236,7 +236,7 @@ class Blah
                 TypeNameHandling = TypeNameHandling.Objects,
             });
 }",
-            GetCSharpResultAt(13, 13, DefinitelyRule));
+            GetCSharpResultAt(9, 13, DefinitelyRule));
         }
 
         [Fact]

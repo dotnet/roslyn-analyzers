@@ -73,8 +73,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidRefParametersMessage">
-        <source>Avoid ref parameters</source>
-        <target state="new">Avoid ref parameters</target>
+        <source>Do not pass types by reference</source>
+        <target state="new">Do not pass types by reference</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidRefParametersTitle">
@@ -125,6 +125,21 @@
       <trans-unit id="DoNotNestGenericTypesInMemberSignaturesTitle">
         <source>Do not nest generic types in member signatures</source>
         <target state="new">Do not nest generic types in member signatures</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesDescription">
+        <source>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object.</source>
+        <target state="new">For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesMessage">
+        <source>Do not overload operator equals on reference types</source>
+        <target state="new">Do not overload operator equals on reference types</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotOverloadOperatorEqualsOnReferenceTypesTitle">
+        <source>Do not overload operator equals on reference types</source>
+        <target state="new">Do not overload operator equals on reference types</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassAsyncLambdasAsVoidReturningDelegateTypesTitle">
@@ -193,8 +208,8 @@
         <note />
       </trans-unit>
       <trans-unit id="IndexersShouldNotBeMultidimensionalDescription">
-        <source>Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </source>
-        <target state="new">Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </target>
+        <source>Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library.</source>
+        <target state="new">Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library.</target>
         <note />
       </trans-unit>
       <trans-unit id="IndexersShouldNotBeMultidimensionalMessage">

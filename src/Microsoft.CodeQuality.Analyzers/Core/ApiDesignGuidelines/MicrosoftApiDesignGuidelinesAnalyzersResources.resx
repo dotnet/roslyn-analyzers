@@ -1089,12 +1089,21 @@
     <value>Do not pass types by reference</value>
   </data>
   <data name="IndexersShouldNotBeMultidimensionalDescription" xml:space="preserve">
-    <value>Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library. </value>
+    <value>Indexed properties should use a single index. Multi-dimensional indexers can significantly reduce the usability of the library.</value>
   </data>
   <data name="IndexersShouldNotBeMultidimensionalMessage" xml:space="preserve">
     <value>Indexers should not be multidimensional</value>
   </data>
   <data name="IndexersShouldNotBeMultidimensionalTitle" xml:space="preserve">
     <value>Indexers should not be multidimensional</value>
+  </data>
+  <data name="DoNotOverloadOperatorEqualsOnReferenceTypesDescription" xml:space="preserve">
+    <value>For reference types, the default implementation of the equality operator is almost always correct. By default, two references are equal only if they point to the same object.</value>
+  </data>
+  <data name="DoNotOverloadOperatorEqualsOnReferenceTypesMessage" xml:space="preserve">
+    <value>Do not overload operator equals on reference types</value>
+  </data>
+  <data name="DoNotOverloadOperatorEqualsOnReferenceTypesTitle" xml:space="preserve">
+    <value>Do not overload operator equals on reference types</value>
   </data>
 </root>

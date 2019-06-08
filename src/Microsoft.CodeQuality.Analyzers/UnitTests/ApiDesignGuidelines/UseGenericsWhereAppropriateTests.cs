@@ -37,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task PublicRefInt_NoWarn()
+        public async Task PublicRefInt_NeverWarns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
@@ -53,7 +53,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
-        public async Task PublicValObject_NoWarn()
+        public async Task PublicValObject_NeverWarns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test

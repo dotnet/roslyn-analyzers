@@ -66,7 +66,6 @@ namespace Test.Utilities
         };
 #pragma warning restore IDE0055 // Fix formatting
 
-
         /// <summary>
         /// Gets the markup string that represents the left boundary of the expected diagnostic range. When no diagnostic is expected, this string will be empty.
         /// </summary>
@@ -84,18 +83,16 @@ namespace Test.Utilities
         {
             return useBrace ?
                 ExpectDiagnostic ? "|}" : string.Empty :
-                ExpectDiagnostic ? "|}" : string.Empty;
+                ExpectDiagnostic ? "|]" : string.Empty;
         }
-
 
         /// <summary>
         /// Gets the accessibility level being tested.
         /// </summary>
         public Accessibility Accessibility { get; }
 
-
         /// <summary>
-        /// Gets a value indicating whether a diagnostic output should be expected. If true, <see cref="Left(bool, string)"/> and <see cref="GetRight()"/> will contain appropriate test markup strings.
+        /// Gets a value indicating whether a diagnostic output should be expected. If true, <see cref="Left(bool, string)"/> and <see cref="GetRight(bool)"/> will contain appropriate test markup strings.
         /// </summary>
         public bool ExpectDiagnostic { get; }
 

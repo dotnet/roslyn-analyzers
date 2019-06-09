@@ -142,6 +142,21 @@
         <target state="new">COM visible type base types should be COM visible</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComVisibleTypesShouldBeCreatableDescription">
+        <source>A type without a public default constructor cannot be created by COM clients.</source>
+        <target state="new">A type without a public default constructor cannot be created by COM clients.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ComVisibleTypesShouldBeCreatableMessage">
+        <source>COM visible types should have a public, default (parameterless) constructor</source>
+        <target state="new">COM visible types should have a public, default (parameterless) constructor</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ComVisibleTypesShouldBeCreatableTitle">
+        <source>COM visible types should be creatable</source>
+        <target state="new">COM visible types should be creatable</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
         <target state="translated">Obecná výjimka (například System.Exception nebo System.SystemException) se zachytává příkazem catch nebo se používá obecná klauzule catch. Obecné výjimky by se neměly zachytávat.</target>

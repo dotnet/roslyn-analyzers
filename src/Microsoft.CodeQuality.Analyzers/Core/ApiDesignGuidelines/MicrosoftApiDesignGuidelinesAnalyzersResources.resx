@@ -1160,4 +1160,14 @@
   <data name="DoNotUseAutoDualClassInterfaceTypeTitle" xml:space="preserve">
     <value>Do not use AutoDual ClassInterfaceType</value>
   </data>
+  <data name="ComVisibleTypesShouldBeCreatableDescription" xml:space="preserve">
+    <value>A type without a public default constructor cannot be created by COM clients.</value>
+  </data>
+  <data name="ComVisibleTypesShouldBeCreatableMessage" xml:space="preserve">
+    <value>COM visible types should have a public, default (parameterless) constructor</value>
+  </data>
+  <data name="ComVisibleTypesShouldBeCreatableTitle" xml:space="preserve">
+    <value>COM visible types should be creatable</value>
+  </data>
+
 </root>

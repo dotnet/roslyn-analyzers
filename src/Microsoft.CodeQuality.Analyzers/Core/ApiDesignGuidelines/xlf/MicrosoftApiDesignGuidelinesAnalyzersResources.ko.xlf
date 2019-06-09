@@ -112,6 +112,21 @@
         <target state="new">Do not pass types by reference</target>
         <note />
       </trans-unit>
+      <trans-unit id="ComVisibleTypeBaseTypesShouldBeComVisibleDescription">
+        <source>When a COM visible type adds members in a new version, it must abide by strict guidelines to avoid breaking COM clients that bind to the current version. A type that is invisible to COM presumes it does not have to follow these COM versioning rules when it adds new members. If the base type adds new members in a subsequent version, any COM clients that bind to the class interface of the derived type might break.</source>
+        <target state="new">When a COM visible type adds members in a new version, it must abide by strict guidelines to avoid breaking COM clients that bind to the current version. A type that is invisible to COM presumes it does not have to follow these COM versioning rules when it adds new members. If the base type adds new members in a subsequent version, any COM clients that bind to the class interface of the derived type might break.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ComVisibleTypeBaseTypesShouldBeComVisibleMessage">
+        <source>The base type of a COM visible type should also be COM visible</source>
+        <target state="new">The base type of a COM visible type should also be COM visible</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ComVisibleTypeBaseTypesShouldBeComVisibleTitle">
+        <source>COM visible type base types should be COM visible</source>
+        <target state="new">COM visible type base types should be COM visible</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
         <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
         <target state="translated">System.Exception 또는 System.SystemException과 같은 일반 예외가 catch 문에서 catch되거나, 일반 catch 절이 사용됩니다. 일반 예외는 catch되면 안 됩니다.</target>

@@ -57,7 +57,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         [Theory]
         [MemberData(nameof(TestData))]
-        public async Task ComVisibleStruct_SequentialLayout_WarnsWhenExposed(AccessibilityContext ctx, string comVisibleAssembly, string comVisibleType, string extraAttribute)
+        public async Task ComVisibleStruct_WarnsWhenIncorrect(AccessibilityContext ctx, string comVisibleAssembly, string comVisibleType, string extraAttribute)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 using System.Runtime.InteropServices;

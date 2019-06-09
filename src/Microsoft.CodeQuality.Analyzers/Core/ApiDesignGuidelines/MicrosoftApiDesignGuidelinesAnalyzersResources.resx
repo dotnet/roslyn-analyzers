@@ -1133,5 +1133,13 @@
   <data name="AutoLayoutTypesShouldNotBeComVisibleTitle" xml:space="preserve">
     <value>Auto layout types should not be COM visible</value>
   </data>
-
+  <data name="ComVisibleTypeBaseTypesShouldBeComVisibleDescription" xml:space="preserve">
+    <value>When a COM visible type adds members in a new version, it must abide by strict guidelines to avoid breaking COM clients that bind to the current version. A type that is invisible to COM presumes it does not have to follow these COM versioning rules when it adds new members. If the base type adds new members in a subsequent version, any COM clients that bind to the class interface of the derived type might break.</value>
+  </data>
+  <data name="ComVisibleTypeBaseTypesShouldBeComVisibleMessage" xml:space="preserve">
+    <value>The base type of a COM visible type should also be COM visible</value>
+  </data>
+  <data name="ComVisibleTypeBaseTypesShouldBeComVisibleTitle" xml:space="preserve">
+    <value>COM visible type base types should be COM visible</value>
+  </data>
 </root>

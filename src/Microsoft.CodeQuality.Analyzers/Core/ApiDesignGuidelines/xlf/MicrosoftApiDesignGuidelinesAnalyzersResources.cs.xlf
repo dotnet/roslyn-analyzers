@@ -7,6 +7,21 @@
         <target state="translated">Připojit .ConfigureAwait(true)</target>
         <note />
       </trans-unit>
+      <trans-unit id="AutoLayoutTypesShouldNotBeComVisibleDescription">
+        <source>LayoutKind.Auto layout types are managed by the common language runtime. The layout of these types can change between versions of .NET, which breaks COM clients that expect a specific layout.</source>
+        <target state="new">LayoutKind.Auto layout types are managed by the common language runtime. The layout of these types can change between versions of .NET, which breaks COM clients that expect a specific layout.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AutoLayoutTypesShouldNotBeComVisibleMessage">
+        <source>Auto layout structs should not be COM visible</source>
+        <target state="new">Auto layout structs should not be COM visible</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AutoLayoutTypesShouldNotBeComVisibleTitle">
+        <source>Auto layout types should not be COM visible</source>
+        <target state="new">Auto layout types should not be COM visible</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
         <source>Avoid Async Void</source>
         <target state="translated">Vyhněte se Async Void.</target>
@@ -68,10 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="AvoidOverloadsInComVisibleInterfacesDescription">
-        <source>When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.
-</source>
-        <target state="new">When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.
-</target>
+        <source>When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.</source>
+        <target state="new">When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidOverloadsInComVisibleInterfacesMessage">

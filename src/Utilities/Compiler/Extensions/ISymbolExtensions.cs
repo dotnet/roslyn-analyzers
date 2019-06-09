@@ -394,6 +394,18 @@ namespace Analyzer.Utilities.Extensions
         }
 
         /// <summary>
+        /// Gets the state of the <see cref="System.Runtime.InteropServices.ComVisibleAttribute"/> attribute.
+        /// </summary>
+        /// <returns>Returns <see langword="true"/>if ComVisible(true) is applied, <see langword="false"/> if ComVisible(false) is applied, and <see langword="null"/> if no attribute is applied.</returns>
+        public static bool? GetComVisibleState(this ISymbol symbol, Compilation compilation)
+        {
+            var comVisible = WellKnownTypes.ComVisibleAttribute(compilation);
+            var attr = symbol.GetAttributes().FirstOrDefault(a => a.AttributeClass.Equals(comVisible));
+            return attr is null ? null : (bool?) attr.ConstructorArguments[0].Value;
+        }
+
+
+        /// <summary>
         /// Get overload from the given overloads that matches given method signature + given parameter
         /// </summary>
         public static IMethodSymbol GetMatchingOverload(this IMethodSymbol method, IEnumerable<IMethodSymbol> overloads, int parameterIndex, INamedTypeSymbol type, CancellationToken cancellationToken)

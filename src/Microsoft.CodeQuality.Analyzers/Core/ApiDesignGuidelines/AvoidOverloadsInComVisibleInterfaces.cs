@@ -48,22 +48,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (!context.Symbol.IsExternallyVisible()) return;
 
-            var type = (INamedTypeSymbol) context.Symbol;
+            var type = (INamedTypeSymbol)context.Symbol;
+            if (type.Arity > 0) return;
             if (type.TypeKind != TypeKind.Interface) return;
 
             var comVisible = WellKnownTypes.ComVisibleAttribute(context.Compilation);
-
-            // If the symbol has ComVisible(true), return true.
-            // If the symbol has ComVisible(false), return false.
-            // If the symbol doesn't have ComVisible, return null.
-            bool? ComVisibility(ISymbol symbol)
-            {
-                var attr = symbol.GetAttributes().FirstOrDefault(a => a.AttributeClass.Equals(comVisible));
-                return attr is null ? null : (bool?)attr.ConstructorArguments[0].Value;
-            }
-
-            var assemblyComVisible = ComVisibility(type.ContainingAssembly);
-            var interfaceComVisible = ComVisibility(type);
+            var assemblyComVisible = type.ContainingAssembly.GetComVisibleState(context.Compilation);
+            var interfaceComVisible = type.GetComVisibleState(context.Compilation);
 
             // Since null means there is no explicit ComVisiblity
             // (and that the container's visibility applies),
@@ -74,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 // ComVisible, and group all remaining
                 // methods into method groups
                 var groups = from method in type.GetMembers().OfType<IMethodSymbol>()
-                             where ComVisibility(method) ?? interfaceComVisible ?? assemblyComVisible ?? true
+                             where method.GetComVisibleState(context.Compilation) ?? interfaceComVisible ?? assemblyComVisible ?? true
                              group method by method.Name;
 
                 foreach (var group in groups)

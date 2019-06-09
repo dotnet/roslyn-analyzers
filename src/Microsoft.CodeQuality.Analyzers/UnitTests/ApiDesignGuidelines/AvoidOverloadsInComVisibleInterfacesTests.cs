@@ -99,6 +99,24 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
+        public async Task ComVisibleGeneric_NeverWarns()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+                public interface Test<T>
+                {
+                    void Method();
+                    void Method(int x);
+                }");
+
+            await VerifyVB.VerifyAnalyzerAsync(@"
+                Public Interface Test(Of T)
+                    Sub Method
+                    Sub Method(x As Integer)
+                End Interface");
+        }
+
+
+        [Fact]
         public async Task ComVisible_Class_NeverWarns()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

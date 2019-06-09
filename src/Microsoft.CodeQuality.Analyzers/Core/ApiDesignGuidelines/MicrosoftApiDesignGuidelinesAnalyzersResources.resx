@@ -1116,8 +1116,7 @@
     <value>Overload operator equals on overloading add and subtract</value>
   </data>
   <data name="AvoidOverloadsInComVisibleInterfacesDescription" xml:space="preserve">
-    <value>When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.
-</value>
+    <value>When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.</value>
   </data>
   <data name="AvoidOverloadsInComVisibleInterfacesMessage" xml:space="preserve">
     <value>Do not overload method '{0}' in COM visible interface '{1}'</value>
@@ -1125,4 +1124,14 @@
   <data name="AvoidOverloadsInComVisibleInterfacesTitle" xml:space="preserve">
     <value>Avoid overloads in COM visible interfaces</value>
   </data>
+  <data name="AutoLayoutTypesShouldNotBeComVisibleDescription" xml:space="preserve">
+    <value>LayoutKind.Auto layout types are managed by the common language runtime. The layout of these types can change between versions of .NET, which breaks COM clients that expect a specific layout.</value>
+  </data>
+  <data name="AutoLayoutTypesShouldNotBeComVisibleMessage" xml:space="preserve">
+    <value>Auto layout structs should not be COM visible</value>
+  </data>
+  <data name="AutoLayoutTypesShouldNotBeComVisibleTitle" xml:space="preserve">
+    <value>Auto layout types should not be COM visible</value>
+  </data>
+
 </root>

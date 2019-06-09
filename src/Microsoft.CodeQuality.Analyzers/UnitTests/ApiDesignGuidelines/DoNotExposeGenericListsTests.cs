@@ -61,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                     {ctx.AccessVB} {ctx.Left}Actions{ctx.Right} As System.Collections.Generic.List(Of Integer)
                 End Class");
         }
-            
+
         [Fact]
         public async Task NonListField_NeverWarns()
         {

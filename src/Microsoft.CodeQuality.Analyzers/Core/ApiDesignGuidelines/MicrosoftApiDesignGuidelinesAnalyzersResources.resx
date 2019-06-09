@@ -1115,4 +1115,14 @@
   <data name="OverloadOperatorEqualsOnOverloadingAddAndSubtractTitle" xml:space="preserve">
     <value>Overload operator equals on overloading add and subtract</value>
   </data>
+  <data name="AvoidOverloadsInComVisibleInterfacesDescription" xml:space="preserve">
+    <value>When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.
+</value>
+  </data>
+  <data name="AvoidOverloadsInComVisibleInterfacesMessage" xml:space="preserve">
+    <value>Do not overload method '{0}' in COM visible interface '{1}'</value>
+  </data>
+  <data name="AvoidOverloadsInComVisibleInterfacesTitle" xml:space="preserve">
+    <value>Avoid overloads in COM visible interfaces</value>
+  </data>
 </root>

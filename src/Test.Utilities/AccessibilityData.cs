@@ -22,10 +22,13 @@ namespace Test.Utilities
         InsideClass,
     }
 
+#pragma warning disable CA1815 // Override equals and operator equals on value types
+
     /// <summary>
     /// Represents the context of an accessibility test.
     /// </summary>
     public struct AccessibilityContext
+#pragma warning restore CA1815 // Override equals and operator equals on value types
     {
         public AccessibilityContext(Accessibility accessibility, bool expectDiagnostic)
         {
@@ -33,6 +36,7 @@ namespace Test.Utilities
             ExpectDiagnostic = expectDiagnostic;
         }
 
+#pragma warning disable IDE0055 // Fix formatting
         /// <summary>
         /// Gets the source string that represents the accessibility level being tested in VB.
         /// </summary>
@@ -60,6 +64,8 @@ namespace Test.Utilities
             Accessibility.Public => "public",
             _ => throw new InvalidOperationException($"Invalid accessibility '{Accessibility}'")
         };
+#pragma warning restore IDE0055 // Fix formatting
+
 
         /// <summary>
         /// Gets the markup string that represents the left boundary of the expected diagnostic range. When no diagnostic is expected, this string will be empty.

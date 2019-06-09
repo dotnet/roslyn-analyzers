@@ -50,9 +50,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (!context.Symbol.IsExternallyVisible()) return;
 
-            var type = (INamedTypeSymbol)context.Symbol;
+            var type = (INamedTypeSymbol) context.Symbol;
 
-            if ((Overloads(type, WellKnownMemberNames.AdditionOperatorName) || Overloads(type, WellKnownMemberNames.SubtractionOperatorName)) 
+            if ((Overloads(type, WellKnownMemberNames.AdditionOperatorName) || Overloads(type, WellKnownMemberNames.SubtractionOperatorName))
                 && !Overloads(type, WellKnownMemberNames.EqualityOperatorName))
             {
                 context.ReportDiagnostic(type.CreateDiagnostic(Rule));

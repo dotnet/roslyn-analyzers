@@ -67,6 +67,23 @@
         <target state="new">Avoid out parameters</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidOverloadsInComVisibleInterfacesDescription">
+        <source>When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.
+</source>
+        <target state="new">When overloaded methods are exposed to COM clients, overloads are uniquely renamed by appending to the name an underscore character '_' and an integer uniquely identifying the overload. Visual Basic 6 COM clients cannot implement interface methods by using an underscore in the name.
+</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidOverloadsInComVisibleInterfacesMessage">
+        <source>Do not overload method '{0}' in COM visible interface '{1}'</source>
+        <target state="new">Do not overload method '{0}' in COM visible interface '{1}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidOverloadsInComVisibleInterfacesTitle">
+        <source>Avoid overloads in COM visible interfaces</source>
+        <target state="new">Avoid overloads in COM visible interfaces</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidRefParametersDescription">
         <source>Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. The difference between out and ref is not widely understood.</source>
         <target state="new">Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. The difference between out and ref is not widely understood.</target>

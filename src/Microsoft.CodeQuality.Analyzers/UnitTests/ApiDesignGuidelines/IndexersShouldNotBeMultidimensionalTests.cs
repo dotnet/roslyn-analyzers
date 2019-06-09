@@ -21,12 +21,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} int {ctx.Left}this{ctx.Right}[int x, int y] => 0;
+                    {ctx.AccessCS} int {ctx.Left()}this{ctx.Right()}[int x, int y] => 0;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} ReadOnly Property {ctx.Left}Int{ctx.Right}(x As Integer, y As Integer) As Integer
+                    {ctx.AccessVB} ReadOnly Property {ctx.Left()}Int{ctx.Right()}(x As Integer, y As Integer) As Integer
                         Get
                             Return 0
                         End Get

@@ -22,12 +22,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left}Actions{ctx.Right} => null;
+                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left()}Actions{ctx.Right()} => null;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} Property {ctx.Left}Actions{ctx.Right} As System.Action(Of System.Action(Of Integer))
+                    {ctx.AccessVB} Property {ctx.Left()}Actions{ctx.Right()} As System.Action(Of System.Action(Of Integer))
                 End Class");
         }
 
@@ -53,12 +53,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left}Actions{ctx.Right};
+                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left()}Actions{ctx.Right()};
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} {ctx.Left}Actions{ctx.Right} As System.Action(Of System.Action(Of Integer))
+                    {ctx.AccessVB} {ctx.Left()}Actions{ctx.Right()} As System.Action(Of System.Action(Of Integer))
                 End Class");
         }
 
@@ -85,12 +85,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left}Actions{ctx.Right}() => null;
+                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left()}Actions{ctx.Right()}() => null;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} Function {ctx.Left}Actions{ctx.Right} As System.Action(Of System.Action(Of Integer))
+                    {ctx.AccessVB} Function {ctx.Left()}Actions{ctx.Right()} As System.Action(Of System.Action(Of Integer))
                         Return Nothing
                     End Function
                 End Class");
@@ -120,12 +120,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} void Actions(System.Action<System.Action<int>> {ctx.Left}action{ctx.Right}) {{ }}
+                    {ctx.AccessCS} void Actions(System.Action<System.Action<int>> {ctx.Left()}action{ctx.Right()}) {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} Sub Actions({ctx.Left}action{ctx.Right} As System.Action(Of System.Action(Of Integer)))
+                    {ctx.AccessVB} Sub Actions({ctx.Left()}action{ctx.Right()} As System.Action(Of System.Action(Of Integer)))
                     End Sub
                 End Class");
         }

@@ -20,14 +20,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         public async Task ClassOverload_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
-                {ctx.AccessCS} class {ctx.Left}Test{ctx.Right}
+                {ctx.AccessCS} class {ctx.Left()}Test{ctx.Right()}
                 {{
                     public static bool operator ==(Test left, Test right) => true;
                     public static bool operator !=(Test left, Test right) => false;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
-                {ctx.AccessVB} Class {ctx.Left}Test{ctx.Right}
+                {ctx.AccessVB} Class {ctx.Left()}Test{ctx.Right()}
                     Public Shared Operator =(left As Test, right As Test) As Boolean
                         Return True
                     End Operator

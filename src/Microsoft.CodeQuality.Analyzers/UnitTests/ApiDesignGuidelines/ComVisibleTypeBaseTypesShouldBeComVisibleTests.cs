@@ -16,23 +16,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class ComVisibleTypeBaseTypesShouldBeComVisibleTests
     {
-        #region Test Data
-
-        public static IEnumerable<object[]> TestData()
-        {
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(true)" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(false)" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, true), "ComVisible(false)", "ComVisible(true)" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(false)", "ComVisible(false)" };
-
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(true)" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(false)" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(true)" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(false)" };
-        }
-
-        #endregion
-
         [Theory]
         [MemberData(nameof(TestData))]
         public async Task ComVisibleClass_WarnsWhenIncorrect(AccessibilityContext ctx, string comVisibleType1, string comVisibleType2)
@@ -46,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                 }}
 
                 [{comVisibleType2}]
-                {ctx.AccessCS} class {ctx.Left}Test2{ctx.Right} : Test1
+                {ctx.AccessCS} class {ctx.Left()}Test2{ctx.Right()} : Test1
                 {{
                 }}");
 
@@ -58,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                 End Class
 
                 <{comVisibleType2}>
-                {ctx.AccessVB} Class {ctx.Left}Test2{ctx.Right}
+                {ctx.AccessVB} Class {ctx.Left()}Test2{ctx.Right()}
                     Inherits Test1
                 End Class");
         }
@@ -91,5 +74,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                     Inherits Test1
                 End Interface");
         }
+
+        #region Test Data
+
+        public static IEnumerable<object[]> TestData()
+        {
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(true)" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(false)" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, true), "ComVisible(false)", "ComVisible(true)" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(false)", "ComVisible(false)" };
+
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(true)" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(false)" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(true)" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(false)" };
+        }
+
+        #endregion
     }
 }

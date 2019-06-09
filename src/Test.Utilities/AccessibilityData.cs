@@ -70,12 +70,23 @@ namespace Test.Utilities
         /// <summary>
         /// Gets the markup string that represents the left boundary of the expected diagnostic range. When no diagnostic is expected, this string will be empty.
         /// </summary>
-        public string Left => ExpectDiagnostic ? "[|" : string.Empty;
+        public string Left(bool useBrace = false, string id = null)
+        {
+            return useBrace ?
+                ExpectDiagnostic ? $"{{|{id}:" : string.Empty :
+                ExpectDiagnostic ? "[|" : string.Empty;
+        }
 
         /// <summary>
-        /// Gets the markup string that represents the right boundary of the expected diagnostic range. When no diagnostic is expected, this string will be empty.
+        /// Gets the markup string that represents the left boundary of the expected diagnostic range. When no diagnostic is expected, this string will be empty.
         /// </summary>
-        public string Right => ExpectDiagnostic ? "|]" : string.Empty;
+        public string Right(bool useBrace = false)
+        {
+            return useBrace ?
+                ExpectDiagnostic ? "|}" : string.Empty :
+                ExpectDiagnostic ? "|}" : string.Empty;
+        }
+
 
         /// <summary>
         /// Gets the accessibility level being tested.
@@ -84,7 +95,7 @@ namespace Test.Utilities
 
 
         /// <summary>
-        /// Gets a value indicating whether a diagnostic output should be expected. If true, <see cref="Left"/> and <see cref="Right"/> will contain appropriate test markup strings.
+        /// Gets a value indicating whether a diagnostic output should be expected. If true, <see cref="Left(bool, string)"/> and <see cref="GetRight()"/> will contain appropriate test markup strings.
         /// </summary>
         public bool ExpectDiagnostic { get; }
 

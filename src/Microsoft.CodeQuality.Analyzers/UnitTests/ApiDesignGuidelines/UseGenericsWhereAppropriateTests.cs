@@ -22,12 +22,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} void {ctx.Left}Swap{ctx.Right}(ref object o1, ref object o2) {{ }}
+                    {ctx.AccessCS} void {ctx.Left()}Swap{ctx.Right()}(ref object o1, ref object o2) {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} Sub {ctx.Left}Swap{ctx.Right}(ByRef o1 As Object, ByRef o2 As Object)
+                    {ctx.AccessVB} Sub {ctx.Left()}Swap{ctx.Right()}(ByRef o1 As Object, ByRef o2 As Object)
                     End Sub
                 End Class");
 

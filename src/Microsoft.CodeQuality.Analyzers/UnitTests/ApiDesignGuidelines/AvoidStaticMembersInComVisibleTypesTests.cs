@@ -17,40 +17,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class AvoidStaticMembersInComVisibleTypesTests
     {
-        #region Test Data
-
-        public static IEnumerable<object[]> WhenIncorrectTestData()
-        {
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, true), "ComVisible(true)", "ComVisible(true)", "static", "Shared" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(false)", "static", "Shared" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, true), "ComVisible(false)", "ComVisible(true)", "static", "Shared" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(false)", "ComVisible(false)", "static", "Shared" };
-
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(true)", "", "" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(false)", "", "" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(false)", "ComVisible(true)", "", "" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(false)", "ComVisible(false)", "", "" };
-
-
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(true)", "static", "Shared" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(false)", "static", "Shared" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(true)", "static", "Shared" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(false)", "static", "Shared" };
-
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(true)", "", "" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(false)", "", "" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(true)", "", "" };
-            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(false)", "", "" };
-        }
-
-        public static IEnumerable<object[]> NonPublicNeverWarnsTestData()
-        {
-            // Don't test public methods, since those warn
-            return new AccessibilityTestAttribute(AccessibilityTestTarget.InsideClass).GetData(null).Skip(1);
-        }
-
-        #endregion
-
         [Theory]
         [MemberData(nameof(WhenIncorrectTestData))]
         public async Task ComVisibleClass_WarnsWhenIncorrect(AccessibilityContext ctx, string comVisibleAssembly, string comVisibleType, string staticCS, string staticVB)
@@ -63,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                 [{comVisibleType}]
                 {ctx.AccessCS} class Test
                 {{
-                    public {staticCS} int {ctx.Left}GetNum{ctx.Right}() => 0;
+                    public {staticCS} int {ctx.Left()}GetNum{ctx.Right()}() => 0;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
@@ -74,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                 <{comVisibleType}>
                 {ctx.AccessVB} Class Test
-                    Public {staticVB} Function {ctx.Left}GetNum{ctx.Right} As Integer
+                    Public {staticVB} Function {ctx.Left()}GetNum{ctx.Right()} As Integer
                         Return 0
                     End Function
                 End Class");
@@ -121,5 +87,38 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                 End Class");
         }
 
+        #region Test Data
+
+        public static IEnumerable<object[]> WhenIncorrectTestData()
+        {
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, true), "ComVisible(true)", "ComVisible(true)", "static", "Shared" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(false)", "static", "Shared" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, true), "ComVisible(false)", "ComVisible(true)", "static", "Shared" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(false)", "ComVisible(false)", "static", "Shared" };
+
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(true)", "", "" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(true)", "ComVisible(false)", "", "" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(false)", "ComVisible(true)", "", "" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Public, false), "ComVisible(false)", "ComVisible(false)", "", "" };
+
+
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(true)", "static", "Shared" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(false)", "static", "Shared" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(true)", "static", "Shared" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(false)", "static", "Shared" };
+
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(true)", "", "" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(true)", "ComVisible(false)", "", "" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(true)", "", "" };
+            yield return new object[] { new AccessibilityContext(Accessibility.Internal, false), "ComVisible(false)", "ComVisible(false)", "", "" };
+        }
+
+        public static IEnumerable<object[]> NonPublicNeverWarnsTestData()
+        {
+            // Don't test public methods, since those warn
+            return new AccessibilityTestAttribute(AccessibilityTestTarget.InsideClass).GetData(null).Skip(1);
+        }
+
+        #endregion
     }
 }

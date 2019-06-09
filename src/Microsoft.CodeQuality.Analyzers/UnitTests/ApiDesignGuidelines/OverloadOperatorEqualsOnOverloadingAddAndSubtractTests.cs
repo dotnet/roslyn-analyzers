@@ -16,33 +16,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class OverloadOperatorEqualsOnOverloadingAddAndSubtractTests
     {
-
-        #region Operator Test Data
-
-        public static IEnumerable<object[]> OperatorTestData()
-        {
-            foreach (var arr in new AccessibilityTestAttribute(AccessibilityTestTarget.Class).GetData(null))
-            {
-                yield return arr.Concat(new[] { "+" }).ToArray();
-                yield return arr.Concat(new[] { "-" }).ToArray();
-            }
-        }
-
-        #endregion
-
         [Theory]
         [MemberData(nameof(OperatorTestData))]
         public async Task SingleOperatorOnly_WarnsWhenExposed(AccessibilityContext ctx, string op)
         {
             System.Console.Write("hello");
             await VerifyCS.VerifyAnalyzerAsync($@"
-                {ctx.AccessCS} class {ctx.Left}Test{ctx.Right}
+                {ctx.AccessCS} class {ctx.Left()}Test{ctx.Right()}
                 {{
                     public static Test operator {op}(Test left, Test right) => left;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
-                {ctx.AccessVB} Class {ctx.Left}Test{ctx.Right}
+                {ctx.AccessVB} Class {ctx.Left()}Test{ctx.Right()}
                     Public Shared Operator {op}(left As Test, right As Test) As Test
                         Return left
                     End Operator
@@ -55,14 +41,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         public async Task MultiOperator_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
-                {ctx.AccessCS} class {ctx.Left}Test{ctx.Right}
+                {ctx.AccessCS} class {ctx.Left()}Test{ctx.Right()}
                 {{
                     public static Test operator +(Test left, Test right) => left;
                     public static Test operator -(Test left, Test right) => right;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
-                {ctx.AccessVB} Class {ctx.Left}Test{ctx.Right}
+                {ctx.AccessVB} Class {ctx.Left()}Test{ctx.Right()}
                     Public Shared Operator +(left As Test, right As Test) As Test
                         Return left
                     End Operator
@@ -113,5 +99,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                 Public Class Test
                 End Class");
         }
+
+        #region Test Data
+
+        public static IEnumerable<object[]> OperatorTestData()
+        {
+            foreach (var arr in new AccessibilityTestAttribute(AccessibilityTestTarget.Class).GetData(null))
+            {
+                yield return arr.Concat(new[] { "+" }).ToArray();
+                yield return arr.Concat(new[] { "-" }).ToArray();
+            }
+        }
+
+        #endregion
     }
 }

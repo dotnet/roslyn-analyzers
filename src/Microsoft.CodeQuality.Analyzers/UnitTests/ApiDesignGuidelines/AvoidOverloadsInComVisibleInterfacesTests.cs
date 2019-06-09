@@ -43,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                 [assembly: {comVisibleAssembly}]
  
                 [{comVisibleType}]
-                {ctx.AccessCS} interface {ctx.Left}Test{ctx.Right}
+                {ctx.AccessCS} interface {ctx.Left()}Test{ctx.Right()}
                 {{
                     void Method();
                     void Method(int x);
@@ -54,7 +54,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                 <Assembly: {comVisibleAssembly}>
 
                 <{comVisibleType}>
-                {ctx.AccessVB} Interface {ctx.Left}Test{ctx.Right}
+                {ctx.AccessVB} Interface {ctx.Left()}Test{ctx.Right()}
                     Sub Method
                     Sub Method(x As Integer)
                 End Interface");

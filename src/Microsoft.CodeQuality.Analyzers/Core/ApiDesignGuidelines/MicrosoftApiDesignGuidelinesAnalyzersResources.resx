@@ -1151,4 +1151,13 @@
   <data name="AvoidStaticMembersInComVisibleTypesTitle" xml:space="preserve">
     <value>Avoid static members in COM visible types</value>
   </data>
+  <data name="DoNotUseAutoDualClassInterfaceTypeDescription" xml:space="preserve">
+    <value>Types that use a dual interface enable clients to bind to a specific interface layout. Any changes in a future version to the layout of the type or any base types will break COM clients that bind to the interface.</value>
+  </data>
+  <data name="DoNotUseAutoDualClassInterfaceTypeMessage" xml:space="preserve">
+    <value>Do not use an AutoDual ClassInterfaceType with an exported COM type</value>
+  </data>
+  <data name="DoNotUseAutoDualClassInterfaceTypeTitle" xml:space="preserve">
+    <value>Do not use AutoDual ClassInterfaceType</value>
+  </data>
 </root>

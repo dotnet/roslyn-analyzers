@@ -22,12 +22,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left}Ints{ctx.Right} => null;
+                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left()}Ints{ctx.Right()} => null;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} Property {ctx.Left}Actions{ctx.Right} As System.Collections.Generic.List(Of Integer)
+                    {ctx.AccessVB} Property {ctx.Left()}Actions{ctx.Right()} As System.Collections.Generic.List(Of Integer)
                 End Class");
         }
 
@@ -53,12 +53,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left}Ints{ctx.Right};
+                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left()}Ints{ctx.Right()};
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} {ctx.Left}Actions{ctx.Right} As System.Collections.Generic.List(Of Integer)
+                    {ctx.AccessVB} {ctx.Left()}Actions{ctx.Right()} As System.Collections.Generic.List(Of Integer)
                 End Class");
         }
 
@@ -84,12 +84,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left}Ints{ctx.Right}() => null;
+                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left()}Ints{ctx.Right()}() => null;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} Function {ctx.Left}Ints{ctx.Right} As System.Collections.Generic.List(Of Integer)
+                    {ctx.AccessVB} Function {ctx.Left()}Ints{ctx.Right()} As System.Collections.Generic.List(Of Integer)
                         Return Nothing
                     End Function
                 End Class");
@@ -119,12 +119,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} void Ints(System.Collections.Generic.List<int> {ctx.Left}ints{ctx.Right}) {{ }}
+                    {ctx.AccessCS} void Ints(System.Collections.Generic.List<int> {ctx.Left()}ints{ctx.Right()}) {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} Sub Ints({ctx.Left}ints{ctx.Right} As System.Collections.Generic.List(Of Integer))
+                    {ctx.AccessVB} Sub Ints({ctx.Left()}ints{ctx.Right()} As System.Collections.Generic.List(Of Integer))
                     End Sub
                 End Class");
         }

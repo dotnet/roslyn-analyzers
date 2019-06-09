@@ -247,6 +247,21 @@
         <target state="translated">Async-Lambdas nicht als "Void" zurückgebende Delegattypen speichern</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseAutoDualClassInterfaceTypeDescription">
+        <source>Types that use a dual interface enable clients to bind to a specific interface layout. Any changes in a future version to the layout of the type or any base types will break COM clients that bind to the interface.</source>
+        <target state="new">Types that use a dual interface enable clients to bind to a specific interface layout. Any changes in a future version to the layout of the type or any base types will break COM clients that bind to the interface.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseAutoDualClassInterfaceTypeMessage">
+        <source>Do not use an AutoDual ClassInterfaceType with an exported COM type</source>
+        <target state="new">Do not use an AutoDual ClassInterfaceType with an exported COM type</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseAutoDualClassInterfaceTypeTitle">
+        <source>Do not use AutoDual ClassInterfaceType</source>
+        <target state="new">Do not use AutoDual ClassInterfaceType</target>
+        <note />
+      </trans-unit>
       <trans-unit id="GenericMethodsShouldProvideTypeParameterDescription">
         <source>When a generic type parameter is not used as the type of a method parameter, it is not able to be inferred from the method's arguments, making using the method more complicated.</source>
         <target state="new">When a generic type parameter is not used as the type of a method parameter, it is not able to be inferred from the method's arguments, making using the method more complicated.</target>

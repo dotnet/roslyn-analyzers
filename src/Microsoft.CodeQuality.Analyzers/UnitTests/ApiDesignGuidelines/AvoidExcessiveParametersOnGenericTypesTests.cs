@@ -20,12 +20,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         public async Task ThreeArguments_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
-                {ctx.AccessCS} class {ctx.Left}Test{ctx.Right}<T1, T2, T3>
+                {ctx.AccessCS} class {ctx.Left()}Test{ctx.Right()}<T1, T2, T3>
                 {{
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
-                {ctx.AccessVB} Class {ctx.Left}Test{ctx.Right}(Of T1, T2, T3)
+                {ctx.AccessVB} Class {ctx.Left()}Test{ctx.Right()}(Of T1, T2, T3)
                 End Class");
         }
 

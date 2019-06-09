@@ -22,12 +22,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {ctx.AccessCS} void {ctx.Left}Method{ctx.Right}<T>() {{ }}
+                    {ctx.AccessCS} void {ctx.Left()}Method{ctx.Right()}<T>() {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {ctx.AccessVB} Sub {ctx.Left}Method{ctx.Right}(Of T)
+                    {ctx.AccessVB} Sub {ctx.Left()}Method{ctx.Right()}(Of T)
                     End Sub
                 End Class");
         }
@@ -56,12 +56,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Class
                 {{
-                    {ctx.AccessCS} void {ctx.Left}Method{ctx.Right}<T1, T2>(T1 o) {{ }}
+                    {ctx.AccessCS} void {ctx.Left()}Method{ctx.Right()}<T1, T2>(T1 o) {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class [MyClass]
-                    {ctx.AccessVB} Sub {ctx.Left}Method{ctx.Right}(Of T1, T2)(o As T1)
+                    {ctx.AccessVB} Sub {ctx.Left()}Method{ctx.Right()}(Of T1, T2)(o As T1)
                     End Sub
                 End Class");
         }

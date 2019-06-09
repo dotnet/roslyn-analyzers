@@ -401,7 +401,30 @@ namespace Analyzer.Utilities.Extensions
         {
             var comVisible = WellKnownTypes.ComVisibleAttribute(compilation);
             var attr = symbol.GetAttributes().FirstOrDefault(a => a.AttributeClass.Equals(comVisible));
-            return attr is null ? null : (bool?) attr.ConstructorArguments[0].Value;
+            return attr is null ? null : (bool?)attr.ConstructorArguments[0].Value;
+        }
+
+        public static bool ComVisibleIsApplied(this ISymbol symbol, Compilation compilation)
+        {
+            while (true)
+            {
+                var state = symbol.GetComVisibleState(compilation);
+                if (!(state is null)) return (bool)state;
+
+                switch (symbol.Kind)
+                {
+                    case SymbolKind.Method:
+                        symbol = symbol.ContainingType;
+                        continue;
+                    case SymbolKind.NamedType:
+                        symbol = symbol.ContainingAssembly;
+                        continue;
+                    case SymbolKind.Assembly:
+                        return true;
+                    default:
+                        throw new InvalidOperationException("Invalid symbol kind: " + symbol.Kind);
+                }
+            }
         }
 
 

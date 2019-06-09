@@ -46,26 +46,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if (!context.Symbol.IsExternallyVisible()) return;
+            if (context.Symbol.DeclaredAccessibility != Accessibility.Public) return;
 
             var type = (INamedTypeSymbol)context.Symbol;
             if (type.Arity > 0) return;
             if (type.TypeKind != TypeKind.Interface) return;
 
-            var comVisible = WellKnownTypes.ComVisibleAttribute(context.Compilation);
-            var assemblyComVisible = type.ContainingAssembly.GetComVisibleState(context.Compilation);
-            var interfaceComVisible = type.GetComVisibleState(context.Compilation);
-
-            // Since null means there is no explicit ComVisiblity
-            // (and that the container's visibility applies),
-            // we can use null coalescing to walk up the chain
-            if (interfaceComVisible ?? assemblyComVisible ?? true)
+            if (type.ComVisibleIsApplied(context.Compilation))
             {
-                // Remove any methods that aren't
-                // ComVisible, and group all remaining
-                // methods into method groups
+                // Remove any methods that aren't ComVisible, and
+                // group all remaining methods into method groups
                 var groups = from method in type.GetMembers().OfType<IMethodSymbol>()
-                             where method.GetComVisibleState(context.Compilation) ?? interfaceComVisible ?? assemblyComVisible ?? true
+                             where method.Arity == 0 && method.ComVisibleIsApplied(context.Compilation)
                              group method by method.Name;
 
                 foreach (var group in groups)

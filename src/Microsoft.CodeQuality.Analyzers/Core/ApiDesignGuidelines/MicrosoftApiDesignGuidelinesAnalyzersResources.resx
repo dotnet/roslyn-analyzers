@@ -1142,4 +1142,13 @@
   <data name="ComVisibleTypeBaseTypesShouldBeComVisibleTitle" xml:space="preserve">
     <value>COM visible type base types should be COM visible</value>
   </data>
+  <data name="AvoidStaticMembersInComVisibleTypesDescription" xml:space="preserve">
+    <value>COM does not support static methods.</value>
+  </data>
+  <data name="AvoidStaticMembersInComVisibleTypesMessage" xml:space="preserve">
+    <value>Avoid static members in COM visible types</value>
+  </data>
+  <data name="AvoidStaticMembersInComVisibleTypesTitle" xml:space="preserve">
+    <value>Avoid static members in COM visible types</value>
+  </data>
 </root>

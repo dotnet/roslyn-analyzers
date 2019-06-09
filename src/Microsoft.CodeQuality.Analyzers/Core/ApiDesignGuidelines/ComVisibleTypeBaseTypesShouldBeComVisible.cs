@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if (!context.Symbol.IsExternallyVisible()) return;
+            if (context.Symbol.DeclaredAccessibility != Accessibility.Public) return;
 
             var type = (INamedTypeSymbol)context.Symbol;
 
@@ -55,16 +55,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             if (type.TypeKind != TypeKind.Class) return;
             if (type.BaseType.SpecialType == SpecialType.System_Object) return;
 
-            var assemblyComVisible = type.ContainingAssembly.GetComVisibleState(context.Compilation);
-            var typeComVisible = type.GetComVisibleState(context.Compilation);
-
-            if (typeComVisible ?? assemblyComVisible ?? true)
+            if (type.ComVisibleIsApplied(context.Compilation) && !type.BaseType.ComVisibleIsApplied(context.Compilation))
             {
-                var baseTypeComVisible = type.BaseType.GetComVisibleState(context.Compilation);
-                if (!(baseTypeComVisible ?? assemblyComVisible ?? true))
-                {
-                    context.ReportDiagnostic(type.CreateDiagnostic(Rule));
-                }
+                context.ReportDiagnostic(type.CreateDiagnostic(Rule));
             }
         }
     }

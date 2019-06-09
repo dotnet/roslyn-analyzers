@@ -47,19 +47,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if (!context.Symbol.IsExternallyVisible()) return;
+            if (context.Symbol.DeclaredAccessibility != Accessibility.Public) return;
 
             var structure = (INamedTypeSymbol)context.Symbol;
-            if (structure.Arity > 0) return;
             if (!structure.IsValueType) return;
+            if (structure.Arity > 0) return;
 
             var structLayout = WellKnownTypes.StructLayoutAttribute(context.Compilation);
-            var assemblyComVisible = structure.ContainingAssembly.GetComVisibleState(context.Compilation);
-            var structComVisible = structure.GetComVisibleState(context.Compilation);
 
-            if (structComVisible ?? assemblyComVisible ?? true)
+            if (structure.ComVisibleIsApplied(context.Compilation))
             {
-                if (structure.GetAttributes()
+                if (structure.GetAttributes().AsParallel()
                     .Any(a => a.AttributeClass.Equals(structLayout) && a.ConstructorArguments[0].Value is 3)) // 3 == LayoutKind.Auto
                 {
                     context.ReportDiagnostic(structure.CreateDiagnostic(Rule));

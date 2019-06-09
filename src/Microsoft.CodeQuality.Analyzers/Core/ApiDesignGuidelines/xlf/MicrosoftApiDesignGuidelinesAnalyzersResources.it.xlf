@@ -112,6 +112,21 @@
         <target state="new">Do not pass types by reference</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidStaticMembersInComVisibleTypesDescription">
+        <source>COM does not support static methods.</source>
+        <target state="new">COM does not support static methods.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidStaticMembersInComVisibleTypesMessage">
+        <source>Avoid static members in COM visible types</source>
+        <target state="new">Avoid static members in COM visible types</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidStaticMembersInComVisibleTypesTitle">
+        <source>Avoid static members in COM visible types</source>
+        <target state="new">Avoid static members in COM visible types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ComVisibleTypeBaseTypesShouldBeComVisibleDescription">
         <source>When a COM visible type adds members in a new version, it must abide by strict guidelines to avoid breaking COM clients that bind to the current version. A type that is invisible to COM presumes it does not have to follow these COM versioning rules when it adds new members. If the base type adds new members in a subsequent version, any COM clients that bind to the class interface of the derived type might break.</source>
         <target state="new">When a COM visible type adds members in a new version, it must abide by strict guidelines to avoid breaking COM clients that bind to the current version. A type that is invisible to COM presumes it does not have to follow these COM versioning rules when it adds new members. If the base type adds new members in a subsequent version, any COM clients that bind to the class interface of the derived type might break.</target>

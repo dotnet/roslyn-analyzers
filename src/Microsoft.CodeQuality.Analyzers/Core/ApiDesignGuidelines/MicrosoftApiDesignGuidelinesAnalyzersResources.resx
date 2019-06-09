@@ -1106,4 +1106,13 @@
   <data name="DoNotOverloadOperatorEqualsOnReferenceTypesTitle" xml:space="preserve">
     <value>Do not overload operator equals on reference types</value>
   </data>
+  <data name="OverloadOperatorEqualsOnOverloadingAddAndSubtractDescription" xml:space="preserve">
+    <value>When instances of a type can be combined by using operations such as addition and subtraction, you should almost always define equality to return true for any two instances that have the same constituent values.</value>
+  </data>
+  <data name="OverloadOperatorEqualsOnOverloadingAddAndSubtractMessage" xml:space="preserve">
+    <value>If overloading the add or subtract operator, overload the equality operator as well</value>
+  </data>
+  <data name="OverloadOperatorEqualsOnOverloadingAddAndSubtractTitle" xml:space="preserve">
+    <value>Overload operator equals on overloading add and subtract</value>
+  </data>
 </root>

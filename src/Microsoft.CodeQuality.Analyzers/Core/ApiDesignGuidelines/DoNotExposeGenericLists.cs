@@ -52,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // so we need to filter them out
             if (context.Symbol.IsAccessorMethod()) return;
 
-            if (!(context.Symbol.GetMemerOrLocalOrParameterType() is INamedTypeSymbol type)) return;
+            if (!(context.Symbol.GetMemberOrLocalOrParameterType() is INamedTypeSymbol type)) return;
 
             var listSymbol = context.Compilation.GetTypeByMetadataName("System.Collections.Generic.List`1");
 

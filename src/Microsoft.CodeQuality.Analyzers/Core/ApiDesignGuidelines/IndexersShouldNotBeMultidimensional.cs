@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -46,8 +45,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
             if (!context.Symbol.IsExternallyVisible()) return;
-            
-            var prop = (IPropertySymbol) context.Symbol;
+
+            var prop = (IPropertySymbol)context.Symbol;
             if (prop.Parameters.Length > 1)
                 context.ReportDiagnostic(context.Symbol.CreateDiagnostic(Rule));
         }

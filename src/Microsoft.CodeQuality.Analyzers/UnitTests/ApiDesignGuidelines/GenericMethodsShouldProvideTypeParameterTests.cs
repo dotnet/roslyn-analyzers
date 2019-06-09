@@ -16,21 +16,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class GenericMethodsShouldProvideTypeParameterTests
     {
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task NoParameters_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task NoParameters_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} void {left}Method{right}<T>() {{ }}
+                    {ctx.AccessCS} void {ctx.Left}Method{ctx.Right}<T>() {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Sub {left}Method{right}(Of T)
+                    {ctx.AccessVB} Sub {ctx.Left}Method{ctx.Right}(Of T)
                     End Sub
                 End Class");
         }
@@ -53,21 +50,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task SomeParameters_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task SomeParameters_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Class
                 {{
-                    {visibilityCS} void {left}Method{right}<T1, T2>(T1 o) {{ }}
+                    {ctx.AccessCS} void {ctx.Left}Method{ctx.Right}<T1, T2>(T1 o) {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class [MyClass]
-                    {visibilityVB} Sub {left}Method{right}(Of T1, T2)(o As T1)
+                    {ctx.AccessVB} Sub {ctx.Left}Method{ctx.Right}(Of T1, T2)(o As T1)
                     End Sub
                 End Class");
         }

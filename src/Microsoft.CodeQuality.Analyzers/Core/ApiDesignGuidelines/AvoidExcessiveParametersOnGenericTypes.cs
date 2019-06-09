@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1002: Do not expose generic lists
+    /// CA1005: Avoid excessive parameters on generic types
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class AvoidExcessiveParametersOnGenericTypesAnalyzer : DiagnosticAnalyzer
@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (!context.Symbol.IsExternallyVisible()) return;
 
-            var type = (INamedTypeSymbol) context.Symbol;
+            var type = (INamedTypeSymbol)context.Symbol;
             if (type.Arity <= 2) return;
 
             context.ReportDiagnostic(context.Symbol.CreateDiagnostic(Rule));

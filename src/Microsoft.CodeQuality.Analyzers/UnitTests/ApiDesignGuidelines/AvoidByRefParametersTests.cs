@@ -17,60 +17,66 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public class AvoidByRefParametersTests
     {
-        [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task OutParameter_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        #region Test Plumbing
+
+        private class DiagnosticNumberCSTest : VerifyCS.Test
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
-                public class Test
-                {{
-                    {visibilityCS} void GetObj(out object {left}o{right}) => o = null;
-                }}");
+            public DiagnosticNumberCSTest(int index)
+            {
+                Index = index;
+            }
+
+            public int Index { get; }
+
+            protected override DiagnosticDescriptor GetDefaultDiagnostic(DiagnosticAnalyzer[] analyzers) => analyzers[0].SupportedDiagnostics[Index];
         }
 
-        #region Ref Tests Plumbing
-
-        // Gets the second diagnostic (avoid ref parameters). If we don't do this,
-        // the test for it will flip out because it doesn't know which diagnostic
-        // to look for. Is there a better way to do this?
-        static DiagnosticDescriptor DefaultDiagnostic(DiagnosticAnalyzer[] analyzers) => analyzers[0].SupportedDiagnostics[1]; 
-
-        private class RefCSTest : VerifyCS.Test
+        private class DiagnosticNumberVBTest : VerifyVB.Test
         {
-            protected override DiagnosticDescriptor GetDefaultDiagnostic(DiagnosticAnalyzer[] analyzers) => DefaultDiagnostic(analyzers);
-        }
+            public DiagnosticNumberVBTest(int index)
+            {
+                Index = index;
+            }
 
-        private class RefVBTest : VerifyVB.Test
-        {
-            protected override DiagnosticDescriptor GetDefaultDiagnostic(DiagnosticAnalyzer[] analyzers) => DefaultDiagnostic(analyzers);
+            public int Index { get; }
+
+            protected override DiagnosticDescriptor GetDefaultDiagnostic(DiagnosticAnalyzer[] analyzers) => analyzers[0].SupportedDiagnostics[Index];
         }
 
         #endregion 
 
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task RefParameter_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task OutParameter_WarnsWhenExposed(AccessibilityContext ctx)
         {
-            await new RefCSTest()
+            await new DiagnosticNumberCSTest(0)
             {
                 TestCode = $@"
                 public class Test
                 {{
-                    {visibilityCS} void GetObj(ref object {left}o{right}) {{ }}
+                    {ctx.AccessCS} void GetObj(out object {ctx.Left}o{ctx.Right}) => o = null;
+                }}"
+            }.RunAsync();
+        }
+
+        [Theory]
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task RefParameter_WarnsWhenExposed(AccessibilityContext ctx)
+        {
+            await new DiagnosticNumberCSTest(1)
+            {
+                TestCode = $@"
+                public class Test
+                {{
+                    {ctx.AccessCS} void GetObj(ref object {ctx.Left}o{ctx.Right}) {{ }}
                 }}"
             }.RunAsync();
 
-            await new RefVBTest()
+            await new DiagnosticNumberVBTest(1)
             {
                 TestCode = $@"
                 Public Class Test
-                    {visibilityVB} Sub GetObj(ByRef {left}o{right} As Object)
+                    {ctx.AccessVB} Sub GetObj(ByRef {ctx.Left}o{ctx.Right} As Object)
                     End Sub
                 End Class"
             }.RunAsync();
@@ -85,7 +91,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                 {
                     protected void GiveObj(object o) { o = null; }
                 }");
-
         }
     }
 }

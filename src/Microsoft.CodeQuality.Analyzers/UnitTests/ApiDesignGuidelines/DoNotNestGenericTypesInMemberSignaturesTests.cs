@@ -16,55 +16,49 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class DoNotNestGenericTypesInMemberSignaturesTests
     {
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task NestedProperty_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task NestedProperty_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} System.Action<System.Action<int>> {left}Actions{right} => null;
+                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left}Actions{ctx.Right} => null;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Property {left}Actions{right} As System.Action(Of System.Action(Of Integer))
+                    {ctx.AccessVB} Property {ctx.Left}Actions{ctx.Right} As System.Action(Of System.Action(Of Integer))
                 End Class");
         }
 
         [Fact]
         public async Task NonNestedProperty_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
-                {{
+                {
                     public System.Action<int> Actions => null;
-                }}");
+                }");
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class Test
                     Public Property Actions As System.Action(Of Integer)
                 End Class");
         }
 
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task NestedField_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task NestedField_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} System.Action<System.Action<int>> {left}Actions{right};
+                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left}Actions{ctx.Right};
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} {left}Actions{right} As System.Action(Of System.Action(Of Integer))
+                    {ctx.AccessVB} {ctx.Left}Actions{ctx.Right} As System.Action(Of System.Action(Of Integer))
                 End Class");
         }
 
@@ -85,21 +79,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
 
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task NestedReturn_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task NestedReturn_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} System.Action<System.Action<int>> {left}Actions{right}() => null;
+                    {ctx.AccessCS} System.Action<System.Action<int>> {ctx.Left}Actions{ctx.Right}() => null;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Function {left}Actions{right} As System.Action(Of System.Action(Of Integer))
+                    {ctx.AccessVB} Function {ctx.Left}Actions{ctx.Right} As System.Action(Of System.Action(Of Integer))
                         Return Nothing
                     End Function
                 End Class");
@@ -108,13 +99,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         [Fact]
         public async Task NonNestedReturn_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
-                {{
+                {
                     public System.Action<int> Actions() => null;
-                }}");
+                }");
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class Test
                     Public Function Actions As System.Action(Of Integer)
                             Return Nothing
@@ -123,21 +114,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task NestedParameter_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task NestedParameter_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} void Actions(System.Action<System.Action<int>> {left}action{right}) {{ }}
+                    {ctx.AccessCS} void Actions(System.Action<System.Action<int>> {ctx.Left}action{ctx.Right}) {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Sub Actions({left}action{right} As System.Action(Of System.Action(Of Integer)))
+                    {ctx.AccessVB} Sub Actions({ctx.Left}action{ctx.Right} As System.Action(Of System.Action(Of Integer)))
                     End Sub
                 End Class");
         }

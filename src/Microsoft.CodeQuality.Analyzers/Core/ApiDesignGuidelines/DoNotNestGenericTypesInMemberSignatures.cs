@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1002: Do not expose generic lists
+    /// CA1006: Do not nest generic types in member signatures
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotNestGenericTypesInMemberSignaturesAnalyzer : DiagnosticAnalyzer
@@ -40,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method, SymbolKind.Parameter, SymbolKind.Field, SymbolKind.Property);
+            analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method, SymbolKind.Parameter, SymbolKind.Field, SymbolKind.Property, SymbolKind.Event);
         }
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
@@ -52,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // so we need to filter them out
             if (context.Symbol.IsAccessorMethod()) return;
 
-            var symbol = context.Symbol.GetMemerOrLocalOrParameterType();
+            var symbol = context.Symbol.GetMemberOrLocalOrParameterType();
             if (!(symbol is INamedTypeSymbol type)) return;
 
             foreach (var typeArgument in type.TypeArguments)

@@ -222,6 +222,21 @@
         <target state="new">Indexers should not be multidimensional</target>
         <note />
       </trans-unit>
+      <trans-unit id="OverloadOperatorEqualsOnOverloadingAddAndSubtractDescription">
+        <source>When instances of a type can be combined by using operations such as addition and subtraction, you should almost always define equality to return true for any two instances that have the same constituent values.</source>
+        <target state="new">When instances of a type can be combined by using operations such as addition and subtraction, you should almost always define equality to return true for any two instances that have the same constituent values.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OverloadOperatorEqualsOnOverloadingAddAndSubtractMessage">
+        <source>If overloading the add or subtract operator, overload the equality operator as well</source>
+        <target state="new">If overloading the add or subtract operator, overload the equality operator as well</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="OverloadOperatorEqualsOnOverloadingAddAndSubtractTitle">
+        <source>Overload operator equals on overloading add and subtract</source>
+        <target state="new">Overload operator equals on overloading add and subtract</target>
+        <note />
+      </trans-unit>
       <trans-unit id="PropagateCancellationTokensWhenPossibleTitle">
         <source>Propagate CancellationTokens When Possible</source>
         <target state="translated">Propagar CancellationTokens quando possível</target>

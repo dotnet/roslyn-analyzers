@@ -16,19 +16,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class DoNotOverloadOperatorEqualsOnReferenceTypesTests
     {
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        public async Task ClassOverload_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.Class)]
+        public async Task ClassOverload_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
-                {visibilityCS} class {left}Test{right}
+                {ctx.AccessCS} class {ctx.Left}Test{ctx.Right}
                 {{
                     public static bool operator ==(Test left, Test right) => true;
                     public static bool operator !=(Test left, Test right) => false;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
-                {visibilityVB} Class {left}Test{right}
+                {ctx.AccessVB} Class {ctx.Left}Test{ctx.Right}
                     Public Shared Operator =(left As Test, right As Test) As Boolean
                         Return True
                     End Operator
@@ -41,14 +40,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         [Fact]
         public async Task StructOverload_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 public struct Test
-                {{
+                {
                     public static bool operator ==(Test left, Test right) => true;
                     public static bool operator !=(Test left, Test right) => false;
-                }}");
+                }");
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Structure Test
                     Public Shared Operator =(left As Test, right As Test) As Boolean
                         Return True
@@ -62,12 +61,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         [Fact]
         public async Task ClassNoOverload_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
-                {{
-                }}");
+                {
+                }");
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class Test
                 End Class");
         }

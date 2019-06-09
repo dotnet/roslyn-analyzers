@@ -16,21 +16,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class UseGenericsWhereAppropriateTests
     {
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task RefObject_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task RefObject_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} void {left}Swap{right}(ref object o1, ref object o2) {{ }}
+                    {ctx.AccessCS} void {ctx.Left}Swap{ctx.Right}(ref object o1, ref object o2) {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Sub {left}Swap{right}(ByRef o1 As Object, ByRef o2 As Object)
+                    {ctx.AccessVB} Sub {ctx.Left}Swap{ctx.Right}(ByRef o1 As Object, ByRef o2 As Object)
                     End Sub
                 End Class");
 

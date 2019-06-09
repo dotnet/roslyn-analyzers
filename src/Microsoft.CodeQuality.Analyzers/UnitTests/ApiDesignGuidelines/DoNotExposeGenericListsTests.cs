@@ -16,89 +16,80 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class DoNotExposeGenericListsTests
     {
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task ListProperty_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task ListProperty_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} System.Collections.Generic.List<int> {left}Ints{right} => null;
+                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left}Ints{ctx.Right} => null;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Property {left}Actions{right} As System.Collections.Generic.List(Of Integer)
+                    {ctx.AccessVB} Property {ctx.Left}Actions{ctx.Right} As System.Collections.Generic.List(Of Integer)
                 End Class");
         }
 
         [Fact]
         public async Task NonNestedProperty_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
-                {{
+                {
                     public System.Action Action => null;
-                }}");
+                }");
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class Test
                     Public Property Actions As System.Action(Of System.Action(Of Integer))
                 End Class");
         }
 
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task ListField_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task ListField_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} System.Collections.Generic.List<int> {left}Ints{right};
+                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left}Ints{ctx.Right};
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} {left}Actions{right} As System.Collections.Generic.List(Of Integer)
+                    {ctx.AccessVB} {ctx.Left}Actions{ctx.Right} As System.Collections.Generic.List(Of Integer)
                 End Class");
         }
             
         [Fact]
         public async Task NonListField_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
-                {{
+                {
                     public System.Action Action;
-                }}");
+                }");
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class Test
                     Public Action As System.Action(Of System.Action(Of Integer))
                 End Class");
         }
 
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task ListReturn_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task ListReturn_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} System.Collections.Generic.List<int> {left}Ints{right}() => null;
+                    {ctx.AccessCS} System.Collections.Generic.List<int> {ctx.Left}Ints{ctx.Right}() => null;
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Function {left}Ints{right} As System.Collections.Generic.List(Of Integer)
+                    {ctx.AccessVB} Function {ctx.Left}Ints{ctx.Right} As System.Collections.Generic.List(Of Integer)
                         Return Nothing
                     End Function
                 End Class");
@@ -107,11 +98,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         [Fact]
         public async Task NonListReturn_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
-                {{
+                {
                     public System.Action Action() => null;
-                }}");
+                }");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
@@ -122,21 +113,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Protected, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        [AccessibilityData(Accessibility.Private, false)]
-        public async Task ListParameter_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.InsideClass)]
+        public async Task ListParameter_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
                 public class Test
                 {{
-                    {visibilityCS} void Ints(System.Collections.Generic.List<int> {left}ints{right}) {{ }}
+                    {ctx.AccessCS} void Ints(System.Collections.Generic.List<int> {ctx.Left}ints{ctx.Right}) {{ }}
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
                 Public Class Test
-                    {visibilityVB} Sub Ints({left}ints{right} As System.Collections.Generic.List(Of Integer))
+                    {ctx.AccessVB} Sub Ints({ctx.Left}ints{ctx.Right} As System.Collections.Generic.List(Of Integer))
                     End Sub
                 End Class");
         }
@@ -144,13 +132,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         [Fact]
         public async Task NonListParameter_NeverWarns()
         {
-            await VerifyCS.VerifyAnalyzerAsync($@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
                 public class Test
-                {{
-                    public void Action(System.Action a) {{ }}
-                }}");
+                {
+                    public void Action(System.Action a) { }
+                }");
 
-            await VerifyVB.VerifyAnalyzerAsync($@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
                 Public Class Test
                     Public Sub Ints(a As System.Action)
                     End Sub

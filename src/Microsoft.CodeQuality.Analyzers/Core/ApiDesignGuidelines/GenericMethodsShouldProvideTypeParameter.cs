@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1002: Do not expose generic lists
+    /// CA1004: Generic methods should provide type parameter
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class GenericMethodsShouldProvideTypeParameterAnalyzer : DiagnosticAnalyzer
@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (!context.Symbol.IsExternallyVisible()) return;
 
-            var method = (IMethodSymbol) context.Symbol;
+            var method = (IMethodSymbol)context.Symbol;
             if (method.Arity == 0) return;
 
             foreach (var typeArgument in method.TypeArguments)

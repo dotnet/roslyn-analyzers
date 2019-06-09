@@ -16,17 +16,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     public class AvoidExcessiveParametersOnGenericTypesTests
     {
         [Theory]
-        [AccessibilityData(Accessibility.Public, true)]
-        [AccessibilityData(Accessibility.Internal, false)]
-        public async Task ThreeArguments_WarnsWhenExposed(string visibilityCS, string visibilityVB, string left, string right)
+        [AccessibilityTest(AccessibilityTestTarget.Class)]
+        public async Task ThreeArguments_WarnsWhenExposed(AccessibilityContext ctx)
         {
             await VerifyCS.VerifyAnalyzerAsync($@"
-                {visibilityCS} class {left}Test{right}<T1, T2, T3>
+                {ctx.AccessCS} class {ctx.Left}Test{ctx.Right}<T1, T2, T3>
                 {{
                 }}");
 
             await VerifyVB.VerifyAnalyzerAsync($@"
-                {visibilityVB} Class {left}Test{right}(Of T1, T2, T3)
+                {ctx.AccessVB} Class {ctx.Left}Test{ctx.Right}(Of T1, T2, T3)
                 End Class");
         }
 

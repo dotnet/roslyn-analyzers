@@ -30,7 +30,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableDescriptionRef = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidRefParametersDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
 
-
         internal static DiagnosticDescriptor AvoidOutRule = new DiagnosticDescriptor(AvoidOutRuleId,
             s_localizableTitleOut,
             s_localizableMessageOut,
@@ -66,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (!context.Symbol.IsExternallyVisible()) return;
 
-            var param = (IParameterSymbol) context.Symbol;
+            var param = (IParameterSymbol)context.Symbol;
 
             switch (param.RefKind)
             {
@@ -74,12 +73,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 case RefKind.None:
                     return;
                 case RefKind.Ref:
-                    // The official documentation for this rule is confusing:
-                    // "A... method... has a ref parameter that takes a primitive 
-                    // type, a reference type, or a value type that is not one of 
-                    // the built-in types."
-                    // Until it is clarified what exactly this means, for now this 
-                    // analyzer will always report for an exposed ref parameter.
                     context.ReportDiagnostic(context.Symbol.CreateDiagnostic(AvoidRefRule));
                     break;
                 case RefKind.Out:

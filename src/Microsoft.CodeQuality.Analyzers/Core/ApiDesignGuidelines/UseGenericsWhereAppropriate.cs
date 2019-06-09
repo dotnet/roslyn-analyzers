@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1002: Do not expose generic lists
+    /// CA1007: Use generics where appropriate
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseGenericsWhereAppropriateAnalyzer : DiagnosticAnalyzer
@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescription,
-            helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1002-do-not-expose-generic-lists",
+            helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1007-use-generics-where-appropriate",
             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             if (!context.Symbol.IsExternallyVisible()) return;
 
-            var method = (IMethodSymbol) context.Symbol;
+            var method = (IMethodSymbol)context.Symbol;
 
             foreach (var param in method.Parameters)
             {

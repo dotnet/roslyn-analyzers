@@ -1173,9 +1173,18 @@
     <value>If it is available, a method that is marked with the ComRegisterFunctionAttribute attribute is called during the registration process to run user-specified code. A corresponding method that is marked with the ComUnregisterFunctionAttribute attribute is called during the unregistration process to reverse the operations of the registration method.</value>
   </data>
   <data name="ComRegistrationMethodsShouldBeMatchedMessage" xml:space="preserve">
-    <value>If declaring '{0}', declare '{1}' as well</value>
+    <value>If a {0} method is declared, declare a {1} method as well</value>
   </data>
   <data name="ComRegistrationMethodsShouldBeMatchedTitle" xml:space="preserve">
     <value>COM registration methods should be matched</value>
+  </data>
+  <data name="ComRegistrationMethodsShouldNotBeVisibleDescription" xml:space="preserve">
+    <value>When an assembly is registered with COM, entries are added to the registry for each COM-visible type in the assembly. Methods that are marked with the ComRegisterFunctionAttribute and ComUnregisterFunctionAttribute attributes are called during these processes to run user code specific to the processes. This code should not be called outside these processes.</value>
+  </data>
+  <data name="ComRegistrationMethodsShouldNotBeVisibleMessage" xml:space="preserve">
+    <value>COM registration methods should not be externally visible</value>
+  </data>
+  <data name="ComRegistrationMethodsShouldNotBeVisibleTitle" xml:space="preserve">
+    <value>COM registration methods should not be visible</value>
   </data>
 </root>

@@ -133,13 +133,28 @@
         <note />
       </trans-unit>
       <trans-unit id="ComRegistrationMethodsShouldBeMatchedMessage">
-        <source>If declaring '{0}', declare '{1}' as well</source>
-        <target state="new">If declaring '{0}', declare '{1}' as well</target>
+        <source>If a {0} method is declared, declare a {1} method as well</source>
+        <target state="new">If a {0} method is declared, declare a {1} method as well</target>
         <note />
       </trans-unit>
       <trans-unit id="ComRegistrationMethodsShouldBeMatchedTitle">
         <source>COM registration methods should be matched</source>
         <target state="new">COM registration methods should be matched</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ComRegistrationMethodsShouldNotBeVisibleDescription">
+        <source>When an assembly is registered with COM, entries are added to the registry for each COM-visible type in the assembly. Methods that are marked with the ComRegisterFunctionAttribute and ComUnregisterFunctionAttribute attributes are called during these processes to run user code specific to the processes. This code should not be called outside these processes.</source>
+        <target state="new">When an assembly is registered with COM, entries are added to the registry for each COM-visible type in the assembly. Methods that are marked with the ComRegisterFunctionAttribute and ComUnregisterFunctionAttribute attributes are called during these processes to run user code specific to the processes. This code should not be called outside these processes.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ComRegistrationMethodsShouldNotBeVisibleMessage">
+        <source>COM registration methods should not be externally visible</source>
+        <target state="new">COM registration methods should not be externally visible</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ComRegistrationMethodsShouldNotBeVisibleTitle">
+        <source>COM registration methods should not be visible</source>
+        <target state="new">COM registration methods should not be visible</target>
         <note />
       </trans-unit>
       <trans-unit id="ComVisibleTypeBaseTypesShouldBeComVisibleDescription">

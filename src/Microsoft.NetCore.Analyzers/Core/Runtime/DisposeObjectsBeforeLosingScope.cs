@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Linq;
@@ -223,7 +224,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     // CA2000: Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.
                     var rule = GetRule(isNotDisposed);
+
+                    // Ensure that we do not include multiple lines for the object creation expression in the diagnostic message.
                     var argument = syntax.ToString();
+                    var indexOfNewLine = argument.IndexOf(Environment.NewLine, StringComparison.Ordinal);
+                    if (indexOfNewLine > 0)
+                    {
+                        argument = argument.Substring(0, indexOfNewLine);
+                    }
+
                     var diagnostic = syntax.CreateDiagnostic(rule, argument);
                     if (isNotDisposed)
                     {

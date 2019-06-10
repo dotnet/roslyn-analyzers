@@ -64,10 +64,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if (context.Symbol.DeclaredAccessibility != Accessibility.Public) return;
-
             var type = (INamedTypeSymbol)context.Symbol;
-            if (type.Arity > 0) return;
+            if (!type.IsValidComExport()) return;
 
             var structLayout = WellKnownTypes.StructLayoutAttribute(context.Compilation);
             var classInterface = context.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.ClassInterfaceAttribute");

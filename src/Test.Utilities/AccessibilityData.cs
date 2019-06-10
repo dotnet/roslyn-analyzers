@@ -92,7 +92,7 @@ namespace Test.Utilities
         public Accessibility Accessibility { get; }
 
         /// <summary>
-        /// Gets a value indicating whether a diagnostic output should be expected. If true, <see cref="Left(bool, string)"/> and <see cref="GetRight(bool)"/> will contain appropriate test markup strings.
+        /// Gets a value indicating whether a diagnostic output should be expected. If true, <see cref="Left(bool, string)"/> and <see cref="Right(bool)"/> will contain appropriate test markup strings.
         /// </summary>
         public bool ExpectDiagnostic { get; }
 

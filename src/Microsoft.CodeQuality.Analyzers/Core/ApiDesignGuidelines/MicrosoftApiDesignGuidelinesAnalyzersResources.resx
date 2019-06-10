@@ -1169,5 +1169,13 @@
   <data name="ComVisibleTypesShouldBeCreatableTitle" xml:space="preserve">
     <value>COM visible types should be creatable</value>
   </data>
-
+  <data name="ComRegistrationMethodsShouldBeMatchedDescription" xml:space="preserve">
+    <value>If it is available, a method that is marked with the ComRegisterFunctionAttribute attribute is called during the registration process to run user-specified code. A corresponding method that is marked with the ComUnregisterFunctionAttribute attribute is called during the unregistration process to reverse the operations of the registration method.</value>
+  </data>
+  <data name="ComRegistrationMethodsShouldBeMatchedMessage" xml:space="preserve">
+    <value>If declaring '{0}', declare '{1}' as well</value>
+  </data>
+  <data name="ComRegistrationMethodsShouldBeMatchedTitle" xml:space="preserve">
+    <value>COM registration methods should be matched</value>
+  </data>
 </root>

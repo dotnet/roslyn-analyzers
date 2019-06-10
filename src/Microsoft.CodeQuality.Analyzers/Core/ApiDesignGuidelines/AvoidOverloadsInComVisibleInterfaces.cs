@@ -46,11 +46,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if (context.Symbol.DeclaredAccessibility != Accessibility.Public) return;
-
             var type = (INamedTypeSymbol)context.Symbol;
-            if (type.Arity > 0) return;
-            if (type.TypeKind != TypeKind.Interface) return;
+            if (!type.IsValidComExport()) return;
 
             if (type.ComVisibleIsApplied(context.Compilation))
             {

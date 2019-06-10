@@ -404,6 +404,28 @@ namespace Analyzer.Utilities.Extensions
             return attr is null ? null : (bool?)attr.ConstructorArguments[0].Value;
         }
 
+        public static bool IsValidComExport(this ISymbol symbol)
+        {
+            switch (symbol.Kind)
+            {
+                case SymbolKind.Method:
+                    var method = (IMethodSymbol)symbol;
+                    if (method.ContainingType.IsValidComExport()) return false;
+                    if (method.IsGenericMethod) return false;
+                    if (method.ContainingType.IsValueType) return false;
+                    if (method.DeclaredAccessibility != Accessibility.Public) return false;
+                    return true;
+                case SymbolKind.NamedType:
+                    var type = (INamedTypeSymbol)symbol;
+                    if (type.IsGenericType) return false;
+                    if (type.DeclaredAccessibility != Accessibility.Public) return false;
+                    return true;
+                default:
+                    throw new NotImplementedException("Invalid symbol kind " + symbol.Kind);
+            }
+        }
+
+
         public static bool ComVisibleIsApplied(this ISymbol symbol, Compilation compilation)
         {
             while (true)
@@ -422,7 +444,7 @@ namespace Analyzer.Utilities.Extensions
                     case SymbolKind.Assembly:
                         return true;
                     default:
-                        throw new InvalidOperationException("Invalid symbol kind: " + symbol.Kind);
+                        throw new NotImplementedException("Invalid symbol kind: " + symbol.Kind);
                 }
             }
         }

@@ -47,10 +47,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeSymbol(SymbolAnalysisContext context)
         {
-            if (context.Symbol.DeclaredAccessibility != Accessibility.Public) return;
-
             var method = (IMethodSymbol)context.Symbol;
-            if (method.ContainingType.DeclaredAccessibility != Accessibility.Public) return;
+            if (!method.IsValidComExport()) return;
 
             // Skip non-static methods or operators and static accessors.
             if (!method.IsStatic) return;

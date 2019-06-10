@@ -19,12 +19,12 @@
       </trans-unit>
       <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage">
         <source>Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</source>
-        <target state="new">Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</target>
+        <target state="translated">Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols anahtarını true olarak ayarlamayın. Bu anahtarı ayarlamak, Windows Communication Framework'ü (WCF) güvenli olmayan ve eski Aktarım Katmanı Güvenliği (TLS) 1.0 kullanacak şekilde kısıtlar.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle">
         <source>Do not disable ServicePointManagerSecurityProtocols</source>
-        <target state="new">Do not disable ServicePointManagerSecurityProtocols</target>
+        <target state="translated">ServicePointManagerSecurityProtocols öğesini devre dışı bırakmayın</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">

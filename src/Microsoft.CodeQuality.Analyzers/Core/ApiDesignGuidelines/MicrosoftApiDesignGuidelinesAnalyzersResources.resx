@@ -1187,4 +1187,13 @@
   <data name="ComRegistrationMethodsShouldNotBeVisibleTitle" xml:space="preserve">
     <value>COM registration methods should not be visible</value>
   </data>
+  <data name="AvoidNonpublicFieldsInComVisibleValueTypesDescription" xml:space="preserve">
+    <value>Nonpublic instance fields of COM-visible value types are visible to COM clients. Review the content of the field for information that should not be exposed, or that will have an unintended design or security effect.</value>
+  </data>
+  <data name="AvoidNonpublicFieldsInComVisibleValueTypesMessage" xml:space="preserve">
+    <value>Avoid non-public fields in COM visible value types</value>
+  </data>
+  <data name="AvoidNonpublicFieldsInComVisibleValueTypesTitle" xml:space="preserve">
+    <value>Avoid non-public fields in COM visible value types</value>
+  </data>
 </root>

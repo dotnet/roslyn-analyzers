@@ -48,6 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             var type = (INamedTypeSymbol)context.Symbol;
             if (!type.IsValidComExport()) return;
+            if (type.TypeKind != TypeKind.Class) return;
 
             if (type.ComVisibleIsApplied(context.Compilation))
             {

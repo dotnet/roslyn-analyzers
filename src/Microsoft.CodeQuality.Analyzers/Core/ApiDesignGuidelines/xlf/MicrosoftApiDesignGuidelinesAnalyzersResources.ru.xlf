@@ -67,6 +67,21 @@
         <target state="new">Avoid excessive parameters on generic types</target>
         <note />
       </trans-unit>
+      <trans-unit id="AvoidNonpublicFieldsInComVisibleValueTypesDescription">
+        <source>Nonpublic instance fields of COM-visible value types are visible to COM clients. Review the content of the field for information that should not be exposed, or that will have an unintended design or security effect.</source>
+        <target state="new">Nonpublic instance fields of COM-visible value types are visible to COM clients. Review the content of the field for information that should not be exposed, or that will have an unintended design or security effect.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidNonpublicFieldsInComVisibleValueTypesMessage">
+        <source>Avoid non-public fields in COM visible value types</source>
+        <target state="new">Avoid non-public fields in COM visible value types</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidNonpublicFieldsInComVisibleValueTypesTitle">
+        <source>Avoid non-public fields in COM visible value types</source>
+        <target state="new">Avoid non-public fields in COM visible value types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidOutParametersDescription">
         <source>Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. The difference between out and ref is not widely understood.</source>
         <target state="new">Passing types by reference (using out or ref) requires experience with pointers, understanding how value types and reference types differ, and handling methods with multiple return values. The difference between out and ref is not widely understood.</target>

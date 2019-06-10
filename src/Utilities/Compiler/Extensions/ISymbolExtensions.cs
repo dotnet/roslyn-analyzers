@@ -410,7 +410,7 @@ namespace Analyzer.Utilities.Extensions
             {
                 case SymbolKind.Method:
                     var method = (IMethodSymbol)symbol;
-                    if (method.ContainingType.IsValidComExport()) return false;
+                    if (!method.ContainingType.IsValidComExport()) return false;
                     if (method.IsGenericMethod) return false;
                     if (method.ContainingType.IsValueType) return false;
                     if (method.DeclaredAccessibility != Accessibility.Public) return false;

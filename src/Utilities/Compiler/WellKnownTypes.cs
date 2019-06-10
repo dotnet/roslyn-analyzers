@@ -413,6 +413,26 @@ namespace Analyzer.Utilities
             return compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
         }
 
+        public static INamedTypeSymbol MEFV1ImportAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionImportAttribute);
+        }
+
+        public static INamedTypeSymbol MEFV1ImportManyAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionImportManyAttribute);
+        }
+
+        public static INamedTypeSymbol MEFV2ImportAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionImportAttribute);
+        }
+
+        public static INamedTypeSymbol MEFV2ImportManyAttribute(Compilation compilation)
+        {
+            return compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionImportManyAttribute);
+        }
+
         public static INamedTypeSymbol InheritedExportAttribute(Compilation compilation)
         {
             return compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionInheritedExportAttribute);

@@ -106,8 +106,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                     simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation &&
                                                     propertyReferenceOperation.Property.Name == "ViewStateUserKey" &&
                                                     propertyReferenceOperation.Property.Type.SpecialType == SpecialType.System_String &&
-                                                    propertyReferenceOperation.Instance is IInstanceReferenceOperation instanceReferenceOperation &&
-                                                    instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
+                                                    (propertyReferenceOperation.Instance is IInstanceReferenceOperation instanceReferenceOperation &&
+                                                    instanceReferenceOperation.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance ||
+                                                    propertyReferenceOperation.Instance is IPropertyReferenceOperation propertyReferenceOperation2 &&
+                                                    propertyReferenceOperation2.Property.IsVirtual &&
+                                                    propertyReferenceOperation2.Instance is IInstanceReferenceOperation instanceReferenceOperation2 &&
+                                                    instanceReferenceOperation2.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance))
                                         .Count() > 0;
                 }
             });

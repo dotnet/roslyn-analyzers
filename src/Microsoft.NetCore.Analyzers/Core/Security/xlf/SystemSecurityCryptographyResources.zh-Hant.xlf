@@ -308,8 +308,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="translated">頁面的子類別 {0}，在 OnInit 方法中並未設定 ViewStateUserKey 屬性</target>
+        <source>The subclass {0} of Page does not set the ViewStateUserKey property in either method OnInit or method Page_Init</source>
+        <target state="needs-review-translation">頁面的子類別 {0}，在 OnInit 方法中並未設定 ViewStateUserKey 屬性</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">

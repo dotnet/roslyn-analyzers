@@ -308,8 +308,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="translated">Page의 서브클래스 {0}은(는) OnInit 메서드에서 ViewStateUserKey 속성을 설정하지 않습니다.</target>
+        <source>The subclass {0} of Page does not set the ViewStateUserKey property in either method OnInit or method Page_Init</source>
+        <target state="needs-review-translation">Page의 서브클래스 {0}은(는) OnInit 메서드에서 ViewStateUserKey 속성을 설정하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">

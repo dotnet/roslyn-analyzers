@@ -308,8 +308,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="translated">Podtřída {0} třídy Page nenastavuje v metodě OnInit vlastnost ViewStateUserKey.</target>
+        <source>The subclass {0} of Page does not set the ViewStateUserKey property in either method OnInit or method Page_Init</source>
+        <target state="needs-review-translation">Podtřída {0} třídy Page nenastavuje v metodě OnInit vlastnost ViewStateUserKey.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">

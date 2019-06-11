@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Analyzer.Utilities;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -10327,6 +10326,34 @@ class C : IDisposable
 }", TestValidationMode.AllowCompileErrors,
             // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
             GetCSharpResultAt(10, 17, "new C()"));
+        }
+
+        [Fact, WorkItem(2529, "https://github.com/dotnet/roslyn-analyzers/issues/2529")]
+        public void MultilineDisposableCreation_SingleLine_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public A(int a) { }
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        var a = new A(
+            M2());
+    }
+
+    int M2() => 0;
+}",
+            // Test0.cs(16,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A(' before all references to it are out of scope.
+            GetCSharpResultAt(16, 17, "new A("));
         }
     }
 }

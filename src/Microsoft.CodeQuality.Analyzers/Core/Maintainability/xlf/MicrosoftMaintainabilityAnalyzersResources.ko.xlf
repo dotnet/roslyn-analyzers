@@ -179,12 +179,12 @@
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsTitle">
         <source>Avoid unused private fields</source>
-        <target state="translated">사용하지 않는 전용 필드를 사용하지 마세요.</target>
+        <target state="translated">사용하지 않는 프라이빗 필드를 사용하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsDescription">
         <source>Private fields were detected that do not appear to be accessed in the assembly.</source>
-        <target state="translated">어셈블리 내부에서 액세스되지 않는 전용 필드가 발견되었습니다.</target>
+        <target state="translated">어셈블리 내부에서 액세스되지 않는 프라이빗 필드가 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnusedPrivateFieldsMessage">

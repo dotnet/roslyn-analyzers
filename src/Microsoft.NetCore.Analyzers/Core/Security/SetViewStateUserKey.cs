@@ -6,6 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -50,21 +51,13 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var compilation = compilationStartAnalysisContext.Compilation;
-                var pageTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebUIPage);
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                if (pageTypeSymbol == null)
+                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemWebUIPage, out var pageTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs, out var eventArgsTypeSymbol))
                 {
                     return;
                 }
-
-                var eventArgsTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
-
-                if (eventArgsTypeSymbol == null)
-                {
-                    return;
-                }
-
-                var objectTypeSymbol = WellKnownTypes.Object(compilation);
 
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
@@ -81,8 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                                                                     !s.IsStatic));
                         var setViewStateUserKeyInPage_Init = SetViewStateUserKeyCorrectly(methods.FirstOrDefault(s => s.Name == "Page_Init" &&
                                                                                                                         s.Parameters.Length == 2 &&
-                                                                                                                        objectTypeSymbol != null &&
-                                                                                                                        s.Parameters[0].Type.Equals(objectTypeSymbol) &&
+                                                                                                                        s.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
                                                                                                                         s.Parameters[1].Type.Equals(eventArgsTypeSymbol) &&
                                                                                                                         s.ReturnType.SpecialType == SpecialType.System_Void));
 

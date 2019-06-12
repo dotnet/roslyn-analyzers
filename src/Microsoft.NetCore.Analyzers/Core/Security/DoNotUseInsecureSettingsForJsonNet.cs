@@ -53,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Security
         private const int TypeNameHandlingIndex = 0;
 
         /// <summary>
-        /// PropertySetAbstractValue index for Binder / SerializationBinder properties (aliased to same underlying value).
+        /// PropertySetAbstractValue index for Binder / SerializationBinder properties (both are aliased to same underlying value).
         /// </summary>
         private const int SerializationBinderIndex = 1;
 
@@ -79,19 +79,9 @@ namespace Microsoft.NetCore.Analyzers.Security
             new PropertyMapper(
                 "TypeNameHandling",
                 (ValueContentAbstractValue valueContentAbstractValue) =>
-                {
-                    foreach (object literalValue in valueContentAbstractValue.LiteralValues)
-                    {
-                        if (literalValue is int integerValue && integerValue != 0)
-                        {
-                            return PropertySetAbstractValueKind.Flagged;
-                        }
-                    }
-
-                    // TODO handle MaybeFlagged cases.
-
-                    return PropertySetAbstractValueKind.Unflagged;
-                },
+                    PropertySetCallbacks.EvaluateLiteralValues(
+                        valueContentAbstractValue,
+                        (object o) => o is int i && i != 0),
                 TypeNameHandlingIndex),
             new PropertyMapper(
                 "Binder",

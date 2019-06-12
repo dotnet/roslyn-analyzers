@@ -155,7 +155,6 @@ class Blah
                 GetCSharpResultAt(14, 20, DefinitelyRule));
         }
 
-        // Ideally, we'd be able to generate a diagnostic in this case.
         [Fact]
         public void Insecure_JsonConvert_DefaultSettings_LocalFunction_CapturedVariables_DefinitelyDiagnostic()
         {
@@ -178,7 +177,8 @@ class Blah
             return settings;
         };
     }
-}");
+}",
+                GetCSharpResultAt(17, 20, MaybeRule));
         }
 
         // Ideally, we'd only generate one diagnostic in this case.

@@ -338,8 +338,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="translated">Sayfanın {0} alt sınıfı OnInit metodunda ViewStateUserKey özelliğini ayarlamıyor</target>
+        <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
+        <target state="needs-review-translation">Sayfanın {0} alt sınıfı OnInit metodunda ViewStateUserKey özelliğini ayarlamıyor</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">

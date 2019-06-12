@@ -113,6 +113,26 @@ class Blah
         }
 
         [Fact]
+        public void Insecure_JsonConvert_DefaultSettings_Lambda_ImplicitReturn_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    void Method()
+    {
+        JsonConvert.DefaultSettings = () =>
+            new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.All,
+            };
+    }
+}",
+                GetCSharpResultAt(9, 13, DefinitelyRule));
+        }
+
+        [Fact]
         public void Insecure_JsonConvert_DefaultSettings_LocalFunction_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
@@ -133,6 +153,62 @@ class Blah
     }
 }",
                 GetCSharpResultAt(14, 20, DefinitelyRule));
+        }
+
+        // Ideally, we'd be able to generate a diagnostic in this case.
+        [Fact]
+        public void Insecure_JsonConvert_DefaultSettings_LocalFunction_CapturedVariables_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    void Method()
+    {
+        TypeNameHandling tnh = TypeNameHandling.None;
+        JsonConvert.DefaultSettings = GetSettings;
+
+        tnh = TypeNameHandling.All;
+
+        JsonSerializerSettings GetSettings()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = tnh;
+            return settings;
+        };
+    }
+}");
+        }
+
+        // Ideally, we'd only generate one diagnostic in this case.
+        [Fact]
+        public void Insecure_JsonConvert_DefaultSettings_NestedLocalFunction_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    void Method()
+    {
+        JsonConvert.DefaultSettings = GetSettings;
+
+        JsonSerializerSettings GetSettings()
+        {
+            return InnerGetSettings();
+
+            JsonSerializerSettings InnerGetSettings()
+            {
+                JsonSerializerSettings settings = new JsonSerializerSettings();
+                settings.TypeNameHandling = TypeNameHandling.All;
+                return settings;
+            }
+        };
+    }
+}",
+                GetCSharpResultAt(12, 20, DefinitelyRule),
+                GetCSharpResultAt(18, 24, DefinitelyRule));
         }
 
         [Fact]

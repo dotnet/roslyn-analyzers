@@ -308,7 +308,7 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in either method OnInit or method Page_Init</source>
+        <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
         <target state="needs-review-translation">La sous-classe {0} de Page ne définit pas la propriété ViewStateUserKey dans la méthode OnInit</target>
         <note />
       </trans-unit>

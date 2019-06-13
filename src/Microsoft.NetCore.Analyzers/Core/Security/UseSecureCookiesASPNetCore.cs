@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -12,7 +11,6 @@ using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
@@ -20,32 +18,42 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseWeakKDFInsufficientIterationCount : DiagnosticAnalyzer
+    public sealed class UseSecureCookiesASPNetCore : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor DefinitelyUseWeakKDFInsufficientIterationCountRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5387",
+        internal static DiagnosticDescriptor DefinitelyUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5382",
             typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DefinitelyUseWeakKDFInsufficientIterationCount),
-            nameof(SystemSecurityCryptographyResources.DefinitelyUseWeakKDFInsufficientIterationCountMessage),
+            nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCore),
+            nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCoreMessage),
             false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseWeakKDFInsufficientIterationCountDescription),
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCoreDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
-        internal static DiagnosticDescriptor MaybeUseWeakKDFInsufficientIterationCountRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5388",
+        internal static DiagnosticDescriptor MaybeUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5383",
             typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.MaybeUseWeakKDFInsufficientIterationCount),
-            nameof(SystemSecurityCryptographyResources.MaybeUseWeakKDFInsufficientIterationCountMessage),
+            nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCore),
+            nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCoreMessage),
             false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseWeakKDFInsufficientIterationCountDescription),
+            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCoreDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
-                                                                                        DefinitelyUseWeakKDFInsufficientIterationCountRule,
-                                                                                        MaybeUseWeakKDFInsufficientIterationCountRule);
+                                                                                        DefinitelyUseSecureCookiesASPNetCoreRule,
+                                                                                        MaybeUseSecureCookiesASPNetCoreRule);
 
-        private const int DefaultIterationCount = 1000;
+        private static readonly ConstructorMapper constructorMapper = new ConstructorMapper(
+                                                                        ImmutableArray.Create<PropertySetAbstractValueKind>(
+                                                                            PropertySetAbstractValueKind.Flagged));
+
+        private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
+            new PropertyMapper(
+                "Secure",
+                (ValueContentAbstractValue valueContentAbstractValue) =>
+                {
+                    return PropertySetAnalysis.EvaluateLiteralValues(valueContentAbstractValue, o => o.Equals(false));
+                }));
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
@@ -69,49 +77,29 @@ namespace Microsoft.NetCore.Analyzers.Security
             // Security analyzer - analyze and report diagnostics on generated code.
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
+            // If there are more classes implement IResponseCookies, add them here later.
             HazardousUsageEvaluatorCollection hazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
-                new HazardousUsageEvaluator("GetBytes", HazardousUsageCallback));
+                new HazardousUsageEvaluator(
+                    WellKnownTypeNames.MicrosoftAspNetCoreHttpInternalResponseCookies,
+                    "Append",
+                    "options",
+                    HazardousUsageCallback));
 
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes, out var rfc2898DeriveBytesTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                            WellKnownTypeNames.MicrosoftAspNetCoreHttpIResponseCookies,
+                            out var iResponseCookiesTypeSymbol))
                     {
                         return;
                     }
 
-                    var cancellationToken = compilationStartAnalysisContext.CancellationToken;
-                    var sufficientIterationCount = compilationStartAnalysisContext.Options.GetUnsignedIntegralOptionValue(
-                        optionName: EditorConfigOptionNames.SufficientIterationCountForWeakKDFAlgorithm,
-                        rule: DefinitelyUseWeakKDFInsufficientIterationCountRule,
-                        defaultValue: 100000,
-                        cancellationToken: cancellationToken);
-                    var constructorMapper = new ConstructorMapper(
-                        (IMethodSymbol constructorMethod, IReadOnlyList<ValueContentAbstractValue> argumentValueContentAbstractValues,
-                        IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
-                        {
-                            var kind = DefaultIterationCount >= sufficientIterationCount ? PropertySetAbstractValueKind.Unflagged : PropertySetAbstractValueKind.Flagged;
-
-                            if (constructorMethod.Parameters.Length >= 3)
-                            {
-                                if (constructorMethod.Parameters[2].Name == "iterations" &&
-                                    constructorMethod.Parameters[2].Type.SpecialType == SpecialType.System_Int32)
-                                {
-                                    kind = PropertySetAnalysis.EvaluateLiteralValues(argumentValueContentAbstractValues[2], o => Convert.ToInt32(o) < sufficientIterationCount);
-                                }
-                            }
-
-                            return PropertySetAbstractValue.GetInstance(kind);
-                        });
-                    var propertyMappers = new PropertyMapperCollection(
-                        new PropertyMapper(
-                            "IterationCount",
-                            (ValueContentAbstractValue valueContentAbstractValue) =>
-                            {
-                                return PropertySetAnalysis.EvaluateLiteralValues(valueContentAbstractValue, o => Convert.ToInt32(o) < sufficientIterationCount);
-                            }));
+                    wellKnownTypeProvider.TryGetTypeByMetadataName(
+                        WellKnownTypeNames.MicrosoftAspNetCoreHttpCookieOptions,
+                        out var cookieOptionsTypeSymbol);
                     var rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
 
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
@@ -121,13 +109,24 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
                                     var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
+                                    var methodSymbol = invocationOperation.TargetMethod;
 
-                                    if (rfc2898DeriveBytesTypeSymbol.Equals(invocationOperation.Instance?.Type) &&
-                                        invocationOperation.TargetMethod.Name == "GetBytes")
+                                    if (methodSymbol.ContainingType is INamedTypeSymbol namedTypeSymbol &&
+                                        namedTypeSymbol.Interfaces.Contains(iResponseCookiesTypeSymbol) &&
+                                        invocationOperation.TargetMethod.Name == "Append")
                                     {
-                                        lock (rootOperationsNeedingAnalysis)
+                                        if (methodSymbol.Parameters.Length < 3)
                                         {
-                                            rootOperationsNeedingAnalysis.Add((invocationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
+                                            operationAnalysisContext.ReportDiagnostic(
+                                                invocationOperation.CreateDiagnostic(
+                                                    DefinitelyUseSecureCookiesASPNetCoreRule));
+                                        }
+                                        else
+                                        {
+                                            lock (rootOperationsNeedingAnalysis)
+                                            {
+                                                rootOperationsNeedingAnalysis.Add((invocationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
+                                            }
                                         }
                                     }
                                 },
@@ -138,7 +137,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     var argumentOperation = (IArgumentOperation)operationAnalysisContext.Operation;
 
-                                    if (rfc2898DeriveBytesTypeSymbol.Equals(argumentOperation.Parameter.Type))
+                                    if (argumentOperation.Parameter.Type.Equals(cookieOptionsTypeSymbol))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
@@ -166,15 +165,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
-                                        WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
+                                        WellKnownTypeNames.MicrosoftAspNetCoreHttpCookieOptions,
                                         constructorMapper,
-                                        propertyMappers,
+                                        PropertyMappers,
                                         hazardousUsageEvaluators,
                                         InterproceduralAnalysisConfiguration.Create(
                                             compilationAnalysisContext.Options,
                                             SupportedDiagnostics,
                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                            cancellationToken: cancellationToken));
+                                            cancellationToken: compilationAnalysisContext.CancellationToken));
                                 }
 
                                 if (allResults == null)
@@ -189,11 +188,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     switch (kvp.Value)
                                     {
                                         case HazardousUsageEvaluationResult.Flagged:
-                                            descriptor = DefinitelyUseWeakKDFInsufficientIterationCountRule;
+                                            descriptor = DefinitelyUseSecureCookiesASPNetCoreRule;
                                             break;
 
                                         case HazardousUsageEvaluationResult.MaybeFlagged:
-                                            descriptor = MaybeUseWeakKDFInsufficientIterationCountRule;
+                                            descriptor = MaybeUseSecureCookiesASPNetCoreRule;
                                             break;
 
                                         default:
@@ -205,7 +204,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         Diagnostic.Create(
                                             descriptor,
                                             kvp.Key.Location,
-                                            sufficientIterationCount));
+                                            kvp.Key.Method.ToDisplayString(
+                                                SymbolDisplayFormat.MinimallyQualifiedFormat)));
                                 }
                             }
                             finally

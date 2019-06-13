@@ -132,11 +132,11 @@
   <data name="DefinitelyInstallRootCertMessage" xml:space="preserve">
     <value>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</value>
   </data>
-  <data name="DefinitelyUseWeakKDFInsufficientIterationCount" xml:space="preserve">
-    <value>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</value>
+  <data name="DefinitelyUseSecureCookiesASPNetCore" xml:space="preserve">
+    <value>Use Secure Cookies In ASP.Net Core</value>
   </data>
-  <data name="DefinitelyUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
-    <value>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</value>
+  <data name="DefinitelyUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
+    <value>Set CookieOptions.Secure = true when setting a cookie</value>
   </data>
   <data name="DoNotAddSchemaByURL" xml:space="preserve">
     <value>Do Not Add Schema By URL</value>
@@ -283,13 +283,10 @@
     <value>Do Not Use Weak Key Derivation Function Algorithm</value>
   </data>
   <data name="DoNotUseWeakKDFAlgorithmDescription" xml:space="preserve">
-    <value>Some implementations of the Rfc2898DeriveBytes class allow for a hashAlgorithm to be specified in the constructor parameter or overwritten in HashAlgorithm property. If this exists, then it should be used with SHA-256 or higher as the hashAlgorithm parameter.</value>
+    <value>Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</value>
   </data>
   <data name="DoNotUseWeakKDFAlgorithmMessage" xml:space="preserve">
     <value>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</value>
-  </data>
-  <data name="DoNotUseWeakKDFInsufficientIterationCountDescription" xml:space="preserve">
-    <value>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</value>
   </data>
   <data name="DoNotUseXslTransform" xml:space="preserve">
     <value>Do Not Use XslTransform</value>
@@ -303,11 +300,11 @@
   <data name="MaybeInstallRootCertMessage" xml:space="preserve">
     <value>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</value>
   </data>
-  <data name="MaybeUseWeakKDFInsufficientIterationCount" xml:space="preserve">
-    <value>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</value>
+  <data name="MaybeUseSecureCookiesASPNetCore" xml:space="preserve">
+    <value>Ensure Use Secure Cookies In ASP.Net Core</value>
   </data>
-  <data name="MaybeUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
-    <value>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</value>
+  <data name="MaybeUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
+    <value>Ensure that CookieOptions.Secure = true when setting a cookie</value>
   </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>
@@ -326,6 +323,9 @@
   </data>
   <data name="UseContainerLevelAccessPolicyMessage" xml:space="preserve">
     <value>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</value>
+  </data>
+  <data name="UseSecureCookiesASPNetCoreDescription" xml:space="preserve">
+    <value>Applications available over HTTPS must use secure cookies.</value>
   </data>
   <data name="UseSharedAccessProtocolHttpsOnly" xml:space="preserve">
     <value>Use SharedAccessProtocol HttpsOnly</value>
@@ -365,5 +365,20 @@
   </data>
   <data name="UseRSAWithSufficientKeySizeMessage" xml:space="preserve">
     <value>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>
+  </data>
+  <data name="DefinitelyUseWeakKDFInsufficientIterationCount" xml:space="preserve">
+    <value>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</value>
+  </data>
+  <data name="DefinitelyUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
+    <value>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</value>
+  </data>
+  <data name="DoNotUseWeakKDFInsufficientIterationCountDescription" xml:space="preserve">
+    <value>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</value>
+  </data>
+  <data name="MaybeUseWeakKDFInsufficientIterationCount" xml:space="preserve">
+    <value>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</value>
+  </data>
+  <data name="MaybeUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
+    <value>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</value>
   </data>
 </root>

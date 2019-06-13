@@ -27,7 +27,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(SystemSecurityCryptographyResources),
             nameof(SystemSecurityCryptographyResources.DefinitelyUseWeakKDFInsufficientIterationCount),
             nameof(SystemSecurityCryptographyResources.DefinitelyUseWeakKDFInsufficientIterationCountMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseWeakKDFInsufficientIterationCountDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(SystemSecurityCryptographyResources),
             nameof(SystemSecurityCryptographyResources.MaybeUseWeakKDFInsufficientIterationCount),
             nameof(SystemSecurityCryptographyResources.MaybeUseWeakKDFInsufficientIterationCountMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseWeakKDFInsufficientIterationCountDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);

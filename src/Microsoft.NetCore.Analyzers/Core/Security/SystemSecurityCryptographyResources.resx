@@ -294,6 +294,12 @@
   <data name="DoNotUseXslTransformMessage" xml:space="preserve">
     <value>Do not use XslTransform. It does not restrict potentially dangerous external references.</value>
   </data>
+  <data name="HardCodedSecurityProtocolMessage" xml:space="preserve">
+    <value>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</value>
+  </data>
+  <data name="HardCodedSecurityProtocolTitle" xml:space="preserve">
+    <value>Avoid hardcoding SecurityProtocolType value</value>
+  </data>
   <data name="MaybeInstallRootCert" xml:space="preserve">
     <value>Ensure Certificates Are Not Added To Root Store</value>
   </data>
@@ -313,7 +319,7 @@
     <value>Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</value>
   </data>
   <data name="SetViewStateUserKeyMessage" xml:space="preserve">
-    <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
+    <value>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</value>
   </data>
   <data name="UseContainerLevelAccessPolicy" xml:space="preserve">
     <value>Use Container Level Access Policy</value>

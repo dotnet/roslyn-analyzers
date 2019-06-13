@@ -139,13 +139,18 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                             defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
                                                                             cancellationToken: operationBlockStartContext.CancellationToken,
                                                                             defaultMaxInterproceduralMethodCallChain: 1);
-                                    var pointsToAnalysisResult = PointsToAnalysis.GetOrComputeResult(
+                                    var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
                                                                     invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
                                                                     owningSymbol,
                                                                     wellKnownTypeProvider,
                                                                     interproceduralAnalysisConfig,
                                                                     interproceduralAnalysisPredicateOpt: null,
                                                                     false);
+                                    if (pointsToAnalysisResult == null)
+                                    {
+                                        return;
+                                    }
+
                                     var pointsToAbstractValue = pointsToAnalysisResult[argumentOperation.Kind, argumentOperation.Syntax];
 
                                     if (pointsToAbstractValue.NullState != NullAbstractValue.Null)

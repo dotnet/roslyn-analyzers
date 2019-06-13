@@ -156,6 +156,43 @@ class Blah
         }
 
         [Fact]
+        public void Insecure_JsonConvert_DefaultSettings_LocalFunctionWithTryCatch_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    void Method()
+    {
+        JsonConvert.DefaultSettings = GetSettings;
+
+        JsonSerializerSettings GetSettings()
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            try
+            {
+                settings.TypeNameHandling = TypeNameHandling.All;
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+            }
+
+            return settings;
+        };
+    }
+
+    void HandleException(Exception exParam)  // 'ex' asserts in AnalysisEntityFactory.EnsureLocation()
+    {
+        Console.WriteLine(exParam);
+    }
+}",
+                GetCSharpResultAt(23, 20, DefinitelyRule));
+        }
+
+        [Fact]
         public void Insecure_JsonConvert_DefaultSettings_LocalFunction_CapturedVariables_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"

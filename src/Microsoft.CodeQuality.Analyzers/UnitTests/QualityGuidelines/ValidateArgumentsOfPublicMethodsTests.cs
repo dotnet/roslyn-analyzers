@@ -5550,5 +5550,27 @@ public class C
             // Test0.cs(13,12): warning CA1062: In externally visible method 'void C.M(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(13, 12, "void C.M(C c1, C c2)", "c2"));
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2528, "https://github.com/dotnet/roslyn-analyzers/issues/2528")]
+        public void ParamArrayIsNotFlagged()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(params int[] p)
+    {
+        var x = p.Length;
+    }
+}");
+
+            VerifyBasic(@"
+Public Class C
+    Public Sub M(ParamArray p As Integer())
+        Dim x = p.Length
+    End Sub
+End Class
+");
+        }
     }
 }

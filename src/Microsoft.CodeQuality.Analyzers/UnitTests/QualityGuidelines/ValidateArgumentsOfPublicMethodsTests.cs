@@ -2341,6 +2341,38 @@ Public Class Test
 End Class");
         }
 
+        [Fact, WorkItem(2504, "https://github.com/dotnet/roslyn-analyzers/issues/2504")]
+        public void ValidatedInInvokedMethod_Generic_02_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        M2(c); // Validation method
+        var x = c.X;    // No diagnostic here.
+    }
+
+    private static T M2<T>(T c)
+    {
+        if (c == null)
+        {
+            throw new ArgumentNullException(nameof(c));
+        }
+
+        return c;
+    }
+}
+");
+        }
+
         [Fact]
         public void MaybeValidatedInInvokedMethod_Diagnostic()
         {

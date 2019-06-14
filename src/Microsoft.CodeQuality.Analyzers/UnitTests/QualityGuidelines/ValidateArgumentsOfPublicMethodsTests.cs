@@ -5409,6 +5409,60 @@ public class C
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Theory, WorkItem(2369, "https://github.com/dotnet/roslyn-analyzers/issues/2369")]
+        [InlineData("IsNullOrWhiteSpace")]
+        [InlineData("IsNullOrEmpty")]
+        public void StringNullCheckApis_02(string apiName)
+        {
+            VerifyCSharp($@"
+using System;
+
+public class C
+{{
+    public static void A(string input)
+    {{
+        if (string.{apiName}(input))
+        {{
+            throw new ArgumentException(""Invalid input"", nameof(input));
+        }}
+
+        B(input);
+    }}
+
+    private static void B(string input)
+    {{
+        var x = input.Length;
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Theory, WorkItem(2369, "https://github.com/dotnet/roslyn-analyzers/issues/2369")]
+        [InlineData("IsNullOrWhiteSpace")]
+        [InlineData("IsNullOrEmpty")]
+        public void StringNullCheckApis_03(string apiName)
+        {
+            VerifyCSharp($@"
+using System;
+
+public class C
+{{
+    public static void A(string input)
+    {{
+        if (!string.{apiName}(input))
+        {{
+            B(input);
+        }}
+    }}
+
+    private static void B(string input)
+    {{
+        var x = input.Length;
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
         public void NamedArgumentInDifferentOrder()
         {

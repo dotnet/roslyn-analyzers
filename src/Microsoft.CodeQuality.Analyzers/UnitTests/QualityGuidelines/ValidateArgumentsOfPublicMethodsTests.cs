@@ -5463,6 +5463,65 @@ public class C
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
+        public void StringEmptyFieldIsNonNull()
+        {
+            VerifyCSharp($@"
+using System;
+
+public class Class1
+{{
+    public Class1(int num) {{ }}
+
+    public Class1(string name)
+        : this((name ?? string.Empty).Length) // Ensure no CA1062 here
+    {{
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
+        public void ArrayEmptyMethodIsNonNull()
+        {
+            VerifyCSharp($@"
+using System;
+
+public class Class1
+{{
+    public Class1(int num) {{ }}
+
+    public Class1(int[] arr)
+        : this((arr ?? Array.Empty<int>()).Length) // Ensure no CA1062 here
+    {{
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
+        public void ImmutableCreationMethodIsNonNull()
+        {
+            VerifyCSharp($@"
+using System.Collections.Immutable;
+
+public class Class1
+{{
+    public Class1(int num) {{ }}
+
+    public Class1(ImmutableDictionary<int, int> map)
+        : this((map ?? ImmutableDictionary.Create<int, int>()).Count) // Ensure no CA1062 here
+    {{
+    }}
+
+    public Class1(ImmutableHashSet<int> set)
+        : this((set ?? ImmutableHashSet.CreateRange(new[] {{ 1, 2 }})).Count) // Ensure no CA1062 here
+    {{
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
         public void NamedArgumentInDifferentOrder()
         {

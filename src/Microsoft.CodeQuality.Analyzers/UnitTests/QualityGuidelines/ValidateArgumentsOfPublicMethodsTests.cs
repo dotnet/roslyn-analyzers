@@ -1896,6 +1896,42 @@ End Class
 ", GetEditorConfigAdditionalFile(editorConfigText));
         }
 
+        [Theory, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None")]
+        [InlineData(@"dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive
+                      dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
+        public void ValidatedNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+public class ValidatedNotNullAttribute : System.Attribute
+{
+}
+
+public class C
+{
+    public void M1(C c1, C c2)
+    {
+        Validate(c1);
+        var x = c1.ToString(); // No diagnostic
+
+        NoValidate(c2);
+        x = c2.ToString(); // Diagnostic
+    }
+
+    private static void Validate([ValidatedNotNullAttribute]C c)
+    {
+    }
+
+    private static void NoValidate(C c)
+    {
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText),
+            // Test0.cs(14,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(14, 13, "void C.M1(C c1, C c2)", "c2"));
+        }
+
         [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
         public void HazardousUsageInInvokedMethod_PrivateMethod_Generic_Diagnostic()
         {

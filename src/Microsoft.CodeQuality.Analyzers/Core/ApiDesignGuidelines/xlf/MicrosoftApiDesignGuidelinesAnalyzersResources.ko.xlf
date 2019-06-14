@@ -729,7 +729,7 @@
       </trans-unit>
       <trans-unit id="NestedTypesShouldNotBeVisibleDescription">
         <source>A nested type is a type that is declared in the scope of another type. Nested types are useful to encapsulate private implementation details of the containing type. Used for this purpose, nested types should not be externally visible.</source>
-        <target state="translated">중첩 형식은 다른 형식의 범위에서 선언된 형식입니다. 중첩 형식은 포함하는 형식의 전용 구현 세부 정보를 캡슐화하는 데 유용합니다. 이러한 용도로 사용되는 중첩 형식은 외부에 표시하지 않아야 합니다.</target>
+        <target state="translated">중첩 형식은 다른 형식의 범위에서 선언된 형식입니다. 중첩 형식은 포함하는 형식의 프라이빗 구현 세부 정보를 캡슐화하는 데 유용합니다. 이러한 용도로 사용되는 중첩 형식은 외부에 표시하지 않아야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NestedTypesShouldNotBeVisibleMessageDefault">

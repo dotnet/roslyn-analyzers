@@ -89,7 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var baseTypesAndThis = typeSymbol.GetBaseTypesAndThis();
 
-                    if (baseTypesAndThis.Contains(rsaTypeSymbol))
+                    if (rsaTypeSymbol != null && baseTypesAndThis.Contains(rsaTypeSymbol))
                     {
                         var arguments = objectCreationOperation.Arguments;
 
@@ -109,7 +109,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
                     var returnOperation = (IReturnOperation)operationAnalysisContext.Operation;
-                    var typeSymbol = returnOperation.ReturnedValue.Type;
+                    var typeSymbol = returnOperation.ReturnedValue?.Type;
 
                     if (typeSymbol == null)
                     {
@@ -118,7 +118,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var baseTypesAndThis = typeSymbol.GetBaseTypesAndThis();
 
-                    if (baseTypesAndThis.Contains(rsaTypeSymbol))
+                    if (rsaTypeSymbol != null && baseTypesAndThis.Contains(rsaTypeSymbol))
                     {
                         operationAnalysisContext.ReportDiagnostic(
                             returnOperation.CreateDiagnostic(

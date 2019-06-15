@@ -5640,5 +5640,25 @@ Public Class C
 End Class
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2269, "https://github.com/dotnet/roslyn-analyzers/issues/2269")]
+        public void ProtectedMemberOfSealedClassNotFlagged()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class A
+{
+    public bool CheckMe() => IsType(GetType());
+
+    protected abstract bool IsType(Type type);
+}
+
+public sealed class B : A
+{
+    protected override bool IsType(Type type) => type.Namespace == nameof(System);
+}");
+        }
     }
 }

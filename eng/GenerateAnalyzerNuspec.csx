@@ -14,6 +14,8 @@ var legacyRulesets = Args[12].Split(new[] { ';' }, StringSplitOptions.RemoveEmpt
 var artifactsBinDir = Args[13];
 var analyzerDocumentationFileDir = Args[14];
 var analyzerDocumentationFileName = Args[15];
+var analyzerSarifFileDir = Args[16];
+var analyzerSarifFileName = Args[17];
 
 var result = new StringBuilder();
 
@@ -167,6 +169,15 @@ if (rulesetsDir.Length > 0 && Directory.Exists(rulesetsDir))
 if (analyzerDocumentationFileDir.Length > 0 && Directory.Exists(analyzerDocumentationFileDir) && analyzerDocumentationFileName.Length > 0)
 {
     var fileWithPath = Path.Combine(analyzerDocumentationFileDir, analyzerDocumentationFileName);
+    if (File.Exists(fileWithPath))
+    {
+        result.AppendLine(FileElement(fileWithPath, "documentation"));
+    }
+}
+
+if (analyzerSarifFileDir.Length > 0 && Directory.Exists(analyzerSarifFileDir) && analyzerSarifFileName.Length > 0)
+{
+    var fileWithPath = Path.Combine(analyzerSarifFileDir, analyzerSarifFileName);
     if (File.Exists(fileWithPath))
     {
         result.AppendLine(FileElement(fileWithPath, "documentation"));

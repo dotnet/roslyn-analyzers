@@ -247,12 +247,9 @@
     <value>Some references to '{0}' could not be fixed, they should be fixed manually.</value>
   </data>
   <data name="AvoidPropertySelfAssignmentTitle" xml:space="preserve">
-    <value>Do not assign properties to themselves.</value>
+    <value>Do not assign a property to itself.</value>
   </data>
   <data name="AvoidPropertySelfAssignmentMessage" xml:space="preserve">
-    <value></value>
-  </data>
-  <data name="AvoidPropertySelfAssignmentDescription" xml:space="preserve">
-    <value></value>
+    <value>The property {0} should not be assigned to itself.</value>
   </data>
 </root>

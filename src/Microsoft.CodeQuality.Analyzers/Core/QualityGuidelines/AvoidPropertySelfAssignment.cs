@@ -19,16 +19,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AvoidPropertySelfAssignmentTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AvoidPropertySelfAssignmentMessage), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AvoidPropertySelfAssignmentDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Design,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
-            description: s_localizableDescription,
-            helpLinkUri: "");
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -41,8 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             {
                 var assignmentOperation = (IAssignmentOperation)operationContext.Operation;
 
-                var operationTarget = (IPropertyReferenceOperation)assignmentOperation?.Target;
-                if (operationTarget == null)
+                if (!(assignmentOperation.Target is IPropertyReferenceOperation operationTarget))
                 {
                     return;
                 }
@@ -57,15 +54,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return;
                 }
 
-                var reference = (InstanceReferenceKind)operationTarget.Property.RefKind;
-                if (reference != InstanceReferenceKind.ContainingTypeInstance)
+                if (operationTarget.Instance is IInstanceReferenceOperation targetInstanceReference &&
+                    targetInstanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance &&
+                    operationValue.Instance is IInstanceReferenceOperation valueInstanceReference &&
+                    valueInstanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                 {
-                    return;
+                    var diagnostic = Diagnostic.Create(Rule, valueInstanceReference.Syntax.GetLocation(), operationTarget.Property.Name);
+                    operationContext.ReportDiagnostic(diagnostic);
                 }
-
-                Diagnostic diagnostic = Diagnostic.Create(Rule, operationContext.Operation.Syntax.GetLocation(), operationTarget.Property.Name);
-                operationContext.ReportDiagnostic(diagnostic);
-
             }, OperationKind.SimpleAssignment);
         }
     }

@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
@@ -22,121 +21,327 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
         }
 
         [Fact]
-        public void AssignmentInConstructorWithNoArguments()
+        public void CSharpAssignmentInConstructorWithNoArguments()
         {
             VerifyCSharp(@"
 class C
 {
-    private string Property { get; set; }
+    private string P { get; set; }
     public C()
     {
-        Property = Property;
+        P = P;
     }
 }
 ",
-                GetCSharpResultAt(7, 9, "="));
+            GetCSharpResultAt(7, 13, "P"));
         }
 
-
         [Fact]
-        public void AssignmentInConstructorWithSimilarArgument()
+        public void CSharpAssignmentInConstructorUsingThisWithNoArguments()
         {
             VerifyCSharp(@"
 class C
 {
-    private string Property { get; set; }
-    public C(string property)
+    private string P { get; set; }
+    public C()
     {
-        Property = Property;
+        this.P = P;
     }
 }
 ",
-                GetCSharpResultAt(7, 9, "="));
+            GetCSharpResultAt(7, 18, "P"));
         }
 
+
         [Fact]
-        public void AssignmentInMethodWithoutArguments()
+        public void CSharpAssignmentInConstructorWithSimilarArgument()
         {
             VerifyCSharp(@"
 class C
 {
-    private string Property { get; set; }
-    public void Method()
+    private string P { get; set; }
+    public C(string p)
     {
-        Property = Property;
+        P = P;
     }
 }
 ",
-                GetCSharpResultAt(7, 9, "="));
+            GetCSharpResultAt(7, 13, "P"));
         }
 
         [Fact]
-        public void AssignmentInMethodWithSimilarArgumentName()
+        public void CSharpAssignmentInMethodWithoutArguments()
         {
             VerifyCSharp(@"
 class C
 {
-    private string Property { get; set; }
-    public void Method(string property)
+    private string P { get; set; }
+    public void CSharpMethod()
     {
-        Property = Property;
+        P = P;
     }
 }
 ",
-                GetCSharpResultAt(7, 9, "="));
+            GetCSharpResultAt(7, 13, "P"));
         }
 
         [Fact]
-        public void AdditionAssignmentOperatorDoesNotCauseDiagnosticToAppear()
+        public void CSharpAssignmentInMethodWithSimilarArgumentName()
+        {
+            VerifyCSharp(@"
+class C
+{
+    private string P { get; set; }
+    public void CSharpMethod(string p)
+    {
+        P = P;
+    }
+}
+",
+            GetCSharpResultAt(7, 13, "P"));
+        }
+
+        [Fact]
+        public void CSharpAdditionAssignmentOperatorDoesNotCauseDiagnosticToAppear()
         {
             VerifyCSharp(@"
 class C
 {
     private int Property { get; set; }
-    public void Method(string property)
+    public void CSharpMethod(string p)
     {
         Property += 1;
     }
 }
-",
-                Array.Empty<DiagnosticResult>());
+");
         }
 
         [Fact]
-        public void NormalPropertyAssignmentDoesNotCauseDiagnosticToAppear()
+        public void CSharpNormalPropertyAssignmentDoesNotCauseDiagnosticToAppear()
         {
             VerifyCSharp(@"
 class C
 {
-    private string Property { get; set; }
-    public void Method(string property)
+    private string P { get; set; }
+    public void CSharpMethod(string p)
     {
-        Property = property;
+        P = p;
     }
 }
-",
-                Array.Empty<DiagnosticResult>());
+");
         }
 
         [Fact]
-        public void NormalVariableAssignmentDoesNotCauseDiagnosticToAppear()
+        public void CSharpNormalAssignmentOfTwoDifferentPropertiesDoesNotCauseDiagnosticToAppear()
         {
             VerifyCSharp(@"
 class C
 {
-    private string Property { get; set; }
-    public void Method(string property)
+    private string FirstP { get; set; }
+    private string SecondP { get; set; }
+    public C()
     {
-        var methodVariable = property;
+        FirstP = SecondP;
     }
 }
+");
+        }
+
+        [Fact]
+        public void CSharpNormalVariableAssignmentDoesNotCauseDiagnosticToAppear()
+        {
+            VerifyCSharp(@"
+class C
+{
+    private string P { get; set; }
+    public void CSharpMethod(string p)
+    {
+        var methodVariable = p;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharpNormalAssignmentWithTwoDifferentInstancesDoesNotCauseDiagnosticToAppear()
+        {
+            VerifyCSharp(@"
+internal class A
+{
+    public string P { get; set; } = ""value"";
+}
+
+class C
+{
+    public C()
+    {
+        var a = new A();
+        var b = new A();
+        a.P = b.P;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void VbAssignmentInConstructorWithNoArguments()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property [P] As String
+
+    Public Sub New()
+        [P] = [P]
+    End Sub
+End Class
 ",
-                Array.Empty<DiagnosticResult>());
+            GetBasicResultAt(6, 15, "P"));
+        }
+
+        [Fact]
+        public void VbAssignmentInConstructorUsingThisWithNoArguments()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property [P] As String
+
+    Public Sub New()
+        Me.[P] = [P]
+    End Sub
+End Class
+",
+            GetBasicResultAt(6, 18, "P"));
+        }
+
+
+        [Fact]
+        public void VbAssignmentInConstructorWithSimilarArgument()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property [P] As String
+
+    Public Sub New(ByVal [ctorArg] As String)
+        [P] = [P]
+    End Sub
+End Class
+",
+            GetBasicResultAt(6, 15, "P"));
+        }
+
+        [Fact]
+        public void VbAssignmentInMethodWithoutArguments()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property [P] As String
+
+    Public Sub VbMethod()
+        [P] = [P]
+    End Sub
+End Class
+",
+            GetBasicResultAt(6, 15, "P"));
+        }
+
+        [Fact]
+        public void VbAssignmentInMethodWithSimilarArgumentName()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property [P] As String
+
+    Public Sub VbMethod(ByVal [methodArg] As String)
+        [P] = [P]
+    End Sub
+End Class
+",
+            GetBasicResultAt(6, 15, "P"));
+        }
+
+        [Fact]
+        public void VbAdditionAssignmentOperatorDoesNotCauseDiagnosticToAppear()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property [P] As Integer
+
+    Public Sub VbMethod(ByVal [methodArg] As String)
+        [P] += 1
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void VbNormalPropertyAssignmentDoesNotCauseDiagnosticToAppear()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property [P] As String
+
+    Public Sub VbMethod(ByVal [methodArg] As String)
+        [P] = [methodArg]
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void VbNormalAssignmentOfTwoDifferentPropertiesDoesNotCauseDiagnosticToAppear()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property FirstP As String
+    Private Property SecondP As String
+
+    Public Sub New()
+        FirstP = SecondP
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void VbNormalVariableAssignmentDoesNotCauseDiagnosticToAppear()
+        {
+            VerifyBasic(@"
+Class C
+    Private Property [P] As String
+
+    Public Sub VbMethod(ByVal [methodArg] As String)
+        Dim methodVariable = [methodArg]
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void VbNormalAssignmentWithTwoDifferentInstancesDoesNotCauseDiagnosticToAppear()
+        {
+            VerifyBasic(@"
+Friend Class A
+    Public Property [P] As String = ""value""
+End Class
+
+Class C
+    Public Sub New()
+        Dim a = New A()
+        Dim b = New A()
+        a.[P] = b.[P]
+    End Sub
+End Class
+");
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
         {
             return GetCSharpResultAt(line, column, AvoidPropertySelfAssignment.Rule, symbolName);
+        }
+
+        private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
+        {
+            return GetBasicResultAt(line, column, AvoidPropertySelfAssignment.Rule, symbolName);
         }
     }
 }

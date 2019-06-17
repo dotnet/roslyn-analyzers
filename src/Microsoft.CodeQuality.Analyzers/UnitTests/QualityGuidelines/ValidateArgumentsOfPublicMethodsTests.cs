@@ -1932,6 +1932,78 @@ public class C
             GetCSharpResultAt(14, 13, "void C.M1(C c1, C c2)", "c2"));
         }
 
+        [Theory, WorkItem(2578, "https://github.com/dotnet/roslyn-analyzers/issues/2578")]
+        // Match by method name
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
+                      dotnet_code_quality.null_check_validation_methods = Validate")]
+        // Match multiple methods by method documentation ID
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
+                      dotnet_code_quality.null_check_validation_methods = C.Validate(C)~Helper`1.Validate(C)~Helper`1.Validate``1(C,``0)")]
+        // Match multiple methods by method documentation ID with "M:" prefix
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
+                      dotnet_code_quality.null_check_validation_methods = M:C.Validate(C)~M:Helper`1.Validate(C)~M:Helper`1.Validate``1(C,``0)")]
+        public void NullCheckValidationMethod_ConfiguredInEditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M1(C c1, C c2, C c3, C c4, C c5, C c6)
+    {
+        Validate(c1);
+        var x = c1.ToString(); // No diagnostic
+
+        Helper<int>.Validate(c2);
+        x = c2.ToString(); // No diagnostic
+
+        Helper<int>.Validate<object>(c3, null);
+        x = c3.ToString(); // No diagnostic
+
+        NoValidate(c4);
+        x = c4.ToString(); // Diagnostic
+
+        Helper<int>.NoValidate(c5);
+        x = c5.ToString(); // Diagnostic
+
+        Helper<int>.NoValidate<object>(c6, null);
+        x = c6.ToString(); // Diagnostic
+    }
+
+    private static void Validate(C c)
+    {
+    }
+
+    private static void NoValidate(C c)
+    {
+    }
+}
+
+internal static class Helper<T>
+{
+    internal static void Validate(C c)
+    {
+    }
+
+    internal static void NoValidate(C c)
+    {
+    }
+
+    internal static void Validate<U>(C c, U u)
+    {
+    }
+
+    internal static void NoValidate<U>(C c, U u)
+    {
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText),
+            // Test0.cs(16,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c4' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(16, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c4"),
+            // Test0.cs(19,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c5' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(19, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c5"),
+            // Test0.cs(22,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c6' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(22, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c6"));
+        }
+
         [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
         public void HazardousUsageInInvokedMethod_PrivateMethod_Generic_Diagnostic()
         {
@@ -5639,6 +5711,26 @@ Public Class C
     End Sub
 End Class
 ");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2269, "https://github.com/dotnet/roslyn-analyzers/issues/2269")]
+        public void ProtectedMemberOfSealedClassNotFlagged()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class A
+{
+    public bool CheckMe() => IsType(GetType());
+
+    protected abstract bool IsType(Type type);
+}
+
+public sealed class B : A
+{
+    protected override bool IsType(Type type) => type.Namespace == nameof(System);
+}");
         }
     }
 }

@@ -5732,5 +5732,66 @@ public sealed class B : A
     protected override bool IsType(Type type) => type.Namespace == nameof(System);
 }");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2526, "https://github.com/dotnet/roslyn-analyzers/issues/2526")]
+        public void CheckedWithConditionalAccess_01()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool Flag;
+    public void M(C c)
+    {
+        if (c?.Flag == true)
+        {
+          var x = c.ToString();
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2526, "https://github.com/dotnet/roslyn-analyzers/issues/2526")]
+        public void CheckedWithConditionalAccess_02()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool M(List<string> list)
+    {
+        return list?.Count > 5 && list.Count < 10;
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2586, "https://github.com/dotnet/roslyn-analyzers/issues/2586")]
+        public void CheckedWithConditionalAccess_03()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool Flag;
+    public void M(C c)
+    {
+        switch (c?.Flag)
+        {
+            case true:
+                var x = c.ToString();
+                break;
+            case null:
+                var y = c.ToString();
+                break;
+        }
+    }
+}");
+        }
     }
 }

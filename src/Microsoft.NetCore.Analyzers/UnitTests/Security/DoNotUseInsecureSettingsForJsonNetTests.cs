@@ -184,7 +184,8 @@ class Blah
         };
     }
 
-    void HandleException(Exception exParam)  // 'ex' asserts in AnalysisEntityFactory.EnsureLocation()
+    // 'ex' asserts in AnalysisEntityFactory.EnsureLocation(), when performing interprocedural DFA from Method()
+    void HandleException(Exception exParam)
     {
         Console.WriteLine(exParam);
     }

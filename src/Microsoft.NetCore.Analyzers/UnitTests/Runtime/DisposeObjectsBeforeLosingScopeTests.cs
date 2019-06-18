@@ -4482,6 +4482,96 @@ Class Test
 End Class");
         }
 
+        [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
+        public void ReturnStatement_03_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public sealed class MyResult : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public MyResult DoSomething()
+    {
+        try { }
+        catch (ArgumentException)
+        {
+            // Ensure no CA2000 reported here
+            return this.CreateResponse();
+        }
+
+        return null;
+    }
+
+    private MyResult CreateResponse() { return new MyResult(); }
+}
+");
+        }
+
+        [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
+        public void ReturnStatement_04_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public sealed class MyResult : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public MyResult DoSomething()
+    {
+        try { }
+        catch (ArgumentException)
+        {
+            // Ensure no CA2000 reported here
+            return this.CreateResponse();
+        }
+
+        return null;
+    }
+
+    private MyResult CreateResponse() { return CreateResponse2(); }
+
+    private MyResult CreateResponse2() { return new MyResult(); }
+}
+");
+        }
+
+        [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
+        public void ReturnStatement_05_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public sealed class MyResult : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public MyResult DoSomething()
+    {
+        try { }
+        catch (ArgumentException)
+        {
+            // Ensure no CA2000 reported here
+            return new MyResult();
+        }
+
+        return null;
+    }
+}
+");
+        }
+
         [Fact]
         public void LocalFunctionInvocation_EmptyBody_Diagnostic()
         {

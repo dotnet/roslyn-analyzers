@@ -19,22 +19,47 @@
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCert">
         <source>Do Not Add Certificates To Root Store</source>
-        <target state="new">Do Not Add Certificates To Root Store</target>
+        <target state="translated">No agregar certificados al almacén raíz</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
+        <target state="translated">La adición de certificados a los certificados raíz de confianza del sistema operativo aumenta el riesgo de autenticar incorrectamente un certificado ilegítimo</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
         <source>Use Secure Cookies In ASP.Net Core</source>
-        <target state="new">Use Secure Cookies In ASP.Net Core</target>
+        <target state="translated">Usar cookies seguras en ASP.NET Core</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCoreMessage">
         <source>Set CookieOptions.Secure = true when setting a cookie</source>
-        <target state="new">Set CookieOptions.Secure = true when setting a cookie</target>
+        <target state="translated">Establecer CookieOptions.Secure en true al establecer una cookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
+        <source>Do Not Add Archive Item's Path To The Target File System Path</source>
+        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
+        <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
+        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
+        <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
+        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
+        <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
+        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
+        <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -109,7 +134,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
-        <target state="translated">El método {0} tiene deshabilitada la validación de solicitudes.</target>
+        <target state="translated">{0} tiene deshabilitada la validación de solicitudes.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
@@ -129,7 +154,7 @@
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
         <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
-        <target state="new">By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</target>
+        <target state="translated">De forma predeterminada, el almacén de certificados de entidades de certificación raíz de confianza está configurado con un conjunto de entidades de certificación públicas que cumplen los requisitos del programa de certificados raíz de Microsoft. Dado que todas las entidades de certificación raíz de confianza pueden emitir certificados para cualquier dominio, un atacante puede elegir una entidad de certificación coaccionable o débil que instale por su cuenta para destinar un ataque, y una única entidad de certificación vulnerable, malintencionada o convertible socava la seguridad de todo el sistema. Para empeorar las cosas, estos ataques pueden pasar desapercibidos con bastante facilidad.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">
@@ -194,17 +219,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
-        <target state="new">Do Not Use Digital Signature Algorithm (DSA)</target>
+        <target state="translated">No usar el algoritmo de firma digital (DSA)</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSADescription">
         <source>DSA is too weak to use.</source>
-        <target state="new">DSA is too weak to use.</target>
+        <target state="translated">El algoritmo de firma digital no es suficientemente seguro para usarlo.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
-        <target state="new">Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <target state="translated">El algoritmo de cifrado asimétrico {0} no es seguro. Cambie a un algoritmo de ECDSA o ECDH con RSA que tenga un tamaño de clave mínimo de 2048.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
@@ -274,17 +299,22 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithm">
         <source>Do Not Use Weak Key Derivation Function Algorithm</source>
-        <target state="new">Do Not Use Weak Key Derivation Function Algorithm</target>
+        <target state="translated">No usar el algoritmo de función de derivación de claves débiles</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
         <source>Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</source>
-        <target state="new">Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</target>
+        <target state="translated">Algunas implementaciones de la clase Rfc2898DeriveBytes permiten especificar un algoritmo hash en un parámetro de constructor o sobrescribirlo en la propiedad HashAlgorithm. Si se especifica un algoritmo hash, debe ser SHA-256 o una versión posterior.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
         <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
-        <target state="new">{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</target>
+        <target state="translated">{0} se creó con un algoritmo hash débil. Use SHA256, SHA384 o SHA512 para crear una clave segura a partir de una contraseña</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
+        <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
+        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -309,22 +339,32 @@
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
         <source>Ensure Certificates Are Not Added To Root Store</source>
-        <target state="new">Ensure Certificates Are Not Added To Root Store</target>
+        <target state="translated">Asegurarse de que los certificados no se agregan al almacén raíz</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</target>
+        <target state="translated">La adición de certificados a los certificados raíz de confianza del sistema operativo no es segura. Asegúrese de que el almacén de destino no es un almacén raíz.</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCore">
         <source>Ensure Use Secure Cookies In ASP.Net Core</source>
-        <target state="new">Ensure Use Secure Cookies In ASP.Net Core</target>
+        <target state="translated">Asegurarse de usar cookies seguras en ASP.NET Core</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCoreMessage">
         <source>Ensure that CookieOptions.Secure = true when setting a cookie</source>
-        <target state="new">Ensure that CookieOptions.Secure = true when setting a cookie</target>
+        <target state="translated">Asegurarse de que CookieOptions.Secure es true al establecer una cookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
+        <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
+        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
+        <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -338,58 +378,58 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="translated">La subclase {0} de página no establece la propiedad ViewStateUserKey en el método OnInit.</target>
+        <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
+        <target state="needs-review-translation">La subclase {0} de página no establece la propiedad ViewStateUserKey en el método OnInit.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
         <source>Use Container Level Access Policy</source>
-        <target state="new">Use Container Level Access Policy</target>
+        <target state="translated">Usar una directiva de acceso de nivel de contenedor</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyDescription">
         <source>No access policy identifier is specified, making tokens non-revocable.</source>
-        <target state="new">No access policy identifier is specified, making tokens non-revocable.</target>
+        <target state="translated">No se ha especificado ningún identificador de directiva de acceso, por lo que los tokens no son revocables.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
-        <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</target>
+        <target state="translated">Considere la posibilidad de usar el control de acceso basado en rol de Azure en lugar de una firma de acceso compartido (SAS), si es posible. Si tiene que usar una firma de acceso compartido, utilice una directiva de acceso de nivel de contenedor al crear la firma.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
-        <target state="new">Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</target>
+        <target state="translated">Usar un algoritmo de Rivest-Shamir-Adleman (RSA) con un tamaño de clave suficiente</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeDescription">
         <source>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</source>
-        <target state="new">Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</target>
+        <target state="translated">Los algoritmos de cifrado son vulnerables a los ataques por fuerza bruta cuando se usa un tamaño de clave demasiado pequeño.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeMessage">
         <source>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
-        <target state="new">Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</target>
+        <target state="translated">El tamaño de clave del algoritmo de cifrado asimétrico {0} es inferior a 2048. Cambie a un algoritmo de ECDSA o ECDH con RSA que tenga un tamaño de clave mínimo de 2048.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">
         <source>Applications available over HTTPS must use secure cookies.</source>
-        <target state="new">Applications available over HTTPS must use secure cookies.</target>
+        <target state="translated">Las aplicaciones disponibles a través de HTTPS deben usar cookies seguras.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
-        <target state="translated">Usar HttpsOnly de SharedAccessProtocol</target>
+        <target state="translated">Usar HttpsOnly con SharedAccessProtocol</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
-        <target state="translated">HTTPS cifra el tráfico de red. Use HttpsOnly, en lugar de HttpOrHttps, para asegurarse de que el tráfico de red esté siempre cifrado para ayudar a evitar la revelación de datos confidenciales.</target>
+        <target state="translated">HTTPS cifra el tráfico de red. Use HttpsOnly, en lugar de HttpOrHttps, para asegurarse de que el tráfico de red se cifra siempre y ayudar a evitar la divulgación de información confidencial.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
-        <target state="translated">Considere la posibilidad de usar el control de acceso basado en roles de Azure en lugar de una firma de acceso compartido (SAS) si es posible. Si aún necesita usar una SAS, especifique SharedAccessProtocol. HttpsOnly</target>
+        <target state="translated">Considere la posibilidad de usar el control de acceso basado en rol de Azure en lugar de una firma de acceso compartido (SAS), si es posible. Si tiene que usar una firma de acceso compartido, especifique SharedAccessProtocol.HttpsOnly.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

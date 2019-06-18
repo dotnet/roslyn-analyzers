@@ -1382,6 +1382,45 @@ public class TestClass : IDeserializationCallback
         }
 
         [Fact]
+        public void TestUsingAbstractClassDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+public abstract class TestAbstractClass
+{
+    public abstract void TestAbstractMethod();
+}
+
+[Serializable()]
+public class TestDerivedClass : TestAbstractClass
+{
+    public override void TestAbstractMethod()
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private TestDerivedClass member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        member.TestAbstractMethod();
+    }
+}",
+            GetCSharpResultAt(29, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
         public void TestFinalizeDiagnostic()
         {
             VerifyCSharp(@"
@@ -2323,6 +2362,63 @@ public class TestClass : IDisposable
     private void TestMethod()
     {
         member.TestInterfaceMethod();
+    }
+}");
+        }
+
+        [Fact]
+        public void TestUsingAbstractClassNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+public abstract class TestAbstractClass
+{
+    public abstract void TestAbstractMethod();
+}
+
+[Serializable()]
+public class TestDerivedClass : TestAbstractClass
+{
+    public override void TestAbstractMethod()
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
+}
+
+[Serializable()]
+public class TestClass : IDisposable
+{
+    private TestAbstractClass member;
+    bool disposed = false;
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);           
+    }
+    
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed)
+        {
+            return; 
+        }
+      
+        if (disposing) 
+        {
+        }
+      
+        disposed = true;
+    }
+
+    private void TestMethod()
+    {
+        member.TestAbstractMethod();
     }
 }");
         }

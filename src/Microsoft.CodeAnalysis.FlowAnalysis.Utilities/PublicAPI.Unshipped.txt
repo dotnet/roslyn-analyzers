@@ -63,6 +63,7 @@ Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.AnalysisEntityOpt.
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.CaptureIdOpt.get -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.InterproceduralCaptureId?
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.CreationCallStack.get -> System.Collections.Immutable.ImmutableStack<Microsoft.CodeAnalysis.IOperation>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.CreationOpt.get -> Microsoft.CodeAnalysis.IOperation
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.GetTopOfCreationCallStackOrCreation() -> Microsoft.CodeAnalysis.IOperation
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.IsAnalysisEntityDefaultLocation.get -> bool
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.IsNoLocation.get -> bool
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractLocation.IsNull.get -> bool

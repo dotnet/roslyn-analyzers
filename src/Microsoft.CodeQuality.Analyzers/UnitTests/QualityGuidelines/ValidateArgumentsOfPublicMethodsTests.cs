@@ -781,7 +781,7 @@ End Class",
         }
 
         [Fact]
-        public void ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic()
+        public void ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic_CopyAnalysis()
         {
             VerifyCSharp(@"
 public class C
@@ -843,7 +843,7 @@ public class Test
         var z = c.X;
     }
 }
-");
+", GetEditorConfigToEnableCopyAnalysis());
 
             VerifyBasic(@"
 Public Class C
@@ -896,7 +896,7 @@ Public Class Test
         Dim z = c.X
     End Sub
 
-End Class");
+End Class", GetEditorConfigToEnableCopyAnalysis());
         }
 
         [Fact]
@@ -1244,7 +1244,7 @@ End Class");
         }
 
         [Fact]
-        public void ContractCheck_NoDiagnostic()
+        public void ContractCheck_NoDiagnostic_CopyAnalysis()
         {
             VerifyCSharp(@"
 public class C
@@ -1289,7 +1289,7 @@ public class Test
         var z = c.X;
     }
 }
-");
+", GetEditorConfigToEnableCopyAnalysis());
 
             VerifyBasic(@"
 Public Class C
@@ -1329,7 +1329,7 @@ Public Class Test
         Dim z = c.X
     End Sub
 End Class
-");
+", GetEditorConfigToEnableCopyAnalysis());
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]

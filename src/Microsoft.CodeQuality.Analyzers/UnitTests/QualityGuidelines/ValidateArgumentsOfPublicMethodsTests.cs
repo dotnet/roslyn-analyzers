@@ -1932,7 +1932,7 @@ public class C
             GetCSharpResultAt(14, 13, "void C.M1(C c1, C c2)", "c2"));
         }
 
-        [Fact, WorkItem(2584, "https://github.com/dotnet/roslyn-analyzers/issues/2584")]
+        [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
         public void ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_02()
         {
             VerifyCSharp(@"
@@ -1973,7 +1973,7 @@ public static class Issue2578Test
 ");
         }
 
-        [Fact, WorkItem(2584, "https://github.com/dotnet/roslyn-analyzers/issues/2584")]
+        [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
         public void ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_03()
         {
             VerifyCSharp(@"

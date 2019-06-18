@@ -776,7 +776,7 @@
           "shortDescription": "Use nameof to express symbol names",
           "fullDescription": "Using nameof helps keep your code valid when refactoring.",
           "defaultLevel": "warning",
-          "helpUri": "https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md#maintainability",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": true,

@@ -447,17 +447,10 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                         writer.WriteObjectStart(descriptor.Id); // rule
                         writer.Write("id", descriptor.Id);
 
-                        string shortDescription = descriptor.Title.ToString(culture);
-                        if (!string.IsNullOrEmpty(shortDescription))
-                        {
-                            writer.Write("shortDescription", shortDescription);
-                        }
+                        writer.Write("shortDescription", descriptor.Title.ToString(culture));
 
                         string fullDescription = descriptor.Description.ToString(culture);
-                        if (!string.IsNullOrEmpty(fullDescription))
-                        {
-                            writer.Write("fullDescription", fullDescription);
-                        }
+                        writer.Write("fullDescription", !string.IsNullOrEmpty(fullDescription) ? fullDescription : descriptor.MessageFormat.ToString());
 
                         writer.Write("defaultLevel", getLevel(descriptor.DefaultSeverity));
 
@@ -468,10 +461,7 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
 
                         writer.WriteObjectStart("properties");
 
-                        if (!string.IsNullOrEmpty(descriptor.Category))
-                        {
-                            writer.Write("category", descriptor.Category);
-                        }
+                        writer.Write("category", descriptor.Category);
 
                         writer.Write("isEnabledByDefault", descriptor.IsEnabledByDefault);
 

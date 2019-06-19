@@ -171,9 +171,10 @@ class Blah
         JsonSerializerSettings GetSettings()
         {
             JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.TypeNameHandling = TypeNameHandling.All;
             try
             {
-                settings.TypeNameHandling = TypeNameHandling.All;
+                settings.TypeNameHandling = TypeNameHandling.Objects;
             }
             catch (Exception ex)
             {
@@ -190,7 +191,7 @@ class Blah
         Console.WriteLine(exParam);
     }
 }",
-                GetCSharpResultAt(23, 20, DefinitelyRule));
+                GetCSharpResultAt(24, 20, DefinitelyRule));
         }
 
         [Fact]

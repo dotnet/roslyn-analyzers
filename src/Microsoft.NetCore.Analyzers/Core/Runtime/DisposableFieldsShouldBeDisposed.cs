@@ -153,7 +153,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // Mark fields disposed in Dispose method(s).
-                    if (containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task) != DisposeMethodKind.None)
+                    if (IsDisposeMethod(containingMethod))
                     {
                         var disposableFields = disposeAnalysisHelper.GetDisposableFields(containingMethod.ContainingType);
                         if (!disposableFields.IsEmpty)
@@ -210,7 +210,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     {
                         IFieldSymbol field = kvp.Key;
                         bool disposed = kvp.Value;
-                        if (!disposed)
+
+                        // Flag non-disposed fields only if the containing type has a Dispose method implementation.
+                        if (!disposed &&
+                            HasDisposeMethod(field.ContainingType))
                         {
                             // '{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.
                             var arg1 = field.ContainingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
@@ -232,6 +235,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return !hasErrors &&
                         namedType.IsDisposable(disposeAnalysisHelper.IDisposable) &&
                         !disposeAnalysisHelper.GetDisposableFields(namedType).IsEmpty;
+                }
+
+                bool IsDisposeMethod(IMethodSymbol method)
+                    => method.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task) != DisposeMethodKind.None;
+
+                bool HasDisposeMethod(INamedTypeSymbol namedType)
+                {
+                    foreach (var method in namedType.GetMembers().OfType<IMethodSymbol>())
+                    {
+                        if (IsDisposeMethod(method))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
                 }
             });
         }

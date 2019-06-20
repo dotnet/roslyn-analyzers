@@ -810,6 +810,7 @@
             "category": "Security",
             "isEnabledByDefault": true,
             "tags": [
+              "Dataflow",
               "Telemetry"
             ]
           }
@@ -1033,6 +1034,7 @@
             "category": "Security",
             "isEnabledByDefault": true,
             "tags": [
+              "Dataflow",
               "Telemetry"
             ]
           }
@@ -1143,6 +1145,34 @@
             "category": "Security",
             "isEnabledByDefault": false,
             "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5387": {
+          "id": "CA5387",
+          "shortDescription": "Do Not Use Weak Key Derivation Function With Insufficient Iteration Count",
+          "fullDescription": "When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5388": {
+          "id": "CA5388",
+          "shortDescription": "Ensure Sufficient Iteration Count When Using Weak Key Derivation Function",
+          "fullDescription": "When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "tags": [
+              "Dataflow",
               "Telemetry"
             ]
           }

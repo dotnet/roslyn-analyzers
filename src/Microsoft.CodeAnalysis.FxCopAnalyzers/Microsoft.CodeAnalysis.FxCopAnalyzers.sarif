@@ -780,7 +780,7 @@
           "shortDescription": "Use nameof to express symbol names",
           "fullDescription": "Using nameof helps keep your code valid when refactoring.",
           "defaultLevel": "warning",
-          "helpUri": "https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md#maintainability",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": true,
@@ -1295,6 +1295,7 @@
           "shortDescription": "Consider calling ConfigureAwait on the awaited task",
           "fullDescription": "When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2007-do-not-directly-await-task",
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
@@ -2145,6 +2146,7 @@
             "category": "Security",
             "isEnabledByDefault": true,
             "tags": [
+              "Dataflow",
               "Telemetry"
             ]
           }
@@ -2368,6 +2370,7 @@
             "category": "Security",
             "isEnabledByDefault": true,
             "tags": [
+              "Dataflow",
               "Telemetry"
             ]
           }
@@ -2482,6 +2485,34 @@
             ]
           }
         },
+        "CA5387": {
+          "id": "CA5387",
+          "shortDescription": "Do Not Use Weak Key Derivation Function With Insufficient Iteration Count",
+          "fullDescription": "When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5388": {
+          "id": "CA5388",
+          "shortDescription": "Ensure Sufficient Iteration Count When Using Weak Key Derivation Function",
+          "fullDescription": "When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
         "CA5389": {
           "id": "CA5389",
           "shortDescription": "Do Not Add Archive Item's Path To The Target File System Path",
@@ -2499,7 +2530,7 @@
         "CA9999": {
           "id": "CA9999",
           "shortDescription": "Analyzer version mismatch",
-          "fullDescription": "Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions to install the correct analyzer version.",
+          "fullDescription": "Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Reliability",

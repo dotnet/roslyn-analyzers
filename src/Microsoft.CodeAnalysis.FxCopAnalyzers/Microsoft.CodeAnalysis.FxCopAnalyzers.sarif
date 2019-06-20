@@ -2498,7 +2498,7 @@
         "CA9999": {
           "id": "CA9999",
           "shortDescription": "Analyzer version mismatch",
-          "fullDescription": "Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions to install the correct analyzer version.",
+          "fullDescription": "Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Reliability",

@@ -115,11 +115,29 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0)
             targets = allTargets;
         }
 
-        string path = Path.Combine(Path.GetFileNameWithoutExtension(assembly), configuration, tfm, assembly);
+		string assemblyNameWithoutExtension = Path.GetFileNameWithoutExtension(assembly);
+        string assemblyFolder = Path.Combine(artifactsBinDir, assemblyNameWithoutExtension, configuration, tfm);
+        string assemblyPathForNuspec = Path.Combine(assemblyNameWithoutExtension, configuration, tfm, assembly);
 
         foreach (string target in targets)
         {
-            result.AppendLine(FileElement(path, target));
+            result.AppendLine(FileElement(assemblyPathForNuspec, target));
+			
+            if (Directory.Exists(assemblyFolder))
+            {
+                string resourceAssemblyName = assemblyNameWithoutExtension + ".resources.dll";
+                foreach (var directory in Directory.EnumerateDirectories(assemblyFolder))
+                {
+                    var resourceAssemblyFullPath = Path.Combine(directory, resourceAssemblyName);
+                    if (File.Exists(resourceAssemblyFullPath))
+                    {
+                        var directoryName = Path.GetFileName(directory);
+                        string resourceAssemblyPathForNuspec = Path.Combine(assemblyNameWithoutExtension, configuration, tfm, directoryName, resourceAssemblyName);
+                        string targetForNuspec = Path.Combine(target, directoryName);
+                        result.AppendLine(FileElement(resourceAssemblyPathForNuspec, targetForNuspec));
+                    }
+                }
+            }
         }
     }
 

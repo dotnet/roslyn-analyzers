@@ -10522,5 +10522,30 @@ class Test
             // Test0.cs(16,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A(' before all references to it are out of scope.
             GetCSharpResultAt(16, 17, "new A("));
         }
+
+        [Fact]
+        public void DisposableObject_NotDisposed_DisposeOwnershipTransferAtMethodCall_NoDiagnostic()
+        {
+            var editorConfigText = $@"dotnet_code_quality.interprocedural_analysis_kind = None
+                                      dotnet_code_quality.dispose_ownership_transfer_at_method_call = true";
+
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    public void M1()
+    {
+        // Ensure 'new C()' is not flagged as 'dispose_ownership_transfer_at_method_call = true'
+        M2(new C());
+    }
+
+    void M2(object o)
+    {
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText));
+        }
     }
 }

@@ -147,6 +147,7 @@
         "CA1018": {
           "id": "CA1018",
           "shortDescription": "Mark attributes with AttributeUsageAttribute",
+          "fullDescription": "Specify AttributeUsage on {0}.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1018-mark-attributes-with-attributeusageattribute",
           "properties": {
@@ -161,6 +162,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
           "properties": {
@@ -399,6 +401,7 @@
         "CA1052": {
           "id": "CA1052",
           "shortDescription": "Static holder types should be Static or NotInheritable",
+          "fullDescription": "Type '{0}' is a static holder type but is neither static nor NotInheritable",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1052-static-holder-types-should-be-sealed",
           "properties": {
@@ -571,6 +574,7 @@
         "CA1068": {
           "id": "CA1068",
           "shortDescription": "CancellationToken parameters must come last",
+          "fullDescription": "Method '{0}' should take CancellationToken as the last parameter",
           "defaultLevel": "warning",
           "properties": {
             "category": "Design",
@@ -655,7 +659,7 @@
           "shortDescription": "Use nameof to express symbol names",
           "fullDescription": "Using nameof helps keep your code valid when refactoring.",
           "defaultLevel": "warning",
-          "helpUri": "https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md#maintainability",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": true,
@@ -667,6 +671,7 @@
         "CA1508": {
           "id": "CA1508",
           "shortDescription": "Avoid dead conditional code",
+          "fullDescription": "'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Maintainability",
@@ -1040,6 +1045,7 @@
           "shortDescription": "Consider calling ConfigureAwait on the awaited task",
           "fullDescription": "When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2007-do-not-directly-await-task",
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
@@ -1066,6 +1072,7 @@
         "CA2200": {
           "id": "CA2200",
           "shortDescription": "Rethrow to preserve stack details.",
+          "fullDescription": "Re-throwing caught exception changes stack information.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
           "properties": {

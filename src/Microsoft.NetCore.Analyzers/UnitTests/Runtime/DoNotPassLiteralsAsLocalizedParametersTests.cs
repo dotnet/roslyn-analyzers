@@ -1348,5 +1348,54 @@ End Class
             // Test0.vb(9,9): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'AutoPropertyValue' of a call to 'Property Set C.caption(AutoPropertyValue As String)'. Retrieve the following string(s) from a resource table instead: "a".
             GetBasicResultAt(9, 9, "Sub Test.M1(c As C)", "AutoPropertyValue", $"Property Set C.{propertyName}(AutoPropertyValue As String)", "a"));
         }
+
+        [Fact, WorkItem(1919, "https://github.com/dotnet/roslyn-analyzers/issues/1919")]
+        public void ShouldBeLocalizedRegressionTest()
+        {
+            VerifyCSharp(@"
+internal static class Program
+{
+    public static void Main()
+    {
+        new DerivedClass().Generic<decimal>(""number"");
+    }
+
+    private class BaseClass
+    {
+        public virtual T Generic<T>(string text) => default(T);
+    }
+
+    private class DerivedClass : BaseClass
+    {
+        public override T Generic<T>(string text) => base.Generic<T>(text);
+    }
+}",
+            // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
+            GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number"));
+        }
+
+        [Fact, WorkItem(1919, "https://github.com/dotnet/roslyn-analyzers/issues/1919")]
+        public void ShouldBeLocalizedRegressionTest_02()
+        {
+            VerifyCSharp(@"
+internal static class Program
+{
+    public static void Main()
+    {
+        new DerivedClass().Generic<decimal>(""number"");
+    }
+
+    private class BaseClass
+    {
+    }
+
+    private class DerivedClass : BaseClass
+    {
+        public override T Generic<T>(string text) => base.Generic<T>(text);
+    }
+}", TestValidationMode.AllowCompileErrors,
+            // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
+            GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number"));
+        }
     }
 }

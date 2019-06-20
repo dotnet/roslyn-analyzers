@@ -81,6 +81,7 @@
         "MetaAnalyzer008": {
           "id": "MetaAnalyzer008",
           "shortDescription": "Incorrect SupportedDiagnostics property",
+          "fullDescription": "T: The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -280,6 +281,7 @@
         "MetaAnalyzer028": {
           "id": "MetaAnalyzer028",
           "shortDescription": "Missing SyntaxKind check",
+          "fullDescription": "T: Next, check if the kind of '{0}' is whitespace trivia",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -289,6 +291,7 @@
         "MetaAnalyzer029": {
           "id": "MetaAnalyzer029",
           "shortDescription": "Incorrect SyntaxKind check",
+          "fullDescription": "T: This statement should check to see if the kind of '{0}' is whitespace trivia",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -298,6 +301,7 @@
         "MetaAnalyzer030": {
           "id": "MetaAnalyzer030",
           "shortDescription": "Missing whitespace check",
+          "fullDescription": "T: Next, check if '{0}' is a single whitespace, which is the desired formatting",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -307,6 +311,7 @@
         "MetaAnalyzer031": {
           "id": "MetaAnalyzer031",
           "shortDescription": "Incorrect whitespace check",
+          "fullDescription": "T: This statement should check to see if '{0}' is a single whitespace, which is the desired formatting",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -496,6 +501,7 @@
         "MetaAnalyzer050": {
           "id": "MetaAnalyzer050",
           "shortDescription": "Analyzer tutorial complete",
+          "fullDescription": "T: Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.",
           "defaultLevel": "note",
           "properties": {
             "category": "Tutorial",
@@ -535,6 +541,7 @@
         "MetaAnalyzer054": {
           "id": "MetaAnalyzer054",
           "shortDescription": "Incorrect analysis method accessibility",
+          "fullDescription": "T: The '{0}' method should be private",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -544,6 +551,7 @@
         "MetaAnalyzer055": {
           "id": "MetaAnalyzer055",
           "shortDescription": "Incorrect analysis method return type",
+          "fullDescription": "T: The '{0}' method should have a void return type",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -553,6 +561,7 @@
         "MetaAnalyzer056": {
           "id": "MetaAnalyzer056",
           "shortDescription": "Incorrect parameter to analysis method",
+          "fullDescription": "T: The '{0}' method should take one parameter of type SyntaxNodeAnalysisContext",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -562,6 +571,7 @@
         "MetaAnalyzer057": {
           "id": "MetaAnalyzer057",
           "shortDescription": "Trailing trivia count missing",
+          "fullDescription": "T: Next, check that '{0}' only has one trailing trivia element",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -571,6 +581,7 @@
         "MetaAnalyzer058": {
           "id": "MetaAnalyzer058",
           "shortDescription": "Trailing trivia count incorrect",
+          "fullDescription": "T: This statement should check that '{0}' only has one trailing trivia element",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -580,6 +591,7 @@
         "MetaAnalyzer059": {
           "id": "MetaAnalyzer059",
           "shortDescription": "ID string literal",
+          "fullDescription": "T: The ID should not be a string literal, because the ID must be accessible from the code fix provider",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -589,6 +601,7 @@
         "MetaAnalyzer060": {
           "id": "MetaAnalyzer060",
           "shortDescription": "Change default title",
+          "fullDescription": "T: Please change the title to a string of your choosing",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -598,6 +611,7 @@
         "MetaAnalyzer061": {
           "id": "MetaAnalyzer061",
           "shortDescription": "Change default message",
+          "fullDescription": "T: Please change the default message to a string of your choosing",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
@@ -607,6 +621,7 @@
         "MetaAnalyzer062": {
           "id": "MetaAnalyzer062",
           "shortDescription": "Change default category",
+          "fullDescription": "T: Please change the category to a string of your choosing",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",

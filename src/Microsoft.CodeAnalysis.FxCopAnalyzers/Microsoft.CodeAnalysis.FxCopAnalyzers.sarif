@@ -147,6 +147,7 @@
         "CA1018": {
           "id": "CA1018",
           "shortDescription": "Mark attributes with AttributeUsageAttribute",
+          "fullDescription": "Specify AttributeUsage on {0}.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1018-mark-attributes-with-attributeusageattribute",
           "properties": {
@@ -161,6 +162,7 @@
         "CA1019": {
           "id": "CA1019",
           "shortDescription": "Define accessors for attribute arguments",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
           "properties": {
@@ -399,6 +401,7 @@
         "CA1052": {
           "id": "CA1052",
           "shortDescription": "Static holder types should be Static or NotInheritable",
+          "fullDescription": "Type '{0}' is a static holder type but is neither static nor NotInheritable",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1052-static-holder-types-should-be-sealed",
           "properties": {
@@ -586,6 +589,7 @@
         "CA1068": {
           "id": "CA1068",
           "shortDescription": "CancellationToken parameters must come last",
+          "fullDescription": "Method '{0}' should take CancellationToken as the last parameter",
           "defaultLevel": "warning",
           "properties": {
             "category": "Design",
@@ -788,6 +792,7 @@
         "CA1508": {
           "id": "CA1508",
           "shortDescription": "Avoid dead conditional code",
+          "fullDescription": "'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Maintainability",
@@ -1234,6 +1239,7 @@
         "CA1825": {
           "id": "CA1825",
           "shortDescription": "Avoid zero-length array allocations.",
+          "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Performance",
@@ -1313,6 +1319,7 @@
         "CA2009": {
           "id": "CA2009",
           "shortDescription": "Do not call ToImmutableCollection on an ImmutableCollection value",
+          "fullDescription": "Do not call {0} on an {1} value",
           "defaultLevel": "warning",
           "properties": {
             "category": "Reliability",
@@ -1398,6 +1405,7 @@
         "CA2200": {
           "id": "CA2200",
           "shortDescription": "Rethrow to preserve stack details.",
+          "fullDescription": "Re-throwing caught exception changes stack information.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
           "properties": {
@@ -1767,6 +1775,7 @@
         "CA2301": {
           "id": "CA2301",
           "shortDescription": "Do not call BinaryFormatter.Deserialize without first setting BinaryFormatter.Binder",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2301-do-not-call-binaryformatter-deserialize-without-first-setting-binaryformatter-binder",
           "properties": {
@@ -1777,6 +1786,7 @@
         "CA2302": {
           "id": "CA2302",
           "shortDescription": "Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2302-ensure-binaryformatter-binder-is-set-before-calling-binaryformatter-deserialize",
           "properties": {
@@ -1787,6 +1797,7 @@
         "CA2305": {
           "id": "CA2305",
           "shortDescription": "Do not use insecure deserializer LosFormatter",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2305-do-not-use-insecure-deserializer-losformatter",
           "properties": {
@@ -1808,6 +1819,7 @@
         "CA2311": {
           "id": "CA2311",
           "shortDescription": "Do not deserialize without first setting NetDataContractSerializer.Binder",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder",
           "properties": {
@@ -1818,6 +1830,7 @@
         "CA2312": {
           "id": "CA2312",
           "shortDescription": "Ensure NetDataContractSerializer.Binder is set before deserializing",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing",
           "properties": {
@@ -1828,6 +1841,7 @@
         "CA2315": {
           "id": "CA2315",
           "shortDescription": "Do not use insecure deserializer ObjectStateFormatter",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2315-do-not-use-insecure-deserializer-objectstateformatter",
           "properties": {
@@ -1838,6 +1852,7 @@
         "CA2321": {
           "id": "CA2321",
           "shortDescription": "Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2321",
           "properties": {
@@ -1848,6 +1863,7 @@
         "CA2322": {
           "id": "CA2322",
           "shortDescription": "Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2322",
           "properties": {
@@ -1858,6 +1874,7 @@
         "CA3001": {
           "id": "CA3001",
           "shortDescription": "Review code for SQL injection vulnerabilities",
+          "fullDescription": "Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3001-review-code-for-sql-injection-vulnerabilities",
           "properties": {
@@ -1868,6 +1885,7 @@
         "CA3002": {
           "id": "CA3002",
           "shortDescription": "Review code for XSS vulnerabilities",
+          "fullDescription": "Potential cross-site scripting (XSS) vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3002-review-code-for-xss-vulnerabilities",
           "properties": {
@@ -1878,6 +1896,7 @@
         "CA3003": {
           "id": "CA3003",
           "shortDescription": "Review code for file path injection vulnerabilities",
+          "fullDescription": "Potential file path injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3003-review-code-for-file-path-injection-vulnerabilities",
           "properties": {
@@ -1888,6 +1907,7 @@
         "CA3004": {
           "id": "CA3004",
           "shortDescription": "Review code for information disclosure vulnerabilities",
+          "fullDescription": "Potential information disclosure vulnerability was found where '{0}' in method '{1}' may contain unintended information from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3004-review-code-for-information-disclosure-vulnerabilities",
           "properties": {
@@ -1898,6 +1918,7 @@
         "CA3005": {
           "id": "CA3005",
           "shortDescription": "Review code for LDAP injection vulnerabilities",
+          "fullDescription": "Potential LDAP injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3005-review-code-for-ldap-injection-vulnerabilities",
           "properties": {
@@ -1908,6 +1929,7 @@
         "CA3006": {
           "id": "CA3006",
           "shortDescription": "Review code for process command injection vulnerabilities",
+          "fullDescription": "Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3006-review-code-for-process-command-injection-vulnerabilities",
           "properties": {
@@ -1918,6 +1940,7 @@
         "CA3007": {
           "id": "CA3007",
           "shortDescription": "Review code for open redirect vulnerabilities",
+          "fullDescription": "Potential open redirect vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3007-review-code-for-open-redirect-vulnerabilities",
           "properties": {
@@ -1928,6 +1951,7 @@
         "CA3008": {
           "id": "CA3008",
           "shortDescription": "Review code for XPath injection vulnerabilities",
+          "fullDescription": "Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3008-review-code-for-xpath-injection-vulnerabilities",
           "properties": {
@@ -1938,6 +1962,7 @@
         "CA3009": {
           "id": "CA3009",
           "shortDescription": "Review code for XML injection vulnerabilities",
+          "fullDescription": "Potential XML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3009-review-code-for-xml-injection-vulnerabilities",
           "properties": {
@@ -1948,6 +1973,7 @@
         "CA3010": {
           "id": "CA3010",
           "shortDescription": "Review code for XAML injection vulnerabilities",
+          "fullDescription": "Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3010-review-code-for-xaml-injection-vulnerabilities",
           "properties": {
@@ -1958,6 +1984,7 @@
         "CA3011": {
           "id": "CA3011",
           "shortDescription": "Review code for DLL injection vulnerabilities",
+          "fullDescription": "Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3011-review-code-for-dll-injection-vulnerabilities",
           "properties": {
@@ -1968,6 +1995,7 @@
         "CA3012": {
           "id": "CA3012",
           "shortDescription": "Review code for regex injection vulnerabilities",
+          "fullDescription": "Potential regex injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3012-review-code-for-regex-injection-vulnerabilities",
           "properties": {
@@ -2033,6 +2061,7 @@
         "CA3147": {
           "id": "CA3147",
           "shortDescription": "Mark Verb Handlers With Validate Antiforgery Token",
+          "fullDescription": "Missing ValidateAntiForgeryTokenAttribute on controller action {0}.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3147-mark-verb-handlers-with-validateantiforgerytoken",
           "properties": {
@@ -2279,6 +2308,7 @@
         "CA5374": {
           "id": "CA5374",
           "shortDescription": "Do Not Use XslTransform",
+          "fullDescription": "Do not use XslTransform. It does not restrict potentially dangerous external references.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
@@ -2332,6 +2362,7 @@
         "CA5378": {
           "id": "CA5378",
           "shortDescription": "Do not disable ServicePointManagerSecurityProtocols",
+          "fullDescription": "Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
@@ -2441,6 +2472,7 @@
         "CA5386": {
           "id": "CA5386",
           "shortDescription": "Avoid hardcoding SecurityProtocolType value",
+          "fullDescription": "Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",

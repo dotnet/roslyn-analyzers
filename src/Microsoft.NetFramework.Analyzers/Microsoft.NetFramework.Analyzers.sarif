@@ -82,6 +82,7 @@
         "CA3147": {
           "id": "CA3147",
           "shortDescription": "Mark Verb Handlers With Validate Antiforgery Token",
+          "fullDescription": "Missing ValidateAntiForgeryTokenAttribute on controller action {0}.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3147-mark-verb-handlers-with-validateantiforgerytoken",
           "properties": {

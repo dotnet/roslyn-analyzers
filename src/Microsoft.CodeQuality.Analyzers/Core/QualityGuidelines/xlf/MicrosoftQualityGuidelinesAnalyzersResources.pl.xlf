@@ -2,6 +2,16 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="pl" original="../MicrosoftQualityGuidelinesAnalyzersResources.resx">
     <body>
+      <trans-unit id="AvoidPropertySelfAssignmentMessage">
+        <source>The property {0} should not be assigned to itself.</source>
+        <target state="new">The property {0} should not be assigned to itself.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AvoidPropertySelfAssignmentTitle">
+        <source>Do not assign a property to itself.</source>
+        <target state="new">Do not assign a property to itself.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="MarkMembersAsStaticCodeFix">
         <source>Make static</source>
         <target state="translated">Ustaw jako statyczne</target>

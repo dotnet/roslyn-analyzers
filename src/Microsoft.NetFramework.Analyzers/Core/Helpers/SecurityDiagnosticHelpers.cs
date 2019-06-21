@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Threading;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
@@ -233,23 +234,21 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         /// </summary>
         /// <param name="current">Current syntax not to examine</param>
         /// <param name="model">The semantic model</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <returns></returns>
-        public static string GetNonEmptyParentName(SyntaxNode current, SemanticModel model)
+        public static string GetNonEmptyParentName(SyntaxNode current, SemanticModel model, CancellationToken cancellationToken)
         {
             while (current.Parent != null)
             {
                 SyntaxNode parent = current.Parent;
-                ISymbol sym = parent.GetDeclaredOrReferencedSymbol(model);
+                ISymbol sym = model.GetDeclaredSymbol(current, cancellationToken);
 
-                if (sym != null &&
-                    !string.IsNullOrEmpty(sym.Name)
-                    && (
-                        sym.Kind == SymbolKind.Method ||
-                        sym.Kind == SymbolKind.NamedType
-                       )
-                )
+                switch (sym)
                 {
-                    return sym.Name;
+                    case IMethodSymbol method:
+                        return method.MethodKind == MethodKind.Ordinary ? method.Name : method.ContainingType.Name;
+                    case INamedTypeSymbol namedType:
+                        return namedType.Name;
                 }
 
                 current = parent;

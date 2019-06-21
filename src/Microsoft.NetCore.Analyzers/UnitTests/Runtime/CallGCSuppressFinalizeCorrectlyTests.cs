@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using Xunit.Abstractions;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Runtime.CallGCSuppressFinalizeCorrectlyAnalyzer,
     Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpCallGCSuppressFinalizeCorrectlyFixer>;
@@ -29,6 +30,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             return GetBasicResultAt(line, column, rule, containingMethodName, gcSuppressFinalizeMethodName);
         }
 
+        public CallGCSuppressFinalizeCorrectlyTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new CallGCSuppressFinalizeCorrectlyAnalyzer();
@@ -44,8 +50,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
         [Fact]
         public void DisposableWithoutFinalizer_CSharp_NoDiagnostic()
         {
-            this.PrintActualDiagnosticsOnFailure = true;
-
             var code = @"
 using System;
 using System.ComponentModel;

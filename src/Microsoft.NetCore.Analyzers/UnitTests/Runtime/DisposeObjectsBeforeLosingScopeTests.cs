@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using Analyzer.Utilities;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -1305,6 +1304,83 @@ End Class
                 {
                     // Test0.vb(13,40): warning CA2000: Call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
                     GetBasicResultAt(13, 40, "New A()")
+                };
+            }
+
+            VerifyBasic(source, editorConfigFile, expectedDiagnostics);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void Configured_DisposeOwnershipTransfer_AtMethodCall(bool disposeOwnershipTransferAtMethodCall)
+        {
+            var editorConfigText = disposeOwnershipTransferAtMethodCall ?
+                        $@"dotnet_code_quality.interprocedural_analysis_kind = None
+                           dotnet_code_quality.dispose_ownership_transfer_at_method_call = true" :
+                        string.Empty;
+            var editorConfigFile = GetEditorConfigAdditionalFile(editorConfigText);
+
+            var source = @"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        TransferDisposeOwnership(new A());
+    }
+
+    void TransferDisposeOwnership(A a)
+    {
+    }
+}";
+
+            var expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (!disposeOwnershipTransferAtMethodCall)
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.cs(15,34): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                    GetCSharpResultAt(15, 34, "new A()")
+                };
+            }
+
+            VerifyCSharp(source, editorConfigFile, expectedDiagnostics);
+
+            source = @"
+Imports System
+
+Class A
+    Implements IDisposable
+
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Private Sub M1()
+        TransferDisposeOwnership(New A())
+    End Sub
+
+    Private Sub TransferDisposeOwnership(a As A)
+    End Sub
+End Class
+";
+            expectedDiagnostics = Array.Empty<DiagnosticResult>();
+            if (!disposeOwnershipTransferAtMethodCall)
+            {
+                expectedDiagnostics = new[]
+                {
+                    // Test0.vb(13,34): warning CA2000: Call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                    GetBasicResultAt(13, 34, "New A()")
                 };
             }
 
@@ -4483,6 +4559,96 @@ Class Test
 End Class");
         }
 
+        [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
+        public void ReturnStatement_03_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public sealed class MyResult : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public MyResult DoSomething()
+    {
+        try { }
+        catch (ArgumentException)
+        {
+            // Ensure no CA2000 reported here
+            return this.CreateResponse();
+        }
+
+        return null;
+    }
+
+    private MyResult CreateResponse() { return new MyResult(); }
+}
+");
+        }
+
+        [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
+        public void ReturnStatement_04_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public sealed class MyResult : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public MyResult DoSomething()
+    {
+        try { }
+        catch (ArgumentException)
+        {
+            // Ensure no CA2000 reported here
+            return this.CreateResponse();
+        }
+
+        return null;
+    }
+
+    private MyResult CreateResponse() { return CreateResponse2(); }
+
+    private MyResult CreateResponse2() { return new MyResult(); }
+}
+");
+        }
+
+        [Fact, WorkItem(2583, "https://github.com/dotnet/roslyn-analyzers/issues/2583")]
+        public void ReturnStatement_05_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public sealed class MyResult : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public MyResult DoSomething()
+    {
+        try { }
+        catch (ArgumentException)
+        {
+            // Ensure no CA2000 reported here
+            return new MyResult();
+        }
+
+        return null;
+    }
+}
+");
+        }
+
         [Fact]
         public void LocalFunctionInvocation_EmptyBody_Diagnostic()
         {
@@ -6109,9 +6275,7 @@ Class Test
         New A().M()
         Dim x = New A().X
     End Sub
-End Class", TestValidationMode.AllowCompileErrors,
-            // Test0.vb(19,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
-            GetBasicResultAt(19, 17, "New A()"));
+End Class", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -7335,7 +7499,7 @@ End Class
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public void DisposableObjectInErrorCode_NotDisposed_Diagnostic()
+        public void DisposableObjectInErrorCode_NotDisposed_BailOut_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -7356,13 +7520,11 @@ class B : IDisposable
         = x
     }
 }
-", TestValidationMode.AllowCompileErrors,
-            // Test0.cs(16,15): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
-            GetCSharpResultAt(16, 15, "new A()"));
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact, WorkItem(1597, "https://github.com/dotnet/roslyn-analyzers/issues/1597")]
-        public void DisposableObjectInErrorCode_02_NotDisposed_Diagnostic()
+        public void DisposableObjectInErrorCode_02_NotDisposed_BailOut_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -7391,9 +7553,7 @@ class Test
     {
     }
 }
-", TestValidationMode.AllowCompileErrors,
-            // Test0.cs(20,22): warning CA2000: Call System.IDisposable.Dispose on object created by 'new StringWriter(builder)' before all references to it are out of scope.
-            GetCSharpResultAt(20, 22, "new StringWriter(builder)"));
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -10293,7 +10453,7 @@ class C : IDisposable
         }
 
         [Fact, WorkItem(2506, "https://github.com/dotnet/roslyn-analyzers/issues/2506")]
-        public void ErroroneousCodeWithBrokenIfCondition()
+        public void ErroroneousCodeWithBrokenIfCondition_BailOut_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -10307,9 +10467,85 @@ class C : IDisposable
         var c = new C();
         if()
     }
+}", TestValidationMode.AllowCompileErrors);
+        }
+
+        [Fact, WorkItem(2506, "https://github.com/dotnet/roslyn-analyzers/issues/2506")]
+        public void ErroroneousCodeWithBrokenIfCondition_Interprocedural_BailOut_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    void M1()
+    {
+        var c = new C();
+        M2(c);
+    }
+
+    void M2(C c)
+    {
+        if()
+    }
 }", TestValidationMode.AllowCompileErrors,
             // Test0.cs(10,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new C()' before all references to it are out of scope.
             GetCSharpResultAt(10, 17, "new C()"));
+        }
+
+        [Fact, WorkItem(2529, "https://github.com/dotnet/roslyn-analyzers/issues/2529")]
+        public void MultilineDisposableCreation_SingleLine_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public A(int a) { }
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        var a = new A(
+            M2());
+    }
+
+    int M2() => 0;
+}",
+            // Test0.cs(16,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A(' before all references to it are out of scope.
+            GetCSharpResultAt(16, 17, "new A("));
+        }
+
+        [Fact]
+        public void DisposableObject_NotDisposed_DisposeOwnershipTransferAtMethodCall_NoDiagnostic()
+        {
+            var editorConfigText = $@"dotnet_code_quality.interprocedural_analysis_kind = None
+                                      dotnet_code_quality.dispose_ownership_transfer_at_method_call = true";
+
+            VerifyCSharp(@"
+using System;
+
+class C : IDisposable
+{
+    public void Dispose() { }
+
+    public void M1()
+    {
+        // Ensure 'new C()' is not flagged as 'dispose_ownership_transfer_at_method_call = true'
+        M2(new C());
+    }
+
+    void M2(object o)
+    {
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText));
         }
     }
 }

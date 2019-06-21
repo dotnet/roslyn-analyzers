@@ -1,25 +1,29 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     [Trait(Traits.DataflowAnalysis, Traits.Dataflow.TaintedDataAnalysis)]
     public abstract class TaintedDataAnalyzerTestBase : DiagnosticAnalyzerTestBase
     {
+        public TaintedDataAnalyzerTestBase(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected abstract DiagnosticDescriptor Rule { get; }
 
         protected virtual IEnumerable<string> AdditionalCSharpSources { get; }
 
         protected DiagnosticResult GetCSharpResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             return GetCSharpResultAt(
                 new[] {
                     (sinkLine, sinkColumn),
@@ -45,7 +49,6 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 
         protected DiagnosticResult GetBasicResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
         {
-            this.PrintActualDiagnosticsOnFailure = true;
             return GetBasicResultAt(
                 new[] {
                     (sinkLine, sinkColumn),

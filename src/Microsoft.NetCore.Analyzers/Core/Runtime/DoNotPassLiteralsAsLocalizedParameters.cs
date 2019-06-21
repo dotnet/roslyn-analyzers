@@ -95,7 +95,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
                     {
-                        if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore))
+                        if (ShouldBeLocalized(parameter.OriginalDefinition, containingPropertySymbolOpt?.OriginalDefinition, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
+                            lazyValueContentResult.Value != null)
                         {
                             ValueContentAbstractValue stringContentValue = lazyValueContentResult.Value[operation.Kind, operation.Syntax];
                             if (stringContentValue.IsLiteralState)
@@ -146,7 +147,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (cfg != null)
                         {
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockStartContext.Compilation);
-                            return ValueContentAnalysis.GetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                            return ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
                                 operationBlockStartContext.Options, Rule, operationBlockStartContext.CancellationToken);
                         }
 
@@ -235,7 +236,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // FxCop compat: For overrides, check for localizability of the corresponding parameter in the overridden method.
             var method = (IMethodSymbol)parameterSymbol.ContainingSymbol;
             if (method.IsOverride &&
-                method.OverriddenMethod.Parameters.Length == method.Parameters.Length)
+                method.OverriddenMethod?.Parameters.Length == method.Parameters.Length)
             {
                 int parameterIndex = method.GetParameterIndex(parameterSymbol);
                 IParameterSymbol overridenParameter = method.OverriddenMethod.Parameters[parameterIndex];
@@ -310,12 +311,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var literals = new StringBuilder();
             foreach (string literal in literalValues.Order())
             {
+                // sanitize the literal to ensure it's not multiline
+                // replace any newline characters with a space
+                var sanitizedLiteral = literal.Replace(Environment.NewLine, " ");
+                sanitizedLiteral = sanitizedLiteral.Replace((char)13, ' ');
+                sanitizedLiteral = sanitizedLiteral.Replace((char)10, ' ');
+
                 if (literals.Length > 0)
                 {
                     literals.Append(", ");
                 }
 
-                literals.Append(literal);
+                literals.Append(sanitizedLiteral);
             }
 
             return literals.ToString();

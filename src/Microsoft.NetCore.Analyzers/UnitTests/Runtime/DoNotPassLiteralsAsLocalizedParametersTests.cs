@@ -186,6 +186,51 @@ End Class
         }
 
         [Fact]
+        public void ParameterWithLocalizableAttribute_MultipleLineStringLiteralArgument_Method_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.ComponentModel;
+
+public class C
+{
+    public void M([LocalizableAttribute(true)] string param)
+    {
+    }
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        var str = ""a\na"";
+        c.M(str);
+    }
+}
+",
+                // Test0.cs(16,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a a".
+                GetCSharpResultAt(16, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a a"));
+
+            VerifyBasic(@"
+Imports Microsoft.VisualBasic
+Imports System.ComponentModel
+
+Public Class C
+    Public Sub M(<LocalizableAttribute(True)> param As String)
+    End Sub
+End Class
+
+Public Class Test
+    Public Sub M1(c As C)
+        Dim str = ""a"" & vbCrLf & ""a""
+        c.M(str)
+    End Sub
+End Class
+",
+                // Test0.vb(13,13): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'param' of a call to 'Sub C.M(param As String)'. Retrieve the following string(s) from a resource table instead: "a a".
+                GetBasicResultAt(13, 13, "Sub Test.M1(c As C)", "param", "Sub C.M(param As String)", "a a"));
+        }
+
+        [Fact]
         public void ParameterWithLocalizableAttribute_StringLiteralArgument_Method_Diagnostic()
         {
             VerifyCSharp(@"
@@ -1302,6 +1347,55 @@ End Class
 
             // Test0.vb(9,9): warning CA1303: Method 'Sub Test.M1(c As C)' passes a literal string as parameter 'AutoPropertyValue' of a call to 'Property Set C.caption(AutoPropertyValue As String)'. Retrieve the following string(s) from a resource table instead: "a".
             GetBasicResultAt(9, 9, "Sub Test.M1(c As C)", "AutoPropertyValue", $"Property Set C.{propertyName}(AutoPropertyValue As String)", "a"));
+        }
+
+        [Fact, WorkItem(1919, "https://github.com/dotnet/roslyn-analyzers/issues/1919")]
+        public void ShouldBeLocalizedRegressionTest()
+        {
+            VerifyCSharp(@"
+internal static class Program
+{
+    public static void Main()
+    {
+        new DerivedClass().Generic<decimal>(""number"");
+    }
+
+    private class BaseClass
+    {
+        public virtual T Generic<T>(string text) => default(T);
+    }
+
+    private class DerivedClass : BaseClass
+    {
+        public override T Generic<T>(string text) => base.Generic<T>(text);
+    }
+}",
+            // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
+            GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number"));
+        }
+
+        [Fact, WorkItem(1919, "https://github.com/dotnet/roslyn-analyzers/issues/1919")]
+        public void ShouldBeLocalizedRegressionTest_02()
+        {
+            VerifyCSharp(@"
+internal static class Program
+{
+    public static void Main()
+    {
+        new DerivedClass().Generic<decimal>(""number"");
+    }
+
+    private class BaseClass
+    {
+    }
+
+    private class DerivedClass : BaseClass
+    {
+        public override T Generic<T>(string text) => base.Generic<T>(text);
+    }
+}", TestValidationMode.AllowCompileErrors,
+            // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
+            GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number"));
         }
     }
 }

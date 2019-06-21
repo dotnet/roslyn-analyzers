@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,9 +18,11 @@ namespace GenerateAnalyzerRulesets
     {
         public static int Main(string[] args)
         {
-            if (args.Length != 10)
+            const int expectedArguments = 12;
+
+            if (args.Length != expectedArguments)
             {
-                Console.Error.WriteLine($"Excepted 8 arguments, found {args.Length}: {string.Join(';', args)}");
+                Console.Error.WriteLine($"Excepted {expectedArguments} arguments, found {args.Length}: {string.Join(';', args)}");
                 return 1;
             }
 
@@ -32,7 +35,9 @@ namespace GenerateAnalyzerRulesets
             string propsFileName = args[6];
             string analyzerDocumentationFileDir = args[7];
             string analyzerDocumentationFileName = args[8];
-            if (!bool.TryParse(args[9], out var containsPortedFxCopRules))
+            string analyzerSarifFileDir = args[9];
+            string analyzerSarifFileName = args[10];
+            if (!bool.TryParse(args[11], out var containsPortedFxCopRules))
             {
                 containsPortedFxCopRules = false;
             }
@@ -114,6 +119,8 @@ namespace GenerateAnalyzerRulesets
             createPropsFile();
 
             createAnalyzerDocumentationFile();
+
+            createAnalyzerSarifFile();
 
             return 0;
 
@@ -397,6 +404,112 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                 }
 
                 File.WriteAllText(fileWithPath, builder.ToString());
+            }
+
+            // based on https://github.com/dotnet/roslyn/blob/master/src/Compilers/Core/Portable/CommandLine/ErrorLogger.cs
+            void createAnalyzerSarifFile()
+            {
+                if (string.IsNullOrEmpty(analyzerSarifFileDir) || string.IsNullOrEmpty(analyzerSarifFileName) || allRulesById.Count == 0)
+                {
+                    Debug.Assert(!containsPortedFxCopRules);
+                    return;
+                }
+
+                var culture = new CultureInfo("en-us");
+
+                var directory = Directory.CreateDirectory(analyzerSarifFileDir);
+                var fileWithPath = Path.Combine(directory.FullName, analyzerSarifFileName);
+
+                using (var textWriter = new StreamWriter(fileWithPath, false, Encoding.UTF8))
+                using (var writer = new Roslyn.Utilities.JsonWriter(textWriter))
+                {
+                    writer.WriteObjectStart(); // root
+                    writer.Write("$schema", "http://json.schemastore.org/sarif-1.0.0");
+                    writer.Write("version", "1.0.0");
+                    writer.WriteArrayStart("runs");
+                    writer.WriteObjectStart(); // run
+
+                    writer.WriteObjectStart("tool");
+                    writer.Write("name", "Microsoft Code Analysis");
+                    //writer.Write("version", toolAssemblyVersion.ToString());
+                    //writer.Write("fileVersion", toolFileVersion);
+                    //writer.Write("semanticVersion", toolAssemblyVersion.ToString(fieldCount: 3));
+                    writer.Write("language", culture.Name);
+                    writer.WriteObjectEnd(); // tool
+
+                    writer.WriteObjectStart("rules"); // rules
+
+                    foreach (var ruleById in allRulesById)
+                    {
+                        var ruleId = ruleById.Key;
+                        var descriptor = ruleById.Value;
+
+                        writer.WriteObjectStart(descriptor.Id); // rule
+                        writer.Write("id", descriptor.Id);
+
+                        writer.Write("shortDescription", descriptor.Title.ToString(culture));
+
+                        string fullDescription = descriptor.Description.ToString(culture);
+                        writer.Write("fullDescription", !string.IsNullOrEmpty(fullDescription) ? fullDescription : descriptor.MessageFormat.ToString());
+
+                        writer.Write("defaultLevel", getLevel(descriptor.DefaultSeverity));
+
+                        if (!string.IsNullOrEmpty(descriptor.HelpLinkUri))
+                        {
+                            writer.Write("helpUri", descriptor.HelpLinkUri);
+                        }
+
+                        writer.WriteObjectStart("properties");
+
+                        writer.Write("category", descriptor.Category);
+
+                        writer.Write("isEnabledByDefault", descriptor.IsEnabledByDefault);
+
+                        if (descriptor.CustomTags.Any())
+                        {
+                            writer.WriteArrayStart("tags");
+
+                            foreach (string tag in descriptor.CustomTags)
+                            {
+                                writer.Write(tag);
+                            }
+
+                            writer.WriteArrayEnd(); // tags
+                        }
+
+                        writer.WriteObjectEnd(); // properties
+                        writer.WriteObjectEnd(); // rule
+                    }
+
+                    writer.WriteObjectEnd(); // rules
+                    writer.WriteObjectEnd(); // run
+                    writer.WriteArrayEnd(); // runs
+                    writer.WriteObjectEnd(); // root
+
+                    return;
+
+                    string getLevel(DiagnosticSeverity severity)
+                    {
+                        switch (severity)
+                        {
+                            case DiagnosticSeverity.Info:
+                                return "note";
+
+                            case DiagnosticSeverity.Error:
+                                return "error";
+
+                            case DiagnosticSeverity.Warning:
+                                return "warning";
+
+                            case DiagnosticSeverity.Hidden:
+                            default:
+                                // hidden diagnostics are not reported on the command line and therefore not currently given to 
+                                // the error logger. We could represent it with a custom property in the SARIF log if that changes.
+                                Debug.Assert(false);
+                                goto case DiagnosticSeverity.Warning;
+                        }
+                    }
+                }
             }
         }
 

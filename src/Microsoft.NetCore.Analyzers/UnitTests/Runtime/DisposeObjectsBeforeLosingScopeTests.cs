@@ -10547,5 +10547,43 @@ class C : IDisposable
     }
 }", GetEditorConfigAdditionalFile(editorConfigText));
         }
+
+        [Fact]
+        public void OutArgument_Disposed_DisposeOwnershipTransferAtMethodCall_NoDiagnostic()
+        {
+            var editorConfigText = $@"dotnet_code_quality.interprocedural_analysis_kind = None
+                                      dotnet_code_quality.dispose_ownership_transfer_at_method_call = true";
+
+            VerifyCSharp(@"
+using System;
+using System.Collections.Concurrent;
+
+public class C
+{
+    private readonly ConcurrentDictionary<object, IDisposable> _dictionary;
+    public C(ConcurrentDictionary<object, IDisposable> dictionary)
+    {
+        _dictionary = dictionary;
+    }
+
+    public void Remove1(object key)
+    {
+        if (_dictionary.TryRemove(key, out IDisposable value))
+        {
+            value.Dispose();
+        }
+    }
+
+    public void Remove2(object key)
+    {
+        if (!_dictionary.TryRemove(key, out IDisposable value))
+        {
+            return;
+        }
+
+        value.Dispose();
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText));
+        }
     }
 }

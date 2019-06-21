@@ -48,7 +48,7 @@ namespace GenerateAnalyzerRulesets
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
             var fixableDiagnosticIds = new HashSet<string>();
             var categories = new HashSet<string>();
-            var rulesMetadata = new SortedList<string, (string path, Version version, SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)> rules)>();
+            var rulesMetadata = new SortedList<string, (string path, SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)> rules)>();
             foreach (string assembly in assemblyList)
             {
                 var assemblyName = Path.GetFileNameWithoutExtension(assembly);
@@ -63,7 +63,7 @@ namespace GenerateAnalyzerRulesets
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
                 var rulesById = new SortedList<string, DiagnosticDescriptor>();
 
-                var assemblyRulesMetadata = (path: path, version: analyzerFileReference.GetAssembly().GetName().Version, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
+                var assemblyRulesMetadata = (path: path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
 
                 foreach (var analyzer in analyzers)
                 {

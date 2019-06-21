@@ -4,7 +4,17 @@
   "runs": [
     {
       "tool": {
-        "name": "Microsoft Code Analysis",
+        "name": "Humanizer",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.CodeQuality.Analyzers",
+        "version": "2.9.4",
         "language": "en-US"
       },
       "rules": {
@@ -17,36 +27,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1001": {
-          "id": "CA1001",
-          "shortDescription": "Types that own disposable fields should be disposable",
-          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1001-types-that-own-disposable-fields-should-be-disposable",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1003": {
-          "id": "CA1003",
-          "shortDescription": "Use generic event handler instances",
-          "fullDescription": "A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": false,
+            "typeName": "DoNotDeclareStaticMembersOnGenericTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -62,6 +47,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "EnumsShouldHaveZeroValueAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry",
@@ -78,6 +68,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "CollectionsShouldImplementGenericInterfaceAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -93,6 +88,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "AbstractTypesShouldNotHaveConstructorsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -108,6 +108,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "MarkAssembliesWithAttributesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -123,6 +128,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "MarkAssembliesWithAttributesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -138,6 +148,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "MarkAssembliesWithComVisibleAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -153,21 +168,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1019": {
-          "id": "CA1019",
-          "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": false,
+            "typeName": "MarkAttributesWithAttributeUsageAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -183,6 +188,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "UsePropertiesWhereAppropriateAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -198,6 +208,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "EnumWithFlagsAttributeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -213,6 +228,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "EnumStorageShouldBeInt32Analyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -228,6 +248,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UseEventsWhereAppropriateAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -243,22 +268,12 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "DoNotCatchGeneralExceptionTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1032": {
-          "id": "CA1032",
-          "shortDescription": "Implement standard exception constructors",
-          "fullDescription": "Failure to provide the full set of constructors can make it difficult to correctly handle exceptions.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1032-implement-standard-exception-constructors",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
               "Telemetry"
             ]
           }
@@ -272,6 +287,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "InterfaceMethodsShouldBeCallableByChildTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -287,6 +307,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "NestedTypesShouldNotBeVisibleAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -302,6 +327,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "OverrideMethodsOnComparableTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -317,6 +347,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "AvoidEmptyInterfacesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -332,6 +367,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "ProvideObsoleteAttributeMessageAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -347,6 +387,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UseIntegralOrStringArgumentForIndexersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -362,6 +407,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "PropertiesShouldNotBeWriteOnlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -377,6 +427,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "DeclareTypesInNamespacesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -392,6 +447,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDeclareVisibleInstanceFieldsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -407,6 +467,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "StaticHolderTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -422,6 +487,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UriParametersShouldNotBeStringsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -437,6 +507,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UriReturnValuesShouldNotBeStringsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -452,6 +527,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UriPropertiesShouldNotBeStringsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -467,6 +547,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "MovePInvokesToNativeMethodsClassAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -482,6 +567,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "DoNotHideBaseClassMethodsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -497,6 +587,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "ValidateArgumentsOfPublicMethods",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -513,6 +608,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "ImplementIDisposableCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -528,21 +628,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1065": {
-          "id": "CA1065",
-          "shortDescription": "Do not raise exceptions in unexpected locations",
-          "fullDescription": "A method that is not expected to throw exceptions throws an exception.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1065-do-not-raise-exceptions-in-unexpected-locations",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true,
+            "typeName": "ExceptionsShouldBePublicAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -557,7 +647,12 @@
           "helpUri": "http://go.microsoft.com/fwlink/?LinkId=734907",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "EquatableAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA1067": {
@@ -568,7 +663,12 @@
           "helpUri": "http://go.microsoft.com/fwlink/?LinkId=734909",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "EquatableAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA1068": {
@@ -578,19 +678,11 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Design",
-            "isEnabledByDefault": true
-          }
-        },
-        "CA1200": {
-          "id": "CA1200",
-          "shortDescription": "Avoid using cref tags with a prefix",
-          "fullDescription": "Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Documentation",
             "isEnabledByDefault": true,
-            "tags": [
-              "Telemetry"
+            "typeName": "CancellationTokenParametersMustComeLastAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
             ]
           }
         },
@@ -603,6 +695,11 @@
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -618,6 +715,11 @@
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -633,6 +735,11 @@
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -648,22 +755,13 @@
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1507": {
-          "id": "CA1507",
-          "shortDescription": "Use nameof to express symbol names",
-          "fullDescription": "Using nameof helps keep your code valid when refactoring.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": true,
-            "tags": [
               "Telemetry"
             ]
           }
@@ -676,6 +774,11 @@
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": false,
+            "typeName": "AvoidDeadConditionalCode",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -690,6 +793,11 @@
           "properties": {
             "category": "Maintainability",
             "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -704,6 +812,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldNotContainUnderscoresAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -719,6 +832,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": false,
+            "typeName": "IdentifiersShouldDifferByMoreThanCaseAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -734,6 +852,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldHaveCorrectSuffixAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -749,6 +872,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": false,
+            "typeName": "IdentifiersShouldNotHaveIncorrectSuffixAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -764,6 +892,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "DoNotPrefixEnumValuesWithTypeNameAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -779,6 +912,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "EnumsShouldHavePluralNamesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -794,6 +932,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldHaveCorrectPrefixAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -809,6 +952,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldNotMatchKeywordsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -824,6 +972,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "EnumsShouldHavePluralNamesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -839,6 +992,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldNotContainTypeNames",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -854,6 +1012,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "PropertyNamesShouldNotMatchGetMethodsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -869,6 +1032,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": true,
+            "typeName": "TypeNamesShouldNotMatchNamespacesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -884,6 +1052,11 @@
           "properties": {
             "category": "Naming",
             "isEnabledByDefault": false,
+            "typeName": "ParameterNamesShouldMatchBaseDeclarationAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -899,6 +1072,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "ReviewUnusedParametersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -914,6 +1092,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "UseLiteralsWhereAppropriateAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -929,6 +1112,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "DoNotIgnoreMethodResultsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -944,6 +1132,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "AvoidUninstantiatedInternalClassesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -959,6 +1152,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "PreferJaggedArraysOverMultidimensionalAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -974,6 +1172,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -989,21 +1192,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1821": {
-          "id": "CA1821",
-          "shortDescription": "Remove empty Finalizers",
-          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821-remove-empty-finalizers",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
+            "typeName": "PropertiesShouldNotReturnArraysAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1019,6 +1212,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "MarkMembersAsStaticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1034,6 +1232,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "AvoidUnusedPrivateFieldsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1049,6 +1252,11 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDirectlyAwaitATaskAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -1063,21 +1271,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2200": {
-          "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details.",
-          "fullDescription": "Re-throwing caught exception changes stack information.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
+            "typeName": "SealMethodsThatSatisfyPrivateInterfacesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1093,6 +1291,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "NonConstantFieldsShouldNotBeVisibleAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1108,6 +1311,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "DoNotCallOverridableMethodsInConstructorsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1123,21 +1331,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2218": {
-          "id": "CA2218",
-          "shortDescription": "Override GetHashCode on overriding Equals",
-          "fullDescription": "GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2218-override-gethashcode-on-overriding-equals",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
+            "typeName": "EnumWithFlagsAttributeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1153,21 +1351,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2224": {
-          "id": "CA2224",
-          "shortDescription": "Override Equals on overloading operator equals",
-          "fullDescription": "A public type implements the equality operator but does not override Object.Equals.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2224-override-equals-on-overloading-operator-equals",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
+            "typeName": "DoNotRaiseExceptionsInExceptionClausesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1183,6 +1371,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "OperatorOverloadsHaveNamedAlternatesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1198,6 +1391,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "OperatorsShouldHaveSymmetricalOverloadsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1213,6 +1411,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "CollectionPropertiesShouldBeReadOnlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1228,6 +1431,205 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "OverloadOperatorEqualsOnOverridingValueTypeEqualsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2244": {
+          "id": "CA2244",
+          "shortDescription": "Do not duplicate indexed element initializations",
+          "fullDescription": "Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidDuplicateElementInitialization",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.CodeQuality.CSharp.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1001": {
+          "id": "CA1001",
+          "shortDescription": "Types that own disposable fields should be disposable",
+          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1001-types-that-own-disposable-fields-should-be-disposable",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1003": {
+          "id": "CA1003",
+          "shortDescription": "Use generic event handler instances",
+          "fullDescription": "A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpUseGenericEventHandlerInstancesAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1019": {
+          "id": "CA1019",
+          "shortDescription": "Define accessors for attribute arguments",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpDefineAccessorsForAttributeArgumentsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1032": {
+          "id": "CA1032",
+          "shortDescription": "Implement standard exception constructors",
+          "fullDescription": "Failure to provide the full set of constructors can make it difficult to correctly handle exceptions.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1032-implement-standard-exception-constructors",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpImplementStandardExceptionConstructorsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1065": {
+          "id": "CA1065",
+          "shortDescription": "Do not raise exceptions in unexpected locations",
+          "fullDescription": "A method that is not expected to throw exceptions throws an exception.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1065-do-not-raise-exceptions-in-unexpected-locations",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1200": {
+          "id": "CA1200",
+          "shortDescription": "Avoid using cref tags with a prefix",
+          "fullDescription": "Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Documentation",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAvoidUsingCrefTagsWithAPrefixAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1507": {
+          "id": "CA1507",
+          "shortDescription": "Use nameof to express symbol names",
+          "fullDescription": "Using nameof helps keep your code valid when refactoring.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpUseNameofInPlaceOfStringAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1821": {
+          "id": "CA1821",
+          "shortDescription": "Remove empty Finalizers",
+          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821-remove-empty-finalizers",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpRemoveEmptyFinalizersAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2200": {
+          "id": "CA2200",
+          "shortDescription": "Rethrow to preserve stack details.",
+          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpRethrowToPreserveStackDetailsAnalyzer",
+            "languages": [
+              "C#"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1243,21 +1645,246 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "CSharpPassSystemUriObjectsInsteadOfStringsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1001": {
+          "id": "CA1001",
+          "shortDescription": "Types that own disposable fields should be disposable",
+          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1001-types-that-own-disposable-fields-should-be-disposable",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
             ]
           }
         },
-        "CA2244": {
-          "id": "CA2244",
-          "shortDescription": "Do not duplicate indexed element initializations",
-          "fullDescription": "Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.",
+        "CA1003": {
+          "id": "CA1003",
+          "shortDescription": "Use generic event handler instances",
+          "fullDescription": "A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "BasicUseGenericEventHandlerInstancesAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1019": {
+          "id": "CA1019",
+          "shortDescription": "Define accessors for attribute arguments",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "BasicDefineAccessorsForAttributeArgumentsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1032": {
+          "id": "CA1032",
+          "shortDescription": "Implement standard exception constructors",
+          "fullDescription": "Failure to provide the full set of constructors can make it difficult to correctly handle exceptions.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1032-implement-standard-exception-constructors",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "BasicImplementStandardExceptionConstructorsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1065": {
+          "id": "CA1065",
+          "shortDescription": "Do not raise exceptions in unexpected locations",
+          "fullDescription": "A method that is not expected to throw exceptions throws an exception.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1065-do-not-raise-exceptions-in-unexpected-locations",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "BasicDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1200": {
+          "id": "CA1200",
+          "shortDescription": "Avoid using cref tags with a prefix",
+          "fullDescription": "Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Documentation",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAvoidUsingCrefTagsWithAPrefixAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1507": {
+          "id": "CA1507",
+          "shortDescription": "Use nameof to express symbol names",
+          "fullDescription": "Using nameof helps keep your code valid when refactoring.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "BasicUseNameofInPlaceOfStringAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1821": {
+          "id": "CA1821",
+          "shortDescription": "Remove empty Finalizers",
+          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821-remove-empty-finalizers",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicRemoveEmptyFinalizersAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2200": {
+          "id": "CA2200",
+          "shortDescription": "Rethrow to preserve stack details.",
+          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "BasicRethrowToPreserveStackDetailsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
             "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2218": {
+          "id": "CA2218",
+          "shortDescription": "Override GetHashCode on overriding Equals",
+          "fullDescription": "GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2218-override-gethashcode-on-overriding-equals",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicOverrideGetHashCodeOnOverridingEqualsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2224": {
+          "id": "CA2224",
+          "shortDescription": "Override Equals on overloading operator equals",
+          "fullDescription": "A public type implements the equality operator but does not override Object.Equals.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2224-override-equals-on-overloading-operator-equals",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2234": {
+          "id": "CA2234",
+          "shortDescription": "Pass system uri objects instead of strings",
+          "fullDescription": "A call is made to a method that has a string parameter whose name contains \"uri\", \"URI\", \"urn\", \"URN\", \"url\", or \"URL\". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2234-pass-system-uri-objects-instead-of-strings",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicPassSystemUriObjectsInsteadOfStringsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
               "Telemetry"
             ]
           }

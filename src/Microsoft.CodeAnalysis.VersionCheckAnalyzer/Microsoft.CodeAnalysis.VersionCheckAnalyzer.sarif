@@ -4,7 +4,8 @@
   "runs": [
     {
       "tool": {
-        "name": "Microsoft Code Analysis",
+        "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
+        "version": "2.9.4",
         "language": "en-US"
       },
       "rules": {
@@ -15,7 +16,12 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Reliability",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "AnalyzerVersionCheckAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         }
       }

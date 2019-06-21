@@ -4,7 +4,8 @@
   "runs": [
     {
       "tool": {
-        "name": "Microsoft Code Analysis",
+        "name": "Microsoft.NetCore.Analyzers",
+        "version": "2.9.4",
         "language": "en-US"
       },
       "rules": {
@@ -17,6 +18,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
+            "typeName": "DoNotPassLiteralsAsLocalizedParameters",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -33,6 +39,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
+            "typeName": "SpecifyCultureInfoAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -48,6 +59,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
+            "typeName": "SpecifyIFormatProviderAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -63,6 +79,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
+            "typeName": "SpecifyStringComparisonAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -78,21 +99,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1309": {
-          "id": "CA1309",
-          "shortDescription": "Use ordinal stringcomparison",
-          "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
-          "properties": {
-            "category": "Globalization",
-            "isEnabledByDefault": false,
+            "typeName": "NormalizeStringsToUppercaseAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -108,21 +119,11 @@
           "properties": {
             "category": "Interoperability",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1810": {
-          "id": "CA1810",
-          "shortDescription": "Initialize reference type static fields inline",
-          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
+            "typeName": "PInvokeDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -138,6 +139,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": false,
+            "typeName": "AvoidUnsealedAttributesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -153,6 +159,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "CallGCSuppressFinalizeCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -168,35 +179,15 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "TestForEmptyStringsUsingStringLengthAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
             ]
-          }
-        },
-        "CA1824": {
-          "id": "CA1824",
-          "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
-          "fullDescription": "The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824-mark-assemblies-with-neutralresourceslanguageattribute",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1825": {
-          "id": "CA1825",
-          "shortDescription": "Avoid zero-length array allocations.",
-          "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true
           }
         },
         "CA1826": {
@@ -207,6 +198,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -221,6 +217,11 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
+            "typeName": "DisposeObjectsBeforeLosingScope",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -237,6 +238,11 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
+            "typeName": "DoNotLockOnObjectsWithWeakIdentityAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -251,6 +257,11 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
+            "typeName": "DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -264,19 +275,11 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2010": {
-          "id": "CA2010",
-          "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
-          "fullDescription": "PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Reliability",
-            "isEnabledByDefault": true,
+            "typeName": "DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -291,6 +294,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "ReviewSqlQueriesForSecurityVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -307,36 +315,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2201": {
-          "id": "CA2201",
-          "shortDescription": "Do not raise reserved exception types",
-          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201-do-not-raise-reserved-exception-types",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2207": {
-          "id": "CA2207",
-          "shortDescription": "Initialize value type static fields inline",
-          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
+            "typeName": "PInvokeDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -352,6 +335,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "InstantiateArgumentExceptionsCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -367,6 +355,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "DisposableFieldsShouldBeDisposed",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -383,6 +376,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "DisposableTypesShouldDeclareFinalizerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -398,6 +396,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "SerializationRulesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -413,6 +416,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "SerializationRulesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -428,6 +436,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "SerializationRulesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -443,6 +456,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "ProvideCorrectArgumentsToFormattingMethodsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -458,6 +476,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "TestForNaNCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -473,6 +496,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "AttributeStringLiteralsShouldParseCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -487,7 +515,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2300-do-not-use-insecure-deserializer-binaryformatter",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerBinaryFormatterMethods",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2301": {
@@ -498,7 +531,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2301-do-not-call-binaryformatter-deserialize-without-first-setting-binaryformatter-binder",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2302": {
@@ -509,7 +547,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2302-ensure-binaryformatter-binder-is-set-before-calling-binaryformatter-deserialize",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2305": {
@@ -520,7 +563,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2305-do-not-use-insecure-deserializer-losformatter",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerLosFormatter",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2310": {
@@ -531,7 +579,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2310-do-not-use-insecure-deserializer-netdatacontractserializer",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerNetDataContractSerializerMethods",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2311": {
@@ -542,7 +595,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerNetDataContractSerializerWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2312": {
@@ -553,7 +611,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerNetDataContractSerializerWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2315": {
@@ -564,7 +627,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2315-do-not-use-insecure-deserializer-objectstateformatter",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerObjectStateFormatter",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2321": {
@@ -575,7 +643,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2321",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2322": {
@@ -586,7 +659,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2322",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3001": {
@@ -597,7 +675,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3001-review-code-for-sql-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForSqlInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3002": {
@@ -608,7 +691,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3002-review-code-for-xss-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForXssVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3003": {
@@ -619,7 +707,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3003-review-code-for-file-path-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForFilePathInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3004": {
@@ -630,7 +723,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3004-review-code-for-information-disclosure-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForInformationDisclosureVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3005": {
@@ -641,7 +739,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3005-review-code-for-ldap-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForLdapInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3006": {
@@ -652,7 +755,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3006-review-code-for-process-command-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForCommandExecutionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3007": {
@@ -663,7 +771,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3007-review-code-for-open-redirect-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForOpenRedirectVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3008": {
@@ -674,7 +787,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3008-review-code-for-xpath-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForXPathInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3009": {
@@ -685,7 +803,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3009-review-code-for-xml-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForXmlInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3010": {
@@ -696,7 +819,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3010-review-code-for-xaml-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForXamlInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3011": {
@@ -707,7 +835,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3011-review-code-for-dll-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForDllInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3012": {
@@ -718,7 +851,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3012-review-code-for-regex-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForRegexInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3061": {
@@ -729,6 +867,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotAddSchemaByURL",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -743,6 +886,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseInsecureCryptographicAlgorithmsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -757,6 +905,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseInsecureCryptographicAlgorithmsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -770,6 +923,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "ApprovedCipherModeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -783,6 +941,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDisableCertificateValidation",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -796,6 +959,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotCallDangerousMethodsInDeserialization",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -809,6 +977,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotSetSwitch",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -823,6 +996,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotReferSelfInSerializableClass",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -836,6 +1014,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDisableRequestValidation",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -849,6 +1032,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseDeprecatedSecurityProtocols",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -862,6 +1050,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDisableHTTPHeaderChecking",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -875,6 +1068,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForDataSetReadXml",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -888,6 +1086,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotSerializeTypeWithPointerFields",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -901,6 +1104,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "SetViewStateUserKey",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -914,6 +1122,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForDeserialize",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -927,6 +1140,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForValidatingReader",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -940,6 +1158,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForSchemaRead",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -953,6 +1176,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForXPathDocument",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -966,6 +1194,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseObsoleteKDFAlgorithm",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -979,6 +1212,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseXslTransform",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -992,6 +1230,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotUseAccountSAS",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -1005,6 +1248,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseSharedAccessProtocolHttpsOnly",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1019,6 +1267,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseContainerLevelAccessPolicy",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1033,6 +1286,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotSetSwitch",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1047,6 +1305,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseWeakKDFAlgorithm",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -1060,6 +1323,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotInstallRootCert",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1074,6 +1342,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotInstallRootCert",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1088,6 +1361,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "UseSecureCookiesASPNetCore",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1102,6 +1380,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "UseSecureCookiesASPNetCore",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1116,6 +1399,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseDSA",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1130,6 +1418,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseRSAWithSufficientKeySize",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1144,6 +1437,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotUseDeprecatedSecurityProtocols",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -1157,6 +1455,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotUseWeakKDFInsufficientIterationCount",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1171,6 +1474,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotUseWeakKDFInsufficientIterationCount",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -1185,8 +1493,283 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotAddArchiveItemPathToTheTargetFileSystemPath",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.NetCore.CSharp.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1309": {
+          "id": "CA1309",
+          "shortDescription": "Use ordinal stringcomparison",
+          "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpUseOrdinalStringComparisonAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1810": {
+          "id": "CA1810",
+          "shortDescription": "Initialize reference type static fields inline",
+          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpInitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1824": {
+          "id": "CA1824",
+          "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
+          "fullDescription": "The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824-mark-assemblies-with-neutralresourceslanguageattribute",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpMarkAssembliesWithNeutralResourcesLanguageAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1825": {
+          "id": "CA1825",
+          "shortDescription": "Avoid zero-length array allocations.",
+          "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAvoidZeroLengthArrayAllocationsAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "CA2010": {
+          "id": "CA2010",
+          "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
+          "fullDescription": "PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2201": {
+          "id": "CA2201",
+          "shortDescription": "Do not raise reserved exception types",
+          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201-do-not-raise-reserved-exception-types",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpDoNotRaiseReservedExceptionTypesAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2207": {
+          "id": "CA2207",
+          "shortDescription": "Initialize value type static fields inline",
+          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpInitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.NetCore.VisualBasic.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1309": {
+          "id": "CA1309",
+          "shortDescription": "Use ordinal stringcomparison",
+          "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": false,
+            "typeName": "BasicUseOrdinalStringComparisonAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1810": {
+          "id": "CA1810",
+          "shortDescription": "Initialize reference type static fields inline",
+          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicInitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1824": {
+          "id": "CA1824",
+          "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
+          "fullDescription": "The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824-mark-assemblies-with-neutralresourceslanguageattribute",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicMarkAssembliesWithNeutralResourcesLanguageAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1825": {
+          "id": "CA1825",
+          "shortDescription": "Avoid zero-length array allocations.",
+          "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAvoidZeroLengthArrayAllocationsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA2010": {
+          "id": "CA2010",
+          "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
+          "fullDescription": "PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2201": {
+          "id": "CA2201",
+          "shortDescription": "Do not raise reserved exception types",
+          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201-do-not-raise-reserved-exception-types",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "BasicDoNotRaiseReservedExceptionTypesAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2207": {
+          "id": "CA2207",
+          "shortDescription": "Initialize value type static fields inline",
+          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicInitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
               "Telemetry"
             ]
           }

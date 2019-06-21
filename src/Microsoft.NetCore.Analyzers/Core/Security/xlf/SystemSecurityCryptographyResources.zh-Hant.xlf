@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../SystemSecurityCryptographyResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../SystemSecurityCryptographyResources.resx">
     <body>
       <trans-unit id="ApprovedCipherMode">
         <source>Do Not Use Unsafe Cipher Modes</source>
@@ -39,27 +39,27 @@
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
         <source>Do Not Add Archive Item's Path To The Target File System Path</source>
-        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <target state="translated">請勿將封存項目的路徑新增到目標檔案系統路徑</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
         <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
-        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <target state="translated">從封存擷取檔案並使用封存項目的路徑時，請檢查路徑是否安全。封存路徑可以是相對路徑，可能導致從預期的檔案系統目標路徑外存取檔案系統，從而引發透過偷襲技術進行的惡意組態變更及遠端程式碼執行。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
         <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
-        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
+        <target state="translated">在從相對封存項目路徑建立「方法 {1} 中的 {0}」路徑以擷取檔案，而且來源是未受信任的 ZIP 封存時，請務必處理相對封存項目路徑「方法 {3} 中的 {2}」</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
         <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
-        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <target state="translated">不要使用反覆運算計數不足的弱式金鑰衍生函數 (Key Derivation Function)</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
         <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
-        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
+        <target state="translated">當從密碼衍生密碼編譯金鑰時，請至少使用 {0} 個反覆項目。根據預設，Rfc2898DeriveByte 的 IterationCount 只有 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -314,7 +314,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
         <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
-        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
+        <target state="translated">當從密碼等使用者提供的輸入衍生密碼編譯金鑰時，請使用足夠的反覆項目計數 (至少 100k)。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -329,12 +329,12 @@
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
         <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
-        <target state="new">Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</target>
+        <target state="translated">請避免對 SecurityProtocolType {0} 進行硬式編碼，並改為使用 SecurityProtocolType.SystemDefault 以便作業系統針對要使用的傳輸層安全性通訊協定進行最佳選擇。</target>
         <note />
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolTitle">
         <source>Avoid hardcoding SecurityProtocolType value</source>
-        <target state="new">Avoid hardcoding SecurityProtocolType value</target>
+        <target state="translated">請避免對 SecurityProtocolType 值進行硬式編碼</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
@@ -359,12 +359,12 @@
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
         <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
-        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <target state="translated">使用弱式金鑰衍生函數 (Key Derivation Function) 時，請確保反覆項目計量足夠</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
         <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
-        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
+        <target state="translated">當從密碼衍生密碼編譯金鑰時，請確保反覆項目計數至少為 {0}。根據預設，Rfc2898DeriveByte 的 IterationCount 只有 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
         <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
-        <target state="needs-review-translation">頁面的子類別 {0}，在 OnInit 方法中並未設定 ViewStateUserKey 屬性</target>
+        <target state="translated">衍生自 System.Web.UI.Page 的 {0} 類別未在 OnInit 方法或 Page_Init 方法中設定 ViewStateUserKey 屬性</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">

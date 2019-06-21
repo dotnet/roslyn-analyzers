@@ -4,12 +4,12 @@
     <body>
       <trans-unit id="AvoidPropertySelfAssignmentMessage">
         <source>The property {0} should not be assigned to itself.</source>
-        <target state="new">The property {0} should not be assigned to itself.</target>
+        <target state="translated">Właściwość {0} nie powinna być przypisana do samej siebie.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentTitle">
         <source>Do not assign a property to itself.</source>
-        <target state="new">Do not assign a property to itself.</target>
+        <target state="translated">Nie przypisuj właściwości do jej samej.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticCodeFix">

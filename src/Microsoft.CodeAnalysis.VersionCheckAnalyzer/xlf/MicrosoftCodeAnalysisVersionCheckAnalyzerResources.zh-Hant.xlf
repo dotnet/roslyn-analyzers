@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../MicrosoftCodeAnalysisVersionCheckAnalyzerResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftCodeAnalysisVersionCheckAnalyzerResources.resx">
     <body>
       <trans-unit id="VersionCheckDescription">
         <source>Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
-        <target state="needs-review-translation">此套件中的分析器，需要某些最基本的 Microsoft.CodeAnalysis 版本，才可正確執行。請參閱 https://docs.microsoft.com/zh-tw/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions，安裝正確的分析器版本。</target>
+        <target state="translated">此套件中的分析器，需要某些最基本的 Microsoft.CodeAnalysis 版本，才可正確執行。請參閱 https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions，安裝正確的分析器版本。</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckMessage">
         <source>Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
-        <target state="needs-review-translation">分析器套件 '{0}' 和 Microsoft.CodeAnalysis '{1}' 的版本不符。修正版本不符之前，將不會執行此套件中的某些分析器。請參閱 https://docs.microsoft.com/zh-tw/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions，安裝正確的分析器版本。</target>
+        <target state="translated">分析器套件 '{0}' 和 Microsoft.CodeAnalysis '{1}' 的版本不符。修正版本不符之前，將不會執行此套件中的某些分析器。請參閱 https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions，安裝正確的分析器版本。</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckTitle">

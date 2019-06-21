@@ -15,7 +15,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
     public sealed class AvoidPropertySelfAssignment : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1099";
+        internal const string RuleId = "CA2245";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AvoidPropertySelfAssignmentTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AvoidPropertySelfAssignmentMessage), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
@@ -23,7 +23,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
             s_localizableTitle,
             s_localizableMessage,
-            DiagnosticCategory.Design,
+            DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: null);

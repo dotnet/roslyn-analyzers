@@ -429,6 +429,44 @@ class Blah
         }
 
         [Fact]
+        public void InsecureButNotInitialized_Instance_Constructor_Interprocedural_LValuesWithMoreThanOneCapturedOperation_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public static Func<JsonSerializerSettings[]> GetSettingsArray;
+
+    public Blah()
+    {
+    }
+
+    public Blah(bool flag)
+    {
+        Initialize(GetSettingsArray(), GetSettingsArray(), flag);
+    }
+
+    public static void Initialize(JsonSerializerSettings[] a1, JsonSerializerSettings[] a2, bool flag)
+    {
+        if (flag)
+        {
+            (a1 ?? a2)[0] = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        }
+        else
+        {
+            (a2 ?? a1)[0] = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None };
+        }
+    }
+}
+");
+        }
+
+
+        [Fact]
         public void Insecure_Field_Initialized_Diagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"

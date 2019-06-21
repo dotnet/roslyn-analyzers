@@ -156,7 +156,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         lock (rootOperationsNeedingAnalysis)
                                         {
                                             rootOperationsNeedingAnalysis.Add(
-                                                (invocationOperation.GetInnermostFunction(), operationAnalysisContext.ContainingSymbol));
+                                                (invocationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
                                 },
@@ -172,7 +172,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         lock (rootOperationsNeedingAnalysis)
                                         {
                                             rootOperationsNeedingAnalysis.Add(
-                                                (objectCreationOperation.GetInnermostFunction(), operationAnalysisContext.ContainingSymbol));
+                                                (objectCreationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
                                 },
@@ -185,7 +185,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     if (jsonSerializerSettingsSymbol.Equals(returnOperation.Type))
                                     {
                                         rootOperationsNeedingAnalysis.Add(
-                                            (returnOperation.GetInnermostFunction(), operationAnalysisContext.ContainingSymbol));
+                                            (returnOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                     }
                                 },
                                 OperationKind.Return);

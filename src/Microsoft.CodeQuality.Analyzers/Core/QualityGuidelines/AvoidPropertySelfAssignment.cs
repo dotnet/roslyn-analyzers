@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
-    /// CA1099: Prevent properties from being assigned to themselves
+    /// CA2245: Prevent properties from being assigned to themselves
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
 

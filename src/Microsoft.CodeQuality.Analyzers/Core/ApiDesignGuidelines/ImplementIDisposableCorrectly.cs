@@ -458,18 +458,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static bool IsDisposeBoolCall(IInvocationOperation invocationExpression, INamedTypeSymbol type, bool expectedValue)
         {
-            if (invocationExpression.TargetMethod == null ||
-                !invocationExpression.TargetMethod.HasDisposeBoolMethodSignature())
+            if (!invocationExpression.TargetMethod.HasDisposeBoolMethodSignature())
             {
                 return false;
             }
 
-            if (invocationExpression.Instance.Kind != OperationKind.InstanceReference)
+            if (invocationExpression.Instance == null)
             {
-                return false;
+                if (!type.Equals(invocationExpression.TargetMethod.ContainingType))
+                {
+                    return false;
+                }
             }
-
-            if (!type.Equals(invocationExpression.Instance.Type))
+            else if (invocationExpression.Instance.Kind != OperationKind.InstanceReference ||
+                !type.Equals(invocationExpression.Instance.Type))
             {
                 return false;
             }

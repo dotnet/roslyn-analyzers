@@ -135,7 +135,15 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
                                 {
-                                    calledMethods.TryAdd((operationContext.Operation as IInvocationOperation).TargetMethod, true);
+                                    var calledMethodSymbol = (operationContext.Operation as IInvocationOperation).TargetMethod.OriginalDefinition;
+                                    calledMethods.TryAdd(calledMethodSymbol, true);
+
+                                    if (!calledMethodSymbol.IsInSource() ||
+                                        calledMethodSymbol.ContainingType.TypeKind == TypeKind.Interface ||
+                                        calledMethodSymbol.IsAbstract)
+                                    {
+                                        callGraph.TryAdd(calledMethodSymbol, new ConcurrentDictionary<IMethodSymbol, bool>());
+                                    }
                                 }, OperationKind.Invocation);
                             }
                         });

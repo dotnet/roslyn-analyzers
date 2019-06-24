@@ -98,22 +98,22 @@ namespace Microsoft.NetCore.Analyzers.Security
                     WellKnownTypeNames.NewtonsoftJsonJsonSerializer,
                     methodName,
                     "settings",
-                    PropertySetCallbacks.HazardousIfAllFlagged))
+                    PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown))
                 .Concat(
                     SecurityHelpers.JsonConvertWithSettingsMethods.Select(
                         (string methodName) => new HazardousUsageEvaluator(
                             WellKnownTypeNames.NewtonsoftJsonJsonConvert,
                             methodName,
                             "settings",
-                            PropertySetCallbacks.HazardousIfAllFlagged)))
+                            PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown)))
                 .Concat(
                     new HazardousUsageEvaluator(
                         HazardousUsageEvaluatorKind.Return,
-                        PropertySetCallbacks.HazardousIfAllFlagged))
+                        PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown))
                 .Concat(
                     new HazardousUsageEvaluator(
                         HazardousUsageEvaluatorKind.Initialization,
-                        PropertySetCallbacks.HazardousIfAllFlagged)));
+                        PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown)));
 
         public override void Initialize(AnalysisContext context)
         {

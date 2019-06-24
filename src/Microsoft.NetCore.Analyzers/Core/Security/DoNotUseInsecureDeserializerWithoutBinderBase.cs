@@ -92,7 +92,9 @@ namespace Microsoft.NetCore.Analyzers.Security
             HazardousUsageEvaluatorCollection hazardousUsageEvaluators =
                 new HazardousUsageEvaluatorCollection(
                     cachedDeserializationMethodNames.Select(
-                        methodName => new HazardousUsageEvaluator(methodName, PropertySetCallbacks.HazardousIfAllFlagged)));
+                        methodName => new HazardousUsageEvaluator(
+                            methodName,
+                            PropertySetCallbacks.HazardousIfAllFlaggedOrAllUnknown)));
 
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>

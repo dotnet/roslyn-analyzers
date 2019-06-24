@@ -465,6 +465,179 @@ class Blah
 ");
         }
 
+        [Fact]
+        public void Unknown_PropertyInitialized_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public static Func<JsonSerializerSettings> GetSettings;
+
+    public Blah()
+    {
+        this.Settings = GetSettings();
+    }
+}
+");
+        }
+
+        [Fact]
+        public void UnknownThenNull_PropertyInitialized_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public static Func<JsonSerializerSettings> GetSettings;
+
+    public Blah()
+    {
+        this.Settings = GetSettings();
+        this.Settings = null;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void UnknownOrNull_PropertyInitialized_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public static Func<JsonSerializerSettings> GetSettings;
+
+    public Blah()
+    {
+        if (new Random().Next(6) == 4)
+            this.Settings = GetSettings();
+        else
+            this.Settings = null;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void InsecureThenNull_PropertyInitialized_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public Blah()
+    {
+        this.Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        this.Settings = null;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void InsecureThenSecure_PropertyInitialized_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public Blah()
+    {
+        this.Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        this.Settings.TypeNameHandling = TypeNameHandling.None;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void SecureThenInsecure_FieldInitialized_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings;
+
+    public Blah()
+    {
+        this.Settings = new JsonSerializerSettings();
+        this.Settings.TypeNameHandling = TypeNameHandling.All;
+    }
+}
+",
+                GetCSharpResultAt(11, 9, DefinitelyRule));
+        }
+
+        [Fact]
+        public void InsecureOrNull_PropertyInitialized_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public Blah()
+    {
+        if (new Random().Next(6) == 4)
+            this.Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        else
+            this.Settings = null;
+    }
+}
+",
+                GetCSharpResultAt(12, 13, DefinitelyRule));
+        }
+
+        [Fact]
+        public void InsecureOrSecure_PropertyInitialized_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public Blah()
+    {
+        if (new Random().Next(6) == 4)
+            this.Settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+        else
+            this.Settings = new JsonSerializerSettings();
+    }
+}
+",
+                GetCSharpResultAt(12, 13, DefinitelyRule));
+        }
 
         [Fact]
         public void Insecure_Field_Initialized_Diagnostic()

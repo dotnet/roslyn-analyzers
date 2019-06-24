@@ -3,8 +3,8 @@
   <file datatype="xml" source-language="en" target-language="es" original="../MicrosoftQualityGuidelinesAnalyzersResources.resx">
     <body>
       <trans-unit id="AvoidPropertySelfAssignmentMessage">
-        <source>La propiedad {0} no debe asignarse a sí misma.</source>
-        <target state="translated">The property {0} should not be assigned to itself.</target>
+        <source>The property {0} should not be assigned to itself.</source>
+        <target state="translated">La propiedad {0} no debe asignarse a sí misma.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentTitle">

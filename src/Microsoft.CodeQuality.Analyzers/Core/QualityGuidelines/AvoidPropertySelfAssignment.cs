@@ -49,9 +49,22 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return;
                 }
 
-                if (!Equals(operationTarget.Property, operationValue.Property))
+                if (!Equals(operationTarget.Property, operationValue.Property) ||
+                    operationTarget.Arguments.Length != operationValue.Arguments.Length)
                 {
                     return;
+                }
+
+                if (operationTarget.Arguments.Length > 0)
+                {
+                    // Indexers - compare if all the arguments are identical.
+                    for (int i = 0; i < operationTarget.Arguments.Length; i++)
+                    {
+                        if (!IsArgumentValueEqual(operationTarget.Arguments[i].Value, operationValue.Arguments[i].Value))
+                        {
+                            return;
+                        }
+                    }
                 }
 
                 if (operationTarget.Instance is IInstanceReferenceOperation targetInstanceReference &&
@@ -63,6 +76,41 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     operationContext.ReportDiagnostic(diagnostic);
                 }
             }, OperationKind.SimpleAssignment);
+
+            return;
+
+            // Local functions
+            static bool IsArgumentValueEqual(IOperation targetArg, IOperation valueArg)
+            {
+                // Check if arguments are identical constant/local/parameter reference operations.
+                //   1. Not identical: 'this[i] = this[j]'
+                //   2. Identical: 'this[i] = this[i]', 'this[0] = this[0]'
+                if (targetArg.Kind != valueArg.Kind)
+                {
+                    return false;
+                }
+
+                if (targetArg.ConstantValue.HasValue != valueArg.ConstantValue.HasValue)
+                {
+                    return false;
+                }
+
+                if (targetArg.ConstantValue.HasValue)
+                {
+                    return Equals(targetArg.ConstantValue.Value, valueArg.ConstantValue.Value);
+                }
+
+#pragma warning disable IDE0055 // Fix formatting - Does not seem to be handling switch expressions.
+                return targetArg switch
+                {
+                    ILocalReferenceOperation targetLocalReference =>
+                        Equals(targetLocalReference.Local, ((ILocalReferenceOperation)valueArg).Local),
+                    IParameterReferenceOperation targetParameterReference =>
+                        Equals(targetParameterReference.Parameter, ((IParameterReferenceOperation)valueArg).Parameter),
+                    _ => false,
+                };
+#pragma warning restore IDE0055 // Fix formatting
+            }
         }
     }
 }

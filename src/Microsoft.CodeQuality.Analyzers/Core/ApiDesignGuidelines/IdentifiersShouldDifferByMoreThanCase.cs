@@ -127,10 +127,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             // Remove constructors, indexers, operators and destructors for name check
             IEnumerable<ISymbol> membersForNameCheck = members.Where(item => !item.IsConstructor() && !item.IsDestructor() && !item.IsIndexer() && !item.IsUserDefinedOperator());
-            if (membersForNameCheck.Any())
-            {
-                CheckMemberNames(membersForNameCheck, addDiagnostic);
-            }
+            CheckMemberNames(membersForNameCheck, addDiagnostic);
         }
 
         private static void CheckParameterMembers(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
@@ -164,13 +161,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             ImmutableArray<IParameterSymbol> parameters = symbol.GetParameters();
 
-            // If there is only one parameter, then return an empty collection
+            // If there is only one parameter, then there are no violating parameters
             if (!parameters.Skip(1).Any())
             {
                 return false;
             }
 
-            return parameters.GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1).Any();
+            return parameters.GroupBy(parameter => parameter.Name, StringComparer.OrdinalIgnoreCase).Any(group => group.Skip(1).Any());
         }
 
         private static void CheckMemberNames(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
@@ -181,13 +178,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IEnumerable<ISymbol> overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.Count() > 1).SelectMany((group) => group.Skip(1));
-            IEnumerable<IGrouping<string, ISymbol>> memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<ISymbol> overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.Skip(1).Any()).SelectMany((group) => group.Skip(1));
+            IEnumerable<IGrouping<string, ISymbol>> memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase);
 
             foreach (IGrouping<string, ISymbol> group in memberList)
             {
-                ISymbol symbol = group.First().ContainingSymbol;
-                addDiagnostic(symbol.CreateDiagnostic(Rule, Member, GetSymbolDisplayString(group)));
+                using (var enumerator = group.GetEnumerator())
+                {
+                    enumerator.MoveNext();
+
+                    if (enumerator.MoveNext())
+                    {
+                        addDiagnostic(enumerator.Current.ContainingSymbol.CreateDiagnostic(Rule, Member, GetSymbolDisplayString(group)));
+                    }
+                }
             }
         }
 
@@ -216,11 +220,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IEnumerable<IGrouping<string, INamespaceSymbol>> namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<IGrouping<string, INamespaceSymbol>> namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase);
 
             foreach (IGrouping<string, INamespaceSymbol> group in namespaceList)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Rule, Location.None, Namespace, GetSymbolDisplayString(group)));
+                using (var enumerator = group.GetEnumerator())
+                {
+                    enumerator.MoveNext();
+
+                    if (enumerator.MoveNext())
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Rule, Location.None, Namespace, GetSymbolDisplayString(group)));
+                    }
+                }
             }
         }
 

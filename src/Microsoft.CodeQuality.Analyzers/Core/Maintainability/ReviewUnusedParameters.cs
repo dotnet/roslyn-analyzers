@@ -150,11 +150,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 compilationStartContext.RegisterCompilationEndAction(compilationAnalysisContext =>
                 {
                     // Report diagnostics for unused parameters.
-                    var unusedParameters = unusedMethodParameters.Where(kvp => !methodsUsedAsDelegates.Contains(kvp.Key)).SelectMany(kvp => kvp.Value);
-                    foreach (var parameter in unusedParameters)
+                    foreach (var unusedMethodParameter in unusedMethodParameters)
                     {
-                        var diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
-                        compilationAnalysisContext.ReportDiagnostic(diagnostic);
+                        if (!methodsUsedAsDelegates.Contains(unusedMethodParameter.Key))
+                        {
+                            foreach (var parameter in unusedMethodParameter.Value)
+                            {
+                                var diagnostic = Diagnostic.Create(Rule, parameter.Locations[0], parameter.Name, parameter.ContainingSymbol.Name);
+                                compilationAnalysisContext.ReportDiagnostic(diagnostic);
+                            }
+                        }
                     }
 
                 });
@@ -214,7 +219,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // Do not raise warning for unused 'this' parameter of an extension method.
                 if (_method.IsExtensionMethod)
                 {
-                    var thisParamter = _unusedParameters.Where(p => p.Ordinal == 0).FirstOrDefault();
+                    var thisParamter = _unusedParameters.FirstOrDefault(p => p.Ordinal == 0);
                     _unusedParameters.Remove(thisParamter);
                 }
 

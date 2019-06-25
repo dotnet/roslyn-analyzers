@@ -86,9 +86,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return assembly
                     .GlobalNamespace
                     .GetMembers()
-                    .OfType<INamedTypeSymbol>()
-                    .Where(s => s.DeclaredAccessibility == Accessibility.Public)
-                    .Any();
+                    .Any(s => s is INamedTypeSymbol nts && s.DeclaredAccessibility == Accessibility.Public);
         }
     }
 }

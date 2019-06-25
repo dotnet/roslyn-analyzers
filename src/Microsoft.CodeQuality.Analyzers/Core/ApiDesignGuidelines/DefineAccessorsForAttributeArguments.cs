@@ -100,15 +100,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Only examine parameters of public constructors. Can't use protected 
             // constructors to define an attribute so this rule only applies to
             // public constructors.
-            IEnumerable<IMethodSymbol> instanceConstructorsToCheck = attributeType.InstanceConstructors.Where(c => c.DeclaredAccessibility == Accessibility.Public);
 
-            if (instanceConstructorsToCheck.Any())
+            HashSet<string> uniqueParamNames = null;
+
+            foreach (IMethodSymbol constructor in attributeType.InstanceConstructors)
             {
-                var uniqueParamNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (IMethodSymbol constructor in instanceConstructorsToCheck)
+                if (constructor.DeclaredAccessibility == Accessibility.Public)
                 {
                     foreach (IParameterSymbol parameter in constructor.Parameters)
                     {
+                        if (uniqueParamNames is null)
+                        {
+                            uniqueParamNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                        }
+
                         if (uniqueParamNames.Add(parameter.Name))
                         {
                             yield return parameter;
@@ -123,9 +128,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var propertiesMap = new Dictionary<string, IPropertySymbol>(StringComparer.OrdinalIgnoreCase);
             foreach (INamedTypeSymbol currentType in attributeType.GetBaseTypesAndThis())
             {
-                foreach (IPropertySymbol property in currentType.GetMembers().Where(m => m.Kind == SymbolKind.Property))
+                foreach (var member in currentType.GetMembers())
                 {
-                    if (!propertiesMap.ContainsKey(property.Name))
+                    if (member is IPropertySymbol property && !propertiesMap.ContainsKey(property.Name))
                     {
                         propertiesMap.Add(property.Name, property);
                     }

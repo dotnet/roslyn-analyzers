@@ -781,7 +781,7 @@ End Class",
         }
 
         [Fact]
-        public void ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic()
+        public void ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic_CopyAnalysis()
         {
             VerifyCSharp(@"
 public class C
@@ -843,7 +843,7 @@ public class Test
         var z = c.X;
     }
 }
-");
+", GetEditorConfigToEnableCopyAnalysis());
 
             VerifyBasic(@"
 Public Class C
@@ -896,7 +896,7 @@ Public Class Test
         Dim z = c.X
     End Sub
 
-End Class");
+End Class", GetEditorConfigToEnableCopyAnalysis());
         }
 
         [Fact]
@@ -1244,7 +1244,7 @@ End Class");
         }
 
         [Fact]
-        public void ContractCheck_NoDiagnostic()
+        public void ContractCheck_NoDiagnostic_CopyAnalysis()
         {
             VerifyCSharp(@"
 public class C
@@ -1289,7 +1289,7 @@ public class Test
         var z = c.X;
     }
 }
-");
+", GetEditorConfigToEnableCopyAnalysis());
 
             VerifyBasic(@"
 Public Class C
@@ -1329,7 +1329,7 @@ Public Class Test
         Dim z = c.X
     End Sub
 End Class
-");
+", GetEditorConfigToEnableCopyAnalysis());
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
@@ -1901,7 +1901,7 @@ End Class
         [InlineData(@"dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
         [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive
                       dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
-        public void ValidatedNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        public void ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
         {
             VerifyCSharp(@"
 public class ValidatedNotNullAttribute : System.Attribute
@@ -1930,6 +1930,97 @@ public class C
 ", GetEditorConfigAdditionalFile(editorConfigText),
             // Test0.cs(14,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(14, 13, "void C.M1(C c1, C c2)", "c2"));
+        }
+
+        [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
+        public void ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_02()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+[AttributeUsage(AttributeTargets.Parameter)]
+internal sealed class ValidatedNotNullAttribute : Attribute { }
+
+internal static class Param
+{
+    public static void RequireNotNull([ValidatedNotNull] object value)
+    {
+    }
+}
+
+public class DataThing
+{
+    public IList<object> Items { get; }
+}
+
+public static class Issue2578Test
+{
+    public static void DoSomething(DataThing input)
+    {
+        Param.RequireNotNull(input);
+
+        // This line still generates a CA1062 error.
+        Bar(input);
+    }
+
+    private static void Bar(DataThing input)
+    {
+        input.Items.Any();
+    }
+}
+");
+        }
+
+        [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
+        public void ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_03()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+[AttributeUsage(AttributeTargets.Parameter)]
+internal sealed class ValidatedNotNullAttribute : Attribute { }
+
+internal static class Param
+{
+    public static void RequireNotNull([ValidatedNotNull] object value)
+    {
+        Param.RequireNotNull2(value);
+    }
+
+    public static void RequireNotNull2([ValidatedNotNull] object value)
+    {
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+    }
+}
+
+public class DataThing
+{
+    public IList<object> Items { get; }
+}
+
+public static class Issue2578Test
+{
+    public static void DoSomething(DataThing input)
+    {
+        Param.RequireNotNull(input);
+
+        // This line still generates a CA1062 error.
+        Bar(input);
+    }
+
+    private static void Bar(DataThing input)
+    {
+        input.Items.Any();
+    }
+}
+");
         }
 
         [Theory, WorkItem(2578, "https://github.com/dotnet/roslyn-analyzers/issues/2578")]
@@ -5730,6 +5821,67 @@ public abstract class A
 public sealed class B : A
 {
     protected override bool IsType(Type type) => type.Namespace == nameof(System);
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2526, "https://github.com/dotnet/roslyn-analyzers/issues/2526")]
+        public void CheckedWithConditionalAccess_01()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool Flag;
+    public void M(C c)
+    {
+        if (c?.Flag == true)
+        {
+          var x = c.ToString();
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2526, "https://github.com/dotnet/roslyn-analyzers/issues/2526")]
+        public void CheckedWithConditionalAccess_02()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool M(List<string> list)
+    {
+        return list?.Count > 5 && list.Count < 10;
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2586, "https://github.com/dotnet/roslyn-analyzers/issues/2586")]
+        public void CheckedWithConditionalAccess_03()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool Flag;
+    public void M(C c)
+    {
+        switch (c?.Flag)
+        {
+            case true:
+                var x = c.ToString();
+                break;
+            case null:
+                var y = c.ToString();
+                break;
+        }
+    }
 }");
         }
     }

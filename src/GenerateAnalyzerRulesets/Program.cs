@@ -11,6 +11,7 @@ using System.Text;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace GenerateAnalyzerRulesets
 {
@@ -18,7 +19,7 @@ namespace GenerateAnalyzerRulesets
     {
         public static int Main(string[] args)
         {
-            const int expectedArguments = 12;
+            const int expectedArguments = 13;
 
             if (args.Length != expectedArguments)
             {
@@ -37,7 +38,8 @@ namespace GenerateAnalyzerRulesets
             string analyzerDocumentationFileName = args[8];
             string analyzerSarifFileDir = args[9];
             string analyzerSarifFileName = args[10];
-            if (!bool.TryParse(args[11], out var containsPortedFxCopRules))
+            var analyzerVersion = args[11];
+            if (!bool.TryParse(args[12], out var containsPortedFxCopRules))
             {
                 containsPortedFxCopRules = false;
             }
@@ -46,6 +48,7 @@ namespace GenerateAnalyzerRulesets
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
             var fixableDiagnosticIds = new HashSet<string>();
             var categories = new HashSet<string>();
+            var rulesMetadata = new SortedList<string, (string path, SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)> rules)>();
             foreach (string assembly in assemblyList)
             {
                 var assemblyName = Path.GetFileNameWithoutExtension(assembly);
@@ -58,19 +61,25 @@ namespace GenerateAnalyzerRulesets
 
                 var analyzerFileReference = new AnalyzerFileReference(path, AnalyzerAssemblyLoader.Instance);
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
-                var rules = analyzers.SelectMany(a => a.SupportedDiagnostics);
-                if (rules.Any())
+                var rulesById = new SortedList<string, DiagnosticDescriptor>();
+
+                var assemblyRulesMetadata = (path: path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
+
+                foreach (var analyzer in analyzers)
                 {
-                    var rulesById = new SortedList<string, DiagnosticDescriptor>();
-                    foreach (DiagnosticDescriptor rule in rules)
+                    var analyzerType = analyzer.GetType();
+
+                    foreach (var rule in analyzer.SupportedDiagnostics)
                     {
                         rulesById[rule.Id] = rule;
                         allRulesById[rule.Id] = rule;
                         categories.Add(rule.Category);
+                        assemblyRulesMetadata.rules[rule.Id] = (rule, analyzerType.Name, analyzerType.GetCustomAttribute<DiagnosticAnalyzerAttribute>(true)?.Languages);
                     }
-
-                    allRulesByAssembly.Add(assemblyName, rulesById);
                 }
+
+                allRulesByAssembly.Add(assemblyName, rulesById);
+                rulesMetadata.Add(assemblyName, assemblyRulesMetadata);
 
                 foreach (var id in analyzerFileReference.GetFixers().SelectMany(fixer => fixer.FixableDiagnosticIds))
                 {
@@ -427,72 +436,84 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                     writer.Write("$schema", "http://json.schemastore.org/sarif-1.0.0");
                     writer.Write("version", "1.0.0");
                     writer.WriteArrayStart("runs");
-                    writer.WriteObjectStart(); // run
 
-                    writer.WriteObjectStart("tool");
-                    writer.Write("name", "Microsoft Code Analysis");
-                    //writer.Write("version", toolAssemblyVersion.ToString());
-                    //writer.Write("fileVersion", toolFileVersion);
-                    //writer.Write("semanticVersion", toolAssemblyVersion.ToString(fieldCount: 3));
-                    writer.Write("language", culture.Name);
-                    writer.WriteObjectEnd(); // tool
-
-                    writer.WriteObjectStart("rules"); // rules
-
-                    foreach (var ruleById in allRulesById)
+                    foreach (var assemblymetadata in rulesMetadata)
                     {
-                        var ruleId = ruleById.Key;
-                        var descriptor = ruleById.Value;
+                        writer.WriteObjectStart(); // run
 
-                        writer.WriteObjectStart(descriptor.Id); // rule
-                        writer.Write("id", descriptor.Id);
+                        writer.WriteObjectStart("tool");
+                        writer.Write("name", assemblymetadata.Key);
 
-                        string shortDescription = descriptor.Title.ToString(culture);
-                        if (!string.IsNullOrEmpty(shortDescription))
+                        if (!string.IsNullOrWhiteSpace(analyzerVersion))
                         {
-                            writer.Write("shortDescription", shortDescription);
+                            writer.Write("version", analyzerVersion);
                         }
 
-                        string fullDescription = descriptor.Description.ToString(culture);
-                        if (!string.IsNullOrEmpty(fullDescription))
+                        writer.Write("language", culture.Name);
+                        writer.WriteObjectEnd(); // tool
+
+                        writer.WriteObjectStart("rules"); // rules
+
+                        foreach (var rule in assemblymetadata.Value.rules)
                         {
-                            writer.Write("fullDescription", fullDescription);
-                        }
+                            var ruleId = rule.Key;
+                            var descriptor = rule.Value.rule;
 
-                        writer.Write("defaultLevel", getLevel(descriptor.DefaultSeverity));
+                            writer.WriteObjectStart(descriptor.Id); // rule
+                            writer.Write("id", descriptor.Id);
 
-                        if (!string.IsNullOrEmpty(descriptor.HelpLinkUri))
-                        {
-                            writer.Write("helpUri", descriptor.HelpLinkUri);
-                        }
+                            writer.Write("shortDescription", descriptor.Title.ToString(culture));
 
-                        writer.WriteObjectStart("properties");
+                            string fullDescription = descriptor.Description.ToString(culture);
+                            writer.Write("fullDescription", !string.IsNullOrEmpty(fullDescription) ? fullDescription : descriptor.MessageFormat.ToString());
 
-                        if (!string.IsNullOrEmpty(descriptor.Category))
-                        {
-                            writer.Write("category", descriptor.Category);
-                        }
+                            writer.Write("defaultLevel", getLevel(descriptor.DefaultSeverity));
 
-                        writer.Write("isEnabledByDefault", descriptor.IsEnabledByDefault);
-
-                        if (descriptor.CustomTags.Any())
-                        {
-                            writer.WriteArrayStart("tags");
-
-                            foreach (string tag in descriptor.CustomTags)
+                            if (!string.IsNullOrEmpty(descriptor.HelpLinkUri))
                             {
-                                writer.Write(tag);
+                                writer.Write("helpUri", descriptor.HelpLinkUri);
                             }
 
-                            writer.WriteArrayEnd(); // tags
+                            writer.WriteObjectStart("properties");
+
+                            writer.Write("category", descriptor.Category);
+
+                            writer.Write("isEnabledByDefault", descriptor.IsEnabledByDefault);
+
+                            writer.Write("typeName", rule.Value.typeName);
+
+                            if ((rule.Value.languages?.Length ?? 0) > 0)
+                            {
+                                writer.WriteArrayStart("languages");
+
+                                foreach (var language in rule.Value.languages.OrderBy(l => l, StringComparer.InvariantCultureIgnoreCase))
+                                {
+                                    writer.Write(language);
+                                }
+
+                                writer.WriteArrayEnd(); // languages
+                            }
+
+                            if (descriptor.CustomTags.Any())
+                            {
+                                writer.WriteArrayStart("tags");
+
+                                foreach (string tag in descriptor.CustomTags)
+                                {
+                                    writer.Write(tag);
+                                }
+
+                                writer.WriteArrayEnd(); // tags
+                            }
+
+                            writer.WriteObjectEnd(); // properties
+                            writer.WriteObjectEnd(); // rule
                         }
 
-                        writer.WriteObjectEnd(); // properties
-                        writer.WriteObjectEnd(); // rule
+                        writer.WriteObjectEnd(); // rules
+                        writer.WriteObjectEnd(); // run
                     }
 
-                    writer.WriteObjectEnd(); // rules
-                    writer.WriteObjectEnd(); // run
                     writer.WriteArrayEnd(); // runs
                     writer.WriteObjectEnd(); // root
 

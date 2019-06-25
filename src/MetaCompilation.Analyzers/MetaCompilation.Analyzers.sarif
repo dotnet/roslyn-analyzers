@@ -4,7 +4,8 @@
   "runs": [
     {
       "tool": {
-        "name": "Microsoft Code Analysis",
+        "name": "MetaCompilation.Analyzers",
+        "version": "2.9.4",
         "language": "en-US"
       },
       "rules": {
@@ -15,7 +16,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer002": {
@@ -25,7 +30,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer003": {
@@ -35,7 +44,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer004": {
@@ -45,7 +58,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer005": {
@@ -55,7 +72,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer006": {
@@ -65,7 +86,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer007": {
@@ -75,16 +100,25 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer008": {
           "id": "MetaAnalyzer008",
           "shortDescription": "Incorrect SupportedDiagnostics property",
+          "fullDescription": "T: The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer009": {
@@ -94,7 +128,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer010": {
@@ -104,7 +142,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer011": {
@@ -114,7 +156,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer012": {
@@ -124,7 +170,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer013": {
@@ -134,7 +184,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer014": {
@@ -144,7 +198,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer015": {
@@ -154,7 +212,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer016": {
@@ -164,7 +226,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer017": {
@@ -174,7 +240,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer018": {
@@ -184,7 +254,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer019": {
@@ -194,7 +268,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer020": {
@@ -204,7 +282,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer021": {
@@ -214,7 +296,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer022": {
@@ -224,7 +310,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer023": {
@@ -234,7 +324,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer024": {
@@ -244,7 +338,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer025": {
@@ -254,7 +352,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer026": {
@@ -264,7 +366,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer027": {
@@ -274,43 +380,67 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer028": {
           "id": "MetaAnalyzer028",
           "shortDescription": "Missing SyntaxKind check",
+          "fullDescription": "T: Next, check if the kind of '{0}' is whitespace trivia",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer029": {
           "id": "MetaAnalyzer029",
           "shortDescription": "Incorrect SyntaxKind check",
+          "fullDescription": "T: This statement should check to see if the kind of '{0}' is whitespace trivia",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer030": {
           "id": "MetaAnalyzer030",
           "shortDescription": "Missing whitespace check",
+          "fullDescription": "T: Next, check if '{0}' is a single whitespace, which is the desired formatting",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer031": {
           "id": "MetaAnalyzer031",
           "shortDescription": "Incorrect whitespace check",
+          "fullDescription": "T: This statement should check to see if '{0}' is a single whitespace, which is the desired formatting",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer032": {
@@ -320,7 +450,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer033": {
@@ -330,7 +464,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer034": {
@@ -340,7 +478,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer035": {
@@ -350,7 +492,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer036": {
@@ -360,7 +506,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer037": {
@@ -370,7 +520,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer038": {
@@ -380,7 +534,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer039": {
@@ -390,7 +548,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer040": {
@@ -400,7 +562,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer041": {
@@ -410,7 +576,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer042": {
@@ -420,7 +590,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer043": {
@@ -430,7 +604,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer044": {
@@ -440,7 +618,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer045": {
@@ -450,7 +632,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer046": {
@@ -460,7 +646,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer047": {
@@ -470,7 +660,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer048": {
@@ -480,7 +674,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer049": {
@@ -490,16 +688,25 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer050": {
           "id": "MetaAnalyzer050",
           "shortDescription": "Analyzer tutorial complete",
+          "fullDescription": "T: Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.",
           "defaultLevel": "note",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer051": {
@@ -509,7 +716,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer052": {
@@ -519,7 +730,11 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer053": {
@@ -529,88 +744,137 @@
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer054": {
           "id": "MetaAnalyzer054",
           "shortDescription": "Incorrect analysis method accessibility",
+          "fullDescription": "T: The '{0}' method should be private",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer055": {
           "id": "MetaAnalyzer055",
           "shortDescription": "Incorrect analysis method return type",
+          "fullDescription": "T: The '{0}' method should have a void return type",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer056": {
           "id": "MetaAnalyzer056",
           "shortDescription": "Incorrect parameter to analysis method",
+          "fullDescription": "T: The '{0}' method should take one parameter of type SyntaxNodeAnalysisContext",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer057": {
           "id": "MetaAnalyzer057",
           "shortDescription": "Trailing trivia count missing",
+          "fullDescription": "T: Next, check that '{0}' only has one trailing trivia element",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer058": {
           "id": "MetaAnalyzer058",
           "shortDescription": "Trailing trivia count incorrect",
+          "fullDescription": "T: This statement should check that '{0}' only has one trailing trivia element",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer059": {
           "id": "MetaAnalyzer059",
           "shortDescription": "ID string literal",
+          "fullDescription": "T: The ID should not be a string literal, because the ID must be accessible from the code fix provider",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer060": {
           "id": "MetaAnalyzer060",
           "shortDescription": "Change default title",
+          "fullDescription": "T: Please change the title to a string of your choosing",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer061": {
           "id": "MetaAnalyzer061",
           "shortDescription": "Change default message",
+          "fullDescription": "T: Please change the default message to a string of your choosing",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         },
         "MetaAnalyzer062": {
           "id": "MetaAnalyzer062",
           "shortDescription": "Change default category",
+          "fullDescription": "T: Please change the category to a string of your choosing",
           "defaultLevel": "error",
           "properties": {
             "category": "Tutorial",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
           }
         }
       }

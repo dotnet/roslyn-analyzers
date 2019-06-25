@@ -4,7 +4,32 @@
   "runs": [
     {
       "tool": {
-        "name": "Microsoft Code Analysis",
+        "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA9999": {
+          "id": "CA9999",
+          "shortDescription": "Analyzer version mismatch",
+          "fullDescription": "Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "AnalyzerVersionCheckAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.CodeQuality.Analyzers",
+        "version": "2.9.4",
         "language": "en-US"
       },
       "rules": {
@@ -17,36 +42,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1001": {
-          "id": "CA1001",
-          "shortDescription": "Types that own disposable fields should be disposable",
-          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1001-types-that-own-disposable-fields-should-be-disposable",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1003": {
-          "id": "CA1003",
-          "shortDescription": "Use generic event handler instances",
-          "fullDescription": "A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": false,
+            "typeName": "DoNotDeclareStaticMembersOnGenericTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -62,6 +62,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "EnumsShouldHaveZeroValueAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry",
@@ -78,6 +83,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "CollectionsShouldImplementGenericInterfaceAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -93,6 +103,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "AbstractTypesShouldNotHaveConstructorsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -108,6 +123,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "MarkAssembliesWithAttributesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -123,6 +143,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "MarkAssembliesWithAttributesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -138,6 +163,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "MarkAssembliesWithComVisibleAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -153,21 +183,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1019": {
-          "id": "CA1019",
-          "shortDescription": "Define accessors for attribute arguments",
-          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": false,
+            "typeName": "MarkAttributesWithAttributeUsageAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -183,6 +203,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "UsePropertiesWhereAppropriateAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -198,6 +223,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "EnumWithFlagsAttributeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -213,6 +243,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "EnumStorageShouldBeInt32Analyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -228,6 +263,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UseEventsWhereAppropriateAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -243,22 +283,12 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "DoNotCatchGeneralExceptionTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1032": {
-          "id": "CA1032",
-          "shortDescription": "Implement standard exception constructors",
-          "fullDescription": "Failure to provide the full set of constructors can make it difficult to correctly handle exceptions.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1032-implement-standard-exception-constructors",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
               "Telemetry"
             ]
           }
@@ -272,6 +302,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "InterfaceMethodsShouldBeCallableByChildTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -287,6 +322,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "NestedTypesShouldNotBeVisibleAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -302,6 +342,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "OverrideMethodsOnComparableTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -317,6 +362,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "AvoidEmptyInterfacesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -332,6 +382,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "ProvideObsoleteAttributeMessageAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -347,6 +402,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UseIntegralOrStringArgumentForIndexersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -362,6 +422,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "PropertiesShouldNotBeWriteOnlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -377,6 +442,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "DeclareTypesInNamespacesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -392,6 +462,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDeclareVisibleInstanceFieldsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -407,6 +482,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "StaticHolderTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -422,6 +502,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UriParametersShouldNotBeStringsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -437,6 +522,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "UriReturnValuesShouldNotBeStringsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -452,21 +542,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1058": {
-          "id": "CA1058",
-          "shortDescription": "Types should not extend certain base types",
-          "fullDescription": "An externally visible type extends certain base types. Use one of the alternatives.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1058-types-should-not-extend-certain-base-types",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true,
+            "typeName": "UriPropertiesShouldNotBeStringsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -482,6 +562,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": false,
+            "typeName": "MovePInvokesToNativeMethodsClassAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -497,6 +582,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "DoNotHideBaseClassMethodsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -512,6 +602,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "ValidateArgumentsOfPublicMethods",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -528,6 +623,11 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "ImplementIDisposableCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -543,6 +643,916 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "ExceptionsShouldBePublicAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1066": {
+          "id": "CA1066",
+          "shortDescription": "Type {0} should implement IEquatable<T> because it overrides Equals",
+          "fullDescription": "When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable<T>, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable<T>.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.",
+          "defaultLevel": "warning",
+          "helpUri": "http://go.microsoft.com/fwlink/?LinkId=734907",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "EquatableAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA1067": {
+          "id": "CA1067",
+          "shortDescription": "Override Object.Equals(object) when implementing IEquatable<T>",
+          "fullDescription": "When a type T implements the interface IEquatable<T>, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the \"principle of least surprise\".",
+          "defaultLevel": "warning",
+          "helpUri": "http://go.microsoft.com/fwlink/?LinkId=734909",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "EquatableAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA1068": {
+          "id": "CA1068",
+          "shortDescription": "CancellationToken parameters must come last",
+          "fullDescription": "Method '{0}' should take CancellationToken as the last parameter",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "CancellationTokenParametersMustComeLastAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA1501": {
+          "id": "CA1501",
+          "shortDescription": "Avoid excessive inheritance",
+          "fullDescription": "Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1501-avoid-excessive-inheritance",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1502": {
+          "id": "CA1502",
+          "shortDescription": "Avoid excessive complexity",
+          "fullDescription": "Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1502-avoid-excessive-complexity",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1505": {
+          "id": "CA1505",
+          "shortDescription": "Avoid unmaintainable code",
+          "fullDescription": "The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1505-avoid-unmaintainable-code",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1506": {
+          "id": "CA1506",
+          "shortDescription": "Avoid excessive class coupling",
+          "fullDescription": "This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1508": {
+          "id": "CA1508",
+          "shortDescription": "Avoid dead conditional code",
+          "fullDescription": "'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "AvoidDeadConditionalCode",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1509": {
+          "id": "CA1509",
+          "shortDescription": "Invalid entry in code metrics rule specification file",
+          "fullDescription": "Invalid entry in code metrics rule specification file",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": false,
+            "typeName": "CodeMetricsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1707": {
+          "id": "CA1707",
+          "shortDescription": "Identifiers should not contain underscores",
+          "fullDescription": "By convention, identifier names do not contain the underscore (_) character. This rule checks namespaces, types, members, and parameters.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1707-identifiers-should-not-contain-underscores",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldNotContainUnderscoresAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1708": {
+          "id": "CA1708",
+          "shortDescription": "Identifiers should differ by more than case",
+          "fullDescription": "Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": false,
+            "typeName": "IdentifiersShouldDifferByMoreThanCaseAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1710": {
+          "id": "CA1710",
+          "shortDescription": "Identifiers should have correct suffix",
+          "fullDescription": "By convention, the names of types that extend certain base types or that implement certain interfaces, or types that are derived from these types, have a suffix that is associated with the base type or interface.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldHaveCorrectSuffixAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1711": {
+          "id": "CA1711",
+          "shortDescription": "Identifiers should not have incorrect suffix",
+          "fullDescription": "By convention, only the names of types that extend certain base types or that implement certain interfaces, or types that are derived from these types, should end with specific reserved suffixes. Other type names should not use these reserved suffixes.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1711-identifiers-should-not-have-incorrect-suffix",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": false,
+            "typeName": "IdentifiersShouldNotHaveIncorrectSuffixAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1712": {
+          "id": "CA1712",
+          "shortDescription": "Do not prefix enum values with type name",
+          "fullDescription": "An enumeration's values should not start with the type name of the enumeration.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1712-do-not-prefix-enum-values-with-type-name",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotPrefixEnumValuesWithTypeNameAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1714": {
+          "id": "CA1714",
+          "shortDescription": "Flags enums should have plural names",
+          "fullDescription": "A public enumeration has the System.FlagsAttribute attribute, and its name does not end in \"\"s\"\". Types that are marked by using FlagsAttribute have names that are plural because the attribute indicates that more than one value can be specified.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1714-flags-enums-should-have-plural-names",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "EnumsShouldHavePluralNamesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1715": {
+          "id": "CA1715",
+          "shortDescription": "Identifiers should have correct prefix",
+          "fullDescription": "Identifiers should have correct prefix",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldHaveCorrectPrefixAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1716": {
+          "id": "CA1716",
+          "shortDescription": "Identifiers should not match keywords",
+          "fullDescription": "A namespace name or a type name matches a reserved keyword in a programming language. Identifiers for namespaces and types should not match keywords that are defined by languages that target the common language runtime.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldNotMatchKeywordsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1717": {
+          "id": "CA1717",
+          "shortDescription": "Only FlagsAttribute enums should have plural names",
+          "fullDescription": "Naming conventions dictate that a plural name for an enumeration indicates that more than one value of the enumeration can be specified at the same time.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1717-only-flagsattribute-enums-should-have-plural-names",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "EnumsShouldHavePluralNamesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1720": {
+          "id": "CA1720",
+          "shortDescription": "Identifier contains type name",
+          "fullDescription": "Names of parameters and members are better used to communicate their meaning than to describe their type, which is expected to be provided by development tools. For names of members, if a data type name must be used, use a language-independent name instead of a language-specific one.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1720-identifiers-should-not-contain-type-names",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "IdentifiersShouldNotContainTypeNames",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1721": {
+          "id": "CA1721",
+          "shortDescription": "Property names should not match get methods",
+          "fullDescription": "The name of a public or protected member starts with \"\"Get\"\" and otherwise matches the name of a public or protected property. \"\"Get\"\" methods and properties should have names that clearly distinguish their function.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1721-property-names-should-not-match-get-methods",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "PropertyNamesShouldNotMatchGetMethodsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1724": {
+          "id": "CA1724",
+          "shortDescription": "Type names should not match namespaces",
+          "fullDescription": "Type names should not match the names of namespaces that are defined in the .NET Framework class library. Violating this rule can reduce the usability of the library.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1724-type-names-should-not-match-namespaces",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": true,
+            "typeName": "TypeNamesShouldNotMatchNamespacesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1725": {
+          "id": "CA1725",
+          "shortDescription": "Parameter names should match base declaration",
+          "fullDescription": "Consistent naming of parameters in an override hierarchy increases the usability of the method overrides. A parameter name in a derived method that differs from the name in the base declaration can cause confusion about whether the method is an override of the base method or a new overload of the method.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1725-parameter-names-should-match-base-declaration",
+          "properties": {
+            "category": "Naming",
+            "isEnabledByDefault": false,
+            "typeName": "ParameterNamesShouldMatchBaseDeclarationAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1801": {
+          "id": "CA1801",
+          "shortDescription": "Review unused parameters",
+          "fullDescription": "A method signature includes a parameter that is not used in the method body.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1801-review-unused-parameters",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "ReviewUnusedParametersAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1802": {
+          "id": "CA1802",
+          "shortDescription": "Use literals where appropriate",
+          "fullDescription": "A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1802-use-literals-where-appropriate",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "UseLiteralsWhereAppropriateAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1806": {
+          "id": "CA1806",
+          "shortDescription": "Do not ignore method results",
+          "fullDescription": "A new object is created but never used; or a method that creates and returns a new string is called and the new string is never used; or a COM or P/Invoke method returns an HRESULT or error code that is never used.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotIgnoreMethodResultsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1812": {
+          "id": "CA1812",
+          "shortDescription": "Avoid uninstantiated internal classes",
+          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812-avoid-uninstantiated-internal-classes",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidUninstantiatedInternalClassesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1814": {
+          "id": "CA1814",
+          "shortDescription": "Prefer jagged arrays over multidimensional",
+          "fullDescription": "A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1814-prefer-jagged-arrays-over-multidimensional",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PreferJaggedArraysOverMultidimensionalAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1815": {
+          "id": "CA1815",
+          "shortDescription": "Override equals and operator equals on value types",
+          "fullDescription": "For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1815-override-equals-and-operator-equals-on-value-types",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1819": {
+          "id": "CA1819",
+          "shortDescription": "Properties should not return arrays",
+          "fullDescription": "Arrays that are returned by properties are not write-protected, even when the property is read-only. To keep the array tamper-proof, the property must return a copy of the array. Typically, users will not understand the adverse performance implications of calling such a property.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1819-properties-should-not-return-arrays",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "PropertiesShouldNotReturnArraysAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1822": {
+          "id": "CA1822",
+          "shortDescription": "Mark members as static",
+          "fullDescription": "Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1822-mark-members-as-static",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "MarkMembersAsStaticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1823": {
+          "id": "CA1823",
+          "shortDescription": "Avoid unused private fields",
+          "fullDescription": "Private fields were detected that do not appear to be accessed in the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1823-avoid-unused-private-fields",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidUnusedPrivateFieldsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2007": {
+          "id": "CA2007",
+          "shortDescription": "Consider calling ConfigureAwait on the awaited task",
+          "fullDescription": "When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2007-do-not-directly-await-task",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotDirectlyAwaitATaskAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2119": {
+          "id": "CA2119",
+          "shortDescription": "Seal methods that satisfy private interfaces",
+          "fullDescription": "An inheritable public type provides an overridable method implementation of an internal (Friend in Visual Basic) interface. To fix a violation of this rule, prevent the method from being overridden outside the assembly.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2119-seal-methods-that-satisfy-private-interfaces",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "SealMethodsThatSatisfyPrivateInterfacesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2211": {
+          "id": "CA2211",
+          "shortDescription": "Non-constant fields should not be visible",
+          "fullDescription": "Static fields that are neither constants nor read-only are not thread-safe. Access to such a field must be carefully controlled and requires advanced programming techniques to synchronize access to the class object.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2211-non-constant-fields-should-not-be-visible",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "NonConstantFieldsShouldNotBeVisibleAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2214": {
+          "id": "CA2214",
+          "shortDescription": "Do not call overridable methods in constructors",
+          "fullDescription": "Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called).",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2214-do-not-call-overridable-methods-in-constructors",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotCallOverridableMethodsInConstructorsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2217": {
+          "id": "CA2217",
+          "shortDescription": "Do not mark enums with FlagsAttribute",
+          "fullDescription": "An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2217-do-not-mark-enums-with-flagsattribute",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "EnumWithFlagsAttributeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2219": {
+          "id": "CA2219",
+          "shortDescription": "Do not raise exceptions in finally clauses",
+          "fullDescription": "When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2219-do-not-raise-exceptions-in-exception-clauses",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotRaiseExceptionsInExceptionClausesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2225": {
+          "id": "CA2225",
+          "shortDescription": "Operator overloads have named alternates",
+          "fullDescription": "An operator overload was detected, and the expected named alternative method was not found. The named alternative member provides access to the same functionality as the operator and is provided for developers who program in languages that do not support overloaded operators.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "OperatorOverloadsHaveNamedAlternatesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2226": {
+          "id": "CA2226",
+          "shortDescription": "Operators should have symmetrical overloads",
+          "fullDescription": "A type implements the equality or inequality operator and does not implement the opposite operator.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2226-operators-should-have-symmetrical-overloads",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "OperatorsShouldHaveSymmetricalOverloadsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2227": {
+          "id": "CA2227",
+          "shortDescription": "Collection properties should be read only",
+          "fullDescription": "A writable collection property allows a user to replace the collection with a different collection. A read-only property stops the collection from being replaced but still allows the individual members to be set.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2227-collection-properties-should-be-read-only",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CollectionPropertiesShouldBeReadOnlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2231": {
+          "id": "CA2231",
+          "shortDescription": "Overload operator equals on overriding value type Equals",
+          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2231-overload-operator-equals-on-overriding-valuetype-equals",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "OverloadOperatorEqualsOnOverridingValueTypeEqualsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2244": {
+          "id": "CA2244",
+          "shortDescription": "Do not duplicate indexed element initializations",
+          "fullDescription": "Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidDuplicateElementInitialization",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.CodeQuality.CSharp.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1001": {
+          "id": "CA1001",
+          "shortDescription": "Types that own disposable fields should be disposable",
+          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1001-types-that-own-disposable-fields-should-be-disposable",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1003": {
+          "id": "CA1003",
+          "shortDescription": "Use generic event handler instances",
+          "fullDescription": "A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpUseGenericEventHandlerInstancesAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1019": {
+          "id": "CA1019",
+          "shortDescription": "Define accessors for attribute arguments",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpDefineAccessorsForAttributeArgumentsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1032": {
+          "id": "CA1032",
+          "shortDescription": "Implement standard exception constructors",
+          "fullDescription": "Failure to provide the full set of constructors can make it difficult to correctly handle exceptions.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1032-implement-standard-exception-constructors",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpImplementStandardExceptionConstructorsAnalyzer",
+            "languages": [
+              "C#"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -558,42 +1568,14 @@
           "properties": {
             "category": "Design",
             "isEnabledByDefault": true,
+            "typeName": "CSharpDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer",
+            "languages": [
+              "C#"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
             ]
-          }
-        },
-        "CA1066": {
-          "id": "CA1066",
-          "shortDescription": "Type {0} should implement IEquatable<T> because it overrides Equals",
-          "fullDescription": "When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable<T>, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable<T>.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.",
-          "defaultLevel": "warning",
-          "helpUri": "http://go.microsoft.com/fwlink/?LinkId=734907",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true
-          }
-        },
-        "CA1067": {
-          "id": "CA1067",
-          "shortDescription": "Override Object.Equals(object) when implementing IEquatable<T>",
-          "fullDescription": "When a type T implements the interface IEquatable<T>, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the \"principle of least surprise\".",
-          "defaultLevel": "warning",
-          "helpUri": "http://go.microsoft.com/fwlink/?LinkId=734909",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true
-          }
-        },
-        "CA1068": {
-          "id": "CA1068",
-          "shortDescription": "CancellationToken parameters must come last",
-          "fullDescription": "Method '{0}' should take CancellationToken as the last parameter",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Design",
-            "isEnabledByDefault": true
           }
         },
         "CA1200": {
@@ -604,11 +1586,333 @@
           "properties": {
             "category": "Documentation",
             "isEnabledByDefault": true,
+            "typeName": "CSharpAvoidUsingCrefTagsWithAPrefixAnalyzer",
+            "languages": [
+              "C#"
+            ],
             "tags": [
               "Telemetry"
             ]
           }
         },
+        "CA1507": {
+          "id": "CA1507",
+          "shortDescription": "Use nameof to express symbol names",
+          "fullDescription": "Using nameof helps keep your code valid when refactoring.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpUseNameofInPlaceOfStringAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1821": {
+          "id": "CA1821",
+          "shortDescription": "Remove empty Finalizers",
+          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821-remove-empty-finalizers",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpRemoveEmptyFinalizersAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2200": {
+          "id": "CA2200",
+          "shortDescription": "Rethrow to preserve stack details.",
+          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpRethrowToPreserveStackDetailsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2234": {
+          "id": "CA2234",
+          "shortDescription": "Pass system uri objects instead of strings",
+          "fullDescription": "A call is made to a method that has a string parameter whose name contains \"uri\", \"URI\", \"urn\", \"URN\", \"url\", or \"URL\". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2234-pass-system-uri-objects-instead-of-strings",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpPassSystemUriObjectsInsteadOfStringsAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1001": {
+          "id": "CA1001",
+          "shortDescription": "Types that own disposable fields should be disposable",
+          "fullDescription": "A class declares and implements an instance field that is a System.IDisposable type, and the class does not implement IDisposable. A class that declares an IDisposable field indirectly owns an unmanaged resource and should implement the IDisposable interface.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1001-types-that-own-disposable-fields-should-be-disposable",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1003": {
+          "id": "CA1003",
+          "shortDescription": "Use generic event handler instances",
+          "fullDescription": "A type contains an event that declares an EventHandler delegate that returns void, whose signature contains two parameters (the first an object and the second a type that is assignable to EventArgs), and the containing assembly targets Microsoft .NET Framework?2.0.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1003-use-generic-event-handler-instances",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "BasicUseGenericEventHandlerInstancesAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1019": {
+          "id": "CA1019",
+          "shortDescription": "Define accessors for attribute arguments",
+          "fullDescription": "Remove the property setter from {0} or reduce its accessibility because it corresponds to positional argument {1}.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1019-define-accessors-for-attribute-arguments",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": false,
+            "typeName": "BasicDefineAccessorsForAttributeArgumentsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1032": {
+          "id": "CA1032",
+          "shortDescription": "Implement standard exception constructors",
+          "fullDescription": "Failure to provide the full set of constructors can make it difficult to correctly handle exceptions.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1032-implement-standard-exception-constructors",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "BasicImplementStandardExceptionConstructorsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1065": {
+          "id": "CA1065",
+          "shortDescription": "Do not raise exceptions in unexpected locations",
+          "fullDescription": "A method that is not expected to throw exceptions throws an exception.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1065-do-not-raise-exceptions-in-unexpected-locations",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "BasicDoNotRaiseExceptionsInUnexpectedLocationsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1200": {
+          "id": "CA1200",
+          "shortDescription": "Avoid using cref tags with a prefix",
+          "fullDescription": "Use of cref tags with prefixes should be avoided, since it prevents the compiler from verifying references and the IDE from updating references during refactorings. It is permissible to suppress this error at a single documentation site if the cref must use a prefix because the type being mentioned is not findable by the compiler. For example, if a cref is mentioning a special attribute in the full framework but you're in a file that compiles against the portable framework, or if you want to reference a type at higher layer of Roslyn, you should suppress the error. You should not suppress the error just because you want to take a shortcut and avoid using the full syntax.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Documentation",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAvoidUsingCrefTagsWithAPrefixAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1507": {
+          "id": "CA1507",
+          "shortDescription": "Use nameof to express symbol names",
+          "fullDescription": "Using nameof helps keep your code valid when refactoring.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
+          "properties": {
+            "category": "Maintainability",
+            "isEnabledByDefault": true,
+            "typeName": "BasicUseNameofInPlaceOfStringAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1821": {
+          "id": "CA1821",
+          "shortDescription": "Remove empty Finalizers",
+          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821-remove-empty-finalizers",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicRemoveEmptyFinalizersAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2200": {
+          "id": "CA2200",
+          "shortDescription": "Rethrow to preserve stack details.",
+          "fullDescription": "Re-throwing caught exception changes stack information.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicRethrowToPreserveStackDetailsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2218": {
+          "id": "CA2218",
+          "shortDescription": "Override GetHashCode on overriding Equals",
+          "fullDescription": "GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2218-override-gethashcode-on-overriding-equals",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicOverrideGetHashCodeOnOverridingEqualsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2224": {
+          "id": "CA2224",
+          "shortDescription": "Override Equals on overloading operator equals",
+          "fullDescription": "A public type implements the equality operator but does not override Object.Equals.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2224-override-equals-on-overloading-operator-equals",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicOverrideEqualsOnOverloadingOperatorEqualsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2234": {
+          "id": "CA2234",
+          "shortDescription": "Pass system uri objects instead of strings",
+          "fullDescription": "A call is made to a method that has a string parameter whose name contains \"uri\", \"URI\", \"urn\", \"URN\", \"url\", or \"URL\". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2234-pass-system-uri-objects-instead-of-strings",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicPassSystemUriObjectsInsteadOfStringsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.NetCore.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
         "CA1303": {
           "id": "CA1303",
           "shortDescription": "Do not pass literals as localized parameters",
@@ -618,6 +1922,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
+            "typeName": "DoNotPassLiteralsAsLocalizedParameters",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -634,6 +1943,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
+            "typeName": "SpecifyCultureInfoAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -649,6 +1963,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
+            "typeName": "SpecifyIFormatProviderAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -664,6 +1983,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
+            "typeName": "SpecifyStringComparisonAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -679,21 +2003,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1309": {
-          "id": "CA1309",
-          "shortDescription": "Use ordinal stringcomparison",
-          "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
-          "properties": {
-            "category": "Globalization",
-            "isEnabledByDefault": false,
+            "typeName": "NormalizeStringsToUppercaseAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -709,377 +2023,11 @@
           "properties": {
             "category": "Interoperability",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1501": {
-          "id": "CA1501",
-          "shortDescription": "Avoid excessive inheritance",
-          "fullDescription": "Deeply nested type hierarchies can be difficult to follow, understand, and maintain. This rule limits analysis to hierarchies in the same module. To fix a violation of this rule, derive the type from a base type that is less deep in the inheritance hierarchy or eliminate some of the intermediate base types.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1501-avoid-excessive-inheritance",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1502": {
-          "id": "CA1502",
-          "shortDescription": "Avoid excessive complexity",
-          "fullDescription": "Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1502-avoid-excessive-complexity",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1505": {
-          "id": "CA1505",
-          "shortDescription": "Avoid unmaintainable code",
-          "fullDescription": "The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1505-avoid-unmaintainable-code",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1506": {
-          "id": "CA1506",
-          "shortDescription": "Avoid excessive class coupling",
-          "fullDescription": "This rule measures class coupling by counting the number of unique type references that a symbol contains. Symbols that have a high degree of class coupling can be difficult to maintain. It is a good practice to have types and methods that exhibit low coupling and high cohesion. To fix this violation, try to redesign the code to reduce the number of types to which it is coupled.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1506-avoid-excessive-class-coupling",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1507": {
-          "id": "CA1507",
-          "shortDescription": "Use nameof to express symbol names",
-          "fullDescription": "Using nameof helps keep your code valid when refactoring.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": true,
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1508": {
-          "id": "CA1508",
-          "shortDescription": "Avoid dead conditional code",
-          "fullDescription": "'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": false,
-            "tags": [
-              "Dataflow",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1509": {
-          "id": "CA1509",
-          "shortDescription": "Invalid entry in code metrics rule specification file",
-          "fullDescription": "Invalid entry in code metrics rule specification file",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Maintainability",
-            "isEnabledByDefault": false,
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1707": {
-          "id": "CA1707",
-          "shortDescription": "Identifiers should not contain underscores",
-          "fullDescription": "By convention, identifier names do not contain the underscore (_) character. This rule checks namespaces, types, members, and parameters.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1707-identifiers-should-not-contain-underscores",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1708": {
-          "id": "CA1708",
-          "shortDescription": "Identifiers should differ by more than case",
-          "fullDescription": "Identifiers for namespaces, types, members, and parameters cannot differ only by case because languages that target the common language runtime are not required to be case-sensitive.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1710": {
-          "id": "CA1710",
-          "shortDescription": "Identifiers should have correct suffix",
-          "fullDescription": "By convention, the names of types that extend certain base types or that implement certain interfaces, or types that are derived from these types, have a suffix that is associated with the base type or interface.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1711": {
-          "id": "CA1711",
-          "shortDescription": "Identifiers should not have incorrect suffix",
-          "fullDescription": "By convention, only the names of types that extend certain base types or that implement certain interfaces, or types that are derived from these types, should end with specific reserved suffixes. Other type names should not use these reserved suffixes.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1711-identifiers-should-not-have-incorrect-suffix",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1712": {
-          "id": "CA1712",
-          "shortDescription": "Do not prefix enum values with type name",
-          "fullDescription": "An enumeration's values should not start with the type name of the enumeration.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1712-do-not-prefix-enum-values-with-type-name",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1714": {
-          "id": "CA1714",
-          "shortDescription": "Flags enums should have plural names",
-          "fullDescription": "A public enumeration has the System.FlagsAttribute attribute, and its name does not end in \"\"s\"\". Types that are marked by using FlagsAttribute have names that are plural because the attribute indicates that more than one value can be specified.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1714-flags-enums-should-have-plural-names",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1715": {
-          "id": "CA1715",
-          "shortDescription": "Identifiers should have correct prefix",
-          "fullDescription": "Identifiers should have correct prefix",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1715-identifiers-should-have-correct-prefix",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1716": {
-          "id": "CA1716",
-          "shortDescription": "Identifiers should not match keywords",
-          "fullDescription": "A namespace name or a type name matches a reserved keyword in a programming language. Identifiers for namespaces and types should not match keywords that are defined by languages that target the common language runtime.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1716-identifiers-should-not-match-keywords",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1717": {
-          "id": "CA1717",
-          "shortDescription": "Only FlagsAttribute enums should have plural names",
-          "fullDescription": "Naming conventions dictate that a plural name for an enumeration indicates that more than one value of the enumeration can be specified at the same time.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1717-only-flagsattribute-enums-should-have-plural-names",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1720": {
-          "id": "CA1720",
-          "shortDescription": "Identifier contains type name",
-          "fullDescription": "Names of parameters and members are better used to communicate their meaning than to describe their type, which is expected to be provided by development tools. For names of members, if a data type name must be used, use a language-independent name instead of a language-specific one.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1720-identifiers-should-not-contain-type-names",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1721": {
-          "id": "CA1721",
-          "shortDescription": "Property names should not match get methods",
-          "fullDescription": "The name of a public or protected member starts with \"\"Get\"\" and otherwise matches the name of a public or protected property. \"\"Get\"\" methods and properties should have names that clearly distinguish their function.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1721-property-names-should-not-match-get-methods",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1724": {
-          "id": "CA1724",
-          "shortDescription": "Type names should not match namespaces",
-          "fullDescription": "Type names should not match the names of namespaces that are defined in the .NET Framework class library. Violating this rule can reduce the usability of the library.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1724-type-names-should-not-match-namespaces",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1725": {
-          "id": "CA1725",
-          "shortDescription": "Parameter names should match base declaration",
-          "fullDescription": "Consistent naming of parameters in an override hierarchy increases the usability of the method overrides. A parameter name in a derived method that differs from the name in the base declaration can cause confusion about whether the method is an override of the base method or a new overload of the method.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1725-parameter-names-should-match-base-declaration",
-          "properties": {
-            "category": "Naming",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1801": {
-          "id": "CA1801",
-          "shortDescription": "Review unused parameters",
-          "fullDescription": "A method signature includes a parameter that is not used in the method body.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1801-review-unused-parameters",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1802": {
-          "id": "CA1802",
-          "shortDescription": "Use literals where appropriate",
-          "fullDescription": "A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1802-use-literals-where-appropriate",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1806": {
-          "id": "CA1806",
-          "shortDescription": "Do not ignore method results",
-          "fullDescription": "A new object is created but never used; or a method that creates and returns a new string is called and the new string is never used; or a COM or P/Invoke method returns an HRESULT or error code that is never used.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1806-do-not-ignore-method-results",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1810": {
-          "id": "CA1810",
-          "shortDescription": "Initialize reference type static fields inline",
-          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1812": {
-          "id": "CA1812",
-          "shortDescription": "Avoid uninstantiated internal classes",
-          "fullDescription": "An instance of an assembly-level type is not created by code in the assembly.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1812-avoid-uninstantiated-internal-classes",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
+            "typeName": "PInvokeDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1095,36 +2043,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1814": {
-          "id": "CA1814",
-          "shortDescription": "Prefer jagged arrays over multidimensional",
-          "fullDescription": "A jagged array is an array whose elements are arrays. The arrays that make up the elements can be of different sizes, leading to less wasted space for some sets of data.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1814-prefer-jagged-arrays-over-multidimensional",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1815": {
-          "id": "CA1815",
-          "shortDescription": "Override equals and operator equals on value types",
-          "fullDescription": "For value types, the inherited implementation of Equals uses the Reflection library and compares the contents of all fields. Reflection is computationally expensive, and comparing every field for equality might be unnecessary. If you expect users to compare or sort instances, or to use instances as hash table keys, your value type should implement Equals.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1815-override-equals-and-operator-equals-on-value-types",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
+            "typeName": "AvoidUnsealedAttributesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1140,21 +2063,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1819": {
-          "id": "CA1819",
-          "shortDescription": "Properties should not return arrays",
-          "fullDescription": "Arrays that are returned by properties are not write-protected, even when the property is read-only. To keep the array tamper-proof, the property must return a copy of the array. Typically, users will not understand the adverse performance implications of calling such a property.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1819-properties-should-not-return-arrays",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
+            "typeName": "CallGCSuppressFinalizeCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1170,80 +2083,15 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "TestForEmptyStringsUsingStringLengthAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
             ]
-          }
-        },
-        "CA1821": {
-          "id": "CA1821",
-          "shortDescription": "Remove empty Finalizers",
-          "fullDescription": "Finalizers should be avoided where possible, to avoid the additional performance overhead involved in tracking object lifetime.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1821-remove-empty-finalizers",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1822": {
-          "id": "CA1822",
-          "shortDescription": "Mark members as static",
-          "fullDescription": "Members that do not access instance data or call instance methods can be marked as static (Shared in Visual Basic). After you mark the methods as static, the compiler will emit nonvirtual call sites to these members. This can give you a measurable performance gain for performance-sensitive code.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1822-mark-members-as-static",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1823": {
-          "id": "CA1823",
-          "shortDescription": "Avoid unused private fields",
-          "fullDescription": "Private fields were detected that do not appear to be accessed in the assembly.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1823-avoid-unused-private-fields",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1824": {
-          "id": "CA1824",
-          "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
-          "fullDescription": "The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824-mark-assemblies-with-neutralresourceslanguageattribute",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA1825": {
-          "id": "CA1825",
-          "shortDescription": "Avoid zero-length array allocations.",
-          "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true
           }
         },
         "CA1826": {
@@ -1254,6 +2102,11 @@
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -1268,6 +2121,11 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
+            "typeName": "DisposeObjectsBeforeLosingScope",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -1284,22 +2142,13 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
+            "typeName": "DoNotLockOnObjectsWithWeakIdentityAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2007": {
-          "id": "CA2007",
-          "shortDescription": "Consider calling ConfigureAwait on the awaited task",
-          "fullDescription": "When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2007-do-not-directly-await-task",
-          "properties": {
-            "category": "Reliability",
-            "isEnabledByDefault": true,
-            "tags": [
               "Telemetry"
             ]
           }
@@ -1312,6 +2161,11 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
+            "typeName": "DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -1325,19 +2179,11 @@
           "properties": {
             "category": "Reliability",
             "isEnabledByDefault": true,
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2010": {
-          "id": "CA2010",
-          "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
-          "fullDescription": "PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Reliability",
-            "isEnabledByDefault": true,
+            "typeName": "DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -1352,6 +2198,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "ReviewSqlQueriesForSecurityVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
@@ -1368,80 +2219,11 @@
           "properties": {
             "category": "Globalization",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2119": {
-          "id": "CA2119",
-          "shortDescription": "Seal methods that satisfy private interfaces",
-          "fullDescription": "An inheritable public type provides an overridable method implementation of an internal (Friend in Visual Basic) interface. To fix a violation of this rule, prevent the method from being overridden outside the assembly.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2119-seal-methods-that-satisfy-private-interfaces",
-          "properties": {
-            "category": "Security",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2153": {
-          "id": "CA2153",
-          "shortDescription": "Do Not Catch Corrupted State Exceptions",
-          "fullDescription": "Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2153-avoid-handling-corrupted-state-exceptions",
-          "properties": {
-            "category": "Security",
-            "isEnabledByDefault": true,
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2200": {
-          "id": "CA2200",
-          "shortDescription": "Rethrow to preserve stack details.",
-          "fullDescription": "Re-throwing caught exception changes stack information.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2200-rethrow-to-preserve-stack-details",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2201": {
-          "id": "CA2201",
-          "shortDescription": "Do not raise reserved exception types",
-          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201-do-not-raise-reserved-exception-types",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2207": {
-          "id": "CA2207",
-          "shortDescription": "Initialize value type static fields inline",
-          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
+            "typeName": "PInvokeDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1457,21 +2239,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2211": {
-          "id": "CA2211",
-          "shortDescription": "Non-constant fields should not be visible",
-          "fullDescription": "Static fields that are neither constants nor read-only are not thread-safe. Access to such a field must be carefully controlled and requires advanced programming techniques to synchronize access to the class object.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2211-non-constant-fields-should-not-be-visible",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
+            "typeName": "InstantiateArgumentExceptionsCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1487,24 +2259,14 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "DisposableFieldsShouldBeDisposed",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Dataflow",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2214": {
-          "id": "CA2214",
-          "shortDescription": "Do not call overridable methods in constructors",
-          "fullDescription": "Virtual methods defined on the class should not be called from constructors. If a derived class has overridden the method, the derived class version will be called (before the derived class constructor is called).",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2214-do-not-call-overridable-methods-in-constructors",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
               "Telemetry"
             ]
           }
@@ -1518,111 +2280,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2217": {
-          "id": "CA2217",
-          "shortDescription": "Do not mark enums with FlagsAttribute",
-          "fullDescription": "An externally visible enumeration is marked by using FlagsAttribute, and it has one or more values that are not powers of two or a combination of the other defined values on the enumeration.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2217-do-not-mark-enums-with-flagsattribute",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": false,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2218": {
-          "id": "CA2218",
-          "shortDescription": "Override GetHashCode on overriding Equals",
-          "fullDescription": "GetHashCode returns a value, based on the current instance, that is suited for hashing algorithms and data structures such as a hash table. Two objects that are the same type and are equal must return the same hash code.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2218-override-gethashcode-on-overriding-equals",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2219": {
-          "id": "CA2219",
-          "shortDescription": "Do not raise exceptions in finally clauses",
-          "fullDescription": "When an exception is raised in a finally clause, the new exception hides the active exception. This makes the original error difficult to detect and debug.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2219-do-not-raise-exceptions-in-exception-clauses",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2224": {
-          "id": "CA2224",
-          "shortDescription": "Override Equals on overloading operator equals",
-          "fullDescription": "A public type implements the equality operator but does not override Object.Equals.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2224-override-equals-on-overloading-operator-equals",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2225": {
-          "id": "CA2225",
-          "shortDescription": "Operator overloads have named alternates",
-          "fullDescription": "An operator overload was detected, and the expected named alternative method was not found. The named alternative member provides access to the same functionality as the operator and is provided for developers who program in languages that do not support overloaded operators.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2226": {
-          "id": "CA2226",
-          "shortDescription": "Operators should have symmetrical overloads",
-          "fullDescription": "A type implements the equality or inequality operator and does not implement the opposite operator.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2226-operators-should-have-symmetrical-overloads",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2227": {
-          "id": "CA2227",
-          "shortDescription": "Collection properties should be read only",
-          "fullDescription": "A writable collection property allows a user to replace the collection with a different collection. A read-only property stops the collection from being replaced but still allows the individual members to be set.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2227-collection-properties-should-be-read-only",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
+            "typeName": "DisposableTypesShouldDeclareFinalizerAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1638,36 +2300,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2231": {
-          "id": "CA2231",
-          "shortDescription": "Overload operator equals on overriding value type Equals",
-          "fullDescription": "In most programming languages there is no default implementation of the equality operator (==) for value types. If your programming language supports operator overloads, you should consider implementing the equality operator. Its behavior should be identical to that of Equals",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2231-overload-operator-equals-on-overriding-valuetype-equals",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2234": {
-          "id": "CA2234",
-          "shortDescription": "Pass system uri objects instead of strings",
-          "fullDescription": "A call is made to a method that has a string parameter whose name contains \"uri\", \"URI\", \"urn\", \"URN\", \"url\", or \"URL\". The declaring type of the method contains a corresponding method overload that has a System.Uri parameter.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2234-pass-system-uri-objects-instead-of-strings",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
+            "typeName": "SerializationRulesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1683,6 +2320,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "SerializationRulesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1698,6 +2340,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "SerializationRulesDiagnosticAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1713,6 +2360,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "ProvideCorrectArgumentsToFormattingMethodsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1728,6 +2380,11 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "TestForNaNCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
               "Telemetry"
@@ -1743,21 +2400,13 @@
           "properties": {
             "category": "Usage",
             "isEnabledByDefault": true,
+            "typeName": "AttributeStringLiteralsShouldParseCorrectlyAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "PortedFxCopRuleTag",
-              "Telemetry"
-            ]
-          }
-        },
-        "CA2244": {
-          "id": "CA2244",
-          "shortDescription": "Do not duplicate indexed element initializations",
-          "fullDescription": "Indexed elements in objects initializers must initialize unique elements. A duplicate index might overwrite a previous element initialization.",
-          "defaultLevel": "warning",
-          "properties": {
-            "category": "Usage",
-            "isEnabledByDefault": true,
-            "tags": [
               "Telemetry"
             ]
           }
@@ -1770,7 +2419,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2300-do-not-use-insecure-deserializer-binaryformatter",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerBinaryFormatterMethods",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2301": {
@@ -1781,7 +2435,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2301-do-not-call-binaryformatter-deserialize-without-first-setting-binaryformatter-binder",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2302": {
@@ -1792,7 +2451,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2302-ensure-binaryformatter-binder-is-set-before-calling-binaryformatter-deserialize",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerBinaryFormatterWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2305": {
@@ -1803,7 +2467,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2305-do-not-use-insecure-deserializer-losformatter",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerLosFormatter",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2310": {
@@ -1814,7 +2483,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2310-do-not-use-insecure-deserializer-netdatacontractserializer",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerNetDataContractSerializerMethods",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2311": {
@@ -1825,7 +2499,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerNetDataContractSerializerWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2312": {
@@ -1836,7 +2515,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerNetDataContractSerializerWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2315": {
@@ -1847,7 +2531,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2315-do-not-use-insecure-deserializer-objectstateformatter",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerObjectStateFormatter",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2321": {
@@ -1858,7 +2547,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2321",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA2322": {
@@ -1869,7 +2563,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2322",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3001": {
@@ -1880,7 +2579,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3001-review-code-for-sql-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForSqlInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3002": {
@@ -1891,7 +2595,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3002-review-code-for-xss-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForXssVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3003": {
@@ -1902,7 +2611,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3003-review-code-for-file-path-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForFilePathInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3004": {
@@ -1913,7 +2627,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3004-review-code-for-information-disclosure-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForInformationDisclosureVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3005": {
@@ -1924,7 +2643,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3005-review-code-for-ldap-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForLdapInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3006": {
@@ -1935,7 +2659,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3006-review-code-for-process-command-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForCommandExecutionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3007": {
@@ -1946,7 +2675,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3007-review-code-for-open-redirect-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForOpenRedirectVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3008": {
@@ -1957,7 +2691,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3008-review-code-for-xpath-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForXPathInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3009": {
@@ -1968,7 +2707,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3009-review-code-for-xml-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForXmlInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3010": {
@@ -1979,7 +2723,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3010-review-code-for-xaml-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForXamlInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3011": {
@@ -1990,7 +2739,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3011-review-code-for-dll-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForDllInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3012": {
@@ -2001,7 +2755,12 @@
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3012-review-code-for-regex-injection-vulnerabilities",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": false
+            "isEnabledByDefault": false,
+            "typeName": "ReviewCodeForRegexInjectionVulnerabilities",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
           }
         },
         "CA3061": {
@@ -2012,62 +2771,14 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotAddSchemaByURL",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
-          }
-        },
-        "CA3075": {
-          "id": "CA3075",
-          "shortDescription": "Insecure DTD processing in XML",
-          "fullDescription": "Using XmlTextReader.Load(), creating an insecure XmlReaderSettings instance when invoking XmlReader.Create(), setting the InnerXml property of the XmlDocument and enabling DTD processing using XmlUrlResolver insecurely can lead to information disclosure. Replace it with a call to the Load() method overload that takes an XmlReader instance, use XmlReader.Create() to accept XmlReaderSettings arguments or consider explicitly setting secure values. The DataViewSettingCollectionString property of DataViewManager should always be assigned from a trusted source, the DtdProcessing property should be set to false, and the XmlResolver property should be changed to XmlSecureResolver or null. ",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3075-insecure-dtd-processing",
-          "properties": {
-            "category": "Security",
-            "isEnabledByDefault": true,
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA3076": {
-          "id": "CA3076",
-          "shortDescription": "Insecure XSLT script processing.",
-          "fullDescription": "Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3076-insecure-xslt-script-execution",
-          "properties": {
-            "category": "Security",
-            "isEnabledByDefault": true,
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA3077": {
-          "id": "CA3077",
-          "shortDescription": "Insecure Processing in API Design, XmlDocument and XmlTextReader",
-          "fullDescription": "Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. ",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3077-insecure-processing-in-api-design-xml-document-and-xml-text-reader",
-          "properties": {
-            "category": "Security",
-            "isEnabledByDefault": true,
-            "tags": [
-              "Telemetry"
-            ]
-          }
-        },
-        "CA3147": {
-          "id": "CA3147",
-          "shortDescription": "Mark Verb Handlers With Validate Antiforgery Token",
-          "fullDescription": "Missing ValidateAntiForgeryTokenAttribute on controller action {0}.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3147-mark-verb-handlers-with-validateantiforgerytoken",
-          "properties": {
-            "category": "Security",
-            "isEnabledByDefault": true
           }
         },
         "CA5350": {
@@ -2079,6 +2790,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseInsecureCryptographicAlgorithmsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2093,6 +2809,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseInsecureCryptographicAlgorithmsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2106,6 +2827,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "ApprovedCipherModeAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2119,6 +2845,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDisableCertificateValidation",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2132,6 +2863,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotCallDangerousMethodsInDeserialization",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2145,6 +2881,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotSetSwitch",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2159,6 +2900,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotReferSelfInSerializableClass",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2172,6 +2918,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDisableRequestValidation",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2185,6 +2936,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseDeprecatedSecurityProtocols",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2198,6 +2954,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotDisableHTTPHeaderChecking",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2211,6 +2972,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForDataSetReadXml",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2224,6 +2990,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotSerializeTypeWithPointerFields",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2237,6 +3008,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "SetViewStateUserKey",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2250,6 +3026,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForDeserialize",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2263,6 +3044,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForValidatingReader",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2276,6 +3062,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForSchemaRead",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2289,6 +3080,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseXmlReaderForXPathDocument",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2302,6 +3098,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseObsoleteKDFAlgorithm",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2315,6 +3116,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseXslTransform",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2328,6 +3134,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotUseAccountSAS",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2341,6 +3152,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseSharedAccessProtocolHttpsOnly",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2355,6 +3171,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseContainerLevelAccessPolicy",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2369,6 +3190,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotSetSwitch",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2383,6 +3209,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseWeakKDFAlgorithm",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2396,6 +3227,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotInstallRootCert",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2410,6 +3246,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotInstallRootCert",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2424,6 +3265,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "UseSecureCookiesASPNetCore",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2438,6 +3284,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "UseSecureCookiesASPNetCore",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2452,6 +3303,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotUseDSA",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2466,6 +3322,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "UseRSAWithSufficientKeySize",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2480,6 +3341,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotUseDeprecatedSecurityProtocols",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Telemetry"
             ]
@@ -2493,6 +3359,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotUseWeakKDFInsufficientIterationCount",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2507,6 +3378,11 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
+            "typeName": "DoNotUseWeakKDFInsufficientIterationCount",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
@@ -2521,20 +3397,458 @@
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
+            "typeName": "DoNotAddArchiveItemPathToTheTargetFileSystemPath",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
             "tags": [
               "Dataflow",
               "Telemetry"
             ]
           }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.NetCore.CSharp.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1309": {
+          "id": "CA1309",
+          "shortDescription": "Use ordinal stringcomparison",
+          "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpUseOrdinalStringComparisonAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
         },
-        "CA9999": {
-          "id": "CA9999",
-          "shortDescription": "Analyzer version mismatch",
-          "fullDescription": "Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.",
+        "CA1810": {
+          "id": "CA1810",
+          "shortDescription": "Initialize reference type static fields inline",
+          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpInitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1824": {
+          "id": "CA1824",
+          "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
+          "fullDescription": "The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824-mark-assemblies-with-neutralresourceslanguageattribute",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpMarkAssembliesWithNeutralResourcesLanguageAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1825": {
+          "id": "CA1825",
+          "shortDescription": "Avoid zero-length array allocations.",
+          "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAvoidZeroLengthArrayAllocationsAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "CA2010": {
+          "id": "CA2010",
+          "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
+          "fullDescription": "PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Reliability",
-            "isEnabledByDefault": true
+            "isEnabledByDefault": true,
+            "typeName": "CSharpAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2201": {
+          "id": "CA2201",
+          "shortDescription": "Do not raise reserved exception types",
+          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201-do-not-raise-reserved-exception-types",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "CSharpDoNotRaiseReservedExceptionTypesAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2207": {
+          "id": "CA2207",
+          "shortDescription": "Initialize value type static fields inline",
+          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpInitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.NetCore.VisualBasic.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1309": {
+          "id": "CA1309",
+          "shortDescription": "Use ordinal stringcomparison",
+          "fullDescription": "A string comparison operation that is nonlinguistic does not set the StringComparison parameter to either Ordinal or OrdinalIgnoreCase. By explicitly setting the parameter to either StringComparison.Ordinal or StringComparison.OrdinalIgnoreCase, your code often gains speed, becomes more correct, and becomes more reliable.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1309-use-ordinal-stringcomparison",
+          "properties": {
+            "category": "Globalization",
+            "isEnabledByDefault": false,
+            "typeName": "BasicUseOrdinalStringComparisonAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1810": {
+          "id": "CA1810",
+          "shortDescription": "Initialize reference type static fields inline",
+          "fullDescription": "A reference type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1810-initialize-reference-type-static-fields-inline",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicInitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1824": {
+          "id": "CA1824",
+          "shortDescription": "Mark assemblies with NeutralResourcesLanguageAttribute",
+          "fullDescription": "The NeutralResourcesLanguage attribute informs the ResourceManager of the language that was used to display the resources of a neutral culture for an assembly. This improves lookup performance for the first resource that you load and can reduce your working set.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1824-mark-assemblies-with-neutralresourceslanguageattribute",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicMarkAssembliesWithNeutralResourcesLanguageAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA1825": {
+          "id": "CA1825",
+          "shortDescription": "Avoid zero-length array allocations.",
+          "fullDescription": "Avoid unnecessary zero-length array allocations.  Use {0} instead.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAvoidZeroLengthArrayAllocationsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA2010": {
+          "id": "CA2010",
+          "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
+          "fullDescription": "PreserveSigAttribute indicates that a method will return an HRESULT, rather than throwing an exception. Therefore, it is important to consume the HRESULT returned by the method, so that errors can be detected. Generally, this is done by calling Marshal.ThrowExceptionForHR.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "BasicAlwaysConsumeTheValueReturnedByMethodsMarkedWithPreserveSigAttributeAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2201": {
+          "id": "CA2201",
+          "shortDescription": "Do not raise reserved exception types",
+          "fullDescription": "An exception of type that is not sufficiently specific or reserved by the runtime should never be raised by user code. This makes the original error difficult to detect and debug. If this exception instance might be thrown, use a different exception type.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2201-do-not-raise-reserved-exception-types",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": false,
+            "typeName": "BasicDoNotRaiseReservedExceptionTypesAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2207": {
+          "id": "CA2207",
+          "shortDescription": "Initialize value type static fields inline",
+          "fullDescription": "A value type declares an explicit static constructor. To fix a violation of this rule, initialize all static data when it is declared and remove the static constructor.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2207-initialize-value-type-static-fields-inline",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "BasicInitializeStaticFieldsInlineAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.NetFramework.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA1058": {
+          "id": "CA1058",
+          "shortDescription": "Types should not extend certain base types",
+          "fullDescription": "An externally visible type extends certain base types. Use one of the alternatives.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1058-types-should-not-extend-certain-base-types",
+          "properties": {
+            "category": "Design",
+            "isEnabledByDefault": true,
+            "typeName": "TypesShouldNotExtendCertainBaseTypesAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "PortedFxCopRuleTag",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2153": {
+          "id": "CA2153",
+          "shortDescription": "Do Not Catch Corrupted State Exceptions",
+          "fullDescription": "Catching corrupted state exceptions could mask errors (such as access violations), resulting in inconsistent state of execution or making it easier for attackers to compromise system. Instead, catch and handle a more specific set of exception type(s) or re-throw the exception",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2153-avoid-handling-corrupted-state-exceptions",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotCatchCorruptedStateExceptionsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA3075": {
+          "id": "CA3075",
+          "shortDescription": "Insecure DTD processing in XML",
+          "fullDescription": "Using XmlTextReader.Load(), creating an insecure XmlReaderSettings instance when invoking XmlReader.Create(), setting the InnerXml property of the XmlDocument and enabling DTD processing using XmlUrlResolver insecurely can lead to information disclosure. Replace it with a call to the Load() method overload that takes an XmlReader instance, use XmlReader.Create() to accept XmlReaderSettings arguments or consider explicitly setting secure values. The DataViewSettingCollectionString property of DataViewManager should always be assigned from a trusted source, the DtdProcessing property should be set to false, and the XmlResolver property should be changed to XmlSecureResolver or null. ",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3075-insecure-dtd-processing",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseInsecureDtdProcessingAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA3147": {
+          "id": "CA3147",
+          "shortDescription": "Mark Verb Handlers With Validate Antiforgery Token",
+          "fullDescription": "Missing ValidateAntiForgeryTokenAttribute on controller action {0}.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3147-mark-verb-handlers-with-validateantiforgerytoken",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "MarkVerbHandlersWithValidateAntiforgeryTokenAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.NetFramework.CSharp.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA3076": {
+          "id": "CA3076",
+          "shortDescription": "Insecure XSLT script processing.",
+          "fullDescription": "Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3076-insecure-xslt-script-execution",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpDoNotUseInsecureXSLTScriptExecutionAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA3077": {
+          "id": "CA3077",
+          "shortDescription": "Insecure Processing in API Design, XmlDocument and XmlTextReader",
+          "fullDescription": "Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. ",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3077-insecure-processing-in-api-design-xml-document-and-xml-text-reader",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpDoNotUseInsecureDtdProcessingInApiDesignAnalyzer",
+            "languages": [
+              "C#"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "tool": {
+        "name": "Microsoft.NetFramework.VisualBasic.Analyzers",
+        "version": "2.9.4",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA3076": {
+          "id": "CA3076",
+          "shortDescription": "Insecure XSLT script processing.",
+          "fullDescription": "Providing an insecure XsltSettings instance and an insecure XmlResolver instance to XslCompiledTransform.Load method is potentially unsafe as it allows processing script within XSL, which on an untrusted XSL input may lead to malicious code execution. Either replace the insecure XsltSettings argument with XsltSettings.Default or an instance that has disabled document function and script execution, or replace the XmlResolver argurment with null or an XmlSecureResolver instance. This message may be suppressed if the input is known to be from a trusted source and external resource resolution from locations that are not known in advance must be supported.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3076-insecure-xslt-script-execution",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "BasicDoNotUseInsecureXSLTScriptExecutionAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA3077": {
+          "id": "CA3077",
+          "shortDescription": "Insecure Processing in API Design, XmlDocument and XmlTextReader",
+          "fullDescription": "Enabling DTD processing on all instances derived from XmlTextReader or  XmlDocument and using XmlUrlResolver for resolving external XML entities may lead to information disclosure. Ensure to set the XmlResolver property to null, create an instance of XmlSecureResolver when processing untrusted input, or use XmlReader.Create method with a secure XmlReaderSettings argument. Unless you need to enable it, ensure the DtdProcessing property is set to false. ",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3077-insecure-processing-in-api-design-xml-document-and-xml-text-reader",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "BasicDoNotUseInsecureDtdProcessingInApiDesignAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
           }
         }
       }

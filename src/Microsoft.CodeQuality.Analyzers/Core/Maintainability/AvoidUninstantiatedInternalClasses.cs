@@ -188,13 +188,15 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                 startContext.RegisterCompilationEndAction(context =>
                 {
-                    var uninstantiatedInternalTypes = internalTypes
-                        .Select(it => it.Key.OriginalDefinition)
-                        .Except(instantiatedTypes.Select(it => it.Key.OriginalDefinition))
-                        .Where(type => !HasInstantiatedNestedType(type, instantiatedTypes.Keys));
-
-                    foreach (var type in uninstantiatedInternalTypes)
+                    foreach (var it in internalTypes)
                     {
+                        var type = it.Key.OriginalDefinition;
+                        if (instantiatedTypes.Any(it => it.Key.OriginalDefinition.Equals(type))
+                            || HasInstantiatedNestedType(type, instantiatedTypes.Keys))
+                        {
+                            continue;
+                        }
+
                         context.ReportDiagnostic(type.CreateDiagnostic(Rule, type.FormatMemberName()));
                     }
                 });
@@ -326,9 +328,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             // TODO: Main in nested class? If allowed, what name does it have?
             // TODO: Test that parameter is array of int.
             return type.GetMembers("Main")
-                .Where(m => m is IMethodSymbol)
-                .Cast<IMethodSymbol>()
-                .Any(m => IsEntryPoint(m, taskSymbol, genericTaskSymbol));
+                .Any(m => m is IMethodSymbol method && IsEntryPoint(method, taskSymbol, genericTaskSymbol));
         }
 
         private static bool IsEntryPoint(IMethodSymbol method, ITypeSymbol taskSymbol, ITypeSymbol genericTaskSymbol)
@@ -343,12 +343,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            if (method.Parameters.Count() == 0)
+            var enumerator = method.Parameters.GetEnumerator();
+
+            if (!enumerator.MoveNext())
             {
                 return true;
             }
 
-            if (method.Parameters.Count() > 1)
+            enumerator.MoveNext();
+
+            if (enumerator.MoveNext())
             {
                 return false;
             }

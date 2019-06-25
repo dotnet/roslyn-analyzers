@@ -131,17 +131,28 @@ namespace Analyzer.Utilities.Extensions
             ImmutableDictionary<string, string> properties,
             params object[] args)
         {
-            IEnumerable<Location> inSource = locations.Where(l => l.IsInSource);
-            if (!inSource.Any())
+            Location first = null;
+
+            foreach (var location in locations)
+            {
+                if (location.IsInSource)
+                {
+                    first = location;
+                    break;
+                }
+            }
+
+            if (first is null)
             {
                 return Diagnostic.Create(rule, null, args);
             }
 
             return Diagnostic.Create(rule,
-                     location: inSource.First(),
-                     additionalLocations: inSource.Skip(1),
+                     location: first,
+                     additionalLocations: locations.Where(l => l.IsInSource).Skip(1),
                      properties: properties,
                      messageArgs: args);
+
         }
     }
 }

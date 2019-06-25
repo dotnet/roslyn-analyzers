@@ -49,6 +49,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void AnalyzeNamedType(SymbolAnalysisContext context)
         {
             var symbol = (INamedTypeSymbol)context.Symbol;
+            var enumValueCount = 0;
+
+            foreach(var m in symbol.GetMembers())
+            {
+                if (m.Kind != SymbolKind.Field)
+                {
+                    continue;
+                }
+
+                enumValueCount++;
+            }
             IEnumerable<ISymbol> enumValues;
             if (symbol.TypeKind != TypeKind.Enum || !(enumValues = symbol.GetMembers().Where(m => m.Kind == SymbolKind.Field)).Any())
             {

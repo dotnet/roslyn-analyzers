@@ -265,42 +265,42 @@ namespace Test.Utilities
                 builder.AppendLine("// " + diagnostics[i].ToString());
 
                 Type analyzerType = analyzer.GetType();
-                IEnumerable<FieldInfo> ruleFields = analyzerType
-                    .GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy)
-                    .Where(f => f.IsStatic && f.FieldType == typeof(DiagnosticDescriptor));
 
-                foreach (FieldInfo field in ruleFields)
+                foreach (FieldInfo field in analyzerType.GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy))
                 {
-                    if (field.GetValue(null) is DiagnosticDescriptor rule && rule.Id == diagnostics[i].Id)
+                    if (field.IsStatic && field.FieldType == typeof(DiagnosticDescriptor))
                     {
-                        Location location = diagnostics[i].Location;
-                        if (location == Location.None)
+                        if (field.GetValue(null) is DiagnosticDescriptor rule && rule.Id == diagnostics[i].Id)
                         {
-                            builder.AppendFormat("GetGlobalResult({0}.{1})", analyzerType.Name, field.Name);
+                            Location location = diagnostics[i].Location;
+                            if (location == Location.None)
+                            {
+                                builder.AppendFormat("GetGlobalResult({0}.{1})", analyzerType.Name, field.Name);
+                            }
+                            else
+                            {
+                                Assert.False(location.IsInMetadata,
+                                    "Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n" + diagnostics[i]);
+
+                                string resultMethodName = GetResultMethodName(diagnostics[i]);
+                                Microsoft.CodeAnalysis.Text.LinePosition linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
+
+                                builder.AppendFormat("{0}({1}, {2}, {3}.{4})",
+                                    resultMethodName,
+                                    linePosition.Line + 1,
+                                    linePosition.Character + 1,
+                                    field.DeclaringType.Name,
+                                    field.Name);
+                            }
+
+                            if (i != diagnostics.Length - 1)
+                            {
+                                builder.Append(',');
+                            }
+
+                            builder.AppendLine();
+                            break;
                         }
-                        else
-                        {
-                            Assert.False(location.IsInMetadata,
-                                "Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n" + diagnostics[i]);
-
-                            string resultMethodName = GetResultMethodName(diagnostics[i]);
-                            Microsoft.CodeAnalysis.Text.LinePosition linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
-
-                            builder.AppendFormat("{0}({1}, {2}, {3}.{4})",
-                                resultMethodName,
-                                linePosition.Line + 1,
-                                linePosition.Character + 1,
-                                field.DeclaringType.Name,
-                                field.Name);
-                        }
-
-                        if (i != diagnostics.Length - 1)
-                        {
-                            builder.Append(',');
-                        }
-
-                        builder.AppendLine();
-                        break;
                     }
                 }
             }

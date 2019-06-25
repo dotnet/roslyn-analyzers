@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -76,46 +77,46 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     yield break;
                 }
 
-                var baseMethods = baseType.GetMembers(method.Name)
-                    .OfType<IMethodSymbol>()
-                    .Where(x => !(x.IsStatic || x.IsVirtual)
-                           && x.ReturnType.Equals(method.ReturnType)
-                           && x.DeclaredAccessibility != Accessibility.Private
-                           && x.Parameters.Length == method.Parameters.Length);
-
-                foreach (var baseMethod in baseMethods)
+                foreach (var member in baseType.GetMembers(method.Name))
                 {
-                    var isMethodHidden = false;
-
-                    for (var i = 0; i < baseMethod.Parameters.Length; ++i)
+                    if (member is IMethodSymbol baseMethod
+                        && !(baseMethod.IsStatic || baseMethod.IsVirtual)
+                        && baseMethod.ReturnType.Equals(method.ReturnType)
+                        && baseMethod.DeclaredAccessibility != Accessibility.Private
+                        && baseMethod.Parameters.Length == method.Parameters.Length)
                     {
-                        var baseMethodParameter = baseMethod.Parameters[i];
-                        var derivedMethodParameter = method.Parameters[i];
+                        var isMethodHidden = false;
 
-                        // All parameter names must match
-                        if (baseMethodParameter.Name != derivedMethodParameter.Name)
+                        for (var i = 0; i < baseMethod.Parameters.Length; ++i)
                         {
-                            isMethodHidden = false;
-                            break;
-                        }
+                            var baseMethodParameter = baseMethod.Parameters[i];
+                            var derivedMethodParameter = method.Parameters[i];
 
-                        // All parameter types must match except for those that are subtypes of the
-                        // derived method's parameter type - there must be at least one.
-                        if (!baseMethodParameter.Type.Equals(derivedMethodParameter.Type))
-                        {
-                            if (!baseMethodParameter.Type.DerivesFrom(derivedMethodParameter.Type))
+                            // All parameter names must match
+                            if (baseMethodParameter.Name != derivedMethodParameter.Name)
                             {
                                 isMethodHidden = false;
                                 break;
                             }
 
-                            isMethodHidden = true;
-                        }
-                    }
+                            // All parameter types must match except for those that are subtypes of the
+                            // derived method's parameter type - there must be at least one.
+                            if (!baseMethodParameter.Type.Equals(derivedMethodParameter.Type))
+                            {
+                                if (!baseMethodParameter.Type.DerivesFrom(derivedMethodParameter.Type))
+                                {
+                                    isMethodHidden = false;
+                                    break;
+                                }
 
-                    if (isMethodHidden)
-                    {
-                        yield return baseMethod;
+                                isMethodHidden = true;
+                            }
+                        }
+
+                        if (isMethodHidden)
+                        {
+                            yield return baseMethod;
+                        }
                     }
                 }
 

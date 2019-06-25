@@ -45,7 +45,27 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var classSymbol = (INamedTypeSymbol)model.GetDeclaredSymbol(nodeToFix, cancellationToken);
-            System.Collections.Generic.List<SyntaxNode> instanceConstructors = classSymbol.InstanceConstructors.Where(t => t.DeclaredAccessibility == Accessibility.Public).Select(t => GetDeclaration(t)).Where(d => d != null).ToList();
+
+            System.Collections.Generic.List<SyntaxNode> instanceConstructors = null;
+
+            foreach (var constructor in classSymbol.InstanceConstructors)
+            {
+                if (constructor.DeclaredAccessibility == Accessibility.Public && GetDeclaration(constructor) is SyntaxNode syntaxNode)
+                {
+                    if (instanceConstructors is null)
+                    {
+                        instanceConstructors = new System.Collections.Generic.List<SyntaxNode>();
+                    }
+
+                    instanceConstructors.Add(syntaxNode);
+                }
+            }
+
+            if (instanceConstructors is null)
+            {
+                return document;
+            }
+
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode newRoot = root.ReplaceNodes(instanceConstructors, (original, rewritten) => generator.WithAccessibility(original, Accessibility.Protected));
             return document.WithSyntaxRoot(newRoot);

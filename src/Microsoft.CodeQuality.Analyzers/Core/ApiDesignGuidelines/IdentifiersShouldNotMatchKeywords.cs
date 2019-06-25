@@ -123,13 +123,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 string namespaceDisplayString = containingNamespace.ToDisplayString(s_namespaceDisplayFormat);
 
-                IEnumerable<string> namespaceNameComponents = containingNamespace.ToDisplayParts(s_namespaceDisplayFormat)
-                    .Where(dp => dp.Kind == SymbolDisplayPartKind.NamespaceName)
-                    .Select(dp => dp.ToString());
-
-                foreach (string component in namespaceNameComponents)
+                foreach (var dp in containingNamespace.ToDisplayParts(s_namespaceDisplayFormat))
                 {
-                    if (IsKeyword(component, out string matchingKeyword))
+                    if (dp.Kind == SymbolDisplayPartKind.NamespaceName && IsKeyword(dp.ToString(), out string matchingKeyword))
                     {
                         bool doReportDiagnostic;
 

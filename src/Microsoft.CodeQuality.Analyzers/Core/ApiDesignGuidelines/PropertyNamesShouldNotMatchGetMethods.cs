@@ -78,12 +78,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 Diagnostic diagnostic = null;
 
-                var exposedMembers = type.GetMembers(identifier).Where(member => configuredVisibilities.Contains(member.GetResultantVisibility()));
-                foreach (var member in exposedMembers)
+                foreach (var member in type.GetMembers(identifier))
                 {
                     // Ignore Object.GetType, as it's commonly seen and Type is a commonly-used property name.
-                    if (member.ContainingType.SpecialType == SpecialType.System_Object &&
-                        member.Name == nameof(GetType))
+                    if (!configuredVisibilities.Contains(member.GetResultantVisibility())
+                        || (member.ContainingType.SpecialType == SpecialType.System_Object && member.Name == nameof(GetType)))
                     {
                         continue;
                     }

@@ -115,7 +115,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
-                    if (methodsWithSameNameAsTargetMethod.Count() > 1)
+                    if (methodsWithSameNameAsTargetMethod.Skip(1).Any())
                     {
                         var correctOverload = methodsWithSameNameAsTargetMethod
                                                 .GetMethodOverloadsWithDesiredParameterAtTrailing(targetMethod, stringComparisonType)

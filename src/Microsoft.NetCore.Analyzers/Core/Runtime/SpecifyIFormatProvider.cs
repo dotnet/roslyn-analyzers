@@ -161,7 +161,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     #region "IFormatProviderAlternateStringRule & IFormatProviderAlternateRule"
 
                     IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
-                    if (methodsWithSameNameAsTargetMethod.Count() > 1)
+                    if (methodsWithSameNameAsTargetMethod.Skip(1).Any())
                     {
                         var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType).ToList();
 
@@ -229,10 +229,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static IEnumerable<int> GetIndexesOfParameterType(IMethodSymbol targetMethod, INamedTypeSymbol formatProviderType)
         {
-            return targetMethod.Parameters
-                .Select((Parameter, Index) => new { Parameter, Index })
-                .Where(x => x.Parameter.Type.Equals(formatProviderType))
-                .Select(x => x.Index);
+            for (var index = 0; index < targetMethod.Parameters.Length; index++)
+            {
+                if (targetMethod.Parameters[index].Type.Equals(formatProviderType))
+                {
+                    yield return index;
+                }
+            }
         }
 
         private static ParameterInfo GetParameterInfo(INamedTypeSymbol type, bool isArray = false, int arrayRank = 0, bool isParams = false)

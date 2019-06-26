@@ -66,10 +66,36 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                         return;
                     }
 
-                    var immutableArrayTypes = systemCollectionsImmutableNamespace.GetMembers(nameof(ImmutableArray)).OfType<INamedTypeSymbol>().Where(type => type.MetadataName == typeof(ImmutableArray<>).Name).ToArray();
-                    var localSymbol = immutableArrayTypes.FirstOrDefault(type => type.ContainingAssembly.Equals(compilation.Assembly));
-                    var publicSymbol = immutableArrayTypes.FirstOrDefault(type => type.DeclaredAccessibility == Accessibility.Public);
-                    var fallbackSymbol = immutableArrayTypes.FirstOrDefault();
+                    INamedTypeSymbol localSymbol = null;
+                    INamedTypeSymbol publicSymbol = null;
+                    INamedTypeSymbol fallbackSymbol = null;
+
+                    foreach (var member in systemCollectionsImmutableNamespace.GetMembers(nameof(ImmutableArray)))
+                    {
+                        if (!(member is INamedTypeSymbol type && type.MetadataName == typeof(ImmutableArray<>).Name))
+                        {
+                            continue;
+                        }
+
+                        if (type.ContainingAssembly.Equals(compilation.Assembly))
+                        {
+                            localSymbol = type;
+                            break;
+                        }
+
+                        if (publicSymbol is null && type.DeclaredAccessibility == Accessibility.Public)
+                        {
+                            publicSymbol = type;
+                            continue;
+                        }
+
+                        if (fallbackSymbol is null)
+                        {
+                            fallbackSymbol = type;
+                            continue;
+                        }
+                    }
+
                     immutableArraySymbol = localSymbol ?? publicSymbol ?? fallbackSymbol;
                 }
 

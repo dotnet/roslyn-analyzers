@@ -98,7 +98,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             if (references.Count() != 1)
             {
-                return (newSolution: solution, allReferencesFixed: references.Count() == 0);
+                return (newSolution: solution, allReferencesFixed: !references.Any());
             }
 
             var allReferencesFixed = true;

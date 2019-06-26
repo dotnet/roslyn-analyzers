@@ -41,21 +41,22 @@ namespace Roslyn.Diagnostics.CSharp.Analyzers
 
             public void AnalyzeNode(SyntaxNodeAnalysisContext context)
             {
-                System.Collections.Generic.IEnumerable<SyntaxNode> expressionsToAnalyze = context.Node.DescendantNodes().Where(n => ShouldAnalyzeExpression(n, context.SemanticModel));
-
-                foreach (SyntaxNode expression in expressionsToAnalyze)
+                foreach (SyntaxNode expression in context.Node.DescendantNodes())
                 {
-                    switch (expression.Kind())
+                    if (ShouldAnalyzeExpression(expression, context.SemanticModel))
                     {
-                        case SyntaxKind.ArrayCreationExpression:
-                            AnalyzeArrayCreationExpression((ArrayCreationExpressionSyntax)expression, context.ReportDiagnostic);
-                            break;
-                        case SyntaxKind.ImplicitArrayCreationExpression:
-                            AnalyzeInitializerExpression(((ImplicitArrayCreationExpressionSyntax)expression).Initializer, context.ReportDiagnostic);
-                            break;
-                        case SyntaxKind.SimpleMemberAccessExpression:
-                            AnalyzeMemberAccessName(((MemberAccessExpressionSyntax)expression).Name, context.SemanticModel, context.ReportDiagnostic);
-                            break;
+                        switch (expression.Kind())
+                        {
+                            case SyntaxKind.ArrayCreationExpression:
+                                AnalyzeArrayCreationExpression((ArrayCreationExpressionSyntax)expression, context.ReportDiagnostic);
+                                break;
+                            case SyntaxKind.ImplicitArrayCreationExpression:
+                                AnalyzeInitializerExpression(((ImplicitArrayCreationExpressionSyntax)expression).Initializer, context.ReportDiagnostic);
+                                break;
+                            case SyntaxKind.SimpleMemberAccessExpression:
+                                AnalyzeMemberAccessName(((MemberAccessExpressionSyntax)expression).Name, context.SemanticModel, context.ReportDiagnostic);
+                                break;
+                        }
                     }
                 }
             }

@@ -212,6 +212,25 @@
               "Telemetry"
             ]
           }
+        },
+        "RS0036": {
+          "id": "RS0036",
+          "shortDescription": "One or both of the public API files are missing",
+          "fullDescription": "The solution must contain two files with the type \"AdditionalFiles\": PublicAPI.Unshipped.txt and PublicAPI.Shipped.txt. At least one of these files is missing or has the wrong type.",
+          "defaultLevel": "warning",
+          "helpUri": "https://github.com/dotnet/roslyn-analyzers/blob/master/src/PublicApiAnalyzers/PublicApiAnalyzers.Help.md",
+          "properties": {
+            "category": "ApiDesign",
+            "isEnabledByDefault": true,
+            "typeName": "DeclarePublicApiAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
         }
       }
     },

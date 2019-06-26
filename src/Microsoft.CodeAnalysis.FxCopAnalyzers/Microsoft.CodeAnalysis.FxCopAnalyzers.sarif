@@ -1473,6 +1473,21 @@
               "Telemetry"
             ]
           }
+        },
+        "CA2245": {
+          "id": "CA2245",
+          "shortDescription": "Do not assign a property to itself.",
+          "fullDescription": "The property {0} should not be assigned to itself.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidPropertySelfAssignment",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
         }
       }
     },

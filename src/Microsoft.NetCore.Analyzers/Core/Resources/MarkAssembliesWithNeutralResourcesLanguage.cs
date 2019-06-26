@@ -125,11 +125,18 @@ namespace Microsoft.NetCore.Analyzers.Resources
         {
             INamedTypeSymbol attribute = WellKnownTypes.NeutralResourcesLanguageAttribute(context.Compilation);
             INamedTypeSymbol @string = WellKnownTypes.String(context.Compilation);
+            attributeData = null;
 
-            IEnumerable<AttributeData> attributes = context.Compilation.Assembly.GetAttributes().Where(d => d.AttributeClass?.Equals(attribute) == true);
-            foreach (AttributeData data in attributes)
+            foreach (AttributeData data in context.Compilation.Assembly.GetAttributes())
             {
-                if (data.ConstructorArguments.Any(c => c.Type?.Equals(@string) == true && !string.IsNullOrWhiteSpace((string)c.Value)))
+                if (attributeData is null)
+                {
+                    // set default out value
+                    attributeData = data;
+                }
+
+                if (data.AttributeClass?.Equals(attribute) == true
+                    && data.ConstructorArguments.Any(c => c.Type?.Equals(@string) == true && !string.IsNullOrWhiteSpace((string)c.Value)))
                 {
                     // found one that already does right thing.
                     attributeData = data;
@@ -138,7 +145,6 @@ namespace Microsoft.NetCore.Analyzers.Resources
             }
 
             // either we couldn't find one or existing one is wrong.
-            attributeData = attributes.FirstOrDefault();
             return false;
         }
     }

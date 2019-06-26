@@ -3,7 +3,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -175,8 +174,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters)
             {
-                // Initialization: Assume all parameters are unused.
-                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);
+                // Initialization: Assume all parameters are unused, except the ones with special discard name.
+                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters.Where(p => !p.IsSymbolWithSpecialDiscardName()));
                 _finalUnusedParameters = finalUnusedParameters;
                 _method = method;
             }

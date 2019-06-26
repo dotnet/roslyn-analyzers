@@ -757,6 +757,33 @@ Public Class C
 End Class");
         }
 
+        [Fact]
+        [WorkItem(2589, "https://github.com/dotnet/roslyn-analyzers/issues/2589")]
+        [WorkItem(2593, "https://github.com/dotnet/roslyn-analyzers/issues/2593")]
+        public void NoDiagnosticDiscardParameterNames()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M(int _, int _1, int _4)
+    {
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    ' _ is not an allowed identifier in VB.
+    Public Sub M(_1 As Integer, _2 As Integer, _4 As Integer)
+    End Sub
+End Class
+");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)

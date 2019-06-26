@@ -136,9 +136,8 @@ class TestClass
             GetCSharpResultAt(9, 24, 9, 37, "FileInfo.FileInfo(string fileName)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)"));
         }
 
-        //Ideally, we wouldn't generate a diagnostic in this case.
         [Fact]
-        public void Test_Sanitizer_String_StartsWith_Diagnostic()
+        public void Test_Sanitizer_String_StartsWith_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -155,8 +154,7 @@ class TestClass
             zipArchiveEntry.ExtractToFile(destinationFileName);
         }
     }
-}",
-            GetCSharpResultAt(13, 13, 9, 35, "void ZipFileExtensions.ExtractToFile(ZipArchiveEntry source, string destinationFileName)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)"));
+}");
         }
 
         [Fact]

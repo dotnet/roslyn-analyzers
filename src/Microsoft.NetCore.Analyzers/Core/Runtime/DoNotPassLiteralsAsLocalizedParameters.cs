@@ -95,7 +95,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
                     {
-                        if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
+                        if (ShouldBeLocalized(parameter.OriginalDefinition, containingPropertySymbolOpt?.OriginalDefinition, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
                             lazyValueContentResult.Value != null)
                         {
                             ValueContentAbstractValue stringContentValue = lazyValueContentResult.Value[operation.Kind, operation.Syntax];
@@ -236,7 +236,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // FxCop compat: For overrides, check for localizability of the corresponding parameter in the overridden method.
             var method = (IMethodSymbol)parameterSymbol.ContainingSymbol;
             if (method.IsOverride &&
-                method.OverriddenMethod.Parameters.Length == method.Parameters.Length)
+                method.OverriddenMethod?.Parameters.Length == method.Parameters.Length)
             {
                 int parameterIndex = method.GetParameterIndex(parameterSymbol);
                 IParameterSymbol overridenParameter = method.OverriddenMethod.Parameters[parameterIndex];

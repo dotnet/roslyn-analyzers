@@ -31,7 +31,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
                                                                          description: s_localizableDescription,
-                                                                         helpLinkUri: "https://github.com/dotnet/roslyn-analyzers/blob/master/src/Microsoft.CodeQuality.Analyzers/Microsoft.CodeQuality.Analyzers.md#maintainability",
+                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1507",
                                                                          customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(RuleWithSuggestion);

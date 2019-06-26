@@ -784,6 +784,29 @@ End Class
 ");
         }
 
+        [Fact]
+        [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
+        public void NoDiagnosticUsedLocalFunctionParameters()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M()
+    {
+        LocalFunction(0);
+        return;
+
+        void LocalFunction(int x)
+        {
+            Console.WriteLine(x);
+        }
+    }
+}
+");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)
@@ -912,6 +935,50 @@ static class C
 ",
     // Test0.cs(4,49): warning CA1801: Parameter anotherParam of method ExtensionMethod is never used. Remove the parameter or use it in the method body.
     GetCSharpUnusedParameterResultAt(4, 49, "anotherParam", "ExtensionMethod"));
+        }
+
+        [Fact]
+        [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
+        public void DiagnosticForUnusedLocalFunctionParameters_01()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M()
+    {
+        LocalFunction(0);
+        return;
+
+        void LocalFunction(int x)
+        {
+        }
+    }
+}",
+            // Test0.cs(11,32): warning CA1801: Parameter x of method LocalFunction is never used. Remove the parameter or use it in the method body.
+            GetCSharpUnusedParameterResultAt(11, 32, "x", "LocalFunction"));
+        }
+
+        [Fact]
+        [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
+        public void DiagnosticForUnusedLocalFunctionParameters_02()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M()
+    {
+        // Flag unused parameter even if LocalFunction is unused.
+        void LocalFunction(int x)
+        {
+        }
+    }
+}",
+            // Test0.cs(9,32): warning CA1801: Parameter x of method LocalFunction is never used. Remove the parameter or use it in the method body.
+            GetCSharpUnusedParameterResultAt(9, 32, "x", "LocalFunction"));
         }
 
         #endregion

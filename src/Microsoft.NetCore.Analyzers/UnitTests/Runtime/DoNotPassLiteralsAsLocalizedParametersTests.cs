@@ -1403,11 +1403,11 @@ internal static class Program
         // No configuration - validate diagnostics in default configuration
         [InlineData(@"")]
         // Match by method name
-        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M~M2")]
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M|M2")]
         // Match by type name
         [InlineData(@"dotnet_code_quality.excluded_symbol_names = C")]
         // Match multiple methods by method documentation ID with "M:" prefix
-        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M:C.M(string)~M:C.M2(C)~")]
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M:C.M(System.String)|M:C.M2(System.String)")]
         // Match by type documentation ID with "T:" prefix
         [InlineData(@"dotnet_code_quality.excluded_symbol_names = T:C")]
         public void ShouldBeLocalized_MethodExcludedByConfiguration_NoDiagnostic(string editorConfigText)

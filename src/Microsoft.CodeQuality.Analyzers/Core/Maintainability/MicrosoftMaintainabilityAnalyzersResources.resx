@@ -133,7 +133,7 @@
     <value>Review unused parameters</value>
   </data>
   <data name="ReviewUnusedParametersDescription" xml:space="preserve">
-    <value>A method signature includes a parameter that is not used in the method body.</value>
+    <value>Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.</value>
   </data>
   <data name="ReviewUnusedParametersMessage" xml:space="preserve">
     <value>Parameter {0} of method {1} is never used. Remove the parameter or use it in the method body.</value>

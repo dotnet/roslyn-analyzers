@@ -118,8 +118,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersDescription">
-        <source>A method signature includes a parameter that is not used in the method body.</source>
-        <target state="translated">方法签名包括一个未在方法体中使用的参数。</target>
+        <source>Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.</source>
+        <target state="needs-review-translation">方法签名包括一个未在方法体中使用的参数。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">

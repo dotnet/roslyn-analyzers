@@ -757,6 +757,56 @@ Public Class C
 End Class");
         }
 
+        [Fact]
+        [WorkItem(2589, "https://github.com/dotnet/roslyn-analyzers/issues/2589")]
+        [WorkItem(2593, "https://github.com/dotnet/roslyn-analyzers/issues/2593")]
+        public void NoDiagnosticDiscardParameterNames()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M(int _, int _1, int _4)
+    {
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Public Class C
+    ' _ is not an allowed identifier in VB.
+    Public Sub M(_1 As Integer, _2 As Integer, _4 As Integer)
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
+        public void NoDiagnosticUsedLocalFunctionParameters()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M()
+    {
+        LocalFunction(0);
+        return;
+
+        void LocalFunction(int x)
+        {
+            Console.WriteLine(x);
+        }
+    }
+}
+");
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)
@@ -885,6 +935,50 @@ static class C
 ",
     // Test0.cs(4,49): warning CA1801: Parameter anotherParam of method ExtensionMethod is never used. Remove the parameter or use it in the method body.
     GetCSharpUnusedParameterResultAt(4, 49, "anotherParam", "ExtensionMethod"));
+        }
+
+        [Fact]
+        [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
+        public void DiagnosticForUnusedLocalFunctionParameters_01()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M()
+    {
+        LocalFunction(0);
+        return;
+
+        void LocalFunction(int x)
+        {
+        }
+    }
+}",
+            // Test0.cs(11,32): warning CA1801: Parameter x of method LocalFunction is never used. Remove the parameter or use it in the method body.
+            GetCSharpUnusedParameterResultAt(11, 32, "x", "LocalFunction"));
+        }
+
+        [Fact]
+        [WorkItem(2466, "https://github.com/dotnet/roslyn-analyzers/issues/2466")]
+        public void DiagnosticForUnusedLocalFunctionParameters_02()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void M()
+    {
+        // Flag unused parameter even if LocalFunction is unused.
+        void LocalFunction(int x)
+        {
+        }
+    }
+}",
+            // Test0.cs(9,32): warning CA1801: Parameter x of method LocalFunction is never used. Remove the parameter or use it in the method body.
+            GetCSharpUnusedParameterResultAt(9, 32, "x", "LocalFunction"));
         }
 
         #endregion

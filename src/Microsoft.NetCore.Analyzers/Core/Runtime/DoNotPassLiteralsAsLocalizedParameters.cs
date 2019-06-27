@@ -71,12 +71,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
                         var argument = (IArgumentOperation)operationContext.Operation;
-                        switch (argument.Parent?.Kind)
+                        IMethodSymbol targetMethod = null;
+                        switch (argument.Parent)
                         {
-                            case OperationKind.Invocation:
-                            case OperationKind.ObjectCreation:
-                                AnalyzeArgument(argument.Parameter, containingPropertySymbolOpt: null, operation: argument, reportDiagnostic: operationContext.ReportDiagnostic);
-                                return;
+                            case IInvocationOperation invocation:
+                                targetMethod = invocation.TargetMethod;
+                                break;
+
+                            case IObjectCreationOperation objectCreation:
+                                targetMethod = objectCreation.Constructor;
+                                break;
+                        }
+
+                        if (ShouldAnalyze(targetMethod))
+                        {
+                            AnalyzeArgument(argument.Parameter, containingPropertySymbolOpt: null, operation: argument, reportDiagnostic: operationContext.ReportDiagnostic);
                         }
                     }, OperationKind.Argument);
 
@@ -86,12 +95,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (propertyReference.Parent is IAssignmentOperation assignment &&
                             assignment.Target == propertyReference &&
                             !propertyReference.Property.IsIndexer &&
-                            propertyReference.Property.SetMethod?.Parameters.Length == 1)
+                            propertyReference.Property.SetMethod?.Parameters.Length == 1 &&
+                            ShouldAnalyze(propertyReference.Property))
                         {
                             IParameterSymbol valueSetterParam = propertyReference.Property.SetMethod.Parameters[0];
                             AnalyzeArgument(valueSetterParam, propertyReference.Property, assignment, operationContext.ReportDiagnostic);
                         }
                     }, OperationKind.PropertyReference);
+
+                    return;
+
+                    // Local functions
+                    bool ShouldAnalyze(ISymbol symbol)
+                        => symbol != null && !symbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken);
 
                     void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
                     {

@@ -1488,5 +1488,45 @@ public class Test
     }
 }", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
+
+        [Theory, WorkItem(2602, "https://github.com/dotnet/roslyn-analyzers/issues/2602")]
+        // No configuration - validate diagnostics in default configuration
+        [InlineData(@"")]
+        // Match by type name
+        [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = Exception")]
+        // Match by type documentation ID without "T:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = System.Exception")]
+        // Match by type documentation ID with "T:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = T:System.Exception")]
+        public void ShouldBeLocalized_SubTypesExcludedByConfiguration_NoDiagnostic(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (string.IsNullOrEmpty(editorConfigText))
+            {
+                expected = new[]
+                {
+                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", "Exception.Exception(string message)", "a"),
+                    // Test0.cs(10,39): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'ArgumentException.ArgumentException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(10, 39, "void Test.M1()", "message", "ArgumentException.ArgumentException(string message)", "a"),
+                    // Test0.cs(11,47): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'InvalidOperationException.InvalidOperationException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(11, 47, "void Test.M1()", "message", "InvalidOperationException.InvalidOperationException(string message)", "a")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+public class Test
+{
+    public void M1()
+    {
+        var str = ""a"";
+        var x = new Exception(str);
+        var y = new ArgumentException(str);
+        var z = new InvalidOperationException(str);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
     }
 }

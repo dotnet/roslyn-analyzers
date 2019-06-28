@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Simplification;
 using static System.Linq.ImmutableArrayExtensions;
+using static System.Collections.Immutable.ImmutableArrayExtensions;
 
 namespace MetaCompilation.Analyzers.UnitTests
 {

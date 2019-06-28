@@ -10,6 +10,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using System.Threading;
 using static System.Linq.ImmutableArrayExtensions;
+using static System.Collections.Immutable.ImmutableArrayExtensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {

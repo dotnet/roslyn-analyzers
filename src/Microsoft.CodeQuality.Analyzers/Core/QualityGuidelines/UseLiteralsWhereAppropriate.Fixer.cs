@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 using static System.Linq.ImmutableArrayExtensions;
+using static System.Collections.Immutable.ImmutableArrayExtensions;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {

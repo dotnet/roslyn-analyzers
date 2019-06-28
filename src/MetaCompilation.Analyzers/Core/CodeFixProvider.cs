@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
 using static System.Linq.ImmutableArrayExtensions;
+using static System.Collections.Immutable.ImmutableArrayExtensions;
 
 #pragma warning disable CA1820 // Test for empty strings using string length
 

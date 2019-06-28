@@ -11,12 +11,12 @@ namespace ReleaseNotesUtil
     [DataContract]
     internal class RuleInfo
     {
-        public RuleInfo(string id, string title, string category, bool enabledByDefault, bool hasCodeFix, string messageFormat, string description, string helpLink)
+        public RuleInfo(string id, string title, string category, bool isEnabledByDefault, bool hasCodeFix, string messageFormat, string description, string helpLink)
         {
             Id = id ?? throw new ArgumentNullException(nameof(id));
             Title = title ?? throw new ArgumentNullException(nameof(title));
             Category = category ?? throw new ArgumentNullException(nameof(category));
-            EnabledByDefault = enabledByDefault;
+            IsEnabledByDefault = isEnabledByDefault;
             HasCodeFix = hasCodeFix;
             MessageFormat = messageFormat ?? throw new ArgumentNullException(nameof(messageFormat));
             Description = description;
@@ -37,7 +37,7 @@ namespace ReleaseNotesUtil
         public string Category { get; set; }
 
         [DataMember]
-        public bool EnabledByDefault { get; set; }
+        public bool IsEnabledByDefault { get; set; }
 
         [DataMember]
         public bool HasCodeFix { get; set; }

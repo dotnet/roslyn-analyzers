@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -18,7 +19,7 @@ namespace ReleaseNotesUtil
         public static void Main(string[] args)
         {
             if (!((args.Length == 4 && args[0] == "getrulesjson")
-                  || (args.Length == 4 && args[0] == "diffrules")))
+                  || ((args.Length == 4 || args.Length == 5) && args[0] == "diffrules")))
             {
                 PrintUsage();
                 return;
@@ -32,7 +33,7 @@ namespace ReleaseNotesUtil
                     break;
 
                 case "diffrules":
-                    DiffRules(args[1], args[2], args[3]);
+                    DiffRules(args[1], args[2], args[3], args.Length > 4 ? args[4] : null);
                     break;
 
                 default:
@@ -55,20 +56,38 @@ namespace ReleaseNotesUtil
             WriteRuleFileContent(ruleFileContent, outputPath);
         }
 
-        private static void DiffRules(string oldRulesJsonPath, string newRulesJsonPath, string outputPath)
+        private static void DiffRules(
+            string oldRulesJsonPath,
+            string newRulesJsonPath,
+            string outputPath,
+            string latestRulesJsonPath = null)
         {
             RuleFileContent oldContent = ReadRuleFileContent(oldRulesJsonPath);
             RuleFileContent newContent = ReadRuleFileContent(newRulesJsonPath);
+
+            // If we have the latest rules, we can backfill missing help link URLs.
+            if (!String.IsNullOrWhiteSpace(latestRulesJsonPath))
+            {
+                RuleFileContent latestContent = ReadRuleFileContent(latestRulesJsonPath);
+                Dictionary<string, RuleInfo> latestRulesById = latestContent.Rules.ToDictionary(r => r.Id);
+                foreach (RuleInfo rule in oldContent.Rules.Concat(newContent.Rules))
+                {
+                    if (String.IsNullOrWhiteSpace(rule.HelpLink)
+                        && latestRulesById.TryGetValue(rule.Id, out RuleInfo latestRule))
+                    {
+                        rule.HelpLink = latestRule.HelpLink;
+                    }
+                }
+            }
+
             Dictionary<string, RuleInfo> oldRulesById = oldContent.Rules.ToDictionary(r => r.Id);
             Dictionary<string, RuleInfo> newRulesById = newContent.Rules.ToDictionary(r => r.Id);
             IEnumerable<RuleInfo> addedRules =
                 newContent.Rules
-                    .Where(r => !oldRulesById.ContainsKey(r.Id))
-                    .OrderByDescending(r => r.Category + " " + r.Id);
+                    .Where(r => !oldRulesById.ContainsKey(r.Id));
             IEnumerable<RuleInfo> removedRules =
                 oldContent.Rules
-                    .Where(r => !newRulesById.ContainsKey(r.Id))
-                    .OrderByDescending(r => r.Category + " " + r.Id);
+                    .Where(r => !newRulesById.ContainsKey(r.Id));
             StringBuilder sb = new StringBuilder();
             GenerateRulesDiffMarkdown(sb, "### Added", addedRules);
             GenerateRulesDiffMarkdown(sb, "### Removed", removedRules);
@@ -101,9 +120,11 @@ namespace ReleaseNotesUtil
                 return;
             }
 
+            IEnumerable<RuleInfo> sortedRules = rules.OrderBy(r => r, CategoryThenIdComparer.Instance);
+
             sb.AppendLine(heading);
             string previousCategory = null;
-            foreach (RuleInfo rule in rules)
+            foreach (RuleInfo rule in sortedRules)
             {
                 if (rule.Category != previousCategory)
                 {
@@ -111,7 +132,7 @@ namespace ReleaseNotesUtil
                     previousCategory = rule.Category;
                 }
 
-                sb.AppendLine($"  - {rule.IdWithHelpLinkMarkdown}: {rule.Title} -- {rule.DescriptionOrMessageFormatMarkdown}");
+                sb.AppendLine($"  - {rule.IdWithHelpLinkMarkdown}: {rule.Title}{(rule.IsEnabledByDefault ? " -- **Enabled by default**" : "")}");
             }
         }
 
@@ -125,40 +146,61 @@ namespace ReleaseNotesUtil
             string[] roslynAnalyzerPackages = new string[] {
                 "Microsoft.CodeQuality.Analyzers",
                 "Microsoft.NetCore.Analyzers",
-                "Microsoft.NetFramework.Analyzers" };
+                "Microsoft.NetFramework.Analyzers",
+                "Text.Analyzers",   // deprecated
+            };
+            string dllPath;
             foreach (string roslynAnalyzerPackage in roslynAnalyzerPackages)
             {
                 string packageWithVersion = $"{roslynAnalyzerPackage}.{version}";
                 string baseDll = $"{roslynAnalyzerPackage}.dll";
-                yield return Path.Combine(
+                dllPath = Path.Combine(
                     nugetInstalledPackagesPath,
                     packageWithVersion,
                     "analyzers",
                     "dotnet",
                     "cs",
                     baseDll);
-                yield return Path.Combine(
+                if (File.Exists(dllPath))
+                {
+                    yield return dllPath;
+                }
+
+                dllPath = Path.Combine(
                     nugetInstalledPackagesPath,
                     packageWithVersion,
                     "analyzers",
                     "dotnet",
                     "cs",
                     baseDll.Replace(".Analyzers.dll", ".CSharp.Analyzers.dll", StringComparison.Ordinal));
-                yield return Path.Combine(
+                if (File.Exists(dllPath))
+                {
+                    yield return dllPath;
+                }
+
+                dllPath = Path.Combine(
                     nugetInstalledPackagesPath,
                     packageWithVersion,
                     "analyzers",
                     "dotnet",
                     "vb",
                     baseDll.Replace(".Analyzers.dll", ".VisualBasic.Analyzers.dll", StringComparison.Ordinal));
+                if (File.Exists(dllPath))
+                {
+                    yield return dllPath;
+                }
             }
 
-            yield return Path.Combine(
+            dllPath = Path.Combine(
                 nugetInstalledPackagesPath,
                 $"Microsoft.CodeAnalysis.VersionCheckAnalyzer.{version}",
                 "analyzers",
                 "dotnet",
                 "Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll");
+            if (File.Exists(dllPath))
+            {
+                yield return dllPath;
+            }
         }
 
         private static List<RuleInfo> GetRules(IEnumerable<string> dllPaths)

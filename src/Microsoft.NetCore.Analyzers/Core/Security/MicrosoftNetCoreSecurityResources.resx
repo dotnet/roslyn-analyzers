@@ -220,13 +220,13 @@
     <value>Review code for LDAP injection vulnerabilities</value>
   </data>
   <data name="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage" xml:space="preserve">
-    <value>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</value>
+    <value>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</value>
   </data>
   <data name="JavaScriptSerializerMaybeWithSimpleTypeResolverTitle" xml:space="preserve">
     <value>Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing</value>
   </data>
   <data name="JavaScriptSerializerWithSimpleTypeResolverMessage" xml:space="preserve">
-    <value>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</value>
+    <value>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</value>
   </data>
   <data name="JavaScriptSerializerWithSimpleTypeResolverTitle" xml:space="preserve">
     <value>Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver</value>
@@ -254,6 +254,18 @@
   </data>
   <data name="ReviewCodeForXamlInjectionVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for XAML injection vulnerabilities</value>
+  </data>
+  <data name="JsonNetInsecureSettingsMessage" xml:space="preserve">
+    <value>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</value>
+  </data>
+  <data name="JsonNetInsecureSettingsTitle" xml:space="preserve">
+    <value>Do not use insecure JsonSerializerSettings</value>
+  </data>
+  <data name="JsonNetMaybeInsecureSettingsMessage" xml:space="preserve">
+    <value>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.</value>
+  </data>
+  <data name="JsonNetMaybeInsecureSettingsTitle" xml:space="preserve">
+    <value>Ensure that JsonSerializerSettings are secure</value>
   </data>
   <data name="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage" xml:space="preserve">
     <value>Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</value>

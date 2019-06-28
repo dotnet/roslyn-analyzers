@@ -1,0 +1,278 @@
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.Operations;
+
+namespace Microsoft.NetCore.Analyzers.Security
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    public sealed class UseAutoValidateAntiforgeryToken : DiagnosticAnalyzer
+    {
+        internal const string DiagnosticId = "CA5391";
+        private static readonly LocalizableString s_Title = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.UseAutoValidateAntiforgeryToken),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_Message = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.UseAutoValidateAntiforgeryTokenMessage),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+        private static readonly LocalizableString s_Description = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.UseAutoValidateAntiforgeryTokenDescription),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+                DiagnosticId,
+                s_Title,
+                s_Message,
+                DiagnosticCategory.Security,
+                DiagnosticHelpers.DefaultDiagnosticSeverity,
+                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                description: s_Description,
+                helpLinkUri: null,
+                customTags: WellKnownDiagnosticTags.Telemetry);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+
+        public delegate bool RequirementsOfValidateMethod(IMethodSymbol methodSymbol);
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.EnableConcurrentExecution();
+
+            // Security analyzer - analyze and report diagnostics on generated code.
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze | GeneratedCodeAnalysisFlags.ReportDiagnostics);
+
+            context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
+            {
+                var compilation = compilationStartAnalysisContext.Compilation;
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
+
+                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersFilterCollection, out var filterCollectionTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcController, out var controllerTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcControllerBase, out var controllerBaseTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcNonActionAttribute, out var nonActionAttributeTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPostAttribute, out var httpPostAttributeTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPutAttribute, out var httpPutAttributeTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpDeleteAttribute, out var httpDeleteAttributeTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIFilterMetadata, out var iFilterMetadataTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreAntiforgeryIAntiforgery, out var iAntiforgeryTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAsyncAuthorizationFilter, out var iAsyncAuthorizationFilterTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask, out var taskTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersAuthorizationFilterContext, out var authorizationFilterContextTypeSymbol))
+                {
+                    return;
+                }
+
+                // A dictionary from method symbol to set of methods invoked by it directly.
+                // The bool value in the sub ConcurrentDictionary is not used, use ConcurrentDictionary rather than HashSet just for the concurrency security.
+                var callGraph = new ConcurrentDictionary<IMethodSymbol, ConcurrentDictionary<IMethodSymbol, bool>>();
+
+                // Ignore cases where a global anti forgery filter is in use.
+                var hasGlobalAntiForgeryFilter = false;
+
+                // Verify that validate anti forgery token attributes are used somewhere within this project,
+                // to avoid reporting false positives on projects that use an alternative approach to mitigate CSRF issues.
+                var usingValidateAntiForgeryAttribute = false;
+                var onAuthorizationAsyncMethodSymbols = new HashSet<IMethodSymbol>();
+                var actionMethodSymbols = new HashSet<IMethodSymbol>();
+
+                // Constructing callGraph.
+                compilationStartAnalysisContext.RegisterOperationBlockStartAction(
+                    (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
+                    {
+                        var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+
+                        if (owningSymbol is IMethodSymbol methodSymbol)
+                        {
+                            var calledMethods = new ConcurrentDictionary<IMethodSymbol, bool>();
+                            callGraph.TryAdd(methodSymbol, calledMethods);
+
+                            operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
+                            {
+                                calledMethods.TryAdd((operationContext.Operation as IInvocationOperation).TargetMethod, true);
+                            }, OperationKind.Invocation);
+                        }
+                    });
+
+                // Holds if the project has a global anti forgery filter.
+                compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
+                {
+                    var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
+                    var methodSymbol = invocationOperation.TargetMethod;
+
+                    if (filterCollectionTypeSymbol.GetBaseTypesAndThis().Contains(methodSymbol.ContainingType) &&
+                        methodSymbol.Name == "Add")
+                    {
+                        var potentialAntiForgeryFilters = invocationOperation
+                            .Arguments
+                            .Where(s => s.Parameter.Name == "filterType")
+                            .Select(s => s.Value)
+                            .OfType<ITypeOfOperation>()
+                            .Select(s => s.TypeOperand)
+                            .Union(methodSymbol.TypeArguments);
+
+                        foreach (var potentialAntiForgeryFilter in potentialAntiForgeryFilters)
+                        {
+                            if (potentialAntiForgeryFilter.AllInterfaces.Contains(iFilterMetadataTypeSymbol) &&
+                                IsValidateAntiForgery(potentialAntiForgeryFilter.Name))
+                            {
+                                hasGlobalAntiForgeryFilter = true;
+
+                                break;
+                            }
+                            else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAsyncAuthorizationFilterTypeSymbol))
+                            {
+                                onAuthorizationAsyncMethodSymbols.Add(
+                                    potentialAntiForgeryFilter
+                                    .GetMembers()
+                                    .OfType<IMethodSymbol>()
+                                    .FirstOrDefault(
+                                        s => s.Name == "OnAuthorizationAsync" &&
+                                            s.ReturnType.Equals(taskTypeSymbol) &&
+                                            s.Parameters.Length == 1 &&
+                                            s.Parameters[0].Type.Equals(authorizationFilterContextTypeSymbol)));
+                            }
+                        }
+                    }
+                }, OperationKind.Invocation);
+
+                compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
+                {
+                    var controllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
+
+                    // The controller class is protected by a validate anti forgery token attribute
+                    if (controllerTypeSymbol.GetAttributes().Any(s => IsValidateAntiForgeryAttribute(s.AttributeClass.Name)))
+                    {
+                        usingValidateAntiForgeryAttribute = true;
+
+                        return;
+                    }
+
+                    foreach (var actionMethodSymbol in controllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
+                    {
+
+                        // The method is protected by a validate anti forgery token attribute
+                        if (actionMethodSymbol.GetAttributes().Any(s => IsValidateAntiForgeryAttribute(s.AttributeClass.Name)))
+                        {
+                            usingValidateAntiForgeryAttribute = true;
+
+                            return;
+                        }
+
+                        var baseTypes = controllerTypeSymbol.GetBaseTypes();
+
+                        if ((baseTypes.Contains(controllerTypeSymbol) ||
+                            baseTypes.Contains(controllerBaseTypeSymbol)) && // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`
+                            actionMethodSymbol.IsPublic() &&
+                            !actionMethodSymbol.IsStatic &&
+                            !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol) &&
+                            (actionMethodSymbol.HasAttribute(httpPostAttributeTypeSymbol) ||
+                            actionMethodSymbol.HasAttribute(httpPutAttributeTypeSymbol) ||
+                            actionMethodSymbol.HasAttribute(httpDeleteAttributeTypeSymbol)))
+                        {
+                            actionMethodSymbols.Add(actionMethodSymbol as IMethodSymbol);
+                        }
+                    }
+                }, SymbolKind.NamedType);
+
+                compilationStartAnalysisContext.RegisterCompilationEndAction(
+                (CompilationAnalysisContext compilationAnalysisContext) =>
+                {
+                    if (usingValidateAntiForgeryAttribute && !hasGlobalAntiForgeryFilter)
+                    {
+                        var visited = new Dictionary<IMethodSymbol, bool>();
+
+                        foreach (var onAuthorizationAsyncMethodSymbol in onAuthorizationAsyncMethodSymbols)
+                        {
+                            CheckIfACertainMethodGetsCalled(
+                                onAuthorizationAsyncMethodSymbol,
+                                visited,
+                                (IMethodSymbol methodSymbol) =>
+                                    (methodSymbol.Name == "ValidateRequestAsync" &&
+                                    (methodSymbol.ContainingType.AllInterfaces.Contains(iAntiforgeryTypeSymbol) ||
+                                    methodSymbol.ContainingType.Equals(iAntiforgeryTypeSymbol))));
+
+                            if (visited[onAuthorizationAsyncMethodSymbol])
+                            {
+                                return;
+                            }
+                        }
+
+                        foreach (var actionMethodSymbol in actionMethodSymbols)
+                        {
+                            compilationAnalysisContext.ReportDiagnostic(
+                                actionMethodSymbol.CreateDiagnostic(
+                                    Rule,
+                                    actionMethodSymbol.Name,
+                                    actionMethodSymbol.GetAttributes().FirstOrDefault().AttributeClass.Name.Replace("Attribute", "")));
+                        }
+                    }
+                });
+
+                // <summary>
+                // Check if this method calls a method, which meets the requirement, directly or indirecly.
+                // </summary>
+                // <param name="methodSymbol">The symbol of the method to be analyzed</param>
+                // <param name="visited">All the methods has been visited and its results</param>
+                // <param name="Requirement">The requirements</param>
+                void CheckIfACertainMethodGetsCalled(IMethodSymbol methodSymbol, Dictionary<IMethodSymbol, bool> visited, RequirementsOfValidateMethod requirements)
+                {
+                    if (!visited.TryGetValue(methodSymbol, out var result))
+                    {
+                        visited[methodSymbol] = false;
+
+                        // Symbols like Interface, classes not defined in the source won't be in callGraph.
+                        if (callGraph.TryGetValue(methodSymbol, out var kvp))
+                        {
+                            foreach (var child in kvp.Keys)
+                            {
+                                if (requirements(child))
+                                {
+                                    visited[methodSymbol] = true;
+
+                                    break;
+                                }
+                                else
+                                {
+                                    CheckIfACertainMethodGetsCalled(child, visited, requirements);
+
+                                    if (visited[child])
+                                    {
+                                        visited[methodSymbol] = true;
+
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        public static bool IsValidateAntiForgeryAttribute(string attributeName)
+        {
+            var pattern = @"[a-zA-Z]*Validate[a-zA-Z]*Anti_orgery[a-zA-Z]*Attribute";
+
+            return Regex.Match(attributeName, pattern).Success;
+        }
+
+        public static bool IsValidateAntiForgery(string attributeName)
+        {
+            var pattern = @"[a-zA-Z]*Validate[a-zA-Z]*Anti_orgery[a-zA-Z]*";
+
+            return Regex.Match(attributeName, pattern).Success;
+        }
+    }
+}

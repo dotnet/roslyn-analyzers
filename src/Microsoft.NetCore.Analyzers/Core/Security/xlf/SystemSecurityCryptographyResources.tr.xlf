@@ -382,6 +382,21 @@
         <target state="needs-review-translation">Sayfanın {0} alt sınıfı OnInit metodunda ViewStateUserKey özelliğini ayarlamıyor</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseAutoValidateAntiforgeryToken">
+        <source>Use Auto Validate Antiforgery Token</source>
+        <target state="new">Use Auto Validate Antiforgery Token</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAutoValidateAntiforgeryTokenDescription">
+        <source>Handling a POST, PUT and DELETE request without verifying that the request allows a malicious attacker to submit a request on behalf of the user.</source>
+        <target state="new">Handling a POST, PUT and DELETE request without verifying that the request allows a malicious attacker to submit a request on behalf of the user.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseAutoValidateAntiforgeryTokenMessage">
+        <source>Method {0} handles a {1} request without performing CSRF token validation</source>
+        <target state="new">Method {0} handles a {1} request without performing CSRF token validation</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
         <source>Use Container Level Access Policy</source>
         <target state="translated">Kapsayıcı Düzeyinde Erişim İlkesi Kullan</target>

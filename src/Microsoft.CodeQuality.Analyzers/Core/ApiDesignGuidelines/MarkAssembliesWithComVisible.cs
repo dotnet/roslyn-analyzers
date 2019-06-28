@@ -5,6 +5,7 @@ using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {

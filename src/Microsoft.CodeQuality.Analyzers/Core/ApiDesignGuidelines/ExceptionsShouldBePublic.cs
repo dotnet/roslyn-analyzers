@@ -7,6 +7,7 @@ using Analyzer.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {

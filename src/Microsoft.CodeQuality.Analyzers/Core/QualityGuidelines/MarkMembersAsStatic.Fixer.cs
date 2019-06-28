@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Operations;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {

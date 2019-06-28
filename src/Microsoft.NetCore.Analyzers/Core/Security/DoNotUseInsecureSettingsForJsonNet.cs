@@ -16,6 +16,7 @@ using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {

@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {

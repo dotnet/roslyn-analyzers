@@ -12,6 +12,7 @@ using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace GenerateAnalyzerRulesets
 {

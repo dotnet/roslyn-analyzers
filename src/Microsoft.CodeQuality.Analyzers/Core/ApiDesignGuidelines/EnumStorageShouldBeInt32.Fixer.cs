@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Editing;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
 using System;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {

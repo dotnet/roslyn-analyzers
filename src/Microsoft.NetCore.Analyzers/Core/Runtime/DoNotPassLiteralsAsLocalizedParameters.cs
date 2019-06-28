@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Analyzer.Utilities.PooledObjects;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {

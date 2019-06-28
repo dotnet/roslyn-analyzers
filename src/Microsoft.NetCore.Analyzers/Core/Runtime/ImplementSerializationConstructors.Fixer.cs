@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.Editing;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
+using static System.Linq.ImmutableArrayExtensions;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {

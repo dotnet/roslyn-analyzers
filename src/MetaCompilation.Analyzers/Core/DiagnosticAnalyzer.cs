@@ -2609,7 +2609,7 @@ namespace MetaCompilation.Analyzers
                         ReportDiagnostic(context, IncorrectAnalysisReturnTypeRule, analysisMethodSyntax.Identifier.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
                     }
-                    else if (analysisMethod.Parameters.Count() != 1 || !Equals(analysisMethod.Parameters.First().Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext")))
+                    else if (!analysisMethod.Parameters.HasExactly(1) || !Equals(analysisMethod.Parameters.First().Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext")))
                     {
                         ReportDiagnostic(context, IncorrectAnalysisParameterRule, analysisMethodSyntax.ParameterList.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
@@ -2768,7 +2768,7 @@ namespace MetaCompilation.Analyzers
             private BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                if (parameters.Count() != 1 || !Equals(parameters[0].Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext"))
+                if (!parameters.HasExactly(1) || !Equals(parameters[0].Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext"))
                     || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name);

@@ -350,7 +350,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return true;
             }
 
-            if (method.Parameters.Count() > 1)
+            if (method.Parameters.HasMoreThan(1))
             {
                 return false;
             }

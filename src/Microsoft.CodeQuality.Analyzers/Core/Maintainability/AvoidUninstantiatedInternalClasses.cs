@@ -343,7 +343,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            if (method.Parameters.Count() == 0)
+            if (!method.Parameters.Any())
             {
                 return true;
             }

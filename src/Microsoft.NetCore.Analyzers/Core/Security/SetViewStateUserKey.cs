@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     return methodSymbol?.GetTopmostOperationBlock(compilation)
                                         .Descendants()
-                                        .Where(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
+                                        .Any(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
                                                     simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation &&
                                                     propertyReferenceOperation.Property.Name == "ViewStateUserKey" &&
                                                     propertyReferenceOperation.Property.Type.SpecialType == SpecialType.System_String &&
@@ -104,7 +104,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                     propertyReferenceOperation2.Property.IsVirtual &&
                                                     propertyReferenceOperation2.Instance is IInstanceReferenceOperation instanceReferenceOperation2 &&
                                                     instanceReferenceOperation2.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance))
-                                        .Count() > 0;
+                                        ?? false;
                 }
             });
         }

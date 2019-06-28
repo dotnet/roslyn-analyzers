@@ -2048,7 +2048,7 @@ namespace MetaCompilation.Analyzers
                 }
 
                 IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
-                if (returnStatements.Count() == 0)
+                if (!returnStatements.Any())
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation);
                     return false;
@@ -2712,7 +2712,7 @@ namespace MetaCompilation.Analyzers
                         var memberExpr = bodyResults.MemberExpr as MemberAccessExpressionSyntax;
                         invocExpr = invocationExpr;
 
-                        if (context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(memberExpr).CandidateSymbols.Count() == 0)
+                        if (!context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(memberExpr).CandidateSymbols.Any())
                         {
                             registerCall = context.Compilation.GetSemanticModel(memberExpr.SyntaxTree).GetSymbolInfo(memberExpr).Symbol as IMethodSymbol;
                         }

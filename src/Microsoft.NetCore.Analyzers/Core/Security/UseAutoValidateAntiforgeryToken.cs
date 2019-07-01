@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -85,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 // to avoid reporting false positives on projects that use an alternative approach to mitigate CSRF issues.
                 var usingValidateAntiForgeryAttribute = false;
                 var onAuthorizationAsyncMethodSymbols = new HashSet<IMethodSymbol>();
-                var actionMethodSymbols = new HashSet<IMethodSymbol>();
+                var actionMethodSymbols = new HashSet<(IMethodSymbol, string)>();
 
                 // Constructing callGraph.
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(
@@ -176,12 +177,20 @@ namespace Microsoft.NetCore.Analyzers.Security
                             baseTypes.Contains(controllerBaseTypeSymbol)) && // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`
                             actionMethodSymbol.IsPublic() &&
                             !actionMethodSymbol.IsStatic &&
-                            !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol) &&
-                            (actionMethodSymbol.HasAttribute(httpPostAttributeTypeSymbol) ||
-                            actionMethodSymbol.HasAttribute(httpPutAttributeTypeSymbol) ||
-                            actionMethodSymbol.HasAttribute(httpDeleteAttributeTypeSymbol)))
+                            !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol))
                         {
-                            actionMethodSymbols.Add(actionMethodSymbol as IMethodSymbol);
+                            if (actionMethodSymbol.HasAttribute(httpPostAttributeTypeSymbol))
+                            {
+                                actionMethodSymbols.Add((actionMethodSymbol, "HttpPost"));
+                            }
+                            else if (actionMethodSymbol.HasAttribute(httpPutAttributeTypeSymbol))
+                            {
+                                actionMethodSymbols.Add((actionMethodSymbol, "HttpPut"));
+                            }
+                            else if (actionMethodSymbol.HasAttribute(httpDeleteAttributeTypeSymbol))
+                            {
+                                actionMethodSymbols.Add((actionMethodSymbol, "HttpDelete"));
+                            }
                         }
                     }
                 }, SymbolKind.NamedType);
@@ -189,7 +198,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterCompilationEndAction(
                 (CompilationAnalysisContext compilationAnalysisContext) =>
                 {
-                    if (usingValidateAntiForgeryAttribute && !hasGlobalAntiForgeryFilter)
+                    if (usingValidateAntiForgeryAttribute && !hasGlobalAntiForgeryFilter && actionMethodSymbols.Count != 0)
                     {
                         var visited = new Dictionary<IMethodSymbol, bool>();
 
@@ -209,13 +218,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         }
 
-                        foreach (var actionMethodSymbol in actionMethodSymbols)
+                        foreach (var (methodSymbol, attributeName) in actionMethodSymbols)
                         {
                             compilationAnalysisContext.ReportDiagnostic(
-                                actionMethodSymbol.CreateDiagnostic(
+                                methodSymbol.CreateDiagnostic(
                                     Rule,
-                                    actionMethodSymbol.Name,
-                                    actionMethodSymbol.GetAttributes().FirstOrDefault().AttributeClass.Name.Replace("Attribute", "")));
+                                    methodSymbol.Name,
+                                    attributeName));
                         }
                     }
                 });
@@ -263,14 +272,14 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         public static bool IsValidateAntiForgeryAttribute(string attributeName)
         {
-            var pattern = @"[a-zA-Z]*Validate[a-zA-Z]*Anti_orgery[a-zA-Z]*Attribute";
+            var pattern = @"[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute";
 
             return Regex.Match(attributeName, pattern).Success;
         }
 
         public static bool IsValidateAntiForgery(string attributeName)
         {
-            var pattern = @"[a-zA-Z]*Validate[a-zA-Z]*Anti_orgery[a-zA-Z]*";
+            var pattern = @"[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*";
 
             return Regex.Match(attributeName, pattern).Success;
         }

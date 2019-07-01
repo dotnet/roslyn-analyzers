@@ -15,7 +15,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 using System;
 using System.Threading.Tasks;
 
-class MyValidateAnti_orgeryAttribute : Attribute
+class MyValidateAntiForgeryAttribute : Attribute
 {
 }
 
@@ -71,6 +71,10 @@ namespace Microsoft.AspNetCore
         }
 
         public class HttpDeleteAttribute : Attribute
+        {
+        }
+
+        public class HttpGetAttribute : Attribute
         {
         }
 
@@ -134,8 +138,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -167,13 +171,13 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_WithHttpPostAttribute_Diagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPostAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -189,13 +193,36 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_WithHttpPutAttribute_Diagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPostAndHttpGetAttributes_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+{
+}
+
+class TestClass : ControllerBase
+{
+    [HttpGet]
+    [HttpPost]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}",
+            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpPost"));
+        }
+
+        [Fact]
+        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPutAttribute_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using Microsoft.AspNetCore.Mvc;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -211,14 +238,14 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_WithHttpDeleteAttribute_Diagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpDeleteAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -234,13 +261,13 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfController_WithHttpPostAttribute_Diagnostic()
+        public void Test_ChildrenOfController_ActionMethodWithHttpPostAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -256,13 +283,13 @@ class TestClass : Controller
         }
 
         [Fact]
-        public void Test_ChildrenOfController_WithHttpPutAttribute_Diagnostic()
+        public void Test_ChildrenOfController_ActionMethodWithHttpPutAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -278,13 +305,13 @@ class TestClass : Controller
         }
 
         [Fact]
-        public void Test_ChildrenOfController_WithHttpDeleteAttribute_Diagnostic()
+        public void Test_ChildrenOfController_ActionMethodWithHttpDeleteAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -300,13 +327,13 @@ class TestClass : Controller
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_MethodInDerivedClass_Diagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodNotDerivedFromParentClass_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -331,8 +358,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -375,8 +402,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -419,8 +446,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -469,8 +496,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -518,8 +545,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -574,8 +601,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -621,8 +648,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -664,12 +691,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
-class MyValidateAnti_orgeryClass : IFilterMetadata
+class MyValidateAntiForgeryClass : IFilterMetadata
 {
 }
 
@@ -684,7 +711,7 @@ class TestClass : ControllerBase
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add(typeof(MyValidateAnti_orgeryClass));
+        filterCollection.Add(typeof(MyValidateAntiForgeryClass));
     }
 }");
         }
@@ -699,8 +726,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -708,7 +735,7 @@ public interface IMyFilterMetadata : IFilterMetadata
 {
 }
 
-class MyValidateAnti_orgeryClass : IMyFilterMetadata
+class MyValidateAntiForgeryClass : IMyFilterMetadata
 {
 }
 
@@ -723,7 +750,7 @@ class TestClass : ControllerBase
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add(typeof(MyValidateAnti_orgeryClass));
+        filterCollection.Add(typeof(MyValidateAntiForgeryClass));
     }
 }");
         }
@@ -738,12 +765,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
-class MyValidateAnti_orgeryClass : IFilterMetadata
+class MyValidateAntiForgeryClass : IFilterMetadata
 {
 }
 
@@ -758,7 +785,7 @@ class TestClass : ControllerBase
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add<MyValidateAnti_orgeryClass>();
+        filterCollection.Add<MyValidateAntiForgeryClass>();
     }
 }");
         }
@@ -773,8 +800,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -782,7 +809,7 @@ public interface IMyFilterMetadata : IFilterMetadata
 {
 }
 
-class MyValidateAnti_orgeryClass : IMyFilterMetadata
+class MyValidateAntiForgeryClass : IMyFilterMetadata
 {
 }
 
@@ -797,19 +824,19 @@ class TestClass : ControllerBase
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add<MyValidateAnti_orgeryClass>();
+        filterCollection.Add<MyValidateAntiForgeryClass>();
     }
 }");
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_NotPublicMethod_NoDiagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodNotPublic_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -824,13 +851,13 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_StaticMethod_NoDiagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodIsStatic_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -845,13 +872,13 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_MethodWithNonActionAttribute_NoDiagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodWithNonActionAttribute_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
@@ -866,58 +893,13 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_MethodWitoutAttribute_NoDiagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodWitoutAttribute_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
 class TestClass : ControllerBase
 {
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
-    {
-        return null;
-    }
-}");
-        }
-
-        [Fact]
-        public void Test_ChildrenOfControllerBase_MethodWithValidateAntiForgeryAttribute_NoDiagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using System;
-using Microsoft.AspNetCore.Mvc;
-
-[MyValidateAnti_orgery]
-class Blah
-{
-}
-
-class TestClass : ControllerBase
-{
-    [MyValidateAnti_orgeryAttribute]
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
-    {
-        return null;
-    }
-}");
-        }
-
-        [Fact]
-        public void Test_ChildrenOfControllerBase_MethodWithBothValidateAntiForgeryAndHttpPostAttributes_NoDiagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using System;
-using Microsoft.AspNetCore.Mvc;
-
-[MyValidateAnti_orgery]
-class Blah
-{
-}
-
-class TestClass : ControllerBase
-{
-    [MyValidateAnti_orgeryAttribute]
-    [HttpPost]
     public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
     {
         return null;
@@ -932,12 +914,7 @@ class TestClass : ControllerBase
 using System;
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
-{
-}
-
-[MyValidateAnti_orgeryAttribute]
+[MyValidateAntiForgeryAttribute]
 class TestClass : ControllerBase
 {
     public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
@@ -948,18 +925,48 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_MethodWithHttpPostAttributeWhileTypeWithValidateAntiForgeryAndHttpPostAttribute_NoDiagnostic()
+        public void Test_ChildrenOfControllerBase_ActionMethodWithValidateAntiForgeryAttribute_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.AspNetCore.Mvc;
 
-[MyValidateAnti_orgery]
-class Blah
+class TestClass : ControllerBase
 {
-}
+    [MyValidateAntiForgeryAttribute]
+    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}");
+        }
 
-[MyValidateAnti_orgeryAttribute]
+        [Fact]
+        public void Test_ChildrenOfControllerBase_ActionMethodWithBothValidateAntiForgeryAndHttpPostAttributes_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+class TestClass : ControllerBase
+{
+    [MyValidateAntiForgeryAttribute]
+    [HttpPost]
+    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPostAttributeWhileTypeWithValidateAntiForgeryAttribute_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+[MyValidateAntiForgeryAttribute]
 class TestClass : ControllerBase
 {
     [HttpPost]

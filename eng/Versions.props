@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-    
-    <VersionPrefix>2.9.4</VersionPrefix>
+
+    <VersionPrefix>3.0.0</VersionPrefix>
     <PreReleaseVersionLabel>beta2</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
@@ -18,7 +18,7 @@
     <CodecovVersion>1.0.3</CodecovVersion>
 
     <!-- Roslyn -->
-    <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
+    <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>
     <MicrosoftNetCompilersVersion>3.0.0</MicrosoftNetCompilersVersion>
     <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.4-beta1.final</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>3.0.0-beta2.19218.3+e96bad97</MicrosoftCodeAnalysisAnalyersVersion>

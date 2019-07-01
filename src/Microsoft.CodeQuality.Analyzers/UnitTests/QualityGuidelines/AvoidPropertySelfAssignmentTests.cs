@@ -184,6 +184,80 @@ class C
         }
 
         [Fact]
+        public void CSharpIndexerAssignmentDoesNotCauseDiagnosticToAppear()
+        {
+            VerifyCSharp(@"
+internal class A
+{
+    private int[] _a;
+    public int this[int i] { get => _a[i]; set => _a[i] = value; }
+
+    public void ExchangeValue(int i, int j)
+    {
+        var temp = this[i];
+        this[i] = this[j];
+        this[j] = temp;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharpIndexerAssignmentWithSameConstantIndexCausesDiagnosticToAppear()
+        {
+            VerifyCSharp(@"
+internal class A
+{
+    private int[] _a;
+    public int this[int i] { get => _a[i]; set => _a[i] = value; }
+
+    public void M()
+    {
+        this[0] = this[0];
+    }
+}
+",
+            GetCSharpResultAt(9, 19, "this[]"));
+        }
+
+        [Fact]
+        public void CSharpIndexerAssignmentWithSameLocalReferenceIndexCausesDiagnosticToAppear()
+        {
+            VerifyCSharp(@"
+internal class A
+{
+    private int[] _a;
+    public int this[int i] { get => _a[i]; set => _a[i] = value; }
+
+    public void M()
+    {
+        int local = 0;
+        this[local] = this[local];
+    }
+}
+",
+            GetCSharpResultAt(10, 23, "this[]"));
+        }
+
+        [Fact]
+        public void CSharpIndexerAssignmentWithSameParameterReferenceIndexCausesDiagnosticToAppear()
+        {
+            VerifyCSharp(@"
+internal class A
+{
+    private int[] _a;
+    public int this[int i] { get => _a[i]; set => _a[i] = value; }
+
+    public void M(int param)
+    {
+        this[param] = this[param];
+    }
+}
+",
+            GetCSharpResultAt(9, 23, "this[]"));
+        }
+
+        [Fact]
         public void VbAssignmentInConstructorWithNoArguments()
         {
             VerifyBasic(@"

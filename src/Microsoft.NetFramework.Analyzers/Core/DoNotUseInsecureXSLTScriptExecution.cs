@@ -7,7 +7,6 @@ using Analyzer.Utilities;
 using Microsoft.NetFramework.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using static System.Collections.Immutable.ImmutableArrayExtensions;
 
 namespace Microsoft.NetFramework.Analyzers
 {

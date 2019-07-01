@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
-using static System.Collections.Immutable.ImmutableArrayExtensions;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {

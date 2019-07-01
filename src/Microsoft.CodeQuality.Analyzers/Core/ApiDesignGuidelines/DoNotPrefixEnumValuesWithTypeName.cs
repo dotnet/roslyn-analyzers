@@ -9,7 +9,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using static Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MicrosoftApiDesignGuidelinesAnalyzersResources;
 using System.Collections.Generic;
-using static System.Collections.Immutable.ImmutableArrayExtensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {

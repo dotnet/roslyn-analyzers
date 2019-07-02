@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -1396,6 +1397,136 @@ internal static class Program
 }", TestValidationMode.AllowCompileErrors,
             // Test0.cs(6,45): warning CA1303: Method 'void Program.Main()' passes a literal string as parameter 'text' of a call to 'decimal DerivedClass.Generic<decimal>(string text)'. Retrieve the following string(s) from a resource table instead: "number".
             GetCSharpResultAt(6, 45, "void Program.Main()", "text", "decimal DerivedClass.Generic<decimal>(string text)", "number"));
+        }
+
+        [Theory, WorkItem(2602, "https://github.com/dotnet/roslyn-analyzers/issues/2602")]
+        // No configuration - validate diagnostics in default configuration
+        [InlineData(@"")]
+        // Match by method name
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M|M2")]
+        // Match by type name
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = C")]
+        // Match multiple methods by method documentation ID with "M:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M:C.M(System.String)|M:C.M2(System.String)")]
+        // Match by type documentation ID with "T:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = T:C")]
+        public void ShouldBeLocalized_MethodExcludedByConfiguration_NoDiagnostic(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (string.IsNullOrEmpty(editorConfigText))
+            {
+                expected = new[]
+                {
+                    // Test0.cs(20,13): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M(string param)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(20, 13, "void Test.M1(C c)", "param", "void C.M(string param)", "a"),
+                    // Test0.cs(21,14): warning CA1303: Method 'void Test.M1(C c)' passes a literal string as parameter 'param' of a call to 'void C.M2(string param)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(21, 14, "void Test.M1(C c)", "param", "void C.M2(string param)", "a")
+                };
+            }
+
+            VerifyCSharp(@"
+using System.ComponentModel;
+
+public class C
+{
+    public void M([LocalizableAttribute(true)] string param)
+    {
+    }
+
+    public void M2([LocalizableAttribute(true)] string param)
+    {
+    }
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        var str = ""a"";
+        c.M(str);
+        c.M2(str);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
+        [Theory, WorkItem(2602, "https://github.com/dotnet/roslyn-analyzers/issues/2602")]
+        // No configuration - validate diagnostics in default configuration
+        [InlineData(@"")]
+        // Match by constructor name
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = .ctor")]
+        // Match by type name
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = Exception")]
+        // Match by namespace name
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = System")]
+        // Match by constructor documentation ID with "M:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = M:System.Exception..ctor(System.String)")]
+        // Match by type documentation ID with "T:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = T:System.Exception")]
+        // Match by namespace documentation ID with "N:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_symbol_names = N:System")]
+        public void ShouldBeLocalized_ConstructorExcludedByConfiguration_NoDiagnostic(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (string.IsNullOrEmpty(editorConfigText))
+            {
+                expected = new[]
+                {
+                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", "Exception.Exception(string message)", "a")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+public class Test
+{
+    public void M1()
+    {
+        var str = ""a"";
+        var x = new Exception(str);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
+        [Theory, WorkItem(2602, "https://github.com/dotnet/roslyn-analyzers/issues/2602")]
+        // No configuration - validate diagnostics in default configuration
+        [InlineData(@"")]
+        // Match by type name
+        [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = Exception")]
+        // Match by type documentation ID without "T:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = System.Exception")]
+        // Match by type documentation ID with "T:" prefix
+        [InlineData(@"dotnet_code_quality.excluded_type_names_with_derived_types = T:System.Exception")]
+        public void ShouldBeLocalized_SubTypesExcludedByConfiguration_NoDiagnostic(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (string.IsNullOrEmpty(editorConfigText))
+            {
+                expected = new[]
+                {
+                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", "Exception.Exception(string message)", "a"),
+                    // Test0.cs(10,39): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'ArgumentException.ArgumentException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(10, 39, "void Test.M1()", "message", "ArgumentException.ArgumentException(string message)", "a"),
+                    // Test0.cs(11,47): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'InvalidOperationException.InvalidOperationException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(11, 47, "void Test.M1()", "message", "InvalidOperationException.InvalidOperationException(string message)", "a")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+public class Test
+{
+    public void M1()
+    {
+        var str = ""a"";
+        var x = new Exception(str);
+        var y = new ArgumentException(str);
+        var z = new InvalidOperationException(str);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
     }
 }

@@ -2029,10 +2029,10 @@ public static class Issue2578Test
                       dotnet_code_quality.null_check_validation_methods = Validate")]
         // Match multiple methods by method documentation ID
         [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
-                      dotnet_code_quality.null_check_validation_methods = C.Validate(C)~Helper`1.Validate(C)~Helper`1.Validate``1(C,``0)")]
+                      dotnet_code_quality.null_check_validation_methods = C.Validate(C)|Helper`1.Validate(C)|Helper`1.Validate``1(C,``0)")]
         // Match multiple methods by method documentation ID with "M:" prefix
         [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
-                      dotnet_code_quality.null_check_validation_methods = M:C.Validate(C)~M:Helper`1.Validate(C)~M:Helper`1.Validate``1(C,``0)")]
+                      dotnet_code_quality.null_check_validation_methods = M:C.Validate(C)|M:Helper`1.Validate(C)|M:Helper`1.Validate``1(C,``0)")]
         public void NullCheckValidationMethod_ConfiguredInEditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
         {
             VerifyCSharp(@"
@@ -5880,6 +5880,83 @@ public class C
             case null:
                 var y = c.ToString();
                 break;
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
+        public void IsPatternInConditionalExpression_01_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    public static void DoSomething(object input)
+    {
+        // Ensure no diagnostic here.
+        Bar(input);
+    }
+
+    private static void Bar(object input)
+    {
+        if (input is Class1)
+        {
+            var c = (Class1)input;
+            c.ToString();
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
+        public void IsPatternInConditionalExpression_01_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    public static void DoSomething(object input)
+    {
+        // Ensure diagnostic here.
+        Bar(input);
+    }
+
+    private static void Bar(object input)
+    {
+        if (input is Class1)
+        {
+            var c = (Class1)input;
+            c.ToString();
+            return;
+        }
+
+        var c2 = (Class1)input;
+        c2.ToString();
+    }
+}",
+            // Test0.cs(7,13): warning CA1062: In externally visible method 'void Class1.DoSomething(object input)', validate parameter 'input' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(7, 13, "void Class1.DoSomething(object input)", "input"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
+        public void IsPatternInConditionalExpression_02_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    public static void DoSomething(object input)
+    {
+        // Ensure no diagnostic here.
+        Bar2(input);
+    }
+
+    private static void Bar2(object input)
+    {
+        if (input is Class1 c)
+        {
+            c.ToString();
         }
     }
 }");

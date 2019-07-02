@@ -17,7 +17,26 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         protected override DiagnosticDescriptor Rule => DoNotHardCodeEncryptionKey.Rule;
 
         [Fact]
-        public void Test_HardcodedInString_CreateEncryptor_Diagnostic()
+        public void Test_HardcodedInString_CreateEncryptor_NeedValueContentAnalysis_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(byte[] someOtherBytesForIV)
+    {
+        byte[] key = Convert.FromBase64String(""AAAAAaazaoensuth"");
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(key, someOtherBytesForIV);
+    }
+}",
+            GetCSharpResultAt(11, 9, 9, 22, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+        }
+
+        [Fact]
+        public void Test_HardcodedInStringWithVariable_CreateEncryptor_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -95,6 +114,26 @@ class TestClass
     }
 }",
             GetCSharpResultAt(11, 9, 9, 36, "ICryptoTransform SymmetricAlgorithm.CreateDecryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+        }
+
+        [Fact]
+        public void Test_HardcodedInbyteArrayWithVariable_CreateEncryptor_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(byte[] someOtherBytesForIV)
+    {
+        byte b = 1;
+        byte[] rgbKey = new byte[] {b};
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(rgbKey, someOtherBytesForIV);
+    }
+}",
+            GetCSharpResultAt(12, 9, 10, 36, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
@@ -223,25 +262,6 @@ class TestClass
         }
 
         [Fact]
-        public void Test_HardcodedInbyteArray_CreateEncryptor_NoDiagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using System;
-using System.Security.Cryptography;
-
-class TestClass
-{
-    public void TestMethod(byte[] someOtherBytesForIV)
-    {
-        byte b = 1;
-        byte[] rgbKey = new byte[] {b};
-        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
-        rijn.CreateEncryptor(rgbKey, someOtherBytesForIV);
-    }
-}");
-        }
-
-        [Fact]
         public void Test_HardcodedInArrayThenOverwrite_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -256,6 +276,25 @@ class TestClass
         rgbKey = key;
         SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
         rijn.CreateEncryptor(rgbKey, someOtherBytesForIV);
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_NotHardcodedInString_CreateEncryptor_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(byte[] someOtherBytesForIV)
+    {
+        byte[] key = Convert.FromBase64String(Console.ReadLine());
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(key, someOtherBytesForIV);
+
     }
 }");
         }

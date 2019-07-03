@@ -154,7 +154,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     // Checks for GC.SuppressFinalize(this)
-                    if (invocationExpression.Arguments.Count() != 1)
+                    if (!invocationExpression.Arguments.HasExactly(1))
                     {
                         return;
                     }

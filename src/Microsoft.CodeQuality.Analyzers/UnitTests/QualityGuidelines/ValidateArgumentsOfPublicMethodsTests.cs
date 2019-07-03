@@ -2029,10 +2029,10 @@ public static class Issue2578Test
                       dotnet_code_quality.null_check_validation_methods = Validate")]
         // Match multiple methods by method documentation ID
         [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
-                      dotnet_code_quality.null_check_validation_methods = C.Validate(C)~Helper`1.Validate(C)~Helper`1.Validate``1(C,``0)")]
+                      dotnet_code_quality.null_check_validation_methods = C.Validate(C)|Helper`1.Validate(C)|Helper`1.Validate``1(C,``0)")]
         // Match multiple methods by method documentation ID with "M:" prefix
         [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
-                      dotnet_code_quality.null_check_validation_methods = M:C.Validate(C)~M:Helper`1.Validate(C)~M:Helper`1.Validate``1(C,``0)")]
+                      dotnet_code_quality.null_check_validation_methods = M:C.Validate(C)|M:Helper`1.Validate(C)|M:Helper`1.Validate``1(C,``0)")]
         public void NullCheckValidationMethod_ConfiguredInEditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
         {
             VerifyCSharp(@"

@@ -557,8 +557,8 @@ namespace Blah
         }
     }
 }",
-                GetCA3147CSharpGetAndOtherToken(SystemWebMvcNamespaceCSharpLineCount + 10, 30, "DoSomething"),
-                GetCA3147CSharpGetAndToken(SystemWebMvcNamespaceCSharpLineCount + 10, 30, "DoSomething"));
+                GetCA3147CSharpGetAndToken(SystemWebMvcNamespaceCSharpLineCount + 10, 30, "DoSomething"),
+                GetCA3147CSharpGetAndOtherToken(SystemWebMvcNamespaceCSharpLineCount + 10, 30, "DoSomething"));
         }
 
         [Fact]
@@ -576,8 +576,8 @@ Namespace Blah
         End Function
     End Class
 End Namespace",
-                GetCA3147BasicGetAndOtherToken(SystemWebMvcNamespaceBasicLineCount + 8, 25, "DoSomething"),
-                GetCA3147BasicGetAndToken(SystemWebMvcNamespaceBasicLineCount + 8, 25, "DoSomething"));
+                GetCA3147BasicGetAndToken(SystemWebMvcNamespaceBasicLineCount + 8, 25, "DoSomething"),
+                GetCA3147BasicGetAndOtherToken(SystemWebMvcNamespaceBasicLineCount + 8, 25, "DoSomething"));
         }
 
         [Fact]
@@ -600,8 +600,8 @@ namespace Blah
     }
 }
 ",
-                GetCA3147CSharpGetAndOtherToken(SystemWebMvcNamespaceCSharpLineCount + 11, 29, "DoSomething"),
-                GetCA3147CSharpGetAndToken(SystemWebMvcNamespaceCSharpLineCount + 11, 29, "DoSomething"));
+                GetCA3147CSharpGetAndToken(SystemWebMvcNamespaceCSharpLineCount + 11, 29, "DoSomething"),
+                GetCA3147CSharpGetAndOtherToken(SystemWebMvcNamespaceCSharpLineCount + 11, 29, "DoSomething"));
         }
 
         [Fact]
@@ -620,8 +620,8 @@ Namespace Blah
         End Function
     End Class
 End Namespace",
-                GetCA3147BasicGetAndOtherToken(SystemWebMvcNamespaceBasicLineCount + 9, 25, "DoSomething"),
-                GetCA3147BasicGetAndToken(SystemWebMvcNamespaceBasicLineCount + 9, 25, "DoSomething"));
+                GetCA3147BasicGetAndToken(SystemWebMvcNamespaceBasicLineCount + 9, 25, "DoSomething"),
+                GetCA3147BasicGetAndOtherToken(SystemWebMvcNamespaceBasicLineCount + 9, 25, "DoSomething"));
         }
 
         [Fact]

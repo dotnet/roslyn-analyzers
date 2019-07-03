@@ -1404,12 +1404,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">{0} türü IEquatable&lt;T&gt; uyguladığından Equals öğesini geçersiz kılmalıdır</target>
+        <target state="translated">{0} türü IEquatable&lt;T&gt; uyguladığından Equals metodunu geçersiz kılmalıdır</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">IEquatable&lt;T&gt; uygularken Object.Equals(object) öğesini kaldır</target>
+        <target state="translated">IEquatable&lt;T&gt; uygularken Object.Equals(object)’i geçersiz kılın</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1429,17 +1429,17 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="needs-review-translation">Kullanıcının bilinmediği ve bir SynchronizationContext gerektirmeyen bir kitaplık yazarken ConfigureAwait(false) kullanmayı göz önünde bulundurun. Aksi takdirde, kitaplık kullanıcıları zaman uyumsuz yöntemleri engelleyici bir biçimde kullanarak kilitlenmelerle karşılaşabilir.</target>
+        <target state="translated">Bir asenkron metot bir Görevi doğrudan bekliyorsa, görevi oluşturan iş parçacığında devamlılık gerçekleşir. Devamlılığa yönelik amacınızı belirtmek için Task.ConfigureAwait(Boolean) çağrısı yapmayı düşünün. İş parçacığı havuzuna devamlılıkları zamanlamaya yönelik görev üzerinde ConfigureAwait(false) çağrısı yaparak kullanıcı arabirimi iş parçacığında kilitlenmeyi önleyin. False geçirmek, uygulamadan bağımsız kitaplıklar için iyi bir seçenektir. Görevde ConfigureAwait(true) çağrısı yapmak, ConfigureAwait öğesini açıkça çağırmamakla aynı davranışa sahiptir. Bu yöntemi açık bir şekilde çağırarak, okuyuculara devamlılığı özgün eşitleme bağlamında gerçekleştirmek istediğinizi bildirirsiniz.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">ConfigureAwait’i çağırmadan bir Task’i doğrudan beklemeyin</target>
+        <target state="translated">Beklenen görevde ConfigureAwait çağrısı yapmayı düşünün</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Bir Task’i doğrudan beklemeyin</target>
+        <target state="translated">Beklenen görevde ConfigureAwait çağrısı yapmayı düşünün</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
@@ -1449,12 +1449,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Bir T türü tarafından Object.Equals(object) geçersiz kılındığında, uygulama karşılaştırmayı gerçekleştirmeden önce nesne bağımsız değişkenini doğru T türüne dönüştürmelidir. Tür tarafından IEquatable&lt;T&gt; uygulanıyorsa ve dolayısıyla T.Equals(T) metodu sunuluyorsa, ayrıca derleme zamanında bağımsız değişkenin T türünde olduğu biliniyorsa derleyici Object.Equals(object) yerine IEquatable&lt;T&gt;.Equals(T) çağrısı yapabilir ve tür dönüştürme gerekmez, bu sayede de performans artar.</target>
+        <target state="translated">Bir T türü Object.Equals(object) öğesini geçersiz kıldığında, uygulama karşılaştırma gerçekleştirmeden önce nesne bağımsız değişkenini doğru T türüne dönüştürmelidir. Tür IEquatable&lt;T&gt; arabirimini uyguluyor, dolayısıyla T.Equals(T) metodunu sunuyorsa ve bağımsız değişkenin derleme zamanında T türünde olduğu biliniyorsa, derleyici Object.Equals(object) yerine IEquatable&lt;T&gt;.Equals(T) çağrısı yapabilir ve tür dönüştürmeye gerek kalmadığından performansın artırılması sağlanır.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Bir T türü IEquatable&lt;T&gt; uygularken, kaynak kodunda Equals metoduna yönelik bir çağrı gören kullanıcıya türün bir örneğinin başka herhangi bir türdeki bir örnekle eşitlenebileceğini önerir. Türü başka bir türdeki bir örnekle eşitleme girişimi derlenemezse kullanıcının kafası karışabilir. Bu, "en az sürpriz" ilkesini ihlal eder.</target>
+        <target state="translated">Bir T türü IEquatable&lt;T&gt; arabirimini uyguluyorsa, bu arabirim kaynak kodunda Equals metodu çağrısını gören kullanıcıya türün örneğinin başka herhangi bir türün örneğiyle eşitlenebileceği önerisinde bulunur. Kullanıcının, türü başka bir türün örneğiyle eşitleme girişimi derlenemediğinde kafası karışabilir. Bu durum, "en az beklenmedik durum ilkesini" ihlal eder.</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1479,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}' öğesini kaldırıp bunun kullanımını genel bir EventHandler ile değiştirin (ör. T'nin geçerli bir EventArgs olduğu EventHandler&lt;T&gt;)</target>
+        <target state="translated">'{0}' öğesini kaldırın ve kullanımını genel bir EventHandler ile değiştirin. Örneğin, T'nin geçerli bir EventArgs olduğu EventHandler&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1489,7 +1489,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">'{0}' olayını değiştirerek '{1}' türünü genel bir EventHandler ile değiştirin (ör. T'nin geçerli bir EventArgs olduğu EventHandler&lt;T&gt;)</target>
+        <target state="translated">'{0}' olayını genel bir EventHandler'ın '{1}' türünün yerini alacak şekilde değiştirin. Örneğin, T'nin geçerli bir EventArgs olduğu EventHandler&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

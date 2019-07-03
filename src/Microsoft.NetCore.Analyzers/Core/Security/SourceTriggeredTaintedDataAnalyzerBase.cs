@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                     foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                     {
-                                        TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.GetOrComputeResult(
+                                        TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
                                             rootOperation.GetEnclosingControlFlowGraph(),
                                             operationBlockAnalysisContext.Compilation,
                                             operationBlockAnalysisContext.OwningSymbol,
@@ -104,6 +104,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             taintedDataConfig.GetSanitizerSymbolMap(this.SinkKind),
                                             sinkInfoSymbolMap,
                                             operationBlockAnalysisContext.CancellationToken);
+                                        if (taintedDataAnalysisResult == null)
+                                        {
+                                            return;
+                                        }
+
                                         foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
                                         {
                                             if (!sourceSink.SinkKinds.Contains(this.SinkKind))

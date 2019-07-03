@@ -1,14 +1,19 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.IO;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ReviewCodeForFileCanonicalizationVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        public ReviewCodeForFileCanonicalizationVulnerabilitiesTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticDescriptor Rule => ReviewCodeForFilePathInjectionVulnerabilities.Rule;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

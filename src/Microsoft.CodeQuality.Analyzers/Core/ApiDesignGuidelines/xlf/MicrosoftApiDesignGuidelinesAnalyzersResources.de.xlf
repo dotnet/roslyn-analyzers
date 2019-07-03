@@ -524,7 +524,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">Der Typ "{0}" muss "IEquatable&lt;T&gt;" implementieren, weil er "Equals" außer Kraft setzt.</target>
+        <target state="translated">Typ {0} muss IEquatable&lt;T&gt; implementieren, weil er Equals überschreibt</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -1404,12 +1404,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">Typ "{0}" muss "Equals" außer Kraft setzen, weil er "IEquatable&lt;T&gt;" implementiert.</target>
+        <target state="translated">Der Typ {0} muss Equals außer Kraft setzen, weil IEquatable&lt;T&gt; implementiert wird.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">Setzen Sie "Object.Equals(object)" außer Kraft, wenn "IEquatable&lt;T&gt;" implementiert wird.</target>
+        <target state="translated">"Object.Equals(object)" bei Implementierung von "IEquatable&lt;T&gt;" außer Kraft setzen</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1429,17 +1429,17 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="needs-review-translation">Beim Erstellen einer Bibliothek, in der der Endverbraucher unbekannt und kein SynchronizationContext erforderlich ist, sollten Sie die Verwendung von "ConfigureAwait(false)" in Betracht ziehen. Andernfalls treten bei den Endverbrauchern der Bibliothek möglicherweise Deadlocks auf, wenn die asynchronen Methoden in blockierender Weise verwendet werden.</target>
+        <target state="translated">Wenn eine asynchrone Methode direkt auf einen Task wartet, erfolgt die Fortsetzung in demselben Thread, in dem der Task erstellt wurde. Erwägen Sie den Aufruf von "Task.ConfigureAwait(Boolean)", um Ihre Absicht zur Fortsetzung zu signalisieren. Rufen Sie "ConfigureAwait(false)" auf, um Fortsetzungen für den Threadpool zu planen und so einen Deadlock für den UI-Thread zu vermeiden. Die Übergabe von FALSE ist eine geeignete Option für App-unabhängige Bibliotheken. Der Aufruf von "ConfigureAwait(true)" für den Task führt zum gleichen Verhalten wie der nicht explizite Aufruf von "ConfigureAwait". Wenn Sie diese Methode explizit aufrufen, teilen Sie den Lesern mit, dass Sie die Fortsetzung absichtlich für den ursprünglichen Synchronisierungskontext durchführen möchten.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Erwarten Sie nicht direkt einen Task ohne Aufruf von "ConfigureAwait".</target>
+        <target state="translated">Aufruf von "ConfigureAwait" für erwarteten Task erwägen</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Task nicht direkt erwarten</target>
+        <target state="translated">Aufruf von "ConfigureAwait" für erwarteten Task erwägen</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
@@ -1449,12 +1449,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Wenn ein Typ T "Object.Equals(object)" außer Kraft setzt, muss die Implementierung das Objektargument in den richtigen Typ T umwandeln, bevor der Vergleich durchgeführt wird. Wenn der Typ "IEquatable&lt;T&gt;" implementiert und daher die Methode "T.Equals(T)" bereitstellt, und wenn das Argument zur Kompilierungszeit bekanntermaßen vom Typ T ist, dann kann der Compiler "IEquatable&lt;T&gt;.Equals(T)" anstelle von "Object.Equals(object)" aufrufen. Es ist in diesem Fall keine Umwandlung erforderlich, was die Leistung verbessert.</target>
+        <target state="translated">Wenn ein Object.Equals(object) durch einen Typ T außer Kraft gesetzt wird, muss die Implementierung das Objektargument in den richtigen Typ T umwandeln, bevor der Vergleich durchgeführt wird. Wenn der Typ IEquatable&lt;T&gt; implementiert und daher die T.Equals(T)-Methode anbietet und wenn das Argument zur Kompilierzeit bekanntermaßen dem Typ T entspricht, kann der Compiler IEquatable&lt;T&gt;. Equals(T) anstelle von Object.Equals(object) aufrufen. In diesem Fall ist keine Umwandlung erforderlich, sodass eine bessere Leistung erzielt werden kann.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Wenn ein Typ T die Schnittstelle "IEquatable&lt;T&gt;" implementiert, wird einem Benutzer, der einen Aufruf der Equals-Methode im Quellcode sieht, vorgeschlagen, dass eine Instanz des Typs mit einer Instanz eines anderen Typs gleichgesetzt werden kann. Es könnte den Benutzer verwirren, wenn der Versuch der Gleichsetzung des  Typs mit einer Instanz eines anderen Typs nicht funktioniert. Dies verstößt gegen das "Prinzip der geringsten Überraschung".</target>
+        <target state="translated">Wenn ein Typ T die Schnittstelle IEquatable&lt;T&gt; implementiert, gewinnt ein Benutzer, der einen Aufruf der Equals-Methode im Quellcode anzeigt, den Eindruck, dass eine Instanz des Typs mit einer Instanz eines beliebigen anderen Typs gleichgesetzt werden kann. Der Benutzer ist möglicherweise irritiert, wenn er den Typ mit einer Instanz eines anderen Typs gleichzusetzen versucht und keine Kompilierung möglich ist. Dies verstößt gegen das "Prinzip der geringsten Überraschung" (Principle of Least Surprise).</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1479,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Entfernen Sie "{0}", und ersetzen Sie ihn durch einen generischen EventHandler wie z.B. "EventHandler&lt;T&gt;". Hierbei steht T für einen gültige EventArgs-Wert.</target>
+        <target state="translated">Entfernen Sie "{0}", und ersetzen Sie die zugehörige Syntax durch einen generischen EventHandler, z. B. EventHandler&lt;T&gt;, wobei T einem gültigen EventArgs-Wert entspricht.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1489,7 +1489,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Ändern Sie das Ereignis "{0}", um den Typ "{1}" durch einen generischen EventHandler wie z.B. "EventHandler&lt;T&gt;" zu ersetzen. Hierbei steht T für einen gültigen EventArgs-Wert.</target>
+        <target state="translated">Ändern Sie das Ereignis "{0}", um den Typ "{1}" durch einen generischen EventHandler zu ersetzen, z. B. EventHandler&lt;T&gt;, wobei T einem gültigen EventArgs-Wert entspricht.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

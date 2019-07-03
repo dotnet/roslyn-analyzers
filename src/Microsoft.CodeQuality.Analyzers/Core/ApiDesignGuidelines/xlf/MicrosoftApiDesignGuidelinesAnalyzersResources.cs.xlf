@@ -524,7 +524,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">Typ {0} by měl implementovat IEquatable&lt;T&gt;, protože přepisuje Equals.</target>
+        <target state="translated">Typ {0} by měl implementovat rozhraní IEquatable&lt;T&gt;, protože přepisuje metodu Equals</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -944,12 +944,12 @@
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessagePropertyGetter">
         <source>{0} creates an exception of type {1}, an exception type that should not be raised in a property. If this exception instance might be raised, use a different exception type, convert this property into a method, or change this property's logic so that it no longer raises an exception.</source>
-        <target state="translated">{0} vytváří výjimku typu {1\}, což je typ výjimky, která by neměla být ve vlastnosti vyvolána. Pokud se tato instance výjimky může vyvolat, použijte jiný typ výjimky, převeďte tuto vlastnost na metodu nebo změňte logiku této vlastnosti tak, aby už nevyvolávala výjimku.</target>
+        <target state="translated">{0} vytváří výjimku typu {1}, což je typ výjimky, která by neměla být ve vlastnosti vyvolána. Pokud se tato instance výjimky může vyvolat, použijte jiný typ výjimky, převeďte tuto vlastnost na metodu nebo změňte logiku této vlastnosti tak, aby už nevyvolávala výjimku.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions">
         <source>{0} creates an exception of type {1}, an exception type that should not be raised in this type of method. If this exception instance might be raised, either use a different exception type or change this method's logic so that it no longer raises an exception.</source>
-        <target state="translated">{0} vytváří výjimku typu {1\}, což je typ výjimky, která by neměla být v tomto typu metody vyvolána. Pokud se tato instance výjimky může vyvolat, buď použijte jiný typ výjimky, nebo změňte logiku této metody tak, aby už nevyvolávala výjimku.</target>
+        <target state="translated">{0} vytváří výjimku typu {1}, což je typ výjimky, která by neměla být v tomto typu metody vyvolána. Pokud se tato instance výjimky může vyvolat, buď použijte jiný typ výjimky, nebo změňte logiku této metody tak, aby už nevyvolávala výjimku.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions">
@@ -1404,12 +1404,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">Typ {0} by měl přepsat Equals, protože implementuje IEquatable&lt;T&gt;.</target>
+        <target state="translated">Typ {0} by měl přepisovat metodu Equals, protože implementuje IEquatable&lt;T&gt;.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">Přepsat Object.Equals(objekt) při implementaci IEquatable&lt;T&gt;</target>
+        <target state="translated">Při implementaci IEquatable&lt;T&gt; přepište Object.Equals(object)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1429,17 +1429,17 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="needs-review-translation">Při vytváření knihovny, jejíž konzument je neznámý a nevyžaduje se SynchronizationContext, zvažte použít ConfigureAwait(false). U konzumentů knihovny může jinak dojít ke vzájemnému zablokování, a to konzumací asynchronních metod blokujícím způsobem.</target>
+        <target state="translated">Když asynchronní metoda čeká přímo na Task, bude se pokračovat ve stejném vlákně, v jakém se vytvořila daná úloha. Zvažte možnost zavolat Task.ConfigureAwait(Boolean), čímž dáte najevo, že hodláte pokračovat. Když pro úlohu zavoláte ConfigureAwait(false), můžete ve fondu vláken naplánovat pokračování a vyhnout se tak vzájemnému zablokování ve vláknu uživatelského rozhraní. Pro knihovny, které nejsou závislé na aplikacích, je vhodné předat false. Volání ConfigureAwait(true) pro danou úlohu se chová stejně, jako když se explicitně nezavolá ConfigureAwait. Když tuto metodu explicitně zavoláte, dáváte čtenářům najevo, že se záměrně chystáte pokračovat v původním kontextu synchronizace.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Nečekejte přímo na úlohu bez volání ConfigureAwait.</target>
+        <target state="translated">Zvažte možnost zavolat ConfigureAwait pro očekávanou úlohu</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Nečekejte přímo na úlohu.</target>
+        <target state="translated">Zvažte možnost zavolat ConfigureAwait pro očekávanou úlohu</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
@@ -1449,12 +1449,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Pokud typ T přepisuje Object.Equals(objekt), musí implementace přetypovat argument objektu na správný typ T před provedením porovnání. Pokud typ implementuje IEquatable&lt;T&gt; a nabízí metodu T.Equals(T) a pokud se o argumentu při kompilaci ví, že je typu T, může kompilátor volat IEquatable&lt;T&gt;.Equals(T) namísto Object.Equals(objekt) a není nutné přetypování, čímž se zlepšuje výkon.</target>
+        <target state="translated">Když typ T přepisuje Object.Equals(object), implementace musí před porovnáním přetypovat argument objektu na správný typ T. Pokud typ implementuje rozhraní IEquatable&lt;T&gt; a tím nabízí metodu T.Equals(T) a pokud je při kompilaci známo, že argument je typu T, kompilátor může zavolat IEquatable&lt;T&gt;.Equals(T) místo Object.Equals(object). Díky tomu není nutné nic přetypovávat, což zvyšuje výkon.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Pokud typ T implementuje rozhraní IEquatable&lt;T&gt;, vyvolá to v uživateli, který ve zdrojovém kódu vidí volání metody Equals, dojem, že instanci typu lze srovnávat s instancí libovolného jiného typu. Uživatele může zmást, pokud při jeho pokusu o srovnání typu s instancí jiného typu dojde k chybě kompilace. To porušuje takzvaný „princip nejmenšího překvapení“.</target>
+        <target state="translated">Když typ T implementuje rozhraní IEquatable&lt;T&gt;, informuje uživatele, který ve zdrojovém kódu vidí volání metody Equals, že instance daného typu se dá porovnat s instancí jiného typu. U uživatele může dojít k nedorozumění, pokud jeho pokus o porovnání typu s instancí jiného typu způsobí chybu při kompilaci. To porušuje tzv. princip minimálního překvapení.</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1479,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Odeberte {0} a místo toho použijte obecnou obslužnou rutinu událostí, například EventHandler&lt;T&gt;, kde T je platná hodnota EventArgs.</target>
+        <target state="translated">Odeberte {0} a nahraďte jeho použití obecným EventHandlerem, třeba EventHandler&lt;T&gt;, kde T je platné EventArgs.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1489,7 +1489,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Změňte událost {0} tak, aby se typ {1} nahradil obecnou obslužnou rutinou událostí, například EventHandler&lt;T&gt;, kde T je platná hodnota EventArgs.</target>
+        <target state="translated">Změňte událost {0} tak, aby nahradila typ {1} obecným EventHandlerem, třeba EventHandler&lt;T&gt;, kde T je platné EventArgs.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

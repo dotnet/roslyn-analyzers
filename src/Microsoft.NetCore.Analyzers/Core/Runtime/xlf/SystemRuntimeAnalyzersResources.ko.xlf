@@ -4,202 +4,202 @@
     <body>
       <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
         <source>Add the 'NonSerialized' attribute to this field.</source>
-        <target state="new">Add the 'NonSerialized' attribute to this field.</target>
+        <target state="translated">이 필드에 'NonSerialized' 특성을 추가합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AddSerializableAttributeCodeActionTitle">
         <source>Add Serializable attribute</source>
-        <target state="new">Add Serializable attribute</target>
+        <target state="translated">Serializable 특성 추가</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
-        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <target state="translated">삭제 가능한 개체에 대한 모든 참조가 범위를 벗어나기 전에 삭제 가능한 개체가 명시적으로 삭제되지 않으면 가비지 수집기가 개체의 종료자를 실행할 때 비활성화 시점에서 개체가 삭제됩니다. 개체 종료자의 실행을 방지하는 예외적인 이벤트가 발생할 수 있으므로 대신 개체를 명시적으로 삭제해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="new">Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</target>
+        <target state="translated">권장 dispose 패턴을 사용하여 '{0}'에서 생성된 개체가 모든 경로에서 삭제되도록 합니다. 가능한 경우 'using' 문이나 'using' 선언 내에서 생성을 래핑합니다. 그렇지 않으면 try 영역 앞에 선언된 전용 지역 변수 및 'finally' 영역에 있는 null이 아닌 값의 비조건부 Dispose 호출('x?.Dispose()')과 함께 try-finally 패턴을 사용하세요. 개체가 try 영역 내에서 명시적으로 삭제되거나 삭제 소유권이 다른 개체나 메서드로 이전되면 해당 작업 바로 뒤의 지역 변수에 'null'을 할당하여 'finally'에서 이중 삭제를 방지하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedOnExceptionPathsMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="new">Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</target>
+        <target state="translated">권장 dispose 패턴을 사용하여 '{0}'에서 생성된 개체가 모든 예외 경로에서 삭제되도록 합니다. 가능한 경우 'using' 문이나 'using' 선언 내에서 생성을 래핑합니다. 그렇지 않으면 try 영역 앞에 선언된 전용 지역 변수 및 'finally' 영역에 있는 null이 아닌 값의 비조건부 Dispose 호출('x?.Dispose()')과 함께 try-finally 패턴을 사용하세요. 개체가 try 영역 내에서 명시적으로 삭제되거나 삭제 소유권이 다른 개체나 메서드로 이전되면 해당 작업 바로 뒤의 지역 변수에 'null'을 할당하여 'finally'에서 이중 삭제를 방지하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedMessage">
         <source>Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</source>
-        <target state="new">Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</target>
+        <target state="translated">'{0}'에서 생성된 개체에 대한 모든 참조가 범위를 벗어나기 전에 해당 개체에서 System.IDisposable.Dispose를 호출합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedOnExceptionPathsMessage">
         <source>Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</source>
-        <target state="new">Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</target>
+        <target state="translated">'{0}'에서 생성된 개체는 일부 예외 경로와 함께 삭제되지 않습니다. 개체에 대한 모든 참조가 범위를 벗어나기 전에 해당 개체에서 System.IDisposable.Dispose를 호출합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose objects before losing scope</source>
-        <target state="new">Dispose objects before losing scope</target>
+        <target state="translated">범위를 벗어나기 전에 개체를 삭제하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersDescription">
         <source>A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</source>
-        <target state="new">A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</target>
+        <target state="translated">메서드는 .NET Framework 클래스 라이브러리의 생성자 또는 메서드에 문자열 리터럴을 매개 변수로 전달하고 해당 문자열은 지역화 가능해야 합니다. 이 규칙 위반 문제를 해결하려면 문자열 리터럴을 ResourceManager 클래스의 인스턴스를 통해 검색된 문자열로 바꿉니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersMessage">
         <source>Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</source>
-        <target state="new">Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</target>
+        <target state="translated">'{0}' 메서드가 리터럴 문자열을 '{2}' 호출의 '{1}' 매개 변수로 전달합니다. 대신 리소스 테이블에서 "{3}" 문자열을 가져오세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersTitle">
         <source>Do not pass literals as localized parameters</source>
-        <target state="new">Do not pass literals as localized parameters</target>
+        <target state="translated">리터럴을 지역화된 매개 변수로 전달하지 마십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">
         <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
-        <target state="new">To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</target>
+        <target state="translated">이 규칙 위반 문제를 해결하려면 GetObjectData 메서드를 visible 및 overridable로 설정하고 모든 인스턴스 필드가 serialization 프로세스에 포함되거나 NonSerializedAttribute 특성을 사용하여 명시적으로 표시되도록 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
         <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="new">Add an implementation of GetObjectData to type {0}.</target>
+        <target state="translated">{0} 형식에 GetObjectData 구현을 추가하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
         <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="new">Make {0}.GetObjectData virtual and overridable.</target>
+        <target state="translated">{0}.GetObjectData를 virtual 및 overridable로 표시하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
         <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="new">Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</target>
+        <target state="translated">파생 형식에 표시되도록 {0}.GetObjectData의 액세스 가능성을 높이십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyTitle">
         <source>Implement ISerializable correctly</source>
-        <target state="new">Implement ISerializable correctly</target>
+        <target state="translated">ISerializable을 올바르게 구현하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
         <source>Implement Serialization constructor</source>
-        <target state="new">Implement Serialization constructor</target>
+        <target state="translated">Serialization 생성자 구현</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsDescription">
         <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="new">To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</target>
+        <target state="translated">이 규칙 위반 문제를 해결하려면 serialization 생성자를 구현합니다. sealed 클래스의 경우 생성자를 private으로 설정하고, 그렇지 않으면 protected로 설정합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
         <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
-        <target state="new">Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</target>
+        <target state="translated">다음 시그니처를 사용하여 생성자를 {0}에 추가하십시오. 'protected {0}(SerializationInfo info, StreamingContext context)'</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
         <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="new">Declare the serialization constructor of {0}, a sealed type, as private.</target>
+        <target state="translated">sealed 형식의 {0} serialization 생성자를 private으로 선언하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
         <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="new">Declare the serialization constructor of {0}, an unsealed type, as protected.</target>
+        <target state="translated">unsealed 형식의 {0} serialization 생성자를 protected로 선언하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsTitle">
         <source>Implement serialization constructors</source>
-        <target state="new">Implement serialization constructors</target>
+        <target state="translated">serialization 생성자를 구현하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
         <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
-        <target state="new">A method that handles a serialization event does not have the correct signature, return type, or visibility.</target>
+        <target state="translated">serialization 이벤트를 처리하는 메서드에 올바른 시그니처, 반환 형식 또는 표시 여부가 없습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</target>
+        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 제네릭 형식이 되지 않도록 시그니처를 변경하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</target>
+        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 'System.Runtime.Serialization.StreamingContext' 형식의 단일 매개 변수를 사용하도록 시그니처를 변경하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</target>
+        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 반환 형식을 {1}에서 void(Visual Studio의 경우 Sub)로 변경하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</target>
+        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 static(Visual Basic의 경우 Shared)에서 인스턴스 메서드로 변경하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</target>
+        <target state="translated">{0}이(가) OnSerializing, OnSerialized, OnDeserializing 또는 OnDeserialized로 표시되어 있으므로 액세스 가능성을 private으로 변경하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
         <source>Implement serialization methods correctly</source>
-        <target state="new">Implement serialization methods correctly</target>
+        <target state="translated">serialization 메서드를 올바르게 구현하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsDescription">
         <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
-        <target state="new">An instance field of a type that is not serializable is declared in a type that is serializable.</target>
+        <target state="translated">직렬화할 수 없는 형식의 인스턴스 필드는 직렬화할 수 있는 형식으로 선언됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsMessage">
         <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
-        <target state="new">Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</target>
+        <target state="translated">{0} 필드는 직렬화할 수 있는 {1} 형식의 멤버이지만 직렬화할 수 없는 {2} 형식입니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsTitle">
         <source>Mark all non-serializable fields</source>
-        <target state="new">Mark all non-serializable fields</target>
+        <target state="translated">모두 serialize할 수 없는 필드로 표시하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableDescription">
         <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
-        <target state="new">To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</target>
+        <target state="translated">공용 언어 런타임에서 serializable로 인식되려면 형식이 ISerializable 인터페이스 구현을 통해 사용자 지정 serialization 루틴을 사용하는 경우에도 SerializableAttribute 특성을 사용하여 형식을 표시해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableMessage">
         <source>Add [Serializable] to {0} as this type implements ISerializable</source>
-        <target state="new">Add [Serializable] to {0} as this type implements ISerializable</target>
+        <target state="translated">ISerializable을 구현하는 [Serializable]을 {0}에 추가합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableTitle">
         <source>Mark ISerializable types with serializable</source>
-        <target state="new">Mark ISerializable types with serializable</target>
+        <target state="translated">serializable로 ISerializable 형식 표시</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
         <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
-        <target state="new">A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</target>
+        <target state="translated">형식에 System.Runtime.Serialization.OptionalFieldAttribute 특성을 사용하여 표시된 필드가 있으면 해당 형식은 deserialization 이벤트 처리 메서드를 제공하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
         <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="new">Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</target>
+        <target state="translated">'private void OnDeserialized(StreamingContext)' 메서드를 {0} 형식에 추가하고 System.Runtime.Serialization.OnDeserializedAttribute 특성을 사용하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
         <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="new">Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</target>
+        <target state="translated">'private void OnDeserializing(StreamingContext)' 메서드를 {0} 형식에 추가하고 System.Runtime.Serialization.OnDeserializingAttribute 특성을 사용하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
         <source>Provide deserialization methods for optional fields</source>
-        <target state="new">Provide deserialization methods for optional fields</target>
+        <target state="translated">선택적 필드에 deserialization 메서드를 제공하십시오.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIndexer">
         <source>Use indexer</source>
-        <target state="new">Use indexer</target>
+        <target state="translated">인덱서 사용</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonTitle">
@@ -364,12 +364,12 @@
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
-        <target state="needs-review-translation">System.IDisposable을 구현하는 형식이 IDisposable도 구현하는 형식의 필드를 선언합니다. 필드의 Dispose 메서드가 선언 형식의 Dispose 메서드에서 호출되지 않습니다.</target>
+        <target state="translated">System.IDisposable을 구현하는 형식은 IDisposable도 구현하는 형식의 필드를 선언합니다. 필드의 Dispose 메서드는 선언 형식의 Dispose 메서드에 의해 호출되지 않습니다. 이 규칙 위반 문제를 해결하려면 필드에 포함되는 비관리형 리소스를 할당 및 해제해야 하는 경우 IDisposable을 구현하는 형식의 필드에서 Dispose를 호출합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
         <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
-        <target state="needs-review-translation">삭제 가능한 필드는 삭제해야 합니다.</target>
+        <target state="translated">'{0}'에는 IDisposable 형식 '{2}'의 '{1}' 필드가 포함되지만, 삭제되지는 않습니다. 이 필드에서 Close 또는 Dispose를 호출하려면 '{0}'에서 Dispose 메서드를 변경합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
@@ -389,17 +389,17 @@
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose methods should call base class dispose</source>
-        <target state="needs-review-translation">Dispose 메서드는 기본 클래스 Dispose를 호출해야 합니다.</target>
+        <target state="translated">Dispose 메서드는 기본 클래스 Dispose를 호출해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
-        <target state="needs-review-translation">특정 형식이 삭제 가능한 형식에서 상속된 경우 고유 Dispose 메서드에서 기본 형식의 Dispose 메서드를 호출해야 합니다.</target>
+        <target state="translated">System.IDisposable을 구현하는 형식은 IDisposable도 구현하는 형식에서 상속됩니다. 상속 형식의 Dispose 메서드는 부모 형식의 Dispose 메서드를 호출하지 않습니다. 이 규칙 위반 문제를 해결하려면 Dispose 메서드에서 base.Dispose를 호출합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="needs-review-translation">Dispose 메서드는 기본 클래스 Dispose를 호출해야 합니다.</target>
+        <target state="translated">'{0}' 메서드가 모든 가능한 제어 흐름 경로에서 '{1}'을(를) 호출하도록 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerTitle">

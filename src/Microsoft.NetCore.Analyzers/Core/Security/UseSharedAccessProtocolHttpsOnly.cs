@@ -136,13 +136,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                                         defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
                                                                         cancellationToken: operationBlockStartContext.CancellationToken,
                                                                         defaultMaxInterproceduralMethodCallChain: 1);
-                                var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(
+                                var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
                                                                                             invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
                                                                                             owningSymbol,
                                                                                             wellKnownTypeProvider,
                                                                                             interproceduralAnalysisConfig,
                                                                                             out var copyAnalysisResult,
                                                                                             out var pointsToAnalysisResult);
+                                if (valueContentAnalysisResult == null)
+                                {
+                                    return;
+                                }
 
                                 var protocolsArgument = valueContentAnalysisResult[protocolsArgumentOperation.Kind, protocolsArgumentOperation.Syntax];
 

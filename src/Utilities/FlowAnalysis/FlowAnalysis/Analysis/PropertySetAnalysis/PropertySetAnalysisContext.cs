@@ -34,7 +34,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
             bool pessimisticAnalysis,
             PointsToAnalysisResult pointsToAnalysisResult,
             ValueContentAnalysisResult valueContentAnalysisResultOpt,
-            Func<PropertySetAnalysisContext, PropertySetAnalysisResult> getOrComputeAnalysisResult,
+            Func<PropertySetAnalysisContext, PropertySetAnalysisResult> tryGetOrComputeAnalysisResult,
             ControlFlowGraph parentControlFlowGraphOpt,
             InterproceduralPropertySetAnalysisData interproceduralAnalysisDataOpt,
             string typeToTrackMetadataName,
@@ -42,11 +42,23 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
             PropertyMapperCollection propertyMappers,
             HazardousUsageEvaluatorCollection hazardousUsageEvaluators,
             ImmutableDictionary<INamedTypeSymbol, string> hazardousUsageTypesToNames)
-            : base(valueDomain, wellKnownTypeProvider, controlFlowGraph, owningSymbol, interproceduralAnalysisConfig, pessimisticAnalysis,
-                  predicateAnalysis: false, exceptionPathsAnalysis: false, copyAnalysisResultOpt: null, pointsToAnalysisResult,
-                  getOrComputeAnalysisResult, parentControlFlowGraphOpt, interproceduralAnalysisDataOpt, interproceduralAnalysisPredicateOpt: null)
+            : base(
+                  valueDomain,
+                  wellKnownTypeProvider,
+                  controlFlowGraph,
+                  owningSymbol,
+                  interproceduralAnalysisConfig,
+                  pessimisticAnalysis,
+                  predicateAnalysis: false,
+                  exceptionPathsAnalysis: false,
+                  copyAnalysisResultOpt: null,
+                  pointsToAnalysisResult,
+                  valueContentAnalysisResultOpt,
+                  tryGetOrComputeAnalysisResult,
+                  parentControlFlowGraphOpt,
+                  interproceduralAnalysisDataOpt,
+                  interproceduralAnalysisPredicateOpt: null)
         {
-            this.ValueContentAnalysisResultOpt = valueContentAnalysisResultOpt;
             this.TypeToTrackMetadataName = typeToTrackMetadataName;
             this.ConstructorMapper = constructorMapper;
             this.PropertyMappers = propertyMappers;
@@ -63,7 +75,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
             bool pessimisticAnalysis,
             PointsToAnalysisResult pointsToAnalysisResult,
             ValueContentAnalysisResult valueContentAnalysisResultOpt,
-            Func<PropertySetAnalysisContext, PropertySetAnalysisResult> getOrComputeAnalysisResult,
+            Func<PropertySetAnalysisContext, PropertySetAnalysisResult> tryGetOrComputeAnalysisResult,
             string typeToTrackMetadataName,
             ConstructorMapper constructorMapper,
             PropertyMapperCollection propertyMappers,
@@ -78,7 +90,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                 pessimisticAnalysis,
                 pointsToAnalysisResult,
                 valueContentAnalysisResultOpt,
-                getOrComputeAnalysisResult,
+                tryGetOrComputeAnalysisResult,
                 parentControlFlowGraphOpt: null,
                 interproceduralAnalysisDataOpt: null,
                 typeToTrackMetadataName: typeToTrackMetadataName,
@@ -94,6 +106,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
             IOperation operation,
             PointsToAnalysisResult pointsToAnalysisResultOpt,
             CopyAnalysisResult copyAnalysisResultOpt,
+            ValueContentAnalysisResult valueContentAnalysisResultOpt,
             InterproceduralPropertySetAnalysisData interproceduralAnalysisData)
         {
             Debug.Assert(pointsToAnalysisResultOpt != null);
@@ -107,8 +120,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                 InterproceduralAnalysisConfiguration,
                 PessimisticAnalysis,
                 pointsToAnalysisResultOpt,
-                this.ValueContentAnalysisResultOpt,
-                GetOrComputeAnalysisResult,
+                valueContentAnalysisResultOpt,
+                TryGetOrComputeAnalysisResult,
                 ControlFlowGraph,
                 interproceduralAnalysisData,
                 this.TypeToTrackMetadataName,
@@ -117,12 +130,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
                 this.HazardousUsageEvaluators,
                 this.HazardousUsageTypesToNames);
         }
-
-        /// <summary>
-        /// <see cref="ValueContentAnalysisResult"/> if the <see cref="ConstructorMapper"/> or a <see cref="PropertyMapper"/>
-        /// requires value content analysis.
-        /// </summary>
-        public ValueContentAnalysisResult ValueContentAnalysisResultOpt { get; }
 
         /// <summary>
         /// Metadata name of the type to track.
@@ -149,7 +156,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis
 #pragma warning disable CA1307 // Specify StringComparison - string.GetHashCode(StringComparison) not available in all projects that reference this shared project
         protected override void ComputeHashCodePartsSpecific(ArrayBuilder<int> builder)
         {
-            builder.Add(ValueContentAnalysisResultOpt.GetHashCodeOrDefault());
             builder.Add(TypeToTrackMetadataName.GetHashCode());
             builder.Add(ConstructorMapper.GetHashCode());
             builder.Add(PropertyMappers.GetHashCode());

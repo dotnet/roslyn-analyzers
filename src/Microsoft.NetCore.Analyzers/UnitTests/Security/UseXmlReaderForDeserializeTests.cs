@@ -23,7 +23,7 @@ class TestClass
         new XmlSerializer(typeof(TestClass)).Deserialize(stream);
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDeserialize.RealRule, "Deserialize"));
+            GetCSharpResultAt(10, 9, UseXmlReaderForDeserialize.RealRule, "XmlSerializer", "Deserialize"));
         }
 
         [Fact]
@@ -41,7 +41,7 @@ class TestClass
         new XmlSerializer(typeof(TestClass)).Deserialize(textReader);
     }
 }",
-            GetCSharpResultAt(10, 9, UseXmlReaderForDeserialize.RealRule, "Deserialize"));
+            GetCSharpResultAt(10, 9, UseXmlReaderForDeserialize.RealRule, "XmlSerializer", "Deserialize"));
         }
 
         [Fact]
@@ -59,7 +59,7 @@ class TestClass : XmlSerializer
         return base.Deserialize(xmlSerializationReader);
     }
 }",
-            GetCSharpResultAt(10, 16, UseXmlReaderForDeserialize.RealRule, "Deserialize"));
+            GetCSharpResultAt(10, 16, UseXmlReaderForDeserialize.RealRule, "XmlSerializer", "Deserialize"));
 
             VerifyBasic(@"
 Imports System
@@ -72,7 +72,7 @@ Class TestClass
         Deserialize = MyBase.Deserialize(xmlSerializationReader)
     End Function
 End Class",
-            GetBasicResultAt(9, 23, UseXmlReaderForDeserialize.RealRule, "Deserialize"));
+            GetBasicResultAt(9, 23, UseXmlReaderForDeserialize.RealRule, "XmlSerializer", "Deserialize"));
         }
 
         [Fact]
@@ -95,7 +95,7 @@ class TestClass : XmlSerializer
         Deserialize(xmlSerializationReader);
     }
 }",
-            GetCSharpResultAt(15, 9, UseXmlReaderForDeserialize.RealRule, "Deserialize"));
+            GetCSharpResultAt(15, 9, UseXmlReaderForDeserialize.RealRule, "TestClass", "Deserialize"));
 
             VerifyBasic(@"
 Imports System
@@ -112,7 +112,7 @@ Class TestClass
         Deserialize(xmlSerializationReader)
     End Sub
 End Class",
-            GetBasicResultAt(13, 9, UseXmlReaderForDeserialize.RealRule, "Deserialize"));
+            GetBasicResultAt(13, 9, UseXmlReaderForDeserialize.RealRule, "TestClass", "Deserialize"));
         }
 
         [Fact]
@@ -143,7 +143,7 @@ class SubTestClass : TestClass
         Deserialize(xmlSerializationReader);
     }
 }",
-            GetCSharpResultAt(23, 9, UseXmlReaderForDeserialize.RealRule, "Deserialize"));
+            GetCSharpResultAt(23, 9, UseXmlReaderForDeserialize.RealRule, "SubTestClass", "Deserialize"));
         }
 
         [Fact]

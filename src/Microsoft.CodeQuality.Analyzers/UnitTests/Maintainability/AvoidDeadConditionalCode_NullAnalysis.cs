@@ -6555,5 +6555,19 @@ public class C
     }
 }");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void ArrayInitializerNotParentedByArrayCreation()
+        {
+            VerifyBasic(@"
+Class C
+    Public Sub F(p As Object)
+        Dim a = {M}
+        Dim b = If(p, new C())
+    End Sub
+End Class
+", validationMode: TestValidationMode.AllowCompileErrors);
+        }
     }
 }

@@ -3,11 +3,17 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ReviewCodeForSqlInjectionVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        public ReviewCodeForSqlInjectionVulnerabilitiesTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticDescriptor Rule => ReviewCodeForSqlInjectionVulnerabilities.Rule;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

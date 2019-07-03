@@ -1429,17 +1429,17 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="needs-review-translation">Durante la creazione di una libreria in cui il consumer è sconosciuto e quando non è necessario un elemento SynchronizationContext, provare a usare ConfigureAwait(false). In caso contrario, i consumer della libreria potrebbero riscontrare deadlock durante l'utilizzo dei metodi asincroni in modalità di blocco.</target>
+        <target state="translated">Quando un metodo asincrono attende direttamente un elemento Task, la continuazione avviene nello stesso thread che ha creato l'attività. Provare a chiamare Task.ConfigureAwait(Boolean) per segnalare l'intenzione di continuare. Chiamare ConfigureAwait(false) sull'attività per pianificare le continuazioni nel pool di thread, evitando così un deadlock nel thread dell'interfaccia utente. È consigliabile passare false per le librerie indipendenti dall'app. Chiamare ConfigureAwait(true) sull'attività per ottenere lo stesso comportamento di quando ConfigureAwait non viene chiamato in modo esplicito. Se si chiama questo metodo in modo esplicito, si consente ai lettori di sapere che si intende intenzionalmente eseguire la continuazione nel contesto di sincronizzazione originale.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Non attendere direttamente un oggetto Task senza chiamare ConfigureAwait</target>
+        <target state="translated">Provare a chiamare ConfigureAwait sull'attività attesa</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Non attendere direttamente un oggetto Task</target>
+        <target state="translated">Provare a chiamare ConfigureAwait sull'attività attesa</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">

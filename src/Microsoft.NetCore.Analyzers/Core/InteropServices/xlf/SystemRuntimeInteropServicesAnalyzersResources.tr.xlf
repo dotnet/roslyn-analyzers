@@ -34,7 +34,7 @@
       </trans-unit>
       <trans-unit id="PInvokeDeclarationsShouldBePortableMessageReturn">
         <source>As it is declared in your code, the return type of P/Invoke {0} will be {1} bytes wide on {2} platforms. This is not correct, as the actual native declaration of this API indicates it should be {3} bytes wide on {2} platforms. Consult the MSDN Platform SDK documentation for help determining what data type should be used instead of {4}.</source>
-        <target state="translated">Kodunuzda bildirildiği gibi, P/Invoke \{0\} öğesinin dönüş türü {2} platformlarında {1} bayt genişliğinde olacaktır. Bu API’nin gerçek yerel bildirimi {2} platformlarında {3} genişliğinde olması gerektiğini bildirdiğinden, bu doğru değildir. {4} yerine hangi veri türünün kullanılması gerektiğini belirleme hakkında yardım için MSDN Platform SDK’sı belgelerine başvurun.</target>
+        <target state="translated">Kodunuzda bildirildiği gibi, P/Invoke {0} öğesinin dönüş türü {2} platformlarında {1} bayt genişliğinde olacaktır. Bu API’nin gerçek yerel bildirimi {2} platformlarında {3} genişliğinde olması gerektiğini bildirdiğinden, bu doğru değildir. {4} yerine hangi veri türünün kullanılması gerektiğini belirleme hakkında yardım için MSDN Platform SDK’sı belgelerine başvurun.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">

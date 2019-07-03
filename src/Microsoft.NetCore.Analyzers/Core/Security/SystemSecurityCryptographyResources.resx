@@ -126,6 +126,18 @@
   <data name="ApprovedCipherModeMessage" xml:space="preserve">
     <value>It uses an unsafe Cipher Mode {0}</value>
   </data>
+  <data name="DefinitelyInstallRootCert" xml:space="preserve">
+    <value>Do Not Add Certificates To Root Store</value>
+  </data>
+  <data name="DefinitelyInstallRootCertMessage" xml:space="preserve">
+    <value>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</value>
+  </data>
+  <data name="DefinitelyUseSecureCookiesASPNetCore" xml:space="preserve">
+    <value>Use Secure Cookies In ASP.Net Core</value>
+  </data>
+  <data name="DefinitelyUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
+    <value>Set CookieOptions.Secure = true when setting a cookie</value>
+  </data>
   <data name="DoNotAddSchemaByURL" xml:space="preserve">
     <value>Do Not Add Schema By URL</value>
   </data>
@@ -180,6 +192,9 @@
   <data name="DoNotDisableSchUseStrongCryptoMessage" xml:space="preserve">
     <value>{0} disables TLS 1.2 and enables SSLv3</value>
   </data>
+  <data name="DoNotInstallRootCertDescription" xml:space="preserve">
+    <value>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</value>
+  </data>
   <data name="DoNotReferSelfInSerializableClass" xml:space="preserve">
     <value>Do Not Refer Self In Serializable Class</value>
   </data>
@@ -225,6 +240,15 @@
   <data name="DoNotUseDeprecatedSecurityProtocolsMessage" xml:space="preserve">
     <value>Hard-coded use of deprecated security protocol {0}</value>
   </data>
+  <data name="DoNotUseDSA" xml:space="preserve">
+    <value>Do Not Use Digital Signature Algorithm (DSA)</value>
+  </data>
+  <data name="DoNotUseDSADescription" xml:space="preserve">
+    <value>DSA is too weak to use.</value>
+  </data>
+  <data name="DoNotUseDSAMessage" xml:space="preserve">
+    <value>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</value>
+  </data>
   <data name="DoNotUseMD5" xml:space="preserve">
     <value>Do not use insecure cryptographic algorithm MD5.</value>
   </data>
@@ -255,11 +279,38 @@
   <data name="DoNotUseWeakCryptographicAlgorithmsMessage" xml:space="preserve">
     <value>{0} uses a weak cryptographic algorithm {1}</value>
   </data>
+  <data name="DoNotUseWeakKDFAlgorithm" xml:space="preserve">
+    <value>Do Not Use Weak Key Derivation Function Algorithm</value>
+  </data>
+  <data name="DoNotUseWeakKDFAlgorithmDescription" xml:space="preserve">
+    <value>Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</value>
+  </data>
+  <data name="DoNotUseWeakKDFAlgorithmMessage" xml:space="preserve">
+    <value>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</value>
+  </data>
   <data name="DoNotUseXslTransform" xml:space="preserve">
     <value>Do Not Use XslTransform</value>
   </data>
   <data name="DoNotUseXslTransformMessage" xml:space="preserve">
     <value>Do not use XslTransform. It does not restrict potentially dangerous external references.</value>
+  </data>
+  <data name="HardCodedSecurityProtocolMessage" xml:space="preserve">
+    <value>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</value>
+  </data>
+  <data name="HardCodedSecurityProtocolTitle" xml:space="preserve">
+    <value>Avoid hardcoding SecurityProtocolType value</value>
+  </data>
+  <data name="MaybeInstallRootCert" xml:space="preserve">
+    <value>Ensure Certificates Are Not Added To Root Store</value>
+  </data>
+  <data name="MaybeInstallRootCertMessage" xml:space="preserve">
+    <value>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</value>
+  </data>
+  <data name="MaybeUseSecureCookiesASPNetCore" xml:space="preserve">
+    <value>Ensure Use Secure Cookies In ASP.Net Core</value>
+  </data>
+  <data name="MaybeUseSecureCookiesASPNetCoreMessage" xml:space="preserve">
+    <value>Ensure that CookieOptions.Secure = true when setting a cookie</value>
   </data>
   <data name="SetViewStateUserKey" xml:space="preserve">
     <value>Set ViewStateUserKey For Classes Derived From Page</value>
@@ -269,6 +320,18 @@
   </data>
   <data name="SetViewStateUserKeyMessage" xml:space="preserve">
     <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
+  </data>
+  <data name="UseContainerLevelAccessPolicy" xml:space="preserve">
+    <value>Use Container Level Access Policy</value>
+  </data>
+  <data name="UseContainerLevelAccessPolicyDescription" xml:space="preserve">
+    <value>No access policy identifier is specified, making tokens non-revocable.</value>
+  </data>
+  <data name="UseContainerLevelAccessPolicyMessage" xml:space="preserve">
+    <value>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</value>
+  </data>
+  <data name="UseSecureCookiesASPNetCoreDescription" xml:space="preserve">
+    <value>Applications available over HTTPS must use secure cookies.</value>
   </data>
   <data name="UseSharedAccessProtocolHttpsOnly" xml:space="preserve">
     <value>Use SharedAccessProtocol HttpsOnly</value>
@@ -299,5 +362,14 @@
   </data>
   <data name="UseXmlReaderMessage" xml:space="preserve">
     <value>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</value>
+  </data>
+  <data name="UseRSAWithSufficientKeySize" xml:space="preserve">
+    <value>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</value>
+  </data>
+  <data name="UseRSAWithSufficientKeySizeDescription" xml:space="preserve">
+    <value>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</value>
+  </data>
+  <data name="UseRSAWithSufficientKeySizeMessage" xml:space="preserve">
+    <value>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>
   </data>
 </root>

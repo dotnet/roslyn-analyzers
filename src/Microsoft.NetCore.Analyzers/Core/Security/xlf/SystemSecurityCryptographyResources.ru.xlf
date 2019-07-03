@@ -17,19 +17,39 @@
         <target state="translated">Он использует небезопасный режим шифрования {0}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefinitelyInstallRootCert">
+        <source>Do Not Add Certificates To Root Store</source>
+        <target state="new">Do Not Add Certificates To Root Store</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyInstallRootCertMessage">
+        <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
+        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
+        <source>Use Secure Cookies In ASP.Net Core</source>
+        <target state="new">Use Secure Cookies In ASP.Net Core</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseSecureCookiesASPNetCoreMessage">
+        <source>Set CookieOptions.Secure = true when setting a cookie</source>
+        <target state="new">Set CookieOptions.Secure = true when setting a cookie</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
         <source>Do Not Add Schema By URL</source>
-        <target state="new">Do Not Add Schema By URL</target>
+        <target state="translated">Не добавляйте схему по URL-адресу</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURLDescription">
         <source>This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</source>
-        <target state="new">This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.</target>
+        <target state="translated">Эта внутренняя перегрузка метода XmlSchemaCollection.Add включает обработку DTD в используемом экземпляре модуля чтения XML, а также использует UrlResolver для разрешения внешних сущностей XML. Результатом является раскрытие информации. Содержимое из файловой системы или общих папок на компьютере, обрабатывающем XML-код, может быть раскрыто для злоумышленника. Кроме того, злоумышленник может использовать этот вектор для проведения атак типа "отказ в обслуживании".</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURLMessage">
         <source>This overload of the Add method is potentially unsafe because it may resolve dangerous external references</source>
-        <target state="new">This overload of the Add method is potentially unsafe because it may resolve dangerous external references</target>
+        <target state="translated">Эта перегрузка метода Add потенциально небезопасна, так как может разрешать опасные внешние ссылки</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
@@ -49,7 +69,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">
         <source>Do Not Disable Certificate Validation</source>
-        <target state="needs-review-translation">Не отключать проверку сертификации</target>
+        <target state="translated">Не отключайте проверку сертификатов</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidationDescription">
@@ -64,92 +84,97 @@
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderChecking">
         <source>Do Not Disable HTTP Header Checking</source>
-        <target state="new">Do Not Disable HTTP Header Checking</target>
+        <target state="translated">Не отключайте проверку заголовков HTTP</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderCheckingDescription">
         <source>HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</source>
-        <target state="new">HTTP header checking enables encoding of the carriage return and newline characters, \r and \n, that are found in response headers. This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</target>
+        <target state="translated">Проверка заголовков HTTP позволяет кодировать символы возврата каретки и новой строки \r и \n, находящиеся в заголовках ответов. Такая кодировка позволяет избежать атак путем внедрения, использующих приложение, которое возвращает ненадежные данные из заголовка.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableHTTPHeaderCheckingMessage">
         <source>Do not disable HTTP header checking</source>
-        <target state="new">Do not disable HTTP header checking</target>
+        <target state="translated">Не отключайте проверку заголовков HTTP</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidation">
         <source>Do Not Disable Request Validation</source>
-        <target state="new">Do Not Disable Request Validation</target>
+        <target state="translated">Не отключайте проверку запросов</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationDescription">
         <source>Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</source>
-        <target state="new">Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.</target>
+        <target state="translated">Проверка запросов — это функция ASP.NET, которая анализирует HTTP-запросы и определяет, содержат ли они потенциально опасное содержимое. Эта проверка улучшает защиту от разметки или кода в строке запроса URL-адреса, файлах cookie или значениях опубликованной формы, которые могли быть добавлены злоумышленником. Таким образом, в общем случае эта проверка желательна, и ее следует оставить включенной, чтобы обеспечить полноценную защиту.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
-        <target state="new">{0} has request validation disabled</target>
+        <target state="translated">Для метода {0} проверка запросов отключена</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
         <source>Do Not Disable SChannel Use of Strong Crypto</source>
-        <target state="new">Do Not Disable SChannel Use of Strong Crypto</target>
+        <target state="translated">Не отключайте стойкое шифрование в защищенном канале</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCryptoDescription">
         <source>Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommeded to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.</source>
-        <target state="new">Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommeded to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.</target>
+        <target state="translated">Начиная с .NET Framework 4.6 в классах System.Net.ServicePointManager и System.Net.Security.SslStream рекомендуется использовать новые протоколы. В старых протоколах обнаружены уязвимости, и они не поддерживаются. При установке значения true для параметра Switch.System.Net.DontEnableSchUseStrongCrypto будет включена проверка использования устаревшего протокола с наличием уязвимостей и не будет выполнен перенос протокола.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCryptoMessage">
         <source>{0} disables TLS 1.2 and enables SSLv3</source>
-        <target state="new">{0} disables TLS 1.2 and enables SSLv3</target>
+        <target state="translated">{0} отключает TLS 1.2 и включает SSLv3</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotInstallRootCertDescription">
+        <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
+        <target state="new">By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">
         <source>Do Not Refer Self In Serializable Class</source>
-        <target state="new">Do Not Refer Self In Serializable Class</target>
+        <target state="translated">Не ссылайтесь на самого себя в сериализуемом классе</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClassDescription">
         <source>This can allow an attacker to DOS or exhaust the memory of the process.</source>
-        <target state="new">This can allow an attacker to DOS or exhaust the memory of the process.</target>
+        <target state="translated">Это позволяет злоумышленнику провести DDOS-атаку или вызвать переполнение памяти процесса.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClassMessage">
         <source>{0} participates in a potential reference cycle</source>
-        <target state="new">{0} participates in a potential reference cycle</target>
+        <target state="translated">{0} участвует в потенциальном ссылочном цикле</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotSerializeTypesWithPointerFields">
         <source>Do Not Serialize Types With Pointer Fields</source>
-        <target state="new">Do Not Serialize Types With Pointer Fields</target>
+        <target state="translated">Не сериализуйте типы с полями указателей</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotSerializeTypesWithPointerFieldsDescription">
         <source>Pointers are not "type safe" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.</source>
-        <target state="new">Pointers are not "type safe" in the sense that you cannot guarantee the correctness of the memory they point at. So, serializing types with pointer fields is dangerous, as it may allow an attacker to control the pointer.</target>
+        <target state="translated">Указатели не являются "типобезопасными" в том смысле, что невозможно гарантировать правильность памяти, на которую они указывают. Таким образом, сериализация типов с полями указателей опасна, так как она может позволить злоумышленнику контролировать указатель.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotSerializeTypesWithPointerFieldsMessage">
         <source>Pointer field {0} on serializable type.</source>
-        <target state="new">Pointer field {0} on serializable type.</target>
+        <target state="translated">Поле указателя {0} для сериализуемого типа.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseAccountSAS">
         <source>Do Not Use Account Shared Access Signature</source>
-        <target state="new">Do Not Use Account Shared Access Signature</target>
+        <target state="translated">Не использовать подписанный URL-адрес учетной записи</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseAccountSASDescription">
         <source>Shared Access Signatures(SAS) are a vital part of the security model for any application using Azure Storage, they should provide limited and safe permissions to your storage account to clients that don't have the account key. All of the operations available via a service SAS are also available via an account SAS, that is, account SAS is too powerful. So it is recommended to use Service SAS to delegate access more carefully.</source>
-        <target state="new">Shared Access Signatures(SAS) are a vital part of the security model for any application using Azure Storage, they should provide limited and safe permissions to your storage account to clients that don't have the account key. All of the operations available via a service SAS are also available via an account SAS, that is, account SAS is too powerful. So it is recommended to use Service SAS to delegate access more carefully.</target>
+        <target state="translated">Подписанные URL-адреса (SAS) являются критически важной частью модели безопасности для любого приложения, использующего службу хранилища Azure, они должны предоставлять ограниченные и безопасные разрешения для вашей учетной записи хранения для клиентов, не имеющих ключа учетной записи. Все операции, доступные через SAS службы, также доступны через SAS учетной записи, то есть учетная запись SAS обладает слишком широкими полномочиями. Поэтому рекомендуется использовать SAS службы для более аккуратного делегирования доступа.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseAccountSASMessage">
         <source>Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</source>
-        <target state="new">Use Service SAS instead of Account SAS for fine grained access control and container-level access policy</target>
+        <target state="translated">Используйте SAS службы вместо SAS учетной записи для детализированного контроля доступа и политики доступа на уровне контейнеров.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseBrokenCryptographicAlgorithms">
@@ -167,19 +192,34 @@
         <target state="translated">{0} использует взломанный алгоритм шифрования {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseDSA">
+        <source>Do Not Use Digital Signature Algorithm (DSA)</source>
+        <target state="new">Do Not Use Digital Signature Algorithm (DSA)</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDSADescription">
+        <source>DSA is too weak to use.</source>
+        <target state="new">DSA is too weak to use.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseDSAMessage">
+        <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
+        <target state="new">Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
         <source>Do Not Use Deprecated Security Protocols</source>
-        <target state="new">Do Not Use Deprecated Security Protocols</target>
+        <target state="translated">Не используйте нерекомендуемые протоколы безопасности</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocolsDescription">
         <source>Using a deprecated security protocol rather than the system default is risky.</source>
-        <target state="new">Using a deprecated security protocol rather than the system default is risky.</target>
+        <target state="translated">Использование нерекомендуемого протокола безопасности вместо заданного по умолчанию в системе является рискованным.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocolsMessage">
         <source>Hard-coded use of deprecated security protocol {0}</source>
-        <target state="new">Hard-coded use of deprecated security protocol {0}</target>
+        <target state="translated">Жестко заданное использование нерекомендуемого протокола безопасности {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseMD5">
@@ -194,17 +234,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseObsoleteKDFAlgorithm">
         <source>Do not use obsolete key derivation function</source>
-        <target state="new">Do not use obsolete key derivation function</target>
+        <target state="translated">Не используйте устаревшую функцию формирования ключа.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseObsoleteKDFAlgorithmDescription">
         <source>Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</source>
-        <target state="new">Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.</target>
+        <target state="translated">При формировании ключа на основе пароля должен использоваться стандарт PBKDF2 с SHA-2. Не используйте метод PasswordDeriveBytes, так как он формирует ключ PBKDF1. Также не используйте метод Rfc2898DeriveBytes.CryptDeriveKey, так как он не использует счетчик итераций и соль.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseObsoleteKDFAlgorithmMessage">
         <source>Call to obsolete key derivation function {0}.{1}</source>
-        <target state="new">Call to obsolete key derivation function {0}.{1}</target>
+        <target state="translated">Вызов устаревшей функции формирования ключа {0}.{1}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseSHA1">
@@ -232,79 +272,159 @@
         <target state="translated">{0} использует слабый алгоритм шифрования {1}</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFAlgorithm">
+        <source>Do Not Use Weak Key Derivation Function Algorithm</source>
+        <target state="new">Do Not Use Weak Key Derivation Function Algorithm</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
+        <source>Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</source>
+        <target state="new">Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
+        <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
+        <target state="new">{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
         <source>Do Not Use XslTransform</source>
-        <target state="new">Do Not Use XslTransform</target>
+        <target state="translated">Не используйте XslTransform.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransformMessage">
         <source>Do not use XslTransform. It does not restrict potentially dangerous external references.</source>
-        <target state="new">Do not use XslTransform. It does not restrict potentially dangerous external references.</target>
+        <target state="translated">Не используйте XslTransform. Он не ограничивает потенциально опасные внешние ссылки.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardCodedSecurityProtocolMessage">
+        <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
+        <target state="new">Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardCodedSecurityProtocolTitle">
+        <source>Avoid hardcoding SecurityProtocolType value</source>
+        <target state="new">Avoid hardcoding SecurityProtocolType value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeInstallRootCert">
+        <source>Ensure Certificates Are Not Added To Root Store</source>
+        <target state="new">Ensure Certificates Are Not Added To Root Store</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeInstallRootCertMessage">
+        <source>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</source>
+        <target state="new">Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseSecureCookiesASPNetCore">
+        <source>Ensure Use Secure Cookies In ASP.Net Core</source>
+        <target state="new">Ensure Use Secure Cookies In ASP.Net Core</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseSecureCookiesASPNetCoreMessage">
+        <source>Ensure that CookieOptions.Secure = true when setting a cookie</source>
+        <target state="new">Ensure that CookieOptions.Secure = true when setting a cookie</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
         <source>Set ViewStateUserKey For Classes Derived From Page</source>
-        <target state="new">Set ViewStateUserKey For Classes Derived From Page</target>
+        <target state="translated">Задайте ViewStateUserKey для классов, производных от Page</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyDescription">
         <source>Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</source>
-        <target state="new">Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</target>
+        <target state="translated">Задание свойства ViewStateUserKey может помочь предотвратить атаки на приложение, позволяя назначить идентификатор переменной состояния просмотра для отдельных пользователей, чтобы они не могли использовать переменную для атаки. В противном случае будут иметь место уязвимости к подделке межсайтовых запросов.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
         <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="new">The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</target>
+        <target state="translated">Подкласс {0} класса Page не задает свойство ViewStateUserKey в методе OnInit</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicy">
+        <source>Use Container Level Access Policy</source>
+        <target state="new">Use Container Level Access Policy</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicyDescription">
+        <source>No access policy identifier is specified, making tokens non-revocable.</source>
+        <target state="new">No access policy identifier is specified, making tokens non-revocable.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseContainerLevelAccessPolicyMessage">
+        <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
+        <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRSAWithSufficientKeySize">
+        <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
+        <target state="new">Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRSAWithSufficientKeySizeDescription">
+        <source>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</source>
+        <target state="new">Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseRSAWithSufficientKeySizeMessage">
+        <source>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
+        <target state="new">Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseSecureCookiesASPNetCoreDescription">
+        <source>Applications available over HTTPS must use secure cookies.</source>
+        <target state="new">Applications available over HTTPS must use secure cookies.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
-        <target state="new">Use SharedAccessProtocol HttpsOnly</target>
+        <target state="translated">Использовать Шаредакцесспротокол Хттпсонли</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
-        <target state="new">HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</target>
+        <target state="translated">HTTPS шифрует сетевой трафик. Используйте Хттпсонли, а не Хттпорхттпс, чтобы гарантировать, что сетевой трафик всегда будет зашифрован для предотвращения раскрытия конфиденциальных данных.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
-        <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</target>
+        <target state="translated">Попробуйте использовать управление доступом на основе ролей Azure вместо сигнатуры общего доступа (SAS), если это возможно. Если все еще нужно использовать SAS, укажите Шаредакцесспротокол. Хттпсонли</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">
         <source>Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</source>
-        <target state="new">Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.</target>
+        <target state="translated">Обработка XML-кода из ненадежных данных может привести к загрузке опасных внешних ссылок, что следует ограничить, используя XmlReader с безопасным сопоставителем или отключив обработку DTD.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDataSetReadXml">
         <source>Use XmlReader For DataSet Read Xml</source>
-        <target state="new">Use XmlReader For DataSet Read Xml</target>
+        <target state="translated">Использовать XmlReader для чтения XML из набора данных</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForDeserialize">
         <source>Use XmlReader For Deserialize</source>
-        <target state="new">Use XmlReader For Deserialize</target>
+        <target state="translated">Использовать XmlReader для десериализации</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForSchemaRead">
         <source>Use XmlReader For Schema Read</source>
-        <target state="new">Use XmlReader For Schema Read</target>
+        <target state="translated">Использовать XmlReader для чтения схемы</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForValidatingReader">
         <source>Use XmlReader For Validating Reader</source>
-        <target state="new">Use XmlReader For Validating Reader</target>
+        <target state="translated">Использовать XmlReader для проверяющего модуля чтения</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderForXPathDocument">
         <source>Use XmlReader For XPathDocument</source>
-        <target state="new">Use XmlReader For XPathDocument</target>
+        <target state="translated">Использовать XmlReader для XPathDocument</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderMessage">
         <source>This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</source>
-        <target state="new">This overload of the {0}.{1} method is potentially unsafe, use an overload that takes a XmlReader instance instead</target>
+        <target state="translated">Эта перегрузка метода {0}.{1} потенциально небезопасна, используйте вместо этого перегрузку, которая принимает экземпляр XmlReader</target>
         <note />
       </trans-unit>
     </body>

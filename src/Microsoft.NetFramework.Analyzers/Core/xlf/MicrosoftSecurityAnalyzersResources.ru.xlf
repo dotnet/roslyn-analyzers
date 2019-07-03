@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenTitle">
         <source>Mark Verb Handlers With Validate Antiforgery Token</source>
-        <target state="needs-review-translation">MarkVerbHandlersWithValidateAntiforgeryTokenTitle</target>
+        <target state="translated">Пометьте обработчики команд маркером проверки на подлинность</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">

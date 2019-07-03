@@ -266,6 +266,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             private bool IsSerializable(ITypeSymbol type)
             {
+                if (type.IsPrimitiveType())
+                {
+                    return true;
+                }
+
                 switch (type.TypeKind)
                 {
                     case TypeKind.Array:

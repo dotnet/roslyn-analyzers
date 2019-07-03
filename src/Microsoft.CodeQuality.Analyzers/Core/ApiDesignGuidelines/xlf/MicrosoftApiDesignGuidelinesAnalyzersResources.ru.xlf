@@ -524,7 +524,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">Тип {0} должен реализовать интерфейс IEquatable&lt;T&gt;, так как он переопределяет Equals</target>
+        <target state="translated">Тип {0} должен реализовывать IEquatable&lt;T&gt;, так как он переопределяет Equals</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -1404,7 +1404,7 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">Тип {0} должен переопределять Equals, так как он реализует интерфейс IEquatable&lt;T&gt;</target>
+        <target state="translated">Тип {0} должен переопределять Equals, так как он реализует IEquatable&lt;T&gt;</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
@@ -1429,17 +1429,17 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="needs-review-translation">При создании библиотеки, когда потребитель неизвестен, а SynchronizationContext не требуется, рекомендуется использовать ConfigureAwait(false). В противном случае потребители библиотеки могут столкнуться с взаимоблокировками, используя асинхронные методы блокирующим образом.</target>
+        <target state="translated">Когда асинхронный метод непосредственно ожидает задачу, продолжение происходит в том же потоке, в котором была создана задача. Попробуйте вызвать Task.ConfigureAwait(Boolean), чтобы сообщить о том, что планируется продолжение. Вызовите ConfigureAwait(false) для задачи, чтобы запланировать продолжения для пула потоков, избежав таким образом взаимоблокировки в потоке пользовательского интерфейса. Передача значения false является хорошим вариантом для библиотек, независимых от приложений. Поведение при вызове ConfigureAwait(true) для задачи такое же, как при неявном вызове ConfigureAwait. При явном вызове этого метода вы сообщаете читателям, что вы намеренно хотите выполнить продолжение в исходном контексте синхронизации.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Не дожидайтесь задачи напрямую, не вызвав ConfigureAwait</target>
+        <target state="translated">Попробуйте вызвать ConfigureAwait для ожидаемой задачи</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">Не дожидайтесь задачи напрямую</target>
+        <target state="translated">Попробуйте вызвать ConfigureAwait для ожидаемой задачи</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
@@ -1449,12 +1449,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">Если тип T переопределяет Object.Equals(object), то в реализации необходимо привести аргумент к соответствующему типу T перед сравнением. Если тип реализует IEquatable&lt;T&gt; и поэтому предлагает метод T.Equals(T) и аргумент на момент компиляции имеет тип T, то компилятор может вызвать IEquatable&lt;T&gt;.Equals(T) вместо Object.Equals(object). В этом случае приведение типов не требуется, что позволяет повысить производительность.</target>
+        <target state="translated">Если тип T переопределяет Object.Equals(object), реализация должна привести аргумент object к правильному типу T перед выполнением сравнения. Если тип реализует IEquatable&lt;T&gt;и поэтому предоставляет метод T.Equals(T), а также известно, что этот аргумент во время компиляции имеет тип T, компилятор может вызывать IEquatable&lt;T&gt;.Equals(T) вместо Object.Equals(object) и приведение не требуется, что повышает производительность.</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">Если тип T реализует интерфейс IEquatable&lt;T&gt;, то пользователь, который видит вызов метода Equals в исходном коде, предполагает, что экземпляр этого типа можно сравнить на равенство с экземпляром любого другого типа. Если попытка сравнить экземпляр этого типа с экземпляром другого типа приведет к ошибке компиляции, это может запутать пользователя. При этом нарушается "принцип наименьшего удивления".</target>
+        <target state="translated">Когда тип T реализует интерфейс IEquatable&lt;T&gt;, он предлагает пользователю, который видит вызов метода Equals в исходном коде, что экземпляр типа можно сравнить с экземпляром любого другого типа. Пользователь может быть озадачен, если его попытка сравнить этот тип с экземпляром другого типа не компилируется. Это нарушает "принцип наименьшего удивления".</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1479,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Удалите '{0}' и замените его на универсальный обработчик EventHandler, например, EventHandler&lt;T&gt;, где T представляет собой допустимый EventArgs</target>
+        <target state="translated">Удалите "{0}" и замените его использование универсальным EventHandler, например EventHandler&lt;T&gt;, где T — это допустимый EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1489,7 +1489,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">Измените событие '{0}', заменив тип '{1}' на универсальный тип EventHandler, например, EventHandler&lt;T&gt;, где T представляет собой допустимый тип EventArgs</target>
+        <target state="translated">Измените событие "{0}", чтобы заменить тип "{1}" универсальным EventHandler, например EventHandler&lt;T&gt;, где T — это допустимый EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

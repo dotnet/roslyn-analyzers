@@ -7,10 +7,12 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
     using CopyAnalysisResult = DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue>;
+    using ValueContentAnalysisResult = DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>;
 
     /// <summary>
     /// Base type for analysis contexts for execution of <see cref="DataFlowAnalysis"/> on a control flow graph.
@@ -31,7 +33,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             bool exceptionPathsAnalysis,
             CopyAnalysisResult copyAnalysisResultOpt,
             PointsToAnalysisResult pointsToAnalysisResultOpt,
-            Func<TAnalysisContext, TAnalysisResult> getOrComputeAnalysisResult,
+            ValueContentAnalysisResult valueContentAnalysisResultOpt,
+            Func<TAnalysisContext, TAnalysisResult> tryGetOrComputeAnalysisResult,
             ControlFlowGraph parentControlFlowGraphOpt,
             InterproceduralAnalysisData<TAnalysisData, TAnalysisContext, TAbstractAnalysisValue> interproceduralAnalysisDataOpt,
             InterproceduralAnalysisPredicate interproceduralAnalysisPredicateOpt)
@@ -44,7 +47,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 owningSymbol.Kind == SymbolKind.Event);
             Debug.Assert(Equals(owningSymbol.OriginalDefinition, owningSymbol));
             Debug.Assert(wellKnownTypeProvider != null);
-            Debug.Assert(getOrComputeAnalysisResult != null);
+            Debug.Assert(tryGetOrComputeAnalysisResult != null);
 
             ValueDomain = valueDomain;
             WellKnownTypeProvider = wellKnownTypeProvider;
@@ -57,7 +60,8 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             ExceptionPathsAnalysis = exceptionPathsAnalysis;
             CopyAnalysisResultOpt = copyAnalysisResultOpt;
             PointsToAnalysisResultOpt = pointsToAnalysisResultOpt;
-            GetOrComputeAnalysisResult = getOrComputeAnalysisResult;
+            ValueContentAnalysisResultOpt = valueContentAnalysisResultOpt;
+            TryGetOrComputeAnalysisResult = tryGetOrComputeAnalysisResult;
             InterproceduralAnalysisDataOpt = interproceduralAnalysisDataOpt;
             InterproceduralAnalysisPredicateOpt = interproceduralAnalysisPredicateOpt;
         }
@@ -72,7 +76,9 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         public bool ExceptionPathsAnalysis { get; }
         public CopyAnalysisResult CopyAnalysisResultOpt { get; }
         public PointsToAnalysisResult PointsToAnalysisResultOpt { get; }
-        public Func<TAnalysisContext, TAnalysisResult> GetOrComputeAnalysisResult { get; }
+        public ValueContentAnalysisResult ValueContentAnalysisResultOpt { get; }
+
+        public Func<TAnalysisContext, TAnalysisResult> TryGetOrComputeAnalysisResult { get; }
         protected ControlFlowGraph ParentControlFlowGraphOpt { get; }
 
         // Optional data for context sensitive analysis.
@@ -85,6 +91,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             IOperation operation,
             PointsToAnalysisResult pointsToAnalysisResultOpt,
             CopyAnalysisResult copyAnalysisResultOpt,
+            ValueContentAnalysisResult valueContentAnalysisResultOpt,
             InterproceduralAnalysisData<TAnalysisData, TAnalysisContext, TAbstractAnalysisValue> interproceduralAnalysisData);
 
         public ControlFlowGraph GetLocalFunctionControlFlowGraph(IMethodSymbol localFunction)
@@ -151,6 +158,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             builder.Add(ExceptionPathsAnalysis.GetHashCode());
             builder.Add(CopyAnalysisResultOpt.GetHashCodeOrDefault());
             builder.Add(PointsToAnalysisResultOpt.GetHashCodeOrDefault());
+            builder.Add(ValueContentAnalysisResultOpt.GetHashCodeOrDefault());
             builder.Add(InterproceduralAnalysisDataOpt.GetHashCodeOrDefault());
             builder.Add(InterproceduralAnalysisPredicateOpt.GetHashCodeOrDefault());
             ComputeHashCodePartsSpecific(builder);

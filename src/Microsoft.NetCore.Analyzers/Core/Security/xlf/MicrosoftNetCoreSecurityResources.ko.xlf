@@ -4,232 +4,242 @@
     <body>
       <trans-unit id="BinaryFormatterMethodUsedDescription">
         <source>The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect BinaryFormatter deserialization without a SerializationBinder set, then disable rule CA2300, and enable rules CA2301 and CA2302.</target>
+        <target state="translated">신뢰할 수 없는 데이터를 deserialize할 경우 '{0}' 메서드는 안전하지 않습니다. SerializationBinder를 설정하지 않고 BinaryFormatter deserialization을 검색해야 하는 경우에는 규칙 CA2300을 사용하지 않도록 설정하고 규칙 CA2301 및 CA2302를 사용하도록 설정합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterMethodUsedMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data.</target>
+        <target state="translated">신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterMethodUsedTitle">
         <source>Do not use insecure deserializer BinaryFormatter</source>
-        <target state="new">Do not use insecure deserializer BinaryFormatter</target>
+        <target state="translated">안전하지 않은 역직렬 변환기 BinaryFormatter를 사용하지 마세요.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage">
+        <source>Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</source>
+        <target state="new">Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle">
+        <source>Do not disable ServicePointManagerSecurityProtocols</source>
+        <target state="new">Do not disable ServicePointManagerSecurityProtocols</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</target>
+        <target state="translated">SimpleTypeResolver로 초기화된 JavaScriptSerializer로 신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다. JavaScriptSerializer가 JavaScriptTypeResolver가 지정되지 않은 상태로 초기화되었거나 deserialize된 개체 그래프에서 해당 개체 형식을 제한하는 JavaScriptTypeResolver로 초기화되었는지 확인하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverTitle">
         <source>Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing</source>
-        <target state="new">Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing</target>
+        <target state="translated">deserialize하기 전에 JavaScriptSerializer가 SimpleTypeResolver로 초기화되지 않았는지 확인</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</target>
+        <target state="translated">SimpleTypeResolver로 초기화된 JavaScriptSerializer로 신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다. JavaScriptTypeResolver가 지정되지 않은 상태로 JavaScriptSerializer를 초기화하거나 deserialize된 개체 그래프에서 해당 개체 형식을 제한하는 JavaScriptTypeResolver로 초기화하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverTitle">
         <source>Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver</source>
-        <target state="new">Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver</target>
+        <target state="translated">SimpleTypeResolver를 사용하여 JavaScriptSerializer로 deserialize 안 함</target>
         <note />
       </trans-unit>
       <trans-unit id="LosFormatterMethodUsedMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data.</target>
+        <target state="translated">신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="LosFormatterMethodUsedTitle">
         <source>Do not use insecure deserializer LosFormatter</source>
-        <target state="new">Do not use insecure deserializer LosFormatter</target>
+        <target state="translated">안전하지 않은 역직렬 변환기 LosFormatter를 사용하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeMaybeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</target>
+        <target state="translated">deserialize된 개체 그래프에서 개체 형식을 제한하기 위해 SerializationBinder 없이 신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeMaybeWithoutBinderSetTitle">
         <source>Ensure NetDataContractSerializer.Binder is set before deserializing</source>
-        <target state="new">Ensure NetDataContractSerializer.Binder is set before deserializing</target>
+        <target state="translated">deserialize하기 전에 NetDataContractSerializer.Binder를 설정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</target>
+        <target state="translated">deserialize된 개체 그래프에서 개체 형식을 제한하기 위해 SerializationBinder 없이 신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerDeserializeWithoutBinderSetTitle">
         <source>Do not deserialize without first setting NetDataContractSerializer.Binder</source>
-        <target state="new">Do not deserialize without first setting NetDataContractSerializer.Binder</target>
+        <target state="translated">먼저 NetDataContractSerializer.Binder를 설정하지 않고 deserialize하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerMethodUsedDescription">
         <source>The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect NetDataContractSerializer deserialization without a SerializationBinder set, then disable rule CA2310, and enable rules CA2311 and CA2312.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data.  If you need to instead detect NetDataContractSerializer deserialization without a SerializationBinder set, then disable rule CA2310, and enable rules CA2311 and CA2312.</target>
+        <target state="translated">신뢰할 수 없는 데이터를 deserialize할 경우 '{0}' 메서드는 안전하지 않습니다. SerializationBinder를 설정하지 않고 NetDataContractSerializer deserialization을 검색해야 하는 경우에는 규칙 CA2310을 사용하지 않도록 설정하고 규칙 CA2311 및 CA2312를 사용하도록 설정합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerMethodUsedMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data.</target>
+        <target state="translated">신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="NetDataContractSerializerMethodUsedTitle">
         <source>Do not use insecure deserializer NetDataContractSerializer</source>
-        <target state="new">Do not use insecure deserializer NetDataContractSerializer</target>
+        <target state="translated">안전하지 않은 역직렬 변환기 NetDataContractSerializer를 사용하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ObjectStateFormatterMethodUsedMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data.</target>
+        <target state="translated">신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ObjectStateFormatterMethodUsedTitle">
         <source>Do not use insecure deserializer ObjectStateFormatter</source>
-        <target state="new">Do not use insecure deserializer ObjectStateFormatter</target>
+        <target state="translated">안전하지 않은 역직렬 변환기 ObjectStateFormatter를 사용하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesMessage">
         <source>Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential DLL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 DLL 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForDllInjectionVulnerabilitiesTitle">
         <source>Review code for DLL injection vulnerabilities</source>
-        <target state="new">Review code for DLL injection vulnerabilities</target>
+        <target state="translated">코드에서 DLL 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForFilePathInjectionVulnerabilitiesMessage">
         <source>Potential file path injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential file path injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 파일 경로 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForFilePathInjectionVulnerabilitiesTitle">
         <source>Review code for file path injection vulnerabilities</source>
-        <target state="new">Review code for file path injection vulnerabilities</target>
+        <target state="translated">코드에서 파일 경로 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForInformationDisclosureVulnerabilitiesMessage">
         <source>Potential information disclosure vulnerability was found where '{0}' in method '{1}' may contain unintended information from '{2}' in method '{3}'.</source>
-        <target state="new">Potential information disclosure vulnerability was found where '{0}' in method '{1}' may contain unintended information from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'에 '{3}' 메서드에 있는 '{2}'의 의도하지 않은 데이터가 포함될 수 있는 잠재적인 정보 공개 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForInformationDisclosureVulnerabilitiesTitle">
         <source>Review code for information disclosure vulnerabilities</source>
-        <target state="new">Review code for information disclosure vulnerabilities</target>
+        <target state="translated">코드에서 정보 공개 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForLdapInjectionVulnerabilitiesMessage">
         <source>Potential LDAP injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential LDAP injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 LDAP 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForLdapInjectionVulnerabilitiesTitle">
         <source>Review code for LDAP injection vulnerabilities</source>
-        <target state="new">Review code for LDAP injection vulnerabilities</target>
+        <target state="translated">코드에서 LDAP 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForOpenRedirectVulnerabilitiesMessage">
         <source>Potential open redirect vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential open redirect vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 오픈 리디렉션 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForOpenRedirectVulnerabilitiesTitle">
         <source>Review code for open redirect vulnerabilities</source>
-        <target state="new">Review code for open redirect vulnerabilities</target>
+        <target state="translated">코드에서 오픈 리디렉션 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesMessage">
         <source>Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential process command injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 프로세스 명령 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForProcessCommandInjectionVulnerabilitiesTitle">
         <source>Review code for process command injection vulnerabilities</source>
-        <target state="new">Review code for process command injection vulnerabilities</target>
+        <target state="translated">코드에서 프로세스 명령 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForRegexInjectionVulnerabilitiesMessage">
         <source>Potential regex injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential regex injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 regex 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForRegexInjectionVulnerabilitiesTitle">
         <source>Review code for regex injection vulnerabilities</source>
-        <target state="new">Review code for regex injection vulnerabilities</target>
+        <target state="translated">코드에서 regex 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesMessage">
         <source>Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 SQL 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForSqlInjectionVulnerabilitiesTitle">
         <source>Review code for SQL injection vulnerabilities</source>
-        <target state="new">Review code for SQL injection vulnerabilities</target>
+        <target state="translated">코드에서 SQL 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeMaybeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</target>
+        <target state="translated">deserialize된 개체 그래프에서 개체 형식을 제한하기 위해 SerializationBinder 없이 신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeMaybeWithoutBinderSetTitle">
         <source>Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize</source>
-        <target state="new">Ensure BinaryFormatter.Binder is set before calling BinaryFormatter.Deserialize</target>
+        <target state="translated">BinaryFormatter.Deserialize를 호출하기 전에 BinaryFormatter.Binder를 설정해야 합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeWithoutBinderSetMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</source>
-        <target state="new">The method '{0}' is insecure when deserializing untrusted data without a SerializationBinder to restrict the type of objects in the deserialized object graph.</target>
+        <target state="translated">deserialize된 개체 그래프에서 개체 형식을 제한하기 위해 SerializationBinder 없이 신뢰할 수 없는 데이터를 deserialize하는 경우 '{0}' 메서드는 안전하지 않습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="BinaryFormatterDeserializeWithoutBinderSetTitle">
         <source>Do not call BinaryFormatter.Deserialize without first setting BinaryFormatter.Binder</source>
-        <target state="new">Do not call BinaryFormatter.Deserialize without first setting BinaryFormatter.Binder</target>
+        <target state="translated">먼저 BinaryFormatter.Binder를 설정하지 않고 BinaryFormatter.Deserialize를 호출하지 마세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesMessage">
         <source>Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential XPath injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 XPath 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXPathInjectionVulnerabilitiesTitle">
         <source>Review code for XPath injection vulnerabilities</source>
-        <target state="new">Review code for XPath injection vulnerabilities</target>
+        <target state="translated">코드에서 XPath 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesMessage">
         <source>Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential XAML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 XAML 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXamlInjectionVulnerabilitiesTitle">
         <source>Review code for XAML injection vulnerabilities</source>
-        <target state="new">Review code for XAML injection vulnerabilities</target>
+        <target state="translated">코드에서 XAML 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesMessage">
         <source>Potential XML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential XML injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 XML 삽입 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXmlInjectionVulnerabilitiesTitle">
         <source>Review code for XML injection vulnerabilities</source>
-        <target state="new">Review code for XML injection vulnerabilities</target>
+        <target state="translated">코드에서 XML 삽입 취약성 검토</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesMessage">
         <source>Potential cross-site scripting (XSS) vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</source>
-        <target state="new">Potential cross-site scripting (XSS) vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.</target>
+        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 사용자 제어 데이터에 의해 감염될 수 있는 잠재적인 XSS(사이트 간 스크립팅) 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewCodeForXssVulnerabilitiesTitle">
         <source>Review code for XSS vulnerabilities</source>
-        <target state="new">Review code for XSS vulnerabilities</target>
+        <target state="translated">코드에서 XSS 취약성 검토</target>
         <note />
       </trans-unit>
     </body>

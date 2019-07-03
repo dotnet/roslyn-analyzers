@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenTitle">
         <source>Mark Verb Handlers With Validate Antiforgery Token</source>
-        <target state="needs-review-translation">MarkVerbHandlersWithValidateAntiforgeryTokenTitle</target>
+        <target state="translated">Oznacz procedury obsługi czasownika za pomocą tokenu walidacji przeciwdziałania fałszerstwom</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">

@@ -3,12 +3,14 @@
 using System;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 
 #pragma warning disable CA1067 // Override Object.Equals(object) when implementing IEquatable<T>
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 {
     using CopyAnalysisResult = DataFlowAnalysisResult<CopyBlockAnalysisResult, CopyAbstractValue>;
+    using ValueContentAnalysisResult = DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>;
     using InterproceduralCopyAnalysisData = InterproceduralAnalysisData<CopyAnalysisData, CopyAnalysisContext, CopyAbstractValue>;
 
     /// <summary>
@@ -25,13 +27,13 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
             bool pessimisticAnalysis,
             bool exceptionPathsAnalysis,
             PointsToAnalysisResult pointsToAnalysisResultOpt,
-            Func<CopyAnalysisContext, CopyAnalysisResult> getOrComputeAnalysisResult,
+            Func<CopyAnalysisContext, CopyAnalysisResult> tryGetOrComputeAnalysisResult,
             ControlFlowGraph parentControlFlowGraphOpt,
             InterproceduralCopyAnalysisData interproceduralAnalysisDataOpt,
             InterproceduralAnalysisPredicate interproceduralAnalysisPredicateOpt)
             : base(valueDomain, wellKnownTypeProvider, controlFlowGraph, owningSymbol, interproceduralAnalysisConfig, pessimisticAnalysis,
-                  predicateAnalysis: true, exceptionPathsAnalysis, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt,
-                  getOrComputeAnalysisResult, parentControlFlowGraphOpt, interproceduralAnalysisDataOpt, interproceduralAnalysisPredicateOpt)
+                  predicateAnalysis: true, exceptionPathsAnalysis, copyAnalysisResultOpt: null, pointsToAnalysisResultOpt, valueContentAnalysisResultOpt: null,
+                  tryGetOrComputeAnalysisResult, parentControlFlowGraphOpt, interproceduralAnalysisDataOpt, interproceduralAnalysisPredicateOpt)
         {
         }
 
@@ -44,11 +46,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
             bool pessimisticAnalysis,
             bool exceptionPathsAnalysis,
             PointsToAnalysisResult pointsToAnalysisResultOpt,
-            Func<CopyAnalysisContext, CopyAnalysisResult> getOrComputeAnalysisResult,
+            Func<CopyAnalysisContext, CopyAnalysisResult> tryGetOrComputeAnalysisResult,
             InterproceduralAnalysisPredicate interproceduralAnalysisPredicateOpt)
         {
             return new CopyAnalysisContext(valueDomain, wellKnownTypeProvider, controlFlowGraph, owningSymbol,
-                  interproceduralAnalysisConfig, pessimisticAnalysis, exceptionPathsAnalysis, pointsToAnalysisResultOpt, getOrComputeAnalysisResult,
+                  interproceduralAnalysisConfig, pessimisticAnalysis, exceptionPathsAnalysis, pointsToAnalysisResultOpt, tryGetOrComputeAnalysisResult,
                   parentControlFlowGraphOpt: null, interproceduralAnalysisDataOpt: null, interproceduralAnalysisPredicateOpt);
         }
 
@@ -58,10 +60,11 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
             IOperation operation,
             PointsToAnalysisResult pointsToAnalysisResultOpt,
             CopyAnalysisResult copyAnalysisResultOpt,
+            ValueContentAnalysisResult valueContentAnalysisResultOpt,
             InterproceduralCopyAnalysisData interproceduralAnalysisData)
         {
             return new CopyAnalysisContext(ValueDomain, WellKnownTypeProvider, invokedControlFlowGraph, invokedMethod, InterproceduralAnalysisConfiguration,
-                PessimisticAnalysis, ExceptionPathsAnalysis, pointsToAnalysisResultOpt, GetOrComputeAnalysisResult, ControlFlowGraph, interproceduralAnalysisData,
+                PessimisticAnalysis, ExceptionPathsAnalysis, pointsToAnalysisResultOpt, TryGetOrComputeAnalysisResult, ControlFlowGraph, interproceduralAnalysisData,
                 InterproceduralAnalysisPredicateOpt);
         }
 

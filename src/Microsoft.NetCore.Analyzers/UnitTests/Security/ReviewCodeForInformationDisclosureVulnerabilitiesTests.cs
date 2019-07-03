@@ -2,12 +2,19 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Test.Utilities;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ReviewCodeForInformationDisclosureVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        public ReviewCodeForInformationDisclosureVulnerabilitiesTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticDescriptor Rule => ReviewCodeForInformationDisclosureVulnerabilities.Rule;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
@@ -264,6 +271,49 @@ public class Class
     }
 }
 ");
+        }
+
+        [Fact, WorkItem(2457, "https://github.com/dotnet/roslyn-analyzers/issues/2457")]
+        public void PredicateAnalysisAssert_PredicatedOnNonBoolEntity()
+        {
+            this.VerifyCSharp(@"
+using System;
+using System.Web.UI.WebControls;
+
+public class Class
+{
+    public int? AProperty { get; set; }
+
+    public void Blah()
+    {
+        try
+        {
+            Class c = new Class();
+            Second(c);
+            object o = null;
+            o.ToString();
+        }
+        catch (NullReferenceException nre)
+        {
+            Console.WriteLine(nre.StackTrace);
+        }
+    }
+
+    public void Second(Class c)
+    {
+        if (c == null)
+        {
+            throw new ArgumentNullException(nameof(c));
+        }
+
+        Third(c);
+    }
+
+    public void Third(Class c)
+    {
+        Console.WriteLine(""c was null = {0}, c.AProperty = {1}"", c == null, c == null ? ""(null)"" : c.AProperty.GetValueOrDefault(-1).ToString());
+    }
+}");
         }
     }
 }

@@ -19,7 +19,9 @@ Microsoft created a set of analyzers called [Microsoft.CodeAnalysis.FxCopAnalyze
 
 *Latest stable version:* [![NuGet](https://img.shields.io/nuget/v/Microsoft.CodeAnalysis.FxCopAnalyzers.svg)](https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers)
 
-This is the **primary analyzer package** for this repo that contains all **the ported FxCop code analysis rules (CAxxxx)**. The documentation for FxCop Analyzers and FAQs about migrating from legacy post-build static analysis also known as "FxCop" to FxCop Analyzers can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers). 
+This is the **primary analyzer package** for this repo that contains all **the ported FxCop code analysis rules (CAxxxx)**. The documentation for FxCop Analyzers and FAQs about migrating from legacy post-build static analysis also known as "FxCop" to FxCop Analyzers can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers).
+
+The documentation for all the ported and unported FxCop rules can be found at [docs.microsoft.com/en-us/visualstudio/code-quality/fxcop-rule-port-status](https://docs.microsoft.com/visualstudio/code-quality/fxcop-rule-port-status).
 
 This analyzer package contains all the ported FxCop rules that are applicable for both _.NetCore/.NetStandard_ and _Desktop .NetFramework_ projects. You **do not need to install any separate analyzer package from this repo to get target-framework specific FxCop rules**. [More info about rules in this package](src/Microsoft.CodeAnalysis.FxCopAnalyzers/Microsoft.CodeAnalysis.FxCopAnalyzers.md)
 
@@ -101,11 +103,13 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 # Recommended version of Analyzer Packages
 
-Recommended Visual Studio Version: **Visual Studio 2017 15.5 Preview5, RTW or later**
+Recommended Visual Studio Version: **Visual Studio 2017 15.9 RTW or later**
 
-Recommended Analyzer Package Version: **Version 2.6.3**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.3
+Recommended Analyzer Package Version: **Version 2.9.3**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.9.3
 
 The documentation for FxCopAnalyzers package versions can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers)
 
-In Visual Studio 2017 15.5 and later releases, you can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects. See details here: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
+You can also install a custom **Microsoft Code Analysis VSIX** containing these analyzers as a Visual Studio extension for all your managed projects.
+1. For Visual Studio 2017 15.5 or later: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2017
+2. For Visual Studio 2019 16.0 or later: https://marketplace.visualstudio.com/items?itemName=VisualStudioPlatformTeam.MicrosoftCodeAnalysis2019
 

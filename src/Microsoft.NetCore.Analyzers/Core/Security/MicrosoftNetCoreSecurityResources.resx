@@ -255,4 +255,10 @@
   <data name="ReviewCodeForXamlInjectionVulnerabilitiesTitle" xml:space="preserve">
     <value>Review code for XAML injection vulnerabilities</value>
   </data>
+  <data name="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage" xml:space="preserve">
+    <value>Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</value>
+  </data>
+  <data name="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle" xml:space="preserve">
+    <value>Do not disable ServicePointManagerSecurityProtocols</value>
+  </data>
 </root>

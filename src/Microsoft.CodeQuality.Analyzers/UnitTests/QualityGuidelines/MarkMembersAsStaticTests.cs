@@ -525,6 +525,7 @@ End Class
         [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanup", MSTestAttributes.CSharp, MSTestAttributes.VisualBasic)]
         [InlineData("Xunit.Fact", XunitApis.CSharp, XunitApis.VisualBasic)]
         [InlineData("Xunit.Theory", XunitApis.CSharp, XunitApis.VisualBasic)]
+        [InlineData("CustomxUnit.WpfFact", XunitApis.CSharp, XunitApis.VisualBasic)]
         [InlineData("NUnit.Framework.OneTimeSetUp", NUnitApis.CSharp, NUnitApis.VisualBasic)]
         [InlineData("NUnit.Framework.OneTimeTearDown", NUnitApis.CSharp, NUnitApis.VisualBasic)]
         [InlineData("NUnit.Framework.SetUp", NUnitApis.CSharp, NUnitApis.VisualBasic)]

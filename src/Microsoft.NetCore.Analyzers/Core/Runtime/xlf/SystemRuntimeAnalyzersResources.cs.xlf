@@ -4,202 +4,202 @@
     <body>
       <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
         <source>Add the 'NonSerialized' attribute to this field.</source>
-        <target state="new">Add the 'NonSerialized' attribute to this field.</target>
+        <target state="translated">Přidejte k tomuto poli atribut NonSerialized</target>
         <note />
       </trans-unit>
       <trans-unit id="AddSerializableAttributeCodeActionTitle">
         <source>Add Serializable attribute</source>
-        <target state="new">Add Serializable attribute</target>
+        <target state="translated">Přidat atribut Serializable</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
-        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <target state="translated">Pokud uvolnitelný objekt není explicitně uvolněn před tím, než jsou všechny odkazy na něj mimo obor, objekt bude uvolněn v neurčité době, když systém uvolňování paměti spustí finalizační metodu objektu. Protože může dojít k mimořádné události, která zabrání spuštění finalizační metody objektu, měl by být objekt místo toho objekt explicitně uvolněn.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="new">Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</target>
+        <target state="translated">Použijte doporučený vzor vyřazení, abyste měli jistotu, že objekt vytvořený pomocí {0} se vyřadí na všech cestách. Pokud je to možné, zabalte vytváření do příkazu nebo deklarace using. Jinak použijte vzor try-finally s vyhrazenou místní proměnnou deklarovanou před oblastí try a nepodmíněným voláním Dispose pro hodnotu, která není null, v oblasti finally, třeba x?.Dispose(). Pokud se objekt explicitně vyřadí v oblasti try nebo se vlastnictví vyřazení převede na jiný objekt nebo metodu, přiřaďte ihned po takové operaci místní proměnné hodnotu null, aby ve finally nedošlo k dvojímu vyřazení.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedOnExceptionPathsMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="new">Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</target>
+        <target state="translated">Použijte doporučený vzor vyřazení, abyste měli jistotu, že objekt vytvořený pomocí {0} se vyřadí na všech cestách výjimky. Pokud je to možné, zabalte vytváření do příkazu nebo deklarace using. Jinak použijte vzor try-finally s vyhrazenou místní proměnnou deklarovanou před oblastí try a nepodmíněným voláním Dispose pro hodnotu, která není null, v oblasti finally, třeba x?.Dispose(). Pokud se objekt explicitně vyřadí v oblasti try nebo se vlastnictví vyřazení převede na jiný objekt nebo metodu, přiřaďte ihned po takové operaci místní proměnné hodnotu null, aby ve finally nedošlo k dvojímu vyřazení.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedMessage">
         <source>Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</source>
-        <target state="new">Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</target>
+        <target state="translated">Zavolejte System.IDisposable.Dispose pro objekt vytvořený pomocí {0} dříve, než budou všechny odkazy na něj mimo obor.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedOnExceptionPathsMessage">
         <source>Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</source>
-        <target state="new">Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</target>
+        <target state="translated">Objekt vytvořený pomocí {0} není vyřazený na všech cestách výjimky. Zavolejte System.IDisposable.Dispose pro tento objekt dříve, než budou všechny odkazy na něj mimo obor.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose objects before losing scope</source>
-        <target state="new">Dispose objects before losing scope</target>
+        <target state="translated">Uvolňujte objekty před ztrátou oboru</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersDescription">
         <source>A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</source>
-        <target state="new">A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</target>
+        <target state="translated">Metoda předává jako parametr do konstruktoru nebo metody v knihovně tříd .NET Framework řetězcový literál, který by měl být lokalizovatelný. Pokud chcete porušení tohoto pravidla opravit, nahraďte řetězcový literál řetězcem načteným přes instanci třídy ResourceManager.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersMessage">
         <source>Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</source>
-        <target state="new">Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</target>
+        <target state="translated">Metoda {0} předává řetězcový literál jako parametr {1} volání {2}. Místo toho načtěte následující řetězce z tabulky prostředků: {3}</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersTitle">
         <source>Do not pass literals as localized parameters</source>
-        <target state="new">Do not pass literals as localized parameters</target>
+        <target state="translated">Nepředávejte literály jako lokalizované parametry</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">
         <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
-        <target state="new">To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</target>
+        <target state="translated">Pokud chcete porušení tohoto pravidla opravit, nastavte metodu GetObjectData jako viditelnou a přepsatelnou a ujistěte se, že všechna pole instance jsou součástí procesu serializace nebo explicitně označená atributem NonSerializedAttribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
         <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="new">Add an implementation of GetObjectData to type {0}.</target>
+        <target state="translated">Přidejte implementaci GetObjectData k typu {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
         <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="new">Make {0}.GetObjectData virtual and overridable.</target>
+        <target state="translated">Učiňte {0}.GetObjectData virtuální a přepisovatelnou.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
         <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="new">Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</target>
+        <target state="translated">Zvýšit přístupnost {0}.GetObjectData tak, že je viditelná pro odvozené typy.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyTitle">
         <source>Implement ISerializable correctly</source>
-        <target state="new">Implement ISerializable correctly</target>
+        <target state="translated">Implementujte správně ISerializable</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
         <source>Implement Serialization constructor</source>
-        <target state="new">Implement Serialization constructor</target>
+        <target state="translated">Naimplementovat konstruktor Serialization</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsDescription">
         <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="new">To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</target>
+        <target state="translated">Pokud chcete porušení tohoto pravidla opravit, naimplementujte serializační konstruktor. Pro zapečetěné třídy nastavte konstruktor jako private, jinak jako protected.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
         <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
-        <target state="new">Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</target>
+        <target state="translated">Přidejte konstruktor k {0} s následující signaturou: 'protected {0}(SerializationInfo info, StreamingContext context)'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
         <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="new">Declare the serialization constructor of {0}, a sealed type, as private.</target>
+        <target state="translated">Deklarujte serializační konstruktor {0}, zapečetěný typ, jako soukromý.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
         <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="new">Declare the serialization constructor of {0}, an unsealed type, as protected.</target>
+        <target state="translated">Deklarujte serializační konstruktor {0}, zapečetěný typ, jako chráněný.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsTitle">
         <source>Implement serialization constructors</source>
-        <target state="new">Implement serialization constructors</target>
+        <target state="translated">Implementovat serializační konstruktory</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
         <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
-        <target state="new">A method that handles a serialization event does not have the correct signature, return type, or visibility.</target>
+        <target state="translated">Metoda, která zpracovává událost serializace, nemá správnou signaturu, návratový typ nebo viditelnost.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</target>
+        <target state="translated">Protože {0} je označená pomocí OnSerializing, OnSerialized, OnDeserializing nebo OnDeserialized, změňte její signaturu tak, že již není nadále obecná.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</target>
+        <target state="translated">Protože {0} je označená pomocí OnSerializing, OnSerialized, OnDeserializing nebo OnDeserialized, změňte její signaturu tak, že vyžaduje jeden parametr typu 'System.Runtime.Serialization.StreamingContext'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</target>
+        <target state="translated">Protože {0} je označená pomocí OnSerializing, OnSerialized, OnDeserializing nebo OnDeserialized, změňte její návratový typ z {1} na void (Sub v jazyce Visual Basic).</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</target>
+        <target state="translated">Protože {0} je označená pomocí OnSerializing, OnSerialized, OnDeserializing nebo OnDeserialized, změňte ji ze statické (sdílené v jazyce Visual Basic) na instanční metodu.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</target>
+        <target state="translated">Protože {0} je označená pomocí OnSerializing, OnSerialized, OnDeserializing nebo OnDeserialized, změňte její přístupnost na soukromou.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
         <source>Implement serialization methods correctly</source>
-        <target state="new">Implement serialization methods correctly</target>
+        <target state="translated">Implementujte správně metody serializace</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsDescription">
         <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
-        <target state="new">An instance field of a type that is not serializable is declared in a type that is serializable.</target>
+        <target state="translated">Pole instance typu, který se nedá serializovat, je deklarované v typu, který se serializovat dá.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsMessage">
         <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
-        <target state="new">Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</target>
+        <target state="translated">Pole {0} je členem typu {1}, který je serializovatelný, ale je typu {2}, který serializovatelný není.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsTitle">
         <source>Mark all non-serializable fields</source>
-        <target state="new">Mark all non-serializable fields</target>
+        <target state="translated">Označte všechny neserializovatelná pole</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableDescription">
         <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
-        <target state="new">To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</target>
+        <target state="translated">Aby modul CLR (Common Language Runtime) mohl typy rozpoznat jako serializovatelné, musí se tyto typy označit atributem SerializableAttribute, a to i v případě, že typ používá vlastní serializační rutinu prostřednictvím implementace rozhraní ISerializable.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableMessage">
         <source>Add [Serializable] to {0} as this type implements ISerializable</source>
-        <target state="new">Add [Serializable] to {0} as this type implements ISerializable</target>
+        <target state="translated">Přidejte [Serializable] k {0}, protože tento typ implementuje ISerializable.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableTitle">
         <source>Mark ISerializable types with serializable</source>
-        <target state="new">Mark ISerializable types with serializable</target>
+        <target state="translated">Označit typy ISerializable jako serializable</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
         <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
-        <target state="new">A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</target>
+        <target state="translated">Typ má pole, které je označené atributem System.Runtime.Serialization.OptionalFieldAttribute, ale tento typ neposkytuje metody pro zpracování události deserializace.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
         <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="new">Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</target>
+        <target state="translated">Přidejte metodu 'private void OnDeserialized(StreamingContext)' k typu {0} a označte ji pomocí System.Runtime.Serialization.OnDeserializedAttribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
         <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="new">Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</target>
+        <target state="translated">Přidejte metodu 'private void OnDeserializing(StreamingContext)' k typu {0} a označte ji pomocí System.Runtime.Serialization.OnDeserializingAttribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
         <source>Provide deserialization methods for optional fields</source>
-        <target state="new">Provide deserialization methods for optional fields</target>
+        <target state="translated">Poskytujte metody deserializace pro volitelné pole</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIndexer">
         <source>Use indexer</source>
-        <target state="new">Use indexer</target>
+        <target state="translated">Použít indexer</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonTitle">
@@ -364,12 +364,12 @@
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
-        <target state="needs-review-translation">Typ, který implementuje System.IDisposable, deklaruje pole typů, které System.IDisposable implementují taky. Metoda Dispose daného pole se nezavolala metodou Dispose deklarujícího typu.</target>
+        <target state="translated">Typ, který implementuje System.IDisposable, deklaruje pole, která mají typ, který IDisposable implementuje taky. Metoda Dispose deklarujícího typu nevolá metodu Dispose daného pole. Pokud chcete porušení tohoto pravidla opravit a je vaší odpovědností přidělovat a uvolňovat nespravované prostředky, které pole uchovává, zavolejte Dispose pro pole s typy, které implementují IDisposable.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
         <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
-        <target state="needs-review-translation">Pole, která se dají uvolnit, by se měla uvolňovat</target>
+        <target state="translated">{0} obsahuje pole {1}, které má typ IDisposable {2}, ale nikdy se nevyřazuje. Změňte metodu Dispose v {0} tak, aby pro toto pole volala Close nebo Dispose.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
@@ -389,17 +389,17 @@
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose methods should call base class dispose</source>
-        <target state="needs-review-translation">Metody Dispose by měly volat metodu Dispose základní třídy</target>
+        <target state="translated">Metody Dispose by měly volat uvolnění základní třídy</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
-        <target state="needs-review-translation">Pokud typ dědí z uvolnitelného typu, musí ze své vlastní metody Dispose volat metodu Dispose základního typu.</target>
+        <target state="translated">Typ, který implementuje System.IDisposable, dědí z typu, který IDisposable implementuje taky. Metoda Dispose dědícího typu nevolá metodu Dispose nadřazeného typu. Pokud chcete porušení tohoto pravidla opravit, zavolejte ve své metodě Dispose metodu base.Dispose.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="needs-review-translation">Metody Dispose by měly volat metodu Dispose základní třídy</target>
+        <target state="translated">Zajistěte, aby metoda {0} volala {1} na všech možných cestách toku řízení.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerTitle">

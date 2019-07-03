@@ -2,7 +2,7 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     
-    <VersionPrefix>2.9.3</VersionPrefix>
+    <VersionPrefix>2.9.4</VersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
@@ -20,13 +20,13 @@
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
     <MicrosoftNetCompilersVersion>3.0.0</MicrosoftNetCompilersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.2</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.3</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>3.0.0-beta2.19218.3+e96bad97</MicrosoftCodeAnalysisAnalyersVersion>
     <CodeStyleAnalyersVersion>2.11.0-beta2-63603-03</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- Roslyn Testing -->
-    <MicrosoftCodeAnalysisTestingVersion>1.0.0-beta1.19211.1</MicrosoftCodeAnalysisTestingVersion>
+    <MicrosoftCodeAnalysisTestingVersion>1.0.0-beta1.19264.1</MicrosoftCodeAnalysisTestingVersion>
 
     <!-- Libs -->
     <SystemCollectionsImmutableVersion>1.3.1</SystemCollectionsImmutableVersion>

@@ -26,7 +26,7 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotDisableSchUseStrongCrypto.Rule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
         }
 
         [Fact]
@@ -42,7 +42,7 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", 1 + 2 == 3);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotDisableSchUseStrongCrypto.Rule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
         }
 
         [Fact]
@@ -58,7 +58,7 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", 1 == 1 ? true : false);
     }
 }",
-            GetCSharpResultAt(8, 9, DoNotDisableSchUseStrongCrypto.Rule, "SetSwitch"));
+            GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
         }
 
         [Fact]
@@ -75,7 +75,7 @@ class TestClass
         AppContext.SetSwitch(constSwitchName, true);
     }
 }",
-            GetCSharpResultAt(9, 9, DoNotDisableSchUseStrongCrypto.Rule, "SetSwitch"));
+            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
         }
 
         [Fact]
@@ -173,12 +173,12 @@ class TestClass
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new DoNotDisableSchUseStrongCrypto();
+            return new DoNotSetSwitch();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new DoNotDisableSchUseStrongCrypto();
+            return new DoNotSetSwitch();
         }
     }
 }

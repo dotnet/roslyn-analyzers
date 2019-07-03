@@ -15,6 +15,16 @@ namespace Microsoft.NetCore.Analyzers.Security
 {
     public abstract class UseXmlReaderBase : DiagnosticAnalyzer
     {
+        private static readonly LocalizableString s_Message = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.UseXmlReaderMessage),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+
+        private static readonly LocalizableString s_Description = new LocalizableResourceString(
+            nameof(SystemSecurityCryptographyResources.UseXmlReaderDescription),
+            SystemSecurityCryptographyResources.ResourceManager,
+            typeof(SystemSecurityCryptographyResources));
+
         /// <summary>
         /// Metadata name of the type which is recommended to use method take XmlReader as parameter.
         /// </summary>
@@ -28,6 +38,10 @@ namespace Microsoft.NetCore.Analyzers.Security
         protected abstract DiagnosticDescriptor Rule { get; }
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+
+        protected static LocalizableString Description => s_Description;
+
+        protected static LocalizableString Message => s_Message;
 
         public override void Initialize(AnalysisContext context)
         {

@@ -1,205 +1,205 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../SystemRuntimeAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../SystemRuntimeAnalyzersResources.resx">
     <body>
       <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
         <source>Add the 'NonSerialized' attribute to this field.</source>
-        <target state="new">Add the 'NonSerialized' attribute to this field.</target>
+        <target state="translated">將 'NonSerialized' 屬性新增至此欄位。</target>
         <note />
       </trans-unit>
       <trans-unit id="AddSerializableAttributeCodeActionTitle">
         <source>Add Serializable attribute</source>
-        <target state="new">Add Serializable attribute</target>
+        <target state="translated">新增可序列化屬性</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
-        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <target state="translated">如果未在可處置物件的所有參考都超出範圍前明確處置掉該物件，則該物件將在記憶體回收行程執行該物件的完成項時，於某個不定時間被處置掉。因為可能發生例外事件，導致物件的完成項無法執行，所以應改為明確處置掉物件。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="new">Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</target>
+        <target state="translated">請使用建議的處置模式，確認會在所有路徑上，處置由 '{0}' 所建立的物件。在可能的情況下，請將建立包在 'using' 陳述式或 'using' 宣告內。否則，請使用 try-finally 模式，同時在 try 區域之前先宣告專用的區域變數，並在 'finally' 區域中的非 null 值上，設定無條件 Dispose 引動過程，比如 'x?.Dispose()'。如果 try 區域內已明確地處置了該物件，或是處置擁有權已轉移到另一個物件或方法，則請在這類作業之後，對區域變數指派 'null'，以避免在 'finally' 中發生雙重處置。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedOnExceptionPathsMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="new">Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</target>
+        <target state="translated">請使用建議的處置模式，確認會在所有例外狀況路徑上，處置由 '{0}' 所建立的物件。在可能的情況下，請將建立包在 'using' 陳述式或 'using' 宣告內。否則，請使用 try-finally 模式，同時在 try 區域之前先宣告專用的區域變數，並在 'finally' 區域中的非 null 值上，設定無條件 Dispose 引動過程，比如 'x?.Dispose()'。如果 try 區域內已明確地處置了該物件，或是處置擁有權已轉移到另一個物件或方法，則請在這類作業之後，對區域變數指派 'null'，以避免在 'finally' 中發生雙重處置。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedMessage">
         <source>Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</source>
-        <target state="new">Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</target>
+        <target state="translated">在 '{0}' 所建立的物件上，於所有參考 System.IDisposable.Dispose 的項目前呼叫它，超出範圍。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedOnExceptionPathsMessage">
         <source>Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</source>
-        <target state="new">Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</target>
+        <target state="translated">由 {0} 所建立的物件，並非隨著所有例外狀況路徑處置。於物件的所有參考之前呼叫 System.IDisposable.Dispose，超出範圍。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose objects before losing scope</source>
-        <target state="new">Dispose objects before losing scope</target>
+        <target state="translated">必須在超出範圍前處置物件</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersDescription">
         <source>A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</source>
-        <target state="new">A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</target>
+        <target state="translated">方法會將字串常值以參數方式傳遞到 .NET Framework 類別庫中的建構函式或方法，且該字串應當地語系化。若要修正此規則的違規，請以透過 ResourceManager 類別的執行個體所擷取的字串，取代字串常值。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersMessage">
         <source>Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</source>
-        <target state="new">Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</target>
+        <target state="translated">方法 '{0}' 在呼叫 '{2}' 時傳遞了常值字串做為參數 '{1}'。請改為從資源表格擷取下列字串: "{3}"。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersTitle">
         <source>Do not pass literals as localized parameters</source>
-        <target state="new">Do not pass literals as localized parameters</target>
+        <target state="translated">不要將常值當做已當地語系化的參數傳遞</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">
         <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
-        <target state="new">To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</target>
+        <target state="translated">若要修正此規則違規，請將 GetObjectData 方法設定為可見且可覆寫，並確定所有執行個體欄位都包含在序列化程序中，或是使用 NonSerializedAttribute 屬性明確地標記。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
         <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="new">Add an implementation of GetObjectData to type {0}.</target>
+        <target state="translated">將 GetObjectData 的實作加入類型 {0}。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
         <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="new">Make {0}.GetObjectData virtual and overridable.</target>
+        <target state="translated">請將 {0}.GetObjectData 設定成虛擬和可覆寫。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
         <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="new">Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</target>
+        <target state="translated">增大 {0}.GetObjectData 的存取範圍，讓它對衍生類型而言為可見的。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyTitle">
         <source>Implement ISerializable correctly</source>
-        <target state="new">Implement ISerializable correctly</target>
+        <target state="translated">必須正確實作 ISerializable</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
         <source>Implement Serialization constructor</source>
-        <target state="new">Implement Serialization constructor</target>
+        <target state="translated">實作序列化建構函式</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsDescription">
         <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="new">To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</target>
+        <target state="translated">若要修正此規則違規，請實作序列化建構函式。若是密封類別，請將其設定為私人建構函式; 否則，請將其設定為受保護。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
         <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
-        <target state="new">Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</target>
+        <target state="translated">使用下列簽章將建構函式加入 {0}: 'protected {0}(SerializationInfo info, StreamingContext context)'。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
         <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="new">Declare the serialization constructor of {0}, a sealed type, as private.</target>
+        <target state="translated">將 {0} 的序列化建構函式 (sealed 類型) 宣告為 private。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
         <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="new">Declare the serialization constructor of {0}, an unsealed type, as protected.</target>
+        <target state="translated">將 {0} 的序列化建構函式 (unsealed 類型) 宣告為 protected。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsTitle">
         <source>Implement serialization constructors</source>
-        <target state="new">Implement serialization constructors</target>
+        <target state="translated">必須實作序列化建構函式</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
         <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
-        <target state="new">A method that handles a serialization event does not have the correct signature, return type, or visibility.</target>
+        <target state="translated">處理序列化事件的方法，沒有正確的簽章、傳回型別或可見度。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</target>
+        <target state="translated">因為 {0} 標記著 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，請將它的簽章變更，使其不再是泛型。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</target>
+        <target state="translated">因為 {0} 標記著 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，請將它的簽章變更，使其接受 'System.Runtime.Serialization.StreamingContext' 類型的單一參數。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</target>
+        <target state="translated">因為 {0} 標記著 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，請將它的傳回類型從 {1} 變更成 void (Visual Basic 中為 Sub)。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</target>
+        <target state="translated">因為 {0} 標記著 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，請將它從 static (Visual Basic 中為 Shared) 變更成執行個體方法。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</target>
+        <target state="translated">因為 {0} 標記著 OnSerializing、OnSerialized、OnDeserializing 或 OnDeserialized，請將它的存取範圍變更成 private。</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
         <source>Implement serialization methods correctly</source>
-        <target state="new">Implement serialization methods correctly</target>
+        <target state="translated">必須正確實作序列化方法</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsDescription">
         <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
-        <target state="new">An instance field of a type that is not serializable is declared in a type that is serializable.</target>
+        <target state="translated">非可序列化類型的執行個體欄位，被宣告為可序列化的類型。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsMessage">
         <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
-        <target state="new">Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</target>
+        <target state="translated">欄位 {0} 是可序列化類型 {1} 的成員，但其所屬類型 {2} 則不可序列化</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsTitle">
         <source>Mark all non-serializable fields</source>
-        <target state="new">Mark all non-serializable fields</target>
+        <target state="translated">必須標記所有不可序列化的欄位</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableDescription">
         <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
-        <target state="new">To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</target>
+        <target state="translated">若要通用語言執行階段將其辨識為可序列化，即使類型透過實作 ISerializable 介面使用自訂序列化常式，也必須使用 SerializableAttribute 屬性來標示類型。</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableMessage">
         <source>Add [Serializable] to {0} as this type implements ISerializable</source>
-        <target state="new">Add [Serializable] to {0} as this type implements ISerializable</target>
+        <target state="translated">將 [Serializable] 新增至 {0}，因為這個類型會實作 ISerializable</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableTitle">
         <source>Mark ISerializable types with serializable</source>
-        <target state="new">Mark ISerializable types with serializable</target>
+        <target state="translated">將 ISerializable 類型標示為可序列化</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
         <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
-        <target state="new">A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</target>
+        <target state="translated">類型的欄位已使用 System.Runtime.Serialization.OptionalFieldAttribute 屬性進行標記，但該類型不提供還原序列化事件處理方法。</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
         <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="new">Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</target>
+        <target state="translated">將 'private void OnDeserialized(StreamingContext)' 方法加入類型 {0}，並為它加上 System.Runtime.Serialization.OnDeserializedAttribute 屬性。</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
         <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="new">Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</target>
+        <target state="translated">將 'private void OnDeserializing(StreamingContext)' 方法加入類型 {0}，並為它加上 System.Runtime.Serialization.OnDeserializingAttribute 屬性。</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
         <source>Provide deserialization methods for optional fields</source>
-        <target state="new">Provide deserialization methods for optional fields</target>
+        <target state="translated">必須為選擇性欄位提供還原序列化方法</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIndexer">
         <source>Use indexer</source>
-        <target state="new">Use indexer</target>
+        <target state="translated">使用索引子</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonTitle">
@@ -364,12 +364,12 @@
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
-        <target state="needs-review-translation">實作 System.IDisposable 的類型，會宣告類型為也會實作 IDisposable 的欄位。此欄位的 Dispose 方法並非由宣告類型的 Dispose 方法所呼叫。</target>
+        <target state="translated">實作 System.IDisposable 的類型，宣告的欄位會是也實作 IDisposable 的類型。該欄位的 Dispose 方法，並非由宣告類型的 Dispose 方法呼叫。若要修正此規則違規，如果由您負責配置及釋放由該欄位所保留的非受控資源，則請在會實作 IDisposable 的欄位類型欄位上，呼叫 Dispose。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
         <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
-        <target state="needs-review-translation">可處置的欄位應受到處置</target>
+        <target state="translated">'{0}' 包含 IDisposable 類型 '{2}' 的欄位 '{1}'，但從未處置過該欄位。請變更 '{0}' 上的 Dispose 方法，在此欄位上呼叫 Close 或 Dispose。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
@@ -389,17 +389,17 @@
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose methods should call base class dispose</source>
-        <target state="needs-review-translation">Dispose 方法應呼叫 Dispose 基底類別</target>
+        <target state="translated">Dispose 方法應該呼叫基底類別處置</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
-        <target state="needs-review-translation">如果類型繼承自可處置的類型，其必須在本身的 Dispose 方法中呼叫基底類型的 Dispose 方法。</target>
+        <target state="translated">實作 System.IDisposable 的類型，會繼承自也實作 IDisposable 的類型。但繼承類型的 Dispose 方法，並未呼叫父類型的 Dispose 方法。若要修正此規則違規，請在 Dispose 方法中呼叫 base.Dispose。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="needs-review-translation">Dispose 方法應呼叫 Dispose 基底類別</target>
+        <target state="translated">確認方法 '{0}' 呼叫了所有可能的控制流程路徑中的 '{1}'。</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerTitle">

@@ -4,202 +4,202 @@
     <body>
       <trans-unit id="AddNonSerializedAttributeCodeActionTitle">
         <source>Add the 'NonSerialized' attribute to this field.</source>
-        <target state="new">Add the 'NonSerialized' attribute to this field.</target>
+        <target state="translated">Aggiungere l'attributo 'NonSerialized' a questo campo.</target>
         <note />
       </trans-unit>
       <trans-unit id="AddSerializableAttributeCodeActionTitle">
         <source>Add Serializable attribute</source>
-        <target state="new">Add Serializable attribute</target>
+        <target state="translated">Aggiungere l'attributo Serializable</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeDescription">
         <source>If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</source>
-        <target state="new">If a disposable object is not explicitly disposed before all references to it are out of scope, the object will be disposed at some indeterminate time when the garbage collector runs the finalizer of the object. Because an exceptional event might occur that will prevent the finalizer of the object from running, the object should be explicitly disposed instead.</target>
+        <target state="translated">Se un oggetto eliminabile non viene eliminato in modo esplicito prima che tutti i riferimenti a esso siano esterni all'ambito, verrà eliminato in un momento indeterminato quando il relativo finalizzatore verrà eseguito dal Garbage Collector. Poiché un evento eccezionale potrebbe impedire l'esecuzione del finalizzatore dell'oggetto, è preferibile che l'oggetto venga eliminato in modo esplicito.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="new">Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</target>
+        <target state="translated">Usare il criterio dispose consigliato per garantire che l'oggetto creato da '{0}' venga eliminato in tutti i percorsi. Se possibile, eseguire il wrapping della creazione in un'istruzione 'using' o una dichiarazione 'using'. In caso contrario, usare un criterio try-finally, con una variabile locale dedicata dichiarata prima dell'area try e una chiamata Dispose non condizionale al valore non Null nell'area 'finally', ad esempio 'x?.Dispose()'. Se l'oggetto viene eliminato in modo esplicito nell'area try oppure la proprietà di dispose viene trasferita a un altro oggetto o metodo, assegnare 'null' alla variabile locale subito dopo una tale operazione per evitare di raddoppiare dispose in 'finally'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeMayBeDisposedOnExceptionPathsMessage">
         <source>Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</source>
-        <target state="new">Use recommended dispose pattern to ensure that object created by '{0}' is disposed on all exception paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.</target>
+        <target state="translated">Usare il criterio dispose consigliato per garantire che l'oggetto creato da '{0}' venga eliminato in tutti i percorsi delle eccezioni. Se possibile, eseguire il wrapping della creazione in un'istruzione 'using' o una dichiarazione 'using'. In caso contrario, usare un criterio try-finally, con una variabile locale dedicata dichiarata prima dell'area try e una chiamata Dispose non condizionale al valore non Null nell'area 'finally', ad esempio 'x?.Dispose()'. Se l'oggetto viene eliminato in modo esplicito nell'area try oppure la proprietà di dispose viene trasferita a un altro oggetto o metodo, assegnare 'null' alla variabile locale subito dopo una tale operazione per evitare di raddoppiare dispose in 'finally'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedMessage">
         <source>Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</source>
-        <target state="new">Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.</target>
+        <target state="translated">Chiamare System.IDisposable.Dispose sull'oggetto creato da '{0}' prima che tutti i relativi riferimenti siano esterni all'ambito.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeNotDisposedOnExceptionPathsMessage">
         <source>Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</source>
-        <target state="new">Object created by '{0}' is not disposed along all exception paths. Call System.IDisposable.Dispose on the object before all references to it are out of scope.</target>
+        <target state="translated">L'oggetto creato da '{0}' non è stato eliminato in tutti i percorsi delle eccezioni. Chiamare System.IDisposable.Dispose sull'oggetto prima che tutti i relativi riferimenti siano esterni.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeObjectsBeforeLosingScopeTitle">
         <source>Dispose objects before losing scope</source>
-        <target state="new">Dispose objects before losing scope</target>
+        <target state="translated">Elimina gli oggetti prima che siano esterni all'ambito</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersDescription">
         <source>A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</source>
-        <target state="new">A method passes a string literal as a parameter to a constructor or method in the .NET Framework class library and that string should be localizable. To fix a violation of this rule, replace the string literal with a string retrieved through an instance of the ResourceManager class.</target>
+        <target state="translated">Un metodo passa un valore letterale stringa come parametro a un costruttore o a un metodo nella libreria di classi .NET Framework e questa stringa deve essere localizzabile. Per correggere una violazione di questa regola, sostituire la stringa letterale con una stringa recuperata attraverso un'istanza della classe ResourceManager.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersMessage">
         <source>Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</source>
-        <target state="new">Method '{0}' passes a literal string as parameter '{1}' of a call to '{2}'. Retrieve the following string(s) from a resource table instead: "{3}".</target>
+        <target state="translated">Il metodo '{0}' passa una stringa letterale come parametro '{1}' di una chiamata a '{2}'. Recuperare le seguenti stringhe da una tabella delle risorse: "{3}".</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotPassLiteralsAsLocalizedParametersTitle">
         <source>Do not pass literals as localized parameters</source>
-        <target state="new">Do not pass literals as localized parameters</target>
+        <target state="translated">Non passare valori letterali come parametri localizzati</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyDescription">
         <source>To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</source>
-        <target state="new">To fix a violation of this rule, make the GetObjectData method visible and overridable, and make sure that all instance fields are included in the serialization process or explicitly marked by using the NonSerializedAttribute attribute.</target>
+        <target state="translated">Per correggere una violazione di questa regola, impostare il metodo GetObjectData come visibile e sottoponibile a override e assicurarsi che tutti i campi di istanza siano inclusi nel processo di serializzazione o contrassegnati in modo esplicito usando l'attributo NonSerializedAttribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageDefault">
         <source>Add an implementation of GetObjectData to type {0}.</source>
-        <target state="new">Add an implementation of GetObjectData to type {0}.</target>
+        <target state="translated">Aggiungere un'implementazione di GetObjectData al tipo {0}.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeOverridable">
         <source>Make {0}.GetObjectData virtual and overridable.</source>
-        <target state="new">Make {0}.GetObjectData virtual and overridable.</target>
+        <target state="translated">Rendere {0}.GetObjectData virtuale e sottoponibile a override.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyMessageMakeVisible">
         <source>Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</source>
-        <target state="new">Increase the accessibility of {0}.GetObjectData so that it is visible to derived types.</target>
+        <target state="translated">Aumentare l'accessibilità di {0}.GetObjectData in modo che sia visibile ai tipi derivati.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementISerializableCorrectlyTitle">
         <source>Implement ISerializable correctly</source>
-        <target state="new">Implement ISerializable correctly</target>
+        <target state="translated">Implementare ISerializable in modo corretto</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsCodeActionTitle">
         <source>Implement Serialization constructor</source>
-        <target state="new">Implement Serialization constructor</target>
+        <target state="translated">Implementare il costruttore di serializzazione</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsDescription">
         <source>To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</source>
-        <target state="new">To fix a violation of this rule, implement the serialization constructor. For a sealed class, make the constructor private; otherwise, make it protected.</target>
+        <target state="translated">Per correggere una violazione di questa regola, implementare il costruttore di serializzazione. Per una classe sealed impostare il costruttore come private; in caso contrario impostarlo come protected.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageCreateMagicConstructor">
         <source>Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</source>
-        <target state="new">Add a constructor to {0} with the following signature: 'protected {0}(SerializationInfo info, StreamingContext context)'.</target>
+        <target state="translated">Aggiungere un costruttore a {0} con la seguente firma: 'protected {0}(SerializationInfo info, StreamingContext context)'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate">
         <source>Declare the serialization constructor of {0}, a sealed type, as private.</source>
-        <target state="new">Declare the serialization constructor of {0}, a sealed type, as private.</target>
+        <target state="translated">Dichiarare il costruttore di serializzazione di {0}, tipo sealed, come privato.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily">
         <source>Declare the serialization constructor of {0}, an unsealed type, as protected.</source>
-        <target state="new">Declare the serialization constructor of {0}, an unsealed type, as protected.</target>
+        <target state="translated">Dichiarare come protected il costruttore di serializzazione di {0}, un tipo unsealed.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationConstructorsTitle">
         <source>Implement serialization constructors</source>
-        <target state="new">Implement serialization constructors</target>
+        <target state="translated">Implementare costruttori di serializzazione</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyDescription">
         <source>A method that handles a serialization event does not have the correct signature, return type, or visibility.</source>
-        <target state="new">A method that handles a serialization event does not have the correct signature, return type, or visibility.</target>
+        <target state="translated">Un metodo che gestisce un evento di serializzazione non include valori corretti per visibilità, tipo restituito o firma.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageGeneric">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it is no longer generic.</target>
+        <target state="translated">Poiché {0} è contrassegnato con OnSerializing, OnSerialized, OnDeserializing o OnDeserialized, modificare la firma in modo che non sia più generica.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageParameters">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its signature so that it takes a single parameter of type 'System.Runtime.Serialization.StreamingContext'.</target>
+        <target state="translated">Poiché {0} è contrassegnato con OnSerializing, OnSerialized, OnDeserializing o OnDeserialized, modificare la firma in modo che accetti un solo parametro di tipo 'System.Runtime.Serialization.StreamingContext'.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageReturnType">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its return type from {1} to void (Sub in Visual Basic).</target>
+        <target state="translated">Poiché {0} è contrassegnato con OnSerializing, OnSerialized, OnDeserializing o OnDeserialized, modificare il tipo restituito da {1} in void (Sub in Visual Basic).</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageStatic">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change it from static (Shared in Visual Basic) to an instance method.</target>
+        <target state="translated">Poiché {0} è contrassegnato con OnSerializing, OnSerialized, OnDeserializing o OnDeserialized, modificarlo da statico (Shared in Visual Basic) in un metodo di istanza.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyMessageVisibility">
         <source>Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</source>
-        <target state="new">Because {0} is marked with OnSerializing, OnSerialized, OnDeserializing, or OnDeserialized, change its accessibility to private.</target>
+        <target state="translated">Poiché {0} è contrassegnato con OnSerializing, OnSerialized, OnDeserializing o OnDeserialized, modificarne l'accessibilità in private.</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementSerializationMethodsCorrectlyTitle">
         <source>Implement serialization methods correctly</source>
-        <target state="new">Implement serialization methods correctly</target>
+        <target state="translated">Implementare correttamente i metodi di serializzazione</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsDescription">
         <source>An instance field of a type that is not serializable is declared in a type that is serializable.</source>
-        <target state="new">An instance field of a type that is not serializable is declared in a type that is serializable.</target>
+        <target state="translated">Un campo di istanza di un tipo non serializzabile viene dichiarato in un tipo serializzabile.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsMessage">
         <source>Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</source>
-        <target state="new">Field {0} is a member of type {1} which is serializable but is of type {2} which is not serializable</target>
+        <target state="translated">Il campo {0} è un membro di tipo {1}, che è serializzabile, ma è di tipo {2}, che non è serializzabile</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkAllNonSerializableFieldsTitle">
         <source>Mark all non-serializable fields</source>
-        <target state="new">Mark all non-serializable fields</target>
+        <target state="translated">Contrassegnare tutti i campi non serializzabili</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableDescription">
         <source>To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</source>
-        <target state="new">To be recognized by the common language runtime as serializable, types must be marked by using the SerializableAttribute attribute even when the type uses a custom serialization routine through implementation of the ISerializable interface.</target>
+        <target state="translated">Per essere riconosciuti come serializzabili in Common Language Runtime, i tipi devono essere contrassegnati usando l'attributo SerializableAttribute anche quando usano una routine di serializzazione personalizzata tramite l'implementazione dell'interfaccia ISerializable.</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableMessage">
         <source>Add [Serializable] to {0} as this type implements ISerializable</source>
-        <target state="new">Add [Serializable] to {0} as this type implements ISerializable</target>
+        <target state="translated">Aggiungere [Serializable] a {0} perché questo tipo implementa ISerializable</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkISerializableTypesWithSerializableTitle">
         <source>Mark ISerializable types with serializable</source>
-        <target state="new">Mark ISerializable types with serializable</target>
+        <target state="translated">Contrassegnare i tipi ISerializable con serializable</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsDescription">
         <source>A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</source>
-        <target state="new">A type has a field that is marked by using the System.Runtime.Serialization.OptionalFieldAttribute attribute, and the type does not provide deserialization event handling methods.</target>
+        <target state="translated">Un tipo include un campo contrassegnato usando l'attributo System.Runtime.Serialization.OptionalFieldAttribute e non fornisce metodi di gestione degli eventi di deserializzazione.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized">
         <source>Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</source>
-        <target state="new">Add a 'private void OnDeserialized(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializedAttribute.</target>
+        <target state="translated">Aggiungere un metodo 'private void OnDeserialized(StreamingContext)' al tipo {0} e impostarvi l'attributo System.Runtime.Serialization.OnDeserializedAttribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing">
         <source>Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</source>
-        <target state="new">Add a 'private void OnDeserializing(StreamingContext)' method to type {0} and attribute it with the System.Runtime.Serialization.OnDeserializingAttribute.</target>
+        <target state="translated">Aggiungere un metodo 'private void OnDeserializing(StreamingContext)' al tipo {0} e impostarvi l'attributo System.Runtime.Serialization.OnDeserializingAttribute.</target>
         <note />
       </trans-unit>
       <trans-unit id="ProvideDeserializationMethodsForOptionalFieldsTitle">
         <source>Provide deserialization methods for optional fields</source>
-        <target state="new">Provide deserialization methods for optional fields</target>
+        <target state="translated">Fornire metodi di deserializzazione per i campi facoltativi</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIndexer">
         <source>Use indexer</source>
-        <target state="new">Use indexer</target>
+        <target state="translated">Usare l'indicizzatore</target>
         <note />
       </trans-unit>
       <trans-unit id="UseOrdinalStringComparisonTitle">
@@ -364,12 +364,12 @@
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedDescription">
         <source>A type that implements System.IDisposable declares fields that are of types that also implement IDisposable. The Dispose method of the field is not called by the Dispose method of the declaring type. To fix a violation of this rule, call Dispose on fields that are of types that implement IDisposable if you are responsible for allocating and releasing the unmanaged resources held by the field.</source>
-        <target state="needs-review-translation">Un tipo che implementa System.IDisposable dichiara i campi di tipi che implementano anch'essi IDisposable. Il metodo Dispose del campo non viene chiamato dal metodo Dispose del tipo dichiarante.</target>
+        <target state="translated">Un tipo che implementa System.IDisposable dichiara i campi di tipi che implementano anch'essi IDisposable. Il metodo Dispose del campo non viene chiamato dal metodo Dispose del tipo dichiarante. Per correggere una violazione di questa regola, chiamare Dispose su campi di tipi che implementano IDisposable se si è responsabile dell'allocazione e del rilascio delle risorse non gestite utilizzate dal campo.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableFieldsShouldBeDisposedMessage">
         <source>'{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.</source>
-        <target state="needs-review-translation">I campi eliminabili devono essere eliminati</target>
+        <target state="translated">'{0}' contiene il campo '{1}' che è di tipo IDisposable '{2}', ma non viene mai eliminato. Modificare il metodo Dispose su '{0}' in modo che chiami Close o Dispose su questo campo.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCallOverridableMethodsInConstructorsTitle">
@@ -389,17 +389,17 @@
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeTitle">
         <source>Dispose methods should call base class dispose</source>
-        <target state="needs-review-translation">I metodi Dispose devono chiamare Dispose della classe di base</target>
+        <target state="translated">I metodi Dispose devono chiamare Dispose della classe di base</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeDescription">
         <source>A type that implements System.IDisposable inherits from a type that also implements IDisposable. The Dispose method of the inheriting type does not call the Dispose method of the parent type. To fix a violation of this rule, call base.Dispose in your Dispose method.</source>
-        <target state="needs-review-translation">Se un tipo eredita da un tipo eliminabile, deve chiamare il metodo Dispose del tipo di base dal proprio metodo Dispose.</target>
+        <target state="translated">Un tipo che implementa System.IDisposable eredita da un tipo che implementa anch'esso IDisposable. Il metodo Dispose del tipo che eredita non chiama il metodo Dispose del tipo padre. Per correggere una violazione di questa regola, chiamare base.Dispose nel metodo Dispose.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposeMethodsShouldCallBaseClassDisposeMessage">
         <source>Ensure that method '{0}' calls '{1}' in all possible control flow paths.</source>
-        <target state="needs-review-translation">I metodi Dispose devono chiamare Dispose della classe di base</target>
+        <target state="translated">Assicurarsi che il metodo '{0}' chiami '{1}' in tutti i percorsi del flusso di controllo possibili.</target>
         <note />
       </trans-unit>
       <trans-unit id="DisposableTypesShouldDeclareFinalizerTitle">

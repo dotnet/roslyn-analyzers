@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">'{0}'은(는) 항상 '{1}'입니다. 데드 코드를 방지하려면 조건을 제거하거나 리팩터링합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
         <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">'{0}'은(는) '{1}'이(가) 아닙니다. 데드 코드를 방지하려면 조건을 제거하거나 리팩터링합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeTitle">
         <source>Avoid dead conditional code</source>
-        <target state="new">Avoid dead conditional code</target>
+        <target state="translated">데드 조건부 코드 방지</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
@@ -34,11 +34,7 @@
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
         <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="needs-review-translation">순환 복잡도는 메서드를 진행하며 따라가는 독립적인 경로의 개수를 계산하는데, 조건 분기의 개수와 복잡도에 의해 결정됩니다. 일반적으로 순환 복잡도가 낮으면 메서드를 이해하기 쉽고 테스트, 유지하기도 쉽습니다. 순환 복잡도는 메서드 제어 흐름 그래프를 보고 다음과 같이 계산합니다.
-
-순환 복잡도 = 엣지 개수 - 노드 개수 + 1
-
-여기에서 노드는 논리 분기점을 가리키고, 엣지는 노드와 노드 사이의 선을 가리킵니다.</target>
+        <target state="translated">순환 복잡성은 조건부 분기의 개수 및 복잡성에 따라 결정되는 메서드를 통해 선형 독립 경로 수를 측정합니다. 낮은 순환 복잡성은 일반적으로 이해, 테스트 및 유지 관리하기 쉬운 메서드를 나타냅니다. 순환 종속성은 메서드의 제어 흐름 그래프에서 계산되고 다음과 같이 지정됩니다. '순환 복잡성 = 에지 수 - 노드 수 + 1'. 여기서 노드는 논리 분기 지점을 나타내고 에지는 노드 사이 줄을 나타냅니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
@@ -68,8 +64,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="needs-review-translation">유지 관리 인덱스는 코드 줄, 프로그램 볼륨 및 순환 복잡성과 같은 메트릭을 사용하여 계산합니다. 프로그램 볼륨은 코드의 연산자 및 피연산자 수를 기준으로 기호 이해의 문제를 측정합니다. 순환 복잡성은 형식 또는 메서드의 구조 복잡성을 측정합니다.
-유지 관리 인덱스가 낮으면 코드가 유지 관리하기 어려울 수 있고 다시 디자인하는 것이 좋습니다.</target>
+        <target state="translated">유지 관리 인덱스는 코드, 프로그램 볼륨 및 순환 복잡성 줄과 같은 메트릭을 사용하여 계산됩니다. 프로그램 볼륨은 코드에 있는 연산자 및 피연산자 개수에 따른 기호 이해도의 측정값입니다. 순환 복잡성은 형식이나 메서드에 대한 구조적 복잡성의 측정값입니다. 낮은 유지 관리 인덱스는 코드를 유지 관리하기 어려울 수 있어 다시 설계하기 좋은 후보임을 나타냅니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">

@@ -24,7 +24,7 @@
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenTitle">
         <source>Mark Verb Handlers With Validate Antiforgery Token</source>
-        <target state="needs-review-translation">MarkVerbHandlersWithValidateAntiforgeryTokenTitle</target>
+        <target state="translated">위조 방지 유효성 검사 토큰을 사용하여 동사 처리기 표시</target>
         <note />
       </trans-unit>
       <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">

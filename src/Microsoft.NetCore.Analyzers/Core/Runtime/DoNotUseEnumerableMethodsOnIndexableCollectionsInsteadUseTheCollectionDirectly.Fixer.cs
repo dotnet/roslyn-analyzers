@@ -1,13 +1,12 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.NetCore.Analyzers.Runtime;
 using System;
 using System.Collections.Immutable;
 using System.Composition;
@@ -15,13 +14,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
+namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
     /// RS0014: Do not use Enumerable methods on indexable collections. Instead use the collection directly
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
-    public class CSharpDoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public class DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.RuleId);
 
@@ -33,20 +32,20 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            Diagnostic diagnostic = context.Diagnostics.FirstOrDefault();
+            var diagnostic = context.Diagnostics.FirstOrDefault();
             if (diagnostic == null)
             {
                 return Task.CompletedTask;
             }
 
-            string methodPropertyKey = DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.MethodPropertyKey;
+            var methodPropertyKey = DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.MethodPropertyKey;
             // The fixer is only implemented for "Enumerable.First"
             if (!diagnostic.Properties.TryGetValue(methodPropertyKey, out var method) || method != "First")
             {
                 return Task.CompletedTask;
             }
 
-            string title = SystemRuntimeAnalyzersResources.UseIndexer;
+            var title = SystemRuntimeAnalyzersResources.UseIndexer;
 
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async ct => await UseCollectionDirectly(context.Document, context.Span, ct).ConfigureAwait(false),
@@ -58,45 +57,33 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Runtime
 
         private async Task<Document> UseCollectionDirectly(Document document, TextSpan span, CancellationToken cancellationToken)
         {
-            SyntaxNode root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxNode invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
-            if (!(invocationNode is InvocationExpressionSyntax))
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
+            if (invocationNode == null)
             {
                 return document;
             }
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-
-            if (!(semanticModel.GetOperation(invocationNode) is IInvocationOperation invocationOp))
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var invocationOperation = semanticModel.GetOperation(invocationNode, cancellationToken) as IInvocationOperation;
+            if (invocationOperation == null)
             {
                 return document;
             }
 
-            var collectionSyntax = GetSyntaxOfType<ExpressionSyntax>(invocationOp.Arguments[0].Syntax);
+            var collectionSyntax = invocationOperation.GetInstance();
             if (collectionSyntax == null)
             {
                 return document;
             }
 
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode indexNode = generator.LiteralExpression(0);
-            SyntaxNode elementAccessNode = generator.ElementAccessExpression(collectionSyntax.WithoutTrailingTrivia(), indexNode)
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var indexNode = generator.LiteralExpression(0);
+            var elementAccessNode = generator.ElementAccessExpression(collectionSyntax.WithoutTrailingTrivia(), indexNode)
                 .WithTrailingTrivia(invocationNode.GetTrailingTrivia());
 
-            SyntaxNode newRoot = root.ReplaceNode(invocationNode, elementAccessNode);
+            var newRoot = root.ReplaceNode(invocationNode, elementAccessNode);
             return document.WithSyntaxRoot(newRoot);
-        }
-
-        private T GetSyntaxOfType<T>(SyntaxNode node)
-        {
-            if (!(node is T result))
-            {
-                result = node
-                    .ChildNodes()
-                    .OfType<T>()
-                    .FirstOrDefault();
-            }
-            return result;
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)

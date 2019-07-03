@@ -1,15 +1,19 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities.MinimalImplementations;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ReviewCodeForOpenRedirectVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        public ReviewCodeForOpenRedirectVulnerabilitiesTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticDescriptor Rule => ReviewCodeForOpenRedirectVulnerabilities.Rule;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

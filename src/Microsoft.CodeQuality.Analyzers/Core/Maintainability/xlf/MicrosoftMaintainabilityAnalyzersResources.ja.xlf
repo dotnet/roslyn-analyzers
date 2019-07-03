@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">'{0}' は常に '{1}' です。実行されないコードを回避するには、条件を削除するかリファクターします。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
         <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">'{0}' は '{1}' ではありません。実行されないコードを回避するには、条件を削除するかリファクターします。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeTitle">
         <source>Avoid dead conditional code</source>
-        <target state="new">Avoid dead conditional code</target>
+        <target state="translated">使用されない条件付きコードを回避する</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
@@ -34,11 +34,7 @@
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
         <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="needs-review-translation">サイクロマティック複雑度は、メソッドから線形的に独立した経路の数を測定し、条件分岐の数と複雑度によってサイクロマティック複雑度を判別します。サイクロマティック複雑度が低いと、一般には理解、テスト、保守が容易であることを示します。サイクロマティック複雑度は、メソッドの制御フロー グラフに基づいて算出されます。次のようになります。
-
-サイクロマティック複雑度 = エッジ数 - ノード数 + 1
-
-ノードは論理分岐ポイントを表し、エッジはノード間の線を表します。</target>
+        <target state="translated">サイクロマティック複雑度は、メソッドにより線形的に独立したパスの数を測定します。これは、条件分岐の数と複雑さによって決定されます。低いサイクロマティック複雑度は一般的に、メソッドの理解、テスト、維持が容易であることを示しています。サイクロマティック複雑度は、メソッドの制御フロー グラフから計算され、次のように表されます。`サイクロマティック複雑度 = エッジの数 - ノードの数 + 1`。ここでノードはロジック ブランチ ポイントを表しており、エッジはノード間のラインを表しています。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
@@ -68,7 +64,7 @@
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="needs-review-translation">保守容易性指数は、コード行数、プログラム ボリューム、サイクロマティック複雑度というメトリックを使用して算出されます。プログラム ボリュームは、シンボルの理解しにくさのメトリックで、コード内の演算子とオペランドの数に基づいています。サイクロマティック複雑度は、型またはメソッドの構造上の複雑さのメトリックです。保守容易性指標が低いと、コードを保守することが難しい可能性があり、再設計を検討できます。</target>
+        <target state="translated">保守容易性指数は、メトリックスとして、コード行、プログラム ボリューム、サイクロマティック複雑度を使用して計算されます。プログラム ボリュームは、コード内の演算子やオペランドの数に基づく、シンボルを理解する難しさの度合いです。サイクロマティック複雑度は、型またはメソッドの構造的な複雑さの度合いです。保守容易性指数が低いと、コードの保守が難しい可能性が高く、再設計の候補になり得ることを示しています。</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">

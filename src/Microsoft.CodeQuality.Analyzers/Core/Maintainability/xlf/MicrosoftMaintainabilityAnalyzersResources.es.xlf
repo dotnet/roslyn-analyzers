@@ -4,17 +4,17 @@
     <body>
       <trans-unit id="AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage">
         <source>'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is always '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">"{0}" siempre es "{1}". Quite o refactorice las condiciones para evitar el código no alcanzado.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeNeverNullMessage">
         <source>'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</source>
-        <target state="new">'{0}' is never '{1}'. Remove or refactor the condition(s) to avoid dead code.</target>
+        <target state="translated">"{0}" nunca es "{1}". Quite o refactorice las condiciones para evitar el código no alcanzado.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidDeadConditionalCodeTitle">
         <source>Avoid dead conditional code</source>
-        <target state="new">Avoid dead conditional code</target>
+        <target state="translated">Evitar código condicional no alcanzado</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveClassCouplingDescription">
@@ -34,11 +34,7 @@
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityDescription">
         <source>Cyclomatic complexity measures the number of linearly independent paths through the method, which is determined by the number and complexity of conditional branches. A low cyclomatic complexity generally indicates a method that is easy to understand, test, and maintain. The cyclomatic complexity is calculated from a control flow graph of the method and is given as follows: `cyclomatic complexity = the number of edges - the number of nodes + 1`, where a node represents a logic branch point and an edge represents a line between nodes.</source>
-        <target state="needs-review-translation">La complejidad ciclomática mide el número de caminos linealmente independientes a través del método, que se determina por el número y la complejidad de las ramas condicionales. Una complejidad ciclomática baja generalmente indica un método que es fácil de entender, probar y mantener. La complejidad ciclomática se calcula a partir de un gráfico de flujo de control del método y se da de la siguiente manera:
-
-complejidad ciclomática = el número de aristas-el número de nodos + 1
-
-donde un nodo representa un punto de bifurcación lógica y un borde representa una línea entre nodos.</target>
+        <target state="translated">La complejidad ciclomática mide el número de rutas de acceso independientes linealmente a través del método, que viene determinado por el número y la complejidad de las ramas condicionales. Una complejidad ciclomática baja indica un método que es fácil de entender, probar y mantener. Dicha complejidad se calcula a partir de un gráfico de flujos de control del método e indica lo siguiente: "complejidad ciclomática = número de bordes - número de nodos + 1", donde un nodo representa un punto de la rama de tipo lógico y un borde representa una línea entre los nodos.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidExcessiveComplexityMessage">
@@ -68,8 +64,7 @@ donde un nodo representa un punto de bifurcación lógica y un borde representa 
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeDescription">
         <source>The maintainability index is calculated by using the following metrics: lines of code, program volume, and cyclomatic complexity. Program volume is a measure of the difficulty of understanding of a symbol that is based on the number of operators and operands in the code. Cyclomatic complexity is a measure of the structural complexity of the type or method. A low maintainability index indicates that code is probably difficult to maintain and would be a good candidate to redesign.</source>
-        <target state="needs-review-translation">El índice de mantenibilidad se calcula utilizando las siguientes métricas: líneas de código, volumen de programa y complejidad de ciclomática. El volumen del programa es una medida de la dificultad de comprensión de un símbolo que se basa en el número de operadores y operandos en el código. La complejidad ciclomática es una medida de la complejidad estructural del tipo o método.
-Un índice de mantenibilidad bajo indica que el código es probablemente difícil de mantener y sería un buen candidato para rediseñar.</target>
+        <target state="translated">El índice de mantenimiento se calcula con las métricas siguientes: líneas de código, volumen del programa y complejidad ciclomática. El volumen del programa es una medida de la dificultad para entender un símbolo que se basa en el número de operadores y de operandos en el código. La complejidad ciclomática es una medida de la complejidad estructural del tipo o método. Un índice de mantenimiento bajo indica que el código es probablemente difícil de mantener y sería un buen candidato para rediseñarlo.</target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidUnmantainableCodeMessage">

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../MicrosoftApiDesignGuidelinesAnalyzersResources.resx">
     <body>
       <trans-unit id="AppendConfigureAwaitTrue">
         <source>Append .ConfigureAwait(true)</source>
@@ -524,7 +524,7 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsTitle">
         <source>Type {0} should implement IEquatable&lt;T&gt; because it overrides Equals</source>
-        <target state="translated">因為類型 {0} 覆寫 Equals，所以其應實作 IEquatable&lt;T&gt;</target>
+        <target state="translated">類型 {0} 應先實作 IEquatable&lt;T&gt;，因為它會覆寫 Equals</target>
         <note />
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsMessage">
@@ -1404,12 +1404,12 @@
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsMessage">
         <source>Type {0} should override Equals because it implements IEquatable&lt;T&gt;</source>
-        <target state="translated">類型 {0} 應覆寫 Equals，原因是它實作了 IEquatable&lt;T&gt;</target>
+        <target state="translated">因為類型 {0} 會實作 IEquatable&lt;T&gt;，所以其應覆寫 Equals</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsTitle">
         <source>Override Object.Equals(object) when implementing IEquatable&lt;T&gt;</source>
-        <target state="translated">在實作 IEquatable&lt;T&gt; 時覆寫 Object.Equals(object)</target>
+        <target state="translated">實作 IEquatable&lt;T&gt; 時覆寫 Object.Equals(object)</target>
         <note />
       </trans-unit>
       <trans-unit id="UseIntegralOrStringArgumentForIndexersDescription">
@@ -1429,17 +1429,17 @@
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskDescription">
         <source>When an asynchronous method awaits a Task directly, continuation occurs in the same thread that created the task. Consider calling Task.ConfigureAwait(Boolean) to signal your intention for continuation. Call ConfigureAwait(false) on the task to schedule continuations to the thread pool, thereby avoiding a deadlock on the UI thread. Passing false is a good option for app-independent libraries. Calling ConfigureAwait(true) on the task has the same behavior as not explicitly calling ConfigureAwait. By explicitly calling this method, you're letting readers know you intentionally want to perform the continuation on the original synchronization context.</source>
-        <target state="needs-review-translation">在消費者不明的情況下撰寫程式庫，且不需要 SynchronizationContext 時，請考慮使用 ConfigureAwait(false)。否則，程式庫的消費者可能會以封鎖方式取用非同步方法而遇到死結。</target>
+        <target state="translated">當非同步方法直接等候 Task 時，接續會發生在建立工作的同一個執行緒中。請考慮呼叫 Task.ConfigureAwait(Boolean) 以表示您打算接續。對工作呼叫 ConfigureAwait(false) 可對執行緒集區排程接續，從而避免 UI 執行緒上產生死結。傳遞 false 是適用於應用程式獨立程式庫的選項。對工作呼叫 ConfigureAwait(true) 的行為與未明確呼叫 ConfigureAwait 的行為相同。明確呼叫此方法，表示要讓讀取器知道您打算對原始同步內容執行接續。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskMessage">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">請勿在未呼叫 ConfigureAwait 的情況下直接等候工作</target>
+        <target state="translated">請考慮對等候的工作呼叫 ConfigureAwait</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDirectlyAwaitATaskTitle">
         <source>Consider calling ConfigureAwait on the awaited task</source>
-        <target state="needs-review-translation">請勿直接等候工作</target>
+        <target state="translated">請考慮對等候的工作呼叫 ConfigureAwait</target>
         <note />
       </trans-unit>
       <trans-unit id="AppendConfigureAwaitFalse">
@@ -1449,12 +1449,12 @@
       </trans-unit>
       <trans-unit id="ImplementIEquatableWhenOverridingObjectEqualsDescription">
         <source>When a type T overrides Object.Equals(object), the implementation must cast the object argument to the correct type T before performing the comparison. If the type implements IEquatable&lt;T&gt;, and therefore offers the method T.Equals(T), and if the argument is known at compile time to be of type T, then the compiler can call IEquatable&lt;T&gt;.Equals(T) instead of Object.Equals(object), and no cast is necessary, improving performance.</source>
-        <target state="translated">當類型 T 覆寫 Object.Equals(object) 時，該實作必須在執行比較前，將物件引數轉換為正確的類型 T。如果該類型實作 IEquatable&lt;T&gt;，則會提供方法 T.Equals(T)，如果在編譯時間知道該引數屬於類型 T，則編譯器可能會呼叫 IEquatable&lt;T&gt;.Equals(T)，而不是 Object.Equals(object)，而且不需轉換，以提升效能。</target>
+        <target state="translated">當類型 T 覆寫 Object.Equals(object) 時，實作必須將物件引數轉換為正確的類型 T，然後才可執行比較。如果此類型會實作 IEquatable&lt;T&gt;，因而提供方法 T.Equals(T)，且引數若在編譯時期即已知為類型 T，則編譯器可呼叫 IEquatable&lt;T&gt;.Equals(T) 而非 Object.Equals(object)，而不需要轉換，如此即可改進效能。</target>
         <note />
       </trans-unit>
       <trans-unit id="OverrideObjectEqualsDescription">
         <source>When a type T implements the interface IEquatable&lt;T&gt;, it suggests to a user who sees a call to the Equals method in source code that an instance of the type can be equated with an instance of any other type. The user might be confused if their attempt to equate the type with an instance of another type fails to compile. This violates the "principle of least surprise".</source>
-        <target state="translated">當類型 T 實作介面 IEquatable&lt;T&gt; 時，會建議在原始程式碼中看到 Equals 方法呼叫的使用者，該類型的執行個體可與另一個類型的執行個體相等。該使用者可能會不清楚其嘗試讓類型與另一個類型的執行個體相等是否無法編譯。這違反了「最不意外的原則」。</target>
+        <target state="translated">當類型 T 實作介面 IEquatable&lt;T&gt; 時，會向在原始程式碼中看到 Equals 方法呼叫的使用者指出，此類型的執行個體可以視為等同於其他任一類型的執行個體。如果使用者嘗試將此類型視為等同於另一個類型的執行個體，卻無法編譯，可能會感到困惑。這違反「最少意外原則」。</target>
         <note />
       </trans-unit>
       <trans-unit id="RenameToTitle">
@@ -1479,7 +1479,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateMessage">
         <source>Remove '{0}' and replace its usage with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">移除 ‘{0}’ 並改為使用一般 EventHandler，例如 EventHandler&lt;T&gt;，其中 T 是有效的 EventArgs</target>
+        <target state="translated">移除 '{0}' 並利用泛型 EventHandler 取代其用法，例如 EventHandler&lt;T&gt;，其中的 T 是有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForDelegateDescription">
@@ -1489,7 +1489,7 @@
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventMessage">
         <source>Change the event '{0}' to replace the type '{1}' with a generic EventHandler, for e.g. EventHandler&lt;T&gt;, where T is a valid EventArgs</source>
-        <target state="translated">變更事件 ‘{0}’，以將類型 ‘{1}’ 取代為一般 EventHandler，例如 EventHandler&lt;T&gt;，其中 T 是有效的 EventArgs</target>
+        <target state="translated">變更事件 '{0}' 來取代具有泛型 EventHandler 的類型 '{1}'，例如 EventHandler&lt;T&gt;，其中的 T 是有效的 EventArgs</target>
         <note />
       </trans-unit>
       <trans-unit id="UseGenericEventHandlerInstancesForEventDescription">

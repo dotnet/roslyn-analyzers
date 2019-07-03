@@ -5407,5 +5407,35 @@ public class C
     }}
 }}");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact]
+        public void NamedArgumentInDifferentOrder()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(C c1, C c2)
+    {
+        if (c1 == null)
+        {
+            return;
+        }
+
+        // We known c1 is non-null.
+        // But c2 may still be non-null.
+        M2(c2: c2, c1: c1);
+    }
+
+    private void M2(C c1, C c2)
+    {
+        // We known c1 is non-null.
+        // But c2 may still be non-null.
+        c2.M(null, null);
+    }
+}",
+            // Test0.cs(13,12): warning CA1062: In externally visible method 'void C.M(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(13, 12, "void C.M(C c1, C c2)", "c2"));
+        }
     }
 }

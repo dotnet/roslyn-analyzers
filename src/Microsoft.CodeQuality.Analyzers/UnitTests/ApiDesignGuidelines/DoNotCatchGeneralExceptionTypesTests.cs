@@ -650,6 +650,27 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
             GetCA1031BasicResultAt(11, 29, "TestMethod"));
         }
 
+        [Fact, WorkItem(2518, "https://github.com/dotnet/roslyn-analyzers/issues/2518")]
+        public void CSharp_NoDiagnostic_SpecificExceptionWithoutVariable()
+        {
+            VerifyCSharp(@"
+            using System;
+
+            public class Class1
+            {
+                void M()
+                {
+                    try
+                    {
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // Comment
+                    }
+                }
+            }");
+        }
+
         private static DiagnosticResult GetCA1031CSharpResultAt(int line, int column, string signature)
         {
             return GetCSharpResultAt(line, column, DoNotCatchGeneralExceptionTypesAnalyzer.Rule, signature);

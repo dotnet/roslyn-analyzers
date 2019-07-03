@@ -2798,5 +2798,49 @@ Class B
     End Sub
 End Class");
         }
+
+        [Fact, WorkItem(2182, "https://github.com/dotnet/roslyn-analyzers/issues/2182")]
+        public void DisposableAllocation_FieldDisposedInOverriddenHelper_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private readonly object _gate = new object();
+
+    public void Dispose()
+    {
+        lock (_gate)
+        {
+            DisposeUnderLock();
+        }
+    }
+
+    protected virtual void DisposeUnderLock()
+    {
+    }
+}
+
+class C : B
+{
+    // Ensure this field is not flagged
+    private readonly A _a = new A();
+
+    protected override void DisposeUnderLock()
+    {
+        _a.Dispose();
+        base.DisposeUnderLock();
+    }
+}
+");
+        }
     }
 }

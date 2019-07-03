@@ -35,9 +35,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
         }
 
-        protected override Diagnostic CreateDiagnostic(IMethodSymbol containingMethod, SyntaxNode catchNode)
+        protected override Diagnostic CreateDiagnostic(IMethodSymbol containingMethod, SyntaxToken catchKeyword)
         {
-            return catchNode.CreateDiagnostic(Rule, containingMethod.Name);
+            return catchKeyword.CreateDiagnostic(Rule, containingMethod.Name);
         }
     }
 }

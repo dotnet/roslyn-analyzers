@@ -19,22 +19,47 @@
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCert">
         <source>Do Not Add Certificates To Root Store</source>
-        <target state="new">Do Not Add Certificates To Root Store</target>
+        <target state="translated">不将证书添加到根存储</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
+        <target state="translated">如果将证书添加到操作系统受信任的根证书中，则会增加非法证书验证不当的风险</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
         <source>Use Secure Cookies In ASP.Net Core</source>
-        <target state="new">Use Secure Cookies In ASP.Net Core</target>
+        <target state="translated">在 ASP.Net Core 中使用安全 Cookie</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCoreMessage">
         <source>Set CookieOptions.Secure = true when setting a cookie</source>
-        <target state="new">Set CookieOptions.Secure = true when setting a cookie</target>
+        <target state="translated">设置 Cookie 时设置 CookieOptions.Secure = true</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
+        <source>Do Not Add Archive Item's Path To The Target File System Path</source>
+        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
+        <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
+        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
+        <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
+        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
+        <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
+        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
+        <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -109,7 +134,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
-        <target state="translated">方法“{0}”已禁用请求验证</target>
+        <target state="translated">{0} 已禁用请求验证</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
@@ -129,7 +154,7 @@
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
         <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
-        <target state="new">By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</target>
+        <target state="translated">默认情况下，“受信任的根证书颁发机构”证书存储配置有一组符合 Microsoft 根证书程序的公共 CA。由于所有受信任的根 CA 都可为任意域颁发证书，因此攻击者可能会选择你自行安装的某个安全性较弱或可强迫的 CA 进行攻击；一个易受攻击、恶意或可强迫的 CA 就会降低整个系统的安全性。更糟糕的是，这些攻击者可能很难被察觉。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">
@@ -194,17 +219,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
-        <target state="new">Do Not Use Digital Signature Algorithm (DSA)</target>
+        <target state="translated">不使用数字签名算法(DSA)</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSADescription">
         <source>DSA is too weak to use.</source>
-        <target state="new">DSA is too weak to use.</target>
+        <target state="translated">DSA 太弱，无法使用。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
-        <target state="new">Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <target state="translated">非对称加密算法 {0} 较弱。请转而切换到至少具有 2048 位密钥大小的 RSA、ECDH 或者 ECDSA 算法</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
@@ -274,17 +299,22 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithm">
         <source>Do Not Use Weak Key Derivation Function Algorithm</source>
-        <target state="new">Do Not Use Weak Key Derivation Function Algorithm</target>
+        <target state="translated">不使用弱密钥派生功能算法</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
         <source>Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</source>
-        <target state="new">Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</target>
+        <target state="translated">Rfc2898DeriveBytes 类的某些实现允许在构造函数参数中指定哈希算法或在 HashAlgorithm 属性中覆盖它。如果指定了哈希算法，则它应为 SHA-256 或更高版本。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
         <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
-        <target state="new">{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</target>
+        <target state="translated">{0} 是使用弱哈希算法创建的。请使用 SHA256、SHA384 或 SHA512 根据密码创建强密钥</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
+        <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
+        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -309,22 +339,32 @@
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
         <source>Ensure Certificates Are Not Added To Root Store</source>
-        <target state="new">Ensure Certificates Are Not Added To Root Store</target>
+        <target state="translated">确保没有将证书添加到根存储</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</target>
+        <target state="translated">将证书添加到操作系统受信任的根证书很不安全。请确保目标存储不是根存储。</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCore">
         <source>Ensure Use Secure Cookies In ASP.Net Core</source>
-        <target state="new">Ensure Use Secure Cookies In ASP.Net Core</target>
+        <target state="translated">确保在 ASP.Net Core 中使用安全 Cookie</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCoreMessage">
         <source>Ensure that CookieOptions.Secure = true when setting a cookie</source>
-        <target state="new">Ensure that CookieOptions.Secure = true when setting a cookie</target>
+        <target state="translated">请确保设置 Cookie 时 CookieOptions.Secure = true</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
+        <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
+        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
+        <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -338,43 +378,43 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="translated">Page 的子类 {0} 未在方法 OnInit 中设置 ViewStateUserKey 属性</target>
+        <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
+        <target state="needs-review-translation">Page 的子类 {0} 未在方法 OnInit 中设置 ViewStateUserKey 属性</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
         <source>Use Container Level Access Policy</source>
-        <target state="new">Use Container Level Access Policy</target>
+        <target state="translated">使用容器级别访问策略</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyDescription">
         <source>No access policy identifier is specified, making tokens non-revocable.</source>
-        <target state="new">No access policy identifier is specified, making tokens non-revocable.</target>
+        <target state="translated">未指定访问策略标识符，这使得令牌不可撤消。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
-        <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</target>
+        <target state="translated">如果可能，请考虑使用 Azure 基于角色的访问控制，而不是共享访问签名(SAS)。如果仍需使用 SAS，请在创建 SAS 时使用容器级别访问策略</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
-        <target state="new">Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</target>
+        <target state="translated">设置具有足够密钥大小的 Rivest–Shamir–Adleman (RSA)算法</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeDescription">
         <source>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</source>
-        <target state="new">Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</target>
+        <target state="translated">在使用的密钥大小太小时，加密算法容易遭到暴力破解攻击。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeMessage">
         <source>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
-        <target state="new">Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</target>
+        <target state="translated">非对称加密算法 {0} 的密钥大小小于 2048 位。请转而切换到至少具有 2048 位密钥大小的 RSA、ECDH 或者 ECDSA 算法。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">
         <source>Applications available over HTTPS must use secure cookies.</source>
-        <target state="new">Applications available over HTTPS must use secure cookies.</target>
+        <target state="translated">通过 HTTPS 提供的应用程序必须使用安全 Cookie。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
@@ -384,12 +424,12 @@
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
-        <target state="translated">HTTPS 对网络流量进行加密。使用 HttpsOnly, 而不是 HttpOrHttps, 确保始终加密网络流量, 以帮助防止敏感数据泄露。</target>
+        <target state="translated">HTTPS 对网络流量加密。请使用 HttpsOnly (而不是 HttpOrHttps)确保网络流量始终加密，从而帮助防止敏感数据泄露。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
-        <target state="translated">如果可能, 请考虑使用 Azure 基于角色的访问控制, 而不是共享访问签名 (SAS)。如果仍需要使用 SAS, 请指定 SharedAccessProtocol。 HttpsOnly</target>
+        <target state="translated">如果可能，请考虑使用 Azure 基于角色的访问控制，而不是共享访问签名(SAS)。如果仍需使用 SAS，请指定 SharedAccessProtocol.HttpsOnly</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

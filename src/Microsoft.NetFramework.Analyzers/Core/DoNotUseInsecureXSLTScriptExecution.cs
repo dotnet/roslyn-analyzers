@@ -143,7 +143,7 @@ namespace Microsoft.NetFramework.Analyzers
                             LocalizableResourceString message = SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 isSetInBlock ? nameof(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureConstructedMessage) :
                                     nameof(MicrosoftNetFrameworkAnalyzersResources.XslCompiledTransformLoadInsecureInputMessage),
-                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model, context.CancellationToken)
                             );
 
                             context.ReportDiagnostic(

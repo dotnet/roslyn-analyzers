@@ -49,6 +49,30 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                         return;
                     }
 
+                    // Bail out for protected members of sealed classes if the entire overridden method chain
+                    // is defined in the same assembly.
+                    if (containingMethod.IsOverride &&
+                        containingMethod.ContainingType.IsSealed)
+                    {
+                        var overriddenMethod = containingMethod.OverriddenMethod;
+                        var hasAssemblyMismatch = false;
+                        while (overriddenMethod != null)
+                        {
+                            if (!Equals(overriddenMethod.ContainingAssembly, containingMethod.ContainingAssembly))
+                            {
+                                hasAssemblyMismatch = true;
+                                break;
+                            }
+
+                            overriddenMethod = overriddenMethod.OverriddenMethod;
+                        }
+
+                        if (!hasAssemblyMismatch)
+                        {
+                            return;
+                        }
+                    }
+
                     // Bail out early if we have no parameter references in the method body. 
                     if (!operationBlockContext.OperationBlocks.HasAnyOperationDescendant(OperationKind.ParameterReference))
                     {

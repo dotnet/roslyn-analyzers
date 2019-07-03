@@ -14,6 +14,8 @@ var legacyRulesets = Args[12].Split(new[] { ';' }, StringSplitOptions.RemoveEmpt
 var artifactsBinDir = Args[13];
 var analyzerDocumentationFileDir = Args[14];
 var analyzerDocumentationFileName = Args[15];
+var analyzerSarifFileDir = Args[16];
+var analyzerSarifFileName = Args[17];
 
 var result = new StringBuilder();
 
@@ -113,11 +115,29 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0)
             targets = allTargets;
         }
 
-        string path = Path.Combine(Path.GetFileNameWithoutExtension(assembly), configuration, tfm, assembly);
+        string assemblyNameWithoutExtension = Path.GetFileNameWithoutExtension(assembly);
+        string assemblyFolder = Path.Combine(artifactsBinDir, assemblyNameWithoutExtension, configuration, tfm);
+        string assemblyPathForNuspec = Path.Combine(assemblyNameWithoutExtension, configuration, tfm, assembly);
 
         foreach (string target in targets)
         {
-            result.AppendLine(FileElement(path, target));
+            result.AppendLine(FileElement(assemblyPathForNuspec, target));
+
+            if (Directory.Exists(assemblyFolder))
+            {
+                string resourceAssemblyName = assemblyNameWithoutExtension + ".resources.dll";
+                foreach (var directory in Directory.EnumerateDirectories(assemblyFolder))
+                {
+                    var resourceAssemblyFullPath = Path.Combine(directory, resourceAssemblyName);
+                    if (File.Exists(resourceAssemblyFullPath))
+                    {
+                        var directoryName = Path.GetFileName(directory);
+                        string resourceAssemblyPathForNuspec = Path.Combine(assemblyNameWithoutExtension, configuration, tfm, directoryName, resourceAssemblyName);
+                        string targetForNuspec = Path.Combine(target, directoryName);
+                        result.AppendLine(FileElement(resourceAssemblyPathForNuspec, targetForNuspec));
+                    }
+                }
+            }
         }
     }
 
@@ -167,6 +187,15 @@ if (rulesetsDir.Length > 0 && Directory.Exists(rulesetsDir))
 if (analyzerDocumentationFileDir.Length > 0 && Directory.Exists(analyzerDocumentationFileDir) && analyzerDocumentationFileName.Length > 0)
 {
     var fileWithPath = Path.Combine(analyzerDocumentationFileDir, analyzerDocumentationFileName);
+    if (File.Exists(fileWithPath))
+    {
+        result.AppendLine(FileElement(fileWithPath, "documentation"));
+    }
+}
+
+if (analyzerSarifFileDir.Length > 0 && Directory.Exists(analyzerSarifFileDir) && analyzerSarifFileName.Length > 0)
+{
+    var fileWithPath = Path.Combine(analyzerSarifFileDir, analyzerSarifFileName);
     if (File.Exists(fileWithPath))
     {
         result.AppendLine(FileElement(fileWithPath, "documentation"));

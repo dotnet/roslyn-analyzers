@@ -19,22 +19,47 @@
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCert">
         <source>Do Not Add Certificates To Root Store</source>
-        <target state="new">Do Not Add Certificates To Root Store</target>
+        <target state="translated">ルート ストアに証明書を追加しない</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
+        <target state="translated">オペレーティング システムの信頼されたルート証明書に証明書を追加すると、不正な証明書を誤って認証するリスクが高くなります</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
         <source>Use Secure Cookies In ASP.Net Core</source>
-        <target state="new">Use Secure Cookies In ASP.Net Core</target>
+        <target state="translated">ASP.Net Core で安全な Cookie を使用します</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCoreMessage">
         <source>Set CookieOptions.Secure = true when setting a cookie</source>
-        <target state="new">Set CookieOptions.Secure = true when setting a cookie</target>
+        <target state="translated">Cookie を設定する場合は、CookieOptions.Secure = true と設定してください。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
+        <source>Do Not Add Archive Item's Path To The Target File System Path</source>
+        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
+        <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
+        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
+        <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
+        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
+        <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
+        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
+        <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -129,7 +154,7 @@
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
         <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
-        <target state="new">By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</target>
+        <target state="translated">既定では、信頼されたルート証明機関の証明書ストアは、Microsoft ルート証明書プログラムの要件を満たす一連の公的 CA で構成されています。すべての信頼されたルート CA は任意のドメインの証明書を発行できますが、攻撃者はユーザー自身がインストールする脆弱な CA または制御可能な CA を攻撃対象として選択できます。脆弱な CA、悪意のあるCA、制御可能な CA が 1 つでもあると、システム全体のセキュリティが弱体化します。さらに悪いことに、こうした攻撃はまったく気付かずに、しかも簡単に行うことができます。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">
@@ -194,17 +219,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
-        <target state="new">Do Not Use Digital Signature Algorithm (DSA)</target>
+        <target state="translated">デジタル署名アルゴリズム (DSA) を使用しない</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSADescription">
         <source>DSA is too weak to use.</source>
-        <target state="new">DSA is too weak to use.</target>
+        <target state="translated">DSA は脆弱であるため使用しません。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
-        <target state="new">Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <target state="translated">非対称暗号化アルゴリズム {0} が脆弱です。キー サイズが少なくとも 2048 の RSA、ECDH、または ECDSA アルゴリズムに切り替えてください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
@@ -274,17 +299,22 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithm">
         <source>Do Not Use Weak Key Derivation Function Algorithm</source>
-        <target state="new">Do Not Use Weak Key Derivation Function Algorithm</target>
+        <target state="translated">弱いキー派生関数アルゴリズムを使用しないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
         <source>Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</source>
-        <target state="new">Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</target>
+        <target state="translated">Rfc2898DeriveBytes クラスの一部の実装では、ハッシュ アルゴリズムをコンストラクターのパラメーターで指定するか、HashAlgorithm プロパティで上書きすることができます。ハッシュ アルゴリズムが指定されている場合、SHA-256 またはそれ以上でなければなりません。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
         <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
-        <target state="new">{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</target>
+        <target state="translated">{0} は弱いハッシュ アルゴリズムを使用して作成されました。SHA256、SHA384、SHA512 を使用してパスワードから強力なキーを作成してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
+        <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
+        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -309,22 +339,32 @@
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
         <source>Ensure Certificates Are Not Added To Root Store</source>
-        <target state="new">Ensure Certificates Are Not Added To Root Store</target>
+        <target state="translated">証明書がルート ストアに追加されていないことを確認する</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</target>
+        <target state="translated">オペレーティング システムの信頼されたルート証明書に証明書を追加することは安全ではありません。ターゲット ストアがルート ストアでないことを確認してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCore">
         <source>Ensure Use Secure Cookies In ASP.Net Core</source>
-        <target state="new">Ensure Use Secure Cookies In ASP.Net Core</target>
+        <target state="translated">ASP.Net Core で安全な Cookie を使用することを確認します</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCoreMessage">
         <source>Ensure that CookieOptions.Secure = true when setting a cookie</source>
-        <target state="new">Ensure that CookieOptions.Secure = true when setting a cookie</target>
+        <target state="translated">Cookie を設定する場合は、CookieOptions.Secure = true になっていることを確認してください</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
+        <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
+        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
+        <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -338,43 +378,43 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="translated">ページのサブクラス {0} は、メソッド OnInit で ViewStateUserKey プロパティを設定しません</target>
+        <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
+        <target state="needs-review-translation">ページのサブクラス {0} は、メソッド OnInit で ViewStateUserKey プロパティを設定しません</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
         <source>Use Container Level Access Policy</source>
-        <target state="new">Use Container Level Access Policy</target>
+        <target state="translated">コンテナー レベルのアクセス ポリシーを使用する</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyDescription">
         <source>No access policy identifier is specified, making tokens non-revocable.</source>
-        <target state="new">No access policy identifier is specified, making tokens non-revocable.</target>
+        <target state="translated">アクセス ポリシー識別子が指定されていません。トークンが取消可能ではなくなります。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
-        <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</target>
+        <target state="translated">可能な場合は、Shared Access Signature (SAS) の代わりに、Azure のロールベースのアクセス制御を使用することを検討してください。依然として SAS を使用する必要がある場合は、SAS の作成時にコンテナーレベルのアクセス ポリシーを使用します</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
-        <target state="new">Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</target>
+        <target state="translated">十分なキー サイズの Rivest–Shamir–Adleman (RSA) アルゴリズムを使用します</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeDescription">
         <source>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</source>
-        <target state="new">Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</target>
+        <target state="translated">暗号化アルゴリズムは、小さすぎるキー サイズが使用されていると、ブルート フォース攻撃に対して脆弱になります。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeMessage">
         <source>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
-        <target state="new">Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</target>
+        <target state="translated">非対称暗号化アルゴリズム {0} のキー サイズが 2048 未満です。キー サイズが少なくとも 2048 の RSA、ECDH、または ECDSA アルゴリズムに切り替えてください。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">
         <source>Applications available over HTTPS must use secure cookies.</source>
-        <target state="new">Applications available over HTTPS must use secure cookies.</target>
+        <target state="translated">HTTPS 経由で使用できるアプリケーションは、セキュリティで保護された Cookie を使用する必要があります。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">

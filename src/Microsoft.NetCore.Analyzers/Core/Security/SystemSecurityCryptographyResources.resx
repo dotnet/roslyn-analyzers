@@ -319,7 +319,7 @@
     <value>Setting the ViewStateUserKey property can help you prevent attacks on your application by allowing you to assign an identifier to the view-state variable for individual users so that they cannot use the variable to generate an attack. Otherwise, there will be cross-site request forgery vulnerabilities.</value>
   </data>
   <data name="SetViewStateUserKeyMessage" xml:space="preserve">
-    <value>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</value>
+    <value>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</value>
   </data>
   <data name="UseContainerLevelAccessPolicy" xml:space="preserve">
     <value>Use Container Level Access Policy</value>
@@ -371,5 +371,29 @@
   </data>
   <data name="UseRSAWithSufficientKeySizeMessage" xml:space="preserve">
     <value>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</value>
+  </data>
+  <data name="DefinitelyUseWeakKDFInsufficientIterationCount" xml:space="preserve">
+    <value>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</value>
+  </data>
+  <data name="DefinitelyUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
+    <value>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</value>
+  </data>
+  <data name="DoNotUseWeakKDFInsufficientIterationCountDescription" xml:space="preserve">
+    <value>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</value>
+  </data>
+  <data name="MaybeUseWeakKDFInsufficientIterationCount" xml:space="preserve">
+    <value>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</value>
+  </data>
+  <data name="MaybeUseWeakKDFInsufficientIterationCountMessage" xml:space="preserve">
+    <value>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</value>
+  </data>
+  <data name="DoNotAddArchiveItemPathToTheTargetFileSystemPath" xml:space="preserve">
+    <value>Do Not Add Archive Item's Path To The Target File System Path</value>
+  </data>
+  <data name="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription" xml:space="preserve">
+    <value>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</value>
+  </data>
+  <data name="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage" xml:space="preserve">
+    <value>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</value>
   </data>
 </root>

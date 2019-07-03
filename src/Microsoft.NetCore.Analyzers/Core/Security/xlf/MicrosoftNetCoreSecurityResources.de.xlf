@@ -19,17 +19,17 @@
       </trans-unit>
       <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsMessage">
         <source>Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</source>
-        <target state="new">Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.</target>
+        <target state="translated">Legen Sie Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols nicht auf TRUE fest. Durch das Festlegen dieses Schalters wird WCF (Windows Communication Framework) auf die Verwendung von TLS 1.0 (Transport Layer Security) eingeschränkt, das unsicher und veraltet ist.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle">
         <source>Do not disable ServicePointManagerSecurityProtocols</source>
-        <target state="new">Do not disable ServicePointManagerSecurityProtocols</target>
+        <target state="translated">ServicePointManagerSecurityProtocols nicht deaktivieren</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
-        <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</source>
-        <target state="translated">Die Methode "{0}" ist unsicher, wenn nicht vertrauenswürdige Daten mit einem JavaScriptSerializer deserialisiert werden, der mit einem SimpleTypeResolver initialisiert wurde. Stellen Sie sicher, dass der JavaScriptSerializer ohne Angabe eines JavaScriptTypeResolver oder mit einem JavaScriptTypeResolver initialisiert wird, der die Objekttypen im deserialisierten Objektdiagramm einschränkt.</target>
+        <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</source>
+        <target state="needs-review-translation">Die Methode "{0}" ist unsicher, wenn nicht vertrauenswürdige Daten mit einem JavaScriptSerializer deserialisiert werden, der mit einem SimpleTypeResolver initialisiert wurde. Stellen Sie sicher, dass der JavaScriptSerializer ohne Angabe eines JavaScriptTypeResolver oder mit einem JavaScriptTypeResolver initialisiert wird, der die Objekttypen im deserialisierten Objektdiagramm einschränkt.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverTitle">
@@ -38,13 +38,33 @@
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverMessage">
-        <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.</source>
-        <target state="translated">Die Methode "{0}" ist unsicher, wenn nicht vertrauenswürdige Daten mit einem JavaScriptSerializer deserialisiert werden, der mit einem SimpleTypeResolver initialisiert wurde. Initialisieren Sie den JavaScriptSerializer ohne Angabe eines JavaScriptTypeResolver oder mit einem JavaScriptTypeResolver, der die Objekttypen im deserialisierten Objektdiagramm einschränkt.</target>
+        <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</source>
+        <target state="needs-review-translation">Die Methode "{0}" ist unsicher, wenn nicht vertrauenswürdige Daten mit einem JavaScriptSerializer deserialisiert werden, der mit einem SimpleTypeResolver initialisiert wurde. Initialisieren Sie den JavaScriptSerializer ohne Angabe eines JavaScriptTypeResolver oder mit einem JavaScriptTypeResolver, der die Objekttypen im deserialisierten Objektdiagramm einschränkt.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverTitle">
         <source>Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver</source>
         <target state="translated">Nicht mit JavaScriptSerializer und SimpleTypeResolver deserialisieren</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetInsecureSettingsMessage">
+        <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
+        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetInsecureSettingsTitle">
+        <source>Do not use insecure JsonSerializerSettings</source>
+        <target state="new">Do not use insecure JsonSerializerSettings</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetMaybeInsecureSettingsMessage">
+        <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.</source>
+        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetMaybeInsecureSettingsTitle">
+        <source>Ensure that JsonSerializerSettings are secure</source>
+        <target state="new">Ensure that JsonSerializerSettings are secure</target>
         <note />
       </trans-unit>
       <trans-unit id="LosFormatterMethodUsedMessage">

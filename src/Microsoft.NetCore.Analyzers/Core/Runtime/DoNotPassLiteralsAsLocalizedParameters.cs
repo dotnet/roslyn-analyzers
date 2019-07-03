@@ -71,12 +71,21 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     operationBlockStartContext.RegisterOperationAction(operationContext =>
                     {
                         var argument = (IArgumentOperation)operationContext.Operation;
-                        switch (argument.Parent?.Kind)
+                        IMethodSymbol targetMethod = null;
+                        switch (argument.Parent)
                         {
-                            case OperationKind.Invocation:
-                            case OperationKind.ObjectCreation:
-                                AnalyzeArgument(argument.Parameter, containingPropertySymbolOpt: null, operation: argument, reportDiagnostic: operationContext.ReportDiagnostic);
-                                return;
+                            case IInvocationOperation invocation:
+                                targetMethod = invocation.TargetMethod;
+                                break;
+
+                            case IObjectCreationOperation objectCreation:
+                                targetMethod = objectCreation.Constructor;
+                                break;
+                        }
+
+                        if (ShouldAnalyze(targetMethod))
+                        {
+                            AnalyzeArgument(argument.Parameter, containingPropertySymbolOpt: null, operation: argument, reportDiagnostic: operationContext.ReportDiagnostic);
                         }
                     }, OperationKind.Argument);
 
@@ -86,16 +95,23 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (propertyReference.Parent is IAssignmentOperation assignment &&
                             assignment.Target == propertyReference &&
                             !propertyReference.Property.IsIndexer &&
-                            propertyReference.Property.SetMethod?.Parameters.Length == 1)
+                            propertyReference.Property.SetMethod?.Parameters.Length == 1 &&
+                            ShouldAnalyze(propertyReference.Property))
                         {
                             IParameterSymbol valueSetterParam = propertyReference.Property.SetMethod.Parameters[0];
                             AnalyzeArgument(valueSetterParam, propertyReference.Property, assignment, operationContext.ReportDiagnostic);
                         }
                     }, OperationKind.PropertyReference);
 
+                    return;
+
+                    // Local functions
+                    bool ShouldAnalyze(ISymbol symbol)
+                        => symbol != null && !symbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken);
+
                     void AnalyzeArgument(IParameterSymbol parameter, IPropertySymbol containingPropertySymbolOpt, IOperation operation, Action<Diagnostic> reportDiagnostic)
                     {
-                        if (ShouldBeLocalized(parameter, containingPropertySymbolOpt, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
+                        if (ShouldBeLocalized(parameter.OriginalDefinition, containingPropertySymbolOpt?.OriginalDefinition, localizableStateAttributeSymbol, conditionalAttributeSymbol, systemConsoleSymbol, typesToIgnore) &&
                             lazyValueContentResult.Value != null)
                         {
                             ValueContentAbstractValue stringContentValue = lazyValueContentResult.Value[operation.Kind, operation.Syntax];
@@ -236,7 +252,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // FxCop compat: For overrides, check for localizability of the corresponding parameter in the overridden method.
             var method = (IMethodSymbol)parameterSymbol.ContainingSymbol;
             if (method.IsOverride &&
-                method.OverriddenMethod.Parameters.Length == method.Parameters.Length)
+                method.OverriddenMethod?.Parameters.Length == method.Parameters.Length)
             {
                 int parameterIndex = method.GetParameterIndex(parameterSymbol);
                 IParameterSymbol overridenParameter = method.OverriddenMethod.Parameters[parameterIndex];
@@ -311,12 +327,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var literals = new StringBuilder();
             foreach (string literal in literalValues.Order())
             {
+                // sanitize the literal to ensure it's not multiline
+                // replace any newline characters with a space
+                var sanitizedLiteral = literal.Replace(Environment.NewLine, " ");
+                sanitizedLiteral = sanitizedLiteral.Replace((char)13, ' ');
+                sanitizedLiteral = sanitizedLiteral.Replace((char)10, ' ');
+
                 if (literals.Length > 0)
                 {
                     literals.Append(", ");
                 }
 
-                literals.Append(literal);
+                literals.Append(sanitizedLiteral);
             }
 
             return literals.ToString();

@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -10,6 +11,7 @@ using System.Text;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace GenerateAnalyzerRulesets
 {
@@ -17,9 +19,11 @@ namespace GenerateAnalyzerRulesets
     {
         public static int Main(string[] args)
         {
-            if (args.Length != 10)
+            const int expectedArguments = 13;
+
+            if (args.Length != expectedArguments)
             {
-                Console.Error.WriteLine($"Excepted 8 arguments, found {args.Length}: {string.Join(';', args)}");
+                Console.Error.WriteLine($"Excepted {expectedArguments} arguments, found {args.Length}: {string.Join(';', args)}");
                 return 1;
             }
 
@@ -32,7 +36,10 @@ namespace GenerateAnalyzerRulesets
             string propsFileName = args[6];
             string analyzerDocumentationFileDir = args[7];
             string analyzerDocumentationFileName = args[8];
-            if (!bool.TryParse(args[9], out var containsPortedFxCopRules))
+            string analyzerSarifFileDir = args[9];
+            string analyzerSarifFileName = args[10];
+            var analyzerVersion = args[11];
+            if (!bool.TryParse(args[12], out var containsPortedFxCopRules))
             {
                 containsPortedFxCopRules = false;
             }
@@ -41,6 +48,7 @@ namespace GenerateAnalyzerRulesets
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
             var fixableDiagnosticIds = new HashSet<string>();
             var categories = new HashSet<string>();
+            var rulesMetadata = new SortedList<string, (string path, SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)> rules)>();
             foreach (string assembly in assemblyList)
             {
                 var assemblyName = Path.GetFileNameWithoutExtension(assembly);
@@ -53,19 +61,25 @@ namespace GenerateAnalyzerRulesets
 
                 var analyzerFileReference = new AnalyzerFileReference(path, AnalyzerAssemblyLoader.Instance);
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
-                var rules = analyzers.SelectMany(a => a.SupportedDiagnostics);
-                if (rules.Any())
+                var rulesById = new SortedList<string, DiagnosticDescriptor>();
+
+                var assemblyRulesMetadata = (path: path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
+
+                foreach (var analyzer in analyzers)
                 {
-                    var rulesById = new SortedList<string, DiagnosticDescriptor>();
-                    foreach (DiagnosticDescriptor rule in rules)
+                    var analyzerType = analyzer.GetType();
+
+                    foreach (var rule in analyzer.SupportedDiagnostics)
                     {
                         rulesById[rule.Id] = rule;
                         allRulesById[rule.Id] = rule;
                         categories.Add(rule.Category);
+                        assemblyRulesMetadata.rules[rule.Id] = (rule, analyzerType.Name, analyzerType.GetCustomAttribute<DiagnosticAnalyzerAttribute>(true)?.Languages);
                     }
-
-                    allRulesByAssembly.Add(assemblyName, rulesById);
                 }
+
+                allRulesByAssembly.Add(assemblyName, rulesById);
+                rulesMetadata.Add(assemblyName, assemblyRulesMetadata);
 
                 foreach (var id in analyzerFileReference.GetFixers().SelectMany(fixer => fixer.FixableDiagnosticIds))
                 {
@@ -114,6 +128,8 @@ namespace GenerateAnalyzerRulesets
             createPropsFile();
 
             createAnalyzerDocumentationFile();
+
+            createAnalyzerSarifFile();
 
             return 0;
 
@@ -397,6 +413,134 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                 }
 
                 File.WriteAllText(fileWithPath, builder.ToString());
+            }
+
+            // based on https://github.com/dotnet/roslyn/blob/master/src/Compilers/Core/Portable/CommandLine/ErrorLogger.cs
+            void createAnalyzerSarifFile()
+            {
+                if (string.IsNullOrEmpty(analyzerSarifFileDir) || string.IsNullOrEmpty(analyzerSarifFileName) || allRulesById.Count == 0)
+                {
+                    Debug.Assert(!containsPortedFxCopRules);
+                    return;
+                }
+
+                var culture = new CultureInfo("en-us");
+
+                var directory = Directory.CreateDirectory(analyzerSarifFileDir);
+                var fileWithPath = Path.Combine(directory.FullName, analyzerSarifFileName);
+
+                using (var textWriter = new StreamWriter(fileWithPath, false, Encoding.UTF8))
+                using (var writer = new Roslyn.Utilities.JsonWriter(textWriter))
+                {
+                    writer.WriteObjectStart(); // root
+                    writer.Write("$schema", "http://json.schemastore.org/sarif-1.0.0");
+                    writer.Write("version", "1.0.0");
+                    writer.WriteArrayStart("runs");
+
+                    foreach (var assemblymetadata in rulesMetadata)
+                    {
+                        writer.WriteObjectStart(); // run
+
+                        writer.WriteObjectStart("tool");
+                        writer.Write("name", assemblymetadata.Key);
+
+                        if (!string.IsNullOrWhiteSpace(analyzerVersion))
+                        {
+                            writer.Write("version", analyzerVersion);
+                        }
+
+                        writer.Write("language", culture.Name);
+                        writer.WriteObjectEnd(); // tool
+
+                        writer.WriteObjectStart("rules"); // rules
+
+                        foreach (var rule in assemblymetadata.Value.rules)
+                        {
+                            var ruleId = rule.Key;
+                            var descriptor = rule.Value.rule;
+
+                            writer.WriteObjectStart(descriptor.Id); // rule
+                            writer.Write("id", descriptor.Id);
+
+                            writer.Write("shortDescription", descriptor.Title.ToString(culture));
+
+                            string fullDescription = descriptor.Description.ToString(culture);
+                            writer.Write("fullDescription", !string.IsNullOrEmpty(fullDescription) ? fullDescription : descriptor.MessageFormat.ToString());
+
+                            writer.Write("defaultLevel", getLevel(descriptor.DefaultSeverity));
+
+                            if (!string.IsNullOrEmpty(descriptor.HelpLinkUri))
+                            {
+                                writer.Write("helpUri", descriptor.HelpLinkUri);
+                            }
+
+                            writer.WriteObjectStart("properties");
+
+                            writer.Write("category", descriptor.Category);
+
+                            writer.Write("isEnabledByDefault", descriptor.IsEnabledByDefault);
+
+                            writer.Write("typeName", rule.Value.typeName);
+
+                            if ((rule.Value.languages?.Length ?? 0) > 0)
+                            {
+                                writer.WriteArrayStart("languages");
+
+                                foreach (var language in rule.Value.languages.OrderBy(l => l, StringComparer.InvariantCultureIgnoreCase))
+                                {
+                                    writer.Write(language);
+                                }
+
+                                writer.WriteArrayEnd(); // languages
+                            }
+
+                            if (descriptor.CustomTags.Any())
+                            {
+                                writer.WriteArrayStart("tags");
+
+                                foreach (string tag in descriptor.CustomTags)
+                                {
+                                    writer.Write(tag);
+                                }
+
+                                writer.WriteArrayEnd(); // tags
+                            }
+
+                            writer.WriteObjectEnd(); // properties
+                            writer.WriteObjectEnd(); // rule
+                        }
+
+                        writer.WriteObjectEnd(); // rules
+                        writer.WriteObjectEnd(); // run
+                    }
+
+                    writer.WriteArrayEnd(); // runs
+                    writer.WriteObjectEnd(); // root
+
+                    return;
+
+                    string getLevel(DiagnosticSeverity severity)
+                    {
+                        switch (severity)
+                        {
+                            case DiagnosticSeverity.Info:
+                                return "note";
+
+                            case DiagnosticSeverity.Error:
+                                return "error";
+
+                            case DiagnosticSeverity.Warning:
+                                return "warning";
+
+                            case DiagnosticSeverity.Hidden:
+                            default:
+                                // hidden diagnostics are not reported on the command line and therefore not currently given to 
+                                // the error logger. We could represent it with a custom property in the SARIF log if that changes.
+                                Debug.Assert(false);
+                                goto case DiagnosticSeverity.Warning;
+                        }
+                    }
+                }
             }
         }
 

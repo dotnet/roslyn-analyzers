@@ -30,6 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             description: s_localizableDescription,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2007-do-not-directly-await-task",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);

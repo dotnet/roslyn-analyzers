@@ -101,11 +101,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol))
                                 {
-                                    kind = PropertySetAnalysis.EvaluateLiteralValues(argumentValueContentAbstractValues[0], o => o.Equals(6));
+                                    kind = PropertySetCallbacks.EvaluateLiteralValues(argumentValueContentAbstractValues[0], o => o.Equals(6));
                                 }
                                 else if (constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
                                 {
-                                    kind = PropertySetAnalysis.EvaluateLiteralValues(
+                                    kind = PropertySetCallbacks.EvaluateLiteralValues(
                                         argumentValueContentAbstractValues[0],
                                         s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase));
                                 }

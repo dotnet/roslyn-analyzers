@@ -1,10 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Microsoft.NetFramework.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -37,9 +35,9 @@ namespace Microsoft.NetFramework.Analyzers
         {
         }
 
-        protected override Diagnostic CreateDiagnostic(IMethodSymbol containingMethod, SyntaxNode catchNode)
+        protected override Diagnostic CreateDiagnostic(IMethodSymbol containingMethod, SyntaxToken catchKeyword)
         {
-            return catchNode.CreateDiagnostic(Rule, containingMethod.ToDisplayString());
+            return catchKeyword.CreateDiagnostic(Rule, containingMethod.ToDisplayString());
         }
     }
 }

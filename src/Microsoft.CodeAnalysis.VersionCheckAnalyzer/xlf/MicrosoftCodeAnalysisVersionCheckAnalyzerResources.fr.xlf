@@ -3,13 +3,13 @@
   <file datatype="xml" source-language="en" target-language="fr" original="../MicrosoftCodeAnalysisVersionCheckAnalyzerResources.resx">
     <body>
       <trans-unit id="VersionCheckDescription">
-        <source>Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
-        <target state="translated">Les analyseurs de ce package nécessitent une certaine version minimale de Microsoft.CodeAnalysis pour pouvoir s'exécuter correctement. Consultez https://docs.microsoft.com/fr-fr/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions pour installer la version appropriée de l'analyseur.</target>
+        <source>Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
+        <target state="needs-review-translation">Les analyseurs de ce package nécessitent une certaine version minimale de Microsoft.CodeAnalysis pour pouvoir s'exécuter correctement. Consultez https://docs.microsoft.com/fr-fr/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions pour installer la version appropriée de l'analyseur.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckMessage">
-        <source>Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed. Refer to https://docs.microsoft.com/en-us/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
-        <target state="translated">Incompatibilité de version entre le package de l'analyseur '{0}' et Microsoft.CodeAnalysis '{1}'. Certains analyseurs de ce package ne peuvent pas s'exécuter tant que l'incompatibilité de version n'est pas corrigée. Consultez https://docs.microsoft.com/fr-fr/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions pour installer la version appropriée de l'analyseur.</target>
+        <source>Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
+        <target state="needs-review-translation">Incompatibilité de version entre le package de l'analyseur '{0}' et Microsoft.CodeAnalysis '{1}'. Certains analyseurs de ce package ne peuvent pas s'exécuter tant que l'incompatibilité de version n'est pas corrigée. Consultez https://docs.microsoft.com/fr-fr/visualstudio/code-quality/install-fxcop-analyzers?view=vs-2017#fxcopanalyzers-package-versions pour installer la version appropriée de l'analyseur.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckTitle">

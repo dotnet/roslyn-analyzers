@@ -19,22 +19,47 @@
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCert">
         <source>Do Not Add Certificates To Root Store</source>
-        <target state="new">Do Not Add Certificates To Root Store</target>
+        <target state="translated">Sertifikaları Kök Depoya Ekleme</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates increases the risk of incorrectly authenticating an illegitimate certificate</target>
+        <target state="translated">Sertifikaların, işletim sisteminin güvenilen kök sertifikalarına eklenmesi, geçerli olmayan bir sertifikanın hatalı bir şekilde kimliğinin doğrulanması riskini artırır</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCore">
         <source>Use Secure Cookies In ASP.Net Core</source>
-        <target state="new">Use Secure Cookies In ASP.Net Core</target>
+        <target state="translated">ASP.Net Core'da Güvenli Tanımlama Bilgileri Kullan</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseSecureCookiesASPNetCoreMessage">
         <source>Set CookieOptions.Secure = true when setting a cookie</source>
-        <target state="new">Set CookieOptions.Secure = true when setting a cookie</target>
+        <target state="translated">Tanımlama bilgisi ayarlarken CookieOptions.Secure = true olarak ayarlayın</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
+        <source>Do Not Add Archive Item's Path To The Target File System Path</source>
+        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
+        <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
+        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
+        <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
+        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
+        <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
+        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
+        <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -109,7 +134,7 @@
       </trans-unit>
       <trans-unit id="DoNotDisableRequestValidationMessage">
         <source>{0} has request validation disabled</source>
-        <target state="translated">{0} metodunun istek doğrulama özelliği devre dışı</target>
+        <target state="translated">{0} öğesinde istek doğrulama devre dışı</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotDisableSchUseStrongCrypto">
@@ -129,7 +154,7 @@
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
         <source>By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</source>
-        <target state="new">By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.</target>
+        <target state="translated">Varsayılan olarak, Güvenilen Kök Sertifika Yetkilileri sertifika deposu, Microsoft Kök Sertifika Programı gereksinimlerini karşılayan bir genel CA kümesiyle yapılandırılır. Tüm güvenilen kök CA'lar herhangi bir etki alanı için sertifika verebileceği için, bir saldırgan kendiniz yüklediğiniz savunmasız veya zorlanabilir bir CA'yı saldırı için seçebilir ve tek bir zayıf, kötü amaçlı ya da zorlanabilir CA tüm sistemin güvenliğini tehlikeye atabilir. Daha da kötüsü, bu saldırıların gözden kaçırılması oldukça kolaydır.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotReferSelfInSerializableClass">
@@ -194,17 +219,17 @@
       </trans-unit>
       <trans-unit id="DoNotUseDSA">
         <source>Do Not Use Digital Signature Algorithm (DSA)</source>
-        <target state="new">Do Not Use Digital Signature Algorithm (DSA)</target>
+        <target state="translated">Dijital İmza Algoritması (DSA) Kullanma</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSADescription">
         <source>DSA is too weak to use.</source>
-        <target state="new">DSA is too weak to use.</target>
+        <target state="translated">DSA, kullanmak için çok zayıf.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDSAMessage">
         <source>Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</source>
-        <target state="new">Asymmetric encryption algorithm {0} is weak. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead</target>
+        <target state="translated">Asimetrik şifreleme algoritması {0} zayıf. Bunun yerine en az 2048 anahtar boyutuna, ECDH veya ECDSA algoritmasına sahip bir RSA'ya geçiş yapın</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseDeprecatedSecurityProtocols">
@@ -274,17 +299,22 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithm">
         <source>Do Not Use Weak Key Derivation Function Algorithm</source>
-        <target state="new">Do Not Use Weak Key Derivation Function Algorithm</target>
+        <target state="translated">Zayıf Anahtar Türetme İşlevi Algoritmasını Kullanma</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
         <source>Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</source>
-        <target state="new">Some implementations of the Rfc2898DeriveBytes class allow for a hash algorithm to be specified in a constructor parameter or overwritten in the HashAlgorithm property. If a hash algorithm is specified, then it should be SHA-256 or higher.</target>
+        <target state="translated">Rfc2898DeriveBytes sınıfının bazı uygulamaları, bir karma algoritması değerinin oluşturucu parametresinde belirtilmesine veya HashAlgorithm özelliğinde üzerine yazılmasına olanak sağlar. Bir karma algoritması belirtilirse SHA-256 veya üzeri olmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
         <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
-        <target state="new">{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</target>
+        <target state="translated">{0} zayıf bir karma algoritmasıyla oluşturuldu. Bir paroladan güçlü bir anahtar oluşturmak için SHA256, SHA384 veya SHA512 kullanın</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
+        <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
+        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -309,22 +339,32 @@
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
         <source>Ensure Certificates Are Not Added To Root Store</source>
-        <target state="new">Ensure Certificates Are Not Added To Root Store</target>
+        <target state="translated">Sertifikaların Kök Depoya Eklenmediğinden Emin Olun</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCertMessage">
         <source>Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</source>
-        <target state="new">Adding certificates to the operating system's trusted root certificates is insecure. Ensure that the target store is not root store.</target>
+        <target state="translated">Sertifikaların, işletim sisteminin güvenilen kök sertifikalarına eklenmesi güvenli değildir. Hedef deponun kök depo olmadığından emin olun.</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCore">
         <source>Ensure Use Secure Cookies In ASP.Net Core</source>
-        <target state="new">Ensure Use Secure Cookies In ASP.Net Core</target>
+        <target state="translated">ASP.Net Core içinde Güvenli Tanımlama Bilgileri Kullanılmasını Sağla</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseSecureCookiesASPNetCoreMessage">
         <source>Ensure that CookieOptions.Secure = true when setting a cookie</source>
-        <target state="new">Ensure that CookieOptions.Secure = true when setting a cookie</target>
+        <target state="translated">Tanımlama bilgisi ayarlanırken CookieOptions.Secure = true olduğundan emin olun</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
+        <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
+        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
+        <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
+        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -338,58 +378,58 @@
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
-        <source>The subclass {0} of Page does not set the ViewStateUserKey property in method OnInit</source>
-        <target state="translated">Sayfanın {0} alt sınıfı OnInit metodunda ViewStateUserKey özelliğini ayarlamıyor</target>
+        <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
+        <target state="needs-review-translation">Sayfanın {0} alt sınıfı OnInit metodunda ViewStateUserKey özelliğini ayarlamıyor</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">
         <source>Use Container Level Access Policy</source>
-        <target state="new">Use Container Level Access Policy</target>
+        <target state="translated">Kapsayıcı Düzeyinde Erişim İlkesi Kullan</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyDescription">
         <source>No access policy identifier is specified, making tokens non-revocable.</source>
-        <target state="new">No access policy identifier is specified, making tokens non-revocable.</target>
+        <target state="translated">Erişim ilkesi tanımlayıcısı belirtilmediğinden belirteçler iptal edilemez.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
-        <target state="new">Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</target>
+        <target state="translated">Mümkünse Paylaşılan Erişim İmzası (SAS) yerine Azure'un rol tabanlı erişim denetimini kullanmayı düşünün. Yine de SAS kullanmanız gerekiyorsa, SAS oluştururken kapsayıcı düzeyinde bir erişim ilkesi kullanın</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
-        <target state="new">Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</target>
+        <target state="translated">Yeterli Anahtar Boyutuna Sahip Rivest–Shamir–Adleman (RSA) Algoritmasını Kullan</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeDescription">
         <source>Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</source>
-        <target state="new">Encryption algorithms are vulnerable to brute force attacks when too small a key size is used.</target>
+        <target state="translated">Çok küçük boyutlu bir anahtar kullanıldığında şifreleme algoritmaları deneme yanılma saldırılarına karşı savunmasız durumda kalır.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySizeMessage">
         <source>Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</source>
-        <target state="new">Asymmetric encryption algorithm {0}'s key size is less than 2048. Switch to an RSA with at least 2048 key size, ECDH or ECDSA algorithm instead.</target>
+        <target state="translated">Asimetrik şifreleme algoritması {0} anahtar boyutu 2048'den az. Bunun yerine en az 2048 anahtar boyutuna, ECDH veya ECDSA algoritmasına sahip bir RSA'ya geçiş yapın.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSecureCookiesASPNetCoreDescription">
         <source>Applications available over HTTPS must use secure cookies.</source>
-        <target state="new">Applications available over HTTPS must use secure cookies.</target>
+        <target state="translated">HTTPS üzerinden kullanılabilen uygulamalar güvenli tanımlama bilgileri kullanmalıdır.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnly">
         <source>Use SharedAccessProtocol HttpsOnly</source>
-        <target state="translated">SharedAccessProtocol HttpsOnly kullanın</target>
+        <target state="translated">SharedAccessProtocol HttpsOnly Kullan</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyDescription">
         <source>HTTPS encrypts network traffic. Use HttpsOnly, rather than HttpOrHttps, to ensure network traffic is always encrypted to help prevent disclosure of sensitive data.</source>
-        <target state="translated">HTTPS ağ trafiğini şifreler. Hassas verilerin açıklanmasını önlemeye yardımcı olmak için, ağ trafiğinin her zaman şifrelenmesini sağlamak amacıyla, HttpOrHttps yerine HttpsOnly kullanın.</target>
+        <target state="translated">HTTPS ağ trafiğini şifreler. Hassas verilerin açıklanmasını önlemeye yardımcı olmak için, ağ trafiğinin her zaman şifrelenmesini sağlamak amacıyla HttpOrHttps yerine HttpsOnly kullanın.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSharedAccessProtocolHttpsOnlyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, specify SharedAccessProtocol.HttpsOnly</source>
-        <target state="translated">Mümkünse paylaşılan erişim Imzası (SAS) yerine, Azure 'un rol tabanlı erişim denetimini kullanmayı düşünün. Hala SAS kullanmanız gerekiyorsa, SharedAccessProtocol. HttpsOnly belirtin</target>
+        <target state="translated">Mümkünse Paylaşılan Erişim İmzası (SAS) yerine Azure'un rol tabanlı erişim denetimini kullanmayı düşünün. Yine de SAS kullanmanız gerekiyorsa, SharedAccessProtocol.HttpsOnly belirtin</target>
         <note />
       </trans-unit>
       <trans-unit id="UseXmlReaderDescription">

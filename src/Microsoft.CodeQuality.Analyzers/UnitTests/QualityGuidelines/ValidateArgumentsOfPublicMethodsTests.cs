@@ -781,7 +781,7 @@ End Class",
         }
 
         [Fact]
-        public void ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic()
+        public void ConditionalButDefiniteNonNullAssigned_BeforeHazardousUsages_NoDiagnostic_CopyAnalysis()
         {
             VerifyCSharp(@"
 public class C
@@ -843,7 +843,7 @@ public class Test
         var z = c.X;
     }
 }
-");
+", GetEditorConfigToEnableCopyAnalysis());
 
             VerifyBasic(@"
 Public Class C
@@ -896,7 +896,7 @@ Public Class Test
         Dim z = c.X
     End Sub
 
-End Class");
+End Class", GetEditorConfigToEnableCopyAnalysis());
         }
 
         [Fact]
@@ -1244,7 +1244,7 @@ End Class");
         }
 
         [Fact]
-        public void ContractCheck_NoDiagnostic()
+        public void ContractCheck_NoDiagnostic_CopyAnalysis()
         {
             VerifyCSharp(@"
 public class C
@@ -1289,7 +1289,7 @@ public class Test
         var z = c.X;
     }
 }
-");
+", GetEditorConfigToEnableCopyAnalysis());
 
             VerifyBasic(@"
 Public Class C
@@ -1329,7 +1329,7 @@ Public Class Test
         Dim z = c.X
     End Sub
 End Class
-");
+", GetEditorConfigToEnableCopyAnalysis());
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.PredicateAnalysis)]
@@ -1896,6 +1896,205 @@ End Class
 ", GetEditorConfigAdditionalFile(editorConfigText));
         }
 
+        [Theory, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None")]
+        [InlineData(@"dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive
+                      dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
+        public void ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+public class ValidatedNotNullAttribute : System.Attribute
+{
+}
+
+public class C
+{
+    public void M1(C c1, C c2)
+    {
+        Validate(c1);
+        var x = c1.ToString(); // No diagnostic
+
+        NoValidate(c2);
+        x = c2.ToString(); // Diagnostic
+    }
+
+    private static void Validate([ValidatedNotNullAttribute]C c)
+    {
+    }
+
+    private static void NoValidate(C c)
+    {
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText),
+            // Test0.cs(14,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(14, 13, "void C.M1(C c1, C c2)", "c2"));
+        }
+
+        [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
+        public void ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_02()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+[AttributeUsage(AttributeTargets.Parameter)]
+internal sealed class ValidatedNotNullAttribute : Attribute { }
+
+internal static class Param
+{
+    public static void RequireNotNull([ValidatedNotNull] object value)
+    {
+    }
+}
+
+public class DataThing
+{
+    public IList<object> Items { get; }
+}
+
+public static class Issue2578Test
+{
+    public static void DoSomething(DataThing input)
+    {
+        Param.RequireNotNull(input);
+
+        // This line still generates a CA1062 error.
+        Bar(input);
+    }
+
+    private static void Bar(DataThing input)
+    {
+        input.Items.Any();
+    }
+}
+");
+        }
+
+        [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
+        public void ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic_03()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+[AttributeUsage(AttributeTargets.Parameter)]
+internal sealed class ValidatedNotNullAttribute : Attribute { }
+
+internal static class Param
+{
+    public static void RequireNotNull([ValidatedNotNull] object value)
+    {
+        Param.RequireNotNull2(value);
+    }
+
+    public static void RequireNotNull2([ValidatedNotNull] object value)
+    {
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+    }
+}
+
+public class DataThing
+{
+    public IList<object> Items { get; }
+}
+
+public static class Issue2578Test
+{
+    public static void DoSomething(DataThing input)
+    {
+        Param.RequireNotNull(input);
+
+        // This line still generates a CA1062 error.
+        Bar(input);
+    }
+
+    private static void Bar(DataThing input)
+    {
+        input.Items.Any();
+    }
+}
+");
+        }
+
+        [Theory, WorkItem(2578, "https://github.com/dotnet/roslyn-analyzers/issues/2578")]
+        // Match by method name
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
+                      dotnet_code_quality.null_check_validation_methods = Validate")]
+        // Match multiple methods by method documentation ID
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
+                      dotnet_code_quality.null_check_validation_methods = C.Validate(C)|Helper`1.Validate(C)|Helper`1.Validate``1(C,``0)")]
+        // Match multiple methods by method documentation ID with "M:" prefix
+        [InlineData(@"dotnet_code_quality.interprocedural_analysis_kind = None
+                      dotnet_code_quality.null_check_validation_methods = M:C.Validate(C)|M:Helper`1.Validate(C)|M:Helper`1.Validate``1(C,``0)")]
+        public void NullCheckValidationMethod_ConfiguredInEditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M1(C c1, C c2, C c3, C c4, C c5, C c6)
+    {
+        Validate(c1);
+        var x = c1.ToString(); // No diagnostic
+
+        Helper<int>.Validate(c2);
+        x = c2.ToString(); // No diagnostic
+
+        Helper<int>.Validate<object>(c3, null);
+        x = c3.ToString(); // No diagnostic
+
+        NoValidate(c4);
+        x = c4.ToString(); // Diagnostic
+
+        Helper<int>.NoValidate(c5);
+        x = c5.ToString(); // Diagnostic
+
+        Helper<int>.NoValidate<object>(c6, null);
+        x = c6.ToString(); // Diagnostic
+    }
+
+    private static void Validate(C c)
+    {
+    }
+
+    private static void NoValidate(C c)
+    {
+    }
+}
+
+internal static class Helper<T>
+{
+    internal static void Validate(C c)
+    {
+    }
+
+    internal static void NoValidate(C c)
+    {
+    }
+
+    internal static void Validate<U>(C c, U u)
+    {
+    }
+
+    internal static void NoValidate<U>(C c, U u)
+    {
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText),
+            // Test0.cs(16,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c4' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(16, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c4"),
+            // Test0.cs(19,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c5' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(19, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c5"),
+            // Test0.cs(22,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c6' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(22, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c6"));
+        }
+
         [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
         public void HazardousUsageInInvokedMethod_PrivateMethod_Generic_Diagnostic()
         {
@@ -2303,6 +2502,38 @@ Public Class Test
         End If
     End Sub
 End Class");
+        }
+
+        [Fact, WorkItem(2504, "https://github.com/dotnet/roslyn-analyzers/issues/2504")]
+        public void ValidatedInInvokedMethod_Generic_02_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public int X;
+}
+
+public class Test
+{
+    public void M1(C c)
+    {
+        M2(c); // Validation method
+        var x = c.X;    // No diagnostic here.
+    }
+
+    private static T M2<T>(T c)
+    {
+        if (c == null)
+        {
+            throw new ArgumentNullException(nameof(c));
+        }
+
+        return c;
+    }
+}
+");
         }
 
         [Fact]
@@ -5409,6 +5640,119 @@ public class C
         }
 
         [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Theory, WorkItem(2369, "https://github.com/dotnet/roslyn-analyzers/issues/2369")]
+        [InlineData("IsNullOrWhiteSpace")]
+        [InlineData("IsNullOrEmpty")]
+        public void StringNullCheckApis_02(string apiName)
+        {
+            VerifyCSharp($@"
+using System;
+
+public class C
+{{
+    public static void A(string input)
+    {{
+        if (string.{apiName}(input))
+        {{
+            throw new ArgumentException(""Invalid input"", nameof(input));
+        }}
+
+        B(input);
+    }}
+
+    private static void B(string input)
+    {{
+        var x = input.Length;
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Theory, WorkItem(2369, "https://github.com/dotnet/roslyn-analyzers/issues/2369")]
+        [InlineData("IsNullOrWhiteSpace")]
+        [InlineData("IsNullOrEmpty")]
+        public void StringNullCheckApis_03(string apiName)
+        {
+            VerifyCSharp($@"
+using System;
+
+public class C
+{{
+    public static void A(string input)
+    {{
+        if (!string.{apiName}(input))
+        {{
+            B(input);
+        }}
+    }}
+
+    private static void B(string input)
+    {{
+        var x = input.Length;
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
+        public void StringEmptyFieldIsNonNull()
+        {
+            VerifyCSharp($@"
+using System;
+
+public class Class1
+{{
+    public Class1(int num) {{ }}
+
+    public Class1(string name)
+        : this((name ?? string.Empty).Length) // Ensure no CA1062 here
+    {{
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
+        public void ArrayEmptyMethodIsNonNull()
+        {
+            VerifyCSharp($@"
+using System;
+
+public class Class1
+{{
+    public Class1(int num) {{ }}
+
+    public Class1(int[] arr)
+        : this((arr ?? Array.Empty<int>()).Length) // Ensure no CA1062 here
+    {{
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2582, "https://github.com/dotnet/roslyn-analyzers/issues/2582")]
+        public void ImmutableCreationMethodIsNonNull()
+        {
+            VerifyCSharp($@"
+using System.Collections.Immutable;
+
+public class Class1
+{{
+    public Class1(int num) {{ }}
+
+    public Class1(ImmutableDictionary<int, int> map)
+        : this((map ?? ImmutableDictionary.Create<int, int>()).Count) // Ensure no CA1062 here
+    {{
+    }}
+
+    public Class1(ImmutableHashSet<int> set)
+        : this((set ?? ImmutableHashSet.CreateRange(new[] {{ 1, 2 }})).Count) // Ensure no CA1062 here
+    {{
+    }}
+}}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
         [Fact]
         public void NamedArgumentInDifferentOrder()
         {
@@ -5436,6 +5780,186 @@ public class C
 }",
             // Test0.cs(13,12): warning CA1062: In externally visible method 'void C.M(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
             GetCSharpResultAt(13, 12, "void C.M(C c1, C c2)", "c2"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2528, "https://github.com/dotnet/roslyn-analyzers/issues/2528")]
+        public void ParamArrayIsNotFlagged()
+        {
+            VerifyCSharp(@"
+public class C
+{
+    public void M(params int[] p)
+    {
+        var x = p.Length;
+    }
+}");
+
+            VerifyBasic(@"
+Public Class C
+    Public Sub M(ParamArray p As Integer())
+        Dim x = p.Length
+    End Sub
+End Class
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2269, "https://github.com/dotnet/roslyn-analyzers/issues/2269")]
+        public void ProtectedMemberOfSealedClassNotFlagged()
+        {
+            VerifyCSharp(@"
+using System;
+
+public abstract class A
+{
+    public bool CheckMe() => IsType(GetType());
+
+    protected abstract bool IsType(Type type);
+}
+
+public sealed class B : A
+{
+    protected override bool IsType(Type type) => type.Namespace == nameof(System);
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2526, "https://github.com/dotnet/roslyn-analyzers/issues/2526")]
+        public void CheckedWithConditionalAccess_01()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool Flag;
+    public void M(C c)
+    {
+        if (c?.Flag == true)
+        {
+          var x = c.ToString();
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2526, "https://github.com/dotnet/roslyn-analyzers/issues/2526")]
+        public void CheckedWithConditionalAccess_02()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool M(List<string> list)
+    {
+        return list?.Count > 5 && list.Count < 10;
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2586, "https://github.com/dotnet/roslyn-analyzers/issues/2586")]
+        public void CheckedWithConditionalAccess_03()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+
+public class C
+{
+    public bool Flag;
+    public void M(C c)
+    {
+        switch (c?.Flag)
+        {
+            case true:
+                var x = c.ToString();
+                break;
+            case null:
+                var y = c.ToString();
+                break;
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
+        public void IsPatternInConditionalExpression_01_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    public static void DoSomething(object input)
+    {
+        // Ensure no diagnostic here.
+        Bar(input);
+    }
+
+    private static void Bar(object input)
+    {
+        if (input is Class1)
+        {
+            var c = (Class1)input;
+            c.ToString();
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
+        public void IsPatternInConditionalExpression_01_Diagnostic()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    public static void DoSomething(object input)
+    {
+        // Ensure diagnostic here.
+        Bar(input);
+    }
+
+    private static void Bar(object input)
+    {
+        if (input is Class1)
+        {
+            var c = (Class1)input;
+            c.ToString();
+            return;
+        }
+
+        var c2 = (Class1)input;
+        c2.ToString();
+    }
+}",
+            // Test0.cs(7,13): warning CA1062: In externally visible method 'void Class1.DoSomething(object input)', validate parameter 'input' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+            GetCSharpResultAt(7, 13, "void Class1.DoSomething(object input)", "input"));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Fact, WorkItem(2630, "https://github.com/dotnet/roslyn-analyzers/issues/2630")]
+        public void IsPatternInConditionalExpression_02_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class Class1
+{
+    public static void DoSomething(object input)
+    {
+        // Ensure no diagnostic here.
+        Bar2(input);
+    }
+
+    private static void Bar2(object input)
+    {
+        if (input is Class1 c)
+        {
+            c.ToString();
+        }
+    }
+}");
         }
     }
 }

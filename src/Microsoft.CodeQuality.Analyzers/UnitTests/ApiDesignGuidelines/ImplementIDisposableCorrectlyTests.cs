@@ -1089,6 +1089,29 @@ public sealed class C : IDisposable
 ");
         }
 
+        [Fact, WorkItem(1815, "https://github.com/dotnet/roslyn-analyzers/issues/1815")]
+        public void CSharp_CA1063_DisposeBoolSignature_NoDiagnostic_DisposeBoolIsStatic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class Class1 : IDisposable
+{
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+
+    protected static void Dispose(bool disposing)
+    {
+        if (!disposing) return;
+    }
+}
+",
+            // Test0.cs(11,27): warning CA1063: Ensure that 'Class1.Dispose' is declared as protected, virtual, and unsealed.
+            GetCA1063CSharpDisposeBoolSignatureResultAt(11, 27, "Class1", "Dispose"));
+        }
+
         #endregion
 
         #region CSharp DisposeImplementation Unit Tests

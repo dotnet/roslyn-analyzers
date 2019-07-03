@@ -84,16 +84,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 },
                                 OperationKind.Invocation);
 
-                            operationBlockStartContext.RegisterOperationAction(
-                                operationAnalysisContext =>
-                                {
-                                    IArrayInitializerOperation arrayInitializerOperation = (IArrayInitializerOperation)operationAnalysisContext.Operation;
-                                    if (sourceInfoSymbolMap.IsSourceArray(arrayInitializerOperation.Parent.Type as IArrayTypeSymbol))
+                            if (taintedDataConfig.HasTaintArraySource(SinkKind))
+                            {
+                                operationBlockStartContext.RegisterOperationAction(
+                                    operationAnalysisContext =>
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
-                                    }
-                                },
-                                OperationKind.ArrayInitializer);
+                                        IArrayInitializerOperation arrayInitializerOperation = (IArrayInitializerOperation)operationAnalysisContext.Operation;
+                                        if (sourceInfoSymbolMap.IsSourceArray(arrayInitializerOperation.Parent.Type as IArrayTypeSymbol))
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        }
+                                    },
+                                    OperationKind.ArrayInitializer);
+                            }
 
                             operationBlockStartContext.RegisterOperationBlockEndAction(
                                 operationBlockAnalysisContext =>

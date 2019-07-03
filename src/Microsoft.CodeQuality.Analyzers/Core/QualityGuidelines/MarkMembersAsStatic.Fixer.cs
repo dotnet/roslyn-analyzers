@@ -96,9 +96,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             // Filter out cascaded symbol references. For example, accessor references for property symbol.
             references = references.Where(r => symbol.Equals(r.Definition));
 
-            if (references.Count() != 1)
+            if (!references.HasExactly(1))
             {
-                return (newSolution: solution, allReferencesFixed: references.Count() == 0);
+                return (newSolution: solution, allReferencesFixed: !references.Any());
             }
 
             var allReferencesFixed = true;

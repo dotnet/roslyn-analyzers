@@ -99,7 +99,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 if (constructorMethod.Parameters[2].Name == "iterations" &&
                                     constructorMethod.Parameters[2].Type.SpecialType == SpecialType.System_Int32)
                                 {
-                                    kind = PropertySetAnalysis.EvaluateLiteralValues(argumentValueContentAbstractValues[2], o => Convert.ToInt32(o) < sufficientIterationCount);
+                                    kind = PropertySetCallbacks.EvaluateLiteralValues(argumentValueContentAbstractValues[2], o => Convert.ToInt32(o) < sufficientIterationCount);
                                 }
                             }
 
@@ -110,7 +110,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             "IterationCount",
                             (ValueContentAbstractValue valueContentAbstractValue) =>
                             {
-                                return PropertySetAnalysis.EvaluateLiteralValues(valueContentAbstractValue, o => Convert.ToInt32(o) < sufficientIterationCount);
+                                return PropertySetCallbacks.EvaluateLiteralValues(valueContentAbstractValue, o => Convert.ToInt32(o) < sufficientIterationCount);
                             }));
                     var rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
 

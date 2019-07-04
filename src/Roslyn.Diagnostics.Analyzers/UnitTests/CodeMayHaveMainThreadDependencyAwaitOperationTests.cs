@@ -70,7 +70,7 @@ interface IInterface {
 class Class {
     [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
-        await obj.MethodAsync().ConfigureAwait(false);
+        [|await obj.MethodAsync().ConfigureAwait(false)|];
     }
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -91,10 +91,7 @@ class Class {
 }
 " + NoMainThreadDependencyAttribute.CSharp;
 
-            await VerifyCS.VerifyCodeFixAsync(
-                code,
-                VerifyCS.Diagnostic().WithSpan(12, 9, 12, 54).WithSpan(10, 6, 10, 46),
-                fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -111,7 +108,7 @@ End Interface
 Class [Class]
     <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
-        Await obj.MethodAsync().ConfigureAwait(false)
+        [|Await obj.MethodAsync().ConfigureAwait(false)|]
     End Function
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
@@ -132,10 +129,7 @@ Class [Class]
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
 
-            await VerifyVB.VerifyCodeFixAsync(
-                code,
-                VerifyVB.Diagnostic().WithSpan(12, 9, 12, 54).WithSpan(10, 6, 10, 46),
-                fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -152,7 +146,7 @@ interface IInterface {
 class Class {
     [ThreadDependency(ContextDependency.Context)]
     async Task OperationAsync(IInterface obj) {
-        await obj.MethodAsync();
+        [|await obj.MethodAsync()|];
     }
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -173,10 +167,7 @@ class Class {
 }
 " + NoMainThreadDependencyAttribute.CSharp;
 
-            await VerifyCS.VerifyCodeFixAsync(
-                code,
-                VerifyCS.Diagnostic().WithSpan(12, 9, 12, 32).WithSpan(10, 6, 10, 49),
-                fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -193,7 +184,7 @@ End Interface
 Class [Class]
     <ThreadDependency(ContextDependency.Context)>
     Async Function OperationAsync(obj As IInterface) As Task
-        Await obj.MethodAsync()
+        [|Await obj.MethodAsync()|]
     End Function
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
@@ -214,10 +205,7 @@ Class [Class]
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
 
-            await VerifyVB.VerifyCodeFixAsync(
-                code,
-                VerifyVB.Diagnostic().WithSpan(12, 9, 12, 32).WithSpan(10, 6, 10, 49),
-                fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -281,7 +269,7 @@ interface IInterface {
 class Class {
     [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
-        await obj.MethodAsync();
+        [|await obj.MethodAsync()|];
     }
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -302,10 +290,7 @@ class Class {
 }
 " + NoMainThreadDependencyAttribute.CSharp;
 
-            await VerifyCS.VerifyCodeFixAsync(
-                code,
-                VerifyCS.Diagnostic().WithSpan(13, 9, 13, 32).WithSpan(11, 6, 11, 46),
-                fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -323,7 +308,7 @@ End Interface
 Class [Class]
     <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
-        Await obj.MethodAsync()
+        [|Await obj.MethodAsync()|]
     End Function
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
@@ -344,10 +329,7 @@ Class [Class]
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
 
-            await VerifyVB.VerifyCodeFixAsync(
-                code,
-                VerifyVB.Diagnostic().WithSpan(13, 9, 13, 32).WithSpan(11, 6, 11, 46),
-                fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -365,7 +347,7 @@ interface IInterface {
 class Class {
     [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
-        await obj.MethodAsync();
+        [|await obj.MethodAsync()|];
     }
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -386,10 +368,7 @@ class Class {
 }
 " + NoMainThreadDependencyAttribute.CSharp;
 
-            await VerifyCS.VerifyCodeFixAsync(
-                code,
-                VerifyCS.Diagnostic().WithSpan(13, 9, 13, 32).WithSpan(11, 6, 11, 46),
-                fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -407,7 +386,7 @@ End Interface
 Class [Class]
     <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
-        Await obj.MethodAsync()
+        [|Await obj.MethodAsync()|]
     End Function
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
@@ -428,10 +407,7 @@ Class [Class]
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
 
-            await VerifyVB.VerifyCodeFixAsync(
-                code,
-                VerifyVB.Diagnostic().WithSpan(13, 9, 13, 32).WithSpan(11, 6, 11, 46),
-                fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -449,7 +425,7 @@ interface IInterface {
 class Class {
     [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
-        await obj.MethodAsync().ConfigureAwait(true);
+        [|await obj.MethodAsync().ConfigureAwait(true)|];
     }
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -470,10 +446,7 @@ class Class {
 }
 " + NoMainThreadDependencyAttribute.CSharp;
 
-            await VerifyCS.VerifyCodeFixAsync(
-                code,
-                VerifyCS.Diagnostic().WithSpan(13, 9, 13, 53).WithSpan(11, 6, 11, 46),
-                fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -491,7 +464,7 @@ End Interface
 Class [Class]
     <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
-        Await obj.MethodAsync().ConfigureAwait(True)
+        [|Await obj.MethodAsync().ConfigureAwait(True)|]
     End Function
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
@@ -512,10 +485,7 @@ Class [Class]
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
 
-            await VerifyVB.VerifyCodeFixAsync(
-                code,
-                VerifyVB.Diagnostic().WithSpan(13, 9, 13, 53).WithSpan(11, 6, 11, 46),
-                fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -625,7 +595,7 @@ interface IInterface {
 class Class {
     [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync(IInterface obj) {
-        await obj.MethodAsync().ConfigureAwait(false);
+        await [|obj|].MethodAsync().ConfigureAwait(false);
     }
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -646,10 +616,7 @@ class Class {
 }
 " + NoMainThreadDependencyAttribute.CSharp;
 
-            await VerifyCS.VerifyCodeFixAsync(
-                code,
-                VerifyCS.Diagnostic().WithSpan(13, 15, 13, 18).WithSpan(11, 6, 11, 46),
-                fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -667,7 +634,7 @@ End Interface
 Class [Class]
     <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(obj As IInterface) As Task
-        Await obj.MethodAsync().ConfigureAwait(false)
+        Await [|obj|].MethodAsync().ConfigureAwait(false)
     End Function
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
@@ -688,10 +655,7 @@ Class [Class]
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
 
-            await VerifyVB.VerifyCodeFixAsync(
-                code,
-                VerifyVB.Diagnostic().WithSpan(13, 15, 13, 18).WithSpan(11, 6, 11, 46),
-                fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -708,7 +672,7 @@ interface IInterface {
 class Class {
     [ThreadDependency(ContextDependency.None)]
     async Task OperationAsync([ThreadDependency(ContextDependency.None)] IInterface obj) {
-        await obj.MethodAsync().ConfigureAwait(false);
+        [|await obj.MethodAsync().ConfigureAwait(false)|];
     }
 }
 " + NoMainThreadDependencyAttribute.CSharp;
@@ -729,10 +693,7 @@ class Class {
 }
 " + NoMainThreadDependencyAttribute.CSharp;
 
-            await VerifyCS.VerifyCodeFixAsync(
-                code,
-                VerifyCS.Diagnostic().WithSpan(12, 9, 12, 54).WithSpan(10, 6, 10, 46),
-                fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
@@ -749,7 +710,7 @@ End Interface
 Class [Class]
     <ThreadDependency(ContextDependency.None)>
     Async Function OperationAsync(<ThreadDependency(ContextDependency.None)> obj As IInterface) As Task
-        Await obj.MethodAsync().ConfigureAwait(false)
+        [|Await obj.MethodAsync().ConfigureAwait(false)|]
     End Function
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
@@ -770,10 +731,7 @@ Class [Class]
 End Class
 " + NoMainThreadDependencyAttribute.VisualBasic;
 
-            await VerifyVB.VerifyCodeFixAsync(
-                code,
-                VerifyVB.Diagnostic().WithSpan(12, 9, 12, 54).WithSpan(10, 6, 10, 46),
-                fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
     }
 }

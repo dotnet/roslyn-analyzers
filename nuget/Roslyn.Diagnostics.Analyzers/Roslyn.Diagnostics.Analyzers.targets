@@ -4,15 +4,15 @@
   <PropertyGroup>
     <GenerateThreadDependencyAttributes Condition="'$(GenerateThreadDependencyAttributes)' == ''">true</GenerateThreadDependencyAttributes>
     <ThreadDependencyAttributeBasePath Condition="'$(ThreadDependencyAttributeBasePath)' == ''">$(MSBuildThisFileDirectory)</ThreadDependencyAttributeBasePath>
-    <NoMainThreadDependencyAttributePath>$(ThreadDependencyAttributeBasePath)NoMainThreadDependencyAttribute$(DefaultLanguageSourceExtension)</NoMainThreadDependencyAttributePath>
+    <ThreadDependencyAttributePath>$(ThreadDependencyAttributeBasePath)ThreadDependencyAttribute$(DefaultLanguageSourceExtension)</ThreadDependencyAttributePath>
     <AsyncEntryAttributePath>$(ThreadDependencyAttributeBasePath)AsyncEntryAttribute$(DefaultLanguageSourceExtension)</AsyncEntryAttributePath>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(GenerateThreadDependencyAttributes)' == 'true' and Exists($(NoMainThreadDependencyAttributePath))">
-    <Compile Include="$(NoMainThreadDependencyAttributePath)" Visible="false" />
+  <ItemGroup Condition="'$(GenerateThreadDependencyAttributes)' == 'true' and Exists($(ThreadDependencyAttributePath))">
+    <Compile Include="$(ThreadDependencyAttributePath)" Visible="false" />
 
     <!-- Make sure the source file is embedded in PDB to support Source Link -->
-    <EmbeddedFiles Condition="'$(DebugType)' != 'none'" Include="$(NoMainThreadDependencyAttributePath)" />
+    <EmbeddedFiles Condition="'$(DebugType)' != 'none'" Include="$(ThreadDependencyAttributePath)" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(GenerateThreadDependencyAttributes)' == 'true' and Exists($(AsyncEntryAttributePath))">

@@ -38,7 +38,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 var compilation = compilationStartContext.Compilation;
                 var threadDependencyAttribute = compilation.GetTypeByMetadataName(ThreadDependencyAttributeFullName);
 
-                // Bail if NoMainThreadDependencyAttribute is not defined
+                // Bail if ThreadDependencyAttribute is not defined
                 if (threadDependencyAttribute is null)
                 {
                     return;

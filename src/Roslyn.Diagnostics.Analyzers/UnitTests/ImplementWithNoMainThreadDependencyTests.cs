@@ -39,7 +39,7 @@ class Class : Interface {
             {
                 TestState =
                 {
-                    Sources = { source, TestResources.NoMainThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
+                    Sources = { source, TestResources.ThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
                 },
             };
 
@@ -68,7 +68,7 @@ class Class : Interface {
             {
                 TestState =
                 {
-                    Sources = { source, TestResources.NoMainThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
+                    Sources = { source, TestResources.ThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
                 },
             };
 
@@ -98,7 +98,7 @@ class Class : Interface {
             {
                 TestState =
                 {
-                    Sources = { source, TestResources.NoMainThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
+                    Sources = { source, TestResources.ThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
                 },
             };
 
@@ -128,7 +128,7 @@ class Class : Interface {
             {
                 TestState =
                 {
-                    Sources = { source, TestResources.NoMainThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
+                    Sources = { source, TestResources.ThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
                 },
             };
 
@@ -158,7 +158,7 @@ class Class : Interface {
             {
                 TestState =
                 {
-                    Sources = { source, TestResources.NoMainThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
+                    Sources = { source, TestResources.ThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
                 },
             };
 

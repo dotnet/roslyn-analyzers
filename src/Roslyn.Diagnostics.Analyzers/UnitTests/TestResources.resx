@@ -121,7 +121,7 @@
   <data name="AsyncEntryAttribute" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\..\nuget\Roslyn.Diagnostics.Analyzers\AsyncEntryAttribute.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
-  <data name="NoMainThreadDependencyAttribute" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\..\nuget\Roslyn.Diagnostics.Analyzers\NoMainThreadDependencyAttribute.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="ThreadDependencyAttribute" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\..\nuget\Roslyn.Diagnostics.Analyzers\ThreadDependencyAttribute.cs;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotHardCodeEncryptionKeyDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
-        protected override SinkKind SinkKind { get { return SinkKind.HardCodeEncryptionKey; } }
+        protected override SinkKind SinkKind { get { return SinkKind.HardcodedEncryptionKey; } }
 
         protected override DiagnosticDescriptor TaintedDataEnteringSinkDescriptor { get { return Rule; } }
     }

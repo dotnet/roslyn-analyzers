@@ -7,10 +7,15 @@ using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using ValueContentAnalysisResult = DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>;
+
     /// <summary>
     /// Base class to aid in implementing tainted data analyzers.
     /// </summary>
@@ -59,16 +64,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                         operationBlockStartContext =>
                         {
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
-
-                            HashSet<IOperation> rootOperationsNeedingAnalysis = new HashSet<IOperation>();
+                            Dictionary<IOperation, bool> rootOperationsNeedingAnalysis = new Dictionary<IOperation, bool>();
 
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
                                 {
                                     IPropertyReferenceOperation propertyReferenceOperation = (IPropertyReferenceOperation)operationAnalysisContext.Operation;
-                                    if (sourceInfoSymbolMap.IsSourceProperty(propertyReferenceOperation.Property))
+                                    IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
+                                    if (sourceInfoSymbolMap.IsSourceProperty(propertyReferenceOperation.Property) && !rootOperationsNeedingAnalysis.ContainsKey(rootOperation))
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        rootOperationsNeedingAnalysis[rootOperation] = false;
                                     }
                                 },
                                 OperationKind.PropertyReference);
@@ -77,9 +82,65 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
-                                    if (sourceInfoSymbolMap.IsSourceMethod(invocationOperation.TargetMethod))
+                                    bool needValueContentAnalysis = false;
+                                    if (sourceInfoSymbolMap.IsSourceMethod(invocationOperation.TargetMethod, out var evaluateWithPointsToAnalysis, out var evaluateWithValueContentAnslysis))
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
+                                        PointsToAnalysisResult pointsToAnalysisResult;
+                                        ValueContentAnalysisResult valueContentAnalysisResultOpt;
+                                        if (evaluateWithPointsToAnalysis.Count != 0)
+                                        {
+                                            pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
+                                                rootOperation.GetEnclosingControlFlowGraph(),
+                                                owningSymbol,
+                                                WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
+                                                InterproceduralAnalysisConfiguration.Create(
+                                                    operationAnalysisContext.Options,
+                                                    SupportedDiagnostics,
+                                                    defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                    cancellationToken: operationAnalysisContext.CancellationToken),
+                                                interproceduralAnalysisPredicateOpt: null);
+                                            if (pointsToAnalysisResult == null
+                                                || !evaluateWithPointsToAnalysis.Any(s => s(
+                                                    invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]))))
+                                            {
+                                                return;
+                                            }
+                                        }
+                                        else if (evaluateWithValueContentAnslysis.Count != 0)
+                                        {
+                                            valueContentAnalysisResultOpt = ValueContentAnalysis.TryGetOrComputeResult(
+                                                rootOperation.GetEnclosingControlFlowGraph(),
+                                                owningSymbol,
+                                                WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
+                                                InterproceduralAnalysisConfiguration.Create(
+                                                    operationAnalysisContext.Options,
+                                                    SupportedDiagnostics,
+                                                    defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                    cancellationToken: operationAnalysisContext.CancellationToken),
+                                                out var copyAnalysisResult,
+                                                out pointsToAnalysisResult);
+                                            if (valueContentAnalysisResultOpt == null
+                                                || !evaluateWithValueContentAnslysis.Any(s => s(
+                                                        invocationOperation.Arguments.Select(
+                                                            o => pointsToAnalysisResult[o.Kind, o.Syntax]),
+                                                        invocationOperation.Arguments.Select(
+                                                            o => valueContentAnalysisResultOpt[o.Kind, o.Syntax]))))
+                                            {
+                                                return;
+                                            }
+
+                                            needValueContentAnalysis = true;
+                                        }
+                                        else
+                                        {
+                                            return;
+                                        }
+
+                                        if (needValueContentAnalysis || !rootOperationsNeedingAnalysis.ContainsKey(rootOperation))
+                                        {
+                                            rootOperationsNeedingAnalysis[rootOperation] = needValueContentAnalysis;
+                                        }
                                     }
                                 },
                                 OperationKind.Invocation);
@@ -92,7 +153,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         IArrayInitializerOperation arrayInitializerOperation = (IArrayInitializerOperation)operationAnalysisContext.Operation;
                                         if (sourceInfoSymbolMap.IsSourceArray(arrayInitializerOperation.Parent.Type as IArrayTypeSymbol))
                                         {
-                                            rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+
+                                            rootOperationsNeedingAnalysis[operationAnalysisContext.Operation.GetRoot()] = true;
                                         }
                                     },
                                     OperationKind.ArrayInitializer);
@@ -106,10 +168,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         return;
                                     }
 
-                                    foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
+                                    foreach (KeyValuePair<IOperation, bool> kvp in rootOperationsNeedingAnalysis)
                                     {
                                         TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
-                                            rootOperation.GetEnclosingControlFlowGraph(),
+                                            kvp.Key.GetEnclosingControlFlowGraph(),
                                             operationBlockAnalysisContext.Compilation,
                                             operationBlockAnalysisContext.OwningSymbol,
                                             operationBlockAnalysisContext.Options,
@@ -117,7 +179,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             sourceInfoSymbolMap,
                                             taintedDataConfig.GetSanitizerSymbolMap(this.SinkKind),
                                             sinkInfoSymbolMap,
-                                            operationBlockAnalysisContext.CancellationToken);
+                                            operationBlockAnalysisContext.CancellationToken,
+                                            kvp.Value);
                                         if (taintedDataAnalysisResult == null)
                                         {
                                             return;

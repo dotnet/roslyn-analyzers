@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -64,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         operationBlockStartContext =>
                         {
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
-                            Dictionary<IOperation, bool> rootOperationsNeedingAnalysis = new Dictionary<IOperation, bool>();
+                            ConcurrentDictionary<IOperation, bool> rootOperationsNeedingAnalysis = new ConcurrentDictionary<IOperation, bool>();
 
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
@@ -73,7 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
                                     if (sourceInfoSymbolMap.IsSourceProperty(propertyReferenceOperation.Property) && !rootOperationsNeedingAnalysis.ContainsKey(rootOperation))
                                     {
-                                        rootOperationsNeedingAnalysis[rootOperation] = false;
+                                        rootOperationsNeedingAnalysis.AddOrUpdate(rootOperation, false, (k, v) => v == true ? true : false);
                                     }
                                 },
                                 OperationKind.PropertyReference);
@@ -137,10 +138,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             return;
                                         }
 
-                                        if (needValueContentAnalysis || !rootOperationsNeedingAnalysis.ContainsKey(rootOperation))
-                                        {
-                                            rootOperationsNeedingAnalysis[rootOperation] = needValueContentAnalysis;
-                                        }
+                                        rootOperationsNeedingAnalysis.AddOrUpdate(rootOperation, needValueContentAnalysis, (k, v) => v == true ? true : needValueContentAnalysis);
                                     }
                                 },
                                 OperationKind.Invocation);
@@ -154,7 +152,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         if (sourceInfoSymbolMap.IsSourceArray(arrayInitializerOperation.Parent.Type as IArrayTypeSymbol))
                                         {
 
-                                            rootOperationsNeedingAnalysis[operationAnalysisContext.Operation.GetRoot()] = true;
+                                            rootOperationsNeedingAnalysis.AddOrUpdate(operationAnalysisContext.Operation.GetRoot(), true, (k, v) => true);
                                         }
                                     },
                                     OperationKind.ArrayInitializer);

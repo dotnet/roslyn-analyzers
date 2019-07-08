@@ -397,6 +397,21 @@
         <target state="translated">Mümkünse Paylaşılan Erişim İmzası (SAS) yerine Azure'un rol tabanlı erişim denetimini kullanmayı düşünün. Yine de SAS kullanmanız gerekiyorsa, SAS oluştururken kapsayıcı düzeyinde bir erişim ilkesi kullanın</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttribute">
+        <source>Use DllImport Attribute Along With DefaultDllImportSearchPaths Attribute</source>
+        <target state="new">Use DllImport Attribute Along With DefaultDllImportSearchPaths Attribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttributeDescription">
+        <source>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to dll hijacking.</source>
+        <target state="new">By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to dll hijacking.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttributeMessage">
+        <source>The method {0} uses DllImport attribute explicitly or implicitly for P/Invokes.</source>
+        <target state="new">The method {0} uses DllImport attribute explicitly or implicitly for P/Invokes.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
         <target state="translated">Yeterli Anahtar Boyutuna Sahip Rivest–Shamir–Adleman (RSA) Algoritmasını Kullan</target>

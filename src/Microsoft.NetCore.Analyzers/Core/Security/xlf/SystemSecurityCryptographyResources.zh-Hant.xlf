@@ -397,6 +397,21 @@
         <target state="translated">如果可行的話，請考慮從共用存取簽章 (SAS) 改為使用 Azure 的角色型存取控制。如果您仍需要使用 SAS，請於建立 SAS 時使用容器層級存取原則</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttribute">
+        <source>Use DllImport Attribute Along With DefaultDllImportSearchPaths Attribute</source>
+        <target state="new">Use DllImport Attribute Along With DefaultDllImportSearchPaths Attribute</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttributeDescription">
+        <source>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to dll hijacking.</source>
+        <target state="new">By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to dll hijacking.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttributeMessage">
+        <source>The method {0} uses DllImport attribute explicitly or implicitly for P/Invokes.</source>
+        <target state="new">The method {0} uses DllImport attribute explicitly or implicitly for P/Invokes.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
         <target state="translated">使用有足夠金鑰大小的 Rivest–Shamir–Adleman (RSA) 加密演算法</target>

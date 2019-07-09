@@ -32,13 +32,16 @@ namespace Microsoft.NetCore.Analyzers.Security
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 
+        private static readonly Regex s_AntiForgeryAttributeRegex = new Regex(@"[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute", RegexOptions.Compiled);
+        private static readonly Regex s_AntiForgeryRegex = new Regex(@"[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*", RegexOptions.Compiled);
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
                 s_Title,
                 s_Message,
                 DiagnosticCategory.Security,
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+                isEnabledByDefault: false,
                 description: s_Description,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTags.Telemetry);
@@ -126,7 +129,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         foreach (var potentialAntiForgeryFilter in potentialAntiForgeryFilters)
                         {
                             if (potentialAntiForgeryFilter.AllInterfaces.Contains(iFilterMetadataTypeSymbol) &&
-                                IsValidateAntiForgery(potentialAntiForgeryFilter.Name))
+                                s_AntiForgeryRegex.IsMatch(potentialAntiForgeryFilter.Name))
                             {
                                 hasGlobalAntiForgeryFilter = true;
 
@@ -153,7 +156,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var controllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
 
                     // The controller class is protected by a validate anti forgery token attribute
-                    if (controllerTypeSymbol.GetAttributes().Any(s => IsValidateAntiForgeryAttribute(s.AttributeClass.Name)))
+                    if (controllerTypeSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
                     {
                         usingValidateAntiForgeryAttribute = true;
 
@@ -164,7 +167,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
 
                         // The method is protected by a validate anti forgery token attribute
-                        if (actionMethodSymbol.GetAttributes().Any(s => IsValidateAntiForgeryAttribute(s.AttributeClass.Name)))
+                        if (actionMethodSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
                         {
                             usingValidateAntiForgeryAttribute = true;
 
@@ -268,20 +271,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                     }
                 }
             });
-        }
-
-        public static bool IsValidateAntiForgeryAttribute(string attributeName)
-        {
-            var pattern = @"[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute";
-
-            return Regex.Match(attributeName, pattern).Success;
-        }
-
-        public static bool IsValidateAntiForgery(string attributeName)
-        {
-            var pattern = @"[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*";
-
-            return Regex.Match(attributeName, pattern).Success;
         }
     }
 }

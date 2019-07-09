@@ -50,16 +50,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
-                    bool IsOtherThanNone(IFieldReferenceOperation fieldReferenceOperation)
-                    {
-                        if (!typeNameHandlingSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
-                        {
-                            return false;
-                        }
-
-                        return fieldReferenceOperation.Field.Name != "None";
-                    };
-
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
@@ -103,6 +93,18 @@ namespace Microsoft.NetCore.Analyzers.Security
                         },
                         OperationKind.SimpleAssignment,
                         OperationKind.CompoundAssignment);
+
+                    return;
+
+                    bool IsOtherThanNone(IFieldReferenceOperation fieldReferenceOperation)
+                    {
+                        if (!typeNameHandlingSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
+                        {
+                            return false;
+                        }
+
+                        return fieldReferenceOperation.Field.Name != "None";
+                    };
                 });
         }
     }

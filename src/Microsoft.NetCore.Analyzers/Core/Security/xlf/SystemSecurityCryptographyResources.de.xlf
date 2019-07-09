@@ -398,8 +398,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseDefaultDllImportSearchPathsAttribute">
-        <source>Use DllImport Attribute Along With DefaultDllImportSearchPaths Attribute</source>
-        <target state="new">Use DllImport Attribute Along With DefaultDllImportSearchPaths Attribute</target>
+        <source>Use DefaultDllImportSearchPaths Attribute For P/Invokes</source>
+        <target state="new">Use DefaultDllImportSearchPaths Attribute For P/Invokes</target>
         <note />
       </trans-unit>
       <trans-unit id="UseDefaultDllImportSearchPathsAttributeDescription">

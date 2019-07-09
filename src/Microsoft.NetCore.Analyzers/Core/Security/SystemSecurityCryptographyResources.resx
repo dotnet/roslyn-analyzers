@@ -397,7 +397,7 @@
     <value>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</value>
   </data>
   <data name="UseDefaultDllImportSearchPathsAttribute" xml:space="preserve">
-    <value>Use DllImport Attribute Along With DefaultDllImportSearchPaths Attribute</value>
+    <value>Use DefaultDllImportSearchPaths Attribute For P/Invokes</value>
   </data>
   <data name="UseDefaultDllImportSearchPathsAttributeDescription" xml:space="preserve">
     <value>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to dll hijacking.</value>

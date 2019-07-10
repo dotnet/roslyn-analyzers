@@ -153,7 +153,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var attributeConstructor = attributeData.AttributeConstructor;
             var constructorArguments = attributeData.ConstructorArguments;
 
-            if (attributeConstructor == null || attributeConstructor.Parameters.Count() != constructorArguments.Count())
+            if (attributeConstructor == null || !attributeConstructor.Parameters.HasExactly(constructorArguments.Count()))
             {
                 return;
             }

@@ -245,6 +245,54 @@ class TestClass
         }
 
         [Fact]
+        public void Test_PassTaintedSourceInfoAsParameter_SinkMethodParameters_Interprocedual_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(byte[] someOtherBytesForIV)
+    {
+        byte[] key = Convert.FromBase64String(""AAAAAaazaoensuth"");
+        CreateEncryptor(key, someOtherBytesForIV);
+    }
+
+    public void CreateEncryptor(byte[] rgbKey, byte[] rgbIV)
+    {
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(rgbKey, rgbIV);
+    }
+}",
+            GetCSharpResultAt(16, 9, 9, 22, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+        }
+
+        [Fact]
+        public void Test_PassTaintedSourceInfoAsParameter_SinkProperties_Interprocedual_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        byte[] key = Convert.FromBase64String(""AAAAAaazaoensuth"");
+        CreateEncryptor(key);
+    }
+
+    public void CreateEncryptor(byte[] rgbKey)
+    {
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.Key = rgbKey;
+    }
+}",
+            GetCSharpResultAt(16, 9, 9, 22, "byte[] SymmetricAlgorithm.Key", "void TestClass.CreateEncryptor(byte[] rgbKey)", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
         public void Test_NotHardcoded_CreateEncryptor_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -294,7 +342,30 @@ class TestClass
         byte[] key = Convert.FromBase64String(Console.ReadLine());
         SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
         rijn.CreateEncryptor(key, someOtherBytesForIV);
+    }
+}");
+        }
 
+        // For now, it doesn't support checking return tainted source info.
+        [Fact]
+        public void Test_ReturnTaintedSourceInfo_Interprocedual_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public byte[] GetKey()
+    {
+        return Convert.FromBase64String(""AAAAAaazaoensuth"");
+    }
+
+    public void TestMethod(byte[] someOtherBytesForIV)
+    {
+        byte[] key = GetKey();
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(key, someOtherBytesForIV);
     }
 }");
         }

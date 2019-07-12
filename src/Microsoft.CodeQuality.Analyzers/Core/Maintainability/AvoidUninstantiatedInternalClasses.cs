@@ -343,12 +343,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            if (method.Parameters.Count() == 0)
+            if (!method.Parameters.Any())
             {
                 return true;
             }
 
-            if (method.Parameters.Count() > 1)
+            if (method.Parameters.HasMoreThan(1))
             {
                 return false;
             }

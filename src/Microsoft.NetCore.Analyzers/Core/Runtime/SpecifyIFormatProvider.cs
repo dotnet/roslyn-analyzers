@@ -161,7 +161,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     #region "IFormatProviderAlternateStringRule & IFormatProviderAlternateRule"
 
                     IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
-                    if (methodsWithSameNameAsTargetMethod.Count() > 1)
+                    if (methodsWithSameNameAsTargetMethod.HasMoreThan(1))
                     {
                         var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType).ToList();
 

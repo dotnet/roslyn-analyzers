@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -69,21 +71,35 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var symbol = symbolAnalysisContext.Symbol;
 
-                    if (!symbol.IsExtern)
+                    if (!symbol.IsExtern || !symbol.IsStatic)
                     {
                         return;
                     }
 
-                    var attributeClasses = symbol.GetAttributes().Select(o => o.AttributeClass);
+                    var dllImportAttribute = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(dllImportAttributeTypeSymbol));
+                    var defaultDllImportSearchPathsAttribute = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(defaultDllImportSearchPathsAttributeTypeSymbol));
 
-                    if (attributeClasses.Contains(dllImportAttributeTypeSymbol) ||
-                        (!attributeClasses.Contains(defaultDllImportSearchPathsAttributeTypeSymbol) &&
-                        !hasDefaultDllImportSearchPathsAttribute))
+                    if (dllImportAttribute != null)
                     {
-                        symbolAnalysisContext.ReportDiagnostic(
-                            symbol.CreateDiagnostic(
-                                Rule,
-                                symbol.Name));
+                        var constructorArguments = dllImportAttribute.ConstructorArguments;
+
+                        if (constructorArguments.Length == 0)
+                        {
+                            return;
+                        }
+
+                        var dllPath = constructorArguments[0].Value.ToString();
+
+                        if ((Path.IsPathRooted(dllPath) &&
+                            dllPath.EndsWith(".dll", StringComparison.Ordinal)) ||
+                            (!hasDefaultDllImportSearchPathsAttribute &&
+                            defaultDllImportSearchPathsAttribute == null))
+                        {
+                            symbolAnalysisContext.ReportDiagnostic(
+                                symbol.CreateDiagnostic(
+                                    Rule,
+                                    symbol.Name));
+                        }
                     }
                 }, SymbolKind.Method);
             });

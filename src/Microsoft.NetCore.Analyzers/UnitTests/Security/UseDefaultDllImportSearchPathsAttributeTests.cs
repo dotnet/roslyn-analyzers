@@ -9,25 +9,6 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class UseDefaultDllImportSearchPathsAttributeTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
-        public void Test_NoAttribute_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-class TestClass
-{
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(7, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Fact]
         public void Test_DllImportAttribute_Diagnostic()
         {
             VerifyCSharp(@"
@@ -48,7 +29,7 @@ class TestClass
         }
 
         [Fact]
-        public void Test_DllImportAndDefaultDllImportSearchPathsAttributes_ApplyOnDifferentMethods_Diagnostic()
+        public void Test_DllImportAttributeWithAbsolutePath_Diagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -56,19 +37,38 @@ using System.Runtime.InteropServices;
 
 class TestClass
 {
-    [DllImport(""user32.dll"")]
+    [DllImport(""C:\\\\Windows\\System32\\user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
-
-    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-    public static extern int AnotherMessageBox(IntPtr hWnd, String text, String caption, uint type);
-
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
 }",
-            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
         }
 
         [Fact]
-        public void Test_DllImportAndDefaultDllImportSearchPathsAttributes_Diagnostic()
+        public void Test_NoAttribute_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_DllImportAndDefaultDllImportSearchPathsAttributes_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -84,12 +84,11 @@ class TestClass
     {
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
-}",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+}");
         }
 
         [Fact]
-        public void Test_DllImportAndGlobalDefaultDllImportSearchPathsAttributes_Diagnostic()
+        public void Test_DllImportAndAssemblyDefaultDllImportSearchPathsAttributes_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -106,8 +105,7 @@ class TestClass
     {
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
-}",
-            GetCSharpResultAt(10, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+}");
         }
 
         [Fact]
@@ -129,7 +127,7 @@ class TestClass
         }
 
         [Fact]
-        public void Test_GlobalDefaultDllImportSearchPaths_NoDiagnostic()
+        public void Test_AssemblyDefaultDllImportSearchPaths_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;

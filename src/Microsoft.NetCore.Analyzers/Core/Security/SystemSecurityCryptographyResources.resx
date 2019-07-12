@@ -403,6 +403,6 @@
     <value>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to dll hijacking.</value>
   </data>
   <data name="UseDefaultDllImportSearchPathsAttributeMessage" xml:space="preserve">
-    <value>The method {0} uses DllImport attribute explicitly or implicitly for P/Invokes.</value>
+    <value>The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</value>
   </data>
 </root>

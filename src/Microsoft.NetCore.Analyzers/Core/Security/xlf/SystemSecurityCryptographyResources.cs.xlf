@@ -408,8 +408,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseDefaultDllImportSearchPathsAttributeMessage">
-        <source>The method {0} uses DllImport attribute explicitly or implicitly for P/Invokes.</source>
-        <target state="new">The method {0} uses DllImport attribute explicitly or implicitly for P/Invokes.</target>
+        <source>The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</source>
+        <target state="new">The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en" target-language="de" original="../MicrosoftPerformanceAnalyzersResources.resx">
+    <body>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
+        <source>Count() enumerates the entire enumerable while Any() will only enumerates, at most, up until the first item.</source>
+        <target state="new">Count() enumerates the entire enumerable while Any() will only enumerates, at most, up until the first item.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
+        <source>Count() is being used where Any() could be used.</source>
+        <target state="new">Count() is being used where Any() could be used.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
+        <source>Do not use Count() when Any() can be used</source>
+        <target state="new">Do not use Count() when Any() can be used</target>
+        <note />
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -170,7 +170,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return false;
             }
 
-            return parameters.GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1).Any();
+            return parameters.GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.HasMoreThan(1)).Any();
         }
 
         private static void CheckMemberNames(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
@@ -181,8 +181,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IEnumerable<ISymbol> overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.Count() > 1).SelectMany((group) => group.Skip(1));
-            IEnumerable<IGrouping<string, ISymbol>> memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<ISymbol> overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.HasMoreThan(1)).SelectMany((group) => group.Skip(1));
+            IEnumerable<IGrouping<string, ISymbol>> memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase).Where((group) => group.HasMoreThan(1));
 
             foreach (IGrouping<string, ISymbol> group in memberList)
             {
@@ -200,7 +200,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             IEnumerable<IGrouping<string, ITypeSymbol>> typeList = types.GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase)
-                .Where((group) => group.Count() > 1);
+                .Where((group) => group.HasMoreThan(1));
 
             foreach (IGrouping<string, ITypeSymbol> group in typeList)
             {
@@ -216,7 +216,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IEnumerable<IGrouping<string, INamespaceSymbol>> namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<IGrouping<string, INamespaceSymbol>> namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase).Where((group) => group.HasMoreThan(1));
 
             foreach (IGrouping<string, INamespaceSymbol> group in namespaceList)
             {

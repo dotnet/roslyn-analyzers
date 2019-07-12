@@ -67,6 +67,21 @@
         <target state="new">Ensure that JsonSerializerSettings are secure</target>
         <note />
       </trans-unit>
+      <trans-unit id="JsonNetTypeNameHandlingDescription">
+        <source>Deserializing JSON when using a TypeNameHandling value other than None can be insecure.  If you need to instead detect Json.NET deserialization when a SerializationBinder isn't specified, then disable rule CA2326, and enable rules CA2327, CA2328, CA2329, and CA2330.</source>
+        <target state="new">Deserializing JSON when using a TypeNameHandling value other than None can be insecure.  If you need to instead detect Json.NET deserialization when a SerializationBinder isn't specified, then disable rule CA2326, and enable rules CA2327, CA2328, CA2329, and CA2330.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetTypeNameHandlingMessage">
+        <source>Deserializing JSON when using a TypeNameHandling value other than None can be insecure.</source>
+        <target state="new">Deserializing JSON when using a TypeNameHandling value other than None can be insecure.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetTypeNameHandlingTitle">
+        <source>Do not use TypeNameHandling values other than None</source>
+        <target state="new">Do not use TypeNameHandling values other than None</target>
+        <note />
+      </trans-unit>
       <trans-unit id="LosFormatterMethodUsedMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data.</source>
         <target state="translated">還原序列化不受信任的資料時，方法 '{0}' 不安全。</target>

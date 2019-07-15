@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         }
 
         /// <summary>
-        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from <see cref="MicrosoftNetCoreSecurityResources"/>.
+        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from the specified resource source type.
         /// </summary>
         /// <param name="id">Diagnostic identifier.</param>
         /// <param name="resourceSource">Type containing the resource strings.</param>

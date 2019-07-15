@@ -6,6 +6,11 @@ using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
+    // All the test cases use user32.dll as an example,
+    // however it is a commonly used system dll and will be influenced by Known Dlls mechanism,
+    // which will ignore all the configuration about the search algorithm.
+    // Fow now, this rule didn't take Known Dlls into consideration.
+    // If it is needed in the future, we can recover this rule.
     public class UseDefaultDllImportSearchPathsAttributeTests : DiagnosticAnalyzerTestBase
     {
         // It will try to retrieve the MessageBox from user32.dll, which will be searched in a default order:

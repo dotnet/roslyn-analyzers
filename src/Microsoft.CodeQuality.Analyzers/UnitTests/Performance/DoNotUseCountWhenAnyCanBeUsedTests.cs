@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
@@ -10,67 +9,13 @@ using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;
 using Test.Utilities;
 using Xunit;
+using static Microsoft.CodeQuality.Analyzers.Performance.UnitTests.DoNotUseCountWhenAnyCanBeUsedTestData;
 
 namespace Microsoft.CodeQuality.Analyzers.Performance.UnitTests
 {
-    public class DoNotUseCountWhenAnyCanBeUsedTests : DiagnosticAnalyzerTestBase
+
+    public class DoNotUseCountWhenAnyCanBeUsedAnalyzerTests : DiagnosticAnalyzerTestBase
     {
-        #region Data for analyzer unit tests
-
-        public static TheoryData<BinaryOperatorKind, int> LeftCount_NoDiagnostic_TheoryData { get; } = new TheoryData<BinaryOperatorKind, int>
-        {
-            { BinaryOperatorKind.Equals            , 1 },
-            { BinaryOperatorKind.NotEquals         , 1 },
-            { BinaryOperatorKind.LessThanOrEqual   , 1 },
-            { BinaryOperatorKind.GreaterThan       , 1 },
-            { BinaryOperatorKind.LessThan          , 0 },
-            { BinaryOperatorKind.GreaterThanOrEqual, 0 },
-            { BinaryOperatorKind.Equals            , 2 },
-            { BinaryOperatorKind.NotEquals         , 2 },
-            { BinaryOperatorKind.LessThanOrEqual   , 2 },
-            { BinaryOperatorKind.GreaterThan       , 2 },
-            { BinaryOperatorKind.LessThan          , 2 },
-            { BinaryOperatorKind.GreaterThanOrEqual, 2 },
-        };
-
-        public static TheoryData<int, BinaryOperatorKind> RightCount_NoDiagnostic_TheoryData { get; } = new TheoryData<int, BinaryOperatorKind>
-        {
-            { 1, BinaryOperatorKind.Equals             },
-            { 1, BinaryOperatorKind.NotEquals          },
-            { 1, BinaryOperatorKind.LessThan           },
-            { 1, BinaryOperatorKind.GreaterThanOrEqual },
-            { 0, BinaryOperatorKind.GreaterThan        },
-            { 0, BinaryOperatorKind.LessThanOrEqual    },
-            { 2, BinaryOperatorKind.Equals             },
-            { 2, BinaryOperatorKind.NotEquals          },
-            { 2, BinaryOperatorKind.LessThan           },
-            { 2, BinaryOperatorKind.GreaterThanOrEqual },
-            { 2, BinaryOperatorKind.GreaterThan        },
-            { 2, BinaryOperatorKind.LessThanOrEqual    },
-        };
-
-        public static TheoryData<BinaryOperatorKind, int> LeftCount_Diagnostic_TheoryData { get; } = new TheoryData<BinaryOperatorKind, int>
-        {
-            { BinaryOperatorKind.Equals            , 0 }, // !Any
-            { BinaryOperatorKind.NotEquals         , 0 }, // Any
-            { BinaryOperatorKind.LessThanOrEqual   , 0 }, // !Any
-            { BinaryOperatorKind.GreaterThan       , 0 }, // Any
-            { BinaryOperatorKind.LessThan          , 1 }, // !Any
-            { BinaryOperatorKind.GreaterThanOrEqual, 1 }, // Any
-        };
-
-        public static TheoryData<int, BinaryOperatorKind> RightCount_Diagnostic_TheoryData { get; } = new TheoryData<int, BinaryOperatorKind>
-        {
-            { 0, BinaryOperatorKind.Equals             }, // !Any
-            { 0, BinaryOperatorKind.NotEquals          }, // Any
-            { 0, BinaryOperatorKind.LessThan           }, // Any
-            { 0, BinaryOperatorKind.GreaterThanOrEqual }, // !Any
-            { 1, BinaryOperatorKind.GreaterThan        }, // !Any
-            { 1, BinaryOperatorKind.LessThanOrEqual    }, // Any
-        };
-
-        #endregion
-
         #region Unit tests for no analyzer diagnostic
 
         [Fact]
@@ -136,8 +81,8 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
-        public void CSharp_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void CSharp_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value, bool _)
         {
             VerifyCSharp(
                 $@"
@@ -153,8 +98,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
-        public void Basic_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void Basic_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value, bool _)
         {
             VerifyBasic(
                 $@"
@@ -199,7 +144,7 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(LeftCount_NoDiagnostic_TheoryData))]
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_NoDiagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
         public void CSharp_NoDiagnostic_LeftCount(BinaryOperatorKind @operator, int value)
         {
             VerifyCSharp($@"
@@ -215,7 +160,7 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(LeftCount_NoDiagnostic_TheoryData))]
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_NoDiagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
         public void Basic_NoDiagnostic_LeftCount(BinaryOperatorKind @operator, int value)
         {
             VerifyBasic(
@@ -247,8 +192,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
-        public void CSharp_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void CSharp_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator, bool _)
         {
             VerifyCSharp(
                 $@"
@@ -264,8 +209,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
-        public void Basic_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void Basic_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator, bool _)
         {
             VerifyBasic(
                 $@"
@@ -280,7 +225,7 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(RightCount_NoDiagnostic_TheoryData))]
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_NoDiagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
         public void CSharp_NoDiagnostic_RightCount(int value, BinaryOperatorKind @operator)
         {
             VerifyCSharp($@"
@@ -296,7 +241,7 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(RightCount_NoDiagnostic_TheoryData))]
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_NoDiagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
         public void Basic_NoDiagnostic_RightCount(int value, BinaryOperatorKind @operator)
         {
             VerifyBasic(
@@ -406,8 +351,8 @@ End Namespace
         #region Unit tests for analyzer diagnostic(s)
 
         [Theory]
-        [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
-        public void CSharp_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void CSharp_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value, bool _)
         {
             VerifyCSharp(
                 $@"
@@ -424,8 +369,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
-        public void Basic_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void Basic_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value, bool _)
         {
             VerifyBasic(
                 $@"
@@ -441,8 +386,8 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
-        public void CSharp_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void CSharp_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value, bool _)
         {
             VerifyCSharp(
                 $@"
@@ -459,8 +404,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
-        public void Basic_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void Basic_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value, bool _)
         {
             VerifyBasic(
                 $@"
@@ -509,8 +454,8 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
-        public void CSharp_Diagnostic_RightCount(int value, BinaryOperatorKind @operator)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void CSharp_Diagnostic_RightCount(int value, BinaryOperatorKind @operator, bool _)
         {
             VerifyCSharp(
                 $@"
@@ -527,8 +472,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
-        public void Basic_Diagnostic_RightCount(int value, BinaryOperatorKind @operator)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void Basic_Diagnostic_RightCount(int value, BinaryOperatorKind @operator, bool _)
         {
             VerifyBasic(
                 $@"
@@ -544,8 +489,8 @@ End Class
         }
 
         [Theory]
-        [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
-        public void CSharp_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void CSharp_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator, bool _)
         {
             VerifyCSharp(
                 $@"
@@ -562,8 +507,8 @@ class C
         }
 
         [Theory]
-        [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
-        public void Basic_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator)
+        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        public void Basic_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator, bool _)
         {
             VerifyBasic(
                 $@"
@@ -579,36 +524,6 @@ End Class
         }
 
         #endregion
-
-        private static string CSharpOperatorText(BinaryOperatorKind binaryOperatorKind)
-        {
-            switch (binaryOperatorKind)
-            {
-                case BinaryOperatorKind.Add: return "+";
-                case BinaryOperatorKind.Equals: return "==";
-                case BinaryOperatorKind.GreaterThan: return ">";
-                case BinaryOperatorKind.GreaterThanOrEqual: return ">=";
-                case BinaryOperatorKind.LessThan: return "<";
-                case BinaryOperatorKind.LessThanOrEqual: return "<=";
-                case BinaryOperatorKind.NotEquals: return "!=";
-                default: throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}");
-            }
-        }
-
-        private static string BasicOperatorText(BinaryOperatorKind binaryOperatorKind)
-        {
-            switch (binaryOperatorKind)
-            {
-                case BinaryOperatorKind.Add: return "+";
-                case BinaryOperatorKind.Equals: return "=";
-                case BinaryOperatorKind.GreaterThan: return ">";
-                case BinaryOperatorKind.GreaterThanOrEqual: return ">=";
-                case BinaryOperatorKind.LessThan: return "<";
-                case BinaryOperatorKind.LessThanOrEqual: return "<=";
-                case BinaryOperatorKind.NotEquals: return "<>";
-                default: throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}");
-            }
-        }
 
         private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
         {

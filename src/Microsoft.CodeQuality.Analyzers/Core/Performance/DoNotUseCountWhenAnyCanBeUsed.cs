@@ -20,54 +20,56 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
     /// </summary>
     /// <remarks>
     /// Use cases covered:
-    /// <code language="C#">
-    /// enumerable.Count() == 0
-    /// enumerable.Count() != 0
-    /// enumerable.Count() &lt;= 0
-    /// enumerable.Count() > 0
-    /// enumerable.Count() &lt; 1
-    /// enumerable.Count() >= 1
-    /// 0 == enumerable.Count()
-    /// 0 != enumerable.Count()
-    /// 0 &lt; enumerable.Count()
-    /// 0 >= enumerable.Count()
-    /// 1 > enumerable.Count()
-    /// 1 &lt;= enumerable.Count()
-    /// enumerable.Count().Equals(0)
-    /// 0.Equals(enumerable.Count())
-    /// enumerable.Count(_ => true) == 0
-    /// enumerable.Count(_ => true) != 0
-    /// enumerable.Count(_ => true) &lt;= 0
-    /// enumerable.Count(_ => true) > 0
-    /// enumerable.Count(_ => true) &lt; 1
-    /// enumerable.Count(_ => true) >= 1
-    /// 0 == enumerable.Count(_ => true)
-    /// 0 != enumerable.Count(_ => true)
-    /// 0 &lt; enumerable.Count(_ => true)
-    /// 0 >= enumerable.Count(_ => true)
-    /// 1 > enumerable.Count(_ => true)
-    /// 1 &lt;= enumerable.Count(_ => true)
-    /// enumerable.Count(_ => true).Equals(0)
-    /// 0.Equals(enumerable.Count(_ => true))
-    /// </code>
+    /// <list type="table">
+    /// <listheader><term>detected</term><term>fix</term></listheader>
+    /// <item><term><c> enumerable.Count() == 0               </c></term><description><c> !enumerable.Any() </c></description></item>
+    /// <item><term><c> enumerable.Count() != 0               </c></term><description><c> enumerable.Any()  </c></description></item>
+    /// <item><term><c> enumerable.Count() &lt;= 0            </c></term><description><c> !enumerable.Any() </c></description></item>
+    /// <item><term><c> enumerable.Count() > 0                </c></term><description><c> enumerable.Any()  </c></description></item>
+    /// <item><term><c> enumerable.Count() &lt; 1             </c></term><description><c> !enumerable.Any() </c></description></item>
+    /// <item><term><c> enumerable.Count() >= 1               </c></term><description><c> enumerable.Any()  </c></description></item>
+    /// <item><term><c> 0 == enumerable.Count()               </c></term><description><c> !enumerable.Any() </c></description></item>
+    /// <item><term><c> 0 != enumerable.Count()               </c></term><description><c> enumerable.Any()  </c></description></item>
+    /// <item><term><c> 0 >= enumerable.Count()               </c></term><description><c> !enumerable.Any() </c></description></item>
+    /// <item><term><c> 0 &lt; enumerable.Count()             </c></term><description><c> enumerable.Any()  </c></description></item>
+    /// <item><term><c> 1 > enumerable.Count()                </c></term><description><c> !enumerable.Any() </c></description></item>
+    /// <item><term><c> 1 &lt;= enumerable.Count()            </c></term><description><c> enumerable.Any()  </c></description></item>
+    /// <item><term><c> enumerable.Count().Equals(0)          </c></term><description><c> !enumerable.Any() </c></description></item>
+    /// <item><term><c> 0.Equals(enumerable.Count())          </c></term><description><c> !enumerable.Any() </c></description></item>
+    /// <item><term><c> enumerable.Count(_ => true) == 0      </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// <item><term><c> enumerable.Count(_ => true) != 0      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
+    /// <item><term><c> enumerable.Count(_ => true) &lt;= 0   </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// <item><term><c> enumerable.Count(_ => true) > 0       </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
+    /// <item><term><c> enumerable.Count(_ => true) &lt; 1    </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// <item><term><c> enumerable.Count(_ => true) >= 1      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
+    /// <item><term><c> 0 == enumerable.Count(_ => true)      </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// <item><term><c> 0 != enumerable.Count(_ => true)      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
+    /// <item><term><c> 0 &lt; enumerable.Count(_ => true)    </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// <item><term><c> 0 >= enumerable.Count(_ => true)      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
+    /// <item><term><c> 1 > enumerable.Count(_ => true)       </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// <item><term><c> 1 &lt;= enumerable.Count(_ => true)   </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
+    /// <item><term><c> enumerable.Count(_ => true).Equals(0) </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// <item><term><c> 0.Equals(enumerable.Count(_ => true)) </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// </list>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class DoNotUseCountWhenAnyCanBeUsedAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "DoNotUseCountWhenAnyCanBeUsed";
         private const string CountMethodName = "Count";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedDescription), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
-        private static readonly DiagnosticDescriptor s_rule = new DiagnosticDescriptor(RuleId,
-                                                                             s_localizableTitle,
-                                                                             s_localizableMessage,
-                                                                             DiagnosticCategory.Performance,
-                                                                             DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
-                                                                             description: s_localizableDescription,
-                                                                             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + RuleId,
-                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
+        private static readonly DiagnosticDescriptor s_rule = new DiagnosticDescriptor(
+            RuleId,
+            Title,
+            s_localizableMessage,
+            DiagnosticCategory.Performance,
+            DiagnosticHelpers.DefaultDiagnosticSeverity,
+            isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
+            description: s_localizableDescription,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + RuleId,
+            customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
         /// <summary>
         /// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.

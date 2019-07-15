@@ -638,7 +638,7 @@
         "CA2321": {
           "id": "CA2321",
           "shortDescription": "Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2321",
           "properties": {
@@ -654,13 +654,58 @@
         "CA2322": {
           "id": "CA2322",
           "shortDescription": "Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2322",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
             "typeName": "DoNotUseInsecureDeserializerJavaScriptSerializerWithSimpleTypeResolver",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA2326": {
+          "id": "CA2326",
+          "shortDescription": "Do not use TypeNameHandling values other than None",
+          "fullDescription": "Deserializing JSON when using a TypeNameHandling value other than None can be insecure.  If you need to instead detect Json.NET deserialization when a SerializationBinder isn't specified, then disable rule CA2326, and enable rules CA2327, CA2328, CA2329, and CA2330.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "JsonNetTypeNameHandling",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA2327": {
+          "id": "CA2327",
+          "shortDescription": "Do not use insecure JsonSerializerSettings",
+          "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureSettingsForJsonNet",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA2328": {
+          "id": "CA2328",
+          "shortDescription": "Ensure that JsonSerializerSettings are secure",
+          "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureSettingsForJsonNet",
             "languages": [
               "C#",
               "Visual Basic"

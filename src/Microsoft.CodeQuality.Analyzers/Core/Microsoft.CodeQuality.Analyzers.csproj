@@ -14,11 +14,6 @@
     <InternalsVisibleTo Include="Microsoft.CodeQuality.Analyzers.UnitTests" />
     <PackageReference Include="Humanizer.Core" Version="$(HumanizerVersion)" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Performance\MicrosoftPerformanceAnalyzersResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
   <Import Project="..\..\Utilities\Compiler\Analyzer.Utilities.projitems" Label="Shared" />
   <Import Project="..\..\Utilities\FlowAnalysis\FlowAnalysis.Utilities.projitems" Label="Shared" />
   <Import Project="..\..\Utilities\Workspaces\Workspaces.Utilities.projitems" Label="Shared" />

@@ -110,13 +110,20 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 return;
                                             }
 
-                                            if (evaluateWithPointsToAnalysis.Any(s => s(
-                                                invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]))))
+                                            try
                                             {
-                                                lock (rootOperationsNeedingAnalysis)
+                                                if (evaluateWithPointsToAnalysis.Any(s => s(
+                                                    invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]))))
                                                 {
-                                                    rootOperationsNeedingAnalysis.Add(rootOperation);
+                                                    lock (rootOperationsNeedingAnalysis)
+                                                    {
+                                                        rootOperationsNeedingAnalysis.Add(rootOperation);
+                                                    }
                                                 }
+                                            }
+                                            finally
+                                            {
+                                                evaluateWithPointsToAnalysis.Free();
                                             }
                                         }
                                         else if (evaluateWithValueContentAnalysis != null)
@@ -137,16 +144,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 return;
                                             }
 
-                                            if (evaluateWithValueContentAnalysis.Any(s => s(
-                                                invocationOperation.Arguments.Select(
-                                                    o => pointsToAnalysisResult[o.Kind, o.Syntax]),
-                                                invocationOperation.Arguments.Select(
-                                                    o => valueContentAnalysisResultOpt[o.Kind, o.Syntax]))))
+                                            try
                                             {
-                                                lock (rootOperationsNeedingAnalysis)
+                                                if (evaluateWithValueContentAnalysis.Any(s => s(
+                                                    invocationOperation.Arguments.Select(
+                                                        o => pointsToAnalysisResult[o.Kind, o.Syntax]),
+                                                    invocationOperation.Arguments.Select(
+                                                        o => valueContentAnalysisResultOpt[o.Kind, o.Syntax]))))
                                                 {
-                                                    rootOperationsNeedingAnalysis.Add(rootOperation);
+                                                    lock (rootOperationsNeedingAnalysis)
+                                                    {
+                                                        rootOperationsNeedingAnalysis.Add(rootOperation);
+                                                    }
                                                 }
+                                            }
+                                            finally
+                                            {
+                                                evaluateWithValueContentAnalysis.Free();
                                             }
                                         }
                                     }

@@ -17,7 +17,7 @@ using Microsoft.CodeAnalysis.Formatting;
 namespace Microsoft.CodeQuality.Analyzers.Performance
 {
     /// <summary>
-    /// CA----: Do not use Count() when Any() can be used.
+    /// CA1827: Do not use Count() when Any() can be used.
     /// </summary>
     public abstract class DoNotUseCountWhenAnyCanBeUsedFixer : CodeFixProvider
     {

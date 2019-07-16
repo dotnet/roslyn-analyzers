@@ -14,7 +14,7 @@ using Microsoft.CodeQuality.Analyzers.Performance;
 namespace Microsoft.CodeQuality.CSharp.Analyzers.Performance
 {
     /// <summary>
-    /// CA----: Do not use Count() when Any() can be used.
+    /// CA1827: Do not use Count() when Any() can be used.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpDoNotUseCountWhenAnyCanBeUsedFixer : DoNotUseCountWhenAnyCanBeUsedFixer

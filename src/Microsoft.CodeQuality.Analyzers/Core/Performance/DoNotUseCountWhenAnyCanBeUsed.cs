@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.Performance
 {
     /// <summary>
-    /// CA----: Do not use Count() when Any() can be used.
+    /// CA1827: Do not use Count() when Any() can be used.
     /// <para>
     /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> enumerates the entire enumerable
     /// while <see cref="System.Linq.Enumerable.Any{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> will only enumerates, at most, up until the first item.
@@ -55,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class DoNotUseCountWhenAnyCanBeUsedAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "DoNotUseCountWhenAnyCanBeUsed";
+        internal const string RuleId = "CA1827";
         private const string CountMethodName = "Count";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));

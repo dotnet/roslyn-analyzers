@@ -273,4 +273,13 @@
   <data name="DoNotDisableUsingServicePointManagerSecurityProtocolsTitle" xml:space="preserve">
     <value>Do not disable ServicePointManagerSecurityProtocols</value>
   </data>
+  <data name="JsonNetTypeNameHandlingDescription" xml:space="preserve">
+    <value>Deserializing JSON when using a TypeNameHandling value other than None can be insecure.  If you need to instead detect Json.NET deserialization when a SerializationBinder isn't specified, then disable rule CA2326, and enable rules CA2327, CA2328, CA2329, and CA2330.</value>
+  </data>
+  <data name="JsonNetTypeNameHandlingMessage" xml:space="preserve">
+    <value>Deserializing JSON when using a TypeNameHandling value other than None can be insecure.</value>
+  </data>
+  <data name="JsonNetTypeNameHandlingTitle" xml:space="preserve">
+    <value>Do not use TypeNameHandling values other than None</value>
+  </data>
 </root>

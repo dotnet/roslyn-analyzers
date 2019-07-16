@@ -55,7 +55,6 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
     public class DoNotUseCountWhenAnyCanBeUsedAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "DoNotUseCountWhenAnyCanBeUsed";
-        private const string EnumerableMetadataName = "System.Linq.Enumerable";
         private const string CountMethodName = "Count";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
@@ -94,7 +93,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         /// <param name="context">The context.</param>
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            var enumerableType = context.Compilation.GetTypeByMetadataName(EnumerableMetadataName);
+            var enumerableType = WellKnownTypes.Enumerable(context.Compilation);
 
             if (enumerableType == null)
             {

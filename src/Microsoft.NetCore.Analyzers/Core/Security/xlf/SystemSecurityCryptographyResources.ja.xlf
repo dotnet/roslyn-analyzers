@@ -39,27 +39,27 @@
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
         <source>Do Not Add Archive Item's Path To The Target File System Path</source>
-        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <target state="translated">アーカイブ項目のパスをターゲット ファイル システム パスに追加しない</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
         <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
-        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <target state="translated">アーカイブからファイルを抽出し、アーカイブ アイテムのパスを使用するときは、パスが安全であるかどうかを確認します。アーカイブ パスは相対パスの場合があり、想定されるファイル システムのターゲット パス以外でファイル システムへのアクセスを引き起こす可能性があります。これは、lay-and-wait の技法によって悪意のある構成変更とリモート コードの実行につながります。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
         <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
-        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
+        <target state="translated">'メソッド {1} の {0}' のパスを相対アーカイブ アイテムのパスから作成してファイルを抽出し、ソースが信頼されていない zip アーカイブである場合は、'メソッド {3} の相対アーカイブ アイテムのパス {2}' をサニタイズしてください</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
         <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
-        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <target state="translated">反復回数が十分でない弱いキー派生関数は使用しないでください</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
         <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
-        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
+        <target state="translated">パスワードから暗号化キーを派生させる場合は、少なくとも {0} 回の反復を使用してください。既定では、Rfc2898DeriveByte の IterationCount は 1000 のみです</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -314,7 +314,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
         <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
-        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
+        <target state="translated">パスワードなど、ユーザーが指定した入力から暗号化キーを派生させる場合は、十分な反復回数を使用してください (少なくとも 10 万)。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -329,12 +329,12 @@
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
         <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
-        <target state="new">Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</target>
+        <target state="translated">SecurityProtocolType {0} をハードコードしないでください。代わりに、SecurityProtocolType.SystemDefault を使用して、オペレーティング システムが使用する最適なトランスポート層セキュリティ プロトコルを選択できるようにします。</target>
         <note />
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolTitle">
         <source>Avoid hardcoding SecurityProtocolType value</source>
-        <target state="new">Avoid hardcoding SecurityProtocolType value</target>
+        <target state="translated">SecurityProtocolType の値をハードコードしない</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
@@ -359,12 +359,12 @@
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
         <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
-        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <target state="translated">弱いキー派生関数を使用する場合は十分な反復回数を確保してください</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
         <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
-        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
+        <target state="translated">パスワードから暗号化キーを派生させる場合は、反復回数が少なくとも {0} 回であることを確認してください。既定では、Rfc2898DeriveByte の IterationCount は 1000 のみです</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -379,7 +379,7 @@
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
         <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
-        <target state="needs-review-translation">ページのサブクラス {0} は、メソッド OnInit で ViewStateUserKey プロパティを設定しません</target>
+        <target state="translated">System.Web.UI.Page から派生したクラス {0} は、OnInit メソッドまたは Page_Init メソッドで ViewStateUserKey プロパティを設定しません</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">

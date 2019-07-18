@@ -247,6 +247,21 @@
         <target state="translated">非推奨のセキュリティ プロトコル {0} のハードコーディングされた使用</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseInsecureRandomness">
+        <source>Do Not Use Insecure Randomness</source>
+        <target state="new">Do Not Use Insecure Randomness</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseInsecureRandomnessDescription">
+        <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what sensitive value will be generated.</source>
+        <target state="new">Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what sensitive value will be generated.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseInsecureRandomnessMessage">
+        <source>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required</source>
+        <target state="new">{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseMD5">
         <source>Do not use insecure cryptographic algorithm MD5.</source>
         <target state="translated">安全でない暗号アルゴリズム MD5 を使用しない。</target>

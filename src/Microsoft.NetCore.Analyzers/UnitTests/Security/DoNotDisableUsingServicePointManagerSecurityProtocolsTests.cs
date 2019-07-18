@@ -9,6 +9,66 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class DoNotDisableUsingServicePointManagerSecurityProtocolsTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
+        public void DocSample1_CSharp_Violation()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5378 violation
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true);
+    }
+}",
+            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class ExampleClass
+    Public Sub ExampleMethod()
+        ' CA5378 violation
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true)
+    End Sub
+End Class",
+            GetBasicResultAt(7, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch"));
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Solution()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", false);
+    }
+}");
+        }
+
+        [Fact]
+        public void DocSample1_VB_Solution()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class ExampleClass
+    Public Sub ExampleMethod()
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", false)
+    End Sub
+End Class");
+        }
+
+        [Fact]
         public void TestBoolDiagnostic()
         {
             VerifyCSharp(@"

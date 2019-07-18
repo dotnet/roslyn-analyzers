@@ -88,10 +88,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             return;
                         }
 
-                        var dllPath = constructorArguments[0].Value.ToString();
-
-                        if ((Path.IsPathRooted(dllPath) &&
-                            dllPath.EndsWith(".dll", StringComparison.Ordinal)) ||
+                        if ((Path.IsPathRooted(constructorArguments[0].Value.ToString())) ||
                             (!hasDefaultDllImportSearchPathsAttribute &&
                             defaultDllImportSearchPathsAttribute == null))
                         {

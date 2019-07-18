@@ -13,13 +13,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     // If it is needed in the future, we can recover this rule.
     public class UseDefaultDllImportSearchPathsAttributeTests : DiagnosticAnalyzerTestBase
     {
-        // It will try to retrieve the MessageBox from user32.dll, which will be searched in a default order:
-        //  1. The directory from which the application is loaded.
-        //  2. The current directory.
-        //  3. The system directory, usually C:\\Windows\\System32\\ (The GetSystemDirectory function is called to obtain this directory.).
-        //  4. The 16-bit system directory – There is no dedicated function to retrieve the path of this directory, but it is searched as well.
-        //  5. The Windows directory. The GetWindowsDirectory function is called to obtain this directory.
-        //  6. The directories that are listed in the PATH environment variable
+        // It will try to retrieve the MessageBox from user32.dll, which will be searched in a default order.
         [Fact]
         public void Test_DllImportAttribute_Diagnostic()
         {
@@ -41,7 +35,6 @@ class TestClass
         }
 
         // [DllImport] is set with an absolute path, which will let the [DefaultDllImportSearchPaths] be ignored.
-        // So user32.dll will also be searched in the default order.
         [Fact]
         public void Test_DllImportAttributeWithAbsolutePath_Diagnostic()
         {
@@ -52,6 +45,48 @@ using System.Runtime.InteropServices;
 class TestClass
 {
     [DllImport(""C:\\\\Windows\\System32\\user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Fact]
+        public void Test_DllInUpperCase_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""C:\\\\Windows\\System32\\user32.DLL"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Fact]
+        public void Test_WithoutDllExtension_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""C:\\\\Windows\\System32\\user32"")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 

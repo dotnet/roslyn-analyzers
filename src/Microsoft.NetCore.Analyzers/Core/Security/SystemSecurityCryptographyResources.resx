@@ -400,7 +400,7 @@
     <value>Use DefaultDllImportSearchPaths Attribute For P/Invokes</value>
   </data>
   <data name="UseDefaultDllImportSearchPathsAttributeDescription" xml:space="preserve">
-    <value>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to dll hijacking.</value>
+    <value>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</value>
   </data>
   <data name="UseDefaultDllImportSearchPathsAttributeMessage" xml:space="preserve">
     <value>The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</value>

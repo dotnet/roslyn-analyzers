@@ -523,23 +523,6 @@ class TestClass
 }");
         }
 
-        private void VerifyAcrossTwoAssemblies(string source1, string source2, string language, params DiagnosticResult[] expected)
-        {
-            Debug.Assert(language == LanguageNames.CSharp || language == LanguageNames.VisualBasic);
-
-            Project project1 = CreateProject(new[] { source1 }, language: language, referenceFlags: ReferenceFlags.RemoveCodeAnalysis);
-            Project project2 = CreateProject(new[] { source2 }, language: language, referenceFlags: ReferenceFlags.RemoveCodeAnalysis, addToSolution: project1.Solution)
-                           .AddProjectReference(new ProjectReference(project1.Id));
-
-            DiagnosticAnalyzer analyzer = language == LanguageNames.CSharp ? GetCSharpDiagnosticAnalyzer() : GetBasicDiagnosticAnalyzer();
-            GetSortedDiagnostics(analyzer, project2.Documents.ToArray()).Verify(analyzer, GetDefaultPath(language), expected);
-        }
-
-        private void VerifyCSharpAcrossTwoAssemblies(string source1, string source2, params DiagnosticResult[] expected)
-        {
-            VerifyAcrossTwoAssemblies(source1, source2, LanguageNames.CSharp, expected);
-        }
-
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotDisableCertificateValidation();

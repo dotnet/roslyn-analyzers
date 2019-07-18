@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     /// </summary>
     [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    class DoNotUseInsecureSettingsForJsonNet : DiagnosticAnalyzer
+    public sealed class DoNotUseInsecureSettingsForJsonNet : DiagnosticAnalyzer
     {
         // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor DefinitelyInsecureSettings =

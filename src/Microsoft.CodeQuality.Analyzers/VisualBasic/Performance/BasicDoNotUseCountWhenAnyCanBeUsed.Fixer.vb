@@ -11,7 +11,7 @@ Imports Microsoft.CodeQuality.Analyzers.Performance
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Performance
     ''' <summary>
-    ''' CA----: Do not use Count() when Any() can be used.
+    ''' CA1827: Do not use Count() when Any() can be used.
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotUseCountWhenAnyCanBeUsedFixer
@@ -21,10 +21,10 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Performance
         ''' Tries the get a fixer the specified <paramref name="node" />.
         ''' </summary>
         ''' <param name="node">The node to get a fixer for.</param>
-        ''' <param name="expression">The expression to be used to invoke <see cref="M:System.Linq.Enumerable.Any``1(System.Collections.Generic.IEnumerable{``0})" />.</param>
-        ''' <param name="arguments">The arguments from <see cref="!:" />.</param>
-        ''' <param name="negate">if set to <see langword="true" /> [negate].</param>
-        ''' <returns><see langword="true" /> if XXXX, <see langword="false" /> otherwise.</returns>
+        ''' <param name="expression">If this method returns <see langword="true" />, contains the expression to be used to invoke <c>Any</c>.</param>
+        ''' <param name="arguments">If this method returns <see langword="true" />, contains the arguments from <c>Any</c> to be used on <c>Count</c>.</param>
+        ''' <param name="negate">If this method returns <see langword="true" />, indicates whether to negate the expression.</param>
+        ''' <returns><see langword="true" /> if a fixer was found., <see langword="false" /> otherwise.</returns>
         Protected Overrides Function TryGetFixer(node As SyntaxNode, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode), ByRef negate As Boolean) As Boolean
 
             If node.IsKind(SyntaxKind.InvocationExpression) Then

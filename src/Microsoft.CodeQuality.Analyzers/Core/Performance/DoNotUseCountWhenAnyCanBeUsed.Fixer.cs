@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -54,34 +56,10 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
             if (node is object &&
                 this.TryGetFixer(node, out var expression, out var arguments, out var negate))
             {
-                var title = MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle;
                 context.RegisterCodeFix(
-                    CodeAction.Create(
-                        title: title,
-                        createChangedDocument: ct => FixAsync(context.Document, node, expression, arguments, negate, ct),
-                        equivalenceKey: title),
+                    new DoNotUseCountWhenAnyCanBeUsedCodeAction(context.Document, node, expression, arguments, negate),
                     context.Diagnostics);
             }
-        }
-
-        private async Task<Document> FixAsync(Document document, SyntaxNode pattern, SyntaxNode expression, IEnumerable<SyntaxNode> arguments, bool negate, CancellationToken cancellationToken)
-        {
-            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            var generator = editor.Generator;
-            var memberAccess = generator.MemberAccessExpression(expression.WithoutTrailingTrivia(), "Any");
-            var replacementSyntax = generator.InvocationExpression(memberAccess, arguments);
-
-            if (negate)
-            {
-                replacementSyntax = editor.Generator.LogicalNotExpression(replacementSyntax);
-            }
-
-            replacementSyntax = replacementSyntax
-                .WithAdditionalAnnotations(Formatter.Annotation)
-                .WithTriviaFrom(pattern);
-
-            editor.ReplaceNode(pattern, replacementSyntax);
-            return editor.GetChangedDocument();
         }
 
         /// <summary>
@@ -93,5 +71,48 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         /// <param name="negate">If this method returns <see langword="true"/>, indicates whether to negate the expression.</param>
         /// <returns><see langword="true" /> if a fixer was found., <see langword="false" /> otherwise.</returns>
         protected abstract bool TryGetFixer(SyntaxNode node, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments, out bool negate);
+
+        private class DoNotUseCountWhenAnyCanBeUsedCodeAction : CodeAction
+        {
+            private readonly Document document;
+            private readonly SyntaxNode pattern;
+            private readonly SyntaxNode expression;
+            private readonly IEnumerable<SyntaxNode> arguments;
+            private readonly bool negate;
+
+            public DoNotUseCountWhenAnyCanBeUsedCodeAction(Document document, SyntaxNode pattern, SyntaxNode expression, IEnumerable<SyntaxNode> arguments, bool negate)
+            {
+                this.document = document;
+                this.pattern = pattern;
+                this.expression = expression;
+                this.arguments = arguments;
+                this.negate = negate;
+            }
+
+            public override string Title { get; } = MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle;
+
+            public override string EquivalenceKey { get; } = MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle;
+
+            protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
+            {
+                var editor = await DocumentEditor.CreateAsync(this.document, cancellationToken).ConfigureAwait(false);
+                var generator = editor.Generator;
+                var memberAccess = generator.MemberAccessExpression(this.expression.WithoutTrailingTrivia(), "Any");
+                var replacementSyntax = generator.InvocationExpression(memberAccess, arguments);
+
+                if (this.negate)
+                {
+                    replacementSyntax = editor.Generator.LogicalNotExpression(replacementSyntax);
+                }
+
+                replacementSyntax = replacementSyntax
+                    .WithAdditionalAnnotations(Formatter.Annotation)
+                    .WithTriviaFrom(this.pattern);
+
+                editor.ReplaceNode(this.pattern, replacementSyntax);
+
+                return editor.GetChangedDocument();
+            }
+        }
     }
 }

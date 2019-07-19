@@ -1263,7 +1263,7 @@
           "shortDescription": "Do not use Count() when Any() can be used",
           "fullDescription": "Count() enumerates the entire enumerable while Any() will only enumerates, at most, up until the first item.",
           "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/CA1827",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
           "properties": {
             "category": "Performance",
             "isEnabledByDefault": true,

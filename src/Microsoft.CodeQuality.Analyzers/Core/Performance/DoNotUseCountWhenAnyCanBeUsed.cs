@@ -68,7 +68,9 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
             description: s_localizableDescription,
-            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + RuleId);
+#pragma warning disable CA1308 // Normalize strings to uppercase
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + RuleId.ToLowerInvariant());
+#pragma warning restore CA1308 // Normalize strings to uppercase
 
         /// <summary>
         /// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.

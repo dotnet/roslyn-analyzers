@@ -29,7 +29,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Performance
 
             If node.IsKind(SyntaxKind.InvocationExpression) Then
 
-                GetFixerForEqualsMethod(DirectCast(node, InvocationExpressionSyntax), expression, arguments, negate)
+                GetFixerForEqualsMethod(DirectCast(node, InvocationExpressionSyntax), expression, arguments)
                 negate = True
                 Return True
 
@@ -74,7 +74,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.Performance
 
         End Function
 
-        Private Shared Sub GetFixerForEqualsMethod(equalsMethodInvocation As InvocationExpressionSyntax, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode), ByRef negate As Boolean)
+        Private Shared Sub GetFixerForEqualsMethod(equalsMethodInvocation As InvocationExpressionSyntax, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode))
 
             Dim argument = equalsMethodInvocation.ArgumentList.Arguments.Item(0).GetExpression()
 

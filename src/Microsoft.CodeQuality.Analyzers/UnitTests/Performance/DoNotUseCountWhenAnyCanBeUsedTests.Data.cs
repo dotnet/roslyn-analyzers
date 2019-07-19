@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.Performance.UnitTests
 {
-    public static class DoNotUseCountWhenAnyCanBeUsedTestData
+    public static partial class DoNotUseCountWhenAnyCanBeUsedTests
     {
         public static TheoryData<BinaryOperatorKind, int> LeftCount_NoDiagnostic_TheoryData { get; } = new TheoryData<BinaryOperatorKind, int>
         {

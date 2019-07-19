@@ -1,28 +1,23 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.VisualBasic;
-using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;
-using Test.Utilities;
 using Xunit;
-using static Microsoft.CodeQuality.Analyzers.Performance.UnitTests.DoNotUseCountWhenAnyCanBeUsedTestData;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Performance.DoNotUseCountWhenAnyCanBeUsedAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.Performance.CSharpDoNotUseCountWhenAnyCanBeUsedFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Performance.DoNotUseCountWhenAnyCanBeUsedAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.Performance.BasicDoNotUseCountWhenAnyCanBeUsedFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Performance.UnitTests
 {
 
-    public class DoNotUseCountWhenAnyCanBeUsedAnalyzerTests : DiagnosticAnalyzerTestBase
+    public static partial class DoNotUseCountWhenAnyCanBeUsedTests
     {
-        #region Unit tests for no analyzer diagnostic
-
         [Fact]
-        public void CSharp_NoDiagnostic_CountEqualsNonZero()
-        {
-            VerifyCSharp(
-                @"
+        public static Task CSharp_NoDiagnostic_CountEqualsNonZero() => VerifyCS.VerifyAnalyzerAsync(
+            @"
 using System;
 using System.Linq;
 class C
@@ -32,12 +27,9 @@ class C
         var b = Enumerable.Range(0, 0).Count().Equals(1);
     }
 }");
-        }
 
         [Fact]
-        public void Basic_NoDiagnostic_CountEqualsNonZero()
-        {
-            VerifyBasic(
+        public static Task Basic_NoDiagnostic_CountEqualsNonZero() => VerifyVB.VerifyAnalyzerAsync(
                 @"
 Imports System
 Imports System.Linq
@@ -47,12 +39,9 @@ Class C
     End Sub
 End Class
 ");
-        }
 
         [Fact]
-        public void CSharp_NoDiagnostic_NotCountEqualsZero()
-        {
-            VerifyCSharp(
+        public static Task CSharp_NoDiagnostic_NotCountEqualsZero() => VerifyCS.VerifyAnalyzerAsync(
                 @"
 using System;
 using System.Linq;
@@ -63,12 +52,9 @@ class C
         var b = Enumerable.Range(0, 0).Sum().Equals(0);
     }
 }");
-        }
 
         [Fact]
-        public void Basic_NoDiagnostic_NotCountEqualsZero()
-        {
-            VerifyBasic(
+        public static Task Basic_NoDiagnostic_NotCountEqualsZero() => VerifyVB.VerifyAnalyzerAsync(
                 @"
 Imports System
 Imports System.Linq
@@ -78,13 +64,10 @@ Class C
     End Sub
 End Class
 ");
-        }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value)
-        {
-            VerifyCSharp(
+        [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
+        public static Task CSharp_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value) => VerifyCS.VerifyAnalyzerAsync(
                 $@"
 using System;
 using System.Linq;
@@ -95,13 +78,10 @@ class C
         var b = Enumerable.Range(0, 0).Sum() {CSharpOperatorText(@operator)} {value};
     }}
 }}");
-        }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value)
-        {
-            VerifyBasic(
+        [MemberData(nameof(LeftCount_Diagnostic_TheoryData))]
+        public static Task Basic_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value) => VerifyVB.VerifyAnalyzerAsync(
                 $@"
 Imports System
 Imports System.Linq
@@ -111,12 +91,9 @@ Class C
     End Sub
 End Class
 ");
-        }
 
         [Fact]
-        public void CSharp_NoDiagnostic_NotCoveredOperator()
-        {
-            VerifyCSharp(@"
+        public static Task CSharp_NoDiagnostic_NotCoveredOperator() => VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Linq;
 class C
@@ -126,12 +103,9 @@ class C
         var b = Enumerable.Range(0, 0).Count() + 0;
     }
 }");
-        }
 
         [Fact]
-        public void Basic_NoDiagnostic_NotCoveredOperator()
-        {
-            VerifyBasic(
+        public static Task Basic_NoDiagnostic_NotCoveredOperator() => VerifyVB.VerifyAnalyzerAsync(
                 @"
 Imports System
 Imports System.Linq
@@ -141,13 +115,10 @@ Class C
     End Sub
 End Class
 ");
-        }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_NoDiagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_NoDiagnostic_LeftCount(BinaryOperatorKind @operator, int value)
-        {
-            VerifyCSharp($@"
+        [MemberData(nameof(LeftCount_NoDiagnostic_TheoryData))]
+        public static Task CSharp_NoDiagnostic_LeftCount(BinaryOperatorKind @operator, int value) => VerifyCS.VerifyAnalyzerAsync($@"
 using System;
 using System.Linq;
 class C
@@ -157,13 +128,10 @@ class C
         var b = Enumerable.Range(0, 0).Count() {CSharpOperatorText(@operator)} {value};
     }}
 }}");
-        }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_NoDiagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_NoDiagnostic_LeftCount(BinaryOperatorKind @operator, int value)
-        {
-            VerifyBasic(
+        [MemberData(nameof(LeftCount_NoDiagnostic_TheoryData))]
+        public static Task Basic_NoDiagnostic_LeftCount(BinaryOperatorKind @operator, int value) => VerifyVB.VerifyAnalyzerAsync(
                 $@"
 Imports System
 Imports System.Linq
@@ -173,12 +141,9 @@ Class C
     End Sub
 End Class
 ");
-        }
 
         [Fact]
-        public void CSharp_NoDiagnostic_NonZeroEqualsCount()
-        {
-            VerifyCSharp(
+        public static Task CSharp_NoDiagnostic_NonZeroEqualsCount() => VerifyCS.VerifyAnalyzerAsync(
                 @"
 using System;
 using System.Linq;
@@ -189,13 +154,10 @@ class C
         var b = 1.Equals(Enumerable.Range(0, 0).Count());
     }
 }");
-        }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator)
-        {
-            VerifyCSharp(
+        [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
+        public static Task CSharp_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator) => VerifyCS.VerifyAnalyzerAsync(
                 $@"
 using System;
 using System.Linq;
@@ -206,13 +168,10 @@ class C
         var b = {value} {CSharpOperatorText(@operator)} Enumerable.Range(0, 0).Sum();
     }}
 }}");
-        }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator)
-        {
-            VerifyBasic(
+        [MemberData(nameof(RightCount_Diagnostic_TheoryData))]
+        public static Task Basic_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator) => VerifyVB.VerifyAnalyzerAsync(
                 $@"
 Imports System
 Imports System.Linq
@@ -222,13 +181,10 @@ Class C
     End Sub
 End Class
 ");
-        }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_NoDiagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_NoDiagnostic_RightCount(int value, BinaryOperatorKind @operator)
-        {
-            VerifyCSharp($@"
+        [MemberData(nameof(RightCount_NoDiagnostic_TheoryData))]
+        public static Task CSharp_NoDiagnostic_RightCount(int value, BinaryOperatorKind @operator) => VerifyCS.VerifyAnalyzerAsync($@"
 using System;
 using System.Linq;
 class C
@@ -238,13 +194,10 @@ class C
         var b = {value} {CSharpOperatorText(@operator)} Enumerable.Range(0, 0).Count();
     }}
 }}");
-        }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_NoDiagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_NoDiagnostic_RightCount(int value, BinaryOperatorKind @operator)
-        {
-            VerifyBasic(
+        [MemberData(nameof(RightCount_NoDiagnostic_TheoryData))]
+        public static Task Basic_NoDiagnostic_RightCount(int value, BinaryOperatorKind @operator) => VerifyVB.VerifyAnalyzerAsync(
                 $@"
 Imports System
 Imports System.Linq
@@ -254,12 +207,9 @@ Class C
     End Sub
 End Class
 ");
-        }
 
         [Fact]
-        public void CSharp_NoDiagnostic_NotEnumerableCountEqualsConstant()
-        {
-            VerifyCSharp(@"
+        public static Task CSharp_NoDiagnostic_NotEnumerableCountEqualsConstant() => VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Linq;
 namespace N
@@ -276,12 +226,9 @@ namespace N
         public static int Count<TSource>(this System.Collections.Generic.IEnumerable<TSource> source) => 0;
     }
 }");
-        }
 
         [Fact]
-        public void Basic_NoDiagnostic_NotEnumerableCountEqualsConstant()
-        {
-            VerifyBasic(
+        public static Task Basic_NoDiagnostic_NotEnumerableCountEqualsConstant() => VerifyVB.VerifyAnalyzerAsync(
                 $@"
 Imports System
 Imports System.Linq
@@ -299,12 +246,9 @@ Namespace N
     End Module
 End Namespace
 ");
-        }
 
         [Fact]
-        public void CSharp_NoDiagnostic_EqualsNotEnumerableCount()
-        {
-            VerifyCSharp(@"
+        public static Task CSharp_NoDiagnostic_EqualsNotEnumerableCount() => VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Linq;
 namespace N
@@ -321,12 +265,11 @@ namespace N
         public static int Count<TSource>(this System.Collections.Generic.IEnumerable<TSource> source) => 0;
     }
 }");
-        }
 
         [Fact]
-        public void Basic_NoDiagnostic_EqualsNotEnumerableCount()
+        public static Task Basic_NoDiagnostic_EqualsNotEnumerableCount()
         {
-            VerifyBasic(
+            return VerifyVB.VerifyAnalyzerAsync(
                 $@"
 Imports System
 Imports System.Linq
@@ -344,207 +287,6 @@ Namespace N
     End Module
 End Namespace
 ");
-        }
-
-        #endregion
-
-        #region Unit tests for analyzer diagnostic(s)
-
-        [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value)
-        {
-            VerifyCSharp(
-                $@"
-using System;
-using System.Linq;
-class C
-{{
-    void M()
-    {{
-        var b = Enumerable.Range(0, 0).Count() {CSharpOperatorText(@operator)} {value};
-    }}
-}}",
-                GetCSharpNameofResultAt(8, 17, "x"));
-        }
-
-        [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value)
-        {
-            VerifyBasic(
-                $@"
-Imports System
-Imports System.Linq
-Class C
-    Sub S()
-        Dim b = Enumerable.Range(0, 0).Count() {BasicOperatorText(@operator)} {value}
-    End Sub
-End Class
-",
-                GetBasicNameofResultAt(6, 17, "x"));
-        }
-
-        [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value)
-        {
-            VerifyCSharp(
-                $@"
-using System;
-using System.Linq;
-class C
-{{
-    void M()
-    {{
-        var b = Enumerable.Range(0, 0).Count(_ => true) {CSharpOperatorText(@operator)} {value};
-    }}
-}}",
-                GetCSharpNameofResultAt(8, 17, "x"));
-        }
-
-        [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value)
-        {
-            VerifyBasic(
-                $@"
-Imports System
-Imports System.Linq
-Class C
-    Sub S()
-        Dim b = Enumerable.Range(0, 0).Count(Function(x) True) {BasicOperatorText(@operator)} {value}
-    End Sub
-End Class
-",
-                GetBasicNameofResultAt(6, 17, "x"));
-        }
-
-        [Fact]
-        public void CSharp_Diagnostic_ZeroEqualsCount()
-        {
-            VerifyCSharp(
-                @"
-using System;
-using System.Linq;
-class C
-{
-    void M()
-    {
-        var b = 0.Equals(Enumerable.Range(0, 0).Count());
-    }
-}",
-                GetCSharpNameofResultAt(8, 17, "x"));
-        }
-
-        [Fact]
-        public void Basic_Diagnostic_ZeroEqualsCount()
-        {
-            VerifyBasic(
-                $@"
-Imports System
-Imports System.Linq
-Class C
-    Sub S()
-        Dim b = 0.Equals(Enumerable.Range(0, 0).Count())
-    End Sub
-End Class
-",
-                GetBasicNameofResultAt(6, 17, "x"));
-        }
-
-        [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_Diagnostic_RightCount(int value, BinaryOperatorKind @operator)
-        {
-            VerifyCSharp(
-                $@"
-using System;
-using System.Linq;
-class C
-{{
-    void M()
-    {{
-        var b = {value} {CSharpOperatorText(@operator)} Enumerable.Range(0, 0).Count();
-    }}
-}}",
-                GetCSharpNameofResultAt(8, 17, "x"));
-        }
-
-        [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_Diagnostic_RightCount(int value, BinaryOperatorKind @operator)
-        {
-            VerifyBasic(
-                $@"
-Imports System
-Imports System.Linq
-Class C
-    Sub S()
-        Dim b = {value} {BasicOperatorText(@operator)} Enumerable.Range(0, 0).Count()
-    End Sub
-End Class
-",
-                GetBasicNameofResultAt(6, 17, "x"));
-        }
-
-        [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator)
-        {
-            VerifyCSharp(
-                $@"
-using System;
-using System.Linq;
-class C
-{{
-    void M()
-    {{
-        var b = {value} {CSharpOperatorText(@operator)} Enumerable.Range(0, 0).Count(_ => true);
-    }}
-}}",
-                GetCSharpNameofResultAt(8, 17, "x"));
-        }
-
-        [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator)
-        {
-            VerifyBasic(
-                $@"
-Imports System
-Imports System.Linq
-Class C
-    Sub S()
-        Dim b = {value} {BasicOperatorText(@operator)} Enumerable.Range(0, 0).Count(Function(x) True)
-    End Sub
-End Class
-",
-                GetBasicNameofResultAt(6, 17, "x"));
-        }
-
-        #endregion
-
-        private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
-        {
-            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage, name);
-            return GetBasicResultAt(line, column, DoNotUseCountWhenAnyCanBeUsedAnalyzer.RuleId, message);
-        }
-
-        private DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
-        {
-            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage, name);
-            return GetCSharpResultAt(line, column, DoNotUseCountWhenAnyCanBeUsedAnalyzer.RuleId, message);
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotUseCountWhenAnyCanBeUsedAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotUseCountWhenAnyCanBeUsedAnalyzer();
         }
     }
 }

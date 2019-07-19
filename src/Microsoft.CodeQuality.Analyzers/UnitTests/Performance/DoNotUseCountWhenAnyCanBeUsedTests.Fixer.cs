@@ -3,7 +3,6 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Operations;
 using Xunit;
-using static Microsoft.CodeQuality.Analyzers.Performance.UnitTests.DoNotUseCountWhenAnyCanBeUsedTestData;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.Performance.DoNotUseCountWhenAnyCanBeUsedAnalyzer,
     Microsoft.CodeQuality.CSharp.Analyzers.Performance.CSharpDoNotUseCountWhenAnyCanBeUsedFixer>;
@@ -13,59 +12,59 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.Performance.UnitTests
 {
-    public static class DoNotUseCountWhenAnyCanBeUsedFixerTests
+    public static partial class DoNotUseCountWhenAnyCanBeUsedTests
     {
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Fixer_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
         public static Task CSharpLeftBinaryExpresssion(BinaryOperatorKind @operator, int value, bool negate)
         {
             return CSharpLeftBinaryExpresssionTestImpl(@operator, value, negate, false);
         }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Fixer_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
         public static Task CSharpLeftBinaryExpresssionPredicate(BinaryOperatorKind @operator, int value, bool negate)
         {
             return CSharpLeftBinaryExpresssionTestImpl(@operator, value, negate, true);
         }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Fixer_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
         public static Task CSharpRightBinaryExpresssion(int value, BinaryOperatorKind @operator, bool negate)
         {
             return CSharpRightBinaryExpresssionTestImpl(@operator, value, negate, false);
         }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Fixer_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
         public static Task CSharpRightBinaryExpresssionWithPredicate(int value, BinaryOperatorKind @operator, bool negate)
         {
             return CSharpRightBinaryExpresssionTestImpl(@operator, value, negate, true);
         }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Fixer_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
         public static Task BasicLeftBinaryExpresssion(BinaryOperatorKind @operator, int value, bool negate)
         {
             return BasicLeftBinaryExpresssionTestImpl(@operator, value, negate, false);
         }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Fixer_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
         public static Task BasicLeftBinaryExpresssionPredicate(BinaryOperatorKind @operator, int value, bool negate)
         {
             return BasicLeftBinaryExpresssionTestImpl(@operator, value, negate, true);
         }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Fixer_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
         public static Task BasicRightBinaryExpresssion(int value, BinaryOperatorKind @operator, bool negate)
         {
             return BasicRightBinaryExpresssionTestImpl(@operator, value, negate, false);
         }
 
         [Theory]
-        [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Fixer_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
         public static Task BasicRightBinaryExpresssionWithPredicate(int value, BinaryOperatorKind @operator, bool negate)
         {
             return BasicRightBinaryExpresssionTestImpl(@operator, value, negate, true);

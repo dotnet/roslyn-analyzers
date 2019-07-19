@@ -281,9 +281,8 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         {
             constant = default;
 
-            if (operation.Type?.SpecialType != SpecialType.System_Int32)
+            if (operation?.Type?.SpecialType != SpecialType.System_Int32)
             {
-                // TODO: Should we be checking for other integer types?
                 return false;
             }
 

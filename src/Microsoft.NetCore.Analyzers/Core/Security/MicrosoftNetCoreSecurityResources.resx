@@ -282,4 +282,16 @@
   <data name="JsonNetTypeNameHandlingTitle" xml:space="preserve">
     <value>Do not use TypeNameHandling values other than None</value>
   </data>
+  <data name="JsonNetInsecureSerializerMessage" xml:space="preserve">
+    <value>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.   When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</value>
+  </data>
+  <data name="JsonNetInsecureSerializerTitle" xml:space="preserve">
+    <value>Do not deserialize with JsonSerializer using an insecure configuration</value>
+  </data>
+  <data name="JsonNetMaybeInsecureSerializerMessage" xml:space="preserve">
+    <value>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.   When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</value>
+  </data>
+  <data name="JsonNetMaybeInsecureSerializerTitle" xml:space="preserve">
+    <value>Ensure that JsonSerializer has a secure configuration when deserializing</value>
+  </data>
 </root>

@@ -47,6 +47,16 @@
         <target state="translated">Nie wykonuj deserializacji za pomocą klasy JavaScriptSerializer używającej klasy SimpleTypeResolver</target>
         <note />
       </trans-unit>
+      <trans-unit id="JsonNetInsecureSerializerMessage">
+        <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.   When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
+        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.   When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetInsecureSerializerTitle">
+        <source>Do not deserialize with JsonSerializer using an insecure configuration</source>
+        <target state="new">Do not deserialize with JsonSerializer using an insecure configuration</target>
+        <note />
+      </trans-unit>
       <trans-unit id="JsonNetInsecureSettingsMessage">
         <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
         <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
@@ -55,6 +65,16 @@
       <trans-unit id="JsonNetInsecureSettingsTitle">
         <source>Do not use insecure JsonSerializerSettings</source>
         <target state="new">Do not use insecure JsonSerializerSettings</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetMaybeInsecureSerializerMessage">
+        <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.   When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
+        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.   When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetMaybeInsecureSerializerTitle">
+        <source>Ensure that JsonSerializer has a secure configuration when deserializing</source>
+        <target state="new">Ensure that JsonSerializer has a secure configuration when deserializing</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetMaybeInsecureSettingsMessage">

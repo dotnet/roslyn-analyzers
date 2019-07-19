@@ -51,7 +51,8 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span);
 
-            if (this.TryGetFixer(node, out var expression, out var arguments, out var negate))
+            if (node is object &&
+                this.TryGetFixer(node, out var expression, out var arguments, out var negate))
             {
                 var title = MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle;
                 context.RegisterCodeFix(

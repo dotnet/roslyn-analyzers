@@ -57,9 +57,9 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
     {
         internal const string RuleId = "CA1827";
         private const string CountMethodName = "Count";
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedDescription), MicrosoftPerformanceAnalyzersResources.ResourceManager, typeof(MicrosoftPerformanceAnalyzersResources));
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private static readonly DiagnosticDescriptor s_rule = new DiagnosticDescriptor(
             RuleId,
             Title,

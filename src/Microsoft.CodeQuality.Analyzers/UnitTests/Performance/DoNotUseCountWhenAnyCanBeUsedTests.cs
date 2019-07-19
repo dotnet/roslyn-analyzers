@@ -533,7 +533,7 @@ End Class
 
         private DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
         {
-            var message = string.Format(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage, name);
+            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage, name);
             return GetCSharpResultAt(line, column, DoNotUseCountWhenAnyCanBeUsedAnalyzer.RuleId, message);
         }
 

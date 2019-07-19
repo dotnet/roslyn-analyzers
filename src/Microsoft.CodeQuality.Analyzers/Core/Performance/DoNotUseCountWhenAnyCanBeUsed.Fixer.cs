@@ -53,7 +53,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
 
             if (this.TryGetFixer(node, out var expression, out var arguments, out var negate))
             {
-                var title = MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle;
+                var title = MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle;
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         title: title,

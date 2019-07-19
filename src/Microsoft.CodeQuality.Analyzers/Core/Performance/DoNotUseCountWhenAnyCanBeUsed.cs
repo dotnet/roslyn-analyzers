@@ -186,17 +186,8 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         /// </summary>
         private static void AnalyzeBinaryExpression(IBinaryOperation binaryOperation, INamedTypeSymbol enumerableType, Action<Diagnostic> reportDiagnostic)
         {
-            if (binaryOperation.OperatorKind != BinaryOperatorKind.Equals &&
-                binaryOperation.OperatorKind != BinaryOperatorKind.NotEquals &&
-                binaryOperation.OperatorKind != BinaryOperatorKind.LessThan &&
-                binaryOperation.OperatorKind != BinaryOperatorKind.LessThanOrEqual &&
-                binaryOperation.OperatorKind != BinaryOperatorKind.GreaterThan &&
-                binaryOperation.OperatorKind != BinaryOperatorKind.GreaterThanOrEqual)
-            {
-                return;
-            }
-
-            if (IsLeftCountComparison(binaryOperation, enumerableType) || IsRightCountComparison(binaryOperation, enumerableType))
+            if (binaryOperation.IsComparisonOperator() &&
+                (IsLeftCountComparison(binaryOperation, enumerableType) || IsRightCountComparison(binaryOperation, enumerableType)))
             {
                 reportDiagnostic(binaryOperation.Syntax.CreateDiagnostic(s_rule));
             }

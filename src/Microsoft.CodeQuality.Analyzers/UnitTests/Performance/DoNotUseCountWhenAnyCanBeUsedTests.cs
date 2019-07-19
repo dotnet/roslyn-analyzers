@@ -82,7 +82,7 @@ End Class
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value, bool _)
+        public void CSharp_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value)
         {
             VerifyCSharp(
                 $@"
@@ -99,7 +99,7 @@ class C
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value, bool _)
+        public void Basic_NoDiagnostic_LeftNotCount(BinaryOperatorKind @operator, int value)
         {
             VerifyBasic(
                 $@"
@@ -193,7 +193,7 @@ class C
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator, bool _)
+        public void CSharp_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator)
         {
             VerifyCSharp(
                 $@"
@@ -210,7 +210,7 @@ class C
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator, bool _)
+        public void Basic_NoDiagnostic_RightNotCount(int value, BinaryOperatorKind @operator)
         {
             VerifyBasic(
                 $@"
@@ -352,7 +352,7 @@ End Namespace
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value, bool _)
+        public void CSharp_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value)
         {
             VerifyCSharp(
                 $@"
@@ -370,7 +370,7 @@ class C
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value, bool _)
+        public void Basic_Diagnostic_LeftCount(BinaryOperatorKind @operator, int value)
         {
             VerifyBasic(
                 $@"
@@ -387,7 +387,7 @@ End Class
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value, bool _)
+        public void CSharp_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value)
         {
             VerifyCSharp(
                 $@"
@@ -405,7 +405,7 @@ class C
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.LeftCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value, bool _)
+        public void Basic_Diagnostic_LeftCountWithPredicate(BinaryOperatorKind @operator, int value)
         {
             VerifyBasic(
                 $@"
@@ -455,7 +455,7 @@ End Class
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_Diagnostic_RightCount(int value, BinaryOperatorKind @operator, bool _)
+        public void CSharp_Diagnostic_RightCount(int value, BinaryOperatorKind @operator)
         {
             VerifyCSharp(
                 $@"
@@ -473,7 +473,7 @@ class C
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_Diagnostic_RightCount(int value, BinaryOperatorKind @operator, bool _)
+        public void Basic_Diagnostic_RightCount(int value, BinaryOperatorKind @operator)
         {
             VerifyBasic(
                 $@"
@@ -490,7 +490,7 @@ End Class
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void CSharp_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator, bool _)
+        public void CSharp_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator)
         {
             VerifyCSharp(
                 $@"
@@ -508,7 +508,7 @@ class C
 
         [Theory]
         [MemberData(nameof(DoNotUseCountWhenAnyCanBeUsedTestData.RightCount_Diagnostic_TheoryData), MemberType = typeof(DoNotUseCountWhenAnyCanBeUsedTestData))]
-        public void Basic_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator, bool _)
+        public void Basic_Diagnostic_RightCountWithPredicate(int value, BinaryOperatorKind @operator)
         {
             VerifyBasic(
                 $@"
@@ -527,7 +527,7 @@ End Class
 
         private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
         {
-            var message = string.Format(MicrosoftPerformanceAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage, name);
+            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage, name);
             return GetBasicResultAt(line, column, DoNotUseCountWhenAnyCanBeUsedAnalyzer.RuleId, message);
         }
 

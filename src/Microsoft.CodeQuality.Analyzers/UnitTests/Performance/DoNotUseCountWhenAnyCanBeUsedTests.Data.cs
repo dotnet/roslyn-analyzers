@@ -40,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance.UnitTests
             { 2, BinaryOperatorKind.LessThanOrEqual    },
         };
 
-        public static TheoryData<BinaryOperatorKind, int, bool> LeftCount_Diagnostic_TheoryData { get; } = new TheoryData<BinaryOperatorKind, int, bool>
+        public static TheoryData<BinaryOperatorKind, int, bool> LeftCount_Fixer_TheoryData { get; } = new TheoryData<BinaryOperatorKind, int, bool>
         {
             { BinaryOperatorKind.Equals            , 0 , true }, // !Any
             { BinaryOperatorKind.NotEquals         , 0 , false }, // Any
@@ -50,7 +50,19 @@ namespace Microsoft.CodeQuality.Analyzers.Performance.UnitTests
             { BinaryOperatorKind.GreaterThanOrEqual, 1 , false }, // Any
         };
 
-        public static TheoryData<int, BinaryOperatorKind, bool> RightCount_Diagnostic_TheoryData { get; } = new TheoryData<int, BinaryOperatorKind, bool>
+        public static TheoryData<BinaryOperatorKind, int> LeftCount_Diagnostic_TheoryData { get; } = Build_LeftCount_Diagnostic_TheoryData();
+
+        private static TheoryData<BinaryOperatorKind, int> Build_LeftCount_Diagnostic_TheoryData()
+        {
+            var theoryData = new TheoryData<BinaryOperatorKind, int>();
+            foreach (var fixerData in LeftCount_Fixer_TheoryData)
+            {
+                theoryData.Add((BinaryOperatorKind)fixerData[0], (int)fixerData[1]);
+            }
+            return theoryData;
+        }
+
+        public static TheoryData<int, BinaryOperatorKind, bool> RightCount_Fixer_TheoryData { get; } = new TheoryData<int, BinaryOperatorKind, bool>
         {
             { 0, BinaryOperatorKind.Equals             , true }, // !Any
             { 0, BinaryOperatorKind.NotEquals          , false }, // Any
@@ -59,6 +71,18 @@ namespace Microsoft.CodeQuality.Analyzers.Performance.UnitTests
             { 1, BinaryOperatorKind.GreaterThan        , true }, // !Any
             { 1, BinaryOperatorKind.LessThanOrEqual    , false }, // Any
         };
+
+        public static TheoryData<int, BinaryOperatorKind> RightCount_Diagnostic_TheoryData { get; } = Build_RightCount_Diagnostic_TheoryData();
+
+        private static TheoryData<int, BinaryOperatorKind> Build_RightCount_Diagnostic_TheoryData()
+        {
+            var theoryData = new TheoryData<int, BinaryOperatorKind>();
+            foreach (var fixerData in RightCount_Fixer_TheoryData)
+            {
+                theoryData.Add((int)fixerData[0], (BinaryOperatorKind)fixerData[1]);
+            }
+            return theoryData;
+        }
 
         public static string CSharpOperatorText(BinaryOperatorKind binaryOperatorKind)
         {

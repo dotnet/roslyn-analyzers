@@ -68,8 +68,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
             DiagnosticHelpers.DefaultDiagnosticSeverity,
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultForVsixAndNuget,
             description: s_localizableDescription,
-            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + RuleId,
-            customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + RuleId);
 
         /// <summary>
         /// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.

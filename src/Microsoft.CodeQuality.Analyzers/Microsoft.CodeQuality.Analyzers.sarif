@@ -1256,10 +1256,6 @@
             "languages": [
               "C#",
               "Visual Basic"
-            ],
-            "tags": [
-              "PortedFxCopRuleTag",
-              "Telemetry"
             ]
           }
         },

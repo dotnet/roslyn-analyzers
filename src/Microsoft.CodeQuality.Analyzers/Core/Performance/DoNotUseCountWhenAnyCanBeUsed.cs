@@ -308,41 +308,9 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         /// <returns><see langword="true" /> if XXXX, <see langword="false" /> otherwise.</returns>
         private static bool IsCountMethodInvocation(IOperation operation, INamedTypeSymbol enumerableType)
         {
-            if (operation.Kind != global::Microsoft.CodeAnalysis.OperationKind.Invocation ||
-                !(operation is global::Microsoft.CodeAnalysis.Operations.IInvocationOperation invocationExpression) ||
-                !invocationExpression.TargetMethod.ContainingSymbol.Equals(enumerableType) ||
-                !invocationExpression.TargetMethod.Name.Equals(DoNotUseCountWhenAnyCanBeUsedAnalyzer.CountMethodName, StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            // TODO: Should I be doing more checks?
-
-            var parameterCountOFfset = operation.Language == LanguageNames.VisualBasic ? -1 : 0;
-
-            if (invocationExpression.TargetMethod.Parameters.Length == 0 + parameterCountOFfset ||
-                invocationExpression.TargetMethod.Parameters.Length > 2 + parameterCountOFfset)
-            {
-                return false;
-            }
-
-            // TODO: Should I check for the type of the parameter?
-
-            if (invocationExpression.TargetMethod.Parameters.Length == 1 + parameterCountOFfset)
-            {
-                return true;
-            }
-
-            var parameterType = invocationExpression.TargetMethod.Parameters[1 + parameterCountOFfset].Type;
-
-            if (parameterType.MetadataName.Equals("Func`2", StringComparison.Ordinal))
-            {
-                // TODO: Should I check for the types of the parameters?
-
-                return true;
-            }
-
-            return false;
+            return operation is IInvocationOperation invocationExpression &&
+                invocationExpression.TargetMethod.Name.Equals(DoNotUseCountWhenAnyCanBeUsedAnalyzer.CountMethodName, StringComparison.Ordinal) &&
+                invocationExpression.TargetMethod.ContainingSymbol.Equals(enumerableType);
         }
     }
 }

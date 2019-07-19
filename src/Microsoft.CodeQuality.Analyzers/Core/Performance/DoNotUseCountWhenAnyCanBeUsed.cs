@@ -121,8 +121,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
             if (invocationOperation.Arguments.Length == 1)
             {
                 var methodSymbol = invocationOperation.TargetMethod;
-                if (methodSymbol != null &&
-                    IsInt32EqualsMethod(methodSymbol) &&
+                if (IsInt32EqualsMethod(methodSymbol) &&
                     (IsCountEqualsZero(invocationOperation, enumerableType) || IsZeroEqualsCount(invocationOperation, enumerableType)))
                 {
                     reportDiagnostic(invocationOperation.Syntax.CreateDiagnostic(s_rule));

@@ -100,10 +100,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                     PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown))
                 .Concat(
                     new HazardousUsageEvaluator(
-                        HazardousUsageEvaluatorKind.Return,
-                        PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown))
-                .Concat(
-                    new HazardousUsageEvaluator(
                         HazardousUsageEvaluatorKind.Initialization,
                         PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown)));
 

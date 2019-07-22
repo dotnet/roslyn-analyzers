@@ -74,6 +74,10 @@ namespace Microsoft.AspNetCore
         {
         }
 
+        public class HttpPatchAttribute : Attribute
+        {
+        }
+
         public class HttpGetAttribute : Attribute
         {
         }
@@ -139,7 +143,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -177,7 +181,7 @@ class TestClass : ControllerBase
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -199,7 +203,7 @@ class TestClass : ControllerBase
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -222,7 +226,7 @@ class TestClass : ControllerBase
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -245,7 +249,7 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -261,13 +265,36 @@ class TestClass : ControllerBase
         }
 
         [Fact]
+        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPatchAttribute_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class TestClass : ControllerBase
+{
+    [HttpPatch]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}",
+            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpPatch"));
+        }
+
+        [Fact]
         public void Test_ChildrenOfController_ActionMethodWithHttpPostAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -289,7 +316,7 @@ class TestClass : Controller
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -311,7 +338,7 @@ class TestClass : Controller
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -333,7 +360,7 @@ class TestClass : Controller
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 

@@ -32,8 +32,8 @@ namespace Microsoft.NetCore.Analyzers.Security
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 
-        private static readonly Regex s_AntiForgeryAttributeRegex = new Regex(@"[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute", RegexOptions.Compiled);
-        private static readonly Regex s_AntiForgeryRegex = new Regex(@"[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*", RegexOptions.Compiled);
+        private static readonly Regex s_AntiForgeryAttributeRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute$", RegexOptions.Compiled);
+        private static readonly Regex s_AntiForgeryRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*$", RegexOptions.Compiled);
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -69,6 +69,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPostAttribute, out var httpPostAttributeTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPutAttribute, out var httpPutAttributeTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpDeleteAttribute, out var httpDeleteAttributeTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPatchAttribute, out var httpPatchAttributeTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIFilterMetadata, out var iFilterMetadataTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreAntiforgeryIAntiforgery, out var iAntiforgeryTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAsyncAuthorizationFilter, out var iAsyncAuthorizationFilterTypeSymbol) ||
@@ -154,45 +155,50 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
                     var controllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
+                    var baseTypes = controllerTypeSymbol.GetBaseTypes();
 
-                    // The controller class is protected by a validate anti forgery token attribute
-                    if (controllerTypeSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
+                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`)
+                    if (baseTypes.Contains(controllerTypeSymbol) ||
+                        baseTypes.Contains(controllerBaseTypeSymbol))
                     {
-                        usingValidateAntiForgeryAttribute = true;
-
-                        return;
-                    }
-
-                    foreach (var actionMethodSymbol in controllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
-                    {
-
-                        // The method is protected by a validate anti forgery token attribute
-                        if (actionMethodSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
+                        // The controller class is protected by a validate anti forgery token attribute
+                        if (controllerTypeSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
                         {
                             usingValidateAntiForgeryAttribute = true;
 
                             return;
                         }
 
-                        var baseTypes = controllerTypeSymbol.GetBaseTypes();
-
-                        if ((baseTypes.Contains(controllerTypeSymbol) ||
-                            baseTypes.Contains(controllerBaseTypeSymbol)) && // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`
-                            actionMethodSymbol.IsPublic() &&
-                            !actionMethodSymbol.IsStatic &&
-                            !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol))
+                        foreach (var actionMethodSymbol in controllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
                         {
-                            if (actionMethodSymbol.HasAttribute(httpPostAttributeTypeSymbol))
+                            // The method is protected by a validate anti forgery token attribute
+                            if (actionMethodSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
                             {
-                                actionMethodSymbols.Add((actionMethodSymbol, "HttpPost"));
+                                usingValidateAntiForgeryAttribute = true;
+
+                                return;
                             }
-                            else if (actionMethodSymbol.HasAttribute(httpPutAttributeTypeSymbol))
+
+                            if (actionMethodSymbol.IsPublic() &&
+                                !actionMethodSymbol.IsStatic &&
+                                !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol))
                             {
-                                actionMethodSymbols.Add((actionMethodSymbol, "HttpPut"));
-                            }
-                            else if (actionMethodSymbol.HasAttribute(httpDeleteAttributeTypeSymbol))
-                            {
-                                actionMethodSymbols.Add((actionMethodSymbol, "HttpDelete"));
+                                if (actionMethodSymbol.HasAttribute(httpPostAttributeTypeSymbol))
+                                {
+                                    actionMethodSymbols.Add((actionMethodSymbol, "HttpPost"));
+                                }
+                                else if (actionMethodSymbol.HasAttribute(httpPutAttributeTypeSymbol))
+                                {
+                                    actionMethodSymbols.Add((actionMethodSymbol, "HttpPut"));
+                                }
+                                else if (actionMethodSymbol.HasAttribute(httpDeleteAttributeTypeSymbol))
+                                {
+                                    actionMethodSymbols.Add((actionMethodSymbol, "HttpDelete"));
+                                }
+                                else if (actionMethodSymbol.HasAttribute(httpPatchAttributeTypeSymbol))
+                                {
+                                    actionMethodSymbols.Add((actionMethodSymbol, "HttpPatch"));
+                                }
                             }
                         }
                     }

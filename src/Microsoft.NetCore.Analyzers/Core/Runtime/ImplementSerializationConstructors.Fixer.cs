@@ -93,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var methodSymbol = symbol as IMethodSymbol;
 
             // This would be constructor and can have only one definition.
-            Debug.Assert(methodSymbol.IsConstructor() && methodSymbol.DeclaringSyntaxReferences.Count() == 1);
+            Debug.Assert(methodSymbol.IsConstructor() && methodSymbol.DeclaringSyntaxReferences.HasExactly(1));
             await editor.EditOneDeclarationAsync(methodSymbol, (docEditor, declaration) =>
             {
                 Accessibility newAccessibility = methodSymbol.ContainingType.IsSealed ? Accessibility.Private : Accessibility.Protected;

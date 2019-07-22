@@ -10158,7 +10158,7 @@ End Class");
         }
 
         [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
-        public void AwaitedButNotDisposed_NoDiagnostic()
+        public void AwaitedButNotDisposed_Diagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -10181,8 +10181,8 @@ class C : IDisposable
     }
 }
 ",
-            // Test0.cs(18,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'await M1_Task().ConfigureAwait(false)' before all references to it are out of scope.
-            GetCSharpResultAt(18, 17, "await M1_Task().ConfigureAwait(false)"));
+            // Test0.cs(18,23): warning CA2000: Call System.IDisposable.Dispose on object created by 'M1_Task()' before all references to it are out of scope.
+            GetCSharpResultAt(18, 23, "M1_Task()"));
 
             VerifyBasic(@"
 Imports System
@@ -10202,8 +10202,8 @@ Class C
         Dim c = Await M1_Task().ConfigureAwait(False)
     End Function
 End Class",
-            // Test0.vb(16,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'Await M1_Task().ConfigureAwait(False)' before all references to it are out of scope.
-            GetBasicResultAt(16, 17, "Await M1_Task().ConfigureAwait(False)"));
+            // Test0.vb(16,23): warning CA2000: Call System.IDisposable.Dispose on object created by 'M1_Task()' before all references to it are out of scope.
+            GetBasicResultAt(16, 23, "M1_Task()"));
         }
 
         [Fact, WorkItem(2212, "https://github.com/dotnet/roslyn-analyzers/issues/2212")]
@@ -10230,9 +10230,7 @@ class C : IDisposable
         var c = await M1_Task().ConfigureAwait(false);
     }
 }
-",
-            // Test0.cs(19,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'await M1_Task().ConfigureAwait(false)' before all references to it are out of scope.
-            GetCSharpResultAt(19, 17, "await M1_Task().ConfigureAwait(false)"));
+");
 
             VerifyBasic(@"
 Imports System
@@ -10253,9 +10251,7 @@ Class C
     Public Async Function M2_Task() As Task
         Dim c = Await M1_Task().ConfigureAwait(False)
     End Function
-End Class",
-            // Test0.vb(18,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'Await M1_Task().ConfigureAwait(False)' before all references to it are out of scope.
-            GetBasicResultAt(18, 17, "Await M1_Task().ConfigureAwait(False)"));
+End Class");
         }
 
         [Fact, WorkItem(2347, "https://github.com/dotnet/roslyn-analyzers/issues/2347")]
@@ -10309,8 +10305,33 @@ class C : IDisposable
         var c = await M1_Task(null).ConfigureAwait(false);
     }
 }",
-            // Test0.cs(19,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'await M1_Task(null).ConfigureAwait(false)' before all references to it are out of scope.
-            GetCSharpResultAt(19, 17, "await M1_Task(null).ConfigureAwait(false)"));
+            // Test0.cs(19,23): warning CA2000: Call System.IDisposable.Dispose on object created by 'M1_Task(null)' before all references to it are out of scope.
+            GetCSharpResultAt(19, 23, "M1_Task(null)"));
+        }
+
+        [Fact, WorkItem(37065, "https://github.com/dotnet/roslyn/issues/37065")]
+        public void ReturnDisposableObjectInAsyncMethod_DisposedInCallerInUsing_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Threading.Tasks;
+
+public class C
+{
+    public bool Flag;
+    public async Task M()
+    {
+        using (var s = await GetStreamAsync().ConfigureAwait(false)) // Ensure no diagnostic here.
+        {
+        }
+    }
+    private async Task<MemoryStream> GetStreamAsync()
+    {
+        var x = new MemoryStream();
+        if (Flag) x.Dispose();
+        return x;
+    }
+}");
         }
 
         [Fact, WorkItem(2361, "https://github.com/dotnet/roslyn-analyzers/issues/2361")]
@@ -10584,6 +10605,214 @@ public class C
         value.Dispose();
     }
 }", GetEditorConfigAdditionalFile(editorConfigText));
+        }
+
+        [Fact]
+        [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
+        public void DisposableObject_NotDisposed_ReturnedObject_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class CA2000Issue
+{
+    private sealed class Thing : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public static IDisposable DoSomething()
+    {
+        // Ensure no CA2000 reported here.
+        return GetThing();
+    }
+
+    private static IDisposable GetThing()
+    {
+        var thing = new Thing();
+
+        if (thing.GetHashCode() == 0)
+        {
+            thing.Dispose();
+            return null;
+        }
+
+        return thing;
+    }
+}");
+        }
+
+        [Fact]
+        [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
+        public void DisposableObject_NotDisposed_ReturnedObject_NoDiagnostic_02()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class CA2000Issue
+{
+    private sealed class Thing : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public static IDisposable DoSomething()
+    {
+        // Ensure no CA2000 reported here.
+        return GetThing();
+    }
+
+    private static IDisposable GetThing()
+    {
+        var thing = new Thing();
+
+        if (thing.GetHashCode() == 0)
+        {
+            thing.Dispose();
+            thing = null;
+        }
+
+        return thing;
+    }
+}");
+        }
+
+        [Fact]
+        [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
+        public void DisposableObject_NotDisposed_SomePaths_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class CA2000Issue
+{
+    private sealed class Thing : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public static void DoSomething()
+    {
+        var x = GetThing();
+    }
+
+    private static IDisposable GetThing()
+    {
+        var thing = new Thing();
+
+        if (thing.GetHashCode() == 0)
+        {
+            thing.Dispose();
+            return null;
+        }
+
+        return thing;
+    }
+}",
+            // Test0.cs(13,17): warning CA2000: Use recommended dispose pattern to ensure that object created by 'GetThing()' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(13, 17, "GetThing()"));
+        }
+
+        [Fact]
+        [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
+        public void DisposableObject_NotDisposed_SomePaths_Diagnostic_02()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class CA2000Issue
+{
+    private sealed class Thing : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public static void DoSomething()
+    {
+        var x = GetThing();
+    }
+
+    private static IDisposable GetThing()
+    {
+        var thing = new Thing();
+
+        if (thing.GetHashCode() == 0)
+        {
+            thing.Dispose();
+            thing = null;
+        }
+
+        return thing;
+    }
+}",
+            // Test0.cs(13,17): warning CA2000: Use recommended dispose pattern to ensure that object created by 'GetThing()' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(13, 17, "GetThing()"));
+        }
+
+        [Fact]
+        [WorkItem(36643, "https://github.com/dotnet/roslyn/issues/36643")]
+        public void DisposableObject_StoredInField_NotDisposed_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Threading.Tasks;
+
+public class C
+{
+    private readonly Task<FileStream> fileStreamTask;
+    public C() => fileStreamTask = Task.Run(() => File.OpenRead("""")); 
+
+    public async Task M()
+    {
+        var stream = await fileStreamTask;
+        await stream.FlushAsync();
+    }
+}");
+        }
+
+        [Fact]
+        [WorkItem(36643, "https://github.com/dotnet/roslyn/issues/36643")]
+        public void DisposableObject_StoredInField_NotDisposed_NoDiagnostic_02()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Threading.Tasks;
+
+public class C
+{
+    private Task<FileStream> fileStreamTask;
+    private Task<FileStream> GetStreamAsync() => Task.FromResult(File.OpenRead("""")); 
+
+    public async Task M()
+    {
+        fileStreamTask = GetStreamAsync();
+        var stream = await fileStreamTask;
+        await stream.FlushAsync();
+    }
+}");
+        }
+
+        [Fact]
+        [WorkItem(36643, "https://github.com/dotnet/roslyn/issues/36643")]
+        public void DisposableObject_StoredInLocal_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Threading.Tasks;
+
+public class C
+{
+    private Task<FileStream> GetStreamAsync() => Task.FromResult(File.OpenRead("""")); 
+
+    public async Task M()
+    {
+        var fileStreamTask = GetStreamAsync();
+        var stream = await fileStreamTask;
+        await stream.FlushAsync();
+    }
+}",
+            // Test0.cs(11,30): warning CA2000: Call System.IDisposable.Dispose on object created by 'GetStreamAsync()' before all references to it are out of scope.
+            GetCSharpResultAt(11, 30, "GetStreamAsync()"));
         }
     }
 }

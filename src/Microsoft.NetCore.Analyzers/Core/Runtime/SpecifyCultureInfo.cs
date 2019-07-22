@@ -58,7 +58,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
 
                         IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
-                        if (methodsWithSameNameAsTargetMethod.Count() < 2)
+                        if (methodsWithSameNameAsTargetMethod.HasFewerThan(2))
                         {
                             return;
                         }

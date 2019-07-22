@@ -14,6 +14,66 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class DoNotDisableSchUseStrongCryptoTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
+        public void DocSample1_CSharp_Violation()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5361 violation
+        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true);
+    }
+}",
+            GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class ExampleClass
+    Public Sub ExampleMethod()
+        ' CA5361 violation
+        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true)
+    End Sub
+End Class",
+            GetBasicResultAt(7, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch"));
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Solution()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", false);
+    }
+}");
+        }
+
+        [Fact]
+        public void DocSample1_VB_Solution()
+        {
+            VerifyBasic(@"
+Imports System
+
+Public Class ExampleClass
+    Public Sub ExampleMethod()
+        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", false)
+    End Sub
+End Class");
+        }
+
+        [Fact]
         public void TestBoolDiagnostic()
         {
             VerifyCSharp(@"

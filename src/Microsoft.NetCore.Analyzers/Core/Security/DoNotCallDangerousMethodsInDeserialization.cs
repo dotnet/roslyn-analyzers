@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
                     }
 
-                    if (dangerousMethodSymbolsBuilder.Count() == 0)
+                    if (!dangerousMethodSymbolsBuilder.Any())
                     {
                         return;
                     }

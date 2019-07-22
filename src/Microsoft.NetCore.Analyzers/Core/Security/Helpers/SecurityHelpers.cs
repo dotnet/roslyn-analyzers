@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         }
 
         /// <summary>
-        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from <see cref="MicrosoftNetCoreSecurityResources"/>.
+        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from the specified resource source type.
         /// </summary>
         /// <param name="id">Diagnostic identifier.</param>
         /// <param name="resourceSource">Type containing the resource strings.</param>
@@ -117,6 +117,27 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                     (typeof(MicrosoftNetCoreSecurityResources), MicrosoftNetCoreSecurityResources.ResourceManager),
                     (typeof(SystemSecurityCryptographyResources), SystemSecurityCryptographyResources.ResourceManager),
                 }.Select(o => new KeyValuePair<Type, ResourceManager>(o.Item1, o.Item2)));
+
+        /// <summary>
+        /// Methods using a <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/> parameter for <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
+        /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
+        public static readonly ImmutableHashSet<string> JsonSerializerInstantiateWithSettingsMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "Create",
+                "CreateDefault");
+
+        /// <summary>
+        /// Methods using a <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/> parameter for <see cref="T:Newtonsoft.Json.JsonConvert"/>.
+        /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
+        public static readonly ImmutableHashSet<string> JsonConvertWithSettingsMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "DeserializeObject",
+                "DeserializeAnonymousType",
+                "PopulateObject");
 
         /// <summary>
         /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreSecurityResources"/>.

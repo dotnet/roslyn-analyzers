@@ -255,14 +255,14 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 FindCalledDangerousMethod(child, visited, results);
 
-                                if (!results.TryGetValue(child, out var result))
+                                if (results.TryGetValue(child, out var result))
                                 {
-                                    Debug.Fail(child.Name + " was not found in callGraph");
-
-                                    return;
+                                    results[methodSymbol].UnionWith(result);
                                 }
-
-                                results[methodSymbol].UnionWith(result);
+                                else
+                                {
+                                    Debug.Fail(child.Name + " was not found in results");
+                                }
                             }
                         }
                     }

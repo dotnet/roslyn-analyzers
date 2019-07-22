@@ -120,10 +120,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                     lock (rootOperationsNeedingAnalysis)
                                                     {
                                                         rootOperationsNeedingAnalysis.Add(rootOperation);
+
+                                                        return;
                                                     }
                                                 }
                                             }
-                                            else if (evaluateWithValueContentAnalysis != null)
+
+                                            if (evaluateWithValueContentAnalysis != null)
                                             {
                                                 valueContentAnalysisResultOpt = ValueContentAnalysis.TryGetOrComputeResult(
                                                     rootOperation.GetEnclosingControlFlowGraph(),

@@ -34,28 +34,6 @@ class TestClass
             GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
         }
 
-        // [DllImport] is set with an absolute path, which will let the [DefaultDllImportSearchPaths] be ignored.
-        [Fact]
-        public void Test_DllImportAttributeWithAbsolutePath_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-class TestClass
-{
-    [DllImport(""C:\\Windows\\System32\\user32.dll"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
         [Fact]
         public void Test_DllInUpperCase_Diagnostic()
         {
@@ -65,8 +43,7 @@ using System.Runtime.InteropServices;
 
 class TestClass
 {
-    [DllImport(""C:\\Windows\\System32\\user32.DLL"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    [DllImport(""user32.DLL"")]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
     public void TestMethod()
@@ -74,7 +51,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
         }
 
         [Fact]
@@ -86,8 +63,7 @@ using System.Runtime.InteropServices;
 
 class TestClass
 {
-    [DllImport(""C:\\Windows\\System32\\user32"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    [DllImport(""user32"")]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
     public void TestMethod()
@@ -95,28 +71,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Fact]
-        public void Test_UsingNonexistentAbsolutePath_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-class TestClass
-{
-    [DllImport(""C:\\Nonexistent\\user32.DLL"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
         }
 
         // It will have a compiler warning and recommend to use [DllImport]. So, there's no need to flag a diagnostic for this case.
@@ -217,6 +172,47 @@ class TestClass
 
     public void TestMethod()
     {
+    }
+}");
+        }
+
+        // [DllImport] is set with an absolute path, which will let the [DefaultDllImportSearchPaths] be ignored.
+        [Fact]
+        public void Test_DllImportAttributeWithAbsolutePath_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""C:\\Windows\\System32\\user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_UsingNonexistentAbsolutePath_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""C:\\Nonexistent\\user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }");
         }

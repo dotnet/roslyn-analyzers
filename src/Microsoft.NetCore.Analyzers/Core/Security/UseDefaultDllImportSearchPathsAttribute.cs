@@ -88,9 +88,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                             return;
                         }
 
-                        if ((Path.IsPathRooted(constructorArguments[0].Value.ToString())) ||
-                            (!hasDefaultDllImportSearchPathsAttribute &&
-                            defaultDllImportSearchPathsAttribute == null))
+                        if (!Path.IsPathRooted(constructorArguments[0].Value.ToString()) &&
+                            !hasDefaultDllImportSearchPathsAttribute &&
+                            defaultDllImportSearchPathsAttribute == null)
                         {
                             symbolAnalysisContext.ReportDiagnostic(
                                 symbol.CreateDiagnostic(

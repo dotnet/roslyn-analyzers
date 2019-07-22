@@ -178,7 +178,7 @@ class TestClass
 
         // [DllImport] is set with an absolute path, which will let the [DefaultDllImportSearchPaths] be ignored.
         [Fact]
-        public void Test_DllImportAttributeWithAbsolutePath_NoDiagnostic()
+        public void Test_DllImportAttributeWithAbsolutePath_DefaultDllImportSearchPaths_NoDiagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -188,6 +188,26 @@ class TestClass
 {
     [DllImport(""C:\\Windows\\System32\\user32.dll"")]
     [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}");
+        }
+
+        // [DllImport] is set with an absolute path.
+        [Fact]
+        public void Test_DllImportAttributeWithAbsolutePath_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""C:\\Windows\\System32\\user32.dll"")]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
     public void TestMethod()

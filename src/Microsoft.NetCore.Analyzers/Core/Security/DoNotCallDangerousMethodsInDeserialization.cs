@@ -238,9 +238,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                         if (visited.Add(methodSymbol))
                         {
                             results.Add(methodSymbol, new HashSet<ISymbol>());
-                            Debug.Assert(callGraph.Keys.Contains(methodSymbol), methodSymbol.Name + "was not present in the dictionary.");
 
-                            foreach (var child in callGraph[methodSymbol].Keys)
+                            if (!callGraph.TryGetValue(methodSymbol, out var calledMethods))
+                            {
+                                Debug.Fail(methodSymbol.Name + " was not found in callGraph");
+
+                                return;
+                            }
+
+                            foreach (var child in calledMethods.Keys)
                             {
                                 if (dangerousMethodSymbols.Contains(child))
                                 {
@@ -248,8 +254,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 }
 
                                 FindCalledDangerousMethod(child, visited, results);
-                                Debug.Assert(results.Keys.Contains(child), child.Name + "was not present in the dictionary.");
-                                results[methodSymbol].UnionWith(results[child]);
+
+                                if (!results.TryGetValue(child, out var result))
+                                {
+                                    Debug.Fail(child.Name + " was not found in callGraph");
+
+                                    return;
+                                }
+
+                                results[methodSymbol].UnionWith(result);
                             }
                         }
                     }

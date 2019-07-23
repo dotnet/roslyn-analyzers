@@ -3,13 +3,13 @@
   <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftCodeQualityAnalyzersResources.resx">
     <body>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
-        <source>Count() enumerates the entire enumerable while Any() will only enumerates, at most, up until the first item.</source>
-        <target state="new">Count() enumerates the entire enumerable while Any() will only enumerates, at most, up until the first item.</target>
+        <source>For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
+        <target state="new">For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
-        <source>Count() is being used where Any() could be used.</source>
-        <target state="new">Count() is being used where Any() could be used.</target>
+        <source>Count() is used where Any() could be used instead to improve performance.</source>
+        <target state="new">Count() is used where Any() could be used instead to improve performance.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">

@@ -1246,7 +1246,7 @@
         "CA1827": {
           "id": "CA1827",
           "shortDescription": "Do not use Count() when Any() can be used",
-          "fullDescription": "Count() enumerates the entire enumerable while Any() will only enumerates, at most, up until the first item.",
+          "fullDescription": "For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
           "properties": {

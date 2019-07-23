@@ -39,27 +39,27 @@
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
         <source>Do Not Add Archive Item's Path To The Target File System Path</source>
-        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <target state="translated">Ne pas ajouter le chemin de l'élément d'archive au chemin du système de fichiers cible</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
         <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
-        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <target state="translated">Quand vous effectuez l'extraction de fichiers à partir d'une archive et à l'aide du chemin de l'élément d'archive, vérifiez si le chemin est sécurisé. Le chemin de l'archive peut être relatif et entraîner l'accès au système de fichiers en dehors du chemin cible attendu pour le système de fichiers. Cela peut permettre ensuite des changements de configuration malveillants et l'exécution de code à distance via une technique d'embuscade.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
         <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
-        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
+        <target state="translated">Quand vous créez le chemin de '{0} dans la méthode {1}' à partir du chemin d'élément d'archive relatif pour extraire un fichier, et que la source est une archive zip non approuvée, veillez à assainir le chemin d'élément d'archive relatif '{2} dans la méthode {3}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
         <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
-        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <target state="translated">N'utilisez pas la fonction de dérivation de clés faibles avec un nombre insuffisant d'itérations</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
         <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
-        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
+        <target state="translated">Utilisez au moins {0} itérations quand vous dérivez une clé de chiffrement à partir d'un mot de passe. Par défaut, le IterationCount de Rfc2898DeriveByte est seulement égal à 1 000</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -150,6 +150,21 @@
       <trans-unit id="DoNotDisableSchUseStrongCryptoMessage">
         <source>{0} disables TLS 1.2 and enables SSLv3</source>
         <target state="translated">{0} désactive TLS 1.2 et active SSLv3</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotHardCodeEncryptionKey">
+        <source>Do Not Hard Code Encryption Key</source>
+        <target state="new">Do Not Hard Code Encryption Key</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
+        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</source>
+        <target state="new">SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
+        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</source>
+        <target state="new">Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
@@ -299,7 +314,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithm">
         <source>Do Not Use Weak Key Derivation Function Algorithm</source>
-        <target state="translated">Ne pas utiliser l'algorithme de fonction de dérivation de clés faibles</target>
+        <target state="translated">N'utilisez pas l'algorithme de fonction de dérivation de clés faibles</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
@@ -314,7 +329,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
         <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
-        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
+        <target state="translated">Quand vous dérivez des clés de chiffrement à partir d'entrées fournies par l'utilisateur, par exemple un mot de passe, utilisez un nombre suffisant d'itérations (au moins 100 000).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -329,12 +344,12 @@
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
         <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
-        <target state="new">Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</target>
+        <target state="translated">Évitez tout codage en dur du SecurityProtocolType {0}, et utilisez plutôt SecurityProtocolType.SystemDefault pour permettre au système d'exploitation de choisir le meilleur protocole TLS à utiliser.</target>
         <note />
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolTitle">
         <source>Avoid hardcoding SecurityProtocolType value</source>
-        <target state="new">Avoid hardcoding SecurityProtocolType value</target>
+        <target state="translated">Éviter tout codage en dur de la valeur de SecurityProtocolType</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
@@ -359,12 +374,12 @@
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
         <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
-        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <target state="translated">Vérifiez que le nombre d'itérations est suffisant durant l'utilisation de la fonction de dérivation de clés faibles</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
         <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
-        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
+        <target state="translated">Vérifiez que le nombre d'itérations est au moins égal à {0} quand vous dérivez une clé de chiffrement à partir d'un mot de passe. Par défaut, le IterationCount de Rfc2898DeriveByte est seulement égal à 1 000</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -379,7 +394,7 @@
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
         <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
-        <target state="needs-review-translation">La sous-classe {0} de Page ne définit pas la propriété ViewStateUserKey dans la méthode OnInit</target>
+        <target state="translated">La classe {0} dérivée de System.Web.UI.Page ne définit pas la propriété ViewStateUserKey dans la méthode OnInit ou la méthode Page_Init</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">

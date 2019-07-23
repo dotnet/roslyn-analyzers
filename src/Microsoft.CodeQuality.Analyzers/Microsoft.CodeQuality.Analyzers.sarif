@@ -1066,7 +1066,7 @@
         "CA1801": {
           "id": "CA1801",
           "shortDescription": "Review unused parameters",
-          "fullDescription": "A method signature includes a parameter that is not used in the method body.",
+          "fullDescription": "Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1801-review-unused-parameters",
           "properties": {
@@ -1456,6 +1456,21 @@
             ],
             "tags": [
               "Telemetry"
+            ]
+          }
+        },
+        "CA2245": {
+          "id": "CA2245",
+          "shortDescription": "Do not assign a property to itself.",
+          "fullDescription": "The property {0} should not be assigned to itself.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidPropertySelfAssignment",
+            "languages": [
+              "C#",
+              "Visual Basic"
             ]
           }
         }

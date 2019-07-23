@@ -39,27 +39,27 @@
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPath">
         <source>Do Not Add Archive Item's Path To The Target File System Path</source>
-        <target state="new">Do Not Add Archive Item's Path To The Target File System Path</target>
+        <target state="translated">Nepřidávejte cestu k položce archivu do systémové cesty k cílovému souboru.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription">
         <source>When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</source>
-        <target state="new">When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.</target>
+        <target state="translated">Při extrahování souborů z archivu a použití cesty k položce archivu zkontrolujte, jestli je cesta bezpečná. Cesta k archivu může být relativní a může umožnit přístup k systému souborů mimo očekávanou cílovou cestu k systému souborů, což může vést ke škodlivým změnám konfigurace a spouštění vzdáleného kódu prostřednictvím metody nastražení a čekání.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage">
         <source>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</source>
-        <target state="new">When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</target>
+        <target state="translated">Pokud vytváříte cestu pro {0} v metodě {1} z relativní cesty k položce archivu za účelem extrahování souboru a daný zdroj je nedůvěryhodný archiv zip, zajistěte sanitizaci relativní cesty k položce archivu {2} v metodě {3}.</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCount">
         <source>Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</source>
-        <target state="new">Do Not Use Weak Key Derivation Function With Insufficient Iteration Count</target>
+        <target state="translated">Nepoužívat slabou funkci odvození klíče (KDF) s nedostatečným počtem iterací</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseWeakKDFInsufficientIterationCountMessage">
         <source>Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
-        <target state="new">Use at least {0} iterations when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
+        <target state="translated">Při odvozování kryptografického klíče z hesla používejte alespoň {0} iterací. Ve výchozím nastavení má atribut IterationCount pro Rfc2898DeriveByte hodnotu pouze 1000.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotAddSchemaByURL">
@@ -150,6 +150,21 @@
       <trans-unit id="DoNotDisableSchUseStrongCryptoMessage">
         <source>{0} disables TLS 1.2 and enables SSLv3</source>
         <target state="translated">{0} zakazuje TLS 1.2 a povoluje SSLv3.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotHardCodeEncryptionKey">
+        <source>Do Not Hard Code Encryption Key</source>
+        <target state="new">Do Not Hard Code Encryption Key</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
+        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</source>
+        <target state="new">SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
+        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</source>
+        <target state="new">Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
@@ -299,7 +314,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithm">
         <source>Do Not Use Weak Key Derivation Function Algorithm</source>
-        <target state="translated">Nepoužívat slabý algoritmus funkce odvození klíče (KDF)</target>
+        <target state="translated">Nepoužívejte slabý algoritmus funkce odvození klíče (KDF).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmDescription">
@@ -309,12 +324,12 @@
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFAlgorithmMessage">
         <source>{0} created with a weak hash algorithm. Use SHA256, SHA384, or SHA512 to create a strong key from a password</source>
-        <target state="translated">{0} – vytvořeno pomocí slabého algoritmu hash. Jestli chcete vytvořit silný klíč z hesla, použijte SHA256, SHA384 nebo SHA512.</target>
+        <target state="translated">{0} se vytvořilo pomocí slabého algoritmu hash. Jestli chcete vytvořit silný klíč z hesla, použijte SHA256, SHA384 nebo SHA512.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseWeakKDFInsufficientIterationCountDescription">
         <source>When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</source>
-        <target state="new">When deriving cryptographic keys from user-provided inputs such as password, use sufficient iteration count (at least 100k).</target>
+        <target state="translated">Při odvozování kryptografických klíčů z uživatelem zadaných vstupů, jako je například heslo, používejte dostatečný počet iterací (alespoň 100 000).</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseXslTransform">
@@ -329,12 +344,12 @@
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolMessage">
         <source>Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</source>
-        <target state="new">Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.</target>
+        <target state="translated">Vyhněte se pevnému zakódování hodnoty SecurityProtocolType {0}. Místo toho použijte SecurityProtocolType.SystemDefault, aby mohl operační systém sám zvolit nejlepší protokol TLS (Transport Layer Security), který se má použít.</target>
         <note />
       </trans-unit>
       <trans-unit id="HardCodedSecurityProtocolTitle">
         <source>Avoid hardcoding SecurityProtocolType value</source>
-        <target state="new">Avoid hardcoding SecurityProtocolType value</target>
+        <target state="translated">Vyhněte se pevnému zakódování hodnoty SecurityProtocolType</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeInstallRootCert">
@@ -359,12 +374,12 @@
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCount">
         <source>Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</source>
-        <target state="new">Ensure Sufficient Iteration Count When Using Weak Key Derivation Function</target>
+        <target state="translated">Při použití slabé funkce odvození klíče (KDF) zajistěte dostatečný počet iterací.</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseWeakKDFInsufficientIterationCountMessage">
         <source>Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</source>
-        <target state="new">Ensure that the iteration count is at least {0} when deriving a cryptographic key from a password. By default, Rfc2898DeriveByte's IterationCount is only 1000</target>
+        <target state="translated">Při odvozování kryptografického klíče z hesla zajistěte, aby byl počet iterací alespoň {0}. Ve výchozím nastavení má atribut IterationCount pro Rfc2898DeriveByte hodnotu pouze 1000.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetViewStateUserKey">
@@ -379,7 +394,7 @@
       </trans-unit>
       <trans-unit id="SetViewStateUserKeyMessage">
         <source>The class {0} derived from System.Web.UI.Page does not set the ViewStateUserKey property in the OnInit method or Page_Init method</source>
-        <target state="needs-review-translation">Podtřída {0} třídy Page nenastavuje v metodě OnInit vlastnost ViewStateUserKey.</target>
+        <target state="translated">Třída {0}, která je odvozená ze System.Web.UI.Page, nenastavuje vlastnost ViewStateUserKey v metodě OnInit nebo Page_Init.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseContainerLevelAccessPolicy">

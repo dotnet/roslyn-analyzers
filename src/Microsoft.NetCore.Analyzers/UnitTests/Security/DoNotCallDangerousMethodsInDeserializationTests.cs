@@ -1382,6 +1382,76 @@ public class TestClass : IDeserializationCallback
         }
 
         [Fact]
+        public void TestStaticDelegateFieldDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+public delegate void TestDelegate();
+
+[Serializable()]
+public class TestAnotherClass
+{
+    public static TestDelegate staticDelegateField = () =>
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] { 0x20, 0x20, 0x20 };
+        File.WriteAllBytes(path, bytes);
+    };
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        TestAnotherClass.staticDelegateField();
+    }
+}",
+            GetCSharpResultAt(24, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
+        public void TestDelegateFieldDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+public delegate void TestDelegate();
+
+[Serializable()]
+public class TestAnotherClass
+{
+    public TestDelegate delegateField;
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        TestAnotherClass testAnotherClass = new TestAnotherClass();
+        testAnotherClass.delegateField = () =>
+        {
+            var path = ""C:\\"";
+            var bytes = new byte[] { 0x20, 0x20, 0x20 };
+            File.WriteAllBytes(path, bytes);
+        };
+        testAnotherClass.delegateField();
+    }
+}",
+            GetCSharpResultAt(19, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
         public void TestUsingAbstractClassDiagnostic()
         {
             VerifyCSharp(@"

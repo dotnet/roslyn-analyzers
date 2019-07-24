@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -22,21 +22,21 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DefinitelyUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5382",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCore),
-            nameof(SystemSecurityCryptographyResources.DefinitelyUseSecureCookiesASPNetCoreMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseSecureCookiesASPNetCore),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseSecureCookiesASPNetCoreMessage),
             false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCoreDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseSecureCookiesASPNetCoreDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor MaybeUseSecureCookiesASPNetCoreRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5383",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCore),
-            nameof(SystemSecurityCryptographyResources.MaybeUseSecureCookiesASPNetCoreMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseSecureCookiesASPNetCore),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseSecureCookiesASPNetCoreMessage),
             false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.UseSecureCookiesASPNetCoreDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseSecureCookiesASPNetCoreDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(

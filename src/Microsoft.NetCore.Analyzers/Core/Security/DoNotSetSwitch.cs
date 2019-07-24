@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -24,17 +24,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DoNotDisableSchUseStrongCryptoRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5361",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCrypto),
-            nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCrypto),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCryptoMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5361",
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCryptoDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor DoNotDisableSpmSecurityProtocolsRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5378",
-            nameof(MicrosoftNetCoreSecurityResources.DoNotDisableUsingServicePointManagerSecurityProtocolsTitle),
-            nameof(MicrosoftNetCoreSecurityResources.DoNotDisableUsingServicePointManagerSecurityProtocolsMessage),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableUsingServicePointManagerSecurityProtocolsTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableUsingServicePointManagerSecurityProtocolsMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5378",
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);

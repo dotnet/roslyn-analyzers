@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -17,17 +17,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5385";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseRSAWithSufficientKeySize),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySize),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseRSAWithSufficientKeySizeMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySizeMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseRSAWithSufficientKeySizeDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseRSAWithSufficientKeySizeDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,

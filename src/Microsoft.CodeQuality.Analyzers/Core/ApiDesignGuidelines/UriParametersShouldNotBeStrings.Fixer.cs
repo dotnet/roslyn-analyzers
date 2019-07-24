@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var title = MicrosoftApiDesignGuidelinesAnalyzersResources.UriParametersShouldNotBeStringsTitle;
+            var title = MicrosoftCodeQualityAnalyzersResources.UriParametersShouldNotBeStringsTitle;
 
             var document = context.Document;
             var cancellationToken = context.CancellationToken;

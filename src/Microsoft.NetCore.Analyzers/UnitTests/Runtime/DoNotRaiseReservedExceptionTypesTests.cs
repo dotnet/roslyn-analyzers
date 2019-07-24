@@ -106,22 +106,22 @@ End Namespace",
 
         private DiagnosticResult GetTooGenericCSharpResultAt(int line, int column, string callee)
         {
-            return GetCSharpResultAt(line, column, RuleId, string.Format(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric, callee));
+            return GetCSharpResultAt(line, column, RuleId, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric, callee));
         }
 
         private DiagnosticResult GetReservedCSharpResultAt(int line, int column, string callee)
         {
-            return GetCSharpResultAt(line, column, RuleId, string.Format(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved, callee));
+            return GetCSharpResultAt(line, column, RuleId, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved, callee));
         }
 
         private DiagnosticResult GetTooGenericBasicResultAt(int line, int column, string callee)
         {
-            return GetBasicResultAt(line, column, RuleId, string.Format(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric, callee));
+            return GetBasicResultAt(line, column, RuleId, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageTooGeneric, callee));
         }
 
         private DiagnosticResult GetReservedBasicResultAt(int line, int column, string callee)
         {
-            return GetBasicResultAt(line, column, RuleId, string.Format(SystemRuntimeAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved, callee));
+            return GetBasicResultAt(line, column, RuleId, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotRaiseReservedExceptionTypesMessageReserved, callee));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

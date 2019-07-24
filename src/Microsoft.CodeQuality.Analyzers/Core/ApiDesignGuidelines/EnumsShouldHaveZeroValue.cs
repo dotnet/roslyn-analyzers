@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -41,10 +41,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public const string RuleMultipleZeroCustomTag = "RuleMultipleZero";
         public const string RuleNoZeroCustomTag = "RuleNoZero";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageRuleRename = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageRuleRename = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsRename), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         internal static DiagnosticDescriptor RuleRename = new DiagnosticDescriptor(RuleId,
                                                                        s_localizableTitle,
                                                                        s_localizableMessageRuleRename,
@@ -55,7 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                        helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value",
                                                                        customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule.Concat(RuleRenameCustomTag).ToArray());
 
-        private static readonly LocalizableString s_localizableMessageRuleMultipleZero = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageRuleMultipleZero = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageFlagsMultipleZeros), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         internal static DiagnosticDescriptor RuleMultipleZero = new DiagnosticDescriptor(RuleId,
                                                                s_localizableTitle,
                                                                s_localizableMessageRuleMultipleZero,
@@ -66,7 +66,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1008-enums-should-have-zero-value",
                                                                customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule.Concat(RuleMultipleZeroCustomTag).ToArray());
 
-        private static readonly LocalizableString s_localizableMessageRuleNoZero = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageRuleNoZero = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.EnumsShouldHaveZeroValueMessageNotFlagsNoZeroValue), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         internal static DiagnosticDescriptor RuleNoZero = new DiagnosticDescriptor(RuleId,
                                                                s_localizableTitle,
                                                                s_localizableMessageRuleNoZero,

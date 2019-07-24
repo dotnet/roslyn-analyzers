@@ -23,14 +23,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         {
             return GetBasicResultAt(line, column,
                 id: CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId,
-                message: string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage, propertyName));
+                message: string.Format(MicrosoftCodeQualityAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage, propertyName));
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string propertyName)
         {
             return GetCSharpResultAt(line, column,
                 id: CollectionPropertiesShouldBeReadOnlyAnalyzer.RuleId,
-                message: string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage, propertyName));
+                message: string.Format(MicrosoftCodeQualityAnalyzersResources.CollectionPropertiesShouldBeReadOnlyMessage, propertyName));
         }
 
         [Fact]

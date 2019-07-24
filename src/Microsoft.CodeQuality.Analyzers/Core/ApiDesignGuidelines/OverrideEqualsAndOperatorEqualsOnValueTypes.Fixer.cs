@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             Diagnostic diagnostic = context.Diagnostics.First();
-            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesTitle;
+            string title = MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,

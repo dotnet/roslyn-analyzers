@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -46,14 +46,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 switch (customTag)
                 {
                     case EnumsShouldHaveZeroValueAnalyzer.RuleRenameCustomTag:
-                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueFlagsRenameCodeFix;
+                        title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueFlagsRenameCodeFix;
                         context.RegisterCodeFix(new MyCodeAction(title,
                                                     async ct => await GetUpdatedDocumentForRuleNameRenameAsync(context.Document, (IFieldSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
                                                     equivalenceKey: title),
                                                 diagnostic);
                         return;
                     case EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZeroCustomTag:
-                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueFlagsMultipleZeroCodeFix;
+                        title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueFlagsMultipleZeroCodeFix;
                         context.RegisterCodeFix(new MyCodeAction(title,
                                                     async ct => await ApplyRuleNameMultipleZeroAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
                                                     equivalenceKey: title),
@@ -61,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
 
                     case EnumsShouldHaveZeroValueAnalyzer.RuleNoZeroCustomTag:
-                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix;
+                        title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix;
                         context.RegisterCodeFix(new MyCodeAction(title,
                                                     async ct => await ApplyRuleNameNoZeroValueAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
                                                     equivalenceKey: title),

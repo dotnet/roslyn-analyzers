@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -509,12 +509,12 @@ public class SomeTestClass : IDisposable
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
+            return GetCSharpResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
         }
 
         private static DiagnosticResult GetCA1821BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
+            return GetBasicResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
         }
     }
 }

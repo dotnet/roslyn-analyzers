@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -13,9 +13,9 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5366";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseXmlReaderForDataSetReadXml),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseXmlReaderForDataSetReadXml),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor RealRule = new DiagnosticDescriptor(
                 DiagnosticId,

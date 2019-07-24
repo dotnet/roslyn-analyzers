@@ -29,6 +29,9 @@ namespace Microsoft.NetCore.Analyzers.Security
             SystemSecurityCryptographyResources.ResourceManager,
             typeof(SystemSecurityCryptographyResources));
 
+        private const int UnsafeBits = 2 | 256;
+        private const int LegacyBehavior = 0;
+
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
                 s_Title,
@@ -60,12 +63,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
-                var hasDefaultDllImportSearchPathsAttribute = false;
-
-                if (compilation.Assembly.GetAttributes().Select(o => o.AttributeClass).Contains(defaultDllImportSearchPathsAttributeTypeSymbol))
-                {
-                    hasDefaultDllImportSearchPathsAttribute = true;
-                }
+                var cancellationToken = compilationStartAnalysisContext.CancellationToken;
+                var unsafeDllImportSearchPathValues = compilationStartAnalysisContext.Options.GetUnsignedIntegralOptionValue(
+                    optionName: EditorConfigOptionNames.UnsafeDllImportSearchPathValues,
+                    rule: Rule,
+                    defaultValue: UnsafeBits,
+                    cancellationToken: cancellationToken);
+                var defaultDllImportSearchPathsAttributeOnAssembly = compilation.Assembly.GetAttributes().FirstOrDefault(o => o.AttributeClass.Equals(defaultDllImportSearchPathsAttributeTypeSymbol));
+                var dllImportSearchPathOnAssembly = defaultDllImportSearchPathsAttributeOnAssembly == null ? -1 : (int)defaultDllImportSearchPathsAttributeOnAssembly.ConstructorArguments.FirstOrDefault().Value;
 
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
@@ -78,6 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var dllImportAttribute = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(dllImportAttributeTypeSymbol));
                     var defaultDllImportSearchPathsAttribute = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(defaultDllImportSearchPathsAttributeTypeSymbol));
+                    var dllImportSearchPath = defaultDllImportSearchPathsAttribute == null ? -1 : (int)defaultDllImportSearchPathsAttribute.ConstructorArguments.FirstOrDefault().Value;
 
                     if (dllImportAttribute != null)
                     {
@@ -88,15 +94,33 @@ namespace Microsoft.NetCore.Analyzers.Security
                             return;
                         }
 
-                        if (!Path.IsPathRooted(constructorArguments[0].Value.ToString()) &&
-                            !hasDefaultDllImportSearchPathsAttribute &&
-                            defaultDllImportSearchPathsAttribute == null)
+                        if (Path.IsPathRooted(constructorArguments[0].Value.ToString()))
                         {
-                            symbolAnalysisContext.ReportDiagnostic(
-                                symbol.CreateDiagnostic(
-                                    Rule,
-                                    symbol.Name));
+                            return;
                         }
+
+                        if (dllImportSearchPath == -1)
+                        {
+                            if (dllImportSearchPathOnAssembly != -1 &&
+                                dllImportSearchPathOnAssembly != LegacyBehavior &&
+                                (dllImportSearchPathOnAssembly & unsafeDllImportSearchPathValues) == 0)
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (dllImportSearchPath != LegacyBehavior &&
+                                (dllImportSearchPath & unsafeDllImportSearchPathValues) == 0)
+                            {
+                                return;
+                            }
+                        }
+
+                        symbolAnalysisContext.ReportDiagnostic(
+                            symbol.CreateDiagnostic(
+                                Rule,
+                                symbol.Name));
                     }
                 }, SymbolKind.Method);
             });

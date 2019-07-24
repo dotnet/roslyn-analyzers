@@ -114,6 +114,136 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public void Test_DllImportSearchPathAssemblyDirectory_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Fact]
+        public void Test_DllImportSearchPathLegacyBehavior_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.LegacyBehavior)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Fact]
+        public void Test_DllImportSearchPathUseDllDirectoryForDependencies_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UseDllDirectoryForDependencies)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Fact]
+        public void Test_DllImportSearchPathAssemblyDirectory_Assembly_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(10, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Fact]
+        public void Test_AssemblyDirectory_ApplicationDirectory_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_ApplicationDirectory_AssemblyDirectory_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
         // In this case, [DefaultDllImportSearchPaths] is applied to the assembly.
         // So, this attribute specifies the paths that are used by default to search for any DLL that provides a function for a platform invoke, in any code in the assembly.
         [Fact]

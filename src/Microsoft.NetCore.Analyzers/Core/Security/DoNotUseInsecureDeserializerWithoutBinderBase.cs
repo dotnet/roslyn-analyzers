@@ -67,30 +67,6 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// </summary>
         private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(ImmutableArray.Create(PropertySetAbstractValueKind.Flagged));
 
-        /// <summary>
-        /// For PropertySetAnalysis dataflow analysis; only tracking one property, the <see cref="SerializationBinderPropertyMetadataName"/>.
-        /// </summary>
-        private const int SerializationBinderIndex = 0;
-
-        /// <summary>
-        /// For PropertySetAnalysis dataflow analysis; hazardous usage evaluation callback.
-        /// </summary>
-        /// <param name="methodSymbol"></param>
-        /// <param name="propertySetAbstractValue"></param>
-        /// <returns></returns>
-        private static HazardousUsageEvaluationResult HazardousIfNull(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
-        {
-            switch (propertySetAbstractValue[SerializationBinderIndex])
-            {
-                case PropertySetAbstractValueKind.Flagged:
-                    return HazardousUsageEvaluationResult.Flagged;
-                case PropertySetAbstractValueKind.Unflagged:
-                    return HazardousUsageEvaluationResult.Unflagged;
-                default:
-                    return HazardousUsageEvaluationResult.MaybeFlagged;
-            }
-        }
-
         public sealed override void Initialize(AnalysisContext context)
         {
             ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
@@ -111,26 +87,14 @@ namespace Microsoft.NetCore.Analyzers.Security
             PropertyMapperCollection propertyMappers = new PropertyMapperCollection(
                 new PropertyMapper(
                     this.SerializationBinderPropertyMetadataName,
-                    (PointsToAbstractValue pointsToAbstractValue) =>
-                    {
-                        // A null SerializationBinder is what we want to flag as hazardous.
-                        switch (pointsToAbstractValue.NullState)
-                        {
-                            case NullAbstractValue.Null:
-                                return PropertySetAbstractValueKind.Flagged;
-
-                            case NullAbstractValue.NotNull:
-                                return PropertySetAbstractValueKind.Unflagged;
-
-                            default:
-                                return PropertySetAbstractValueKind.MaybeFlagged;
-                        }
-                    }));
+                    PropertySetCallbacks.FlagIfNull));
 
             HazardousUsageEvaluatorCollection hazardousUsageEvaluators =
                 new HazardousUsageEvaluatorCollection(
                     cachedDeserializationMethodNames.Select(
-                        methodName => new HazardousUsageEvaluator(methodName, DoNotUseInsecureDeserializerWithoutBinderBase.HazardousIfNull)));
+                        methodName => new HazardousUsageEvaluator(
+                            methodName,
+                            PropertySetCallbacks.HazardousIfAllFlaggedOrAllUnknown)));
 
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>

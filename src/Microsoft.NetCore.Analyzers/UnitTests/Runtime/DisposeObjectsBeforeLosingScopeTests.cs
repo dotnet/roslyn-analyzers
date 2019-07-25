@@ -10585,5 +10585,147 @@ public class C
     }
 }", GetEditorConfigAdditionalFile(editorConfigText));
         }
+
+        [Fact]
+        [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
+        public void DisposableObject_NotDisposed_ReturnedObject_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class CA2000Issue
+{
+    private sealed class Thing : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public static IDisposable DoSomething()
+    {
+        // Ensure no CA2000 reported here.
+        return GetThing();
+    }
+
+    private static IDisposable GetThing()
+    {
+        var thing = new Thing();
+
+        if (thing.GetHashCode() == 0)
+        {
+            thing.Dispose();
+            return null;
+        }
+
+        return thing;
+    }
+}");
+        }
+
+        [Fact]
+        [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
+        public void DisposableObject_NotDisposed_ReturnedObject_NoDiagnostic_02()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class CA2000Issue
+{
+    private sealed class Thing : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public static IDisposable DoSomething()
+    {
+        // Ensure no CA2000 reported here.
+        return GetThing();
+    }
+
+    private static IDisposable GetThing()
+    {
+        var thing = new Thing();
+
+        if (thing.GetHashCode() == 0)
+        {
+            thing.Dispose();
+            thing = null;
+        }
+
+        return thing;
+    }
+}");
+        }
+
+        [Fact]
+        [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
+        public void DisposableObject_NotDisposed_SomePaths_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class CA2000Issue
+{
+    private sealed class Thing : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public static void DoSomething()
+    {
+        var x = GetThing();
+    }
+
+    private static IDisposable GetThing()
+    {
+        var thing = new Thing();
+
+        if (thing.GetHashCode() == 0)
+        {
+            thing.Dispose();
+            return null;
+        }
+
+        return thing;
+    }
+}",
+            // Test0.cs(13,17): warning CA2000: Use recommended dispose pattern to ensure that object created by 'GetThing()' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(13, 17, "GetThing()"));
+        }
+
+        [Fact]
+        [WorkItem(2637, "https://github.com/dotnet/roslyn-analyzers/issues/2637")]
+        public void DisposableObject_NotDisposed_SomePaths_Diagnostic_02()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class CA2000Issue
+{
+    private sealed class Thing : IDisposable
+    {
+        public void Dispose() { }
+    }
+
+    public static void DoSomething()
+    {
+        var x = GetThing();
+    }
+
+    private static IDisposable GetThing()
+    {
+        var thing = new Thing();
+
+        if (thing.GetHashCode() == 0)
+        {
+            thing.Dispose();
+            thing = null;
+        }
+
+        return thing;
+    }
+}",
+            // Test0.cs(13,17): warning CA2000: Use recommended dispose pattern to ensure that object created by 'GetThing()' is disposed on all paths. If possible, wrap the creation within a 'using' statement or a 'using' declaration. Otherwise, use a try-finally pattern, with a dedicated local variable declared before the try region and an unconditional Dispose invocation on non-null value in the 'finally' region, say 'x?.Dispose()'. If the object is explicitly disposed within the try region or the dispose ownership is transfered to another object or method, assign 'null' to the local variable just after such an operation to prevent double dispose in 'finally'.
+            GetCSharpMayBeNotDisposedResultAt(13, 17, "GetThing()"));
+        }
     }
 }

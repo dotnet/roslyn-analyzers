@@ -405,4 +405,13 @@
   <data name="DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage" xml:space="preserve">
     <value>When creating path for '{0} in method {1}' from relative archive item path to extract file and the source is an untrusted zip archive, make sure to sanitize relative archive item path '{2} in method {3}'</value>
   </data>
+  <data name="UseDefaultDllImportSearchPathsAttribute" xml:space="preserve">
+    <value>Use DefaultDllImportSearchPaths Attribute For P/Invokes</value>
+  </data>
+  <data name="UseDefaultDllImportSearchPathsAttributeDescription" xml:space="preserve">
+    <value>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</value>
+  </data>
+  <data name="UseDefaultDllImportSearchPathsAttributeMessage" xml:space="preserve">
+    <value>The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</value>
+  </data>
 </root>

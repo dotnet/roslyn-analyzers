@@ -412,6 +412,21 @@
         <target state="translated">가능한 경우 SAS(공유 액세스 서명) 대신 Azure의 역할 기반 액세스 제어를 사용하세요. 계속 SAS를 사용해야 할 경우 SAS를 만들 때 컨테이너 수준 액세스 정책을 사용하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttribute">
+        <source>Use DefaultDllImportSearchPaths Attribute For P/Invokes</source>
+        <target state="new">Use DefaultDllImportSearchPaths Attribute For P/Invokes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttributeDescription">
+        <source>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</source>
+        <target state="new">By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttributeMessage">
+        <source>The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</source>
+        <target state="new">The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
         <target state="translated">충분한 키 크기로 RSA(Rivest–Shamir–Adleman) 알고리즘 사용</target>

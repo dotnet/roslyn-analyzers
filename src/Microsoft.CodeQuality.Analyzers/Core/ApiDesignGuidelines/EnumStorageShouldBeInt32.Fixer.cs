@@ -29,7 +29,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumStorageShouldBeInt32Title;
+            var title = MicrosoftCodeQualityAnalyzersResources.EnumStorageShouldBeInt32Title;
 
             // Get syntax root node
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);

@@ -20,17 +20,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5391";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseAutoValidateAntiforgeryToken),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryToken),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseAutoValidateAntiforgeryTokenMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseAutoValidateAntiforgeryTokenDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly Regex s_AntiForgeryAttributeRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute$", RegexOptions.Compiled);
         private static readonly Regex s_AntiForgeryRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*$", RegexOptions.Compiled);
@@ -96,6 +96,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                     (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                     {
+                        if (hasGlobalAntiForgeryFilter)
+                        {
+                            return;
+                        }
+
                         var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
                         if (owningSymbol is IMethodSymbol methodSymbol)
@@ -113,11 +118,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                 // Holds if the project has a global anti forgery filter.
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {
+                    if (hasGlobalAntiForgeryFilter)
+                    {
+                        return;
+                    }
+
                     var invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
                     var methodSymbol = invocationOperation.TargetMethod;
 
-                    if (filterCollectionTypeSymbol.GetBaseTypesAndThis().Contains(methodSymbol.ContainingType) &&
-                        methodSymbol.Name == "Add")
+                    if (methodSymbol.Name == "Add" &&
+                        methodSymbol.ContainingType.GetBaseTypesAndThis().Contains(filterCollectionTypeSymbol))
                     {
                         var potentialAntiForgeryFilters = invocationOperation
                             .Arguments
@@ -134,7 +144,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 hasGlobalAntiForgeryFilter = true;
 
-                                break;
+                                return;
                             }
                             else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAsyncAuthorizationFilterTypeSymbol))
                             {
@@ -154,6 +164,11 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
+                    if (hasGlobalAntiForgeryFilter)
+                    {
+                        return;
+                    }
+
                     var controllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
                     var baseTypes = controllerTypeSymbol.GetBaseTypes();
 
@@ -213,7 +228,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         foreach (var onAuthorizationAsyncMethodSymbol in onAuthorizationAsyncMethodSymbols)
                         {
-                            CheckIfACertainMethodGetsCalled(
+                            FindTheMethod(
                                 onAuthorizationAsyncMethodSymbol,
                                 visited,
                                 (IMethodSymbol methodSymbol) =>
@@ -239,12 +254,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                 });
 
                 // <summary>
-                // Check if this method calls a method, which meets the requirement, directly or indirecly.
+                // Check if there's a method with specific requirements is getting called by another method.
                 // </summary>
-                // <param name="methodSymbol">The symbol of the method to be analyzed</param>
+                // <param name="methodSymbol">The symbol of the caller method</param>
                 // <param name="visited">All the methods has been visited and its results</param>
                 // <param name="Requirement">The requirements</param>
-                void CheckIfACertainMethodGetsCalled(IMethodSymbol methodSymbol, Dictionary<IMethodSymbol, bool> visited, RequirementsOfValidateMethod requirements)
+                void FindTheMethod(IMethodSymbol methodSymbol, Dictionary<IMethodSymbol, bool> visited, RequirementsOfValidateMethod requirements)
                 {
                     if (!visited.TryGetValue(methodSymbol, out var result))
                     {
@@ -263,7 +278,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 }
                                 else
                                 {
-                                    CheckIfACertainMethodGetsCalled(child, visited, requirements);
+                                    FindTheMethod(child, visited, requirements);
 
                                     if (visited[child])
                                     {

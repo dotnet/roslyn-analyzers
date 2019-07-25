@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 string newName = diagnostic.Properties[ParameterNamesShouldMatchBaseDeclarationAnalyzer.NewNamePropertyName];
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.RenameToTitle, newName),
+                        string.Format(MicrosoftCodeQualityAnalyzersResources.RenameToTitle, newName),
                         cancellationToken => GetUpdatedDocumentForParameterRenameAsync(context.Document, declaredSymbol, newName, cancellationToken),
                         nameof(ParameterNamesShouldMatchBaseDeclarationFixer) + newName),
                     diagnostic);

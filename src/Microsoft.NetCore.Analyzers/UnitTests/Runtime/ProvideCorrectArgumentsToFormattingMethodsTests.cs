@@ -343,12 +343,12 @@ public class C
 
         private static DiagnosticResult GetCA2241CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
+            return GetCSharpResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
         }
 
         private static DiagnosticResult GetCA2241BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, SystemRuntimeAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
+            return GetBasicResultAt(line, column, ProvideCorrectArgumentsToFormattingMethodsAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.ProvideCorrectArgumentsToFormattingMethodsMessage);
         }
     }
 }

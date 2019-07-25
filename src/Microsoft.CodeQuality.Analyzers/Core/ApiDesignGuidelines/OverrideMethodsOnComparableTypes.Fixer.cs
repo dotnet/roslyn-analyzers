@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementComparable;
+            string title = MicrosoftCodeQualityAnalyzersResources.ImplementComparable;
             context.RegisterCodeFix(
                 new MyCodeAction(title,
                     async ct => await ImplementComparableAsync(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false),

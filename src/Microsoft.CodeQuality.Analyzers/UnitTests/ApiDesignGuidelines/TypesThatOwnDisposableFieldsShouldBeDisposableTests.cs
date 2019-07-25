@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -430,13 +430,13 @@ End Namespace
         private static DiagnosticResult GetCA1001CSharpResultAt(int line, int column, string objectName, string disposableFields)
         {
             return GetCSharpResultAt(line, column, CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
+                string.Format(MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
         }
 
         private static DiagnosticResult GetCA1001BasicResultAt(int line, int column, string objectName, string disposableFields)
         {
             return GetBasicResultAt(line, column, BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
+                string.Format(MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking, objectName, disposableFields));
         }
     }
 }

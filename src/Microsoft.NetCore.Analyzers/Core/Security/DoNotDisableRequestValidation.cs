@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -15,17 +15,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5363";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableRequestValidation),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableRequestValidation),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableRequestValidationMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableRequestValidationMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableRequestValidationDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableRequestValidationDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,

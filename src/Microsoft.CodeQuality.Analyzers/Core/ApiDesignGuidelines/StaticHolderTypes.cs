@@ -41,14 +41,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public const string RuleId = "CA1052";
 
         private static readonly LocalizableString s_title = new LocalizableResourceString(
-            nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.StaticHolderTypesShouldBeStaticOrNotInheritable),
-            MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-            typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+            nameof(MicrosoftCodeQualityAnalyzersResources.StaticHolderTypesShouldBeStaticOrNotInheritable),
+            MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+            typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_messageFormat = new LocalizableResourceString(
-            nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.StaticHolderTypeIsNotStatic),
-            MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-            typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+            nameof(MicrosoftCodeQualityAnalyzersResources.StaticHolderTypeIsNotStatic),
+            MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+            typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             RuleId,

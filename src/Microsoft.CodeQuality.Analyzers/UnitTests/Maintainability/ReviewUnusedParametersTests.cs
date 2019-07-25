@@ -997,13 +997,13 @@ public class C
 
         private static DiagnosticResult GetCSharpUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetCSharpResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetBasicResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 

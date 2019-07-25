@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Linq;
@@ -367,7 +367,7 @@ namespace N
         #region Helper Methods
 
         private const string RuleName = IdentifiersShouldDifferByMoreThanCaseAnalyzer.RuleId;
-        private static readonly string s_message = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage;
+        private static readonly string s_message = MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage;
 
         private const string Namespace = IdentifiersShouldDifferByMoreThanCaseAnalyzer.Namespace;
         private const string Type = IdentifiersShouldDifferByMoreThanCaseAnalyzer.Type;

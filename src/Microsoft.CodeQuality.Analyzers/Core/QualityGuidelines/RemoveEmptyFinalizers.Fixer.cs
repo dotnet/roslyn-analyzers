@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -33,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers;
+            string title = MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers;
             context.RegisterCodeFix(new MyCodeAction(title,
                              async ct => await RemoveFinalizer(context.Document, node, ct).ConfigureAwait(false),
                              equivalenceKey: title),

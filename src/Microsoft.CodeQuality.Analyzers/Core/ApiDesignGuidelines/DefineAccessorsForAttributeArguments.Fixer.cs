@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -35,7 +35,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         SyntaxNode parameter = generator.GetDeclaration(node, DeclarationKind.Parameter);
                         if (parameter != null)
                         {
-                            title = MicrosoftApiDesignGuidelinesAnalyzersResources.CreatePropertyAccessorForParameter;
+                            title = MicrosoftCodeQualityAnalyzersResources.CreatePropertyAccessorForParameter;
                             context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await AddAccessor(context.Document, parameter, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         SyntaxNode property = generator.GetDeclaration(node, DeclarationKind.Property);
                         if (property != null)
                         {
-                            title = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeGetterPublic;
+                            title = MicrosoftCodeQualityAnalyzersResources.MakeGetterPublic;
                             context.RegisterCodeFix(new MyCodeAction(title,
                                                              async ct => await MakePublic(context.Document, node, property, ct).ConfigureAwait(false),
                                                              equivalenceKey: title),
@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
 
                     case DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterCase:
-                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeSetterNonPublic;
+                        title = MicrosoftCodeQualityAnalyzersResources.MakeSetterNonPublic;
                         context.RegisterCodeFix(new MyCodeAction(title,
                                                      async ct => await RemoveSetter(context.Document, node, ct).ConfigureAwait(false),
                                                      equivalenceKey: title),

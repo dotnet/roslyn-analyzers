@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -16,20 +16,20 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DeprecatedRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5364",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocols),
-            nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsMessage),
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsDescription),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocols),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocolsMessage),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseDeprecatedSecurityProtocolsDescription),
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5364",
             customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor HardCodedRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5386",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.HardCodedSecurityProtocolTitle),
-            nameof(SystemSecurityCryptographyResources.HardCodedSecurityProtocolMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.HardCodedSecurityProtocolTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.HardCodedSecurityProtocolMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5386",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         private readonly ImmutableHashSet<string> HardCodedSafeProtocolMetadataNames = ImmutableHashSet.Create(

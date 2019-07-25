@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -22,12 +22,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         public const string Parameter = "Parameters of";
 
         internal static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                                      new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
-                                                                                      new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
+                                                                                      new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
+                                                                                      new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
                                                                                       DiagnosticCategory.Naming,
                                                                                       DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                                       isEnabledByDefault: false,
-                                                                                      description: new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
+                                                                                      description: new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldDifferByMoreThanCaseDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
                                                                                       helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1708-identifiers-should-differ-by-more-than-case",
                                                                                       customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
@@ -170,7 +170,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return false;
             }
 
-            return parameters.GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1).Any();
+            return parameters.GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase).Where((group) => group.HasMoreThan(1)).Any();
         }
 
         private static void CheckMemberNames(IEnumerable<ISymbol> members, Action<Diagnostic> addDiagnostic)
@@ -181,8 +181,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IEnumerable<ISymbol> overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.Count() > 1).SelectMany((group) => group.Skip(1));
-            IEnumerable<IGrouping<string, ISymbol>> memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<ISymbol> overloadedMembers = members.Where((item) => !item.IsType()).GroupBy((item) => item.Name).Where((group) => group.HasMoreThan(1)).SelectMany((group) => group.Skip(1));
+            IEnumerable<IGrouping<string, ISymbol>> memberList = members.Where((item) => !overloadedMembers.Contains(item)).GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase).Where((group) => group.HasMoreThan(1));
 
             foreach (IGrouping<string, ISymbol> group in memberList)
             {
@@ -200,7 +200,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             IEnumerable<IGrouping<string, ITypeSymbol>> typeList = types.GroupBy((item) => DiagnosticHelpers.GetMemberName(item), StringComparer.OrdinalIgnoreCase)
-                .Where((group) => group.Count() > 1);
+                .Where((group) => group.HasMoreThan(1));
 
             foreach (IGrouping<string, ITypeSymbol> group in typeList)
             {
@@ -216,7 +216,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            IEnumerable<IGrouping<string, INamespaceSymbol>> namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase).Where((group) => group.Count() > 1);
+            IEnumerable<IGrouping<string, INamespaceSymbol>> namespaceList = namespaces.GroupBy((item) => item.ToDisplayString(), StringComparer.OrdinalIgnoreCase).Where((group) => group.HasMoreThan(1));
 
             foreach (IGrouping<string, INamespaceSymbol> group in namespaceList)
             {

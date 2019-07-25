@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -18,8 +18,8 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static DiagnosticDescriptor RealMethodUsedDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2305",
-                nameof(MicrosoftNetCoreSecurityResources.LosFormatterMethodUsedTitle),
-                nameof(MicrosoftNetCoreSecurityResources.LosFormatterMethodUsedMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.LosFormatterMethodUsedTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.LosFormatterMethodUsedMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2305-do-not-use-insecure-deserializer-losformatter");
 

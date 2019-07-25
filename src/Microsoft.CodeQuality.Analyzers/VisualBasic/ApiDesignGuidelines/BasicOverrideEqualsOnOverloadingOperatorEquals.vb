@@ -7,6 +7,7 @@ Imports Analyzer.Utilities.Extensions
 Imports Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
+Imports Microsoft.CodeQuality.Analyzers
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
     ''' <summary>
@@ -21,10 +22,10 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
 
         Friend Const RuleId As String = "CA2224"
 
-        Private Shared ReadOnly s_localizableTitle As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
+        Private Shared ReadOnly s_localizableTitle As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
 
-        Private Shared ReadOnly s_localizableMessage As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
-        Private Shared ReadOnly s_localizableDescription As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
+        Private Shared ReadOnly s_localizableMessage As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
+        Private Shared ReadOnly s_localizableDescription As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
 
         Friend Shared Rule As DiagnosticDescriptor = New DiagnosticDescriptor(
             RuleId,

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -24,21 +24,21 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DefinitelyUseWeakKDFInsufficientIterationCountRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5387",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DefinitelyUseWeakKDFInsufficientIterationCount),
-            nameof(SystemSecurityCryptographyResources.DefinitelyUseWeakKDFInsufficientIterationCountMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseWeakKDFInsufficientIterationCount),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseWeakKDFInsufficientIterationCountMessage),
             false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseWeakKDFInsufficientIterationCountDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseWeakKDFInsufficientIterationCountDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor MaybeUseWeakKDFInsufficientIterationCountRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5388",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.MaybeUseWeakKDFInsufficientIterationCount),
-            nameof(SystemSecurityCryptographyResources.MaybeUseWeakKDFInsufficientIterationCountMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseWeakKDFInsufficientIterationCount),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseWeakKDFInsufficientIterationCountMessage),
             false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseWeakKDFInsufficientIterationCountDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseWeakKDFInsufficientIterationCountDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(

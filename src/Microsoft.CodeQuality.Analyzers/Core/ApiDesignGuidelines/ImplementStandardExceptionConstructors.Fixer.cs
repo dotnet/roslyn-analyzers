@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsTitle;
+            string title = MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsTitle;
 
             // Get syntax root node
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);

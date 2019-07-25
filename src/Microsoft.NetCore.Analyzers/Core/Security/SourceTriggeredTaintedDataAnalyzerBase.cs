@@ -1,16 +1,21 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
+using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
+    using ValueContentAnalysisResult = DataFlowAnalysisResult<ValueContentBlockAnalysisResult, ValueContentAbstractValue>;
+
     /// <summary>
     /// Base class to aid in implementing tainted data analyzers.
     /// </summary>
@@ -59,16 +64,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                         operationBlockStartContext =>
                         {
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
-
-                            HashSet<IOperation> rootOperationsNeedingAnalysis = new HashSet<IOperation>();
+                            PooledHashSet<IOperation> rootOperationsNeedingAnalysis = PooledHashSet<IOperation>.GetInstance();
 
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
                                 {
                                     IPropertyReferenceOperation propertyReferenceOperation = (IPropertyReferenceOperation)operationAnalysisContext.Operation;
+                                    IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
                                     if (sourceInfoSymbolMap.IsSourceProperty(propertyReferenceOperation.Property))
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(rootOperation);
+                                        }
                                     }
                                 },
                                 OperationKind.PropertyReference);
@@ -77,61 +85,169 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
-                                    if (sourceInfoSymbolMap.IsSourceMethod(invocationOperation.TargetMethod))
+                                    PooledHashSet<IsInvocationTaintedWithPointsToAnalysis> evaluateWithPointsToAnalysis = null;
+                                    PooledHashSet<IsInvocationTaintedWithValueContentAnalysis> evaluateWithValueContentAnalysis = null;
+                                    try
                                     {
-                                        rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                        if (sourceInfoSymbolMap.IsSourceMethod(
+                                            invocationOperation.TargetMethod,
+                                            out evaluateWithPointsToAnalysis,
+                                            out evaluateWithValueContentAnalysis))
+                                        {
+                                            IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
+                                            PointsToAnalysisResult pointsToAnalysisResult;
+                                            ValueContentAnalysisResult valueContentAnalysisResultOpt;
+                                            if (evaluateWithPointsToAnalysis != null)
+                                            {
+                                                pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
+                                                    rootOperation.GetEnclosingControlFlowGraph(),
+                                                    owningSymbol,
+                                                    WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
+                                                    InterproceduralAnalysisConfiguration.Create(
+                                                        operationAnalysisContext.Options,
+                                                        SupportedDiagnostics,
+                                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                        cancellationToken: operationAnalysisContext.CancellationToken),
+                                                    interproceduralAnalysisPredicateOpt: null);
+                                                if (pointsToAnalysisResult == null)
+                                                {
+                                                    return;
+                                                }
+
+                                                if (evaluateWithPointsToAnalysis.Any(s => s(
+                                                    invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]))))
+                                                {
+                                                    lock (rootOperationsNeedingAnalysis)
+                                                    {
+                                                        rootOperationsNeedingAnalysis.Add(rootOperation);
+
+                                                        return;
+                                                    }
+                                                }
+                                            }
+
+                                            if (evaluateWithValueContentAnalysis != null)
+                                            {
+                                                valueContentAnalysisResultOpt = ValueContentAnalysis.TryGetOrComputeResult(
+                                                    rootOperation.GetEnclosingControlFlowGraph(),
+                                                    owningSymbol,
+                                                    WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
+                                                    InterproceduralAnalysisConfiguration.Create(
+                                                        operationAnalysisContext.Options,
+                                                        SupportedDiagnostics,
+                                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                        cancellationToken: operationAnalysisContext.CancellationToken),
+                                                    out var copyAnalysisResult,
+                                                    out pointsToAnalysisResult);
+                                                if (valueContentAnalysisResultOpt == null)
+                                                {
+                                                    return;
+                                                }
+
+                                                if (evaluateWithValueContentAnalysis.Any(s => s(
+                                                    invocationOperation.Arguments.Select(
+                                                        o => pointsToAnalysisResult[o.Kind, o.Syntax]),
+                                                    invocationOperation.Arguments.Select(
+                                                        o => valueContentAnalysisResultOpt[o.Kind, o.Syntax]))))
+                                                {
+                                                    lock (rootOperationsNeedingAnalysis)
+                                                    {
+                                                        rootOperationsNeedingAnalysis.Add(rootOperation);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        if (evaluateWithPointsToAnalysis != null)
+                                        {
+                                            evaluateWithPointsToAnalysis.Free();
+                                        }
+
+                                        if (evaluateWithValueContentAnalysis != null)
+                                        {
+                                            evaluateWithValueContentAnalysis.Free();
+                                        }
                                     }
                                 },
                                 OperationKind.Invocation);
 
+                            if (taintedDataConfig.HasTaintArraySource(SinkKind))
+                            {
+                                operationBlockStartContext.RegisterOperationAction(
+                                    operationAnalysisContext =>
+                                    {
+                                        IArrayInitializerOperation arrayInitializerOperation = (IArrayInitializerOperation)operationAnalysisContext.Operation;
+                                        if (sourceInfoSymbolMap.IsSourceConstantArrayOfType(arrayInitializerOperation.Parent.Type as IArrayTypeSymbol))
+                                        {
+                                            lock (rootOperationsNeedingAnalysis)
+                                            {
+                                                rootOperationsNeedingAnalysis.Add(operationAnalysisContext.Operation.GetRoot());
+                                            }
+                                        }
+                                    },
+                                    OperationKind.ArrayInitializer);
+                            }
+
                             operationBlockStartContext.RegisterOperationBlockEndAction(
                                 operationBlockAnalysisContext =>
                                 {
-                                    if (!rootOperationsNeedingAnalysis.Any())
+                                    try
                                     {
-                                        return;
-                                    }
-
-                                    foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
-                                    {
-                                        TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
-                                            rootOperation.GetEnclosingControlFlowGraph(),
-                                            operationBlockAnalysisContext.Compilation,
-                                            operationBlockAnalysisContext.OwningSymbol,
-                                            operationBlockAnalysisContext.Options,
-                                            TaintedDataEnteringSinkDescriptor,
-                                            sourceInfoSymbolMap,
-                                            taintedDataConfig.GetSanitizerSymbolMap(this.SinkKind),
-                                            sinkInfoSymbolMap,
-                                            operationBlockAnalysisContext.CancellationToken);
-                                        if (taintedDataAnalysisResult == null)
+                                        lock (rootOperationsNeedingAnalysis)
                                         {
-                                            return;
-                                        }
-
-                                        foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
-                                        {
-                                            if (!sourceSink.SinkKinds.Contains(this.SinkKind))
+                                            if (!rootOperationsNeedingAnalysis.Any())
                                             {
-                                                continue;
+                                                return;
                                             }
 
-                                            foreach (SymbolAccess sourceOrigin in sourceSink.SourceOrigins)
+                                            foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {
-                                                // Something like:
-                                                // CA3001: Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.
-                                                Diagnostic diagnostic = Diagnostic.Create(
-                                                    this.TaintedDataEnteringSinkDescriptor,
-                                                    sourceSink.Sink.Location,
-                                                    additionalLocations: new Location[] { sourceOrigin.Location },
-                                                    messageArgs: new object[] {
+                                                TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
+                                                    rootOperation.GetEnclosingControlFlowGraph(),
+                                                    operationBlockAnalysisContext.Compilation,
+                                                    operationBlockAnalysisContext.OwningSymbol,
+                                                    operationBlockAnalysisContext.Options,
+                                                    TaintedDataEnteringSinkDescriptor,
+                                                    sourceInfoSymbolMap,
+                                                    taintedDataConfig.GetSanitizerSymbolMap(this.SinkKind),
+                                                    sinkInfoSymbolMap,
+                                                    operationBlockAnalysisContext.CancellationToken);
+                                                if (taintedDataAnalysisResult == null)
+                                                {
+                                                    return;
+                                                }
+
+                                                foreach (TaintedDataSourceSink sourceSink in taintedDataAnalysisResult.TaintedDataSourceSinks)
+                                                {
+                                                    if (!sourceSink.SinkKinds.Contains(this.SinkKind))
+                                                    {
+                                                        continue;
+                                                    }
+
+                                                    foreach (SymbolAccess sourceOrigin in sourceSink.SourceOrigins)
+                                                    {
+                                                        // Something like:
+                                                        // CA3001: Potential SQL injection vulnerability was found where '{0}' in method '{1}' may be tainted by user-controlled data from '{2}' in method '{3}'.
+                                                        Diagnostic diagnostic = Diagnostic.Create(
+                                                            this.TaintedDataEnteringSinkDescriptor,
+                                                            sourceSink.Sink.Location,
+                                                            additionalLocations: new Location[] { sourceOrigin.Location },
+                                                            messageArgs: new object[] {
                                                         sourceSink.Sink.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
                                                         sourceSink.Sink.AccessingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
                                                         sourceOrigin.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
                                                         sourceOrigin.AccessingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)});
-                                                operationBlockAnalysisContext.ReportDiagnostic(diagnostic);
+                                                        operationBlockAnalysisContext.ReportDiagnostic(diagnostic);
+                                                    }
+                                                }
                                             }
                                         }
+                                    }
+                                    finally
+                                    {
+                                        rootOperationsNeedingAnalysis.Free();
                                     }
                                 });
                         });

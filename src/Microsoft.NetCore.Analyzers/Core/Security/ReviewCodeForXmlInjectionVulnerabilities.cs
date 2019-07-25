@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
 using Microsoft.CodeAnalysis;
@@ -12,8 +12,8 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static readonly DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA3009",
-            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForXmlInjectionVulnerabilitiesTitle),
-            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForXmlInjectionVulnerabilitiesMessage),
+            nameof(MicrosoftNetCoreAnalyzersResources.ReviewCodeForXmlInjectionVulnerabilitiesTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.ReviewCodeForXmlInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca3009-review-code-for-xml-injection-vulnerabilities");
 

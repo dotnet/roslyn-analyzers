@@ -58,7 +58,7 @@
     value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
-    -->    
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -354,5 +354,23 @@
   <data name="XslCompiledTransformLoadInsecureInputMessage" xml:space="preserve">
     <value>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</value>
     <comment>CA3076</comment>
+  </data>
+  <data name="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage" xml:space="preserve">
+    <value>The ValidateAntiForgeryAttribute is defined with HttpVerbs.Get and at least one of HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete, or HttpVerbs.Patch on controller action {0}. The attribute will not be used when GET verb is used.</value>
+  </data>
+  <data name="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage" xml:space="preserve">
+    <value>Using HttpVerbs.GET and ValidateAntiForgeryTokenAttribute is not supported by MVC on controller action {0}.</value>
+  </data>
+  <data name="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage" xml:space="preserve">
+    <value>HTTP verb attributes attributes are missing on controller action {0}. The ValidateAntiForgeryTokenAttribute will not be used when GET verb is used.</value>
+  </data>
+  <data name="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage" xml:space="preserve">
+    <value>Missing ValidateAntiForgeryTokenAttribute on MVC controller action {0} which by default accepts POST requests.</value>
+  </data>
+  <data name="MarkVerbHandlersWithValidateAntiforgeryTokenTitle" xml:space="preserve">
+    <value>Mark Verb Handlers With Validate Antiforgery Token</value>
+  </data>
+  <data name="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage" xml:space="preserve">
+    <value>Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</value>
   </data>
 </root>

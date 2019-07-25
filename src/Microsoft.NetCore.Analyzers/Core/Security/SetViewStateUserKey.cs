@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -16,17 +16,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5368";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.SetViewStateUserKey),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKey),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.SetViewStateUserKeyMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKeyMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.SetViewStateUserKeyDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.SetViewStateUserKeyDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -94,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     return methodSymbol?.GetTopmostOperationBlock(compilation)
                                         .Descendants()
-                                        .Where(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
+                                        .Any(s => s is ISimpleAssignmentOperation simpleAssignmentOperation &&
                                                     simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation &&
                                                     propertyReferenceOperation.Property.Name == "ViewStateUserKey" &&
                                                     propertyReferenceOperation.Property.Type.SpecialType == SpecialType.System_String &&
@@ -104,7 +104,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                     propertyReferenceOperation2.Property.IsVirtual &&
                                                     propertyReferenceOperation2.Instance is IInstanceReferenceOperation instanceReferenceOperation2 &&
                                                     instanceReferenceOperation2.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance))
-                                        .Count() > 0;
+                                        ?? false;
                 }
             });
         }

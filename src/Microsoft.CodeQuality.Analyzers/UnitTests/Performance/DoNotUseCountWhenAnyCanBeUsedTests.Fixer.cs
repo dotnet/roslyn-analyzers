@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -14,147 +15,254 @@ namespace Microsoft.CodeQuality.Analyzers.Performance.UnitTests
 {
     public static partial class DoNotUseCountWhenAnyCanBeUsedTests
     {
-        [Theory]
-        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
-        public static Task CSharpLeftBinaryExpresssion(BinaryOperatorKind @operator, int value, bool negate)
-        {
-            return CSharpLeftBinaryExpresssionTestImpl(@operator, value, negate, false);
-        }
+        private const string EnumerableSymbol = "Enumerable.Range(0, 0)";
+        private const string QueryableSymbol = "Enumerable.Range(0, 0).AsQueryable()";
 
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_TheoryData))]
-        public static Task CSharpLeftBinaryExpresssionPredicate(BinaryOperatorKind @operator, int value, bool negate)
+        public static Task CSharpLeftBinaryExpresssionEnumerableCount(BinaryOperatorKind @operator, int value, bool negate)
         {
-            return CSharpLeftBinaryExpresssionTestImpl(@operator, value, negate, true);
-        }
-
-        [Theory]
-        [MemberData(nameof(RightCount_Fixer_TheoryData))]
-        public static Task CSharpRightBinaryExpresssion(int value, BinaryOperatorKind @operator, bool negate)
-        {
-            return CSharpRightBinaryExpresssionTestImpl(@operator, value, negate, false);
-        }
-
-        [Theory]
-        [MemberData(nameof(RightCount_Fixer_TheoryData))]
-        public static Task CSharpRightBinaryExpresssionWithPredicate(int value, BinaryOperatorKind @operator, bool negate)
-        {
-            return CSharpRightBinaryExpresssionTestImpl(@operator, value, negate, true);
+            return CSharpLeftBinaryExpresssionTestImpl(EnumerableSymbol, @operator, value, negate, false);
         }
 
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_TheoryData))]
-        public static Task BasicLeftBinaryExpresssion(BinaryOperatorKind @operator, int value, bool negate)
+        public static Task CSharpLeftBinaryExpresssionEnumerableCountWithPredicate(BinaryOperatorKind @operator, int value, bool negate)
         {
-            return BasicLeftBinaryExpresssionTestImpl(@operator, value, negate, false);
+            return CSharpLeftBinaryExpresssionTestImpl(EnumerableSymbol, @operator, value, negate, true);
+        }
+
+        [Theory]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
+        public static Task CSharpRightBinaryExpresssionEnumerableCount(int value, BinaryOperatorKind @operator, bool negate)
+        {
+            return CSharpRightBinaryExpresssionTestImpl(EnumerableSymbol, @operator, value, negate, false);
+        }
+
+        [Theory]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
+        public static Task CSharpRightBinaryExpresssionEnumerableCountWithPredicate(int value, BinaryOperatorKind @operator, bool negate)
+        {
+            return CSharpRightBinaryExpresssionTestImpl(EnumerableSymbol, @operator, value, negate, true);
         }
 
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_TheoryData))]
-        public static Task BasicLeftBinaryExpresssionPredicate(BinaryOperatorKind @operator, int value, bool negate)
+        public static Task BasicLeftBinaryExpresssionEnumerableCount(BinaryOperatorKind @operator, int value, bool negate)
         {
-            return BasicLeftBinaryExpresssionTestImpl(@operator, value, negate, true);
+            return BasicLeftBinaryExpresssionTestImpl(EnumerableSymbol, @operator, value, negate, false);
+        }
+
+        [Theory]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
+        public static Task BasicLeftBinaryExpresssionEnumerableCountWithPredicate(BinaryOperatorKind @operator, int value, bool negate)
+        {
+            return BasicLeftBinaryExpresssionTestImpl(EnumerableSymbol, @operator, value, negate, true);
         }
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_TheoryData))]
-        public static Task BasicRightBinaryExpresssion(int value, BinaryOperatorKind @operator, bool negate)
+        public static Task BasicRightBinaryExpresssionEnumerableCount(int value, BinaryOperatorKind @operator, bool negate)
         {
-            return BasicRightBinaryExpresssionTestImpl(@operator, value, negate, false);
+            return BasicRightBinaryExpresssionTestImpl(EnumerableSymbol, @operator, value, negate, false);
         }
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_TheoryData))]
-        public static Task BasicRightBinaryExpresssionWithPredicate(int value, BinaryOperatorKind @operator, bool negate)
+        public static Task BasicRightBinaryExpresssionEnumerableCountWithPredicate(int value, BinaryOperatorKind @operator, bool negate)
         {
-            return BasicRightBinaryExpresssionTestImpl(@operator, value, negate, true);
+            return BasicRightBinaryExpresssionTestImpl(EnumerableSymbol, @operator, value, negate, true);
         }
 
         [Fact]
-        public static Task CSharpZeroEqualsInvocationCount()
+        public static Task CSharpZeroEqualsInvocationEnumerableCount()
         {
-            return CSharpZeroEqualsInvocationTestImpl(false);
+            return CSharpZeroEqualsInvocationTestImpl(EnumerableSymbol, false);
         }
 
         [Fact]
-        public static Task CSharpZeroEqualsInvocationCountWithPredicate()
+        public static Task CSharpZeroEqualsInvocationEnumerableCountWithPredicate()
         {
-            return CSharpZeroEqualsInvocationTestImpl(true);
+            return CSharpZeroEqualsInvocationTestImpl(EnumerableSymbol, true);
         }
 
         [Fact]
-        public static Task BasicZeroEqualsInvocationCount()
+        public static Task BasicZeroEqualsInvocationEnumerableCount()
         {
-            return BasicZeroEqualsInvocationTestImpl(false);
+            return BasicZeroEqualsInvocationTestImpl(EnumerableSymbol, false);
         }
 
         [Fact]
-        public static Task BasicZeroEqualsInvocationCountWithPredicate()
+        public static Task BasicZeroEqualsInvocationEnumerableCountWithPredicate()
         {
-            return BasicZeroEqualsInvocationTestImpl(true);
+            return BasicZeroEqualsInvocationTestImpl(EnumerableSymbol, true);
         }
 
         [Fact]
-        public static Task CSharpCountEqualsInvocation()
+        public static Task CSharpEnumerableCountEqualsInvocation()
         {
-            return CSharpCountEqualsInvocationTestImpl(false);
+            return CSharpCountEqualsInvocationTestImpl(EnumerableSymbol, false);
         }
 
         [Fact]
-        public static Task CSharpCountEqualsInvocationCountWithPredicate()
+        public static Task CSharpCountEqualsInvocationEnumerableCountWithPredicate()
         {
-            return CSharpCountEqualsInvocationTestImpl(true);
+            return CSharpCountEqualsInvocationTestImpl(EnumerableSymbol, true);
         }
 
         [Fact]
-        public static Task BasicCountEqualsInvocation()
+        public static Task BasicEnumerableCountEqualsInvocation()
         {
-            return BasicCountEqualsInvocationTestImpl(false);
+            return BasicCountEqualsInvocationTestImpl(EnumerableSymbol, false);
         }
 
         [Fact]
-        public static Task BasicCountEqualsInvocationCountWithPredicate()
+        public static Task BasicCountEqualsInvocationEnumerableCountWithPredicate()
         {
-            return BasicCountEqualsInvocationTestImpl(true);
+            return BasicCountEqualsInvocationTestImpl(EnumerableSymbol, true);
         }
 
-        private static Task CSharpLeftBinaryExpresssionTestImpl(BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
+        [Theory]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
+        public static Task CSharpLeftBinaryExpresssionQueryableCount(BinaryOperatorKind @operator, int value, bool negate)
         {
-            return CSharpBinaryExpresssionTestImpl("{0} {1} {2}", @operator, value, negate, hasPredicate);
+            return CSharpLeftBinaryExpresssionTestImpl(QueryableSymbol, @operator, value, negate, false);
         }
 
-        private static Task CSharpRightBinaryExpresssionTestImpl(BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
+        [Theory]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
+        public static Task CSharpLeftBinaryExpresssionQueryableCountWithPredicate(BinaryOperatorKind @operator, int value, bool negate)
         {
-            return CSharpBinaryExpresssionTestImpl("{2} {1} {0}", @operator, value, negate, hasPredicate);
+            return CSharpLeftBinaryExpresssionTestImpl(QueryableSymbol, @operator, value, negate, true);
         }
 
-        private static Task CSharpBinaryExpresssionTestImpl(string patternFormat, BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
+        [Theory]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
+        public static Task CSharpRightBinaryExpresssionQueryableCount(int value, BinaryOperatorKind @operator, bool negate)
+        {
+            return CSharpRightBinaryExpresssionTestImpl(QueryableSymbol, @operator, value, negate, false);
+        }
+
+        [Theory]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
+        public static Task CSharpRightBinaryExpresssionQueryableCountWithPredicate(int value, BinaryOperatorKind @operator, bool negate)
+        {
+            return CSharpRightBinaryExpresssionTestImpl(QueryableSymbol, @operator, value, negate, true);
+        }
+
+        [Theory]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
+        public static Task BasicLeftBinaryExpresssionQueryableCount(BinaryOperatorKind @operator, int value, bool negate)
+        {
+            return BasicLeftBinaryExpresssionTestImpl(QueryableSymbol, @operator, value, negate, false);
+        }
+
+        [Theory]
+        [MemberData(nameof(LeftCount_Fixer_TheoryData))]
+        public static Task BasicLeftBinaryExpresssionQueryableCountWithPredicate(BinaryOperatorKind @operator, int value, bool negate)
+        {
+            return BasicLeftBinaryExpresssionTestImpl(QueryableSymbol, @operator, value, negate, true);
+        }
+
+        [Theory]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
+        public static Task BasicRightBinaryExpresssionQueryableCount(int value, BinaryOperatorKind @operator, bool negate)
+        {
+            return BasicRightBinaryExpresssionTestImpl(QueryableSymbol, @operator, value, negate, false);
+        }
+
+        [Theory]
+        [MemberData(nameof(RightCount_Fixer_TheoryData))]
+        public static Task BasicRightBinaryExpresssionQueryableCountWithPredicate(int value, BinaryOperatorKind @operator, bool negate)
+        {
+            return BasicRightBinaryExpresssionTestImpl(QueryableSymbol, @operator, value, negate, true);
+        }
+
+        [Fact]
+        public static Task CSharpZeroEqualsInvocationQueryableCount()
+        {
+            return CSharpZeroEqualsInvocationTestImpl(QueryableSymbol, false);
+        }
+
+        [Fact]
+        public static Task CSharpZeroEqualsInvocationQueryableCountWithPredicate()
+        {
+            return CSharpZeroEqualsInvocationTestImpl(QueryableSymbol, true);
+        }
+
+        [Fact]
+        public static Task BasicZeroEqualsInvocationQueryableCount()
+        {
+            return BasicZeroEqualsInvocationTestImpl(QueryableSymbol, false);
+        }
+
+        [Fact]
+        public static Task BasicZeroEqualsInvocationQueryableCountWithPredicate()
+        {
+            return BasicZeroEqualsInvocationTestImpl(QueryableSymbol, true);
+        }
+
+        [Fact]
+        public static Task CSharpQueryableCountEqualsInvocation()
+        {
+            return CSharpCountEqualsInvocationTestImpl(QueryableSymbol, false);
+        }
+
+        [Fact]
+        public static Task CSharpCountEqualsInvocationQueryableCountWithPredicate()
+        {
+            return CSharpCountEqualsInvocationTestImpl(QueryableSymbol, true);
+        }
+
+        [Fact]
+        public static Task BasicQueryableCountEqualsInvocation()
+        {
+            return BasicCountEqualsInvocationTestImpl(QueryableSymbol, false);
+        }
+
+        [Fact]
+        public static Task BasicCountEqualsInvocationQueryableCountWithPredicate()
+        {
+            return BasicCountEqualsInvocationTestImpl(QueryableSymbol, true);
+        }
+
+        private static Task CSharpLeftBinaryExpresssionTestImpl(string symbol, BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
+        {
+            return CSharpBinaryExpresssionTestImpl(symbol, "{0} {1} {2}", @operator, value, negate, hasPredicate);
+        }
+
+        private static Task CSharpRightBinaryExpresssionTestImpl(string symbol, BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
+        {
+            return CSharpBinaryExpresssionTestImpl(symbol, "{2} {1} {0}", @operator, value, negate, hasPredicate);
+        }
+
+        private static Task CSharpBinaryExpresssionTestImpl(string symbol, string patternFormat, BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
         {
             var predicate = CSharpPredicateText(hasPredicate);
-            var pattern = string.Format(patternFormat, $"Enumerable.Range(0, 0).Count({predicate})", CSharpOperatorText(@operator), value);
+            var pattern = string.Format(patternFormat, $"{symbol}.Count({predicate})", CSharpOperatorText(@operator), value);
 
-            return CSharpTestImpl(pattern, negate, predicate);
+            return CSharpTestImpl(symbol, pattern, negate, predicate);
         }
 
-        private static Task CSharpZeroEqualsInvocationTestImpl(bool hasPredicate)
+        private static Task CSharpZeroEqualsInvocationTestImpl(string symbol, bool hasPredicate)
         {
-            return CSharpEqualsInvocationTestImpl("0.Equals({0})", hasPredicate);
+            return CSharpEqualsInvocationTestImpl(symbol, "0.Equals({0})", hasPredicate);
         }
 
-        private static Task CSharpCountEqualsInvocationTestImpl(bool hasPredicate)
+        private static Task CSharpCountEqualsInvocationTestImpl(string symbol, bool hasPredicate)
         {
-            return CSharpEqualsInvocationTestImpl("{0}.Equals(0)", hasPredicate);
+            return CSharpEqualsInvocationTestImpl(symbol, "{0}.Equals(0)", hasPredicate);
         }
 
-        private static Task CSharpEqualsInvocationTestImpl(string patternFormat, bool hasPredicate)
+        private static Task CSharpEqualsInvocationTestImpl(string symbol, string patternFormat, bool hasPredicate)
         {
             var predicate = CSharpPredicateText(hasPredicate);
-            var pattern = string.Format(patternFormat, $"Enumerable.Range(0, 0).Count({predicate})");
+            var pattern = string.Format(patternFormat, $"{symbol}.Count({predicate})");
 
-            return CSharpTestImpl(pattern, true, predicate);
+            return CSharpTestImpl(symbol, pattern, true, predicate);
         }
 
-        private static async Task CSharpTestImpl(string pattern, bool negate, string predicate)
+        private static async Task CSharpTestImpl(string symbol, string pattern, bool negate, string predicate)
         {
             var source = $@"
 using System;
@@ -174,7 +282,7 @@ class C
 {{
     void M()
     {{
-        var b = {CSharpLogicalNotText(negate)}Enumerable.Range(0, 0).Any({predicate});
+        var b = {CSharpLogicalNotText(negate)}{symbol}.Any({predicate});
     }}
 }}
 ";
@@ -185,43 +293,43 @@ class C
                 fixedSource);
         }
 
-        private static Task BasicLeftBinaryExpresssionTestImpl(BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
+        private static Task BasicLeftBinaryExpresssionTestImpl(string symbol, BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
         {
-            return BasicBinaryExpresssionTestImpl("{0} {1} {2}", @operator, value, negate, hasPredicate);
+            return BasicBinaryExpresssionTestImpl(symbol, "{0} {1} {2}", @operator, value, negate, hasPredicate);
         }
 
-        private static Task BasicRightBinaryExpresssionTestImpl(BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
+        private static Task BasicRightBinaryExpresssionTestImpl(string symbol, BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
         {
-            return BasicBinaryExpresssionTestImpl("{2} {1} {0}", @operator, value, negate, hasPredicate);
+            return BasicBinaryExpresssionTestImpl(symbol, "{2} {1} {0}", @operator, value, negate, hasPredicate);
         }
 
-        private static Task BasicBinaryExpresssionTestImpl(string patternFormat, BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
-        {
-            var predicate = BasicPredicateText(hasPredicate);
-            var pattern = string.Format(patternFormat, $"Enumerable.Range(0, 0).Count({predicate})", BasicOperatorText(@operator), value);
-
-            return BasicTestImpl(pattern, negate, predicate);
-        }
-
-        private static Task BasicZeroEqualsInvocationTestImpl(bool hasPredicate)
-        {
-            return BasicEqualsInvocationTestImpl("0.Equals({0})", hasPredicate);
-        }
-
-        private static Task BasicCountEqualsInvocationTestImpl(bool hasPredicate)
-        {
-            return BasicEqualsInvocationTestImpl("{0}.Equals(0)", hasPredicate);
-        }
-
-        private static Task BasicEqualsInvocationTestImpl(string patternFormat, bool hasPredicate)
+        private static Task BasicBinaryExpresssionTestImpl(string symbol, string patternFormat, BinaryOperatorKind @operator, int value, bool negate, bool hasPredicate)
         {
             var predicate = BasicPredicateText(hasPredicate);
-            var pattern = string.Format(patternFormat, $"Enumerable.Range(0, 0).Count({predicate})");
+            var pattern = string.Format(patternFormat, $"{symbol}.Count({predicate})", BasicOperatorText(@operator), value);
 
-            return BasicTestImpl(pattern, true, predicate);
+            return BasicTestImpl(symbol, pattern, negate, predicate);
         }
 
-        private static async Task BasicTestImpl(string pattern, bool negate, string predicate)
+        private static Task BasicZeroEqualsInvocationTestImpl(string symbol, bool hasPredicate)
+        {
+            return BasicEqualsInvocationTestImpl(symbol, "0.Equals({0})", hasPredicate);
+        }
+
+        private static Task BasicCountEqualsInvocationTestImpl(string symbol, bool hasPredicate)
+        {
+            return BasicEqualsInvocationTestImpl(symbol, "{0}.Equals(0)", hasPredicate);
+        }
+
+        private static Task BasicEqualsInvocationTestImpl(string symbol, string patternFormat, bool hasPredicate)
+        {
+            var predicate = BasicPredicateText(hasPredicate);
+            var pattern = string.Format(patternFormat, $"{symbol}.Count({predicate})");
+
+            return BasicTestImpl(symbol, pattern, true, predicate);
+        }
+
+        private static async Task BasicTestImpl(string symbol, string pattern, bool negate, string predicate)
         {
             var source = $@"
 Imports  System
@@ -237,7 +345,7 @@ Imports  System
 Imports  System.Linq
 Class C
     Sub M()
-        Dim b = {BasicLogicalNotText(negate)}Enumerable.Range(0, 0).Any({predicate})
+        Dim b = {BasicLogicalNotText(negate)}{symbol}.Any({predicate})
     End Sub
 End Class
 ";

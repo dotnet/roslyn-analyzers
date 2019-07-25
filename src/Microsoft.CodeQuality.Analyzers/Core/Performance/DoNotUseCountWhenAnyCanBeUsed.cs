@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -96,35 +97,43 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         /// <param name="context">The context.</param>
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            var enumerableType = WellKnownTypes.Enumerable(context.Compilation);
-
-            if (enumerableType == null)
+            if (WellKnownTypes.Enumerable(context.Compilation) is INamedTypeSymbol enumerableType)
             {
-                return;
+                context.RegisterOperationAction(
+                    operationAnalysisContext => AnalyzeInvocationExpression((IInvocationOperation)operationAnalysisContext.Operation, enumerableType, CountMethodName, operationAnalysisContext.ReportDiagnostic),
+                    OperationKind.Invocation);
+
+                context.RegisterOperationAction(
+                    operationAnalysisContext => AnalyzeBinaryExpression((IBinaryOperation)operationAnalysisContext.Operation, enumerableType, CountMethodName, operationAnalysisContext.ReportDiagnostic),
+                    OperationKind.BinaryOperator);
             }
 
-            context.RegisterOperationAction(
-                operationAnalysisContext => AnalyzeInvocationExpression((IInvocationOperation)operationAnalysisContext.Operation, enumerableType, operationAnalysisContext.ReportDiagnostic),
-                OperationKind.Invocation);
+            if (WellKnownTypes.Queryable(context.Compilation) is INamedTypeSymbol queriableType)
+            {
+                context.RegisterOperationAction(
+                    operationAnalysisContext => AnalyzeInvocationExpression((IInvocationOperation)operationAnalysisContext.Operation, queriableType, CountMethodName, operationAnalysisContext.ReportDiagnostic),
+                    OperationKind.Invocation);
 
-            context.RegisterOperationAction(
-                operationAnalysisContext => AnalyzeBinaryExpression((IBinaryOperation)operationAnalysisContext.Operation, enumerableType, operationAnalysisContext.ReportDiagnostic),
-                OperationKind.BinaryOperator);
+                context.RegisterOperationAction(
+                    operationAnalysisContext => AnalyzeBinaryExpression((IBinaryOperation)operationAnalysisContext.Operation, queriableType, CountMethodName, operationAnalysisContext.ReportDiagnostic),
+                    OperationKind.BinaryOperator);
+            }
         }
 
         /// <summary>
-        /// Check to see if we have an expression comparing the result of
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> or
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource}, Func{TSource, bool})"/>
-        /// using <see cref="int.Equals(int)"/>.
+        /// Check to see if we have an expression comparing the result of the invocation of the method <paramref name="methodName" /> in the <paramref name="containingSymbol" />
+        /// using <see cref="int.Equals(int)" />.
         /// </summary>
-        private static void AnalyzeInvocationExpression(IInvocationOperation invocationOperation, INamedTypeSymbol enumerableType, Action<Diagnostic> reportDiagnostic)
+        /// <param name="invocationOperation">The invocation operation.</param>
+        /// <param name="containingSymbol">The containing symbol.</param>
+        /// <param name="methodName">Name of the method.</param>
+        private static void AnalyzeInvocationExpression(IInvocationOperation invocationOperation, INamedTypeSymbol containingSymbol, string methodName, Action<Diagnostic> reportDiagnostic)
         {
             if (invocationOperation.Arguments.Length == 1)
             {
                 var methodSymbol = invocationOperation.TargetMethod;
                 if (IsInt32EqualsMethod(methodSymbol) &&
-                    (IsCountEqualsZero(invocationOperation, enumerableType) || IsZeroEqualsCount(invocationOperation, enumerableType)))
+                    (IsCountEqualsZero(invocationOperation, containingSymbol, methodName) || IsZeroEqualsCount(invocationOperation, containingSymbol, methodName)))
                 {
                     reportDiagnostic(invocationOperation.Syntax.CreateDiagnostic(s_rule));
                 }
@@ -143,69 +152,71 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         }
 
         /// <summary>
-        /// Checks whether the value of the invocation of <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>
+        /// Checks whether the value of the invocation of the method <paramref name="methodName"/> in the <paramref name="containingSymbol"/>
         /// is being compared with 0 using <see cref="int.Equals(int)"/>.
         /// </summary>
         /// <param name="invocationOperation">The invocation operation.</param>
-        /// <param name="enumerableType">Type of the enumerable.</param>
-        /// <returns><see langword="true" /> if the value of the invocation of <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>
+        /// <param name="containingSymbol">The containing symbol.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <returns><see langword="true" /> if the value of the invocation of the method <paramref name="methodName"/> in the <paramref name="containingSymbol"/>
         /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-        private static bool IsCountEqualsZero(IInvocationOperation invocationOperation, INamedTypeSymbol enumerableType)
+        private static bool IsCountEqualsZero(IInvocationOperation invocationOperation, INamedTypeSymbol containingSymbol, string methodName)
         {
             if (!TryGetInt32Constant(invocationOperation.Arguments[0].Value, out var constant) || constant != 0)
             {
                 return false;
             }
 
-            return IsCountMethodInvocation(invocationOperation.Instance, enumerableType);
+            return IsCountMethodInvocation(invocationOperation.Instance, containingSymbol, methodName);
         }
 
         /// <summary>
-        /// Checks whether 0 is being compared with the value of the invocation of 
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>
+        /// Checks whether 0 is being compared with the value of the invocation of the method <paramref name="methodName"/> in the <paramref name="containingSymbol"/>
         /// using <see cref="int.Equals(int)"/>.
         /// </summary>
         /// <param name="invocationOperation">The invocation operation.</param>
-        /// <param name="enumerableType">Type of the enumerable.</param>
-        /// <returns><see langword="true" /> if 0 is being compared with the value of the invocation of 
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>
+        /// <param name="containingSymbol">The containing symbol.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <returns><see langword="true" /> if 0 is being compared with the value of the invocation of the method <paramref name="methodName"/> in the <paramref name="containingSymbol"/>
         /// using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-        private static bool IsZeroEqualsCount(IInvocationOperation invocationOperation, INamedTypeSymbol enumerableType)
+        private static bool IsZeroEqualsCount(IInvocationOperation invocationOperation, INamedTypeSymbol containingSymbol, string methodName)
         {
             if (!TryGetInt32Constant(invocationOperation.Instance, out var constant) || constant != 0)
             {
                 return false;
             }
 
-            return IsCountMethodInvocation(invocationOperation.Arguments[0].Value, enumerableType);
+            return IsCountMethodInvocation(invocationOperation.Arguments[0].Value, containingSymbol, methodName);
         }
 
         /// <summary>
         /// Check to see if we have an expression comparing the result of
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> or
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource}, Func{TSource, bool})"/>
+        /// the invocation of the method <paramref name="methodName" /> in the <paramref name="containingSymbol" />
         /// using operators.
         /// </summary>
-        private static void AnalyzeBinaryExpression(IBinaryOperation binaryOperation, INamedTypeSymbol enumerableType, Action<Diagnostic> reportDiagnostic)
+        /// <param name="binaryOperation">The binary operation.</param>
+        /// <param name="containingSymbol">The containing symbol.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="reportDiagnostic">The report diagnostic action.</param>
+        private static void AnalyzeBinaryExpression(IBinaryOperation binaryOperation, INamedTypeSymbol containingSymbol, string methodName, Action<Diagnostic> reportDiagnostic)
         {
             if (binaryOperation.IsComparisonOperator() &&
-                (IsLeftCountComparison(binaryOperation, enumerableType) || IsRightCountComparison(binaryOperation, enumerableType)))
+                (IsLeftCountComparison(binaryOperation, containingSymbol, methodName) || IsRightCountComparison(binaryOperation, containingSymbol, methodName)))
             {
                 reportDiagnostic(binaryOperation.Syntax.CreateDiagnostic(s_rule));
             }
         }
 
         /// <summary>
-        /// Checks whether the value of the invocation of
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})" />
+        /// Checks whether the value of the invocation of the method <paramref name="methodName" /> in the <paramref name="containingSymbol" />
         /// is being compared with 0 or 1 using <see cref="int" /> comparison operators.
         /// </summary>
         /// <param name="binaryOperation">The binary operation.</param>
-        /// <param name="enumerableType">Type of the enumerable.</param>
-        /// <returns><see langword="true" /> if the value of the invocation of
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})" />
+        /// <param name="containingSymbol">The containing symbol.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <returns><see langword="true" /> if the value of the invocation of the method <paramref name="methodName" /> in the <paramref name="containingSymbol" />
         /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-        private static bool IsLeftCountComparison(IBinaryOperation binaryOperation, INamedTypeSymbol enumerableType)
+        private static bool IsLeftCountComparison(IBinaryOperation binaryOperation, INamedTypeSymbol containingSymbol, string methodName)
         {
             if (!TryGetInt32Constant(binaryOperation.RightOperand, out var constant))
             {
@@ -231,20 +242,18 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
                 return false;
             }
 
-            return IsCountMethodInvocation(binaryOperation.LeftOperand, enumerableType);
+            return IsCountMethodInvocation(binaryOperation.LeftOperand, containingSymbol, methodName);
         }
 
         /// <summary>
-        /// Checks whether 0 or 1 is being compared with the value of the invocation of
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})" />
+        /// Checks whether 0 or 1 is being compared with the value of the invocation of the method <paramref name="methodName" /> in the <paramref name="containingSymbol" />
         /// using <see cref="int" /> comparison operators.
         /// </summary>
         /// <param name="binaryOperation">The binary operation.</param>
         /// <param name="enumerableType">Type of the enumerable.</param>
-        /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})" />
+        /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of the method <paramref name="methodName" /> in the <paramref name="containingSymbol" />
         /// using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-        private static bool IsRightCountComparison(IBinaryOperation binaryOperation, INamedTypeSymbol enumerableType)
+        private static bool IsRightCountComparison(IBinaryOperation binaryOperation, INamedTypeSymbol enumerableType, string methodName)
         {
             if (!TryGetInt32Constant(binaryOperation.LeftOperand, out var constant))
             {
@@ -270,7 +279,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
                 return false;
             }
 
-            return IsCountMethodInvocation(binaryOperation.RightOperand, enumerableType);
+            return IsCountMethodInvocation(binaryOperation.RightOperand, enumerableType, methodName);
         }
 
         /// <summary>
@@ -301,17 +310,18 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         }
 
         /// <summary>
-        /// Checks the is a <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})" />
-        /// or <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource}, Func{TSource, bool})" /> invocation.
+        /// Checks the <paramref name="operation"/> is an invocation of the method <paramref name="methodName"/> in the <paramref name="containingSymbol"/>.
         /// </summary>
         /// <param name="operation">The operation.</param>
-        /// <param name="enumerableType">Type of the enumerable.</param>
-        /// <returns><see langword="true" /> if XXXX, <see langword="false" /> otherwise.</returns>
-        private static bool IsCountMethodInvocation(IOperation operation, INamedTypeSymbol enumerableType)
+        /// <param name="containingSymbol">The containing symbol.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <returns><see langword="true" /> if the <paramref name="operation"/> is an invocation of the method <paramref name="methodName"/> in the <paramref name="containingSymbol"/>; 
+        /// <see langword="false" /> otherwise.</returns>
+        private static bool IsCountMethodInvocation(IOperation operation, INamedTypeSymbol containingSymbol, string methodName)
         {
             return operation is IInvocationOperation invocationExpression &&
-                invocationExpression.TargetMethod.Name.Equals(DoNotUseCountWhenAnyCanBeUsedAnalyzer.CountMethodName, StringComparison.Ordinal) &&
-                invocationExpression.TargetMethod.ContainingSymbol.Equals(enumerableType);
+                invocationExpression.TargetMethod.Name.Equals(methodName, StringComparison.Ordinal) &&
+                invocationExpression.TargetMethod.ContainingSymbol.Equals(containingSymbol);
         }
     }
 }

@@ -23,6 +23,8 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
     /// </summary>
     public abstract class DoNotUseCountWhenAnyCanBeUsedFixer : CodeFixProvider
     {
+        private const string AnyMethodName = "Any";
+
         /// <summary>
         /// A list of diagnostic IDs that this provider can provider fixes for.
         /// </summary>
@@ -97,7 +99,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
             {
                 var editor = await DocumentEditor.CreateAsync(this.document, cancellationToken).ConfigureAwait(false);
                 var generator = editor.Generator;
-                var memberAccess = generator.MemberAccessExpression(this.expression.WithoutTrailingTrivia(), "Any");
+                var memberAccess = generator.MemberAccessExpression(this.expression.WithoutTrailingTrivia(), AnyMethodName);
                 var replacementSyntax = generator.InvocationExpression(memberAccess, arguments);
 
                 if (this.negate)

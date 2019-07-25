@@ -35,7 +35,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SyntaxGenerator generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
             if (semanticModel != null && generator != null)
             {
-                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
+                string title = MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
                 context.RegisterCodeFix(new MyCodeAction(title, ct => Fix(context, root, generator, semanticModel, ct), equivalenceKey: title), context.Diagnostics.First());
             }
         }

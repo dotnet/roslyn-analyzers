@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -21,12 +21,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string Dispose = "Dispose";
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
-                                                                         new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
-                                                                         new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
+                                                                         new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
+                                                                         new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableMessageNonBreaking), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
                                                                          DiagnosticCategory.Design,
                                                                          DiagnosticHelpers.DefaultDiagnosticSeverity,
                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                                                                         description: new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources)),
+                                                                         description: new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.TypesThatOwnDisposableFieldsShouldBeDisposableDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources)),
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1001-types-that-own-disposable-fields-should-be-disposable",
                                                                          customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 

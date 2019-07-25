@@ -15,34 +15,34 @@ namespace Microsoft.NetFramework.Analyzers
         private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca3147-mark-verb-handlers-with-validateantiforgerytoken";
 
         private static readonly LocalizableString Title = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenTitle),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenTitle),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString NoVerbsMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString NoVerbsNoTokenMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString GetAndTokenMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString GetAndOtherAndTokenMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString VerbsAndNoTokenMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         internal static readonly DiagnosticDescriptor NoVerbsRule = new DiagnosticDescriptor(
             RuleId,

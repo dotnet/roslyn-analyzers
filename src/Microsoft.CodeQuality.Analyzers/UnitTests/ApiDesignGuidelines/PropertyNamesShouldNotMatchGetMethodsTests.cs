@@ -346,14 +346,14 @@ End Class");
         private static DiagnosticResult GetCA1721CSharpResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1721BasicResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 

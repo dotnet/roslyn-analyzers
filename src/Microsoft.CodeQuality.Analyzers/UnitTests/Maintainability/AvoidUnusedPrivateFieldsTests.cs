@@ -417,12 +417,12 @@ End Class
 
         private static DiagnosticResult GetCA1823CSharpResultAt(int line, int column, string fieldName)
         {
-            return GetCSharpResultAt(line, column, AvoidUnusedPrivateFieldsAnalyzer.RuleId, string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
+            return GetCSharpResultAt(line, column, AvoidUnusedPrivateFieldsAnalyzer.RuleId, string.Format(MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
         }
 
         private static DiagnosticResult GetCA1823BasicResultAt(int line, int column, string fieldName)
         {
-            return GetBasicResultAt(line, column, AvoidUnusedPrivateFieldsAnalyzer.RuleId, string.Format(MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
+            return GetBasicResultAt(line, column, AvoidUnusedPrivateFieldsAnalyzer.RuleId, string.Format(MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsMessage, fieldName));
         }
     }
 }

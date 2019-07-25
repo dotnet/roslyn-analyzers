@@ -14,12 +14,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2240";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ImplementISerializableCorrectlyTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementISerializableCorrectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ImplementISerializableCorrectlyMessageDefault), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMakeVisible = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ImplementISerializableCorrectlyMessageMakeVisible), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageMakeOverridable = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ImplementISerializableCorrectlyMessageMakeOverridable), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ImplementISerializableCorrectlyDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementISerializableCorrectlyMessageDefault), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageMakeVisible = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementISerializableCorrectlyMessageMakeVisible), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageMakeOverridable = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementISerializableCorrectlyMessageMakeOverridable), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementISerializableCorrectlyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

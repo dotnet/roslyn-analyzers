@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -25,12 +25,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private static DiagnosticResult CSharpResult(int line, int column)
         {
-            return GetCSharpResultAt(line, column, UseOrdinalStringComparisonAnalyzer.RuleId, SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle);
+            return GetCSharpResultAt(line, column, UseOrdinalStringComparisonAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.UseOrdinalStringComparisonTitle);
         }
 
         private static DiagnosticResult BasicResult(int line, int column)
         {
-            return GetBasicResultAt(line, column, UseOrdinalStringComparisonAnalyzer.RuleId, SystemRuntimeAnalyzersResources.UseOrdinalStringComparisonTitle);
+            return GetBasicResultAt(line, column, UseOrdinalStringComparisonAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.UseOrdinalStringComparisonTitle);
         }
 
         #endregion

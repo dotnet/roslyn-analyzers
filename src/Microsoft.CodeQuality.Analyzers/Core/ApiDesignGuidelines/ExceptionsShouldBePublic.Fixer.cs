@@ -38,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             string equivalenceKey = nameof(ExceptionsShouldBePublicFixer);
 
             CodeAction action = CodeAction.Create(
-                MicrosoftApiDesignGuidelinesAnalyzersResources.MakeExceptionPublic,
+                MicrosoftCodeQualityAnalyzersResources.MakeExceptionPublic,
                 c => MakePublic(context.Document, node, context.CancellationToken),
                 equivalenceKey);
 

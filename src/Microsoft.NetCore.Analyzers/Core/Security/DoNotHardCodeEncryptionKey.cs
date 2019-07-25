@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
@@ -13,12 +13,12 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5390",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DoNotHardCodeEncryptionKey),
-            nameof(SystemSecurityCryptographyResources.DoNotHardCodeEncryptionKeyMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeEncryptionKey),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeEncryptionKeyMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotHardCodeEncryptionKeyDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeEncryptionKeyDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         protected override SinkKind SinkKind { get { return SinkKind.HardcodedEncryptionKey; } }

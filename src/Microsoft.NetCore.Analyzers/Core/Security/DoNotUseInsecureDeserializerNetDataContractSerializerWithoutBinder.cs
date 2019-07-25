@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -19,15 +19,15 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static readonly DiagnosticDescriptor RealBinderDefinitelyNotSetDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2311",
-                nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerDeserializeWithoutBinderSetTitle),
-                nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerDeserializeWithoutBinderSetMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerDeserializeWithoutBinderSetTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerDeserializeWithoutBinderSetMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder");
         internal static readonly DiagnosticDescriptor RealBinderMaybeNotSetDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2312",
-                nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerDeserializeMaybeWithoutBinderSetTitle),
-                nameof(MicrosoftNetCoreSecurityResources.NetDataContractSerializerDeserializeMaybeWithoutBinderSetMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerDeserializeMaybeWithoutBinderSetTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerDeserializeMaybeWithoutBinderSetMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing");
 

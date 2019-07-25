@@ -111,10 +111,10 @@ End Class");
 
         private DiagnosticResult GetCA1064CSharpResultAt(int line, int column) =>
             GetCSharpResultAt(line, column, ExceptionsShouldBePublicAnalyzer.RuleId,
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ExceptionsShouldBePublicMessage);
+                MicrosoftCodeQualityAnalyzersResources.ExceptionsShouldBePublicMessage);
 
         private DiagnosticResult GetCA1064VBasicResultAt(int line, int column) =>
             GetBasicResultAt(line, column, ExceptionsShouldBePublicAnalyzer.RuleId,
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ExceptionsShouldBePublicMessage);
+                MicrosoftCodeQualityAnalyzersResources.ExceptionsShouldBePublicMessage);
     }
 }

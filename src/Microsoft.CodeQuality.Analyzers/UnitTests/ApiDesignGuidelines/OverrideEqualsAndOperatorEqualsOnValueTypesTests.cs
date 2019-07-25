@@ -399,22 +399,22 @@ End Structure
 
         private static DiagnosticResult GetCSharpOverrideEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
         }
 
         private static DiagnosticResult GetCSharpOperatorEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
         }
 
         private static DiagnosticResult GetBasicOverrideEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageEquals);
         }
 
         private static DiagnosticResult GetBasicOperatorEqualsDiagnostic(int line, int column, string typeName)
         {
-            return GetExpectedDiagnostic(line, column, typeName, MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
+            return GetExpectedDiagnostic(line, column, typeName, MicrosoftCodeQualityAnalyzersResources.OverrideEqualsAndOperatorEqualsOnValueTypesMessageOpEquality);
         }
 
         private static DiagnosticResult GetExpectedDiagnostic(int line, int column, string typeName, string messageFormat)

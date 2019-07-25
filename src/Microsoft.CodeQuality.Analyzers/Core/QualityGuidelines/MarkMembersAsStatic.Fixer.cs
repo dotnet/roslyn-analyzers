@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             context.RegisterCodeFix(
                 new MarkMembersAsStaticAction(
-                    MicrosoftQualityGuidelinesAnalyzersResources.MarkMembersAsStaticCodeFix,
+                    MicrosoftCodeQualityAnalyzersResources.MarkMembersAsStaticCodeFix,
                     ct => MakeStaticAsync(context.Document, root, node, ct)),
                 context.Diagnostics);
         }
@@ -234,7 +234,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var fixedDeclaration = root.DescendantNodes().Single(n => n.HasAnnotation(s_annotationForFixedDeclaration));
-            var annotation = WarningAnnotation.Create(string.Format(MicrosoftQualityGuidelinesAnalyzersResources.MarkMembersAsStaticCodeFix_WarningAnnotation, symbolFromEarlierSnapshot.Name));
+            var annotation = WarningAnnotation.Create(string.Format(MicrosoftCodeQualityAnalyzersResources.MarkMembersAsStaticCodeFix_WarningAnnotation, symbolFromEarlierSnapshot.Name));
             return document.WithSyntaxRoot(root.ReplaceNode(fixedDeclaration, fixedDeclaration.WithAdditionalAnnotations(annotation)));
         }
 

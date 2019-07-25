@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -102,13 +102,13 @@ End Class
         private static DiagnosticResult GetCA1018CSharpResultAt(int line, int column, string objectName)
         {
             return GetCSharpResultAt(line, column, MarkAttributesWithAttributeUsageAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault, objectName));
+                string.Format(MicrosoftCodeQualityAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault, objectName));
         }
 
         private static DiagnosticResult GetCA1018BasicResultAt(int line, int column, string objectName)
         {
             return GetBasicResultAt(line, column, MarkAttributesWithAttributeUsageAnalyzer.RuleId,
-                string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault, objectName));
+                string.Format(MicrosoftCodeQualityAnalyzersResources.MarkAttributesWithAttributeUsageMessageDefault, objectName));
         }
     }
 }

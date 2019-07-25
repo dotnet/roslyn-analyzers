@@ -402,12 +402,12 @@ public class C
 
         private DiagnosticResult GetCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
+            return GetCSharpResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
         }
 
         private DiagnosticResult GetBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
+            return GetBasicResultAt(line, column, DoNotDirectlyAwaitATaskAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DoNotDirectlyAwaitATaskMessage);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return Task.CompletedTask;
             }
 
-            var title = SystemRuntimeAnalyzersResources.UseIndexer;
+            var title = MicrosoftNetCoreAnalyzersResources.UseIndexer;
 
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async ct => await UseCollectionDirectly(context.Document, context.Span, ct).ConfigureAwait(false),

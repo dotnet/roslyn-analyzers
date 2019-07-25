@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -44,7 +44,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             Diagnostic diagnostic = context.Diagnostics.Single();
 
             // There was no constructor and so the diagnostic was on the type. Generate a serialization ctor.
-            string title = SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle;
+            string title = MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsCodeActionTitle;
             if (symbol.Kind == SymbolKind.NamedType)
             {
                 context.RegisterCodeFix(new MyCodeAction(title,

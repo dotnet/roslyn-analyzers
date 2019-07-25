@@ -37,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsCodeActionTitle;
+            string title = MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,

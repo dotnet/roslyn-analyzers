@@ -47,15 +47,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                             {
                                 if (symbol.IsOverride)
                                 {
-                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) + DeclarationModifiers.Sealed), dx);
+                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftCodeQualityAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) + DeclarationModifiers.Sealed), dx);
                                 }
                                 else if (symbol.IsVirtual)
                                 {
-                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) - DeclarationModifiers.Virtual), dx);
+                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftCodeQualityAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) - DeclarationModifiers.Virtual), dx);
                                 }
                                 else if (symbol.IsAbstract)
                                 {
-                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) - DeclarationModifiers.Abstract), dx);
+                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftCodeQualityAnalyzersResources.MakeMemberNotOverridable, "MakeMemberNotOverridable", solution, symbol, DeclarationModifiers.From(symbol) - DeclarationModifiers.Abstract), dx);
                                 }
 
                                 // trigger containing type code fixes below
@@ -68,10 +68,10 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                                 // cannot make abstract type sealed because they cannot be constructed
                                 if (!type.IsAbstract)
                                 {
-                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeDeclaringTypeSealed, "MakeDeclaringTypeSealed", solution, type, DeclarationModifiers.From(type) + DeclarationModifiers.Sealed), dx);
+                                    context.RegisterCodeFix(new ChangeModifierAction(MicrosoftCodeQualityAnalyzersResources.MakeDeclaringTypeSealed, "MakeDeclaringTypeSealed", solution, type, DeclarationModifiers.From(type) + DeclarationModifiers.Sealed), dx);
                                 }
 
-                                context.RegisterCodeFix(new ChangeAccessibilityAction(MicrosoftQualityGuidelinesAnalyzersResources.MakeDeclaringTypeInternal, "MakeDeclaringTypeInternal", solution, type, Accessibility.Internal), dx);
+                                context.RegisterCodeFix(new ChangeAccessibilityAction(MicrosoftCodeQualityAnalyzersResources.MakeDeclaringTypeInternal, "MakeDeclaringTypeInternal", solution, type, Accessibility.Internal), dx);
                             }
                         }
                     }

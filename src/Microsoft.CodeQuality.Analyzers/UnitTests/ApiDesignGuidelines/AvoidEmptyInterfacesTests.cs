@@ -234,12 +234,12 @@ End Class",
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)
         {
-            return GetCSharpResultAt(line, col, AvoidEmptyInterfacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidEmptyInterfacesMessage);
+            return GetCSharpResultAt(line, col, AvoidEmptyInterfacesAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.AvoidEmptyInterfacesMessage);
         }
 
         private static DiagnosticResult CreateBasicResult(int line, int col)
         {
-            return GetBasicResultAt(line, col, AvoidEmptyInterfacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.AvoidEmptyInterfacesMessage);
+            return GetBasicResultAt(line, col, AvoidEmptyInterfacesAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.AvoidEmptyInterfacesMessage);
         }
     }
 }

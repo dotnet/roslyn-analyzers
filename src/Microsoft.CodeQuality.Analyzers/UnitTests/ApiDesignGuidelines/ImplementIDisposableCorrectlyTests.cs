@@ -2918,104 +2918,104 @@ End Class
 
         private static DiagnosticResult GetCA1063CSharpIDisposableReimplementationResultAt(int line, int column, string typeName, string baseTypeName)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName, baseTypeName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName, baseTypeName);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063BasicIDisposableReimplementationResultAt(int line, int column, string typeName, string baseTypeName)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName, baseTypeName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageIDisposableReimplementation, typeName, baseTypeName);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063CSharpDisposeSignatureResultAt(int line, int column, string typeName, string disposeMethod)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature, typeName + "." + disposeMethod);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature, typeName + "." + disposeMethod);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063BasicDisposeSignatureResultAt(int line, int column, string typeName, string disposeMethod)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature, typeName + "." + disposeMethod);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeSignature, typeName + "." + disposeMethod);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063CSharpRenameDisposeResultAt(int line, int column, string typeName, string disposeMethod)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose, typeName + "." + disposeMethod);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose, typeName + "." + disposeMethod);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063BasicRenameDisposeResultAt(int line, int column, string typeName, string disposeMethod)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose, typeName + "." + disposeMethod);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageRenameDispose, typeName + "." + disposeMethod);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063CSharpDisposeOverrideResultAt(int line, int column, string typeName, string method)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride, typeName + "." + method);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride, typeName + "." + method);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063BasicDisposeOverrideResultAt(int line, int column, string typeName, string method)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride, typeName + "." + method);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeOverride, typeName + "." + method);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063CSharpFinalizeOverrideResultAt(int line, int column, string typeName, string baseTypeName)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName, baseTypeName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName, baseTypeName);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063BasicFinalizeOverrideResultAt(int line, int column, string typeName, string baseTypeName)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName, baseTypeName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeOverride, typeName, baseTypeName);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063CSharpProvideDisposeBoolResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool, typeName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool, typeName);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063BasicProvideDisposeBoolResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool, typeName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageProvideDisposeBool, typeName);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063CSharpDisposeBoolSignatureResultAt(int line, int column, string typeName, string disposeMethod)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature, typeName + "." + disposeMethod);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature, typeName + "." + disposeMethod);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063BasicDisposeBoolSignatureResultAt(int line, int column, string typeName, string disposeMethod)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature, typeName + "." + disposeMethod);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeBoolSignature, typeName + "." + disposeMethod);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063CSharpDisposeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeImplementation, typeName + "." + disposeMethod);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeImplementation, typeName + "." + disposeMethod);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063BasicDisposeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
         {
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeImplementation, typeName + "." + disposeMethod);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageDisposeImplementation, typeName + "." + disposeMethod);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1063CSharpFinalizeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
         {
             string message = string.Format(
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation, typeName + "." +
+                MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation, typeName + "." +
                 disposeMethod);
             return GetCSharpResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }
@@ -3023,7 +3023,7 @@ End Class
         private static DiagnosticResult GetCA1063BasicFinalizeImplementationResultAt(int line, int column, string typeName, string disposeMethod)
         {
             string message = string.Format(
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation, typeName + "." +
+                MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableCorrectlyMessageFinalizeImplementation, typeName + "." +
                 disposeMethod);
             return GetBasicResultAt(line, column, ImplementIDisposableCorrectlyAnalyzer.RuleId, message);
         }

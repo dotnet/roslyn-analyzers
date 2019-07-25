@@ -906,8 +906,8 @@ End NameSpace
             VerifyBasic(code, GetCA1044BasicResultAt(6, 25, CA1044MessageMakeMoreAccessible, "VB_InaccessibleProperty3"));
         }
 
-        private static readonly string CA1044MessageAddGetter = MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageAddGetter;
-        private static readonly string CA1044MessageMakeMoreAccessible = MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible;
+        private static readonly string CA1044MessageAddGetter = MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageAddGetter;
+        private static readonly string CA1044MessageMakeMoreAccessible = MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotBeWriteOnlyMessageMakeMoreAccessible;
 
         private static DiagnosticResult GetCA1044CSharpResultAt(int line, int column, string CA1044Message, string objectName)
         {

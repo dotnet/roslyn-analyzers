@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
@@ -159,6 +159,6 @@ using System.Reflection;
         }
 
         private static readonly DiagnosticResult s_diagnostic = new DiagnosticResult(MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1016RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
-            .WithMessageFormat(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage);
+            .WithMessageFormat(MicrosoftCodeQualityAnalyzersResources.MarkAssembliesWithAssemblyVersionMessage);
     }
 }

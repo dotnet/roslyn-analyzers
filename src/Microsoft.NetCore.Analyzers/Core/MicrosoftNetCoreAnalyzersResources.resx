@@ -1063,7 +1063,7 @@
     <value>Do not create tasks without passing a TaskScheduler</value>
   </data>
   <data name="UseDefaultDllImportSearchPathsAttribute" xml:space="preserve">
-    <value>Use DefaultDllImportSearchPaths Attribute For P/Invokes</value>
+    <value>Use DefaultDllImportSearchPaths attribute for P/Invokes</value>
   </data>
   <data name="UseDefaultDllImportSearchPathsAttributeDescription" xml:space="preserve">
     <value>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</value>

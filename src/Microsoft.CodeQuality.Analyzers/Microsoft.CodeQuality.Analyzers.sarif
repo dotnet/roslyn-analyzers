@@ -1243,6 +1243,22 @@
             ]
           }
         },
+        "CA1827": {
+          "id": "CA1827",
+          "shortDescription": "Do not use Count() when Any() can be used",
+          "fullDescription": "For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
         "CA2007": {
           "id": "CA2007",
           "shortDescription": "Consider calling ConfigureAwait on the awaited task",

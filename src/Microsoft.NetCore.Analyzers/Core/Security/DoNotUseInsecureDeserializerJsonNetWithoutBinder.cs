@@ -31,15 +31,15 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static readonly DiagnosticDescriptor DefinitelyInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2329",
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetInsecureSerializerTitle),
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetInsecureSerializerMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null);
         internal static readonly DiagnosticDescriptor MaybeInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2330",
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetMaybeInsecureSerializerTitle),
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetMaybeInsecureSerializerMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null);
 

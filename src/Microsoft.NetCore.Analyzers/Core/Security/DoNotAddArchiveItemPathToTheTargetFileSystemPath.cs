@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
@@ -13,12 +13,12 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5389",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DoNotAddArchiveItemPathToTheTargetFileSystemPath),
-            nameof(SystemSecurityCryptographyResources.DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPath),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         protected override SinkKind SinkKind { get { return SinkKind.ZipSlip; } }

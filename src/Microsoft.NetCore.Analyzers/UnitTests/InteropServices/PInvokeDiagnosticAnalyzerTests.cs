@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -11,8 +11,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices.UnitTests
     {
         #region Verifiers 
 
-        private static readonly string s_CA1401RuleText = SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage;
-        private static readonly string s_CA2101RuleText = SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
+        private static readonly string s_CA1401RuleText = MicrosoftNetCoreAnalyzersResources.PInvokesShouldNotBeVisibleMessage;
+        private static readonly string s_CA2101RuleText = MicrosoftNetCoreAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

@@ -344,14 +344,14 @@ End Class
         private static DiagnosticResult GetCA1032CSharpMissingConstructorResultAt(int line, int column, string typeName, string constructor)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor);
             return GetCSharpResultAt(line, column, ImplementStandardExceptionConstructorsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1032BasicMissingConstructorResultAt(int line, int column, string typeName, string constructor)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor);
             return GetBasicResultAt(line, column, ImplementStandardExceptionConstructorsAnalyzer.RuleId, message);
         }
         #endregion

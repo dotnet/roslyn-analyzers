@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -28,15 +28,15 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static readonly DiagnosticDescriptor DefinitelyWithSimpleTypeResolver =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2321",
-                nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerWithSimpleTypeResolverTitle),
-                nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerWithSimpleTypeResolverMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.JavaScriptSerializerWithSimpleTypeResolverTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JavaScriptSerializerWithSimpleTypeResolverMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2321");
         internal static readonly DiagnosticDescriptor MaybeWithSimpleTypeResolver =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2322",
-                nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerMaybeWithSimpleTypeResolverTitle),
-                nameof(MicrosoftNetCoreSecurityResources.JavaScriptSerializerMaybeWithSimpleTypeResolverMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.JavaScriptSerializerMaybeWithSimpleTypeResolverTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JavaScriptSerializerMaybeWithSimpleTypeResolverMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2322");
 

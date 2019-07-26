@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -38,8 +38,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
             string fixTitle = diagnostic.Id == EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags ?
-                                                    MicrosoftApiDesignGuidelinesAnalyzersResources.MarkEnumsWithFlagsCodeFix :
-                                                    MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
+                                                    MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsCodeFix :
+                                                    MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
             context.RegisterCodeFix(new MyCodeAction(fixTitle,
                                          async ct => await AddOrRemoveFlagsAttribute(context.Document, context.Span, diagnostic.Id, flagsAttributeType, ct).ConfigureAwait(false),
                                          equivalenceKey: fixTitle),

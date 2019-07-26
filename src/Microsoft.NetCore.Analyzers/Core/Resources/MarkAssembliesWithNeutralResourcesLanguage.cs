@@ -23,10 +23,10 @@ namespace Microsoft.NetCore.Analyzers.Resources
         protected const string StronglyTypedResourceBuilder = "StronglyTypedResourceBuilder";
         private const string Designer = ".Designer.";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemResourcesAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageTitle), SystemResourcesAnalyzersResources.ResourceManager, typeof(SystemResourcesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemResourcesAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageMessage), SystemResourcesAnalyzersResources.ResourceManager, typeof(SystemResourcesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemResourcesAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageDescription), SystemResourcesAnalyzersResources.ResourceManager, typeof(SystemResourcesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

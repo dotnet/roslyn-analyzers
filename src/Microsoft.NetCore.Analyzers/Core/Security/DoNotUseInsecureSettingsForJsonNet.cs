@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -30,15 +30,15 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static readonly DiagnosticDescriptor DefinitelyInsecureSettings =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2327",
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetInsecureSettingsTitle),
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetInsecureSettingsMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null);
         internal static readonly DiagnosticDescriptor MaybeInsecureSettings =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2328",
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetMaybeInsecureSettingsTitle),
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetMaybeInsecureSettingsMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null);
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -14,13 +14,13 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
     internal static class SecurityHelpers
     {
         /// <summary>
-        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from <see cref="MicrosoftNetCoreSecurityResources"/>.
+        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from <see cref="MicrosoftNetCoreAnalyzersResources"/>.
         /// </summary>
         /// <param name="id">Diagnostic identifier.</param>
-        /// <param name="titleResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's title.</param>
-        /// <param name="messageResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's message.</param>
+        /// <param name="titleResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's title.</param>
+        /// <param name="messageResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's message.</param>
         /// <param name="isEnabledByDefault">Flag indicating the diagnostic is enabled by default</param>
-        /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's descrption.</param>
+        /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's descrption.</param>
         /// <param name="helpLinkUri">Help link URI.</param>
         /// <param name="customTags">Optional custom tags for the diagnostic. See Microsoft.CodeAnalysis.WellKnownDiagnosticTags for some well known tags.</param>
         /// <returns>New DiagnosticDescriptor.</returns>
@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         {
             return CreateDiagnosticDescriptor(
                 id,
-                typeof(MicrosoftNetCoreSecurityResources),
+                typeof(MicrosoftNetCoreAnalyzersResources),
                 titleResourceStringName,
                 messageResourceStringName,
                 isEnabledByDefault,
@@ -114,8 +114,8 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
             ImmutableDictionary.CreateRange<Type, ResourceManager>(
                 new[]
                 {
-                    (typeof(MicrosoftNetCoreSecurityResources), MicrosoftNetCoreSecurityResources.ResourceManager),
-                    (typeof(SystemSecurityCryptographyResources), SystemSecurityCryptographyResources.ResourceManager),
+                    (typeof(MicrosoftNetCoreAnalyzersResources), MicrosoftNetCoreAnalyzersResources.ResourceManager),
+                    (typeof(MicrosoftNetCoreAnalyzersResources), MicrosoftNetCoreAnalyzersResources.ResourceManager),
                 }.Select(o => new KeyValuePair<Type, ResourceManager>(o.Item1, o.Item2)));
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 "Populate");
 
         /// <summary>
-        /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreSecurityResources"/>.
+        /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreAnalyzersResources"/>.
         /// </summary>
         /// <param name="resourceSource">Type containing the resource strings.</param>
         /// <param name="name">Name of the resource string to retrieve.</param>

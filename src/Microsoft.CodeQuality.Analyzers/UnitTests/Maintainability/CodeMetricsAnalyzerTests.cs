@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -690,7 +690,7 @@ CA 1501: 10
         {
             return new DiagnosticResult(CodeMetricsAnalyzer.CA1501RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
                 .WithLocation(line, column)
-                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveInheritanceMessage)
+                .WithMessageFormat(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveInheritanceMessage)
                 .WithArguments(symbolName, metricValue, threshold, baseTypes);
         }
 
@@ -699,7 +699,7 @@ CA 1501: 10
         {
             return new DiagnosticResult(CodeMetricsAnalyzer.CA1502RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
                 .WithLocation(line, column)
-                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveComplexityMessage)
+                .WithMessageFormat(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveComplexityMessage)
                 .WithArguments(symbolName, metricValue, threshold);
         }
 
@@ -708,7 +708,7 @@ CA 1501: 10
         {
             return new DiagnosticResult(CodeMetricsAnalyzer.CA1505RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
                 .WithLocation(line, column)
-                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.AvoidUnmantainableCodeMessage)
+                .WithMessageFormat(MicrosoftCodeQualityAnalyzersResources.AvoidUnmantainableCodeMessage)
                 .WithArguments(symbolName, metricValue, threshold);
         }
 
@@ -717,7 +717,7 @@ CA 1501: 10
         {
             return new DiagnosticResult(CodeMetricsAnalyzer.CA1506RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
                 .WithLocation(line, column)
-                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveClassCouplingMessage)
+                .WithMessageFormat(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveClassCouplingMessage)
                 .WithArguments(symbolName, coupledTypesCount, namespaceCount, threshold);
         }
 
@@ -725,7 +725,7 @@ CA 1501: 10
         {
             return new DiagnosticResult(CodeMetricsAnalyzer.CA1509RuleId, DiagnosticHelpers.DefaultDiagnosticSeverity)
                 .WithLocation(AdditionalFileName, line, column)
-                .WithMessageFormat(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage)
+                .WithMessageFormat(MicrosoftCodeQualityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage)
                 .WithArguments(entry, additionalFile);
         }
 

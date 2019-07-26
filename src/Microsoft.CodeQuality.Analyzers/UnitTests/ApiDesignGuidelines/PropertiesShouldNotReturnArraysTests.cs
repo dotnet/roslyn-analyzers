@@ -146,12 +146,12 @@ End Class");
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)
         {
-            return GetCSharpResultAt(line, col, PropertiesShouldNotReturnArraysAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotReturnArraysMessage);
+            return GetCSharpResultAt(line, col, PropertiesShouldNotReturnArraysAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotReturnArraysMessage);
         }
 
         private static DiagnosticResult CreateBasicResult(int line, int col)
         {
-            return GetBasicResultAt(line, col, PropertiesShouldNotReturnArraysAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.PropertiesShouldNotReturnArraysMessage);
+            return GetBasicResultAt(line, col, PropertiesShouldNotReturnArraysAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.PropertiesShouldNotReturnArraysMessage);
         }
     }
 }

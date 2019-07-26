@@ -24,21 +24,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesTitle),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesTitle),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessage_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription_CA1714 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesDescription),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesDescription),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule_CA1714 =
             new DiagnosticDescriptor(
@@ -59,21 +59,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesTitle),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesTitle),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessage_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription_CA1717 =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesDescription),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesDescription),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule_CA1717 =
             new DiagnosticDescriptor(

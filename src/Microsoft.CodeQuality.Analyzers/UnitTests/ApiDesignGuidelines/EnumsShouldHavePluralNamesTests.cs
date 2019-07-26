@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -526,22 +526,22 @@ End Class
 
         private static DiagnosticResult GetCSharpPluralResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
+            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
         }
 
         private static DiagnosticResult GetBasicPluralResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
+            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
         }
 
         private static DiagnosticResult GetCSharpNoPluralResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
+            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
         }
 
         private static DiagnosticResult GetBasicNoPluralResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
+            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
         }
     }
 }

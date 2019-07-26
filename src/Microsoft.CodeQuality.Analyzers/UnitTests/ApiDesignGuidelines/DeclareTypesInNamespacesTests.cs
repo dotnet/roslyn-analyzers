@@ -97,12 +97,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column)
         {
-            return GetCSharpResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DeclareTypesInNamespacesMessage);
+            return GetCSharpResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DeclareTypesInNamespacesMessage);
         }
 
         private static DiagnosticResult GetBasicExpectedResult(int line, int column)
         {
-            return GetBasicResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DeclareTypesInNamespacesMessage);
+            return GetBasicResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DeclareTypesInNamespacesMessage);
         }
     }
 }

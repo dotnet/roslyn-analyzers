@@ -136,6 +136,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 }
                             }
 
+                            if (!notDisposedDiagnostics.Any() && !mayBeNotDisposedDiagnostics.Any())
+                            {
+                                return;
+                            }
+
+                            if (disposeAnalysisResult.ControlFlowGraph.OriginalOperation.HasAnyOperationDescendant(o => o.Kind == OperationKind.None))
+                            {
+                                // Workaround for https://github.com/dotnet/roslyn/issues/32100
+                                // Bail out in presence of OperationKind.None - not implemented IOperation.
+                                return;
+                            }
+
                             // Report diagnostics preferring *not* disposed diagnostics over may be not disposed diagnostics
                             // and avoiding duplicates.
                             foreach (var diagnostic in notDisposedDiagnostics.Concat(mayBeNotDisposedDiagnostics))

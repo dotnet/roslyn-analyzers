@@ -27,7 +27,7 @@
       <_GeneratedRulesetsDir>$(IntermediateOutputPath)Rulesets</_GeneratedRulesetsDir>
       <ContainsPortedFxCopRules Condition="'$(ContainsPortedFxCopRules)' == ''">false</ContainsPortedFxCopRules>
       <GeneratePackagePropsFile Condition="'$(GeneratePackagePropsFile)' == ''">true</GeneratePackagePropsFile>
-      <DevelopmentDependency Condition="'$(DevelopmentDependency)' == ''">true</DevelopmentDependency>
+      <DevelopmentDependency Condition="'@(AnalyzerNupkgAssembly)' != '' or '@(AnalyzerNupkgDependency)' != ''">true</DevelopmentDependency>
       <GenerateAnalyzerMdFile Condition="'$(GenerateAnalyzerMdFile)' == ''">true</GenerateAnalyzerMdFile>
       <GenerateAnalyzerSarifFile Condition="'$(GenerateAnalyzerSarifFile)' == ''">true</GenerateAnalyzerSarifFile>
     </PropertyGroup>

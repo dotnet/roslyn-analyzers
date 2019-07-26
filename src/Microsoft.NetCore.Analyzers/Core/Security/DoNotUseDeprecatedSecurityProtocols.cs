@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsMessage),
             descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotUseDeprecatedSecurityProtocolsDescription),
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5364",
             customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor HardCodedRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5386",
@@ -29,7 +29,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(SystemSecurityCryptographyResources.HardCodedSecurityProtocolTitle),
             nameof(SystemSecurityCryptographyResources.HardCodedSecurityProtocolMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5386",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         private readonly ImmutableHashSet<string> HardCodedSafeProtocolMetadataNames = ImmutableHashSet.Create(

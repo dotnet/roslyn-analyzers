@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -204,6 +206,34 @@ class TestClass
         zipArchiveEntry.ExtractToFile(destinationFileName.Substring(1));
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality." + DoNotAddArchiveItemPathToTheTargetFileSystemPath.RuleId + ".excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(8, 9, 8, 39, "void ZipFileExtensions.ExtractToFile(ZipArchiveEntry source, string destinationFileName)", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)", "string ZipArchiveEntry.FullName", "void TestClass.TestMethod(ZipArchiveEntry zipArchiveEntry)")
+                };
+            }
+
+            VerifyCSharpWithDependencies(@"
+using System.IO.Compression;
+
+class TestClass
+{
+    public void TestMethod(ZipArchiveEntry zipArchiveEntry)
+    {
+        zipArchiveEntry.ExtractToFile(zipArchiveEntry.FullName);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

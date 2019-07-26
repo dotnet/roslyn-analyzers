@@ -86,7 +86,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
                     if (!(operationBlockContext.OwningSymbol is IMethodSymbol containingMethod) ||
-                        !disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockContext.OperationBlocks, containingMethod))
+                        !disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockContext.OperationBlocks, containingMethod) ||
+                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockContext.Options,
+                            NotDisposedRule, operationBlockContext.Compilation, operationBlockContext.CancellationToken))
                     {
                         return;
                     }

@@ -119,6 +119,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
+                            var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+
+                            // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    DefinitelyInstallRootCertRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    MaybeInstallRootCertRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -168,6 +179,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
+                                        compilationAnalysisContext.Options,
                                         WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Store,
                                         constructorMapper,
                                         PropertyMappers,

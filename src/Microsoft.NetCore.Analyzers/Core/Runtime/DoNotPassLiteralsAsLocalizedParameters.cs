@@ -60,7 +60,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
-                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod))
+                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod) ||
+                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
+                            Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
                     {
                         return;
                     }

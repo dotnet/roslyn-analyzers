@@ -33,14 +33,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: null,
+                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static readonly DiagnosticDescriptor MaybeInsecureSettings =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2328",
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: null,
+                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
@@ -138,6 +140,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
+                            var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+
+                            // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    DefinitelyInsecureSettings, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    MaybeInsecureSettings, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -207,6 +220,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
+                                        compilationAnalysisContext.Options,
                                         WellKnownTypeNames.NewtonsoftJsonJsonSerializerSettings,
                                         ConstructorMapper,
                                         PropertyMappers,

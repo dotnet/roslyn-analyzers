@@ -126,7 +126,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                                         operationBlockStartContext.Options, Rule, InterproceduralAnalysisKind.None, operationBlockStartContext.CancellationToken);
                                     var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(cfg,
-                                        containingMethod, wellKnownTypeProvider, interproceduralAnalysisConfig,
+                                        containingMethod, operationBlockStartContext.Options, wellKnownTypeProvider, interproceduralAnalysisConfig,
                                         interproceduralAnalysisPredicateOpt: null,
                                         pessimisticAnalysis: false, performCopyAnalysis: false);
                                     if (pointsToAnalysisResult == null)
@@ -234,7 +234,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     // and have at least one disposable field.
                     return !hasErrors &&
                         namedType.IsDisposable(disposeAnalysisHelper.IDisposable) &&
-                        !disposeAnalysisHelper.GetDisposableFields(namedType).IsEmpty;
+                        !disposeAnalysisHelper.GetDisposableFields(namedType).IsEmpty &&
+                        !namedType.IsConfiguredToSkipAnalysis(compilationContext.Options, Rule, compilationContext.Compilation, compilationContext.CancellationToken);
                 }
 
                 bool IsDisposeMethod(IMethodSymbol method)

@@ -89,6 +89,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
+                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule,
+                            operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    {
+                        return;
+                    }
 
                     operationBlockStartContext.RegisterOperationAction(operationAnalysisContext =>
                     {
@@ -139,6 +144,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
                                                                                             invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
                                                                                             owningSymbol,
+                                                                                            operationAnalysisContext.Options,
                                                                                             wellKnownTypeProvider,
                                                                                             interproceduralAnalysisConfig,
                                                                                             out var copyAnalysisResult,

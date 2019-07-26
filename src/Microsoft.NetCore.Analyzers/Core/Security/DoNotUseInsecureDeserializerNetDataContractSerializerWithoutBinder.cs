@@ -22,14 +22,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerDeserializeWithoutBinderSetTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerDeserializeWithoutBinderSetMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder");
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2311-do-not-deserialize-without-first-setting-netdatacontractserializer-binder",
+                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static readonly DiagnosticDescriptor RealBinderMaybeNotSetDescriptor =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2312",
                 nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerDeserializeMaybeWithoutBinderSetTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.NetDataContractSerializerDeserializeMaybeWithoutBinderSetMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing");
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2312-ensure-netdatacontractserializer-binder-is-set-before-deserializing",
+                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         protected override string DeserializerTypeMetadataName =>
             WellKnownTypeNames.SystemRuntimeSerializationNetDataContractSerializer;

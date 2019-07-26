@@ -42,22 +42,6 @@ class TestClass
         }
 
         [Fact]
-        public void TestReturnObjectOfRSADerivedClassDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-
-class TestClass
-{
-    public RSA TestMethod(RSA rsa)
-    {
-        return rsa;
-    }
-}",
-            GetCSharpResultAt(8, 9, UseRSAWithSufficientKeySize.Rule, "RSA"));
-        }
-
-        [Fact]
         public void TestCreateWithoutParameterDiagnostic()
         {
             VerifyCSharp(@"
@@ -283,6 +267,21 @@ class TestClass
     }
 }",
             GetCSharpResultAt(9, 28, UseRSAWithSufficientKeySize.Rule, "system.security.cryptography.asymmetricalgorithm"));
+        }
+
+        [Fact]
+        public void TestReturnObjectOfRSADerivedClassNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public RSA TestMethod(RSA rsa)
+    {
+        return rsa;
+    }
+}");
         }
 
         [Fact]

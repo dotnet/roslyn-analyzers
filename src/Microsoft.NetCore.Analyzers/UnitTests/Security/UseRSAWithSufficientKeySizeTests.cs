@@ -9,6 +9,23 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class UseRSAWithSufficientKeySizeTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
+        public void Issue2697()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public RSACryptoServiceProvider TestMethod(string xml)
+    {
+        var rsa = new RSACryptoServiceProvider();
+        rsa.FromXmlString(xml);
+        return rsa;
+    }
+}");
+        }
+
+        [Fact]
         public void TestCreateObjectOfRSADerivedClassWithInt32ParameterDiagnostic()
         {
             VerifyCSharp(@"

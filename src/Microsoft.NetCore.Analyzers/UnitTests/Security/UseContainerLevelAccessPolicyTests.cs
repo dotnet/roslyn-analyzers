@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -9,9 +10,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class UseContainerLevelAccessPolicyTests : DiagnosticAnalyzerTestBase
     {
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            string microsoftWindowsAzureStorageCSharpSourceCode = @"
+        private const string MicrosoftWindowsAzureStorageCSharpSourceCode = @"
 using System;
 
 namespace Microsoft.WindowsAzure.Storage
@@ -125,8 +124,20 @@ namespace Microsoft.WindowsAzure.Storage
         }
     }
 }";
+
+        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        {
             this.VerifyCSharp(
-                new[] { source, microsoftWindowsAzureStorageCSharpSourceCode }.ToFileAndSource(),
+                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode }.ToFileAndSource(),
+                expected);
+        }
+
+        protected void VerifyCSharpWithDependencies(string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
+        {
+            this.VerifyCSharp(
+                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode },
+                additionalFile,
+                ReferenceFlags.None,
                 expected);
         }
 
@@ -374,6 +385,37 @@ class TestClass
         cloudTable.GetSharedAccessSignature(policy, accessPolicyIdentifier, startPartitionKey, startRowKey, endPartitionKey, endRowKey);
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality." + UseContainerLevelAccessPolicy.DiagnosticId + ".excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(11, 9, UseContainerLevelAccessPolicy.Rule)
+                };
+            }
+
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.WindowsAzure.Storage.Table;
+
+class TestClass
+{
+    public void TestMethod(SharedAccessTablePolicy policy, string startPartitionKey, string startRowKey, string endPartitionKey, string endRowKey)
+    {
+        var cloudTable = new CloudTable();
+        string accessPolicyIdentifier = null;
+        cloudTable.GetSharedAccessSignature(policy, accessPolicyIdentifier, startPartitionKey, startRowKey, endPartitionKey, endRowKey);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

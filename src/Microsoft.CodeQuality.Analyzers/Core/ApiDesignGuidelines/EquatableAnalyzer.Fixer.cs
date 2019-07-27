@@ -58,7 +58,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (type.TypeKind == TypeKind.Struct && !TypeImplementsEquatable(type, equatableType))
             {
-                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementEquatable;
+                string title = MicrosoftCodeQualityAnalyzersResources.ImplementEquatable;
                 context.RegisterCodeFix(new MyCodeAction(
                     title,
                     async ct =>
@@ -69,7 +69,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (!type.OverridesEquals())
             {
-                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
+                string title = MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnImplementingIEquatableCodeActionTitle;
                 context.RegisterCodeFix(new MyCodeAction(
                     title,
                     async ct =>

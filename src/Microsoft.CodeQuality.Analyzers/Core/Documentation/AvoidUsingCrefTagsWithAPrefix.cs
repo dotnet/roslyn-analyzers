@@ -14,10 +14,10 @@ namespace Microsoft.CodeQuality.Analyzers.Documentation
     {
         internal const string RuleId = "CA1200";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixTitle), XmlDocumentationCommentsAnalyzersResources.ResourceManager, typeof(XmlDocumentationCommentsAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUsingCrefTagsWithAPrefixTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage), XmlDocumentationCommentsAnalyzersResources.ResourceManager, typeof(XmlDocumentationCommentsAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixDescription), XmlDocumentationCommentsAnalyzersResources.ResourceManager, typeof(XmlDocumentationCommentsAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUsingCrefTagsWithAPrefixDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

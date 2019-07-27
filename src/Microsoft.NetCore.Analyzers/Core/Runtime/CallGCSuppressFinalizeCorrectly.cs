@@ -18,13 +18,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1816";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageNotCalledWithFinalizer = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNotCalled = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalled), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNotPassedThis = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotPassedThis), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageOutsideDispose = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageOutsideDispose), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.CallGCSuppressFinalizeCorrectlyDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNotCalledWithFinalizer = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalledWithFinalizer), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNotCalled = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotCalled), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNotPassedThis = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageNotPassedThis), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageOutsideDispose = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyMessageOutsideDispose), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.CallGCSuppressFinalizeCorrectlyDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor NotCalledWithFinalizerRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,

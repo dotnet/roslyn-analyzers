@@ -43,13 +43,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (resolution != null)
             {
-                var methodInvocationAction = CodeAction.Create(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage,
+                var methodInvocationAction = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage,
                     async ct => await ConvertToMethodInvocation(context, resolution).ConfigureAwait(false),
                     equivalenceKey: "TestForEmptyStringCorrectlyUsingIsNullOrEmpty");
 
                 context.RegisterCodeFix(methodInvocationAction, context.Diagnostics);
 
-                var stringLengthAction = CodeAction.Create(SystemRuntimeAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage,
+                var stringLengthAction = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.TestForEmptyStringsUsingStringLengthMessage,
                     async ct => await ConvertToStringLengthComparison(context, resolution).ConfigureAwait(false),
                     equivalenceKey: "TestForEmptyStringCorrectlyUsingStringLength");
 

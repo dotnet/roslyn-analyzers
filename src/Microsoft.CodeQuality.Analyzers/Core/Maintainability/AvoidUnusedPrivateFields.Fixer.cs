@@ -39,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             // We cannot have multiple overlapping diagnostics of this id. 
             Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = MicrosoftMaintainabilityAnalyzersResources.AvoidUnusedPrivateFieldsTitle;
+            string title = MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -23,11 +23,11 @@ namespace Microsoft.NetCore.Analyzers.Security
         internal static readonly DiagnosticDescriptor Rule =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2326",
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetTypeNameHandlingTitle),
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetTypeNameHandlingMessage),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetTypeNameHandlingTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetTypeNameHandlingMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null,
-                nameof(MicrosoftNetCoreSecurityResources.JsonNetTypeNameHandlingDescription));
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetTypeNameHandlingDescription));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create<DiagnosticDescriptor>(Rule);

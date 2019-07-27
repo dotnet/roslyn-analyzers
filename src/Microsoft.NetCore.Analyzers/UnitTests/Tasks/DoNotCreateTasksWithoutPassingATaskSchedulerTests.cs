@@ -249,12 +249,12 @@ End Class
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer.RuleId, SystemThreadingTasksAnalyzersResources.DoNotCreateTasksWithoutPassingATaskSchedulerMessage);
+            return GetCSharpResultAt(line, column, DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.DoNotCreateTasksWithoutPassingATaskSchedulerMessage);
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer.RuleId, SystemThreadingTasksAnalyzersResources.DoNotCreateTasksWithoutPassingATaskSchedulerMessage);
+            return GetBasicResultAt(line, column, DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.DoNotCreateTasksWithoutPassingATaskSchedulerMessage);
         }
     }
 }

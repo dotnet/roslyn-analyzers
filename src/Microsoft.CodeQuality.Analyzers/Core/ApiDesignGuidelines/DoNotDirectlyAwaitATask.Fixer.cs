@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -29,14 +29,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (expression != null)
             {
-                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.AppendConfigureAwaitFalse;
+                string title = MicrosoftCodeQualityAnalyzersResources.AppendConfigureAwaitFalse;
                 context.RegisterCodeFix(
                     new MyCodeAction(title,
                         async ct => await GetFix(context.Document, expression, argument: false, cancellationToken: ct).ConfigureAwait(false),
                         equivalenceKey: title),
                     context.Diagnostics);
 
-                title = MicrosoftApiDesignGuidelinesAnalyzersResources.AppendConfigureAwaitTrue;
+                title = MicrosoftCodeQualityAnalyzersResources.AppendConfigureAwaitTrue;
                 context.RegisterCodeFix(
                     new MyCodeAction(title,
                         async ct => await GetFix(context.Document, expression, argument: true, cancellationToken: ct).ConfigureAwait(false),

@@ -9,58 +9,65 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.Analyzers;
 
-namespace Microsoft.CodeQuality.Analyzers.Performance
+namespace Microsoft.NetCore.Analyzers.Performance
 {
+#pragma warning disable CA1200 // Avoid using cref tags with a prefix
     /// <summary>
-    /// CA1827: Do not use Count() when Any() can be used.
+    /// CA1828: Do not use CountAsync() when AnyAsync() can be used.
     /// <para>
-    /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> enumerates the entire enumerable
-    /// while <see cref="System.Linq.Enumerable.Any{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> will only enumerates, at most, up until the first item.
+    /// <see cref="T:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.CountAsync{TSource}(Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IQueryable{TSource})"/> 
+    /// and <see cref="T:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.CountAsync{TSource}(Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IQueryable{TSource}, System.Linq.Expressions.Expression{System.Func{TSource}, bool})"/>
+    /// enumerates the entire enumerable
+    /// while <see cref="T:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AnyAsync{TSource}(Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IQueryable{TSource})"/>
+    /// and <see cref="T:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AnyAsync{TSource}(Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IQueryable{TSource}, System.Linq.Expressions.Expression{System.Func{TSource}, bool})"/>
+    /// will only enumerates, at most, up until the first item.
     /// </para>
     /// </summary>
     /// <remarks>
     /// Use cases covered:
     /// <list type="table">
     /// <listheader><term>detected</term><term>fix</term></listheader>
-    /// <item><term><c> enumerable.Count() == 0               </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> enumerable.Count() != 0               </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> enumerable.Count() &lt;= 0            </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> enumerable.Count() > 0                </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> enumerable.Count() &lt; 1             </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> enumerable.Count() >= 1               </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> 0 == enumerable.Count()               </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> 0 != enumerable.Count()               </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> 0 >= enumerable.Count()               </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> 0 &lt; enumerable.Count()             </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> 1 > enumerable.Count()                </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> 1 &lt;= enumerable.Count()            </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> enumerable.Count().Equals(0)          </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> 0.Equals(enumerable.Count())          </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> enumerable.Count(_ => true) == 0      </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
-    /// <item><term><c> enumerable.Count(_ => true) != 0      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
-    /// <item><term><c> enumerable.Count(_ => true) &lt;= 0   </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
-    /// <item><term><c> enumerable.Count(_ => true) > 0       </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
-    /// <item><term><c> enumerable.Count(_ => true) &lt; 1    </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
-    /// <item><term><c> enumerable.Count(_ => true) >= 1      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
-    /// <item><term><c> 0 == enumerable.Count(_ => true)      </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
-    /// <item><term><c> 0 != enumerable.Count(_ => true)      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
-    /// <item><term><c> 0 &lt; enumerable.Count(_ => true)    </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
-    /// <item><term><c> 0 >= enumerable.Count(_ => true)      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
-    /// <item><term><c> 1 > enumerable.Count(_ => true)       </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
-    /// <item><term><c> 1 &lt;= enumerable.Count(_ => true)   </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
-    /// <item><term><c> enumerable.Count(_ => true).Equals(0) </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
-    /// <item><term><c> 0.Equals(enumerable.Count(_ => true)) </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
+    /// <item><term><c> await queryable.CountAsync() == 0               </c></term><description><c> !await queryable.AnyAsync() </c></description></item>
+    /// <item><term><c> await queryable.CountAsync() != 0               </c></term><description><c> await queryable.AnyAsync()  </c></description></item>
+    /// <item><term><c> await queryable.CountAsync() &lt;= 0            </c></term><description><c> !await queryable.AnyAsync() </c></description></item>
+    /// <item><term><c> await queryable.CountAsync() > 0                </c></term><description><c> await queryable.AnyAsync()  </c></description></item>
+    /// <item><term><c> await queryable.CountAsync() &lt; 1             </c></term><description><c> !await queryable.AnyAsync() </c></description></item>
+    /// <item><term><c> await queryable.CountAsync() >= 1               </c></term><description><c> await queryable.AnyAsync()  </c></description></item>
+    /// <item><term><c> 0 == await queryable.CountAsync()               </c></term><description><c> !await queryable.AnyAsync() </c></description></item>
+    /// <item><term><c> 0 != await queryable.CountAsync()               </c></term><description><c> await queryable.AnyAsync()  </c></description></item>
+    /// <item><term><c> 0 >= await queryable.CountAsync()               </c></term><description><c> !await queryable.AnyAsync() </c></description></item>
+    /// <item><term><c> 0 &lt; await queryable.CountAsync()             </c></term><description><c> await queryable.AnyAsync()  </c></description></item>
+    /// <item><term><c> 1 > await queryable.CountAsync()                </c></term><description><c> !await queryable.AnyAsync() </c></description></item>
+    /// <item><term><c> 1 &lt;= await queryable.CountAsync()            </c></term><description><c> await queryable.AnyAsync()  </c></description></item>
+    /// <item><term><c> (await queryable.CountAsync()).Equals(0)          </c></term><description><c> !await queryable.AnyAsync() </c></description></item>
+    /// <item><term><c> 0.Equals(await queryable.CountAsync())          </c></term><description><c> !await queryable.AnyAsync() </c></description></item>
+    /// <item><term><c> await queryable.CountAsync(_ => true) == 0      </c></term><description><c> !await queryable.AnyAsync(_ => true) </c></description></item>
+    /// <item><term><c> await queryable.CountAsync(_ => true) != 0      </c></term><description><c> await queryable.AnyAsync(_ => true)  </c></description></item>
+    /// <item><term><c> await queryable.CountAsync(_ => true) &lt;= 0   </c></term><description><c> !await queryable.AnyAsync(_ => true) </c></description></item>
+    /// <item><term><c> await queryable.CountAsync(_ => true) > 0       </c></term><description><c> await queryable.AnyAsync(_ => true)  </c></description></item>
+    /// <item><term><c> await queryable.CountAsync(_ => true) &lt; 1    </c></term><description><c> !await queryable.AnyAsync(_ => true) </c></description></item>
+    /// <item><term><c> await queryable.CountAsync(_ => true) >= 1      </c></term><description><c> await queryable.AnyAsync(_ => true)  </c></description></item>
+    /// <item><term><c> 0 == await queryable.CountAsync(_ => true)      </c></term><description><c> !await queryable.AnyAsync(_ => true) </c></description></item>
+    /// <item><term><c> 0 != await queryable.CountAsync(_ => true)      </c></term><description><c> await queryable.AnyAsync(_ => true)  </c></description></item>
+    /// <item><term><c> 0 &lt; await queryable.CountAsync(_ => true)    </c></term><description><c> !await queryable.AnyAsync(_ => true) </c></description></item>
+    /// <item><term><c> 0 >= await queryable.CountAsync(_ => true)      </c></term><description><c> await queryable.AnyAsync(_ => true)  </c></description></item>
+    /// <item><term><c> 1 > await queryable.CountAsync(_ => true)       </c></term><description><c> !await queryable.AnyAsync(_ => true) </c></description></item>
+    /// <item><term><c> 1 &lt;= await queryable.CountAsync(_ => true)   </c></term><description><c> await queryable.AnyAsync(_ => true)  </c></description></item>
+    /// <item><term><c> await queryable.CountAsync(_ => true).Equals(0) </c></term><description><c> !await queryable.AnyAsync(_ => true) </c></description></item>
+    /// <item><term><c> 0.Equals(await queryable.CountAsync(_ => true)) </c></term><description><c> !await queryable.AnyAsync(_ => true) </c></description></item>
     /// </list>
     /// </remarks>
+#pragma warning restore CA1200 // Avoid using cref tags with a prefix
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class DoNotUseCountWhenAnyCanBeUsedAnalyzer : DiagnosticAnalyzer
+    public class DoNotUseCountAsyncWhenAnyAsyncCanBeUsedAnalyzer : DiagnosticAnalyzer
     {
-        internal const string RuleId = "CA1827";
-        private const string CountMethodName = "Count";
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        internal const string RuleId = "CA1828";
+        private const string CountAsyncMethodName = "CountAsync";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly DiagnosticDescriptor s_rule = new DiagnosticDescriptor(
             RuleId,
             Title,
@@ -97,25 +104,25 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         /// <param name="context">The context.</param>
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (WellKnownTypes.Enumerable(context.Compilation) is INamedTypeSymbol enumerableType)
+            if (context.Compilation.GetTypeByMetadataName("Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions") is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
             {
                 context.RegisterOperationAction(
-                    operationAnalysisContext => AnalyzeInvocationExpression((IInvocationOperation)operationAnalysisContext.Operation, enumerableType, CountMethodName, operationAnalysisContext.ReportDiagnostic),
+                    operationAnalysisContext => AnalyzeInvocationExpression((IInvocationOperation)operationAnalysisContext.Operation, entityFrameworkQueryableExtensionsType, CountAsyncMethodName, operationAnalysisContext.ReportDiagnostic),
                     OperationKind.Invocation);
 
                 context.RegisterOperationAction(
-                    operationAnalysisContext => AnalyzeBinaryExpression((IBinaryOperation)operationAnalysisContext.Operation, enumerableType, CountMethodName, operationAnalysisContext.ReportDiagnostic),
+                    operationAnalysisContext => AnalyzeBinaryExpression((IBinaryOperation)operationAnalysisContext.Operation, entityFrameworkQueryableExtensionsType, CountAsyncMethodName, operationAnalysisContext.ReportDiagnostic),
                     OperationKind.BinaryOperator);
             }
 
-            if (WellKnownTypes.Queryable(context.Compilation) is INamedTypeSymbol queriableType)
+            if (context.Compilation.GetTypeByMetadataName("System.Data.Entity.QueryableExtensions") is INamedTypeSymbol queryableExtensionsType)
             {
                 context.RegisterOperationAction(
-                    operationAnalysisContext => AnalyzeInvocationExpression((IInvocationOperation)operationAnalysisContext.Operation, queriableType, CountMethodName, operationAnalysisContext.ReportDiagnostic),
+                    operationAnalysisContext => AnalyzeInvocationExpression((IInvocationOperation)operationAnalysisContext.Operation, queryableExtensionsType, CountAsyncMethodName, operationAnalysisContext.ReportDiagnostic),
                     OperationKind.Invocation);
 
                 context.RegisterOperationAction(
-                    operationAnalysisContext => AnalyzeBinaryExpression((IBinaryOperation)operationAnalysisContext.Operation, queriableType, CountMethodName, operationAnalysisContext.ReportDiagnostic),
+                    operationAnalysisContext => AnalyzeBinaryExpression((IBinaryOperation)operationAnalysisContext.Operation, queryableExtensionsType, CountAsyncMethodName, operationAnalysisContext.ReportDiagnostic),
                     OperationKind.BinaryOperator);
             }
         }
@@ -167,7 +174,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
                 return false;
             }
 
-            return IsCountMethodInvocation(invocationOperation.Instance, containingSymbol, methodName);
+            return IsCountAsyncMethodInvocationAwaited(invocationOperation.Instance, containingSymbol, methodName);
         }
 
         /// <summary>
@@ -186,7 +193,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
                 return false;
             }
 
-            return IsCountMethodInvocation(invocationOperation.Arguments[0].Value, containingSymbol, methodName);
+            return IsCountAsyncMethodInvocationAwaited(invocationOperation.Arguments[0].Value, containingSymbol, methodName);
         }
 
         /// <summary>
@@ -242,7 +249,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
                 return false;
             }
 
-            return IsCountMethodInvocation(binaryOperation.LeftOperand, containingSymbol, methodName);
+            return IsCountAsyncMethodInvocationAwaited(binaryOperation.LeftOperand, containingSymbol, methodName);
         }
 
         /// <summary>
@@ -279,7 +286,7 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
                 return false;
             }
 
-            return IsCountMethodInvocation(binaryOperation.RightOperand, containingSymbol, methodName);
+            return IsCountAsyncMethodInvocationAwaited(binaryOperation.RightOperand, containingSymbol, methodName);
         }
 
         /// <summary>
@@ -317,9 +324,15 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         /// <param name="methodName">Name of the method.</param>
         /// <returns><see langword="true" /> if the <paramref name="operation"/> is an invocation of the method <paramref name="methodName"/> in the <paramref name="containingSymbol"/>; 
         /// <see langword="false" /> otherwise.</returns>
-        private static bool IsCountMethodInvocation(IOperation operation, INamedTypeSymbol containingSymbol, string methodName)
+        private static bool IsCountAsyncMethodInvocationAwaited(IOperation operation, INamedTypeSymbol containingSymbol, string methodName)
         {
-            return operation is IInvocationOperation invocationOperation &&
+            if (operation is IParenthesizedOperation parenthesizedOperation)
+            {
+                return IsCountAsyncMethodInvocationAwaited(parenthesizedOperation.Operand, containingSymbol, methodName);
+            }
+
+            return operation is IAwaitOperation awaitOperation &&
+                awaitOperation.Operation is IInvocationOperation invocationOperation &&
                 invocationOperation.TargetMethod.Name.Equals(methodName, StringComparison.Ordinal) &&
                 invocationOperation.TargetMethod.ContainingSymbol.Equals(containingSymbol);
         }

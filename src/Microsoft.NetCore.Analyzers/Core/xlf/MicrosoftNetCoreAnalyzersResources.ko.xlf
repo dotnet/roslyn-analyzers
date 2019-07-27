@@ -22,6 +22,21 @@
         <target state="new">Ensure that JsonSerializer has a secure configuration when deserializing</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
+        <source>For non-empty collections, CountAsync() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
+        <target state="new">For non-empty collections, CountAsync() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
+        <source>CountAsync() is used where AnyAsync() could be used instead to improve performance.</source>
+        <target state="new">CountAsync() is used where AnyAsync() could be used instead to improve performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
+        <source>Do not use CountAsync() when AnyAsync() can be used</source>
+        <target state="new">Do not use CountAsync() when AnyAsync() can be used</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
         <target state="translated">사용자 입력을 직접 사용하는 SQL 쿼리는 SQL 삽입 공격에 취약할 수 있습니다. 이 SQL 쿼리에 잠재적인 취약성이 있는지 검토하고 매개 변수화된 SQL 쿼리를 사용하는 것이 좋습니다.</target>

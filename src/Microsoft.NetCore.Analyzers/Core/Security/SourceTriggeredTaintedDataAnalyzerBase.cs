@@ -64,6 +64,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                         operationBlockStartContext =>
                         {
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
+                                    TaintedDataEnteringSinkDescriptor, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             PooledHashSet<IOperation> rootOperationsNeedingAnalysis = PooledHashSet<IOperation>.GetInstance();
 
                             operationBlockStartContext.RegisterOperationAction(
@@ -102,6 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
                                                     rootOperation.GetEnclosingControlFlowGraph(),
                                                     owningSymbol,
+                                                    operationAnalysisContext.Options,
                                                     WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
                                                     InterproceduralAnalysisConfiguration.Create(
                                                         operationAnalysisContext.Options,
@@ -131,6 +138,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 valueContentAnalysisResultOpt = ValueContentAnalysis.TryGetOrComputeResult(
                                                     rootOperation.GetEnclosingControlFlowGraph(),
                                                     owningSymbol,
+                                                    operationAnalysisContext.Options,
                                                     WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
                                                     InterproceduralAnalysisConfiguration.Create(
                                                         operationAnalysisContext.Options,

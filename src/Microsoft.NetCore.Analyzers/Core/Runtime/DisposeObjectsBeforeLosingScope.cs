@@ -86,7 +86,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
                     if (!(operationBlockContext.OwningSymbol is IMethodSymbol containingMethod) ||
-                        !disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockContext.OperationBlocks, containingMethod))
+                        !disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockContext.OperationBlocks, containingMethod) ||
+                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockContext.Options,
+                            NotDisposedRule, operationBlockContext.Compilation, operationBlockContext.CancellationToken))
                     {
                         return;
                     }
@@ -134,6 +136,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                         notDisposedDiagnostics, mayBeNotDisposedDiagnostics, disposeAnalysisResult, pointsToAnalysisResult,
                                         disposeAnalysisKind, isDisposeDataForExceptionPaths: true);
                                 }
+                            }
+
+                            if (!notDisposedDiagnostics.Any() && !mayBeNotDisposedDiagnostics.Any())
+                            {
+                                return;
+                            }
+
+                            if (disposeAnalysisResult.ControlFlowGraph.OriginalOperation.HasAnyOperationDescendant(o => o.Kind == OperationKind.None))
+                            {
+                                // Workaround for https://github.com/dotnet/roslyn/issues/32100
+                                // Bail out in presence of OperationKind.None - not implemented IOperation.
+                                return;
                             }
 
                             // Report diagnostics preferring *not* disposed diagnostics over may be not disposed diagnostics

@@ -44,7 +44,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     // Analyze externally visible methods with reference type parameters.
                     if (!(operationBlockContext.OwningSymbol is IMethodSymbol containingMethod) ||
                         !containingMethod.IsExternallyVisible() ||
-                        !containingMethod.Parameters.Any(p => p.Type.IsReferenceType))
+                        !containingMethod.Parameters.Any(p => p.Type.IsReferenceType) ||
+                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockContext.Options,
+                            Rule, operationBlockContext.Compilation, operationBlockContext.CancellationToken))
                     {
                         return;
                     }

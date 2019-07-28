@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -199,6 +200,41 @@ class Blah
         }
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = Method")]
+        [InlineData(@"dotnet_code_quality.CA2329.excluded_symbol_names = Method
+                      dotnet_code_quality.CA2330.excluded_symbol_names = Method")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = Method")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            DiagnosticResult[] expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(10, 16, DefinitelyRule)
+                };
+            }
+
+            VerifyCSharpAcrossTwoAssemblies(
+                NewtonsoftJsonNetApis.CSharp,
+                @"
+using Newtonsoft.Json;
+
+class Blah
+{
+    object Method(JsonReader jr)
+    {
+        JsonSerializer serializer = new JsonSerializer();
+        serializer.TypeNameHandling = TypeNameHandling.All;
+        return serializer.Deserialize(jr);
+    }
+}",
+                GetEditorConfigAdditionalFile(editorConfigText),
+                expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

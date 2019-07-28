@@ -34,14 +34,16 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: null,
+                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static readonly DiagnosticDescriptor MaybeInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2330",
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null);
+                helpLinkUri: null,
+                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
@@ -126,6 +128,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
+                            ISymbol owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+
+                            // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(
+                                    operationBlockStartAnalysisContext.Options,
+                                    DefinitelyInsecureSerializer,
+                                    operationBlockStartAnalysisContext.Compilation,
+                                    operationBlockStartAnalysisContext.CancellationToken)
+                                && owningSymbol.IsConfiguredToSkipAnalysis(
+                                    operationBlockStartAnalysisContext.Options,
+                                    MaybeInsecureSerializer,
+                                    operationBlockStartAnalysisContext.Compilation,
+                                    operationBlockStartAnalysisContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -159,18 +178,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
                                 },
                                 OperationKind.ObjectCreation);
-
-                            operationBlockStartAnalysisContext.RegisterOperationAction(
-                                (OperationAnalysisContext operationAnalysisContext) =>
-                                {
-                                    IReturnOperation returnOperation = (IReturnOperation)operationAnalysisContext.Operation;
-                                    if (jsonSerializerSymbol.Equals(returnOperation.Type))
-                                    {
-                                        rootOperationsNeedingAnalysis.Add(
-                                            (returnOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
-                                    }
-                                },
-                                OperationKind.Return);
                         });
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -189,6 +196,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
+                                        compilationAnalysisContext.Options,
                                         WellKnownTypeNames.NewtonsoftJsonJsonSerializer,
                                         ConstructorMapper,
                                         PropertyMappers,

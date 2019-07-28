@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -357,6 +359,37 @@ class TestClass
         rfc2898DeriveBytes.GetBytes(cb);
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
+        [InlineData(@"dotnet_code_quality.CA5387.excluded_symbol_names = TestMethod
+                      dotnet_code_quality.CA5388.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(10, 9, DoNotUseWeakKDFInsufficientIterationCount.DefinitelyUseWeakKDFInsufficientIterationCountRule, SufficientIterationCount)
+                };
+            }
+
+            VerifyCSharp(@"
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(string password, byte[] salt, int cb)
+    {
+        var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt);
+        rfc2898DeriveBytes.IterationCount = 100;
+        rfc2898DeriveBytes.GetBytes(cb);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

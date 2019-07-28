@@ -47,6 +47,17 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             this.VerifyCSharp(sources, ReferenceFlags.AddTestReferenceAssembly, expected);
         }
 
+        protected void VerifyCSharpWithDependencies(string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
+        {
+            string[] sources = new string[] { source };
+            if (this.AdditionalCSharpSources != null)
+            {
+                sources = sources.Concat(this.AdditionalCSharpSources).ToArray();
+            }
+
+            this.VerifyCSharp(sources, additionalFile, ReferenceFlags.AddTestReferenceAssembly, expected);
+        }
+
         protected DiagnosticResult GetBasicResultAt(int sinkLine, int sinkColumn, int sourceLine, int sourceColumn, string sink, string sinkContainingMethod, string source, string sourceContainingMethod)
         {
             return GetBasicResultAt(

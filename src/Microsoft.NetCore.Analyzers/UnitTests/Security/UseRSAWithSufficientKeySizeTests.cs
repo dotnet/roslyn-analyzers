@@ -9,6 +9,23 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     public class UseRSAWithSufficientKeySizeTests : DiagnosticAnalyzerTestBase
     {
         [Fact]
+        public void Issue2697()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public RSACryptoServiceProvider TestMethod(string xml)
+    {
+        var rsa = new RSACryptoServiceProvider();
+        rsa.FromXmlString(xml);
+        return rsa;
+    }
+}");
+        }
+
+        [Fact]
         public void TestCreateObjectOfRSADerivedClassWithInt32ParameterDiagnostic()
         {
             VerifyCSharp(@"
@@ -39,22 +56,6 @@ class TestClass
     }
 }",
             GetCSharpResultAt(9, 22, UseRSAWithSufficientKeySize.Rule, "RSACng"));
-        }
-
-        [Fact]
-        public void TestReturnObjectOfRSADerivedClassDiagnostic()
-        {
-            VerifyCSharp(@"
-using System.Security.Cryptography;
-
-class TestClass
-{
-    public RSA TestMethod(RSA rsa)
-    {
-        return rsa;
-    }
-}",
-            GetCSharpResultAt(8, 9, UseRSAWithSufficientKeySize.Rule, "RSA"));
         }
 
         [Fact]
@@ -283,6 +284,21 @@ class TestClass
     }
 }",
             GetCSharpResultAt(9, 28, UseRSAWithSufficientKeySize.Rule, "system.security.cryptography.asymmetricalgorithm"));
+        }
+
+        [Fact]
+        public void TestReturnObjectOfRSADerivedClassNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public RSA TestMethod(RSA rsa)
+    {
+        return rsa;
+    }
+}");
         }
 
         [Fact]

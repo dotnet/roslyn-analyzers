@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -709,6 +712,37 @@ class Blah
                 GetCSharpResultAt(19, 16, DefinitelyRule));
         }
 
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = Method")]
+        [InlineData(@"dotnet_code_quality.CA2327.excluded_symbol_names = Method
+                      dotnet_code_quality.CA2328.excluded_symbol_names = Method")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = Method")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(10, 16, DefinitelyRule)
+                };
+            }
+
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    object Method(string s)
+    {
+        JsonSerializerSettings settings = new JsonSerializerSettings();
+        settings.TypeNameHandling = TypeNameHandling.All;
+        return JsonConvert.DeserializeObject(s, settings);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotUseInsecureSettingsForJsonNet();
@@ -722,6 +756,11 @@ class Blah
         private void VerifyCSharpWithJsonNet(string source, params DiagnosticResult[] expected)
         {
             this.VerifyCSharpAcrossTwoAssemblies(NewtonsoftJsonNetApis.CSharp, source, expected);
+        }
+
+        private void VerifyCSharpWithJsonNet(string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
+        {
+            this.VerifyCSharpAcrossTwoAssemblies(NewtonsoftJsonNetApis.CSharp, source, additionalFile, expected);
         }
     }
 }

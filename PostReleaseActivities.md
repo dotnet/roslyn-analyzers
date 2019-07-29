@@ -3,8 +3,8 @@
 
 Please follow the below steps after publishing analyzer NuGet packages from this repo onto NuGet.org:
 
-1. Create a new release:
-   1. Draft: Click [here](https://github.com/dotnet/roslyn-analyzers/releases/new) to draft a new release. For reference, you can look at any of the existing releases, say [v2.9.3](https://github.com/dotnet/roslyn-analyzers/releases/edit/v2.9.3).
+1. Create a new release OR Update an existing draft release:
+   1. Draft: Either click [here](https://github.com/dotnet/roslyn-analyzers/releases/new) to draft a new release OR update an [existing draft release](https://github.com/dotnet/roslyn-analyzers/releases). For reference, you can look at any of the existing releases, say [v2.9.3](https://github.com/dotnet/roslyn-analyzers/releases/edit/v2.9.3).
    2. Release notes: Follow the steps in the *Steps to generate Release Notes* below to generate Release notes and copy the generated notes to the description section of the new release.
    3. Publish: Mark the release as a pre-release if appropriate and click "Publish Release".
 2. Repo changes:

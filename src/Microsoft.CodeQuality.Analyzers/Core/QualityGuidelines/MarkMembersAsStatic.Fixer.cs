@@ -192,7 +192,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             return (solution, allReferencesFixed);
 
             // Local functions.
-            bool IsReplacableOperation(IOperation operation)
+            static bool IsReplacableOperation(IOperation operation)
             {
                 // We only replace reference operations whose removal cannot change semantics.
                 if (operation != null)

@@ -90,7 +90,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    bool IsDelegateTypeWithInvokeMethod(INamedTypeSymbol namedType) =>
+                    static bool IsDelegateTypeWithInvokeMethod(INamedTypeSymbol namedType) =>
                         namedType.TypeKind == TypeKind.Delegate && namedType.DelegateInvokeMethod != null;
 
                     bool IsEventArgsParameter(IParameterSymbol parameter)

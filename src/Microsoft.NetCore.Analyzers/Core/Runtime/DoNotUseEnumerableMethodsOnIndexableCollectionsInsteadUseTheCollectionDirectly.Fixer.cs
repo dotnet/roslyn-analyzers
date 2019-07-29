@@ -65,8 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var invocationOperation = semanticModel.GetOperation(invocationNode, cancellationToken) as IInvocationOperation;
-            if (invocationOperation == null)
+            if (!(semanticModel.GetOperation(invocationNode, cancellationToken) is IInvocationOperation invocationOperation))
             {
                 return document;
             }

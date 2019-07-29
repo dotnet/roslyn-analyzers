@@ -1066,7 +1066,7 @@
     <value>Use antiforgery tokens in ASP.NET Core MVC controllers</value>
   </data>
   <data name="UseAutoValidateAntiforgeryTokenDescription" xml:space="preserve">
-    <value>Handling a POST, PUT and DELETE request without verifying that the request allows a malicious attacker to submit a request on behalf of the user.</value>
+    <value>Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.</value>
   </data>
   <data name="UseAutoValidateAntiforgeryTokenMessage" xml:space="preserve">
     <value>Method {0} handles a {1} request without performing CSRF token validation</value>

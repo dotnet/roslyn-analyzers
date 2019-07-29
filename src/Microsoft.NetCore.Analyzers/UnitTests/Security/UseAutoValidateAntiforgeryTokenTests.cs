@@ -271,7 +271,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 {
 }
 
@@ -281,6 +281,221 @@ class FilterClass : IAsyncAuthorizationFilter
 
     public Task OnAuthorizationAsync (AuthorizationFilterContext context)
     {
+        HttpContext httpContext = null;
+
+        return defaultAntiforgery.ValidateRequestAsync(httpContext);
+    }
+}
+
+class TestClass : ControllerBase
+{
+    [HttpDelete]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+
+    public void TestMethod ()
+    {
+        var filterCollection = new FilterCollection ();
+        filterCollection.Add(typeof(FilterClass));
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_GlobalAntiForgeryFilter_MethodReferItSelft_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class FilterClass : IAsyncAuthorizationFilter 
+{
+    public DefaultAntiforgery defaultAntiforgery;
+
+    public void BlahMethod(AuthorizationFilterContext context)
+    {
+        OnAuthorizationAsync(context);
+    }
+
+    public Task OnAuthorizationAsync (AuthorizationFilterContext context)
+    {
+        if (count > 0)
+        {
+            count--;
+            BlahMethod(context);
+        }
+        
+        HttpContext httpContext = null;
+
+        return defaultAntiforgery.ValidateRequestAsync(httpContext);
+    }
+
+    private int count;
+}
+
+class TestClass : ControllerBase
+{
+    [HttpDelete]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+
+    public void TestMethod ()
+    {
+        var filterCollection = new FilterCollection ();
+        filterCollection.Add(typeof(FilterClass));
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_GlobalAntiForgeryFilter_DelegateField_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+public delegate Task TestDelegate();
+
+public class ClassContainsDelegateField
+{
+    public TestDelegate delegateField;
+}
+
+class FilterClass : IAsyncAuthorizationFilter 
+{
+    public DefaultAntiforgery defaultAntiforgery;
+
+    public Task OnAuthorizationAsync (AuthorizationFilterContext context)
+    {
+        ClassContainsDelegateField classContainsDelegateField = new ClassContainsDelegateField();
+        classContainsDelegateField.delegateField = () =>
+        {
+            HttpContext httpContext = null;
+            return defaultAntiforgery.ValidateRequestAsync(httpContext);
+        };
+
+        return classContainsDelegateField.delegateField();
+    }
+}
+
+class TestClass : ControllerBase
+{
+    [HttpDelete]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+
+    public void TestMethod ()
+    {
+        var filterCollection = new FilterCollection ();
+        filterCollection.Add(typeof(FilterClass));
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_GlobalAntiForgeryFilter_StaticDelegateField_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+public delegate Task TestDelegate(DefaultAntiforgery defaultAntiforgery);
+
+public class ClassContainsDelegateField
+{
+    public static TestDelegate staticDelegateField = (DefaultAntiforgery defaultAntiforgery) =>
+    {
+        HttpContext httpContext = null;
+        
+        return defaultAntiforgery.ValidateRequestAsync(httpContext);
+    };
+}
+
+class FilterClass : IAsyncAuthorizationFilter 
+{
+    public DefaultAntiforgery defaultAntiforgery;
+
+    public Task OnAuthorizationAsync (AuthorizationFilterContext context)
+    {
+        return ClassContainsDelegateField.staticDelegateField(defaultAntiforgery);
+    }
+}
+
+class TestClass : ControllerBase
+{
+    [HttpDelete]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+
+    public void TestMethod ()
+    {
+        var filterCollection = new FilterCollection ();
+        filterCollection.Add(typeof(FilterClass));
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_GlobalAntiForgeryFilter_Interface_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+interface BlahInterface
+{
+    void BlahMethod();
+}
+
+class FilterClass : IAsyncAuthorizationFilter 
+{
+    public DefaultAntiforgery defaultAntiforgery;
+
+    public BlahInterface blahInterface;
+
+    public Task OnAuthorizationAsync (AuthorizationFilterContext context)
+    {
+        blahInterface.BlahMethod();
         HttpContext httpContext = null;
 
         return defaultAntiforgery.ValidateRequestAsync(httpContext);

@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Analyzer.Utilities;
@@ -79,9 +79,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
-                // A dictionary from method symbol to set of methods invoked by it directly.
+                // A dictionary from method symbol to set of methods calling it directly.
                 // The bool value in the sub ConcurrentDictionary is not used, use ConcurrentDictionary rather than HashSet just for the concurrency security.
-                var callGraph = new ConcurrentDictionary<IMethodSymbol, ConcurrentDictionary<IMethodSymbol, bool>>();
+                var inverseGraph = new ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>>();
 
                 // Ignore cases where a global anti forgery filter is in use.
                 var hasGlobalAntiForgeryFilter = false;
@@ -92,7 +92,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                 var onAuthorizationAsyncMethodSymbols = new HashSet<IMethodSymbol>();
                 var actionMethodSymbols = new HashSet<(IMethodSymbol, string)>();
 
-                // Constructing callGraph.
+                // Constructing inverse callGraph.
+                // When it comes to delegate function assignment Del handler = DelegateMethod;, inverse call Graph will add:
+                // (1) key: method gets called in DelegateMethod, value: handler.
+                // When it comes to calling delegate function handler(), inverse callGraph will add:
+                // (1) key: delegate function handler, value: callerMethod.
+                // (2) key: Invoke(), value: callerMethod.
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                     (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                     {
@@ -102,17 +107,41 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
 
                         var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+                        inverseGraph.TryAdd(owningSymbol, new ConcurrentDictionary<ISymbol, bool>());
 
-                        if (owningSymbol is IMethodSymbol methodSymbol)
+                        operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
                         {
-                            var calledMethods = new ConcurrentDictionary<IMethodSymbol, bool>();
-                            callGraph.TryAdd(methodSymbol, calledMethods);
+                            ISymbol calledSymbol = null;
+                            ConcurrentDictionary<ISymbol, bool> callers = null;
 
-                            operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
+                            switch (operationContext.Operation)
                             {
-                                calledMethods.TryAdd((operationContext.Operation as IInvocationOperation).TargetMethod, true);
-                            }, OperationKind.Invocation);
-                        }
+                                case IInvocationOperation invocationOperation:
+                                    calledSymbol = invocationOperation.TargetMethod.OriginalDefinition;
+
+                                    break;
+
+                                case IFieldReferenceOperation fieldReferenceOperation:
+                                    var fieldSymbol = (IFieldSymbol)fieldReferenceOperation.Field;
+
+                                    if (fieldSymbol.Type.TypeKind == TypeKind.Delegate)
+                                    {
+                                        calledSymbol = fieldSymbol;
+
+                                        break;
+                                    }
+
+                                    return;
+                            }
+
+                            if (calledSymbol == null)
+                            {
+                                return;
+                            }
+
+                            callers = inverseGraph.GetOrAdd(calledSymbol, new ConcurrentDictionary<ISymbol, bool>());
+                            callers.TryAdd(owningSymbol, true);
+                        }, OperationKind.Invocation, OperationKind.FieldReference);
                     });
 
                 // Holds if the project has a global anti forgery filter.
@@ -169,22 +198,22 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
-                    var controllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
-                    var baseTypes = controllerTypeSymbol.GetBaseTypes();
+                    var derivedControllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
+                    var baseTypes = derivedControllerTypeSymbol.GetBaseTypes();
 
                     // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`)
                     if (baseTypes.Contains(controllerTypeSymbol) ||
                         baseTypes.Contains(controllerBaseTypeSymbol))
                     {
                         // The controller class is protected by a validate anti forgery token attribute
-                        if (controllerTypeSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
+                        if (derivedControllerTypeSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
                         {
                             usingValidateAntiForgeryAttribute = true;
 
                             return;
                         }
 
-                        foreach (var actionMethodSymbol in controllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
+                        foreach (var actionMethodSymbol in derivedControllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
                         {
                             // The method is protected by a validate anti forgery token attribute
                             if (actionMethodSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
@@ -222,23 +251,26 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterCompilationEndAction(
                 (CompilationAnalysisContext compilationAnalysisContext) =>
                 {
-                    if (usingValidateAntiForgeryAttribute && !hasGlobalAntiForgeryFilter && actionMethodSymbols.Count != 0)
+                    if (usingValidateAntiForgeryAttribute && !hasGlobalAntiForgeryFilter && actionMethodSymbols.Any())
                     {
-                        var visited = new Dictionary<IMethodSymbol, bool>();
+                        var visited = new HashSet<ISymbol>();
+                        var results = new Dictionary<ISymbol, HashSet<ISymbol>>();
 
-                        foreach (var onAuthorizationAsyncMethodSymbol in onAuthorizationAsyncMethodSymbols)
+                        if (onAuthorizationAsyncMethodSymbols.Any())
                         {
-                            FindTheMethod(
-                                onAuthorizationAsyncMethodSymbol,
-                                visited,
-                                (IMethodSymbol methodSymbol) =>
-                                    (methodSymbol.Name == "ValidateRequestAsync" &&
-                                    (methodSymbol.ContainingType.AllInterfaces.Contains(iAntiforgeryTypeSymbol) ||
-                                    methodSymbol.ContainingType.Equals(iAntiforgeryTypeSymbol))));
-
-                            if (visited[onAuthorizationAsyncMethodSymbol])
+                            foreach (var calleeMethod in inverseGraph.Keys)
                             {
-                                return;
+                                if (calleeMethod.Name == "ValidateRequestAsync" &&
+                                    (calleeMethod.ContainingType.AllInterfaces.Contains(iAntiforgeryTypeSymbol) ||
+                                    calleeMethod.ContainingType.Equals(iAntiforgeryTypeSymbol)))
+                                {
+                                    FindAllTheSpecifiedCalleeMethod(calleeMethod, visited, results);
+
+                                    if (results.Values.Any(s => s.Any()))
+                                    {
+                                        return;
+                                    }
+                                }
                             }
                         }
 
@@ -254,39 +286,40 @@ namespace Microsoft.NetCore.Analyzers.Security
                 });
 
                 // <summary>
-                // Check if there's a method with specific requirements is getting called by another method.
+                // Analyze the method to find all the specified method it calls, in this case, all the method symbols in onAuthorizationAsyncMethodSymbols.
                 // </summary>
-                // <param name="methodSymbol">The symbol of the caller method</param>
-                // <param name="visited">All the methods has been visited and its results</param>
-                // <param name="Requirement">The requirements</param>
-                void FindTheMethod(IMethodSymbol methodSymbol, Dictionary<IMethodSymbol, bool> visited, RequirementsOfValidateMethod requirements)
+                // <param name="methodSymbol">The symbol of the method to be analyzed</param>
+                // <param name="visited">All the method has been analyzed</param>
+                // <param name="results">The result is organized by &lt;method to be analyzed, dangerous method it calls&gt;</param>
+                void FindAllTheSpecifiedCalleeMethod(ISymbol methodSymbol, HashSet<ISymbol> visited, Dictionary<ISymbol, HashSet<ISymbol>> results)
                 {
-                    if (!visited.TryGetValue(methodSymbol, out var result))
+                    if (visited.Add(methodSymbol))
                     {
-                        visited[methodSymbol] = false;
+                        results.Add(methodSymbol, new HashSet<ISymbol>());
 
-                        // Symbols like Interface, classes not defined in the source won't be in callGraph.
-                        if (callGraph.TryGetValue(methodSymbol, out var kvp))
+                        if (!inverseGraph.TryGetValue(methodSymbol, out var calledMethods))
                         {
-                            foreach (var child in kvp.Keys)
+                            Debug.Fail(methodSymbol.Name + " was not found in inverseGraph");
+
+                            return;
+                        }
+
+                        foreach (var child in calledMethods.Keys)
+                        {
+                            if (onAuthorizationAsyncMethodSymbols.Contains(child))
                             {
-                                if (requirements(child))
-                                {
-                                    visited[methodSymbol] = true;
+                                results[methodSymbol].Add(child);
+                            }
 
-                                    break;
-                                }
-                                else
-                                {
-                                    FindTheMethod(child, visited, requirements);
+                            FindAllTheSpecifiedCalleeMethod(child, visited, results);
 
-                                    if (visited[child])
-                                    {
-                                        visited[methodSymbol] = true;
-
-                                        break;
-                                    }
-                                }
+                            if (results.TryGetValue(child, out var result))
+                            {
+                                results[methodSymbol].UnionWith(result);
+                            }
+                            else
+                            {
+                                Debug.Fail(child.Name + " was not found in results");
                             }
                         }
                     }

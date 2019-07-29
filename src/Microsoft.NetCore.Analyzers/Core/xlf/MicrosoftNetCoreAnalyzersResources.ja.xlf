@@ -108,8 +108,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryTokenDescription">
-        <source>Handling a POST, PUT and DELETE request without verifying that the request allows a malicious attacker to submit a request on behalf of the user.</source>
-        <target state="new">Handling a POST, PUT and DELETE request without verifying that the request allows a malicious attacker to submit a request on behalf of the user.</target>
+        <source>Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.</source>
+        <target state="new">Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryTokenMessage">

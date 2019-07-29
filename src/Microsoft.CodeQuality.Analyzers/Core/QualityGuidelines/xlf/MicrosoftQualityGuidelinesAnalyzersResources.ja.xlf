@@ -22,6 +22,16 @@
         <target state="translated">'{0}' への参照を修正できませんでした。手動で修正する必要があります。</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReferingToObjectAndReassigningItInTheSameStatementMessage">
+        <source>Object '{0}' is being referred to and reassigned in the same statement. You are at risk of referring to unintended object.</source>
+        <target state="new">Object '{0}' is being referred to and reassigned in the same statement. You are at risk of referring to unintended object.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferingToObjectAndReassigningItInTheSameStatementTitle">
+        <source>Refering to object and reassigning it in the same statement.</source>
+        <target state="new">Refering to object and reassigning it in the same statement.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">
         <source>Use literals where appropriate</source>
         <target state="translated">適切な場所にリテラルを使用します</target>

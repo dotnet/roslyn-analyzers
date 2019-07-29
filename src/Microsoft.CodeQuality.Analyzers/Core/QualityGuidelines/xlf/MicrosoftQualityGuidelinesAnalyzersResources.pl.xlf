@@ -22,6 +22,16 @@
         <target state="translated">Nie można naprawić niektórych odwołań do „{0}”. Należy je naprawić ręcznie.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReferingToObjectAndReassigningItInTheSameStatementMessage">
+        <source>Object '{0}' is being referred to and reassigned in the same statement. You are at risk of referring to unintended object.</source>
+        <target state="new">Object '{0}' is being referred to and reassigned in the same statement. You are at risk of referring to unintended object.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ReferingToObjectAndReassigningItInTheSameStatementTitle">
+        <source>Refering to object and reassigning it in the same statement.</source>
+        <target state="new">Refering to object and reassigning it in the same statement.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">
         <source>Use literals where appropriate</source>
         <target state="translated">Używaj literałów w odpowiednich miejscach</target>

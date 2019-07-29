@@ -1,4 +1,4 @@
-﻿Release activities
+﻿Post-release activities
 =================================================================
 
 Please follow the below steps after publishing analyzer NuGet packages from this repo onto NuGet.org:

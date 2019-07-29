@@ -179,7 +179,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     operationAnalysisContext =>
                                     {
                                         IArrayInitializerOperation arrayInitializerOperation = (IArrayInitializerOperation)operationAnalysisContext.Operation;
-                                        if (sourceInfoSymbolMap.IsSourceConstantArrayOfType(arrayInitializerOperation.GetAncestor<IArrayCreationOperation>(OperationKind.ArrayCreation).Type as IArrayTypeSymbol))
+                                        if (arrayInitializerOperation.GetAncestor<IArrayCreationOperation>(OperationKind.ArrayCreation)?.Type is IArrayTypeSymbol arrayTypeSymbol
+                                            && sourceInfoSymbolMap.IsSourceConstantArrayOfType(arrayTypeSymbol))
                                         {
                                             lock (rootOperationsNeedingAnalysis)
                                             {

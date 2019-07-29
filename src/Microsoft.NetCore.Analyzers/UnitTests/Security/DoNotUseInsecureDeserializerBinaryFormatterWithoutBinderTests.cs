@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -1143,6 +1144,57 @@ namespace Blah
     }
 }",
             GetCSharpResultAt(21, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = DeserializeBookRecord")]
+        [InlineData(@"dotnet_code_quality.CA2301.excluded_symbol_names = DeserializeBookRecord
+                      dotnet_code_quality.CA2302.excluded_symbol_names = DeserializeBookRecord")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = DeserializeBookRecord")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(29, 33, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+[Serializable]
+public class BookRecord
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public int PageCount { get; set; }
+    public AisleLocation Location { get; set; }
+}
+
+[Serializable]
+public class AisleLocation
+{
+    public char Aisle { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(byte[] bytes)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        using (MemoryStream ms = new MemoryStream(bytes))
+        {
+            return (BookRecord) formatter.Deserialize(ms);
+        }
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
     }
 }

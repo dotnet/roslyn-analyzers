@@ -8,8 +8,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 
 namespace Microsoft.NetCore.Analyzers.Data
@@ -57,6 +55,11 @@ namespace Microsoft.NetCore.Analyzers.Data
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     ISymbol symbol = operationBlockStartContext.OwningSymbol;
+                    if (symbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
+                        Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    {
+                        return;
+                    }
 
                     var isInDbCommandConstructor = false;
                     var isInDataAdapterConstructor = false;

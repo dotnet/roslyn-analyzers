@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -230,6 +231,34 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", bool.Parse(""true""));
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.CA5361.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(8, 9, DoNotSetSwitch.DoNotDisableSchUseStrongCryptoRule, "SetSwitch")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        AppContext.SetSwitch(""Switch.System.Net.DontEnableSchUseStrongCrypto"", true);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

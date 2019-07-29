@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
-                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
         private static readonly ImmutableHashSet<string> s_RSAAlgorithmNames =
             ImmutableHashSet.Create(
@@ -105,27 +105,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
                     }
                 }, OperationKind.ObjectCreation);
-
-                compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
-                {
-                    var returnOperation = (IReturnOperation)operationAnalysisContext.Operation;
-                    var typeSymbol = returnOperation.ReturnedValue?.Type;
-
-                    if (typeSymbol == null)
-                    {
-                        return;
-                    }
-
-                    var baseTypesAndThis = typeSymbol.GetBaseTypesAndThis();
-
-                    if (rsaTypeSymbol != null && baseTypesAndThis.Contains(rsaTypeSymbol))
-                    {
-                        operationAnalysisContext.ReportDiagnostic(
-                            returnOperation.CreateDiagnostic(
-                                Rule,
-                                typeSymbol.Name));
-                    }
-                }, OperationKind.Return);
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {

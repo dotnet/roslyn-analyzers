@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -403,6 +405,37 @@ class TestClass
         return new X509Store(StoreName.My);
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
+        [InlineData(@"dotnet_code_quality.CA5380.excluded_symbol_names = TestMethod
+                      dotnet_code_quality.CA5381.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(10, 9, DoNotInstallRootCert.DefinitelyInstallRootCertRule)
+                };
+            }
+
+            VerifyCSharp(@"
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        var storeName = StoreName.Root; 
+        var x509Store = new X509Store(storeName);
+        x509Store.Add(new X509Certificate2());
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

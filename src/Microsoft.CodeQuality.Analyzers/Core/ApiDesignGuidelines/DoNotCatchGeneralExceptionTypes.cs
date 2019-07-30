@@ -28,7 +28,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                              isEnabledByDefault: true,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1031-do-not-catch-general-exception-types",
-                                                                             customTags: WellKnownDiagnosticTags.Telemetry);
+                                                                             customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
         public DoNotCatchGeneralExceptionTypesAnalyzer() : base(shouldCheckLambdas: true)

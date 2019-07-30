@@ -29,6 +29,8 @@ namespace Microsoft.NetCore.Analyzers.Security
             MicrosoftNetCoreAnalyzersResources.ResourceManager,
             typeof(MicrosoftNetCoreAnalyzersResources));
 
+        // DllImportSearchPath.AssemblyDirectory = 2.
+        // DllImportSearchPath.UseDllDirectoryForDependencies = 256;
         private const int UnsafeBits = 2 | 256;
         private const int LegacyBehavior = 0;
 
@@ -64,8 +66,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 }
 
                 var cancellationToken = compilationStartAnalysisContext.CancellationToken;
-                var unsafeDllImportSearchPathValues = compilationStartAnalysisContext.Options.GetUnsignedIntegralOptionValue(
-                    optionName: EditorConfigOptionNames.UnsafeDllImportSearchPathValues,
+                var unsafeDllImportSearchPathBits = compilationStartAnalysisContext.Options.GetUnsignedIntegralOptionValue(
+                    optionName: EditorConfigOptionNames.UnsafeDllImportSearchPathBits,
                     rule: Rule,
                     defaultValue: UnsafeBits,
                     cancellationToken: cancellationToken);
@@ -103,7 +105,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         {
                             if (dllImportSearchPathOnAssembly != -1 &&
                                 dllImportSearchPathOnAssembly != LegacyBehavior &&
-                                (dllImportSearchPathOnAssembly & unsafeDllImportSearchPathValues) == 0)
+                                (dllImportSearchPathOnAssembly & unsafeDllImportSearchPathBits) == 0)
                             {
                                 return;
                             }
@@ -111,7 +113,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         else
                         {
                             if (dllImportSearchPath != LegacyBehavior &&
-                                (dllImportSearchPath & unsafeDllImportSearchPathValues) == 0)
+                                (dllImportSearchPath & unsafeDllImportSearchPathBits) == 0)
                             {
                                 return;
                             }

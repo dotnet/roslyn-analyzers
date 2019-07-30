@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 
@@ -225,6 +227,35 @@ class TestClass
         AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", bool.Parse(""true""));
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = ExampleMethod")]
+        [InlineData("dotnet_code_quality.CA5378.excluded_symbol_names = ExampleMethod")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = ExampleMethod")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(9, 9, DoNotSetSwitch.DoNotDisableSpmSecurityProtocolsRule, "SetSwitch")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5378 violation
+        AppContext.SetSwitch(""Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols"", true);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

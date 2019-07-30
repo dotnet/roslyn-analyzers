@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
+using System;
 using Test.Utilities;
 using Xunit;
 
@@ -74,7 +76,6 @@ class TestClass
             GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
         }
 
-        // It will have a compiler warning and recommend to use [DllImport]. So, there's no need to flag a diagnostic for this case.
         [Fact]
         public void Test_NoAttribute_NoDiagnostic()
         {
@@ -242,6 +243,54 @@ class TestClass
     }
 }",
             GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 2 | 256")]
+        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 258")]
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_Diagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.ApplicationDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 2048")]
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.ApplicationDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            Array.Empty<DiagnosticResult>());
         }
 
         // In this case, [DefaultDllImportSearchPaths] is applied to the assembly.

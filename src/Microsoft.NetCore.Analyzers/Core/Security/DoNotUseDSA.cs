@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
                 helpLinkUri: null,
-                customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+                customTags: WellKnownDiagnosticTags.Telemetry);
 
         private static readonly ImmutableHashSet<string> s_DSAAlgorithmNames =
             ImmutableHashSet.Create(

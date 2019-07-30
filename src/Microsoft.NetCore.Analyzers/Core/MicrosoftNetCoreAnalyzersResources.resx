@@ -1062,6 +1062,18 @@
   <data name="DoNotCreateTasksWithoutPassingATaskSchedulerMessage" xml:space="preserve">
     <value>Do not create tasks without passing a TaskScheduler</value>
   </data>
+  <data name="JsonNetInsecureSerializerMessage" xml:space="preserve">
+    <value>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</value>
+  </data>
+  <data name="JsonNetInsecureSerializerTitle" xml:space="preserve">
+    <value>Do not deserialize with JsonSerializer using an insecure configuration</value>
+  </data>
+  <data name="JsonNetMaybeInsecureSerializerMessage" xml:space="preserve">
+    <value>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</value>
+  </data>
+  <data name="JsonNetMaybeInsecureSerializerTitle" xml:space="preserve">
+    <value>Ensure that JsonSerializer has a secure configuration when deserializing</value>
+  </data>
   <data name="UseDefaultDllImportSearchPathsAttribute" xml:space="preserve">
     <value>Use DefaultDllImportSearchPaths attribute for P/Invokes</value>
   </data>

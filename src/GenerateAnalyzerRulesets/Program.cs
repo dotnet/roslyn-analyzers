@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -91,22 +92,19 @@ namespace GenerateAnalyzerRulesets
                 "AllRulesDefault.ruleset",
                 "All Rules with default action",
                 @"All Rules with default action. Rules with IsEnabledByDefault = false are disabled.",
-                RulesetKind.AllDefault,
-                categoryOpt: null);
+                RulesetKind.AllDefault);
 
             createRuleset(
                 "AllRulesEnabled.ruleset",
                 "All Rules Enabled with default action",
                 "All Rules are enabled with default action. Rules with IsEnabledByDefault = false are force enabled with default action.",
-                RulesetKind.AllEnabled,
-                categoryOpt: null);
+                RulesetKind.AllEnabled);
 
             createRuleset(
                 "AllRulesDisabled.ruleset",
                 "All Rules Disabled",
                 @"All Rules are disabled.",
-                RulesetKind.AllDisabled,
-                categoryOpt: null);
+                RulesetKind.AllDisabled);
 
             foreach (var category in categories)
             {
@@ -125,6 +123,28 @@ namespace GenerateAnalyzerRulesets
                     categoryOpt: category);
             }
 
+            // We generate custom tag based rulesets only for select custom tags.
+            var customTagsToGenerateRulesets = ImmutableArray.Create(
+                WellKnownDiagnosticTagsExtensions.Dataflow,
+                FxCopWellKnownDiagnosticTags.PortedFromFxCop);
+
+            foreach (var customTag in customTagsToGenerateRulesets)
+            {
+                createRuleset(
+                    $"{customTag}RulesDefault.ruleset",
+                    $"{customTag} Rules with default action",
+                    $@"All {customTag} Rules with default action. Rules with IsEnabledByDefault = false and non-{customTag} rules are disabled.",
+                    RulesetKind.CustomTagDefault,
+                    customTagOpt: customTag);
+
+                createRuleset(
+                    $"{customTag}RulesEnabled.ruleset",
+                    $"{customTag} Rules Enabled with default action",
+                    $@"All {customTag} Rules are enabled with default action. {customTag} Rules with IsEnabledByDefault = false are force enabled with default action. Non-{customTag} Rules are disabled.",
+                    RulesetKind.CustomTagEnabled,
+                    customTagOpt: customTag);
+            }
+
             createPropsFile();
 
             createAnalyzerDocumentationFile();
@@ -139,23 +159,26 @@ namespace GenerateAnalyzerRulesets
                 string rulesetName,
                 string rulesetDescription,
                 RulesetKind rulesetKind,
-                string categoryOpt)
+                string categoryOpt = null,
+                string customTagOpt = null)
             {
+                Debug.Assert(categoryOpt == null || customTagOpt == null);
                 Debug.Assert((categoryOpt != null) == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
+                Debug.Assert((customTagOpt != null) == (rulesetKind == RulesetKind.CustomTagDefault || rulesetKind == RulesetKind.CustomTagEnabled));
 
                 var result = new StringBuilder();
                 startRuleset();
-                if (categoryOpt == null)
+                if (categoryOpt == null && customTagOpt == null)
                 {
-                    addRules(categoryPass: false);
+                    addRules(categoryPass: false, customTagPass: false);
                 }
                 else
                 {
-                    result.AppendLine($@"   <!-- {categoryOpt} Rules -->");
-                    addRules(categoryPass: true);
+                    result.AppendLine($@"   <!-- {categoryOpt ?? customTagOpt} Rules -->");
+                    addRules(categoryPass: categoryOpt != null, customTagPass: customTagOpt != null);
                     result.AppendLine();
                     result.AppendLine($@"   <!-- Other Rules -->");
-                    addRules(categoryPass: false);
+                    addRules(categoryPass: false, customTagPass: false);
                 }
 
                 endRuleset();
@@ -175,12 +198,18 @@ namespace GenerateAnalyzerRulesets
                     result.AppendLine("</RuleSet>");
                 }
 
-                void addRules(bool categoryPass)
+                void addRules(bool categoryPass, bool customTagPass)
                 {
                     foreach (var rulesByAssembly in allRulesByAssembly)
                     {
                         string assemblyName = rulesByAssembly.Key;
                         SortedList<string, DiagnosticDescriptor> sortedRulesById = rulesByAssembly.Value;
+
+                        if (!sortedRulesById.Any(r => !shouldSkipRule(r.Value)))
+                        {
+                            // Bail out if we don't have any rule to be added for this assembly.
+                            continue;
+                        }
 
                         startRules(assemblyName);
 
@@ -231,6 +260,17 @@ namespace GenerateAnalyzerRulesets
                                     return rule.Category == categoryOpt;
                                 }
 
+                            case RulesetKind.CustomTagDefault:
+                            case RulesetKind.CustomTagEnabled:
+                                if (customTagPass)
+                                {
+                                    return !rule.CustomTags.Contains(customTagOpt);
+                                }
+                                else
+                                {
+                                    return rule.CustomTags.Contains(customTagOpt);
+                                }
+
                             default:
                                 return false;
                         }
@@ -245,6 +285,12 @@ namespace GenerateAnalyzerRulesets
 
                             case RulesetKind.CategoryEnabled:
                                 return getRuleActionCore(enable: categoryPass);
+
+                            case RulesetKind.CustomTagDefault:
+                                return getRuleActionCore(enable: customTagPass && rule.IsEnabledByDefault);
+
+                            case RulesetKind.CustomTagEnabled:
+                                return getRuleActionCore(enable: customTagPass);
 
                             case RulesetKind.AllDefault:
                                 return getRuleActionCore(enable: rule.IsEnabledByDefault);
@@ -548,8 +594,10 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
         {
             AllDefault,
             CategoryDefault,
+            CustomTagDefault,
             AllEnabled,
             CategoryEnabled,
+            CustomTagEnabled,
             AllDisabled,
         }
 

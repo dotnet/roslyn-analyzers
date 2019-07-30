@@ -94,6 +94,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
+                    if (IsConfiguredToSkipAnalysis(DoNotDisableSchUseStrongCryptoRule, operationAnalysisContext) &&
+                        IsConfiguredToSkipAnalysis(DoNotDisableSpmSecurityProtocolsRule, operationAnalysisContext))
+                    {
+                        return;
+                    }
+
                     var values = invocationOperation.Arguments.Select(s => s.Value.ConstantValue).ToArray();
 
                     if (values[0].HasValue &&
@@ -101,7 +107,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         if (values[0].Value is string switchName &&
                             BadSwitches.TryGetValue(switchName, out var pair) &&
-                            pair.BadValue.Equals(values[1].Value))
+                            pair.BadValue.Equals(values[1].Value) &&
+                            !IsConfiguredToSkipAnalysis(pair.Rule, operationAnalysisContext))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
@@ -114,6 +121,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(
                             invocationOperation.GetEnclosingControlFlowGraph(),
                             operationAnalysisContext.ContainingSymbol,
+                            operationAnalysisContext.Options,
                             wellKnownTypeProvider,
                             InterproceduralAnalysisConfiguration.Create(
                                 operationAnalysisContext.Options,
@@ -134,7 +142,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                         if (switchNameValueContent.TryGetSingleLiteral<string>(out var switchName) &&
                             switchValueValueContent.TryGetSingleLiteral<bool>(out var switchValue) &&
                             BadSwitches.TryGetValue(switchName, out var pair) &&
-                            pair.BadValue.Equals(switchValue))
+                            pair.BadValue.Equals(switchValue) &&
+                            !IsConfiguredToSkipAnalysis(pair.Rule, operationAnalysisContext))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
@@ -146,5 +155,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 OperationKind.Invocation);
             });
         }
+
+        static bool IsConfiguredToSkipAnalysis(DiagnosticDescriptor rule, OperationAnalysisContext context)
+            => context.ContainingSymbol.IsConfiguredToSkipAnalysis(context.Options, rule, context.Compilation, context.CancellationToken);
     }
 }

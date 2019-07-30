@@ -105,6 +105,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
+                            // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
+                            if (operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    DefinitelyUseSecureCookiesASPNetCoreRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    MaybeUseSecureCookiesASPNetCoreRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -165,6 +174,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
+                                        compilationAnalysisContext.Options,
                                         WellKnownTypeNames.MicrosoftAspNetCoreHttpCookieOptions,
                                         constructorMapper,
                                         PropertyMappers,

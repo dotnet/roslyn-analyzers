@@ -140,6 +140,16 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 "PopulateObject");
 
         /// <summary>
+        /// Deserialization methods for <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
+        /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
+        public static readonly ImmutableHashSet<string> JsonSerializerDeserializationMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "Deserialize",
+                "Populate");
+
+        /// <summary>
         /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreAnalyzersResources"/>.
         /// </summary>
         /// <param name="resourceSource">Type containing the resource strings.</param>

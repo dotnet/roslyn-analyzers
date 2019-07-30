@@ -264,7 +264,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     (calleeMethod.ContainingType.AllInterfaces.Contains(iAntiforgeryTypeSymbol) ||
                                     calleeMethod.ContainingType.Equals(iAntiforgeryTypeSymbol)))
                                 {
-                                    FindAllTheSpecifiedCalleeMethod(calleeMethod, visited, results);
+                                    FindAllTheSpecifiedCalleeMethods(calleeMethod, visited, results);
 
                                     if (results.Values.Any(s => s.Any()))
                                     {
@@ -291,7 +291,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 // <param name="methodSymbol">The symbol of the method to be analyzed</param>
                 // <param name="visited">All the method has been analyzed</param>
                 // <param name="results">The result is organized by &lt;method to be analyzed, dangerous method it calls&gt;</param>
-                void FindAllTheSpecifiedCalleeMethod(ISymbol methodSymbol, HashSet<ISymbol> visited, Dictionary<ISymbol, HashSet<ISymbol>> results)
+                void FindAllTheSpecifiedCalleeMethods(ISymbol methodSymbol, HashSet<ISymbol> visited, Dictionary<ISymbol, HashSet<ISymbol>> results)
                 {
                     if (visited.Add(methodSymbol))
                     {
@@ -311,7 +311,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 results[methodSymbol].Add(child);
                             }
 
-                            FindAllTheSpecifiedCalleeMethod(child, visited, results);
+                            FindAllTheSpecifiedCalleeMethods(child, visited, results);
 
                             if (results.TryGetValue(child, out var result))
                             {

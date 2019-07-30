@@ -56,6 +56,12 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
                     var owningSymbol = operationBlockContext.OwningSymbol;
+                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockContext.Options,
+                        AlwaysTrueFalseOrNullRule, operationBlockContext.Compilation, operationBlockContext.CancellationToken))
+                    {
+                        return;
+                    }
+
                     var processedOperationRoots = new HashSet<IOperation>();
 
                     foreach (var operationRoot in operationBlockContext.OperationBlocks)

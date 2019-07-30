@@ -114,6 +114,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
+                            var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+
+                            // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    BinderDefinitelyNotSetDescriptor, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    BinderMaybeNotSetDescriptor, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -179,6 +190,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
+                                        compilationAnalysisContext.Options,
                                         this.DeserializerTypeMetadataName,
                                         DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
                                         propertyMappers,

@@ -11,7 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class JsonNetTypeNameHandlingTests : DiagnosticAnalyzerTestBase
     {
-        private static DiagnosticDescriptor Rule = JsonNetTypeNameHandling.Rule;
+        private static readonly DiagnosticDescriptor Rule = JsonNetTypeNameHandling.Rule;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

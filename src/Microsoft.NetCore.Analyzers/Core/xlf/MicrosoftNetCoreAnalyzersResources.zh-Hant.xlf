@@ -2,6 +2,26 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
+      <trans-unit id="JsonNetInsecureSerializerMessage">
+        <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
+        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetInsecureSerializerTitle">
+        <source>Do not deserialize with JsonSerializer using an insecure configuration</source>
+        <target state="new">Do not deserialize with JsonSerializer using an insecure configuration</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetMaybeInsecureSerializerMessage">
+        <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
+        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="JsonNetMaybeInsecureSerializerTitle">
+        <source>Ensure that JsonSerializer has a secure configuration when deserializing</source>
+        <target state="new">Ensure that JsonSerializer has a secure configuration when deserializing</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
         <target state="translated">直接利用使用者輸入的 SQL 查詢，有可能會受到插入 SQL 的攻擊。請檢閱此 SQL 查詢是否有潛在的弱點，並請考慮使用參數化的 SQL 查詢。</target>

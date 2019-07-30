@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -9,9 +10,7 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class UseSharedAccessProtocolHttpsOnlyTests : DiagnosticAnalyzerTestBase
     {
-        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
-        {
-            string microsoftWindowsAzureStorageCSharpSourceCode = @"
+        private const string MicrosoftWindowsAzureStorageCSharpSourceCode = @"
 using System;
 
 namespace Microsoft.WindowsAzure.Storage
@@ -69,8 +68,20 @@ namespace Microsoft.WindowsAzure.Storage
         }
     }
 }";
+
+        protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
+        {
             this.VerifyCSharp(
-                new[] { source, microsoftWindowsAzureStorageCSharpSourceCode }.ToFileAndSource(),
+                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode }.ToFileAndSource(),
+                expected);
+        }
+
+        protected void VerifyCSharpWithDependencies(string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
+        {
+            this.VerifyCSharp(
+                new[] { source, MicrosoftWindowsAzureStorageCSharpSourceCode },
+                additionalFile,
+                ReferenceFlags.None,
                 expected);
         }
 
@@ -204,6 +215,38 @@ class TestClass
         var a = new A();
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality." + UseSharedAccessProtocolHttpsOnly.DiagnosticId + ".excluded_symbol_names = TestMethod")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(12, 9, UseSharedAccessProtocolHttpsOnly.Rule)
+                };
+            }
+
+            VerifyCSharpWithDependencies(@"
+using System;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.File;
+
+class TestClass
+{
+    public void TestMethod(SharedAccessFilePolicy policy, SharedAccessFileHeaders headers, string groupPolicyIdentifier, IPAddressOrRange ipAddressOrRange)
+    {
+        var cloudFile = new CloudFile();
+        var protocols = SharedAccessProtocol.HttpsOrHttp;
+        cloudFile.GetSharedAccessSignature(policy, headers, groupPolicyIdentifier, protocols, ipAddressOrRange); 
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

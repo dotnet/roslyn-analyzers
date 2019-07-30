@@ -117,6 +117,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
+                            // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
+                            if (operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    DefinitelyUseWeakKDFInsufficientIterationCountRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                operationBlockStartAnalysisContext.OwningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    MaybeUseWeakKDFInsufficientIterationCountRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -131,7 +140,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         }
                                     }
                                 },
-                                OperationKind.Invocation);
+                            OperationKind.Invocation);
 
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
@@ -166,6 +175,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
+                                        compilationAnalysisContext.Options,
                                         WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
                                         constructorMapper,
                                         propertyMappers,

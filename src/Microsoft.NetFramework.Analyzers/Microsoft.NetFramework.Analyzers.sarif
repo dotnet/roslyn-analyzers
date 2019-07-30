@@ -24,7 +24,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -20,34 +20,35 @@ using Microsoft.NetCore.Analyzers.Security.Helpers;
 namespace Microsoft.NetCore.Analyzers.Security
 {
     /// <summary>
-    /// For detecting potentially insecure deserialization settings with <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/>.
+    /// For detecting deserialization with <see cref="T:Newtonsoft.Json.JsonSerializer"/> when its TypeNameHandling != None
+    /// and its Binder/SerializationBinder is null.
     /// </summary>
     [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseInsecureSettingsForJsonNet : DiagnosticAnalyzer
+    internal class DoNotUseInsecureDeserializerJsonNetWithoutBinder : DiagnosticAnalyzer
     {
         // TODO paulming: Help links URLs.
-        internal static readonly DiagnosticDescriptor DefinitelyInsecureSettings =
+        internal static readonly DiagnosticDescriptor DefinitelyInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
-                "CA2327",
-                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsTitle),
-                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsMessage),
+                "CA2329",
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
-        internal static readonly DiagnosticDescriptor MaybeInsecureSettings =
+        internal static readonly DiagnosticDescriptor MaybeInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
-                "CA2328",
-                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsTitle),
-                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsMessage),
+                "CA2330",
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerTitle),
+                nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerMessage),
                 isEnabledByDefault: false,
                 helpLinkUri: null,
                 customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
-                DefinitelyInsecureSettings,
-                MaybeInsecureSettings);
+                DefinitelyInsecureSerializer,
+                MaybeInsecureSerializer);
 
         /// <summary>
         /// PropertySetAbstractValue index for TypeNameHandling property.
@@ -70,7 +71,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 }
                 else
                 {
-                    Debug.Fail($"Unhandled JsonSerializerSettings constructor {constructorMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}");
+                    Debug.Fail($"Unhandled JsonSerializer constructor {constructorMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}");
                     return PropertySetAbstractValue.GetInstance(
                         PropertySetAbstractValueKind.Unflagged,
                         PropertySetAbstractValueKind.Unflagged);
@@ -83,7 +84,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (ValueContentAbstractValue valueContentAbstractValue) =>
                     PropertySetCallbacks.EvaluateLiteralValues(
                         valueContentAbstractValue,
-                        (object o) => o is int i && i != 0),    // None is 0, and anything other than None is flagged.
+                        (object o) => o is int i && i != 0),   // None is 0, and anything other than None is flagged.
                 TypeNameHandlingIndex),
             new PropertyMapper(
                 "Binder",
@@ -95,23 +96,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                 SerializationBinderIndex));     // Binder & SerializationBinder have the same underlying value.
 
         private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
-            SecurityHelpers.JsonSerializerInstantiateWithSettingsMethods.Select(
+            SecurityHelpers.JsonSerializerDeserializationMethods.Select(
                 (string methodName) => new HazardousUsageEvaluator(
-                    WellKnownTypeNames.NewtonsoftJsonJsonSerializer,
                     methodName,
-                    "settings",
                     PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown))
-                .Concat(
-                    SecurityHelpers.JsonConvertWithSettingsMethods.Select(
-                        (string methodName) => new HazardousUsageEvaluator(
-                            WellKnownTypeNames.NewtonsoftJsonJsonConvert,
-                            methodName,
-                            "settings",
-                            PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown)))
-                .Concat(
-                    new HazardousUsageEvaluator(
-                        HazardousUsageEvaluatorKind.Return,
-                        PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown))
                 .Concat(
                     new HazardousUsageEvaluator(
                         HazardousUsageEvaluatorKind.Initialization,
@@ -128,9 +116,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializerSettings, out INamedTypeSymbol jsonSerializerSettingsSymbol)
-                        || !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializer, out INamedTypeSymbol jsonSerializerSymbol)
-                        || !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonConvert, out INamedTypeSymbol jsonConvertSymbol))
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                            WellKnownTypeNames.NewtonsoftJsonJsonSerializer,
+                            out INamedTypeSymbol jsonSerializerSymbol))
                     {
                         return;
                     }
@@ -140,13 +128,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
-                            var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+                            ISymbol owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
 
                             // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
-                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    DefinitelyInsecureSettings, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
-                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
-                                    MaybeInsecureSettings, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(
+                                    operationBlockStartAnalysisContext.Options,
+                                    DefinitelyInsecureSerializer,
+                                    operationBlockStartAnalysisContext.Compilation,
+                                    operationBlockStartAnalysisContext.CancellationToken)
+                                && owningSymbol.IsConfiguredToSkipAnalysis(
+                                    operationBlockStartAnalysisContext.Options,
+                                    MaybeInsecureSerializer,
+                                    operationBlockStartAnalysisContext.Compilation,
+                                    operationBlockStartAnalysisContext.CancellationToken))
                             {
                                 return;
                             }
@@ -156,15 +150,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     IInvocationOperation invocationOperation =
                                         (IInvocationOperation)operationAnalysisContext.Operation;
-                                    if ((jsonSerializerSymbol.Equals(invocationOperation.TargetMethod.ContainingType)
-                                            && SecurityHelpers.JsonSerializerInstantiateWithSettingsMethods.Contains(invocationOperation.TargetMethod.Name)
-                                            && invocationOperation.TargetMethod.Parameters.Any(
-                                                p => jsonSerializerSettingsSymbol.Equals(p.Type)))
-                                        || (jsonConvertSymbol.Equals(invocationOperation.TargetMethod.ContainingType)
-                                                && SecurityHelpers.JsonSerializerInstantiateWithSettingsMethods.Contains(invocationOperation.TargetMethod.Name)
-                                                && invocationOperation.TargetMethod.Parameters.Any(
-                                                    p => jsonSerializerSettingsSymbol.Equals(p.Type)))
-                                        || jsonSerializerSettingsSymbol.Equals(invocationOperation.TargetMethod.ReturnType))
+                                    if (jsonSerializerSymbol.Equals(invocationOperation.TargetMethod.ContainingType)
+                                        && SecurityHelpers.JsonSerializerDeserializationMethods.Contains(
+                                               invocationOperation.TargetMethod.Name))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
@@ -180,7 +168,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     IObjectCreationOperation objectCreationOperation =
                                         (IObjectCreationOperation)operationAnalysisContext.Operation;
-                                    if (jsonSerializerSettingsSymbol.Equals(objectCreationOperation.Type))
+                                    if (jsonSerializerSymbol.Equals(objectCreationOperation.Type))
                                     {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
@@ -190,18 +178,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     }
                                 },
                                 OperationKind.ObjectCreation);
-
-                            operationBlockStartAnalysisContext.RegisterOperationAction(
-                                (OperationAnalysisContext operationAnalysisContext) =>
-                                {
-                                    IReturnOperation returnOperation = (IReturnOperation)operationAnalysisContext.Operation;
-                                    if (jsonSerializerSettingsSymbol.Equals(returnOperation.Type))
-                                    {
-                                        rootOperationsNeedingAnalysis.Add(
-                                            (returnOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
-                                    }
-                                },
-                                OperationKind.Return);
                         });
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -221,7 +197,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
                                         compilationAnalysisContext.Options,
-                                        WellKnownTypeNames.NewtonsoftJsonJsonSerializerSettings,
+                                        WellKnownTypeNames.NewtonsoftJsonJsonSerializer,
                                         ConstructorMapper,
                                         PropertyMappers,
                                         HazardousUsageEvaluators,
@@ -244,11 +220,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     switch (kvp.Value)
                                     {
                                         case HazardousUsageEvaluationResult.Flagged:
-                                            descriptor = DefinitelyInsecureSettings;
+                                            descriptor = DefinitelyInsecureSerializer;
                                             break;
 
                                         case HazardousUsageEvaluationResult.MaybeFlagged:
-                                            descriptor = MaybeInsecureSettings;
+                                            descriptor = MaybeInsecureSerializer;
                                             break;
 
                                         default:

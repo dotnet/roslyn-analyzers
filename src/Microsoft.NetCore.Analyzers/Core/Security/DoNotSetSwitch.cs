@@ -116,10 +116,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     methodSymbol.Name));
                         }
                     }
-                    else
+                    else if (invocationOperation.TryGetEnclosingControlFlowGraph(out var cfg))
                     {
                         var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(
-                            invocationOperation.GetEnclosingControlFlowGraph(),
+                            cfg,
                             operationAnalysisContext.ContainingSymbol,
                             operationAnalysisContext.Options,
                             wellKnownTypeProvider,

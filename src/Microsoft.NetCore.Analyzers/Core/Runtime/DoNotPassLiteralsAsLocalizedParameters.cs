@@ -264,12 +264,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
-            // FxCop compat: If a localizable attribute isn't defined then fall back to name heuristics.
-            bool IsLocalizableByNameHeuristic(ISymbol symbol) =>
-                symbol.Name.Equals("message", StringComparison.OrdinalIgnoreCase) ||
-                symbol.Name.Equals("text", StringComparison.OrdinalIgnoreCase) ||
-                symbol.Name.Equals("caption", StringComparison.OrdinalIgnoreCase);
-
             if (IsLocalizableByNameHeuristic(parameterSymbol) ||
                 containingPropertySymbolOpt != null && IsLocalizableByNameHeuristic(containingPropertySymbolOpt))
             {
@@ -286,6 +280,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             return false;
+
+            // FxCop compat: If a localizable attribute isn't defined then fall back to name heuristics.
+            static bool IsLocalizableByNameHeuristic(ISymbol symbol) =>
+                symbol.Name.Equals("message", StringComparison.OrdinalIgnoreCase) ||
+                symbol.Name.Equals("text", StringComparison.OrdinalIgnoreCase) ||
+                symbol.Name.Equals("caption", StringComparison.OrdinalIgnoreCase);
         }
 
         private static LocalizableAttributeState GetLocalizableAttributeState(ISymbol symbol, INamedTypeSymbol localizableAttributeTypeSymbol)

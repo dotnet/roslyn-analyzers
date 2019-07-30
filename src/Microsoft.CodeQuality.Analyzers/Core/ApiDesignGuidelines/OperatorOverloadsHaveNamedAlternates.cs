@@ -197,7 +197,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // list of operator alternate names: https://docs.microsoft.com/visualstudio/code-quality/ca2225-operator-overloads-have-named-alternates
 
             // the most common case; create a static method with the already specified types
-            ExpectedAlternateMethodGroup createSingle(string methodName) => new ExpectedAlternateMethodGroup(methodName);
+            static ExpectedAlternateMethodGroup createSingle(string methodName) => new ExpectedAlternateMethodGroup(methodName);
             switch (operatorName)
             {
                 case "op_Addition":

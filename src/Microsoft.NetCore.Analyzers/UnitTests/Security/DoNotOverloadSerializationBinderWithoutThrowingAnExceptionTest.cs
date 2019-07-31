@@ -178,7 +178,7 @@ sealed class Version1ToVersion2DeserializationBinder : SerializationBinder
 }
 
             ",
-            GetCSharpResultAt(135, 26, DoNotOverloadSerializationBinderWithoutThrowingAnException.DoNotOverloadSerializationBinderWithoutThrowingAnExceptionRule));
+            GetCSharpResultAt(135, 26, DoNotOverloadSerializationBinderWithoutThrowingAnException.DoNotOverloadSerializationBinderWithoutThrowingAnExceptionRule, "Version1ToVersion2DeserializationBinder"));
         }
 
         [Fact]
@@ -672,7 +672,7 @@ sealed class Version1ToVersion2DeserializationBinder : SerializationBinder
         return pointlessRecursiveFunction(assemVer1, typeName, 0);
     }
 }
-            ", GetCSharpResultAt(148, 26, DoNotOverloadSerializationBinderWithoutThrowingAnException.DoNotOverloadSerializationBinderWithoutThrowingAnExceptionRule));
+            ", GetCSharpResultAt(148, 26, DoNotOverloadSerializationBinderWithoutThrowingAnException.DoNotOverloadSerializationBinderWithoutThrowingAnExceptionRule, "Version1ToVersion2DeserializationBinder"));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

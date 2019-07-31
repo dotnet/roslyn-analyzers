@@ -5,6 +5,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Microsoft.NetFramework.Analyzers
 {
@@ -99,6 +100,7 @@ namespace Microsoft.NetFramework.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartContext) =>
                 {
+                    WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartContext.Compilation);
                     INamedTypeSymbol mvcControllerSymbol = WellKnownTypes.MvcController(compilationStartContext.Compilation);
                     INamedTypeSymbol mvcControllerBaseSymbol = WellKnownTypes.MvcControllerBase(compilationStartContext.Compilation);
                     INamedTypeSymbol actionResultSymbol = WellKnownTypes.ActionResult(compilationStartContext.Compilation);
@@ -114,12 +116,16 @@ namespace Microsoft.NetFramework.Analyzers
                     compilationStartContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolContext) =>
                         {
-                            // TODO enhancements: Consider looking at non-ActionResult-derived return types as well.
+                            // TODO enhancements: Consider looking at IAsyncResult-based action methods.
                             if (!(symbolContext.Symbol is IMethodSymbol methodSymbol)
                                 || methodSymbol.MethodKind != MethodKind.Ordinary
                                 || methodSymbol.IsStatic
                                 || !methodSymbol.IsPublic()
-                                || !methodSymbol.ReturnType.Inherits(actionResultSymbol)  // FxCop implementation only looks at ActionResult-derived return types.
+                                || !(methodSymbol.ReturnType.Inherits(actionResultSymbol)  // FxCop implementation only looked at ActionResult-derived return types.
+                                     || (methodSymbol.IsAsync
+                                         && wellKnownTypeProvider.IsTaskOfType(
+                                             methodSymbol.ReturnType,
+                                             (ITypeSymbol typeArgument) => typeArgument.Inherits(actionResultSymbol))))
                                 || (!methodSymbol.ContainingType.Inherits(mvcControllerSymbol)
                                     && !methodSymbol.ContainingType.Inherits(mvcControllerBaseSymbol)))
                             {

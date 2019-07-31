@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -79,7 +80,7 @@ class TestClass
         }
 
         [Fact]
-        public void Test_HardcodedInbyteArray_CreateEncryptor_Diagnostic()
+        public void Test_HardcodedInByteArray_CreateEncryptor_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -94,11 +95,11 @@ class TestClass
         rijn.CreateEncryptor(rgbKey, someOtherBytesForIV);
     }
 }",
-            GetCSharpResultAt(11, 9, 9, 36, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+            GetCSharpResultAt(11, 9, 9, 25, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
-        public void Test_HardcodedInbyteArray_CreateDecryptor_Diagnostic()
+        public void Test_HardcodedInByteArray_CreateDecryptor_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -113,11 +114,11 @@ class TestClass
         rijn.CreateDecryptor(rgbKey, someOtherBytesForIV);
     }
 }",
-            GetCSharpResultAt(11, 9, 9, 36, "ICryptoTransform SymmetricAlgorithm.CreateDecryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+            GetCSharpResultAt(11, 9, 9, 25, "ICryptoTransform SymmetricAlgorithm.CreateDecryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
-        public void Test_HardcodedInbyteArrayWithVariable_CreateEncryptor_Diagnostic()
+        public void Test_HardcodedInByteArrayWithVariable_CreateEncryptor_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -133,11 +134,11 @@ class TestClass
         rijn.CreateEncryptor(rgbKey, someOtherBytesForIV);
     }
 }",
-            GetCSharpResultAt(12, 9, 10, 36, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+            GetCSharpResultAt(12, 9, 10, 25, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
-        public void Test_HardcodedInbyteArray_KeyProperty_Diagnostic()
+        public void Test_HardcodedInByteArray_KeyProperty_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -152,11 +153,11 @@ class TestClass
         rijn.Key = rgbKey;
     }
 }",
-            GetCSharpResultAt(11, 9, 9, 36, "byte[] SymmetricAlgorithm.Key", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+            GetCSharpResultAt(11, 9, 9, 25, "byte[] SymmetricAlgorithm.Key", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
-        public void Test_HardcodedInbyteArray_CreateEncryptorFromDerivedClassOfSymmetricAlgorithm_Diagnostic()
+        public void Test_HardcodedInByteArray_CreateEncryptorFromDerivedClassOfSymmetricAlgorithm_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -171,11 +172,11 @@ class TestClass
         aes.CreateEncryptor(rgbKey, someOtherBytesForIV);
     }
 }",
-            GetCSharpResultAt(11, 9, 9, 36, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+            GetCSharpResultAt(11, 9, 9, 25, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
-        public void Test_HardcodedInbyteArray_CreateEncryptor_Multivalues_Diagnostic()
+        public void Test_HardcodedInByteArray_CreateEncryptor_Multivalues_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -197,12 +198,12 @@ class TestClass
         rijn.CreateEncryptor(rgbKey, someOtherBytesForIV);
     }
 }",
-            GetCSharpResultAt(18, 9, 14, 33, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"),
-            GetCSharpResultAt(18, 9, 9, 36, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+            GetCSharpResultAt(18, 9, 14, 22, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"),
+            GetCSharpResultAt(18, 9, 9, 25, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
-        public void Test_HardcodedInbyteArray_CreateEncryptor_WithoutAssignment_Diagnostic()
+        public void Test_HardcodedInByteArray_CreateEncryptor_WithoutAssignment_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
@@ -216,7 +217,7 @@ class TestClass
         rijn.CreateEncryptor(new byte[] {1, 2, 3}, someOtherBytesForIV);
     }
 }",
-            GetCSharpResultAt(10, 9, 10, 41, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+            GetCSharpResultAt(10, 9, 10, 30, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
@@ -241,7 +242,7 @@ class TestClass
         rijn.CreateEncryptor(rgbKey, someOtherBytesForIV);
     }
 }",
-            GetCSharpResultAt(17, 9, 13, 33, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV, byte[] rgbKey)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV, byte[] rgbKey)"));
+            GetCSharpResultAt(17, 9, 13, 22, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV, byte[] rgbKey)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV, byte[] rgbKey)"));
         }
 
         [Fact]
@@ -290,6 +291,26 @@ class TestClass
     }
 }",
             GetCSharpResultAt(16, 9, 9, 22, "byte[] SymmetricAlgorithm.Key", "void TestClass.CreateEncryptor(byte[] rgbKey)", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void Test_HardcodedIn2DByteArray_CreateEncryptor_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Linq;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(byte[] someOtherBytesForIV)
+    {
+        byte[,] rgbKey = new byte[,] { { 1, 2, 3 }, { 4, 5, 6 } };
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(rgbKey.Cast<byte>().ToArray(), someOtherBytesForIV);
+    }
+}",
+            GetCSharpResultAt(12, 9, 10, 26, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[,]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
         }
 
         [Fact]
@@ -367,6 +388,23 @@ class TestClass
         SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
         rijn.CreateEncryptor(key, someOtherBytesForIV);
     }
+}");
+        }
+
+        [Fact, WorkItem(2723, "https://github.com/dotnet/roslyn-analyzers/issues/2723")]
+        public void Test_ArrayInitializerInAttribute()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+
+class MyAttr : Attribute
+{
+    public MyAttr (byte[] array) { }
+}
+
+[MyAttr(new byte[]{ 1 })]
+class C
+{
 }");
         }
 

@@ -135,33 +135,37 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             if (protocolsArgumentOperation != null)
                             {
-                                var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                var cfg = invocationOperation.GetTopmostParentBlock()?.GetEnclosingControlFlowGraph();
+                                if (cfg != null)
+                                {
+                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                                                                         operationBlockStartContext.Options,
                                                                         SupportedDiagnostics,
                                                                         defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
                                                                         cancellationToken: operationBlockStartContext.CancellationToken,
                                                                         defaultMaxInterproceduralMethodCallChain: 1);
-                                var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
-                                                                                            invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
-                                                                                            owningSymbol,
-                                                                                            operationAnalysisContext.Options,
-                                                                                            wellKnownTypeProvider,
-                                                                                            interproceduralAnalysisConfig,
-                                                                                            out var copyAnalysisResult,
-                                                                                            out var pointsToAnalysisResult);
-                                if (valueContentAnalysisResult == null)
-                                {
-                                    return;
-                                }
+                                    var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
+                                                                                                cfg,
+                                                                                                owningSymbol,
+                                                                                                operationAnalysisContext.Options,
+                                                                                                wellKnownTypeProvider,
+                                                                                                interproceduralAnalysisConfig,
+                                                                                                out var copyAnalysisResult,
+                                                                                                out var pointsToAnalysisResult);
+                                    if (valueContentAnalysisResult == null)
+                                    {
+                                        return;
+                                    }
 
-                                var protocolsArgument = valueContentAnalysisResult[protocolsArgumentOperation.Kind, protocolsArgumentOperation.Syntax];
+                                    var protocolsArgument = valueContentAnalysisResult[protocolsArgumentOperation.Kind, protocolsArgumentOperation.Syntax];
 
-                                if (protocolsArgument.IsLiteralState &&
-                                    !protocolsArgument.LiteralValues.Contains(SharedAccessProtocolHttpsOnly))
-                                {
-                                    operationAnalysisContext.ReportDiagnostic(
-                                        invocationOperation.CreateDiagnostic(
-                                            Rule));
+                                    if (protocolsArgument.IsLiteralState &&
+                                        !protocolsArgument.LiteralValues.Contains(SharedAccessProtocolHttpsOnly))
+                                    {
+                                        operationAnalysisContext.ReportDiagnostic(
+                                            invocationOperation.CreateDiagnostic(
+                                                Rule));
+                                    }
                                 }
                             }
                         }

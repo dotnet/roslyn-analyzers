@@ -140,7 +140,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
                             else if (typeArg is ITypeParameterSymbol typeParameterArg && !typeParameterArg.ConstraintTypes.IsEmpty)
                             {
-                                IEnumerable<INamedTypeSymbol> GetAllNamedTypeConstraints(ITypeParameterSymbol t)
+                                static IEnumerable<INamedTypeSymbol> GetAllNamedTypeConstraints(ITypeParameterSymbol t)
                                 {
                                     var directConstraints = t.ConstraintTypes.OfType<INamedTypeSymbol>();
                                     var inheritedConstraints = t.ConstraintTypes.OfType<ITypeParameterSymbol>()

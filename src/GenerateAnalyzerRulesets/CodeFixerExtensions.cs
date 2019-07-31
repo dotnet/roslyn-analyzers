@@ -40,7 +40,7 @@ namespace GenerateAnalyzerRulesets
                             ExportCodeFixProviderAttribute attribute = typeInfo.GetCustomAttribute<ExportCodeFixProviderAttribute>();
                             if (attribute != null)
                             {
-                                builder = builder ?? ImmutableArray.CreateBuilder<CodeFixProvider>();
+                                builder ??= ImmutableArray.CreateBuilder<CodeFixProvider>();
                                 var fixer = (CodeFixProvider)Activator.CreateInstance(typeInfo.AsType());
                                 if (HasImplementation(fixer))
                                 {

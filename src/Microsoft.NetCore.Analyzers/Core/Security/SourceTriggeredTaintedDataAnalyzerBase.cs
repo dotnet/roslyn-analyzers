@@ -101,12 +101,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             out evaluateWithValueContentAnalysis))
                                         {
                                             IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
+                                            if (!rootOperation.TryGetEnclosingControlFlowGraph(out var cfg))
+                                            {
+                                                return;
+                                            }
+
                                             PointsToAnalysisResult pointsToAnalysisResult;
                                             ValueContentAnalysisResult valueContentAnalysisResultOpt;
                                             if (evaluateWithPointsToAnalysis != null)
                                             {
                                                 pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
-                                                    rootOperation.GetEnclosingControlFlowGraph(),
+                                                    cfg,
                                                     owningSymbol,
                                                     operationAnalysisContext.Options,
                                                     WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
@@ -136,7 +141,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                             if (evaluateWithValueContentAnalysis != null)
                                             {
                                                 valueContentAnalysisResultOpt = ValueContentAnalysis.TryGetOrComputeResult(
-                                                    rootOperation.GetEnclosingControlFlowGraph(),
+                                                    cfg,
                                                     owningSymbol,
                                                     operationAnalysisContext.Options,
                                                     WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
@@ -187,7 +192,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     operationAnalysisContext =>
                                     {
                                         IArrayInitializerOperation arrayInitializerOperation = (IArrayInitializerOperation)operationAnalysisContext.Operation;
-                                        if (sourceInfoSymbolMap.IsSourceConstantArrayOfType(arrayInitializerOperation.Parent.Type as IArrayTypeSymbol))
+                                        if (arrayInitializerOperation.GetAncestor<IArrayCreationOperation>(OperationKind.ArrayCreation)?.Type is IArrayTypeSymbol arrayTypeSymbol
+                                            && sourceInfoSymbolMap.IsSourceConstantArrayOfType(arrayTypeSymbol))
                                         {
                                             lock (rootOperationsNeedingAnalysis)
                                             {
@@ -212,8 +218,13 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                             foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {
+                                                if (!rootOperation.TryGetEnclosingControlFlowGraph(out var cfg))
+                                                {
+                                                    continue;
+                                                }
+
                                                 TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
-                                                    rootOperation.GetEnclosingControlFlowGraph(),
+                                                    cfg,
                                                     operationBlockAnalysisContext.Compilation,
                                                     operationBlockAnalysisContext.OwningSymbol,
                                                     operationBlockAnalysisContext.Options,

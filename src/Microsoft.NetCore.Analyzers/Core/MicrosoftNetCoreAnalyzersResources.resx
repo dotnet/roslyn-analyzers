@@ -1074,4 +1074,10 @@
   <data name="JsonNetMaybeInsecureSerializerTitle" xml:space="preserve">
     <value>Ensure that JsonSerializer has a secure configuration when deserializing</value>
   </data>
+  <data name="DoNotOverloadSerializationBinderWithoutThrowingAnExceptionTitle" xml:space="preserve">
+    <value>Do not overload SerializationBinder without throwing an exception for unexpected types.</value>
+  </data>
+  <data name="DoNotOverloadSerializationBinderWithoutThrowingAnExceptionMessage" xml:space="preserve">
+    <value>The {0}'s BindToType() method might not be throwing exceptions for unexpected types. If you're using a SerializationBinder to restrict types as a mitigation against deserialization attacks, then you need to throw exceptions for unexpected types. Returning 'null' in C# or 'Nothing' in Visual Basic allows deserialization of the type using the default serialization functions, which opens the code to injection of arbitrary information, including code, by providing compromised data to the deserializer. Throwing an exception will prevent deserialization of unrecognized types.</value>
+  </data>
 </root>

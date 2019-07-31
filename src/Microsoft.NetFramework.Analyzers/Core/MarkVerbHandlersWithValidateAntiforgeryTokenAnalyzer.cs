@@ -122,7 +122,7 @@ namespace Microsoft.NetFramework.Analyzers
                                 || methodSymbol.IsStatic
                                 || !methodSymbol.IsPublic()
                                 || !(methodSymbol.ReturnType.Inherits(actionResultSymbol)  // FxCop implementation only looked at ActionResult-derived return types.
-                                     || (methodSymbol.IsAsync 
+                                     || (methodSymbol.IsAsync
                                          && wellKnownTypeProvider.IsTaskOfType(
                                              methodSymbol.ReturnType,
                                              (ITypeSymbol typeArgument) => typeArgument.Inherits(actionResultSymbol))))

@@ -313,6 +313,53 @@ class TestClass
         }
 
         [Fact]
+        public void Test_HardcodedInJaggedArrayInitializer_CreateEncryptor_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Linq;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(byte[] someOtherBytesForIV, byte unknownByte)
+    {
+        byte[][] rgbKey = new byte[3][]
+        {
+            new byte[] { 1, 2 },
+            new byte[] { 3, 4, 5 },
+            new byte[] { unknownByte }
+        };
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(rgbKey.Cast<byte>().ToArray(), someOtherBytesForIV);
+    }
+}",
+            GetCSharpResultAt(17, 9, 13, 13, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV, byte unknownByte)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV, byte unknownByte)"),
+            GetCSharpResultAt(17, 9, 12, 13, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV, byte unknownByte)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV, byte unknownByte)"));
+        }
+
+        [Fact]
+        public void Test_HardcodedInJaggedArray_CreateEncryptor_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Linq;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(byte[] someOtherBytesForIV)
+    {
+        byte[][] rgbKey = new byte[2][];
+        rgbKey[0] = new byte[2] { 1, 2 };
+        rgbKey[1] = new byte[3] { 3, 4, 5 };
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(rgbKey.Cast<byte>().ToArray(), someOtherBytesForIV);
+    }
+}");
+        }
+
+        [Fact]
         public void Test_NotHardcoded_CreateEncryptor_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"

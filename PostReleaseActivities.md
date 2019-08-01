@@ -14,8 +14,9 @@ Please follow the below steps after publishing analyzer NuGet packages from this
    4. Update `eng\Versions.props`:
       1. Bump up the `VersionPrefix`.
       2. Reset `PreReleaseVersionLabel` to `beta1`.
-      3. Update `MicrosoftCodeAnalysisFXCopAnalyersVersion` to the latest released package version. Build the repo by invoking `Build.cmd` and fix/suppress any new CA diagnostics, as appropriate.
-   5. Create and submit a PR with the above changes.
+      3. Update `MicrosoftCodeAnalysisFXCopAnalyersVersion` to the latest released package version.
+   5. Build the repo by invoking `eng\common\CIBuild.cmd` and fix/suppress any new CA diagnostics, as appropriate. This should also update the analyzer documentation files in the repo to use the new version prefix.
+   6. Create and submit a PR with the above changes.
 
 Steps to generate Release Notes
 =================================================================

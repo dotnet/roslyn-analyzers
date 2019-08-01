@@ -2,6 +2,16 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="zh-Hans" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
+      <trans-unit id="DoNotOverloadSerializationBinderWithoutThrowingAnExceptionMessage">
+        <source>The {0}'s BindToType() method might not be throwing exceptions for unexpected types. If you're using a SerializationBinder to restrict types as a mitigation against deserialization attacks, then you need to throw exceptions for unexpected types. Returning 'null' in C# or 'Nothing' in Visual Basic allows deserialization of the type using the default serialization functions, which opens the code to injection of arbitrary information, including code, by providing compromised data to the deserializer. Throwing an exception will prevent deserialization of unrecognized types.</source>
+        <target state="new">The {0}'s BindToType() method might not be throwing exceptions for unexpected types. If you're using a SerializationBinder to restrict types as a mitigation against deserialization attacks, then you need to throw exceptions for unexpected types. Returning 'null' in C# or 'Nothing' in Visual Basic allows deserialization of the type using the default serialization functions, which opens the code to injection of arbitrary information, including code, by providing compromised data to the deserializer. Throwing an exception will prevent deserialization of unrecognized types.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotOverloadSerializationBinderWithoutThrowingAnExceptionTitle">
+        <source>Do not overload SerializationBinder without throwing an exception for unexpected types</source>
+        <target state="new">Do not overload SerializationBinder without throwing an exception for unexpected types</target>
+        <note />
+      </trans-unit>
       <trans-unit id="JsonNetInsecureSerializerMessage">
         <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
         <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>

@@ -19,6 +19,7 @@ namespace Analyzer.Utilities
         public const string SystemThreadingTasksGenericTask = "System.Threading.Tasks.Task`1";
         public const string SystemCollectionsICollection = "System.Collections.ICollection";
         public const string SystemRuntimeSerializationSerializationInfo = "System.Runtime.Serialization.SerializationInfo";
+        public const string SystemRuntimeSerializationSerializationBinder = "System.Runtime.Serialization.SerializationBinder";
         public const string SystemIEquatable1 = "System.IEquatable`1";
         public const string SystemWebUIWebControlsSqlDataSource = "System.Web.UI.WebControls.SqlDataSource";
         public const string SystemDataSqlClientSqlParameter = "System.Data.SqlClient.SqlParameter";

@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -532,7 +534,7 @@ class App
     [STAThread]
     static void Main() 
     {
-        System.Console.WriteLine(""This program is designed to pass compilation tests. It throws an exception as it should, but does that through some extra complexity."");
+        System.Console.WriteLine(""This program is designed not to pass compilation tests. It calls extra functions, but they do not throw exceptions."");
         Serialize();
         Deserialize();
     }
@@ -673,6 +675,235 @@ sealed class Version1ToVersion2DeserializationBinder : SerializationBinder
     }
 }
             ", GetCSharpResultAt(148, 26, DoNotOverloadSerializationBinderWithoutThrowingAnException.DoNotOverloadSerializationBinderWithoutThrowingAnExceptionRule, "Version1ToVersion2DeserializationBinder"));
+        }
+
+        [Fact]
+        public void TestSomethingCalledSerializationBinderButNotARealOneNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+
+class App 
+{
+    static void Main() 
+    {
+        System.Console.WriteLine(""We're going to start a serialization binder. That's what we call it, anyway."");
+        notARealSerializationBinder x = new notARealSerializationBinder(0, ""zero"");
+        x.BindToType();
+        System.Console.WriteLine(x.concatinate());
+    }
+}
+
+class SerializationBinder {
+    protected int aNumber;
+    protected string aString;
+    public SerializationBinder()
+    {
+        aNumber = 0;
+        aString = """";
+    }
+
+    public SerializationBinder(int n, string s)
+    {
+        aNumber = n;
+        aString = s;
+    }
+
+    public string concatinate()
+    {
+        return aString +aNumber;
+    }
+}
+
+class notARealSerializationBinder : SerializationBinder
+{
+    public notARealSerializationBinder(int n, string s)
+    {
+        aNumber = n;
+        aString = s;
+    }
+
+    public Type BindToType() {
+    Console.WriteLine(""I am definitely a serialization binder. Trust me."");
+    return null;
+    }
+}
+            ");
+        }
+
+        [Fact]
+        public void TestLotsOfChainedMethodCallsDiagnostic()
+        {
+            VerifyCSharp(@"
+//lots of method calls
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection;
+using System.Security.Permissions;
+
+
+class App 
+{
+    [STAThread]
+    static void Main() 
+    {
+        System.Console.WriteLine(""This program wasn't supposed to get through compilation. It overloads a serialization binder but doesn't throw an exception, which has security risks."");
+        Serialize();
+        Deserialize();
+    }
+
+    static void Serialize() 
+    {
+        // To serialize the objects, you must first open a stream for writing. 
+        // Use a file stream here.
+        FileStream fs = new FileStream(""DataFile.dat"", FileMode.Create);
+
+        try 
+        {
+            // Construct a BinaryFormatter and use it 
+            // to serialize the data to the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            // Construct a Version1Type object and serialize it.
+            Version1Type obj = new Version1Type();
+            obj.x = 123;
+            formatter.Serialize(fs, obj);
+        }
+        catch (SerializationException e) 
+        {
+            Console.WriteLine(""Failed to serialize. Reason: "" + e.Message);
+            throw;
+        }
+        finally 
+        {
+            fs.Close();
+        }
+    }
+
+   
+    static void Deserialize() 
+    {
+        // Declare the Version2Type reference.
+        Version2Type obj = null;
+
+        // Open the file containing the data that you want to deserialize.
+        FileStream fs = new FileStream(""DataFile.dat"", FileMode.Open);
+        try 
+        {
+            // Construct a BinaryFormatter and use it 
+            // to deserialize the data from the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            // Construct an instance of our the
+            // Version1ToVersion2TypeSerialiationBinder type.
+            // This Binder type can deserialize a Version1Type  
+            // object to a Version2Type object.
+            formatter.Binder = new Version1ToVersion2DeserializationBinder();
+
+            obj = (Version2Type) formatter.Deserialize(fs);
+        }
+        catch (SerializationException e) 
+        {
+            Console.WriteLine(""Failed to deserialize. Reason: "" + e.Message);
+            throw;
+        }
+        finally 
+        {
+            fs.Close();
+        }
+
+        // To prove that a Version2Type object was deserialized, 
+        // display the object's type and fields to the console.
+        Console.WriteLine(""Type of object deserialized: "" + obj.GetType());
+        Console.WriteLine(""x = {0}, name = {1}"", obj.x, obj.name);
+    }
+}
+
+
+[Serializable]
+class Version1Type 
+{
+    public Int32 x;
+}
+
+
+[Serializable]
+class Version2Type : ISerializable 
+{
+    public Int32 x;
+    public String name;
+   
+    // The security attribute demands that code that calls
+    // this method have permission to perform serialization.
+    [SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) 
+    {
+        info.AddValue(""x"", x);
+        info.AddValue(""name"", name);
+    }
+
+    // The security attribute demands that code that calls  
+    // this method have permission to perform serialization.
+    [SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+    private Version2Type(SerializationInfo info, StreamingContext context) 
+    {
+        x = info.GetInt32(""x"");
+        try 
+        {
+            name = info.GetString(""name"");
+        }
+        catch (SerializationException) 
+        {
+            // The ""name"" field was not serialized because Version1Type 
+            // did not contain this field.
+            // Set this field to a reasonable default value.
+            name = ""Reasonable default value"";
+        }
+    }
+}
+
+
+sealed class Version1ToVersion2DeserializationBinder : SerializationBinder 
+{
+    //here are some functions which we call for the explicit purpose of them doing nothing
+    int methodD(int n) {
+        int current = 1, previous = 0;
+        for (int i = 0; i < n; i++) {
+            int temp = current + previous;
+            previous = current;
+            current = temp;
+        }
+        return current;
+    }
+    string methodC(int n) {
+        string r = """";
+        for (int i=0; i<n; i++) {
+            r = r + ""x"";
+        }
+        return r;
+    }
+    string methodB(string s) {
+        if (s=="""") {
+            return ""emptystring"";
+        }
+        return ""Version2Type"";
+    }
+    Type methodA(string s) {
+        Type typeToDeserialize = null;
+        String assemVer1 = Assembly.GetExecutingAssembly().FullName;
+        typeToDeserialize = Type.GetType(String.Format(""{0}, {1}"", 
+            s, assemVer1));
+        return typeToDeserialize;
+    }
+    public override Type BindToType(string assemblyName, string typeName) 
+    {
+        return methodA(methodB(methodC(methodD(8))));
+    }
+}
+            ", GetCSharpResultAt(164, 26, DoNotOverloadSerializationBinderWithoutThrowingAnException.DoNotOverloadSerializationBinderWithoutThrowingAnExceptionRule, "Version1ToVersion2DeserializationBinder"));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

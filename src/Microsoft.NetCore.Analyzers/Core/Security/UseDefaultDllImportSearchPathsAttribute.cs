@@ -30,8 +30,9 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(MicrosoftNetCoreAnalyzersResources));
 
         // DllImportSearchPath.AssemblyDirectory = 2.
-        // DllImportSearchPath.UseDllDirectoryForDependencies = 256;
-        private const int UnsafeBits = 2 | 256;
+        // DllImportSearchPath.UseDllDirectoryForDependencies = 256.
+        // DllImportSearchPath.ApplicationDirectory = 512.
+        private const int UnsafeBits = 2 | 256 | 512;
         private const int LegacyBehavior = 0;
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(

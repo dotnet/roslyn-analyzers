@@ -201,7 +201,7 @@ class TestClass
         }
 
         [Fact]
-        public void Test_AssemblyDirectory_ApplicationDirectory_NoDiagnostic()
+        public void Test_AssemblyDirectory_ApplicationDirectory_Diagnostic()
         {
             VerifyCSharp(@"
 using System;
@@ -219,7 +219,8 @@ class TestClass
     {
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
-}");
+}",
+            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
         }
 
         [Fact]

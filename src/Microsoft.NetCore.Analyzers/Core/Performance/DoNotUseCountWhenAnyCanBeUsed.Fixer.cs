@@ -16,20 +16,24 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace Microsoft.CodeQuality.Analyzers.Performance
+namespace Microsoft.NetCore.Analyzers.Performance
 {
     /// <summary>
-    /// CA1827: Do not use Count() when Any() can be used.
+    /// CA1828: Do not use CountAsync() when AnyAsync() can be used.
     /// </summary>
     public abstract class DoNotUseCountWhenAnyCanBeUsedFixer : CodeFixProvider
     {
-        private const string AnyMethodName = "Any";
+        private const string AsyncMethodName = "AnyAsync";
+        private const string SyncMethodName = "Any";
 
         /// <summary>
         /// A list of diagnostic IDs that this provider can provider fixes for.
         /// </summary>
         /// <value>The fixable diagnostic ids.</value>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(DoNotUseCountWhenAnyCanBeUsedAnalyzer.RuleId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId,
+                DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId);
 
         /// <summary>
         /// Gets an optional <see cref="FixAllProvider" /> that can fix all/multiple occurrences of diagnostics fixed by this code fix provider.
@@ -54,36 +58,46 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span);
+            var isAsync = context.Diagnostics[0].Id == DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId;
 
             if (node is object &&
-                this.TryGetFixer(node, out var expression, out var arguments, out var negate))
+                this.TryGetFixer(node, isAsync, out var expression, out var arguments, out var negate))
             {
                 context.RegisterCodeFix(
-                    new DoNotUseCountWhenAnyCanBeUsedCodeAction(context.Document, node, expression, arguments, negate),
+                    new DoNotUseCountAsyncWhenAnyAsyncCanBeUsedCodeAction(isAsync, context.Document, node, expression, arguments, negate),
                     context.Diagnostics);
             }
         }
 
         /// <summary>
-        /// Tries the get a fixer the specified <paramref name="node"/>.
+        /// Tries the get a fixer the specified <paramref name="node" />.
         /// </summary>
         /// <param name="node">The node to get a fixer for.</param>
-        /// <param name="expression">If this method returns <see langword="true"/>, contains the expression to be used to invoke <c>Any</c>.</param>
-        /// <param name="arguments">If this method returns <see langword="true"/>, contains the arguments from <c>Any</c> to be used on <c>Count</c>.</param>
-        /// <param name="negate">If this method returns <see langword="true"/>, indicates whether to negate the expression.</param>
+        /// <param name="isAsync"><see langword="true" /> if it's an asynchronous method; <see langword="false"/> otherwise.</param>
+        /// <param name="expression">If this method returns <see langword="true" />, contains the expression to be used to invoke <c>Any</c>.</param>
+        /// <param name="arguments">If this method returns <see langword="true" />, contains the arguments from <c>Any</c> to be used on <c>Count</c>.</param>
+        /// <param name="negate">If this method returns <see langword="true" />, indicates whether to negate the expression.</param>
         /// <returns><see langword="true" /> if a fixer was found., <see langword="false" /> otherwise.</returns>
-        protected abstract bool TryGetFixer(SyntaxNode node, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments, out bool negate);
+        protected abstract bool TryGetFixer(SyntaxNode node, bool isAsync, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments, out bool negate);
 
-        private class DoNotUseCountWhenAnyCanBeUsedCodeAction : CodeAction
+        private class DoNotUseCountAsyncWhenAnyAsyncCanBeUsedCodeAction : CodeAction
         {
+            private readonly bool isAsync;
             private readonly Document document;
             private readonly SyntaxNode pattern;
             private readonly SyntaxNode expression;
             private readonly IEnumerable<SyntaxNode> arguments;
             private readonly bool negate;
 
-            public DoNotUseCountWhenAnyCanBeUsedCodeAction(Document document, SyntaxNode pattern, SyntaxNode expression, IEnumerable<SyntaxNode> arguments, bool negate)
+            public DoNotUseCountAsyncWhenAnyAsyncCanBeUsedCodeAction(
+                bool isAsync,
+                Document document,
+                SyntaxNode pattern,
+                SyntaxNode expression,
+                IEnumerable<SyntaxNode> arguments,
+                bool negate)
             {
+                this.isAsync = isAsync;
                 this.document = document;
                 this.pattern = pattern;
                 this.expression = expression;
@@ -91,20 +105,25 @@ namespace Microsoft.CodeQuality.Analyzers.Performance
                 this.negate = negate;
             }
 
-            public override string Title { get; } = MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle;
+            public override string Title { get; } = MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle;
 
-            public override string EquivalenceKey { get; } = MicrosoftCodeQualityAnalyzersResources.DoNotUseCountWhenAnyCanBeUsedTitle;
+            public override string EquivalenceKey { get; } = MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle;
 
             protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
                 var editor = await DocumentEditor.CreateAsync(this.document, cancellationToken).ConfigureAwait(false);
                 var generator = editor.Generator;
-                var memberAccess = generator.MemberAccessExpression(this.expression.WithoutTrailingTrivia(), AnyMethodName);
+                var memberAccess = generator.MemberAccessExpression(this.expression.WithoutTrailingTrivia(), this.isAsync ? AsyncMethodName : SyncMethodName);
                 var replacementSyntax = generator.InvocationExpression(memberAccess, arguments);
+
+                if (this.isAsync)
+                {
+                    replacementSyntax = generator.AwaitExpression(replacementSyntax);
+                }
 
                 if (this.negate)
                 {
-                    replacementSyntax = editor.Generator.LogicalNotExpression(replacementSyntax);
+                    replacementSyntax = generator.LogicalNotExpression(replacementSyntax);
                 }
 
                 replacementSyntax = replacementSyntax

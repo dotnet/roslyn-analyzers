@@ -228,6 +228,15 @@
   <data name="UseOrdinalStringComparisonMessageStringComparer" xml:space="preserve">
     <value>{0} passes '{1}' as the 'StringComparer' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparer.Ordinal' or 'StringComparer.OrdinalIgnoreCase' instead.</value>
   </data>
+  <data name="DoNotUseCountWhenAnyCanBeUsedDescription" xml:space="preserve">
+    <value>For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</value>
+  </data>
+  <data name="DoNotUseCountWhenAnyCanBeUsedMessage" xml:space="preserve">
+    <value>Count() is used where Any() could be used instead to improve performance.</value>
+  </data>
+  <data name="DoNotUseCountWhenAnyCanBeUsedTitle" xml:space="preserve">
+    <value>Do not use Count() when Any() can be used</value>
+  </data>
   <data name="DoNotUseTimersThatPreventPowerStateChangesTitle" xml:space="preserve">
     <value>Do not use timers that prevent power state changes</value>
   </data>

@@ -37,6 +37,21 @@
         <target state="new">Do not use CountAsync() when AnyAsync() can be used</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
+        <source>For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
+        <target state="new">For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
+        <source>Count() is used where Any() could be used instead to improve performance.</source>
+        <target state="new">Count() is used where Any() could be used instead to improve performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
+        <source>Do not use Count() when Any() can be used</source>
+        <target state="new">Do not use Count() when Any() can be used</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
         <target state="translated">Zapytania SQL korzystające bezpośrednio z danych wejściowych użytkownika mogą być podatne na ataki polegające na wstrzyknięciu kodu SQL. Sprawdź to zapytanie SQL pod kątem potencjalnych luk i rozważ użycie sparametryzowanego zapytania SQL.</target>

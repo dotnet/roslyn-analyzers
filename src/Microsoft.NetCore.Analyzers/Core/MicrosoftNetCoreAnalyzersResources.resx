@@ -1138,7 +1138,7 @@
     <value>Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</value>
   </data>
   <data name="UsePropertyInsteadOfCountMethodWhenAvailableMessage" xml:space="preserve">
-    <value>Use the {0} property instead of Enumerable.Count().</value>
+    <value>Use the "{0}" property instead of Enumerable.Count().</value>
   </data>
   <data name="UsePropertyInsteadOfCountMethodWhenAvailableTitle" xml:space="preserve">
     <value>Use property instead of Count() when available</value>

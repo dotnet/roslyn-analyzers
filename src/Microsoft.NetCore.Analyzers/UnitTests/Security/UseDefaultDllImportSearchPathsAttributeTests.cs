@@ -249,7 +249,7 @@ class TestClass
         [InlineData("")]
         [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 2 | 256")]
         [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 258")]
-        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_Diagnostic(string editorConfigText)
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_258_Diagnostic(string editorConfigText)
         {
             VerifyCSharp(@"
 using System;
@@ -268,6 +268,53 @@ class TestClass
 }",
             GetEditorConfigAdditionalFile(editorConfigText),
             GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 1026")]
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_BitwiseCombination_Diagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 2 | 1024")]
+        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UserDirectories")]
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_BitwiseCombination_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            Array.Empty<DiagnosticResult>());
         }
 
         [Theory]

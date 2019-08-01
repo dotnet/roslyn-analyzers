@@ -23,8 +23,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
-        <source>For non-empty collections, CountAsync() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="new">For non-empty collections, CountAsync() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
+        <source>For non-empty collections, CountAsync() enumerates the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
+        <target state="new">For non-empty collections, CountAsync() enumerates the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">

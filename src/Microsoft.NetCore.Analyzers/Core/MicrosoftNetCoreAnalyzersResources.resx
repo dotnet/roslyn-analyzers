@@ -1084,7 +1084,7 @@
     <value>Ensure that JsonSerializer has a secure configuration when deserializing</value>
   </data>
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription" xml:space="preserve">
-    <value>For non-empty collections, CountAsync() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</value>
+    <value>For non-empty collections, CountAsync() enumerates the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</value>
   </data>
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage" xml:space="preserve">
     <value>CountAsync() is used where AnyAsync() could be used instead to improve performance.</value>

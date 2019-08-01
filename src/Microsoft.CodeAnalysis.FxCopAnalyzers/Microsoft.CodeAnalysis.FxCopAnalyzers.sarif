@@ -2147,7 +2147,7 @@
         "CA1828": {
           "id": "CA1828",
           "shortDescription": "Do not use CountAsync() when AnyAsync() can be used",
-          "fullDescription": "For non-empty collections, CountAsync() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
+          "fullDescription": "For non-empty collections, CountAsync() enumerates the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1828",
           "properties": {

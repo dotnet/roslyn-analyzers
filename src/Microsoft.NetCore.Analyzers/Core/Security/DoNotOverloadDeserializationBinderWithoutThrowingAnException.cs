@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
@@ -50,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    Dictionary<IMethodSymbol, CacheState> methodCache = new Dictionary<IMethodSymbol, CacheState>();
+                    ConcurrentDictionary<IMethodSymbol, CacheState> methodCache = new ConcurrentDictionary<IMethodSymbol, CacheState>();
                     WellKnownTypeProvider typeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
                     INamedTypeSymbol serializationBinder = null;
                     if (!typeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationSerializationBinder, out serializationBinder))

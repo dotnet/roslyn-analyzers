@@ -1662,6 +1662,21 @@
         <target state="translated">如果可行的話，請考慮從共用存取簽章 (SAS) 改為使用 Azure 的角色型存取控制。如果您仍需要使用 SAS，請於建立 SAS 時使用容器層級存取原則</target>
         <note />
       </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableDescription">
+        <source>Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</source>
+        <target state="new">Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableMessage">
+        <source>Use the {0} property instead of Enumerable.Count().</source>
+        <target state="new">Use the {0} property instead of Enumerable.Count().</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableTitle">
+        <source>Use property instead of Count() when available</source>
+        <target state="new">Use property instead of Count() when available</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
         <target state="translated">使用有足夠金鑰大小的 Rivest–Shamir–Adleman (RSA) 加密演算法</target>

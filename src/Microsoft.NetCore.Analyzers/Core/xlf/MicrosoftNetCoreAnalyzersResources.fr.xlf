@@ -1662,6 +1662,21 @@
         <target state="translated">Si possible, utilisez la fonctionnalité RBAC (contrôle d'accès en fonction du rôle) d'Azure à la place d'une SAP (signature d'accès partagé). Si vous devez quand même utiliser une SAP, utilisez une stratégie d'accès au niveau du conteneur quand vous créez la SAP</target>
         <note />
       </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableDescription">
+        <source>Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</source>
+        <target state="new">Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableMessage">
+        <source>Use the {0} property instead of Enumerable.Count().</source>
+        <target state="new">Use the {0} property instead of Enumerable.Count().</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableTitle">
+        <source>Use property instead of Count() when available</source>
+        <target state="new">Use property instead of Count() when available</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
         <target state="translated">Utiliser l'algorithme RSA (Rivest-Shamir-Adleman) avec une taille de clé suffisante</target>

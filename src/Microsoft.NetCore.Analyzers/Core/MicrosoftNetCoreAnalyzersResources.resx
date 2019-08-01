@@ -1134,6 +1134,15 @@
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle" xml:space="preserve">
     <value>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</value>
   </data>
+  <data name="UsePropertyInsteadOfCountMethodWhenAvailableDescription" xml:space="preserve">
+    <value>Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</value>
+  </data>
+  <data name="UsePropertyInsteadOfCountMethodWhenAvailableMessage" xml:space="preserve">
+    <value>Use the {0} property instead of Enumerable.Count().</value>
+  </data>
+  <data name="UsePropertyInsteadOfCountMethodWhenAvailableTitle" xml:space="preserve">
+    <value>Use property instead of Count() when available</value>
+  </data>
   <data name="SetHttpOnlyForHttpCookie" xml:space="preserve">
     <value>Set HttpOnly to true for HttpCookie</value>
   </data>

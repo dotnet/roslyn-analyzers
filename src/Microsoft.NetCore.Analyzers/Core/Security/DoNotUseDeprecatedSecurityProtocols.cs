@@ -6,6 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
 
@@ -54,9 +55,13 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    var securityProtocolTypeTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNetSecurityProtocolType);
-
-                    if (securityProtocolTypeTypeSymbol == null)
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                            WellKnownTypeNames.SystemNetSecurityProtocolType,
+                            out var securityProtocolTypeTypeSymbol)
+                        || !wellKnownTypeProvider.TryGetTypeByMetadataName(
+                                WellKnownTypeNames.SystemNetServicePointManager,
+                                out var servicePointManagerTypeSymbol))
                     {
                         return;
                     }
@@ -67,7 +72,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             var fieldReferenceOperation = (IFieldReferenceOperation)operationAnalysisContext.Operation;
 
                             // Make sure we're not inside an &= assignment like:
-                            //   t &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11)
+                            //   ServicePointManager.SecurityProtocol &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11)
                             // cuz &= is at worst, disabling protocol versions.
                             if (IsReferencingSecurityProtocolType(
                                     fieldReferenceOperation,
@@ -75,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     out var isHardCodedOkayProtocol)
                                 && null == fieldReferenceOperation.GetAncestor<ICompoundAssignmentOperation>(
                                       OperationKind.CompoundAssignment,
-                                      (ICompoundAssignmentOperation cao) => cao.OperatorKind == BinaryOperatorKind.And))
+                                      IsAndEqualsServicePointManagerAssignment))
                             {
                                 if (isDeprecatedProtocol)
                                 {
@@ -101,11 +106,11 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             // Make sure this is an assignment operation for a SecurityProtocolType, and not
                             // an assignment like:
-                            //   t &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11)
+                            //   ServicePointManager.SecurityProtocol &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11)
                             // cuz &= is at worst, disabling protocol versions.
                             if (!securityProtocolTypeTypeSymbol.Equals(assignmentOperation.Target.Type)
                                 || (assignmentOperation is ICompoundAssignmentOperation compoundAssignmentOperation
-                                    && compoundAssignmentOperation.OperatorKind == BinaryOperatorKind.And))
+                                    && IsAndEqualsServicePointManagerAssignment(compoundAssignmentOperation)))
                             {
                                 return;
                             }
@@ -209,6 +214,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                             isDeprecatedProtocol = false;
                             return false;
                         }
+                    }
+
+                    bool IsAndEqualsServicePointManagerAssignment(ICompoundAssignmentOperation compoundAssignmentOperation)
+                    {
+                        return compoundAssignmentOperation.OperatorKind == BinaryOperatorKind.And
+                            && compoundAssignmentOperation.Target is IPropertyReferenceOperation targetPropertyReference
+                            && targetPropertyReference.Instance == null
+                            && servicePointManagerTypeSymbol.Equals(targetPropertyReference.Property.ContainingType)
+                            && targetPropertyReference.Property.MetadataName == "SecurityProtocol";
                     }
                 });
         }

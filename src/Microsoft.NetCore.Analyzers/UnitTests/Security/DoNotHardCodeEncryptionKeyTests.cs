@@ -339,6 +339,25 @@ class TestClass
         }
 
         [Fact]
+        public void Test_ElementTypeIsTypeParameter_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+
+class TestClass<T1> where T1 : struct
+{
+    public void MethodWithArrayParameter<T2>(params T2[] arr) where T2 : struct
+    {
+    }
+
+    public void TestMethod(T1 t)
+    {
+        MethodWithArrayParameter(t);
+    }
+}");
+        }
+
+        [Fact]
         public void Test_HardcodedInJaggedArray_CreateEncryptor_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"

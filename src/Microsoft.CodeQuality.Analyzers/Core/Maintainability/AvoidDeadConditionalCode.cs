@@ -66,7 +66,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                     foreach (var operationRoot in operationBlockContext.OperationBlocks)
                     {
-                        bool ShouldAnalyze(IOperation op) =>
+                        static bool ShouldAnalyze(IOperation op) =>
                                 (op as IBinaryOperation)?.IsComparisonOperator() == true ||
                                 (op as IInvocationOperation)?.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean ||
                                 op.Kind == OperationKind.Coalesce ||

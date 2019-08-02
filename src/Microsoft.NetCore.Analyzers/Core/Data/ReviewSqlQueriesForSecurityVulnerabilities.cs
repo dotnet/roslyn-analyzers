@@ -212,17 +212,19 @@ namespace Microsoft.NetCore.Analyzers.Data
             if (argumentValue.Type.SpecialType != SpecialType.System_String || !argumentValue.ConstantValue.HasValue)
             {
                 // We have a candidate for diagnostic. perform more precise dataflow analysis.
-                var cfg = argumentValue.GetEnclosingControlFlowGraph();
-                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
-                var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
-                    operationContext.Options, Rule, operationContext.CancellationToken);
-                if (valueContentResult != null)
+                if (argumentValue.TryGetEnclosingControlFlowGraph(out var cfg))
                 {
-                    ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
-                    if (value.NonLiteralState == ValueContainsNonLiteralState.No)
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
+                    var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, containingMethod, wellKnownTypeProvider,
+                        operationContext.Options, Rule, operationContext.CancellationToken);
+                    if (valueContentResult != null)
                     {
-                        // The value is a constant literal or default/unitialized, so avoid flagging this usage.
-                        return false;
+                        ValueContentAbstractValue value = valueContentResult[argumentValue.Kind, argumentValue.Syntax];
+                        if (value.NonLiteralState == ValueContainsNonLiteralState.No)
+                        {
+                            // The value is a constant literal or default/unitialized, so avoid flagging this usage.
+                            return false;
+                        }
                     }
                 }
 

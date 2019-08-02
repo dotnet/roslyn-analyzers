@@ -204,7 +204,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         private static bool ShouldSkipAnalyzing(OperationAnalysisContext operationContext, INamedTypeSymbol expectedExceptionType, INamedTypeSymbol xunitAssertType, INamedTypeSymbol nunitAssertType)
         {
-            bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, INamedTypeSymbol assertSymbol)
+            static bool IsThrowsArgument(IParameterSymbol parameterSymbol, string argumentName, ImmutableHashSet<string> methodNames, INamedTypeSymbol assertSymbol)
             {
                 return parameterSymbol.Name == argumentName &&
                        parameterSymbol.ContainingSymbol is IMethodSymbol methodSymbol &&

@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -29,7 +29,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -1511,7 +1511,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.CSharp.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -1707,7 +1707,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -1941,7 +1941,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -2670,6 +2670,44 @@
             "category": "Security",
             "isEnabledByDefault": false,
             "typeName": "DoNotUseInsecureSettingsForJsonNet",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2329": {
+          "id": "CA2329",
+          "shortDescription": "Do not deserialize with JsonSerializer using an insecure configuration",
+          "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerJsonNetWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2330": {
+          "id": "CA2330",
+          "shortDescription": "Ensure that JsonSerializer has a secure configuration when deserializing",
+          "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerJsonNetWithoutBinder",
             "languages": [
               "C#",
               "Visual Basic"
@@ -3543,7 +3581,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -3678,7 +3716,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -3813,7 +3851,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -3896,7 +3934,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.CSharp.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -3941,7 +3979,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.VisualBasic.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {

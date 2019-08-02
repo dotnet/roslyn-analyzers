@@ -12,7 +12,6 @@ using System.Text;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace GenerateAnalyzerRulesets
 {

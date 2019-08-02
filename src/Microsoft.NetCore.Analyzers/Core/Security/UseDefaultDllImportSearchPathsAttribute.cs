@@ -1,33 +1,38 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseDefaultDllImportSearchPathsAttribute : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA5392";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
+        internal static DiagnosticDescriptor UseDefaultDllImportSearchPathsAttributeRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5392",
+            typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.UseDefaultDllImportSearchPathsAttribute),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
             nameof(MicrosoftNetCoreAnalyzersResources.UseDefaultDllImportSearchPathsAttributeMessage),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseDefaultDllImportSearchPathsAttributeDescription),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseDefaultDllImportSearchPathsAttributeDescription),
+            customTags: WellKnownDiagnosticTags.Telemetry);
+        internal static DiagnosticDescriptor DoNotUseUnsafeDllImportSearchPathRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5393",
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseUnsafeDllImportSearchPath),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseUnsafeDllImportSearchPathMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseUnsafeDllImportSearchPathDescription),
+            customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         // DllImportSearchPath.AssemblyDirectory = 2.
         // DllImportSearchPath.UseDllDirectoryForDependencies = 256.
@@ -35,18 +40,9 @@ namespace Microsoft.NetCore.Analyzers.Security
         private const int UnsafeBits = 2 | 256 | 512;
         private const int LegacyBehavior = 0;
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-                description: s_Description,
-                helpLinkUri: null,
-                customTags: WellKnownDiagnosticTags.Telemetry);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+            UseDefaultDllImportSearchPathsAttributeRule,
+            DoNotUseUnsafeDllImportSearchPathRule);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -69,11 +65,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                 var cancellationToken = compilationStartAnalysisContext.CancellationToken;
                 var unsafeDllImportSearchPathBits = compilationStartAnalysisContext.Options.GetUnsignedIntegralOptionValue(
                     optionName: EditorConfigOptionNames.UnsafeDllImportSearchPathBits,
-                    rule: Rule,
+                    rule: DoNotUseUnsafeDllImportSearchPathRule,
                     defaultValue: UnsafeBits,
                     cancellationToken: cancellationToken);
                 var defaultDllImportSearchPathsAttributeOnAssembly = compilation.Assembly.GetAttributes().FirstOrDefault(o => o.AttributeClass.Equals(defaultDllImportSearchPathsAttributeTypeSymbol));
-                var dllImportSearchPathOnAssembly = defaultDllImportSearchPathsAttributeOnAssembly == null ? -1 : (int)defaultDllImportSearchPathsAttributeOnAssembly.ConstructorArguments.FirstOrDefault().Value;
 
                 compilationStartAnalysisContext.RegisterSymbolAction(symbolAnalysisContext =>
                 {
@@ -86,7 +81,6 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var dllImportAttribute = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(dllImportAttributeTypeSymbol));
                     var defaultDllImportSearchPathsAttribute = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(defaultDllImportSearchPathsAttributeTypeSymbol));
-                    var dllImportSearchPath = defaultDllImportSearchPathsAttribute == null ? -1 : (int)defaultDllImportSearchPathsAttribute.ConstructorArguments.FirstOrDefault().Value;
 
                     if (dllImportAttribute != null)
                     {
@@ -102,28 +96,45 @@ namespace Microsoft.NetCore.Analyzers.Security
                             return;
                         }
 
-                        if (dllImportSearchPath == -1)
+                        var rule = UseDefaultDllImportSearchPathsAttributeRule;
+                        var ruleArgument = symbol.Name;
+
+                        if (defaultDllImportSearchPathsAttribute == null)
                         {
-                            if (dllImportSearchPathOnAssembly != -1 &&
-                                dllImportSearchPathOnAssembly != LegacyBehavior &&
-                                (dllImportSearchPathOnAssembly & unsafeDllImportSearchPathBits) == 0)
+                            if (defaultDllImportSearchPathsAttributeOnAssembly != null)
                             {
-                                return;
+                                var dllImportSearchPathOnAssembly = (int)defaultDllImportSearchPathsAttributeOnAssembly.ConstructorArguments.FirstOrDefault().Value;
+                                var validBits = dllImportSearchPathOnAssembly & unsafeDllImportSearchPathBits;
+
+                                if (dllImportSearchPathOnAssembly != LegacyBehavior &&
+                                    validBits == 0)
+                                {
+                                    return;
+                                }
+
+                                rule = DoNotUseUnsafeDllImportSearchPathRule;
+                                ruleArgument = ((DllImportSearchPath)validBits).ToString();
                             }
                         }
                         else
                         {
+                            var dllImportSearchPath = (int)defaultDllImportSearchPathsAttribute.ConstructorArguments.FirstOrDefault().Value;
+                            var validBits = dllImportSearchPath & unsafeDllImportSearchPathBits;
+
                             if (dllImportSearchPath != LegacyBehavior &&
-                                (dllImportSearchPath & unsafeDllImportSearchPathBits) == 0)
+                                validBits == 0)
                             {
                                 return;
                             }
+
+                            rule = DoNotUseUnsafeDllImportSearchPathRule;
+                            ruleArgument = ((DllImportSearchPath)validBits).ToString();
                         }
 
                         symbolAnalysisContext.ReportDiagnostic(
                             symbol.CreateDiagnostic(
-                                Rule,
-                                symbol.Name));
+                                rule,
+                                ruleArgument));
                     }
                 }, SymbolKind.Method);
             });

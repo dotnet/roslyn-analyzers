@@ -1083,4 +1083,13 @@
   <data name="UseDefaultDllImportSearchPathsAttributeMessage" xml:space="preserve">
     <value>The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</value>
   </data>
+  <data name="DoNotUseUnsafeDllImportSearchPath" xml:space="preserve">
+    <value>Do not use unsafe DllImportSearchPath value</value>
+  </data>
+  <data name="DoNotUseUnsafeDllImportSearchPathDescription" xml:space="preserve">
+    <value>There could be malicious DLL under the application directory or the default DLL search directories. Use an DllImportSearchPath value that sepecifies explicit search path instead</value>
+  </data>
+  <data name="DoNotUseUnsafeDllImportSearchPathMessage" xml:space="preserve">
+    <value>Use unsafe DllImportSearchPath value {0}</value>
+  </data>
 </root>

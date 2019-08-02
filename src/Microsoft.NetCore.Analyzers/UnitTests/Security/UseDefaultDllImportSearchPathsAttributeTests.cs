@@ -33,7 +33,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
         }
 
         [Fact]
@@ -53,7 +53,7 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
         }
 
         [Fact]
@@ -73,7 +73,228 @@ class TestClass
         MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
     }
 }",
-            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
+            GetCSharpResultAt(8, 30, UseDefaultDllImportSearchPathsAttribute.UseDefaultDllImportSearchPathsAttributeRule, "MessageBox"));
+        }
+
+        [Fact]
+        public void Test_DllImportSearchPathAssemblyDirectory_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
+        }
+
+        [Fact]
+        public void Test_UnsafeDllImportSearchPathBits_BitwiseCombination_OneValueIsBad_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
+        }
+
+        [Fact]
+        public void Test_UnsafeDllImportSearchPathBits_BitwiseCombination_BothIsBad_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.ApplicationDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory"));
+        }
+
+        [Fact]
+        public void Test_DllImportSearchPathLegacyBehavior_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.LegacyBehavior)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "LegacyBehavior"));
+        }
+
+        [Fact]
+        public void Test_DllImportSearchPathUseDllDirectoryForDependencies_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UseDllDirectoryForDependencies)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "UseDllDirectoryForDependencies"));
+        }
+
+        [Fact]
+        public void Test_DllImportSearchPathAssemblyDirectory_Assembly_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(10, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
+        }
+
+        [Fact]
+        public void Test_AssemblyDirectory_ApplicationDirectory_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "ApplicationDirectory"));
+        }
+
+        [Fact]
+        public void Test_ApplicationDirectory_AssemblyDirectory_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory"));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 2 | 256 | 512")]
+        [InlineData("dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 770")]
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_258_Diagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.ApplicationDirectory)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory"));
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 1026")]
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_BitwiseCombination_Diagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "UserDirectories"));
         }
 
         [Fact]
@@ -115,185 +336,6 @@ class TestClass
 }");
         }
 
-        [Fact]
-        public void Test_DllImportSearchPathAssemblyDirectory_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-class TestClass
-{
-    [DllImport(""user32.dll"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Fact]
-        public void Test_DllImportSearchPathLegacyBehavior_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-class TestClass
-{
-    [DllImport(""user32.dll"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.LegacyBehavior)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Fact]
-        public void Test_DllImportSearchPathUseDllDirectoryForDependencies_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-class TestClass
-{
-    [DllImport(""user32.dll"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.UseDllDirectoryForDependencies)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Fact]
-        public void Test_DllImportSearchPathAssemblyDirectory_Assembly_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
-
-class TestClass
-{
-    [DllImport(""user32.dll"")]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(10, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Fact]
-        public void Test_AssemblyDirectory_ApplicationDirectory_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
-
-class TestClass
-{
-    [DllImport(""user32.dll"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Fact]
-        public void Test_ApplicationDirectory_AssemblyDirectory_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-[assembly:DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory)]
-
-class TestClass
-{
-    [DllImport(""user32.dll"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetCSharpResultAt(11, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 2 | 256")]
-        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 258")]
-        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_258_Diagnostic(string editorConfigText)
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-class TestClass
-{
-    [DllImport(""user32.dll"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.ApplicationDirectory)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetEditorConfigAdditionalFile(editorConfigText),
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
-        [Theory]
-        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 1026")]
-        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_BitwiseCombination_Diagnostic(string editorConfigText)
-        {
-            VerifyCSharp(@"
-using System;
-using System.Runtime.InteropServices;
-
-class TestClass
-{
-    [DllImport(""user32.dll"")]
-    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
-
-    public void TestMethod()
-    {
-        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
-    }
-}",
-            GetEditorConfigAdditionalFile(editorConfigText),
-            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.Rule, "MessageBox"));
-        }
-
         [Theory]
         [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 2 | 1024")]
         [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UserDirectories")]
@@ -319,7 +361,7 @@ class TestClass
         }
 
         [Theory]
-        [InlineData("dotnet_code_quality.CA5392.unsafe_DllImportSearchPath_bits = 2048")]
+        [InlineData("dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 2048")]
         public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_NoDiagnostic(string editorConfigText)
         {
             VerifyCSharp(@"

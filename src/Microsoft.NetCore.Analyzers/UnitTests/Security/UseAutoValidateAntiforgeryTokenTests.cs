@@ -60,6 +60,48 @@ class TestClass : ControllerBase
         }
 
         [Fact]
+        public void Test_GlobalAntiForgeryFilter_Add_ChildrenOfIAuthorizationFilter_NotCallMethodsOf_DescedantOfIAntiForgery_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class FilterClass : IAuthorizationFilter 
+{
+    public DefaultAntiforgery defaultAntiforgery;
+
+    public Task OnAuthorization (AuthorizationFilterContext context)
+    {
+        return null;
+    }
+}
+
+class TestClass : ControllerBase
+{
+    [HttpDelete]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+
+    public void TestMethod ()
+    {
+        var filterCollection = new FilterCollection ();
+        filterCollection.Add(typeof(FilterClass));
+    }
+}",
+            GetCSharpResultAt(26, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpDelete"));
+        }
+
+        [Fact]
         public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPostAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"

@@ -73,6 +73,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIFilterMetadata, out var iFilterMetadataTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreAntiforgeryIAntiforgery, out var iAntiforgeryTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAsyncAuthorizationFilter, out var iAsyncAuthorizationFilterTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAuthorizationFilter, out var iAuthorizationFilterTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask, out var taskTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersAuthorizationFilterContext, out var authorizationFilterContextTypeSymbol))
                 {
@@ -107,7 +108,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
 
                         var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
-                        inverseGraph.TryAdd(owningSymbol, new ConcurrentDictionary<ISymbol, bool>());
+                        inverseGraph.GetOrAdd(owningSymbol, (_) => new ConcurrentDictionary<ISymbol, bool>());
 
                         operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
                         {
@@ -139,7 +140,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 return;
                             }
 
-                            callers = inverseGraph.GetOrAdd(calledSymbol, new ConcurrentDictionary<ISymbol, bool>());
+                            callers = inverseGraph.GetOrAdd(calledSymbol, (_) => new ConcurrentDictionary<ISymbol, bool>());
                             callers.TryAdd(owningSymbol, true);
                         }, OperationKind.Invocation, OperationKind.FieldReference);
                     });
@@ -175,14 +176,16 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 return;
                             }
-                            else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAsyncAuthorizationFilterTypeSymbol))
+                            else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAsyncAuthorizationFilterTypeSymbol) ||
+                                potentialAntiForgeryFilter.AllInterfaces.Contains(iAuthorizationFilterTypeSymbol))
                             {
                                 onAuthorizationAsyncMethodSymbols.Add(
                                     potentialAntiForgeryFilter
                                     .GetMembers()
                                     .OfType<IMethodSymbol>()
                                     .FirstOrDefault(
-                                        s => s.Name == "OnAuthorizationAsync" &&
+                                        s => (s.Name == "OnAuthorizationAsync" ||
+                                            s.Name == "OnAuthorization") &&
                                             s.ReturnType.Equals(taskTypeSymbol) &&
                                             s.Parameters.Length == 1 &&
                                             s.Parameters[0].Type.Equals(authorizationFilterContextTypeSymbol)));

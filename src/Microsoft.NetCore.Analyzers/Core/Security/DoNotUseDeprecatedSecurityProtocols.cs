@@ -61,47 +61,21 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
-                    bool IsReferencingSecurityProtocolType(
-                        IFieldReferenceOperation fieldReferenceOperation,
-                        out bool isDeprecatedProtocol,
-                        out bool isHardCodedOkayProtocol)
-                    {
-                        if (securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
-                        {
-                            if (HardCodedSafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name))
-                            {
-                                isHardCodedOkayProtocol = true;
-                                isDeprecatedProtocol = false;
-                            }
-                            else if (fieldReferenceOperation.Field.Name == SystemDefaultName)
-                            {
-                                isHardCodedOkayProtocol = false;
-                                isDeprecatedProtocol = false;
-                            }
-                            else
-                            {
-                                isDeprecatedProtocol = true;
-                                isHardCodedOkayProtocol = false;
-                            }
-
-                            return true;
-                        }
-                        else
-                        {
-                            isHardCodedOkayProtocol = false;
-                            isDeprecatedProtocol = false;
-                            return false;
-                        }
-                    }
-
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
                             var fieldReferenceOperation = (IFieldReferenceOperation)operationAnalysisContext.Operation;
+
+                            // Make sure we're not inside an &= assignment like:
+                            //   t &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11)
+                            // cuz &= is at worst, disabling protocol versions.
                             if (IsReferencingSecurityProtocolType(
                                     fieldReferenceOperation,
                                     out var isDeprecatedProtocol,
-                                    out var isHardCodedOkayProtocol))
+                                    out var isHardCodedOkayProtocol)
+                                && null == fieldReferenceOperation.GetAncestor<ICompoundAssignmentOperation>(
+                                      OperationKind.CompoundAssignment,
+                                      (ICompoundAssignmentOperation cao) => cao.OperatorKind == BinaryOperatorKind.And))
                             {
                                 if (isDeprecatedProtocol)
                                 {
@@ -124,7 +98,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
                             var assignmentOperation = (IAssignmentOperation)operationAnalysisContext.Operation;
-                            if (!securityProtocolTypeTypeSymbol.Equals(assignmentOperation.Target.Type))
+
+                            // Make sure this is an assignment operation for a SecurityProtocolType, and not
+                            // an assignment like:
+                            //   t &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11)
+                            // cuz &= is at worst, disabling protocol versions.
+                            if (!securityProtocolTypeTypeSymbol.Equals(assignmentOperation.Target.Type)
+                                || (assignmentOperation is ICompoundAssignmentOperation compoundAssignmentOperation
+                                    && compoundAssignmentOperation.OperatorKind == BinaryOperatorKind.And))
                             {
                                 return;
                             }
@@ -193,6 +174,42 @@ namespace Microsoft.NetCore.Analyzers.Security
                         },
                         OperationKind.SimpleAssignment,
                         OperationKind.CompoundAssignment);
+
+                    return;
+
+                    // Local function(s).
+                    bool IsReferencingSecurityProtocolType(
+                        IFieldReferenceOperation fieldReferenceOperation,
+                        out bool isDeprecatedProtocol,
+                        out bool isHardCodedOkayProtocol)
+                    {
+                        if (securityProtocolTypeTypeSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
+                        {
+                            if (HardCodedSafeProtocolMetadataNames.Contains(fieldReferenceOperation.Field.Name))
+                            {
+                                isHardCodedOkayProtocol = true;
+                                isDeprecatedProtocol = false;
+                            }
+                            else if (fieldReferenceOperation.Field.Name == SystemDefaultName)
+                            {
+                                isHardCodedOkayProtocol = false;
+                                isDeprecatedProtocol = false;
+                            }
+                            else
+                            {
+                                isDeprecatedProtocol = true;
+                                isHardCodedOkayProtocol = false;
+                            }
+
+                            return true;
+                        }
+                        else
+                        {
+                            isHardCodedOkayProtocol = false;
+                            isDeprecatedProtocol = false;
+                            return false;
+                        }
+                    }
                 });
         }
     }

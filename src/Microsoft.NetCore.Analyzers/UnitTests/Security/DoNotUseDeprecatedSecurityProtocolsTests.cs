@@ -490,6 +490,22 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public void TestMaskOutUnsafeNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11);
+    }
+}");
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotUseDeprecatedSecurityProtocols();

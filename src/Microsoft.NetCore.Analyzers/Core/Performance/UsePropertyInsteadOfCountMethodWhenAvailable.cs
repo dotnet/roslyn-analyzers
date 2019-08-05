@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
@@ -25,6 +26,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
     public sealed class UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1829";
+        private const string CountPropertyName = "Count";
+        private const string LengthPropertyName = "Length";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UsePropertyInsteadOfCountMethodWhenAvailableTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UsePropertyInsteadOfCountMethodWhenAvailableMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UsePropertyInsteadOfCountMethodWhenAvailableDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -39,8 +42,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
 #pragma warning disable CA1308 // Normalize strings to uppercase
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + RuleId.ToLowerInvariant());
 #pragma warning restore CA1308 // Normalize strings to uppercase
-
-        private static readonly ImmutableHashSet<string> propertyNames = ImmutableHashSet.Create("Length", "Count");
 
         /// <summary>
         /// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.
@@ -68,9 +69,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             if (WellKnownTypes.Enumerable(context.Compilation) is INamedTypeSymbol enumerableType)
             {
+                var operationActionsContext = new UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsContext(
+                    context.Compilation,
+                    enumerableType,
+                    WellKnownTypes.ICollection(context.Compilation)?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().SingleOrDefault(),
+                    WellKnownTypes.GenericICollection(context.Compilation)?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().SingleOrDefault(),
+                    WellKnownTypes.ImmutableArray(context.Compilation));
+
                 var operationActionsHandler = context.Compilation.Language == LanguageNames.CSharp
-                    ? (OperationActionsHandler)new CSharpOperationActionsHandler(containingSymbol: enumerableType, rule: s_rule)
-                    : (OperationActionsHandler)new BasicOperationActionsHandler(containingSymbol: enumerableType, rule: s_rule);
+                    ? (OperationActionsHandler)new CSharpOperationActionsHandler(operationActionsContext)
+                    : (OperationActionsHandler)new BasicOperationActionsHandler(operationActionsContext);
 
                 context.RegisterOperationAction(
                     operationActionsHandler.AnalyzeInvocationOperation,
@@ -78,32 +86,48 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
+        private sealed class OperationActionsContext
+        {
+            public OperationActionsContext(Compilation compilation, INamedTypeSymbol enumerableType, IPropertySymbol collectionCountProperty, IPropertySymbol collectionOfTCountProperty, INamedTypeSymbol immutableArrayType)
+            {
+                Compilation = compilation;
+                EnumerableType = enumerableType;
+                CollectionCountProperty = collectionCountProperty;
+                CollectionOfTCountProperty = collectionOfTCountProperty;
+                ImmutableArrayType = immutableArrayType;
+            }
+
+            public Compilation Compilation { get; }
+            public INamedTypeSymbol EnumerableType { get; }
+            public IPropertySymbol CollectionCountProperty { get; }
+            public IPropertySymbol CollectionOfTCountProperty { get; }
+            public INamedTypeSymbol ImmutableArrayType { get; }
+        }
+
         /// <summary>
         /// Handler for operaction actions.
         /// </summary>
         private abstract class OperationActionsHandler
         {
-            private readonly INamedTypeSymbol containingSymbol;
-            private readonly DiagnosticDescriptor rule;
-
-            protected OperationActionsHandler(INamedTypeSymbol containingSymbol, DiagnosticDescriptor rule)
+            protected OperationActionsHandler(OperationActionsContext context)
             {
-                this.containingSymbol = containingSymbol;
-                this.rule = rule;
+                Context = context;
             }
+
+            public OperationActionsContext Context { get; }
 
             internal void AnalyzeInvocationOperation(OperationAnalysisContext context)
             {
                 var invocationOperation = (IInvocationOperation)context.Operation;
 
-                if (GetEnumerableCountInvocationTargetType(invocationOperation, this.containingSymbol) is ITypeSymbol invocationTarget &&
+                if (GetEnumerableCountInvocationTargetType(invocationOperation) is ITypeSymbol invocationTarget &&
                     GetReplacementProperty(invocationTarget) is string propertyName)
                 {
                     var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>();
                     propertiesBuilder.Add("PropertyName", propertyName);
 
                     var diagnostic = Diagnostic.Create(
-                        this.rule,
+                        s_rule,
                         invocationOperation.Syntax.GetLocation(),
                         propertiesBuilder.ToImmutable(),
                         propertyName);
@@ -112,35 +136,79 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
-            protected abstract ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation, INamedTypeSymbol containingSymbol);
+            protected abstract ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation);
 
-            private static string GetReplacementProperty(ITypeSymbol invocationTarget)
+            private string GetReplacementProperty(ITypeSymbol invocationTarget)
             {
                 if (invocationTarget.TypeKind == TypeKind.Array)
                 {
-                    return nameof(Array.Length);
+                    return LengthPropertyName;
                 }
 
-                foreach (var member in invocationTarget.GetMembers())
+                if (invocationTarget.OriginalDefinition is ITypeSymbol originalDefinition &&
+                    originalDefinition.MetadataName.ToString().Equals(typeof(ImmutableArray<>).Name, StringComparison.Ordinal) &&
+                    originalDefinition.ContainingNamespace.ToString().Equals(typeof(ImmutableArray<>).Namespace, StringComparison.Ordinal))
                 {
-                    if (member is IPropertySymbol property && propertyNames.Contains(property.Name))
-                    {
-                        return property.Name;
-                    }
+                    return LengthPropertyName;
                 }
 
-                foreach (var type in invocationTarget.AllInterfaces)
+                if (invocationTarget.FindImplementationForInterfaceMember(this.Context.CollectionCountProperty) is IPropertySymbol countProperty &&
+                    !countProperty.ExplicitInterfaceImplementations.Any())
                 {
-                    foreach (var member in type.GetMembers())
-                    {
-                        if (member is IPropertySymbol property && propertyNames.Contains(property.Name))
-                        {
-                            return property.Name;
-                        }
-                    }
+                    return CountPropertyName;
+                }
+
+                if (findImplementationForCollectionOfTInterfaceCountProperty(invocationTarget))
+                {
+                    return CountPropertyName;
                 }
 
                 return null;
+
+                bool findImplementationForCollectionOfTInterfaceCountProperty(ITypeSymbol invocationTarget)
+                {
+                    if (isCollectionOfTInterface(invocationTarget))
+                    {
+                        return true;
+                    }
+
+                    if (invocationTarget.TypeKind == TypeKind.Interface)
+                    {
+                        if (invocationTarget.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Any())
+                        {
+                            return false;
+                        }
+
+                        foreach (var @interface in invocationTarget.AllInterfaces)
+                        {
+                            if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
+                                isCollectionOfTInterface(originalInterfaceDefinition))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var @interface in invocationTarget.AllInterfaces)
+                        {
+                            if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
+                                isCollectionOfTInterface(originalInterfaceDefinition))
+                            {
+                                if (invocationTarget.FindImplementationForInterfaceMember(@interface.GetMembers(CountPropertyName)[0]) is IPropertySymbol propertyImplementation &&
+                                    !propertyImplementation.ExplicitInterfaceImplementations.Any())
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+
+                    return false;
+
+                    bool isCollectionOfTInterface(ITypeSymbol type)
+                        => type.OriginalDefinition?.Equals(this.Context.CollectionOfTCountProperty.ContainingSymbol) ?? false;
+                }
             }
         }
 
@@ -151,23 +219,23 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <seealso cref="Microsoft.NetCore.Analyzers.Performance.UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsHandler" />
         private sealed class CSharpOperationActionsHandler : OperationActionsHandler
         {
-            internal CSharpOperationActionsHandler(INamedTypeSymbol containingSymbol, DiagnosticDescriptor rule) : base(containingSymbol, rule)
+            internal CSharpOperationActionsHandler(UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsContext context)
+                : base(context)
             {
             }
 
-            protected override ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation, INamedTypeSymbol containingSymbol)
+            protected override ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation)
             {
                 var method = invocationOperation.TargetMethod;
 
                 if (invocationOperation.Arguments.Length == 1 &&
                     method.Name.Equals(nameof(Enumerable.Count), StringComparison.Ordinal) &&
-                    method.ContainingSymbol.Equals(containingSymbol))
+                    method.ContainingSymbol.Equals(this.Context.EnumerableType) &&
+                    ((INamedTypeSymbol)(method.Parameters[0].Type)).TypeArguments[0] is ITypeSymbol methodSourceItemType)
                 {
-                    var targetType = invocationOperation.Arguments[0].Value is IConversionOperation convertionOperation
+                    return invocationOperation.Arguments[0].Value is IConversionOperation convertionOperation
                         ? convertionOperation.Operand.Type
                         : invocationOperation.Arguments[0].Value.Type;
-
-                    return targetType as ITypeSymbol;
                 }
 
                 return null;
@@ -181,23 +249,23 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <seealso cref="Microsoft.NetCore.Analyzers.Performance.UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsHandler" />
         private sealed class BasicOperationActionsHandler : OperationActionsHandler
         {
-            internal BasicOperationActionsHandler(INamedTypeSymbol containingSymbol, DiagnosticDescriptor rule) : base(containingSymbol, rule)
+            internal BasicOperationActionsHandler(UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsContext context)
+                : base(context)
             {
             }
 
-            protected override ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation, INamedTypeSymbol containingSymbol)
+            protected override ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation)
             {
                 var method = invocationOperation.TargetMethod;
 
                 if (invocationOperation.Arguments.Length == 0 &&
                     method.Name.Equals(nameof(Enumerable.Count), StringComparison.Ordinal) &&
-                    method.ContainingSymbol.Equals(containingSymbol))
+                    method.ContainingSymbol.Equals(this.Context.EnumerableType) &&
+                    ((INamedTypeSymbol)(invocationOperation.Instance.Type)).TypeArguments[0] is ITypeSymbol methodSourceItemType)
                 {
-                    var targetType = invocationOperation.Instance is IConversionOperation convertionOperation
-                        ? convertionOperation.Operand.Type
-                        : invocationOperation.Instance.Type;
-
-                    return targetType as ITypeSymbol;
+                    return invocationOperation.Instance is IConversionOperation convertionOperation
+                       ? convertionOperation.Operand.Type
+                       : invocationOperation.Instance.Type;
                 }
 
                 return null;

@@ -49,14 +49,17 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-            GetCSharpResultAt(26, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpDelete"));
+            GetCSharpResultAt(26, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
         }
 
         [Fact]
@@ -91,14 +94,17 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-            GetCSharpResultAt(26, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpDelete"));
+            GetCSharpResultAt(26, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
         }
 
         [Fact]
@@ -120,7 +126,7 @@ class TestClass : ControllerBase
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpPost"));
+            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPost"));
         }
 
         [Fact]
@@ -143,7 +149,7 @@ class TestClass : ControllerBase
         return null;
     }
 }",
-            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpPost"));
+            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPost"));
         }
 
         [Fact]
@@ -165,7 +171,7 @@ class TestClass : ControllerBase
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpPut"));
+            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPut"));
         }
 
         [Fact]
@@ -188,7 +194,7 @@ class TestClass : ControllerBase
         return null;
     }
 }",
-            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpDelete"));
+            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
         }
 
         [Fact]
@@ -211,7 +217,7 @@ class TestClass : ControllerBase
         return null;
     }
 }",
-            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpPatch"));
+            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPatch"));
         }
 
         [Fact]
@@ -233,7 +239,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpPost"));
+            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPost"));
         }
 
         [Fact]
@@ -255,7 +261,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpPut"));
+            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPut"));
         }
 
         [Fact]
@@ -277,7 +283,7 @@ class TestClass : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.Rule, "AcceptedAtAction", "HttpDelete"));
+            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
         }
 
         [Fact]
@@ -299,7 +305,76 @@ class TestClass : ControllerBase
         return null;
     }
 }",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.Rule, "SubAcceptedAtAction", "HttpPost"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "SubAcceptedAtAction", "HttpPost"));
+        }
+
+        [Fact]
+        public void Test_WithoutValidateAntiForgeryAttribute_ActionMethodWithTwoHttpVervAttributes_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class TestClass : ControllerBase
+{
+    [HttpDelete]
+    [HttpPost]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}",
+            GetCSharpResultAt(17, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
+        }
+
+        [Fact]
+        public void Test_ValidateAntiForgeryTokenAttributeOnActionMethod_ActionMethodMissingHttpVerbAttribute_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+class TestClass : ControllerBase
+{
+    [MyValidateAntiForgeryAttribute]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}",
+            GetCSharpResultAt(11, 44, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "AcceptedAtAction"));
+        }
+
+        [Fact]
+        public void Test_ValidateAntiForgeryTokenAttributeOnController_ActionMethodMissingHttpVerbAttribute_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class TestClass : ControllerBase
+{
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}",
+            GetCSharpResultAt(11, 44, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "AcceptedAtAction"));
         }
 
         [Fact]
@@ -336,7 +411,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -392,7 +470,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -447,7 +528,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -500,7 +584,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -551,7 +638,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -595,7 +685,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -646,7 +739,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -694,7 +790,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -751,7 +850,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -798,7 +900,10 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
@@ -841,11 +946,14 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add<FilterClass>();
+        filterCollection.Add(typeof(FilterClass));
     }
 }");
         }
@@ -876,11 +984,14 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add(typeof(MyValidateAntiForgeryClass));
+        filterCollection.Add(typeof(FilterClass));
     }
 }");
         }
@@ -915,11 +1026,14 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add(typeof(MyValidateAntiForgeryClass));
+        filterCollection.Add(typeof(FilterClass));
     }
 }");
         }
@@ -950,11 +1064,14 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add<MyValidateAntiForgeryClass>();
+        filterCollection.Add(typeof(FilterClass));
     }
 }");
         }
@@ -989,11 +1106,14 @@ class TestClass : ControllerBase
     {
         return null;
     }
+}
 
+class BlahClass
+{
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add<MyValidateAntiForgeryClass>();
+        filterCollection.Add(typeof(FilterClass));
     }
 }");
         }
@@ -1077,40 +1197,6 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_TypeWithValidateAntiForgeryAttribute_NoDiagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using System;
-using Microsoft.AspNetCore.Mvc;
-
-[MyValidateAntiForgeryAttribute]
-class TestClass : ControllerBase
-{
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
-    {
-        return null;
-    }
-}");
-        }
-
-        [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodWithValidateAntiForgeryAttribute_NoDiagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using System;
-using Microsoft.AspNetCore.Mvc;
-
-class TestClass : ControllerBase
-{
-    [MyValidateAntiForgeryAttribute]
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
-    {
-        return null;
-    }
-}");
-        }
-
-        [Fact]
         public void Test_ChildrenOfControllerBase_ActionMethodWithBothValidateAntiForgeryAndHttpPostAttributes_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
@@ -1155,6 +1241,27 @@ using Microsoft.AspNetCore.Mvc;
 class TestClass : ControllerBase
 {
     [HttpPost]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_ActionMethodWithHttpGetAttribute_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using Microsoft.AspNetCore.Mvc;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class TestClass : ControllerBase
+{
+    [HttpGet]
     public override AcceptedAtActionResult AcceptedAtAction (string actionName)
     {
         return null;

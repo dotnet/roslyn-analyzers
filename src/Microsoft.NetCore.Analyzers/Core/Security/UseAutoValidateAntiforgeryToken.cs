@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -12,41 +13,45 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class UseAutoValidateAntiforgeryToken : DiagnosticAnalyzer
     {
-        internal const string DiagnosticId = "CA5391";
-        private static readonly LocalizableString s_Title = new LocalizableResourceString(
+        internal static DiagnosticDescriptor UseAutoValidateAntiforgeryTokenRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5391",
+            typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryToken),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Message = new LocalizableResourceString(
             nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenMessage),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
-        private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription),
-            MicrosoftNetCoreAnalyzersResources.ResourceManager,
-            typeof(MicrosoftNetCoreAnalyzersResources));
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription),
+            customTags: WellKnownDiagnosticTags.Telemetry);
+        internal static DiagnosticDescriptor MissHttpVerbAttributeRule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5394",
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttribute),
+            nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttributeMessage),
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            helpLinkUri: null,
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription),
+            customTags: WellKnownDiagnosticTags.Telemetry);
 
         private static readonly Regex s_AntiForgeryAttributeRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute$", RegexOptions.Compiled);
         private static readonly Regex s_AntiForgeryRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*$", RegexOptions.Compiled);
+        private static readonly ImmutableHashSet<string> HttpVerbAttributesMarkingOnActionModifyingMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPostAttribute,
+                WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPutAttribute,
+                WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpDeleteAttribute,
+                WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPatchAttribute);
 
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-                DiagnosticId,
-                s_Title,
-                s_Message,
-                DiagnosticCategory.Security,
-                DiagnosticHelpers.DefaultDiagnosticSeverity,
-                isEnabledByDefault: false,
-                description: s_Description,
-                helpLinkUri: null,
-                customTags: WellKnownDiagnosticTags.Telemetry);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
+            UseAutoValidateAntiforgeryTokenRule,
+            MissHttpVerbAttributeRule);
 
         public delegate bool RequirementsOfValidateMethod(IMethodSymbol methodSymbol);
 
@@ -66,16 +71,21 @@ namespace Microsoft.NetCore.Analyzers.Security
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcController, out var controllerTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcControllerBase, out var controllerBaseTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcNonActionAttribute, out var nonActionAttributeTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPostAttribute, out var httpPostAttributeTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPutAttribute, out var httpPutAttributeTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpDeleteAttribute, out var httpDeleteAttributeTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPatchAttribute, out var httpPatchAttributeTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcRoutingHttpMethodAttribute, out var httpMethodAttributeTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIFilterMetadata, out var iFilterMetadataTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreAntiforgeryIAntiforgery, out var iAntiforgeryTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAsyncAuthorizationFilter, out var iAsyncAuthorizationFilterTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAuthorizationFilter, out var iAuthorizationFilterTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask, out var taskTypeSymbol) ||
                     !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersAuthorizationFilterContext, out var authorizationFilterContextTypeSymbol))
+                {
+                    return;
+                }
+
+                var httpVerbAttributeTypeSymbols = HttpVerbAttributesMarkingOnActionModifyingMethods.Select(
+                    s => wellKnownTypeProvider.TryGetTypeByMetadataName(s, out var attributeTypeSymbol) ? attributeTypeSymbol : null);
+
+                if (httpVerbAttributeTypeSymbols.Any(s => s == null))
                 {
                     return;
                 }
@@ -92,6 +102,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 var usingValidateAntiForgeryAttribute = false;
                 var onAuthorizationAsyncMethodSymbols = new HashSet<IMethodSymbol>();
                 var actionMethodSymbols = new HashSet<(IMethodSymbol, string)>();
+                var actionMethodNeedAddingHttpVerbAttributeSymbols = new HashSet<IMethodSymbol>();
 
                 // Constructing inverse callGraph.
                 // When it comes to delegate function assignment Del handler = DelegateMethod;, inverse call Graph will add:
@@ -208,43 +219,52 @@ namespace Microsoft.NetCore.Analyzers.Security
                     if (baseTypes.Contains(controllerTypeSymbol) ||
                         baseTypes.Contains(controllerBaseTypeSymbol))
                     {
+                        var currentControllerIsSafe = false;
+
                         // The controller class is protected by a validate anti forgery token attribute
                         if (derivedControllerTypeSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
                         {
                             usingValidateAntiForgeryAttribute = true;
-
-                            return;
+                            currentControllerIsSafe = true;
                         }
 
                         foreach (var actionMethodSymbol in derivedControllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
                         {
-                            // The method is protected by a validate anti forgery token attribute
-                            if (actionMethodSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
+                            if (actionMethodSymbol.MethodKind == MethodKind.Constructor)
                             {
-                                usingValidateAntiForgeryAttribute = true;
-
-                                return;
+                                continue;
                             }
 
                             if (actionMethodSymbol.IsPublic() &&
                                 !actionMethodSymbol.IsStatic &&
                                 !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol))
                             {
-                                if (actionMethodSymbol.HasAttribute(httpPostAttributeTypeSymbol))
+                                // The method is protected by a validate anti forgery token attribute
+                                if (currentControllerIsSafe || actionMethodSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
                                 {
-                                    actionMethodSymbols.Add((actionMethodSymbol, "HttpPost"));
+                                    usingValidateAntiForgeryAttribute = true;
+
+                                    if (!actionMethodSymbol.GetAttributes().Any(s => s.AttributeClass.GetBaseTypes().Contains(httpMethodAttributeTypeSymbol)))
+                                    {
+                                        actionMethodNeedAddingHttpVerbAttributeSymbols.Add(actionMethodSymbol);
+                                    }
                                 }
-                                else if (actionMethodSymbol.HasAttribute(httpPutAttributeTypeSymbol))
+                                else
                                 {
-                                    actionMethodSymbols.Add((actionMethodSymbol, "HttpPut"));
-                                }
-                                else if (actionMethodSymbol.HasAttribute(httpDeleteAttributeTypeSymbol))
-                                {
-                                    actionMethodSymbols.Add((actionMethodSymbol, "HttpDelete"));
-                                }
-                                else if (actionMethodSymbol.HasAttribute(httpPatchAttributeTypeSymbol))
-                                {
-                                    actionMethodSymbols.Add((actionMethodSymbol, "HttpPatch"));
+                                    var httpVerbAttributeTypeSymbol = actionMethodSymbol.GetAttributes().FirstOrDefault(s => httpVerbAttributeTypeSymbols.Contains(s.AttributeClass));
+
+                                    if (httpVerbAttributeTypeSymbol != null)
+                                    {
+                                        var attributeName = httpVerbAttributeTypeSymbol.AttributeClass.Name;
+                                        actionMethodSymbols.Add(
+                                            (actionMethodSymbol,
+                                            attributeName.EndsWith("Attribute", StringComparison.Ordinal) ? attributeName.Remove(attributeName.Length - "Attribute".Length) : attributeName));
+                                    }
+                                    else if (!actionMethodSymbol.GetAttributes().Any(s => s.AttributeClass.GetBaseTypes().Contains(httpMethodAttributeTypeSymbol)))
+                                    {
+                                        actionMethodSymbols.Add((actionMethodSymbol, "Http"));
+                                    }
+
                                 }
                             }
                         }
@@ -254,7 +274,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterCompilationEndAction(
                 (CompilationAnalysisContext compilationAnalysisContext) =>
                 {
-                    if (usingValidateAntiForgeryAttribute && !hasGlobalAntiForgeryFilter && actionMethodSymbols.Any())
+                    if (usingValidateAntiForgeryAttribute && !hasGlobalAntiForgeryFilter && (actionMethodSymbols.Any() || actionMethodNeedAddingHttpVerbAttributeSymbols.Any()))
                     {
                         var visited = new HashSet<ISymbol>();
                         var results = new Dictionary<ISymbol, HashSet<ISymbol>>();
@@ -281,33 +301,41 @@ namespace Microsoft.NetCore.Analyzers.Security
                         {
                             compilationAnalysisContext.ReportDiagnostic(
                                 methodSymbol.CreateDiagnostic(
-                                    Rule,
+                                    UseAutoValidateAntiforgeryTokenRule,
                                     methodSymbol.Name,
                                     attributeName));
+                        }
+
+                        foreach (var methodSymbol in actionMethodNeedAddingHttpVerbAttributeSymbols)
+                        {
+                            compilationAnalysisContext.ReportDiagnostic(
+                                methodSymbol.CreateDiagnostic(
+                                    MissHttpVerbAttributeRule,
+                                    methodSymbol.Name));
                         }
                     }
                 });
 
                 // <summary>
-                // Analyze the method to find all the specified method it calls, in this case, all the method symbols in onAuthorizationAsyncMethodSymbols.
+                // Analyze the method to find all the specified methods that call it, in this case, the specified method symbols are in onAuthorizationAsyncMethodSymbols.
                 // </summary>
                 // <param name="methodSymbol">The symbol of the method to be analyzed</param>
                 // <param name="visited">All the method has been analyzed</param>
-                // <param name="results">The result is organized by &lt;method to be analyzed, dangerous method it calls&gt;</param>
+                // <param name="results">The result is organized by &lt;method to be analyzed, specified methods calling it&gt;</param>
                 void FindAllTheSpecifiedCalleeMethods(ISymbol methodSymbol, HashSet<ISymbol> visited, Dictionary<ISymbol, HashSet<ISymbol>> results)
                 {
                     if (visited.Add(methodSymbol))
                     {
                         results.Add(methodSymbol, new HashSet<ISymbol>());
 
-                        if (!inverseGraph.TryGetValue(methodSymbol, out var calledMethods))
+                        if (!inverseGraph.TryGetValue(methodSymbol, out var callingMethods))
                         {
-                            Debug.Fail(methodSymbol.Name + " was not found in inverseGraph");
+                            Debug.Fail(methodSymbol.Name + " was not found in inverseGraph.");
 
                             return;
                         }
 
-                        foreach (var child in calledMethods.Keys)
+                        foreach (var child in callingMethods.Keys)
                         {
                             if (onAuthorizationAsyncMethodSymbols.Contains(child))
                             {
@@ -322,7 +350,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                             else
                             {
-                                Debug.Fail(child.Name + " was not found in results");
+                                Debug.Fail(child.Name + " was not found in results.");
                             }
                         }
                     }

@@ -22,6 +22,16 @@
         <target state="new">Ensure that JsonSerializer has a secure configuration when deserializing</target>
         <note />
       </trans-unit>
+      <trans-unit id="MissHttpVerbAttribute">
+        <source>Miss HttpVerb Attribute for action methods</source>
+        <target state="new">Miss HttpVerb Attribute for action methods</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissHttpVerbAttributeMessage">
+        <source>Action method {0} needs to specify the Http request kind explictly</source>
+        <target state="new">Action method {0} needs to specify the Http request kind explictly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
         <target state="translated">ユーザー入力を直接使用する SQL クエリは、SQL インジェクション攻撃に対して脆弱である可能性があります。この SQL クエリをレビューして潜在的な脆弱性を確認し、パラメーター化された SQL クエリの使用を検討してください。</target>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -24,17 +24,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DoNotDisableSchUseStrongCryptoRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5361",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCrypto),
-            nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCrypto),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCryptoMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5361",
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCryptoDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor DoNotDisableSpmSecurityProtocolsRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5378",
-            nameof(MicrosoftNetCoreSecurityResources.DoNotDisableUsingServicePointManagerSecurityProtocolsTitle),
-            nameof(MicrosoftNetCoreSecurityResources.DoNotDisableUsingServicePointManagerSecurityProtocolsMessage),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableUsingServicePointManagerSecurityProtocolsTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableUsingServicePointManagerSecurityProtocolsMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5378",
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
@@ -94,6 +94,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
+                    if (IsConfiguredToSkipAnalysis(DoNotDisableSchUseStrongCryptoRule, operationAnalysisContext) &&
+                        IsConfiguredToSkipAnalysis(DoNotDisableSpmSecurityProtocolsRule, operationAnalysisContext))
+                    {
+                        return;
+                    }
+
                     var values = invocationOperation.Arguments.Select(s => s.Value.ConstantValue).ToArray();
 
                     if (values[0].HasValue &&
@@ -101,7 +107,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         if (values[0].Value is string switchName &&
                             BadSwitches.TryGetValue(switchName, out var pair) &&
-                            pair.BadValue.Equals(values[1].Value))
+                            pair.BadValue.Equals(values[1].Value) &&
+                            !IsConfiguredToSkipAnalysis(pair.Rule, operationAnalysisContext))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
@@ -114,6 +121,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(
                             invocationOperation.GetEnclosingControlFlowGraph(),
                             operationAnalysisContext.ContainingSymbol,
+                            operationAnalysisContext.Options,
                             wellKnownTypeProvider,
                             InterproceduralAnalysisConfiguration.Create(
                                 operationAnalysisContext.Options,
@@ -134,7 +142,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                         if (switchNameValueContent.TryGetSingleLiteral<string>(out var switchName) &&
                             switchValueValueContent.TryGetSingleLiteral<bool>(out var switchValue) &&
                             BadSwitches.TryGetValue(switchName, out var pair) &&
-                            pair.BadValue.Equals(switchValue))
+                            pair.BadValue.Equals(switchValue) &&
+                            !IsConfiguredToSkipAnalysis(pair.Rule, operationAnalysisContext))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
@@ -146,5 +155,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 OperationKind.Invocation);
             });
         }
+
+        static bool IsConfiguredToSkipAnalysis(DiagnosticDescriptor rule, OperationAnalysisContext context)
+            => context.ContainingSymbol.IsConfiguredToSkipAnalysis(context.Options, rule, context.Compilation, context.CancellationToken);
     }
 }

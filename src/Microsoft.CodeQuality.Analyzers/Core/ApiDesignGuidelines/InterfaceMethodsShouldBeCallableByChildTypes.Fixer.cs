@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -71,11 +71,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (symbolToChange != null)
                 {
-                    string title = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1, symbolToChange.Name);
+                    string title = string.Format(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1, symbolToChange.Name);
 
                     context.RegisterCodeFix(new MyCodeAction(title,
                          async ct => await MakeProtected(context.Document, symbolToChange, checkSetter, ct).ConfigureAwait(false),
-                         equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1),
+                         equivalenceKey: MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix1),
                     context.Diagnostics);
                 }
             }
@@ -84,18 +84,18 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 ISymbol symbolToChange = methodSymbol.IsAccessorMethod() ? methodSymbol.AssociatedSymbol : methodSymbol;
                 if (symbolToChange != null)
                 {
-                    string title = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2, symbolToChange.Name);
+                    string title = string.Format(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2, symbolToChange.Name);
 
                     context.RegisterCodeFix(new MyCodeAction(title,
                          async ct => await ChangeToPublicInterfaceImplementation(context.Document, symbolToChange, ct).ConfigureAwait(false),
-                         equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2),
+                         equivalenceKey: MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix2),
                     context.Diagnostics);
                 }
             }
 
-            context.RegisterCodeFix(new MyCodeAction(string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3, methodSymbol.ContainingType.Name),
+            context.RegisterCodeFix(new MyCodeAction(string.Format(MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3, methodSymbol.ContainingType.Name),
                      async ct => await MakeContainingTypeSealed(context.Document, methodSymbol, ct).ConfigureAwait(false),
-                         equivalenceKey: MicrosoftApiDesignGuidelinesAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3),
+                         equivalenceKey: MicrosoftCodeQualityAnalyzersResources.InterfaceMethodsShouldBeCallableByChildTypesFix3),
                 context.Diagnostics);
         }
 

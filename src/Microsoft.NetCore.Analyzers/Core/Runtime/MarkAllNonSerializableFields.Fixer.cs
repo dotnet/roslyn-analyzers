@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -34,9 +34,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             Diagnostic diagnostic = context.Diagnostics.Single();
 
             // Fix 1: Add a NonSerialized attribute to the field
-            context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.AddNonSerializedAttributeCodeActionTitle,
+            context.RegisterCodeFix(new MyCodeAction(MicrosoftNetCoreAnalyzersResources.AddNonSerializedAttributeCodeActionTitle,
                                         async ct => await AddNonSerializedAttribute(context.Document, fieldNode, ct).ConfigureAwait(false),
-                                        equivalenceKey: SystemRuntimeAnalyzersResources.AddNonSerializedAttributeCodeActionTitle),
+                                        equivalenceKey: MicrosoftNetCoreAnalyzersResources.AddNonSerializedAttributeCodeActionTitle),
                                     diagnostic);
 
 
@@ -46,9 +46,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             ITypeSymbol type = fieldSymbol?.Type;
             if (type != null && type.Locations.Any(l => l.IsInSource))
             {
-                context.RegisterCodeFix(new MyCodeAction(SystemRuntimeAnalyzersResources.AddSerializableAttributeCodeActionTitle,
+                context.RegisterCodeFix(new MyCodeAction(MicrosoftNetCoreAnalyzersResources.AddSerializableAttributeCodeActionTitle,
                             async ct => await AddSerializableAttributeToType(context.Document, type, ct).ConfigureAwait(false),
-                            equivalenceKey: SystemRuntimeAnalyzersResources.AddSerializableAttributeCodeActionTitle),
+                            equivalenceKey: MicrosoftNetCoreAnalyzersResources.AddSerializableAttributeCodeActionTitle),
                         diagnostic);
             }
         }

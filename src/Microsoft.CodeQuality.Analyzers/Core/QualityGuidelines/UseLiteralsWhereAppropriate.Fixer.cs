@@ -40,7 +40,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // We cannot have multiple overlapping diagnostics of this id.
             Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = MicrosoftQualityGuidelinesAnalyzersResources.UseLiteralsWhereAppropriateCodeActionTitle;
+            string title = MicrosoftCodeQualityAnalyzersResources.UseLiteralsWhereAppropriateCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,

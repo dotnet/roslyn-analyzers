@@ -33,7 +33,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -53,7 +53,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry",
               "RuleNoZero"
             ]
@@ -74,7 +74,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -94,7 +94,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -114,7 +114,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -134,7 +134,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -154,7 +154,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -174,7 +174,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -194,7 +194,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -214,7 +214,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -234,7 +234,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -254,7 +254,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -274,6 +274,7 @@
               "Visual Basic"
             ],
             "tags": [
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -293,7 +294,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -313,7 +314,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -333,7 +334,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -353,7 +354,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -373,7 +374,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -393,7 +394,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -413,7 +414,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -433,7 +434,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -453,7 +454,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -473,7 +474,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -493,7 +494,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -513,7 +514,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -533,7 +534,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -553,7 +554,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -573,7 +574,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -593,7 +594,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Dataflow",
               "Telemetry"
             ]
@@ -614,7 +615,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -634,7 +635,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -701,7 +702,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -721,7 +722,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -741,7 +742,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -761,7 +762,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -818,7 +819,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -838,7 +839,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -858,7 +859,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -878,7 +879,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -898,7 +899,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -918,7 +919,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -938,7 +939,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -958,7 +959,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -978,7 +979,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -998,7 +999,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1018,7 +1019,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1038,7 +1039,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1058,7 +1059,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1078,7 +1079,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1098,7 +1099,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1118,7 +1119,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1138,7 +1139,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1158,7 +1159,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1178,7 +1179,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1198,7 +1199,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1218,7 +1219,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1238,8 +1239,24 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
+            ]
+          }
+        },
+        "CA1827": {
+          "id": "CA1827",
+          "shortDescription": "Do not use Count() when Any() can be used",
+          "fullDescription": "For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
             ]
           }
         },
@@ -1277,7 +1294,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1297,7 +1314,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1317,7 +1334,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1337,7 +1354,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1357,7 +1374,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1377,7 +1394,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1397,7 +1414,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1417,7 +1434,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1437,7 +1454,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1497,7 +1514,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1516,7 +1533,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1535,7 +1552,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1554,7 +1571,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1573,7 +1590,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1627,7 +1644,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1646,7 +1663,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1665,7 +1682,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1693,7 +1710,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1712,7 +1729,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1731,7 +1748,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1750,7 +1767,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1769,7 +1786,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1823,7 +1840,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1842,7 +1859,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1861,7 +1878,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1880,7 +1897,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1899,7 +1916,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }

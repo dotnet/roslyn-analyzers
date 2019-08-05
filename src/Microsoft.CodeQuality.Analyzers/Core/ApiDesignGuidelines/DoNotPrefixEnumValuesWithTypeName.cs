@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using static Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MicrosoftApiDesignGuidelinesAnalyzersResources;
+using static Microsoft.CodeQuality.Analyzers.MicrosoftCodeQualityAnalyzersResources;
 using System.Collections.Generic;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
@@ -21,9 +21,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string RuleId = "CA1712";
         private const int PercentValuesPrefixedThreshold = 75; // The percent of an enum's values that must appear to be prefixed in order for a diagnostic to be reported on the enum. This value comes from the original FxCop rule's implementation.
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DoNotPrefixEnumValuesWithTypeNameTitle), ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(DoNotPrefixEnumValuesWithTypeNameMessage), ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(DoNotPrefixEnumValuesWithTypeNameDescription), ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(DoNotPrefixEnumValuesWithTypeNameTitle), ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(DoNotPrefixEnumValuesWithTypeNameMessage), ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(DoNotPrefixEnumValuesWithTypeNameDescription), ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule =
             new DiagnosticDescriptor(

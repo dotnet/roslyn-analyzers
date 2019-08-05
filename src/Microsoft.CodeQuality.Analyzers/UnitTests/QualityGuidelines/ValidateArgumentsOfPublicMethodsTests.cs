@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -5960,6 +5961,52 @@ public class Class1
         }
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality." + ValidateArgumentsOfPublicMethods.RuleId + ".excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.cs(6,17): warning CA1062: In externally visible method 'void Test.M1(string str)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                    GetCSharpResultAt(6, 17, "void Test.M1(string str)", "str")
+                };
+            }
+
+            VerifyCSharp(@"
+public class Test
+{
+    public void M1(string str)
+    {
+        var x = str.ToString();
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.vb(4,17): warning CA1062: In externally visible method 'Sub Test.M1(str As String)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                    GetBasicResultAt(4, 17, "Sub Test.M1(str As String)", "str")
+                };
+            }
+
+            VerifyBasic(@"
+Public Class Test
+    Public Sub M1(str As String)
+        Dim x = str.ToString()
+    End Sub
+End Class
+", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
     }
 }

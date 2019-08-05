@@ -18,12 +18,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string CA1810RuleId = "CA1810";
         internal const string CA2207RuleId = "CA2207";
 
-        private static readonly LocalizableString s_CA1810_LocalizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InitializeReferenceTypeStaticFieldsInlineTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_CA2207_LocalizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InitializeValueTypeStaticFieldsInlineTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_CA1810_LocalizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InitializeReferenceTypeStaticFieldsInlineTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_CA2207_LocalizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InitializeValueTypeStaticFieldsInlineTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_CA1810_LocalizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InitializeReferenceTypeStaticFieldsInlineDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_CA2207_LocalizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.InitializeValueTypeStaticFieldsInlineDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_CA1810_LocalizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InitializeReferenceTypeStaticFieldsInlineDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_CA2207_LocalizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.InitializeValueTypeStaticFieldsInlineDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor CA1810Rule = new DiagnosticDescriptor(CA1810RuleId,
                                                                              s_CA1810_LocalizableTitle,

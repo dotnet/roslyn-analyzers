@@ -1528,5 +1528,41 @@ public class Test
     }
 }", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality." + DoNotPassLiteralsAsLocalizedParameters.RuleId + ".excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (string.IsNullOrEmpty(editorConfigText))
+            {
+                expected = new[]
+                {
+                    // Test0.cs(9,31): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(9, 31, "void Test.M1()", "message", "Exception.Exception(string message)", "a"),
+                    // Test0.cs(10,39): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'ArgumentException.ArgumentException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(10, 39, "void Test.M1()", "message", "ArgumentException.ArgumentException(string message)", "a"),
+                    // Test0.cs(11,47): warning CA1303: Method 'void Test.M1()' passes a literal string as parameter 'message' of a call to 'InvalidOperationException.InvalidOperationException(string message)'. Retrieve the following string(s) from a resource table instead: "a".
+                    GetCSharpResultAt(11, 47, "void Test.M1()", "message", "InvalidOperationException.InvalidOperationException(string message)", "a")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+public class Test
+{
+    public void M1()
+    {
+        var str = ""a"";
+        var x = new Exception(str);
+        var y = new ArgumentException(str);
+        var z = new InvalidOperationException(str);
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
     }
 }

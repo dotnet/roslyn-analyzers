@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
-  <file datatype="xml" source-language="en" target-language="zh-HANT" original="../MicrosoftNetFrameworkAnalyzersResources.resx">
+  <file datatype="xml" source-language="en" target-language="zh-Hant" original="../MicrosoftNetFrameworkAnalyzersResources.resx">
     <body>
       <trans-unit id="SpecifyMessageBoxOptionsTitle">
         <source>Specify MessageBoxOptions</source>
@@ -356,6 +356,36 @@
         <source>In {0} an insecure combination of XsltSettings and XmlResolver instances are provided to XslCompiledTransfor.Load as arguments.</source>
         <target state="translated">在 {0} 中，為 XslCompiledTransfor.Load 提供了不安全的 XsltSettings 與 XmlResolver 執行個體組合作為引數。</target>
         <note>CA3076</note>
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage">
+        <source>The ValidateAntiForgeryAttribute is defined with HttpVerbs.Get and at least one of HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete, or HttpVerbs.Patch on controller action {0}. The attribute will not be used when GET verb is used.</source>
+        <target state="translated">ValidateAntiForgeryAttribute 在控制器動作 {0} 上會使用 HttpVerbs.Get，以及至少一個 HttpVerbs.Post、HttpVerbs.Put、HttpVerbs.Delete 或 HttpVerbs.Patch 來定義。當使用 GET 動詞時，不會使用該屬性。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage">
+        <source>Using HttpVerbs.GET and ValidateAntiForgeryTokenAttribute is not supported by MVC on controller action {0}.</source>
+        <target state="translated">控制器動作 {0} 上的 MVC 不支援使用 HttpVerbs.GET 和 ValidateAntiForgeryTokenAttribute。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage">
+        <source>HTTP verb attributes attributes are missing on controller action {0}. The ValidateAntiForgeryTokenAttribute will not be used when GET verb is used.</source>
+        <target state="translated">控制器動作 {0} 上缺少 HTTP 動詞屬性。當使用 GET 動詞時，不會使用 ValidateAntiForgeryTokenAttribute。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage">
+        <source>Missing ValidateAntiForgeryTokenAttribute on MVC controller action {0} which by default accepts POST requests.</source>
+        <target state="translated">MVC 控制器動作 {0} 上缺少 ValidateAntiForgeryTokenAttribute，該動作根據預設接受 POST 要求。</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenTitle">
+        <source>Mark Verb Handlers With Validate Antiforgery Token</source>
+        <target state="translated">使用驗證 Antiforgery 權杖標記動詞命令處理常式</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">
+        <source>Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</source>
+        <target state="translated">控制器動作 {0} 上缺少 ValidateAntiForgeryTokenAttribute。</target>
+        <note />
       </trans-unit>
     </body>
   </file>

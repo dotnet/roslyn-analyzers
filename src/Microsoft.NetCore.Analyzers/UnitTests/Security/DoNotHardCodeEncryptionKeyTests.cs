@@ -339,6 +339,30 @@ class TestClass
         }
 
         [Fact]
+        public void Test_HardcodeByParamsBytesArray_CreateEncryptor_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod(byte[] someOtherBytesForIV)
+    {
+        byte[] rgbKey = GetArray(1, 2, 3);
+        SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
+        rijn.CreateEncryptor(rgbKey, someOtherBytesForIV);
+    }
+
+    public byte[] GetArray(params byte[] array)
+    {
+        return array;
+    }
+}",
+            GetCSharpResultAt(11, 9, 9, 25, "ICryptoTransform SymmetricAlgorithm.CreateEncryptor(byte[] rgbKey, byte[] rgbIV)", "void TestClass.TestMethod(byte[] someOtherBytesForIV)", "byte[]", "void TestClass.TestMethod(byte[] someOtherBytesForIV)"));
+        }
+
+        [Fact]
         public void Test_ElementTypeIsTypeParameter_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"

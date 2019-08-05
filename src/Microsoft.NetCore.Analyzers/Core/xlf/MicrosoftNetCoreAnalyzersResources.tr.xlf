@@ -8,13 +8,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPathDescription">
-        <source>There could be malicious DLL under the application directory or the default DLL search directories. Use an DllImportSearchPath value that sepecifies explicit search path instead</source>
-        <target state="new">There could be malicious DLL under the application directory or the default DLL search directories. Use an DllImportSearchPath value that sepecifies explicit search path instead</target>
+        <source>There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.</source>
+        <target state="new">There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPathMessage">
-        <source>Use unsafe DllImportSearchPath value {0}</source>
-        <target state="new">Use unsafe DllImportSearchPath value {0}</target>
+        <source>Use of unsafe DllImportSearchPath value {0}</source>
+        <target state="new">Use of unsafe DllImportSearchPath value {0}</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetInsecureSerializerMessage">

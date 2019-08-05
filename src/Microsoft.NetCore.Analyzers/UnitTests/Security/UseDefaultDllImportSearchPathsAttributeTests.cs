@@ -253,7 +253,7 @@ class TestClass
         [InlineData("")]
         [InlineData("dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 2 | 256 | 512")]
         [InlineData("dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 770")]
-        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_258_Diagnostic(string editorConfigText)
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_DefaultValue_Diagnostic(string editorConfigText)
         {
             VerifyCSharp(@"
 using System;
@@ -272,6 +272,29 @@ class TestClass
 }",
             GetEditorConfigAdditionalFile(editorConfigText),
             GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "AssemblyDirectory, ApplicationDirectory"));
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 2048")]
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_NonDefaultValue_Diagnostic(string editorConfigText)
+        {
+            VerifyCSharp(@"
+using System;
+using System.Runtime.InteropServices;
+
+class TestClass
+{
+    [DllImport(""user32.dll"")]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
+    public void TestMethod()
+    {
+        MessageBox(new IntPtr(0), ""Hello World!"", ""Hello Dialog"", 0);
+    }
+}",
+            GetEditorConfigAdditionalFile(editorConfigText),
+            GetCSharpResultAt(9, 30, UseDefaultDllImportSearchPathsAttribute.DoNotUseUnsafeDllImportSearchPathRule, "System32"));
         }
 
         [Theory]
@@ -362,7 +385,7 @@ class TestClass
 
         [Theory]
         [InlineData("dotnet_code_quality.CA5393.unsafe_DllImportSearchPath_bits = 2048")]
-        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_NoDiagnostic(string editorConfigText)
+        public void EditorConfigConfiguration_UnsafeDllImportSearchPathBits_NonDefaultValue_NoDiagnostic(string editorConfigText)
         {
             VerifyCSharp(@"
 using System;

@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseUnsafeDllImportSearchPathDescription),
-            customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
+            customTags: WellKnownDiagnosticTags.Telemetry);
 
         // DllImportSearchPath.AssemblyDirectory = 2.
         // DllImportSearchPath.UseDllDirectoryForDependencies = 256.
@@ -98,27 +98,11 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         var rule = UseDefaultDllImportSearchPathsAttributeRule;
                         var ruleArgument = symbol.Name;
+                        var validatedDefaultDllImportSearchPathsAttribute = defaultDllImportSearchPathsAttribute ?? defaultDllImportSearchPathsAttributeOnAssembly;
 
-                        if (defaultDllImportSearchPathsAttribute == null)
+                        if (validatedDefaultDllImportSearchPathsAttribute != null)
                         {
-                            if (defaultDllImportSearchPathsAttributeOnAssembly != null)
-                            {
-                                var dllImportSearchPathOnAssembly = (int)defaultDllImportSearchPathsAttributeOnAssembly.ConstructorArguments.FirstOrDefault().Value;
-                                var validBits = dllImportSearchPathOnAssembly & unsafeDllImportSearchPathBits;
-
-                                if (dllImportSearchPathOnAssembly != LegacyBehavior &&
-                                    validBits == 0)
-                                {
-                                    return;
-                                }
-
-                                rule = DoNotUseUnsafeDllImportSearchPathRule;
-                                ruleArgument = ((DllImportSearchPath)validBits).ToString();
-                            }
-                        }
-                        else
-                        {
-                            var dllImportSearchPath = (int)defaultDllImportSearchPathsAttribute.ConstructorArguments.FirstOrDefault().Value;
+                            var dllImportSearchPath = (int)validatedDefaultDllImportSearchPathsAttribute.ConstructorArguments.FirstOrDefault().Value;
                             var validBits = dllImportSearchPath & unsafeDllImportSearchPathBits;
 
                             if (dllImportSearchPath != LegacyBehavior &&

@@ -973,7 +973,7 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
-class MyValidateAntiForgeryClass : IFilterMetadata
+class FilterClass : IFilterMetadata
 {
 }
 
@@ -1033,7 +1033,7 @@ class BlahClass
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add(typeof(FilterClass));
+        filterCollection.Add(typeof(MyValidateAntiForgeryClass));
     }
 }");
         }
@@ -1053,7 +1053,7 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 {
 }
 
-class MyValidateAntiForgeryClass : IFilterMetadata
+class FilterClass : IFilterMetadata
 {
 }
 
@@ -1113,7 +1113,7 @@ class BlahClass
     public void TestMethod ()
     {
         var filterCollection = new FilterCollection ();
-        filterCollection.Add(typeof(FilterClass));
+        filterCollection.Add(typeof(MyValidateAntiForgeryClass));
     }
 }");
         }

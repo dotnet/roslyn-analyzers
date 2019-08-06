@@ -2130,8 +2130,8 @@
         },
         "CA1827": {
           "id": "CA1827",
-          "shortDescription": "Do not use Count() when Any() can be used",
-          "fullDescription": "For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
+          "shortDescription": "Do not use Count() or LongCount() when Any() can be used",
+          "fullDescription": "For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
           "properties": {
@@ -2146,8 +2146,8 @@
         },
         "CA1828": {
           "id": "CA1828",
-          "shortDescription": "Do not use CountAsync() when AnyAsync() can be used",
-          "fullDescription": "For non-empty collections, CountAsync() enumerates the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.",
+          "shortDescription": "Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used",
+          "fullDescription": "For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1828",
           "properties": {

@@ -15,8 +15,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
 {
 #pragma warning disable CA1200 // Avoid using cref tags with a prefix
     /// <summary>
-    /// CA1827: Do not use Count() when Any() can be used.
-    /// CA1828: Do not use CountAsync() when AnyAsync() can be used.
+    /// CA1827: Do not use Count()/LongCount() when Any() can be used.
+    /// CA1828: Do not use CountAsync()/LongCountAsync() when AnyAsync() can be used.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -133,6 +133,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + SyncRuleId.ToLowerInvariant());
 #pragma warning restore CA1308 // Normalize strings to uppercase
 
+        private static readonly ImmutableHashSet<string> s_syncMethodNames = ImmutableHashSet.Create(StringComparer.Ordinal, "Count", "LongCount");
+        private static readonly ImmutableHashSet<string> s_asyncMethodNames = ImmutableHashSet.Create(StringComparer.Ordinal, "CountAsync", "LongCountAsync");
+
         /// <summary>
         /// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.
         /// </summary>
@@ -157,13 +160,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <param name="context">The context.</param>
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            const string SyncMethodName = "Count";
-
             if (WellKnownTypes.Enumerable(context.Compilation) is INamedTypeSymbol enumerableType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: enumerableType,
-                    targetMethod: SyncMethodName,
+                    targetMethodNames: s_syncMethodNames,
                     isAsync: false,
                     rule: s_syncRule);
 
@@ -176,11 +177,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (WellKnownTypes.Queryable(context.Compilation) is INamedTypeSymbol queriableType)
+            if (WellKnownTypes.Queryable(context.Compilation) is INamedTypeSymbol queryableType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
-                    targetType: queriableType,
-                    targetMethod: SyncMethodName,
+                    targetType: queryableType,
+                    targetMethodNames: s_syncMethodNames,
                     isAsync: false,
                     rule: s_syncRule);
 
@@ -192,14 +193,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     operationActionsHandler.AnalyzeBinaryOperation,
                     OperationKind.BinaryOperator);
             }
-
-            const string AsyncMethodName = "CountAsync";
 
             if (context.Compilation.GetTypeByMetadataName("Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions") is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: entityFrameworkQueryableExtensionsType,
-                    targetMethod: AsyncMethodName,
+                    targetMethodNames: s_asyncMethodNames,
                     isAsync: true,
                     rule: s_asyncRule);
 
@@ -216,7 +215,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: queryableExtensionsType,
-                    targetMethod: AsyncMethodName,
+                    targetMethodNames: s_asyncMethodNames,
                     isAsync: true,
                     rule: s_asyncRule);
 
@@ -236,14 +235,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
         private sealed class OperationActionsHandler
         {
             private readonly INamedTypeSymbol targetType;
-            private readonly string targetMethod;
+            private readonly ImmutableHashSet<string> targetMethodNames;
             private readonly bool isAsync;
             private readonly DiagnosticDescriptor rule;
 
-            public OperationActionsHandler(INamedTypeSymbol targetType, string targetMethod, bool isAsync, DiagnosticDescriptor rule)
+            public OperationActionsHandler(INamedTypeSymbol targetType, ImmutableHashSet<string> targetMethodNames, bool isAsync, DiagnosticDescriptor rule)
             {
                 this.targetType = targetType;
-                this.targetMethod = targetMethod;
+                this.targetMethodNames = targetMethodNames;
                 this.isAsync = isAsync;
                 this.rule = rule;
             }
@@ -259,10 +258,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (invocationOperation.Arguments.Length == 1)
                 {
                     var method = invocationOperation.TargetMethod;
+                    string methodName;
                     if (IsInt32EqualsMethod(method) &&
-                        (IsCountEqualsZero(invocationOperation) || IsZeroEqualsCount(invocationOperation)))
+                        (IsCountEqualsZero(invocationOperation, out methodName) || IsZeroEqualsCount(invocationOperation, out methodName)))
                     {
-                        context.ReportDiagnostic(invocationOperation.Syntax.CreateDiagnostic(this.rule));
+                        context.ReportDiagnostic(
+                            invocationOperation.Syntax.CreateDiagnostic(
+                                this.rule,
+                                methodName));
                     }
                 }
             }
@@ -275,10 +278,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var binaryOperation = (IBinaryOperation)context.Operation;
 
+                string methodName;
                 if (binaryOperation.IsComparisonOperator() &&
-                    (IsLeftCountComparison(binaryOperation) || IsRightCountComparison(binaryOperation)))
+                    (IsLeftCountComparison(binaryOperation, out methodName) || IsRightCountComparison(binaryOperation, out methodName)))
                 {
-                    context.ReportDiagnostic(binaryOperation.Syntax.CreateDiagnostic(this.rule));
+                    context.ReportDiagnostic(
+                        binaryOperation.Syntax.CreateDiagnostic(
+                            this.rule,
+                            methodName));
                 }
             }
 
@@ -294,51 +301,55 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks whether the value of the invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />
+            /// Checks whether the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
             /// is being compared with 0 using <see cref="int.Equals(int)"/>.
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
             /// 
             /// 
-            /// <returns><see langword="true" /> if the value of the invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />
+            /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
             /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-            private bool IsCountEqualsZero(IInvocationOperation invocationOperation)
+            private bool IsCountEqualsZero(IInvocationOperation invocationOperation, out string methodName)
             {
                 if (!TryGetInt32Constant(invocationOperation.Arguments[0].Value, out var constant) || constant != 0)
                 {
+                    methodName = null;
                     return false;
                 }
 
-                return IsCountAsyncMethodInvocationAwaited(invocationOperation.Instance);
+                return IsCountMethodInvocationAwaited(invocationOperation.Instance, out methodName);
             }
 
             /// <summary>
-            /// Checks whether 0 is being compared with the value of the invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />
+            /// Checks whether 0 is being compared with the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
             /// using <see cref="int.Equals(int)"/>.
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
-            /// <returns><see langword="true" /> if 0 is being compared with the value of the invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />
+            /// <returns><see langword="true" /> if 0 is being compared with the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
             /// using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-            private bool IsZeroEqualsCount(IInvocationOperation invocationOperation)
+            private bool IsZeroEqualsCount(IInvocationOperation invocationOperation, out string methodName)
             {
                 if (!TryGetInt32Constant(invocationOperation.Instance, out var constant) || constant != 0)
                 {
+                    methodName = null;
                     return false;
                 }
 
-                return IsCountAsyncMethodInvocationAwaited(invocationOperation.Arguments[0].Value);
+                return IsCountMethodInvocationAwaited(invocationOperation.Arguments[0].Value, out methodName);
             }
 
             /// <summary>
-            /// Checks whether the value of the invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />
+            /// Checks whether the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
             /// is being compared with 0 or 1 using <see cref="int" /> comparison operators.
             /// </summary>
             /// <param name="binaryOperation">The binary operation.</param>
-            /// 
-            /// <returns><see langword="true" /> if the value of the invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />
+            /// <param name="methodName">If the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
+            /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
             /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-            private bool IsLeftCountComparison(IBinaryOperation binaryOperation)
+            private bool IsLeftCountComparison(IBinaryOperation binaryOperation, out string methodName)
             {
+                methodName = null;
+
                 if (!TryGetInt32Constant(binaryOperation.RightOperand, out var constant))
                 {
                     return false;
@@ -363,19 +374,21 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return false;
                 }
 
-                return IsCountAsyncMethodInvocationAwaited(binaryOperation.LeftOperand);
+                return IsCountMethodInvocationAwaited(binaryOperation.LeftOperand, out methodName);
             }
 
             /// <summary>
-            /// Checks whether 0 or 1 is being compared with the value of the invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />
+            /// Checks whether 0 or 1 is being compared with the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
             /// using <see cref="int" /> comparison operators.
             /// </summary>
             /// <param name="binaryOperation">The binary operation.</param>
-            /// 
-            /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />
+            /// <param name="methodName">If the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
+            /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
             /// using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-            private bool IsRightCountComparison(IBinaryOperation binaryOperation)
+            private bool IsRightCountComparison(IBinaryOperation binaryOperation, out string methodName)
             {
+                methodName = null;
+
                 if (!TryGetInt32Constant(binaryOperation.LeftOperand, out var constant))
                 {
                     return false;
@@ -400,7 +413,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return false;
                 }
 
-                return IsCountAsyncMethodInvocationAwaited(binaryOperation.RightOperand);
+                return IsCountMethodInvocationAwaited(binaryOperation.RightOperand, out methodName);
             }
 
             /// <summary>
@@ -431,13 +444,16 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks the <paramref name="operation"/> is an invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />.
+            /// Checks the <paramref name="operation" /> is an invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />.
             /// </summary>
             /// <param name="operation">The operation.</param>
-            /// <returns><see langword="true" /> if the <paramref name="operation"/> is an invocation of the method <see cref="targetMethod" /> in the <see cref="targetType" />; 
+            /// <param name="methodName">If the <paramref name="operation" /> is an invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
+            /// <returns><see langword="true" /> if the <paramref name="operation" /> is an invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />;
             /// <see langword="false" /> otherwise.</returns>
-            private bool IsCountAsyncMethodInvocationAwaited(IOperation operation)
+            private bool IsCountMethodInvocationAwaited(IOperation operation, out string methodName)
             {
+                methodName = null;
+
                 while (operation is IParenthesizedOperation parenthesizedOperation)
                 {
                     operation = parenthesizedOperation.Operand;
@@ -455,10 +471,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
                 }
 
-                return
-                    operation is IInvocationOperation invocationOperation &&
-                    invocationOperation.TargetMethod.Name.Equals(this.targetMethod, StringComparison.Ordinal) &&
-                    invocationOperation.TargetMethod.ContainingSymbol.Equals(this.targetType);
+                if (operation is IInvocationOperation invocationOperation &&
+                    this.targetMethodNames.Contains(invocationOperation.TargetMethod.Name) &&
+                    invocationOperation.TargetMethod.ContainingSymbol.Equals(this.targetType))
+                {
+                    methodName = invocationOperation.TargetMethod.Name;
+                    return true;
+                }
+
+                return false;
             }
         }
     }

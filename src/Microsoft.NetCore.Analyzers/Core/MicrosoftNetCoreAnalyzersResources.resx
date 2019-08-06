@@ -229,13 +229,13 @@
     <value>{0} passes '{1}' as the 'StringComparer' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparer.Ordinal' or 'StringComparer.OrdinalIgnoreCase' instead.</value>
   </data>
   <data name="DoNotUseCountWhenAnyCanBeUsedDescription" xml:space="preserve">
-    <value>For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</value>
+    <value>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</value>
   </data>
   <data name="DoNotUseCountWhenAnyCanBeUsedMessage" xml:space="preserve">
-    <value>Count() is used where Any() could be used instead to improve performance.</value>
+    <value>{0}() is used where Any() could be used instead to improve performance.</value>
   </data>
   <data name="DoNotUseCountWhenAnyCanBeUsedTitle" xml:space="preserve">
-    <value>Do not use Count() when Any() can be used</value>
+    <value>Do not use Count() or LongCount() when Any() can be used</value>
   </data>
   <data name="DoNotUseTimersThatPreventPowerStateChangesTitle" xml:space="preserve">
     <value>Do not use timers that prevent power state changes</value>
@@ -1084,12 +1084,12 @@
     <value>Ensure that JsonSerializer has a secure configuration when deserializing</value>
   </data>
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription" xml:space="preserve">
-    <value>For non-empty collections, CountAsync() enumerates the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</value>
+    <value>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</value>
   </data>
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage" xml:space="preserve">
-    <value>CountAsync() is used where AnyAsync() could be used instead to improve performance.</value>
+    <value>{0}() is used where AnyAsync() could be used instead to improve performance.</value>
   </data>
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle" xml:space="preserve">
-    <value>Do not use CountAsync() when AnyAsync() can be used</value>
+    <value>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</value>
   </data>
 </root>

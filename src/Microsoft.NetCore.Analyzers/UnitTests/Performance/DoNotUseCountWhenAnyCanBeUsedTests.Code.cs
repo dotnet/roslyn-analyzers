@@ -36,8 +36,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 AsyncKeyword = asyncKeyword;
                 AwaitKeyword = awaitKeyword;
                 CommentPrefix = commentPrefix;
+                MethodSuffix = IsAsync ? "Async" : string.Empty;
+                MethodName = "Count" + MethodSuffix;
             }
 
+            public string MethodName { get; }
+            public string MethodSuffix { get; }
             public string AsyncKeyword { get; }
             public string AwaitKeyword { get; }
             public string CommentPrefix { get; }
@@ -148,7 +152,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             {
                 string targetType;
                 string targetTypeOfSource;
-                string methodSuffix;
                 string predicate;
                 string boolReturnType;
                 string intReturnType;
@@ -159,7 +162,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     targetType = "global::System.Linq.IQueryable";
                     targetTypeOfSource = "global::System.Linq.IQueryable<TSource>";
-                    methodSuffix = "Async";
                     predicate = "global::System.Linq.Expressions.Expression<global::System.Func<TSource, bool>>";
                     boolReturnType = "global::System.Threading.Tasks.Task<bool>";
                     intReturnType = "global::System.Threading.Tasks.Task<int>";
@@ -170,7 +172,6 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 {
                     targetType = "global::System.Collections.IEnumerable";
                     targetTypeOfSource = "global::System.Collections.Generic.IEnumerable<TSource>";
-                    methodSuffix = string.Empty;
                     predicate = "global::System.Func<TSource, bool>";
                     boolReturnType = "bool";
                     intReturnType = "int";
@@ -182,11 +183,11 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {{
     public static class {className}
     {{
-        public static {boolReturnType} Any{methodSuffix}(this {targetType} q) => {boolReturnValue};
-        public static {boolReturnType} Any{methodSuffix}<TSource>(this {targetTypeOfSource} q, {predicate} predicate) => {boolReturnValue};
-        public static {intReturnType} Count{methodSuffix}(this {targetType} q) => {intReturnValue};
-        public static {intReturnType} Count{methodSuffix}<TSource>(this {targetTypeOfSource} q, {predicate} predicate) => {intReturnValue};
-        public static {intReturnType} Sum{methodSuffix}(this {targetType} q) => {intReturnValue};
+        public static {boolReturnType} Any{this.MethodSuffix}(this {targetType} q) => {boolReturnValue};
+        public static {boolReturnType} Any{this.MethodSuffix}<TSource>(this {targetTypeOfSource} q, {predicate} predicate) => {boolReturnValue};
+        public static {intReturnType} {this.MethodName}(this {targetType} q) => {intReturnValue};
+        public static {intReturnType} {this.MethodName}<TSource>(this {targetTypeOfSource} q, {predicate} predicate) => {intReturnValue};
+        public static {intReturnType} Sum{this.MethodSuffix}(this {targetType} q) => {intReturnValue};
     }}
 }}
 ";
@@ -282,7 +283,6 @@ End Namespace")
             {
                 string targetType;
                 string targetTypeOfSource;
-                string methodSuffix;
                 string predicate;
                 string boolReturnType;
                 string intReturnType;
@@ -293,7 +293,6 @@ End Namespace")
                 {
                     targetType = "Global.System.Linq.IQueryable";
                     targetTypeOfSource = "Global.System.Linq.IQueryable(Of TSource)";
-                    methodSuffix = "Async";
                     predicate = "Global.System.Linq.Expressions.Expression(Of Global.System.Func(Of TSource, Boolean))";
                     boolReturnType = "Global.System.Threading.Tasks.Task(Of Boolean)";
                     intReturnType = "Global.System.Threading.Tasks.Task(Of Integer)";
@@ -304,7 +303,6 @@ End Namespace")
                 {
                     targetType = "Global.System.Collections.IEnumerable";
                     targetTypeOfSource = "Global.System.Collections.Generic.IEnumerable(Of TSource)";
-                    methodSuffix = string.Empty;
                     predicate = "Global.System.Func(Of TSource, Boolean)";
                     boolReturnType = "Boolean";
                     intReturnType = "Integer";
@@ -316,23 +314,23 @@ End Namespace")
     <System.Runtime.CompilerServices.Extension>
     Public Module {className}
         <System.Runtime.CompilerServices.Extension>
-        Public Function Any{methodSuffix}(q As {targetType}) As {boolReturnType}
+        Public Function Any{this.MethodSuffix}(q As {targetType}) As {boolReturnType}
             Return {boolReturnValue}
         End Function
         <System.Runtime.CompilerServices.Extension>
-        Public Function Any{methodSuffix}(Of TSource)(q As {targetTypeOfSource}, predicate As {predicate}) As {boolReturnType}
+        Public Function Any{this.MethodSuffix}(Of TSource)(q As {targetTypeOfSource}, predicate As {predicate}) As {boolReturnType}
             Return {boolReturnValue}
         End Function
         <System.Runtime.CompilerServices.Extension>
-        Public Function Count{methodSuffix}(q As {targetType}) As {intReturnType}
+        Public Function {this.MethodName}(q As {targetType}) As {intReturnType}
             Return {intReturnValue}
         End Function
         <System.Runtime.CompilerServices.Extension>
-        Public Function Count{methodSuffix}(Of TSource)(q As {targetTypeOfSource}, predicate As {predicate}) As {intReturnType}
+        Public Function {this.MethodName}(Of TSource)(q As {targetTypeOfSource}, predicate As {predicate}) As {intReturnType}
             Return {intReturnValue}
         End Function
         <System.Runtime.CompilerServices.Extension>
-        Public Function Sum{methodSuffix}(q As {targetType}) As {intReturnType}
+        Public Function Sum{this.MethodSuffix}(q As {targetType}) As {intReturnType}
             Return {intReturnValue}
         End Function
     End Module
@@ -367,7 +365,7 @@ End Namespace
 
         protected abstract class VerifierBase
         {
-            public abstract Task VerifyAsync(string[] testSources);
+            internal abstract Task VerifyAsync(string[] testSources);
             internal abstract Task VerifyAsync(string[] testSources, string[] fixedSources);
         }
 
@@ -376,7 +374,7 @@ End Namespace
             where TAnalyzer : DiagnosticAnalyzer, new()
             where TCodeFix : CodeFixProvider, new()
         {
-            public override Task VerifyAsync(string[] testSources)
+            internal override Task VerifyAsync(string[] testSources)
             {
                 var test = new Test.Utilities.CSharpCodeFixVerifier<TAnalyzer, TCodeFix>.Test();
 
@@ -420,7 +418,7 @@ End Namespace
             where TAnalyzer : DiagnosticAnalyzer, new()
             where TCodeFix : CodeFixProvider, new()
         {
-            public override Task VerifyAsync(string[] testSources)
+            internal override Task VerifyAsync(string[] testSources)
             {
                 var test = new Test.Utilities.VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>.Test();
 

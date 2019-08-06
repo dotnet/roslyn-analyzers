@@ -19,7 +19,8 @@ using Microsoft.CodeAnalysis.Formatting;
 namespace Microsoft.NetCore.Analyzers.Performance
 {
     /// <summary>
-    /// CA1828: Do not use CountAsync() when AnyAsync() can be used.
+    /// CA1827: Do not use Count()/LongCount() when Any() can be used.
+    /// CA1828: Do not use CountAsync()/LongCountAsync() when AnyAsync() can be used.
     /// </summary>
     public abstract class DoNotUseCountWhenAnyCanBeUsedFixer : CodeFixProvider
     {
@@ -64,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 this.TryGetFixer(node, isAsync, out var expression, out var arguments, out var negate))
             {
                 context.RegisterCodeFix(
-                    new DoNotUseCountAsyncWhenAnyAsyncCanBeUsedCodeAction(isAsync, context.Document, node, expression, arguments, negate),
+                    new DoNotUseCountWhenAnyCanBeUsedCodeAction(isAsync, context.Document, node, expression, arguments, negate),
                     context.Diagnostics);
             }
         }
@@ -80,7 +81,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <returns><see langword="true" /> if a fixer was found., <see langword="false" /> otherwise.</returns>
         protected abstract bool TryGetFixer(SyntaxNode node, bool isAsync, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments, out bool negate);
 
-        private class DoNotUseCountAsyncWhenAnyAsyncCanBeUsedCodeAction : CodeAction
+        private class DoNotUseCountWhenAnyCanBeUsedCodeAction : CodeAction
         {
             private readonly bool isAsync;
             private readonly Document document;
@@ -89,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             private readonly IEnumerable<SyntaxNode> arguments;
             private readonly bool negate;
 
-            public DoNotUseCountAsyncWhenAnyAsyncCanBeUsedCodeAction(
+            public DoNotUseCountWhenAnyCanBeUsedCodeAction(
                 bool isAsync,
                 Document document,
                 SyntaxNode pattern,

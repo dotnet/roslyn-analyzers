@@ -11,7 +11,8 @@ Imports Microsoft.NetCore.Analyzers.Performance
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
     ''' <summary>
-    ''' CA1827: Do not use Count() when Any() can be used.
+    ''' CA1827: Do not use Count()/LongCount() when Any() can be used.
+    ''' CA1828: Do not use CountAsync()/LongCountAsync() when AnyAsync() can be used.
     ''' </summary>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicDoNotUseCountWhenAnyCanBeUsedFixer
@@ -196,23 +197,32 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
             End While
 
+            Dim invocationExpression As InvocationExpressionSyntax = Nothing
+
             If isAsync Then
 
                 Dim awaitExpressionSyntax = TryCast(sourceExpression, AwaitExpressionSyntax)
 
-                If awaitExpressionSyntax Is Nothing Then
+                If Not awaitExpressionSyntax Is Nothing Then
 
-                    expression = Nothing
-                    arguments = Nothing
-                    Return
+                    invocationExpression = TryCast(awaitExpressionSyntax.Expression, InvocationExpressionSyntax)
 
                 End If
 
-                sourceExpression = awaitExpressionSyntax.Expression
+            Else
+
+                invocationExpression = TryCast(sourceExpression, InvocationExpressionSyntax)
 
             End If
 
-            Dim invocationExpression = DirectCast(sourceExpression, InvocationExpressionSyntax)
+            If invocationExpression Is Nothing Then
+
+                expression = Nothing
+                arguments = Nothing
+                Return
+
+            End If
+
             expression = DirectCast(invocationExpression.Expression, MemberAccessExpressionSyntax).Expression
             arguments = invocationExpression.ArgumentList.ChildNodes()
 

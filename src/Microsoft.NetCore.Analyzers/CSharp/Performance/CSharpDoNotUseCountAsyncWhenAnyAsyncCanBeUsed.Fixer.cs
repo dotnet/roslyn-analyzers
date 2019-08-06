@@ -13,7 +13,8 @@ using Microsoft.NetCore.Analyzers.Performance;
 namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     /// <summary>
-    /// CA1827: Do not use Count() when Any() can be used.
+    /// CA1827: Do not use Count()/LongCount() when Any() can be used.
+    /// CA1828: Do not use CountAsync()/LongCountAsync() when AnyAsync() can be used.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpDoNotUseCountWhenAnyCanBeUsedFixer : DoNotUseCountWhenAnyCanBeUsedFixer
@@ -187,21 +188,27 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
                 sourceExpression = parenthesizedExpression.Expression;
             }
 
+            InvocationExpressionSyntax invocationExpression = null;
+
             if (isAsync)
             {
                 if (sourceExpression is AwaitExpressionSyntax awaitExpressionSyntax)
                 {
-                    sourceExpression = awaitExpressionSyntax.Expression;
-                }
-                else
-                {
-                    expression = default;
-                    arguments = default;
-                    return;
+                    invocationExpression = awaitExpressionSyntax.Expression as InvocationExpressionSyntax;
                 }
             }
+            else
+            {
+                invocationExpression = sourceExpression as InvocationExpressionSyntax;
+            }
 
-            var invocationExpression = (InvocationExpressionSyntax)sourceExpression;
+            if (invocationExpression is null)
+            {
+                expression = default;
+                arguments = default;
+                return;
+            }
+
             expression = ((MemberAccessExpressionSyntax)invocationExpression.Expression).Expression;
             arguments = invocationExpression.ArgumentList.ChildNodes();
         }

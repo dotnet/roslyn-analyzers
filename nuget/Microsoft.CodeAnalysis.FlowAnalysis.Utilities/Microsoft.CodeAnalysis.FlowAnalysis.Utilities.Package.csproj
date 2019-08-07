@@ -16,6 +16,9 @@
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
     <DevelopmentDependency>false</DevelopmentDependency>
+
+    <!-- Override the version prefix for this package to append a "revision" field to allow more frequent stable releases -->
+    <VersionPrefix>$(VersionPrefix).0</VersionPrefix>
   </PropertyGroup>
   
   <ItemGroup>

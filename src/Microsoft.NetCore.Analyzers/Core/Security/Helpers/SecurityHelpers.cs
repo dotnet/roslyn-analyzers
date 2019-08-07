@@ -116,7 +116,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
                 {
                     (typeof(MicrosoftNetCoreAnalyzersResources), MicrosoftNetCoreAnalyzersResources.ResourceManager),
                     (typeof(MicrosoftNetCoreAnalyzersResources), MicrosoftNetCoreAnalyzersResources.ResourceManager),
-                }.Select(o => new KeyValuePair<Type, ResourceManager>(o.Item1, o.Item2)));
+                }.Select(o => new KeyValuePair<Type, ResourceManager>(o.Item1, o.ResourceManager)));
 
         /// <summary>
         /// Methods using a <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/> parameter for <see cref="T:Newtonsoft.Json.JsonSerializer"/>.

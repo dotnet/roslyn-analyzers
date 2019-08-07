@@ -19,22 +19,20 @@ namespace Metrics
     {
         public static int Main(string[] args)
         {
-            using (var tokenSource = new CancellationTokenSource())
+            using var tokenSource = new CancellationTokenSource();
+            Console.CancelKeyPress += delegate
             {
-                Console.CancelKeyPress += delegate
-                {
-                    tokenSource.Cancel();
-                };
+                tokenSource.Cancel();
+            };
 
-                try
-                {
-                    return (int)RunAsync(args, tokenSource.Token).GetAwaiter().GetResult();
-                }
-                catch (OperationCanceledException)
-                {
-                    Console.WriteLine("Operation Cancelled.");
-                    return -1;
-                }
+            try
+            {
+                return (int)RunAsync(args, tokenSource.Token).GetAwaiter().GetResult();
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("Operation Cancelled.");
+                return -1;
             }
         }
 
@@ -165,7 +163,7 @@ namespace Metrics
                 return ErrorCode.None;
             }
 
-            ErrorCode usage()
+            static ErrorCode usage()
             {
                 Console.WriteLine(@"
 Usage: Metrics.exe <arguments>
@@ -189,31 +187,31 @@ Display this help message.");
                 return ErrorCode.Usage;
             }
 
-            ErrorCode fileNotExists(string path)
+            static ErrorCode fileNotExists(string path)
             {
                 Console.WriteLine($"Error: File '{path}' does not exist.");
                 return ErrorCode.FileNotExists;
             }
 
-            ErrorCode requiresProjectOrSolution()
+            static ErrorCode requiresProjectOrSolution()
             {
                 Console.WriteLine($"Error: No project or solution provided.");
                 return ErrorCode.RequiresProjectOrSolution;
             }
 
-            ErrorCode notASolution(string path)
+            static ErrorCode notASolution(string path)
             {
                 Console.WriteLine($"Error: File '{path}' is not a solution file.");
                 return ErrorCode.NotASolution;
             }
 
-            ErrorCode notASupportedProject(string path)
+            static ErrorCode notASupportedProject(string path)
             {
                 Console.WriteLine($"Error: File '{path}' is not a C# or VB project file.");
                 return ErrorCode.NotASupportedProject;
             }
 
-            ErrorCode invalidOutputFile(string path)
+            static ErrorCode invalidOutputFile(string path)
             {
                 Console.WriteLine($"Error: File '{path}' is not a valid output file.");
                 return ErrorCode.InvalidOutputFile;

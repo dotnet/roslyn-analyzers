@@ -1671,6 +1671,60 @@
               "Telemetry"
             ]
           }
+        },
+        "CA5392": {
+          "id": "CA5392",
+          "shortDescription": "Use DefaultDllImportSearchPaths attribute for P/Invokes",
+          "fullDescription": "By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "UseDefaultDllImportSearchPathsAttribute",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5393": {
+          "id": "CA5393",
+          "shortDescription": "Do not use unsafe DllImportSearchPath value",
+          "fullDescription": "There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "UseDefaultDllImportSearchPathsAttribute",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5394": {
+          "id": "CA5394",
+          "shortDescription": "Do not use insecure randomness",
+          "fullDescription": "{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureRandomness",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
         }
       }
     },

@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="it" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
+      <trans-unit id="DoNotUseUnsafeDllImportSearchPath">
+        <source>Do not use unsafe DllImportSearchPath value</source>
+        <target state="new">Do not use unsafe DllImportSearchPath value</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseUnsafeDllImportSearchPathDescription">
+        <source>There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.</source>
+        <target state="new">There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseUnsafeDllImportSearchPathMessage">
+        <source>Use of unsafe DllImportSearchPath value {0}</source>
+        <target state="new">Use of unsafe DllImportSearchPath value {0}</target>
+        <note />
+      </trans-unit>
       <trans-unit id="JsonNetInsecureSerializerMessage">
         <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
         <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
@@ -120,6 +135,21 @@
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsMessageFieldImplicitAnsi">
         <source>To reduce security risk, marshal field {0} as Unicode, by setting StructLayout.CharSet on {1} to CharSet.Unicode, or by explicitly marshaling the field as UnmanagedType.LPWStr. If you need to marshal this string as ANSI or system-dependent, specify MarshalAs explicitly, use the BestFitMapping attribute to turn best-fit mapping off, and for added security, to turn ThrowOnUnmappableChar on.</source>
         <target state="translated">Per ridurre i problemi di sicurezza, eseguire il marshalling del campo {0} come Unicode impostando StructLayout.CharSet in {1} su CharSet.Unicode o eseguendo in modo esplicito il marshalling del campo come UnmanagedType.LPWStr. Per eseguire il marshalling della stringa come ANSI o dipendente da sistema, specificare in modo esplicito MarshalAs, usare l'attributo BestFitMapping per disattivare il mapping più appropriato. Per maggiore sicurezza, assicurarsi che ThrowOnUnmappableChar sia attivato.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttribute">
+        <source>Use DefaultDllImportSearchPaths attribute for P/Invokes</source>
+        <target state="new">Use DefaultDllImportSearchPaths attribute for P/Invokes</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttributeDescription">
+        <source>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</source>
+        <target state="new">By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseDefaultDllImportSearchPathsAttributeMessage">
+        <source>The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</source>
+        <target state="new">The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiTitle">

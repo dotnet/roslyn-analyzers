@@ -2,14 +2,11 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.NetCore.Analyzers;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
@@ -234,17 +231,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// </summary>
         private sealed class OperationActionsHandler
         {
-            private readonly INamedTypeSymbol targetType;
-            private readonly ImmutableHashSet<string> targetMethodNames;
-            private readonly bool isAsync;
-            private readonly DiagnosticDescriptor rule;
+            private readonly INamedTypeSymbol _targetType;
+            private readonly ImmutableHashSet<string> _targetMethodNames;
+            private readonly bool _isAsync;
+            private readonly DiagnosticDescriptor _rule;
 
             public OperationActionsHandler(INamedTypeSymbol targetType, ImmutableHashSet<string> targetMethodNames, bool isAsync, DiagnosticDescriptor rule)
             {
-                this.targetType = targetType;
-                this.targetMethodNames = targetMethodNames;
-                this.isAsync = isAsync;
-                this.rule = rule;
+                this._targetType = targetType;
+                this._targetMethodNames = targetMethodNames;
+                this._isAsync = isAsync;
+                this._rule = rule;
             }
 
             /// <summary>
@@ -258,13 +255,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (invocationOperation.Arguments.Length == 1)
                 {
                     var method = invocationOperation.TargetMethod;
-                    string methodName;
                     if (IsInt32EqualsMethod(method) &&
-                        (IsCountEqualsZero(invocationOperation, out methodName) || IsZeroEqualsCount(invocationOperation, out methodName)))
+                        (IsCountEqualsZero(invocationOperation, out var methodName) || IsZeroEqualsCount(invocationOperation, out methodName)))
                     {
                         context.ReportDiagnostic(
                             invocationOperation.Syntax.CreateDiagnostic(
-                                this.rule,
+                                this._rule,
                                 methodName));
                     }
                 }
@@ -278,13 +274,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var binaryOperation = (IBinaryOperation)context.Operation;
 
-                string methodName;
                 if (binaryOperation.IsComparisonOperator() &&
-                    (IsLeftCountComparison(binaryOperation, out methodName) || IsRightCountComparison(binaryOperation, out methodName)))
+                    (IsLeftCountComparison(binaryOperation, out var methodName) || IsRightCountComparison(binaryOperation, out methodName)))
                 {
                     context.ReportDiagnostic(
                         binaryOperation.Syntax.CreateDiagnostic(
-                            this.rule,
+                            this._rule,
                             methodName));
                 }
             }
@@ -301,13 +296,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks whether the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
+            /// Checks whether the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 using <see cref="int.Equals(int)"/>.
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
             /// 
             /// 
-            /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
+            /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
             private bool IsCountEqualsZero(IInvocationOperation invocationOperation, out string methodName)
             {
@@ -321,11 +316,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks whether 0 is being compared with the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
+            /// Checks whether 0 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// using <see cref="int.Equals(int)"/>.
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
-            /// <returns><see langword="true" /> if 0 is being compared with the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
+            /// <returns><see langword="true" /> if 0 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
             private bool IsZeroEqualsCount(IInvocationOperation invocationOperation, out string methodName)
             {
@@ -339,12 +334,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks whether the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
+            /// Checks whether the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 or 1 using <see cref="int" /> comparison operators.
             /// </summary>
             /// <param name="binaryOperation">The binary operation.</param>
-            /// <param name="methodName">If the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
-            /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
+            /// <param name="methodName">If the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
+            /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
             private bool IsLeftCountComparison(IBinaryOperation binaryOperation, out string methodName)
             {
@@ -378,12 +373,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks whether 0 or 1 is being compared with the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
+            /// Checks whether 0 or 1 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// using <see cref="int" /> comparison operators.
             /// </summary>
             /// <param name="binaryOperation">The binary operation.</param>
-            /// <param name="methodName">If the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
-            /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />
+            /// <param name="methodName">If the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
+            /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
             private bool IsRightCountComparison(IBinaryOperation binaryOperation, out string methodName)
             {
@@ -444,11 +439,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks the <paramref name="operation" /> is an invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />.
+            /// Checks the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />.
             /// </summary>
             /// <param name="operation">The operation.</param>
-            /// <param name="methodName">If the <paramref name="operation" /> is an invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
-            /// <returns><see langword="true" /> if the <paramref name="operation" /> is an invocation of one of the <see cref="targetMethodNames" /> in the <see cref="targetType" />;
+            /// <param name="methodName">If the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
+            /// <returns><see langword="true" /> if the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />;
             /// <see langword="false" /> otherwise.</returns>
             private bool IsCountMethodInvocationAwaited(IOperation operation, out string methodName)
             {
@@ -459,7 +454,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     operation = parenthesizedOperation.Operand;
                 }
 
-                if (this.isAsync)
+                if (this._isAsync)
                 {
                     if (operation is IAwaitOperation awaitOperation)
                     {
@@ -472,8 +467,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
 
                 if (operation is IInvocationOperation invocationOperation &&
-                    this.targetMethodNames.Contains(invocationOperation.TargetMethod.Name) &&
-                    invocationOperation.TargetMethod.ContainingSymbol.Equals(this.targetType))
+                    this._targetMethodNames.Contains(invocationOperation.TargetMethod.Name) &&
+                    invocationOperation.TargetMethod.ContainingSymbol.Equals(this._targetType))
                 {
                     methodName = invocationOperation.TargetMethod.Name;
                     return true;

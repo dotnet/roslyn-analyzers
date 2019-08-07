@@ -77,12 +77,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private class DoNotUseCountWhenAnyCanBeUsedCodeAction : CodeAction
         {
-            private readonly bool isAsync;
-            private readonly Document document;
-            private readonly SyntaxNode pattern;
-            private readonly SyntaxNode expression;
-            private readonly IEnumerable<SyntaxNode> arguments;
-            private readonly bool negate;
+            private readonly bool _isAsync;
+            private readonly Document _document;
+            private readonly SyntaxNode _pattern;
+            private readonly SyntaxNode _expression;
+            private readonly IEnumerable<SyntaxNode> _arguments;
+            private readonly bool _negate;
 
             public DoNotUseCountWhenAnyCanBeUsedCodeAction(
                 bool isAsync,
@@ -92,12 +92,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 IEnumerable<SyntaxNode> arguments,
                 bool negate)
             {
-                this.isAsync = isAsync;
-                this.document = document;
-                this.pattern = pattern;
-                this.expression = expression;
-                this.arguments = arguments;
-                this.negate = negate;
+                this._isAsync = isAsync;
+                this._document = document;
+                this._pattern = pattern;
+                this._expression = expression;
+                this._arguments = arguments;
+                this._negate = negate;
             }
 
             public override string Title { get; } = MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle;
@@ -106,26 +106,26 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
-                var editor = await DocumentEditor.CreateAsync(this.document, cancellationToken).ConfigureAwait(false);
+                var editor = await DocumentEditor.CreateAsync(this._document, cancellationToken).ConfigureAwait(false);
                 var generator = editor.Generator;
-                var memberAccess = generator.MemberAccessExpression(this.expression.WithoutTrailingTrivia(), this.isAsync ? AsyncMethodName : SyncMethodName);
-                var replacementSyntax = generator.InvocationExpression(memberAccess, arguments);
+                var memberAccess = generator.MemberAccessExpression(this._expression.WithoutTrailingTrivia(), this._isAsync ? AsyncMethodName : SyncMethodName);
+                var replacementSyntax = generator.InvocationExpression(memberAccess, _arguments);
 
-                if (this.isAsync)
+                if (this._isAsync)
                 {
                     replacementSyntax = generator.AwaitExpression(replacementSyntax);
                 }
 
-                if (this.negate)
+                if (this._negate)
                 {
                     replacementSyntax = generator.LogicalNotExpression(replacementSyntax);
                 }
 
                 replacementSyntax = replacementSyntax
                     .WithAdditionalAnnotations(Formatter.Annotation)
-                    .WithTriviaFrom(this.pattern);
+                    .WithTriviaFrom(this._pattern);
 
-                editor.ReplaceNode(this.pattern, replacementSyntax);
+                editor.ReplaceNode(this._pattern, replacementSyntax);
 
                 return editor.GetChangedDocument();
             }

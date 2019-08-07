@@ -235,7 +235,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             {
                 if (symbol != null)
                 {
-                    builder = builder ?? ImmutableArray.CreateBuilder<INamedTypeSymbol>();
+                    builder ??= ImmutableArray.CreateBuilder<INamedTypeSymbol>();
                     builder.Add(symbol);
                 }
             }

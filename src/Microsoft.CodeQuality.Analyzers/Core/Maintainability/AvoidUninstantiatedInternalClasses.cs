@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -140,7 +139,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             }
                             else if (typeArg is ITypeParameterSymbol typeParameterArg && !typeParameterArg.ConstraintTypes.IsEmpty)
                             {
-                                IEnumerable<INamedTypeSymbol> GetAllNamedTypeConstraints(ITypeParameterSymbol t)
+                                static IEnumerable<INamedTypeSymbol> GetAllNamedTypeConstraints(ITypeParameterSymbol t)
                                 {
                                     var directConstraints = t.ConstraintTypes.OfType<INamedTypeSymbol>();
                                     var inheritedConstraints = t.ConstraintTypes.OfType<ITypeParameterSymbol>()

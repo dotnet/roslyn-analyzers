@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
@@ -116,10 +115,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     methodSymbol.Name));
                         }
                     }
-                    else
+                    else if (invocationOperation.TryGetEnclosingControlFlowGraph(out var cfg))
                     {
                         var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(
-                            invocationOperation.GetEnclosingControlFlowGraph(),
+                            cfg,
                             operationAnalysisContext.ContainingSymbol,
                             operationAnalysisContext.Options,
                             wellKnownTypeProvider,

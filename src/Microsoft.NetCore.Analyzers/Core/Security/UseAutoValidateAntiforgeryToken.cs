@@ -30,7 +30,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription),
             customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor MissHttpVerbAttributeRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5394",
+            "CA5395",
             typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttribute),
             nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttributeMessage),
@@ -82,10 +82,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
-                var httpVerbAttributeTypeSymbols = HttpVerbAttributesMarkingOnActionModifyingMethods.Select(
+                var httpVerbAttributeTypeSymbolsAbleToModify = HttpVerbAttributesMarkingOnActionModifyingMethods.Select(
                     s => wellKnownTypeProvider.TryGetTypeByMetadataName(s, out var attributeTypeSymbol) ? attributeTypeSymbol : null);
 
-                if (httpVerbAttributeTypeSymbols.Any(s => s == null))
+                if (httpVerbAttributeTypeSymbolsAbleToModify.Any(s => s == null))
                 {
                     return;
                 }
@@ -219,52 +219,39 @@ namespace Microsoft.NetCore.Analyzers.Security
                     if (baseTypes.Contains(controllerTypeSymbol) ||
                         baseTypes.Contains(controllerBaseTypeSymbol))
                     {
-                        var currentControllerIsSafe = false;
-
-                        // The controller class is protected by a validate anti forgery token attribute
-                        if (derivedControllerTypeSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
+                        // The controller class is not protected by a validate anti forgery token attribute
+                        if (!IsUsingAntiFogeryAttribute(derivedControllerTypeSymbol))
                         {
-                            usingValidateAntiForgeryAttribute = true;
-                            currentControllerIsSafe = true;
-                        }
 
-                        foreach (var actionMethodSymbol in derivedControllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
-                        {
-                            if (actionMethodSymbol.MethodKind == MethodKind.Constructor)
+                            foreach (var actionMethodSymbol in derivedControllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
                             {
-                                continue;
-                            }
-
-                            if (actionMethodSymbol.IsPublic() &&
-                                !actionMethodSymbol.IsStatic &&
-                                !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol))
-                            {
-                                // The method is protected by a validate anti forgery token attribute
-                                if (currentControllerIsSafe || actionMethodSymbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
+                                if (actionMethodSymbol.MethodKind == MethodKind.Constructor)
                                 {
-                                    usingValidateAntiForgeryAttribute = true;
-
-                                    if (!actionMethodSymbol.GetAttributes().Any(s => s.AttributeClass.GetBaseTypes().Contains(httpMethodAttributeTypeSymbol)))
-                                    {
-                                        actionMethodNeedAddingHttpVerbAttributeSymbols.Add(actionMethodSymbol);
-                                    }
+                                    continue;
                                 }
-                                else
+
+                                if (actionMethodSymbol.IsPublic() &&
+                                    !actionMethodSymbol.IsStatic &&
+                                    !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol))
                                 {
-                                    var httpVerbAttributeTypeSymbol = actionMethodSymbol.GetAttributes().FirstOrDefault(s => httpVerbAttributeTypeSymbols.Contains(s.AttributeClass));
-
-                                    if (httpVerbAttributeTypeSymbol != null)
+                                    // The method is not protected by a validate anti forgery token attribute
+                                    if (!IsUsingAntiFogeryAttribute(actionMethodSymbol))
                                     {
-                                        var attributeName = httpVerbAttributeTypeSymbol.AttributeClass.Name;
-                                        actionMethodSymbols.Add(
-                                            (actionMethodSymbol,
-                                            attributeName.EndsWith("Attribute", StringComparison.Ordinal) ? attributeName.Remove(attributeName.Length - "Attribute".Length) : attributeName));
-                                    }
-                                    else if (!actionMethodSymbol.GetAttributes().Any(s => s.AttributeClass.GetBaseTypes().Contains(httpMethodAttributeTypeSymbol)))
-                                    {
-                                        actionMethodSymbols.Add((actionMethodSymbol, "Http"));
-                                    }
+                                        var httpVerbAttributeTypeSymbolAbleToModify = actionMethodSymbol.GetAttributes().FirstOrDefault(s => httpVerbAttributeTypeSymbolsAbleToModify.Contains(s.AttributeClass));
 
+                                        if (httpVerbAttributeTypeSymbolAbleToModify != null)
+                                        {
+                                            var attributeName = httpVerbAttributeTypeSymbolAbleToModify.AttributeClass.Name;
+                                            actionMethodSymbols.Add(
+                                                (actionMethodSymbol,
+                                                attributeName.EndsWith("Attribute", StringComparison.Ordinal) ? attributeName.Remove(attributeName.Length - "Attribute".Length) : attributeName));
+                                        }
+                                        else if (!actionMethodSymbol.GetAttributes().Any(s => s.AttributeClass.GetBaseTypes().Contains(httpMethodAttributeTypeSymbol)))
+                                        {
+                                            actionMethodNeedAddingHttpVerbAttributeSymbols.Add((actionMethodSymbol));
+                                        }
+
+                                    }
                                 }
                             }
                         }
@@ -353,6 +340,20 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 Debug.Fail(child.Name + " was not found in results.");
                             }
                         }
+                    }
+                }
+
+                bool IsUsingAntiFogeryAttribute(ISymbol symbol)
+                {
+                    if (symbol.GetAttributes().Any(s => s_AntiForgeryAttributeRegex.IsMatch(s.AttributeClass.Name)))
+                    {
+                        usingValidateAntiForgeryAttribute = true;
+
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
                     }
                 }
             });

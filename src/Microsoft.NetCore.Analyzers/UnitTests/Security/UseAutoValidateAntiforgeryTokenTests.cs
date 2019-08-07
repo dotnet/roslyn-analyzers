@@ -336,28 +336,7 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ValidateAntiForgeryTokenAttributeOnActionMethod_ActionMethodMissingHttpVerbAttribute_Diagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Antiforgery.Internal;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-
-class TestClass : ControllerBase
-{
-    [MyValidateAntiForgeryAttribute]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
-    {
-        return null;
-    }
-}",
-            GetCSharpResultAt(11, 44, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "AcceptedAtAction"));
-        }
-
-        [Fact]
-        public void Test_ValidateAntiForgeryTokenAttributeOnController_ActionMethodMissingHttpVerbAttribute_Diagnostic()
+        public void Test_NoValidateAntiForgeryTokenAttribute_ActionMethodMissingHttpVerbAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System.Threading.Tasks;
@@ -367,6 +346,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
 class TestClass : ControllerBase
 {
     public override AcceptedAtActionResult AcceptedAtAction (string actionName)
@@ -374,7 +357,7 @@ class TestClass : ControllerBase
         return null;
     }
 }",
-            GetCSharpResultAt(11, 44, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "AcceptedAtAction"));
+            GetCSharpResultAt(15, 44, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "AcceptedAtAction"));
         }
 
         [Fact]
@@ -1265,6 +1248,110 @@ class TestClass : ControllerBase
     public override AcceptedAtActionResult AcceptedAtAction (string actionName)
     {
         return null;
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_ValidateAntiForgeryTokenAttributeOnActionMethod_ActionMethodMissingHttpVerbAttribute_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+class TestClass : ControllerBase
+{
+    [MyValidateAntiForgeryAttribute]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_ValidateAntiForgeryTokenAttributeOnController_ActionMethodMissingHttpVerbAttribute_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class TestClass : ControllerBase
+{
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_NoValidateAntiForgeryTokenAttribute_ActionMethodMissingHttpVerbAttribute_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+class TestClass : ControllerBase
+{
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_GlobalAntiForgeryFilter_ActionMethodMissingHttpVerbAttribute_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class FilterClass : IAsyncAuthorizationFilter 
+{
+    public DefaultAntiforgery defaultAntiforgery;
+
+    public Task OnAuthorizationAsync (AuthorizationFilterContext context)
+    {
+        HttpContext httpContext = null;
+
+        return defaultAntiforgery.ValidateRequestAsync(httpContext);
+    }
+}
+
+class TestClass : ControllerBase
+{
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}
+
+class BlahClass
+{
+    public void TestMethod ()
+    {
+        var filterCollection = new FilterCollection ();
+        filterCollection.Add(typeof(FilterClass));
     }
 }");
         }

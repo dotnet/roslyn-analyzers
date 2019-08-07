@@ -117,15 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DoNotUseCountWhenAnyCanBeUsedDescription" xml:space="preserve">
-    <value>For non-empty collections, Count() enumerates the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</value>
-  </data>
-  <data name="DoNotUseCountWhenAnyCanBeUsedMessage" xml:space="preserve">
-    <value>Count() is used where Any() could be used instead to improve performance.</value>
-  </data>
-  <data name="DoNotUseCountWhenAnyCanBeUsedTitle" xml:space="preserve">
-    <value>Do not use Count() when Any() can be used</value>
-  </data>
   <data name="AvoidAsyncVoidTitle" xml:space="preserve">
     <value>Avoid Async Void</value>
   </data>

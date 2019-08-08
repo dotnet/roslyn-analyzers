@@ -152,6 +152,21 @@
         <target state="translated">Come dichiarato nel codice, il valore del tipo restituito di P/Invoke {0} sarà pari a {1} byte sulle piattaforme {2}. Questo non è corretto perché l'effettiva dichiarazione nativa di questa API indica che deve essere pari a {3} byte sulle piattaforme {2}. Consultare la documentazione di MSDN Platform SDK per informazioni su come determinare il tipo di dati da usare al posto di {4}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookie">
+        <source>Set HttpOnly to true for HttpCookie</source>
+        <target state="new">Set HttpOnly to true for HttpCookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieDescription">
+        <source>Websites that use cookies must specify HttpOnly for all cookies containing sensitive information that are not explicitly required by legitimate scripts in the webpage. Eg. Of sensitive cookies are those used in authentication, authorization, session management or that otherwise contain PII.</source>
+        <target state="new">Websites that use cookies must specify HttpOnly for all cookies containing sensitive information that are not explicitly required by legitimate scripts in the webpage. Eg. Of sensitive cookies are those used in authentication, authorization, session management or that otherwise contain PII.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieMessage">
+        <source>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</source>
+        <target state="new">HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">Specificare il marshalling per gli argomenti stringa P/Invoke</target>

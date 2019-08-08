@@ -152,6 +152,21 @@
         <target state="translated">Как объявлено в вашем коде, тип возвращаемого значения для P/Invoke {0} будет иметь размер {1} байт для платформ {2}. Это неправильно, так как текущее объявление в машинном коде для данного API указывает, что его размер должен быть {3} байт для платформ {2}. Обратитесь к документации по пакету SDK для платформы MSDN и выясните, какой тип данных следует использовать вместо {4}.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookie">
+        <source>Set HttpOnly to true for HttpCookie</source>
+        <target state="new">Set HttpOnly to true for HttpCookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieDescription">
+        <source>Websites that use cookies must specify HttpOnly for all cookies containing sensitive information that are not explicitly required by legitimate scripts in the webpage. Eg. Of sensitive cookies are those used in authentication, authorization, session management or that otherwise contain PII.</source>
+        <target state="new">Websites that use cookies must specify HttpOnly for all cookies containing sensitive information that are not explicitly required by legitimate scripts in the webpage. Eg. Of sensitive cookies are those used in authentication, authorization, session management or that otherwise contain PII.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieMessage">
+        <source>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</source>
+        <target state="new">HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">Укажите маршалинг для строковых аргументов P/Invoke</target>

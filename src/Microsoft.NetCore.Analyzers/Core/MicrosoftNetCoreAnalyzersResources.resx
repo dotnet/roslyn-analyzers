@@ -1119,4 +1119,13 @@
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle" xml:space="preserve">
     <value>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</value>
   </data>
+  <data name="SetHttpOnlyForHttpCookie" xml:space="preserve">
+    <value>Set HttpOnly to true for HttpCookie</value>
+  </data>
+  <data name="SetHttpOnlyForHttpCookieDescription" xml:space="preserve">
+    <value>Websites that use cookies must specify HttpOnly for all cookies containing sensitive information that are not explicitly required by legitimate scripts in the webpage. Eg. Of sensitive cookies are those used in authentication, authorization, session management or that otherwise contain PII.</value>
+  </data>
+  <data name="SetHttpOnlyForHttpCookieMessage" xml:space="preserve">
+    <value>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</value>
+  </data>
 </root>

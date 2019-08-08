@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="tr" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
+      <trans-unit id="DoNotUseInsecureRandomness">
+        <source>Do not use insecure randomness</source>
+        <target state="new">Do not use insecure randomness</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseInsecureRandomnessDescription">
+        <source>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security</source>
+        <target state="new">{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseInsecureRandomnessMessage">
+        <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</source>
+        <target state="new">Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPath">
         <source>Do not use unsafe DllImportSearchPath value</source>
         <target state="new">Do not use unsafe DllImportSearchPath value</target>
@@ -35,6 +50,36 @@
       <trans-unit id="JsonNetMaybeInsecureSerializerTitle">
         <source>Ensure that JsonSerializer has a secure configuration when deserializing</source>
         <target state="new">Ensure that JsonSerializer has a secure configuration when deserializing</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
+        <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
+        <target state="new">For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
+        <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
+        <target state="new">{0}() is used where AnyAsync() could be used instead to improve performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
+        <source>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</source>
+        <target state="new">Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
+        <source>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
+        <target state="new">For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
+        <source>{0}() is used where Any() could be used instead to improve performance.</source>
+        <target state="new">{0}() is used where Any() could be used instead to improve performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
+        <source>Do not use Count() or LongCount() when Any() can be used</source>
+        <target state="new">Do not use Count() or LongCount() when Any() can be used</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">

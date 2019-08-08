@@ -228,6 +228,15 @@
   <data name="UseOrdinalStringComparisonMessageStringComparer" xml:space="preserve">
     <value>{0} passes '{1}' as the 'StringComparer' parameter to {2}. To perform a non-linguistic comparison, specify 'StringComparer.Ordinal' or 'StringComparer.OrdinalIgnoreCase' instead.</value>
   </data>
+  <data name="DoNotUseCountWhenAnyCanBeUsedDescription" xml:space="preserve">
+    <value>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</value>
+  </data>
+  <data name="DoNotUseCountWhenAnyCanBeUsedMessage" xml:space="preserve">
+    <value>{0}() is used where Any() could be used instead to improve performance.</value>
+  </data>
+  <data name="DoNotUseCountWhenAnyCanBeUsedTitle" xml:space="preserve">
+    <value>Do not use Count() or LongCount() when Any() can be used</value>
+  </data>
   <data name="DoNotUseTimersThatPreventPowerStateChangesTitle" xml:space="preserve">
     <value>Do not use timers that prevent power state changes</value>
   </data>
@@ -1091,5 +1100,23 @@
   </data>
   <data name="DoNotUseUnsafeDllImportSearchPathMessage" xml:space="preserve">
     <value>Use of unsafe DllImportSearchPath value {0}</value>
+  </data>
+  <data name="DoNotUseInsecureRandomness" xml:space="preserve">
+    <value>Do not use insecure randomness</value>
+  </data>
+  <data name="DoNotUseInsecureRandomnessDescription" xml:space="preserve">
+    <value>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security</value>
+  </data>
+  <data name="DoNotUseInsecureRandomnessMessage" xml:space="preserve">
+    <value>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</value>
+  </data>
+  <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription" xml:space="preserve">
+    <value>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</value>
+  </data>
+  <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage" xml:space="preserve">
+    <value>{0}() is used where AnyAsync() could be used instead to improve performance.</value>
+  </data>
+  <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle" xml:space="preserve">
+    <value>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</value>
   </data>
 </root>

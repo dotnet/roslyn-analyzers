@@ -449,10 +449,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 methodName = null;
 
-                while (operation is IParenthesizedOperation parenthesizedOperation)
-                {
-                    operation = parenthesizedOperation.Operand;
-                }
+                operation = operation.WalkDownParenthesis();
 
                 if (this._isAsync)
                 {

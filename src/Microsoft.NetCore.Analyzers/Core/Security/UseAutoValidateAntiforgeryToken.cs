@@ -215,14 +215,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var derivedControllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
                     var baseTypes = derivedControllerTypeSymbol.GetBaseTypes();
 
-                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`)
+                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`).
                     if (baseTypes.Contains(controllerTypeSymbol) ||
                         baseTypes.Contains(controllerBaseTypeSymbol))
                     {
-                        // The controller class is not protected by a validate anti forgery token attribute
+                        // The controller class is not protected by a validate anti forgery token attribute.
                         if (!IsUsingAntiFogeryAttribute(derivedControllerTypeSymbol))
                         {
-
                             foreach (var actionMethodSymbol in derivedControllerTypeSymbol.GetMembers().OfType<IMethodSymbol>())
                             {
                                 if (actionMethodSymbol.MethodKind == MethodKind.Constructor)
@@ -231,10 +230,28 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 }
 
                                 if (actionMethodSymbol.IsPublic() &&
-                                    !actionMethodSymbol.IsStatic &&
-                                    !actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol))
+                                    !actionMethodSymbol.IsStatic)
                                 {
-                                    // The method is not protected by a validate anti forgery token attribute
+                                    var hasNonActionAttribute = actionMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol);
+                                    var overridenMethodSymbol = actionMethodSymbol as ISymbol;
+
+                                    while (!hasNonActionAttribute && overridenMethodSymbol.IsOverride)
+                                    {
+                                        overridenMethodSymbol = overridenMethodSymbol.GetOverriddenMember();
+
+                                        if (overridenMethodSymbol.HasAttribute(nonActionAttributeTypeSymbol))
+                                        {
+                                            hasNonActionAttribute = true;
+                                        }
+                                    }
+
+                                    // The method has [NonAction].
+                                    if (hasNonActionAttribute)
+                                    {
+                                        continue;
+                                    }
+
+                                    // The method is not protected by a validate anti forgery token attribute.
                                     if (!IsUsingAntiFogeryAttribute(actionMethodSymbol))
                                     {
                                         var httpVerbAttributeTypeSymbolAbleToModify = actionMethodSymbol.GetAttributes().FirstOrDefault(s => httpVerbAttributeTypeSymbolsAbleToModify.Contains(s.AttributeClass));

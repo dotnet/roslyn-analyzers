@@ -45,7 +45,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -59,7 +59,7 @@ class BlahClass
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-            GetCSharpResultAt(26, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
+            GetCSharpResultAt(26, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -90,7 +90,7 @@ class FilterClass : IAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -104,7 +104,7 @@ class BlahClass
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-            GetCSharpResultAt(26, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
+            GetCSharpResultAt(26, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -121,12 +121,12 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 class TestClass : ControllerBase
 {
     [HttpPost]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPost"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
         }
 
         [Fact]
@@ -144,12 +144,12 @@ class TestClass : ControllerBase
 {
     [HttpGet]
     [HttpPost]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPost"));
+            GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
         }
 
         [Fact]
@@ -166,12 +166,12 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 class TestClass : ControllerBase
 {
     [HttpPut]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPut"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"));
         }
 
         [Fact]
@@ -189,12 +189,12 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
+            GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -212,12 +212,12 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 class TestClass : ControllerBase
 {
     [HttpPatch]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(13, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPatch"));
+            GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPatch"));
         }
 
         [Fact]
@@ -234,12 +234,12 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 class TestClass : Controller
 {
     [HttpPost]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPost"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
         }
 
         [Fact]
@@ -256,12 +256,12 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 class TestClass : Controller
 {
     [HttpPut]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpPut"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"));
         }
 
         [Fact]
@@ -278,34 +278,12 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 class TestClass : Controller
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(12, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
-        }
-
-        [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodNotDerivedFromParentClass_Diagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using Microsoft.AspNetCore.Mvc;
-
-[MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
-{
-}
-
-class TestClass : ControllerBase
-{
-    [HttpPost]
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
-    {
-        return null;
-    }
-}",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "SubAcceptedAtAction", "HttpPost"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -327,12 +305,12 @@ class TestClass : ControllerBase
 {
     [HttpDelete]
     [HttpPost]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(17, 44, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "AcceptedAtAction", "HttpDelete"));
+            GetCSharpResultAt(17, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -352,12 +330,12 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 
 class TestClass : ControllerBase
 {
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
 }",
-            GetCSharpResultAt(15, 44, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "AcceptedAtAction"));
+            GetCSharpResultAt(15, 35, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "CustomizedActionMethod"));
         }
 
         [Fact]
@@ -390,7 +368,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -449,7 +427,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -507,7 +485,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -563,7 +541,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -617,7 +595,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -664,7 +642,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -718,7 +696,7 @@ class MyAntiforgery : IAntiforgery
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -769,7 +747,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -829,7 +807,7 @@ class MyAntiforgery : IAntiforgery
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -879,7 +857,7 @@ class FilterClass : IMyAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -925,7 +903,7 @@ class FilterClass : IAsyncAuthorizationFilter
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -963,7 +941,7 @@ class FilterClass : IFilterMetadata
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1005,7 +983,7 @@ class MyValidateAntiForgeryClass : IMyFilterMetadata
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1043,7 +1021,7 @@ class FilterClass : IFilterMetadata
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1085,7 +1063,7 @@ class MyValidateAntiForgeryClass : IMyFilterMetadata
 class TestClass : ControllerBase
 {
     [HttpDelete]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1102,7 +1080,7 @@ class BlahClass
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodNotPublic_NoDiagnostic()
+        public void Test_ActionMethodIsNotPublic_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
@@ -1115,7 +1093,7 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 class TestClass : ControllerBase
 {
     [HttpPost]
-    private AcceptedAtActionResult SubAcceptedAtAction (string actionName)
+    private AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1123,7 +1101,7 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodIsStatic_NoDiagnostic()
+        public void Test_ActionMethodIsStatic_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
@@ -1136,7 +1114,7 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 class TestClass : ControllerBase
 {
     [HttpPost]
-    public static AcceptedAtActionResult SubAcceptedAtAction (string actionName)
+    public static AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1144,7 +1122,7 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodWithNonActionAttribute_NoDiagnostic()
+        public void Test_ActionMethodWithNonActionAttribute_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
@@ -1157,7 +1135,7 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass
 class TestClass : ControllerBase
 {
     [NonAction]
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1165,14 +1143,35 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodWitoutAttribute_NoDiagnostic()
+        public void Test_OverridenMethodWithNonActionAttribute_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using Microsoft.AspNetCore.Mvc;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class TestClass : Controller
+{
+    [HttpDelete]
+    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    {
+        return null;
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_ActionMethodWitoutAttribute_NoDiagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
 class TestClass : ControllerBase
 {
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1190,7 +1189,7 @@ class TestClass : ControllerBase
 {
     [MyValidateAntiForgeryAttribute]
     [HttpPost]
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1208,7 +1207,7 @@ using Microsoft.AspNetCore.Mvc;
 class TestClass : ControllerBase
 {
     [HttpPost]
-    public AcceptedAtActionResult SubAcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1224,7 +1223,7 @@ using Microsoft.AspNetCore.Mvc;
 class TestClass : ControllerBase
 {
     [HttpPost]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1245,7 +1244,7 @@ class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
 class TestClass : ControllerBase
 {
     [HttpGet]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1265,7 +1264,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 class TestClass : ControllerBase
 {
     [MyValidateAntiForgeryAttribute]
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1285,7 +1284,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 [MyValidateAntiForgeryAttribute]
 class TestClass : ControllerBase
 {
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1304,7 +1303,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 class TestClass : ControllerBase
 {
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }
@@ -1340,7 +1339,7 @@ class FilterClass : IAsyncAuthorizationFilter
 
 class TestClass : ControllerBase
 {
-    public override AcceptedAtActionResult AcceptedAtAction (string actionName)
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
         return null;
     }

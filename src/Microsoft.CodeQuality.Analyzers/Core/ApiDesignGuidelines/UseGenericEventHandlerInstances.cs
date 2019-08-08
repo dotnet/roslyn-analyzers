@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
@@ -90,7 +89,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    bool IsDelegateTypeWithInvokeMethod(INamedTypeSymbol namedType) =>
+                    static bool IsDelegateTypeWithInvokeMethod(INamedTypeSymbol namedType) =>
                         namedType.TypeKind == TypeKind.Delegate && namedType.DelegateInvokeMethod != null;
 
                     bool IsEventArgsParameter(IParameterSymbol parameter)

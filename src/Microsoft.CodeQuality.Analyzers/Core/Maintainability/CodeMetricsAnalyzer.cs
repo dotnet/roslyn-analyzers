@@ -237,7 +237,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     return getDefaultThreshold(ruleId, symbolKind);
                 }
 
-                bool isApplicableByDefault(string ruleId, SymbolKind symbolKind)
+                static bool isApplicableByDefault(string ruleId, SymbolKind symbolKind)
                 {
                     switch (ruleId)
                     {
@@ -280,7 +280,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     }
                 }
 
-                uint? getDefaultThreshold(string ruleId, SymbolKind symbolKind)
+                static uint? getDefaultThreshold(string ruleId, SymbolKind symbolKind)
                 {
                     if (!isApplicableByDefault(ruleId, symbolKind))
                     {
@@ -460,7 +460,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     string arg2 = Path.GetFileName(additionalText.Path);
                     LinePositionSpan linePositionSpan = lines.GetLinePositionSpan(line.Span);
                     Location location = Location.Create(additionalText.Path, line.Span, linePositionSpan);
-                    invalidFileDiagnostics = invalidFileDiagnostics ?? new List<Diagnostic>();
+                    invalidFileDiagnostics ??= new List<Diagnostic>();
                     var diagnostic = Diagnostic.Create(InvalidEntryInCodeMetricsConfigFileRule, location, arg1, arg2);
                     invalidFileDiagnostics.Add(diagnostic);
                 }

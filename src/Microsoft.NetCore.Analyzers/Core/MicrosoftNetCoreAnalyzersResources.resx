@@ -1115,6 +1115,7 @@
   </data>
   <data name="MissHttpVerbAttributeMessage" xml:space="preserve">
     <value>Action method {0} needs to specify the Http request kind explictly</value>
+  </data>
   <data name="DoNotUseInsecureRandomness" xml:space="preserve">
     <value>Do not use insecure randomness</value>
   </data>

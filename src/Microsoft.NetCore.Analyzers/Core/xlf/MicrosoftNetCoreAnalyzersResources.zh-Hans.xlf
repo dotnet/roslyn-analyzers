@@ -60,6 +60,8 @@
       <trans-unit id="MissHttpVerbAttributeMessage">
         <source>Action method {0} needs to specify the Http request kind explictly</source>
         <target state="new">Action method {0} needs to specify the Http request kind explictly</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
         <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
         <target state="new">For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</target>

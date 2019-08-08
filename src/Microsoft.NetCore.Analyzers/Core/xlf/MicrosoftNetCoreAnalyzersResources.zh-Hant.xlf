@@ -158,8 +158,8 @@
         <note />
       </trans-unit>
       <trans-unit id="SetHttpOnlyForHttpCookieDescription">
-        <source>Websites that use cookies must specify HttpOnly for all cookies containing sensitive information that are not explicitly required by legitimate scripts in the webpage. Eg. Of sensitive cookies are those used in authentication, authorization, session management or that otherwise contain PII.</source>
-        <target state="new">Websites that use cookies must specify HttpOnly for all cookies containing sensitive information that are not explicitly required by legitimate scripts in the webpage. Eg. Of sensitive cookies are those used in authentication, authorization, session management or that otherwise contain PII.</target>
+        <source>As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</source>
+        <target state="new">As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetHttpOnlyForHttpCookieMessage">

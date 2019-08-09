@@ -101,13 +101,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         internal const string AsyncRuleId = "CA1828";
         internal const string SyncRuleId = "CA1827";
-        internal const string OperationKey = "Operation";
-        internal const string IsAsyncKey = "IsAsync";
-        internal const string ShouldNegateKey = "ShouldNegate";
-        internal const string OperationEqualsInstance = "Equals.Instance";
-        internal const string OperationEqualsArgument = "Equals.Argument";
-        internal const string OperationBinaryLeft = "Binary.Left ";
-        internal const string OperationBinaryRight = "Binary.Right ";
+        internal const string OperationKey = nameof(OperationKey);
+        internal const string IsAsyncKey = nameof(IsAsyncKey);
+        internal const string ShouldNegateKey = nameof(ShouldNegateKey);
+        internal const string OperationEqualsInstance = nameof(OperationEqualsInstance);
+        internal const string OperationEqualsArgument = nameof(OperationEqualsArgument);
+        internal const string OperationBinaryLeft = nameof(OperationBinaryLeft);
+        internal const string OperationBinaryRight = nameof(OperationBinaryRight);
         private static readonly LocalizableString s_asyncLocalizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_asyncLocalizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));

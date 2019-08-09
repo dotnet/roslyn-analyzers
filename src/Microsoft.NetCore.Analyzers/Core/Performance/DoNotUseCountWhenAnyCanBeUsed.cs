@@ -263,15 +263,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (invocationOperation.Arguments.Length == 1 &&
                     IsEqualsMethod(method))
                 {
-                    string operation;
+                    string operationKey;
 
                     if (IsCountEqualsZero(invocationOperation, out var methodName))
                     {
-                        operation = OperationEqualsInstance;
+                        operationKey = OperationEqualsInstance;
                     }
                     else if (IsZeroEqualsCount(invocationOperation, out methodName))
                     {
-                        operation = OperationEqualsArgument;
+                        operationKey = OperationEqualsArgument;
                     }
                     else
                     {
@@ -279,7 +279,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
 
                     var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
-                    propertiesBuilder.Add(OperationKey, operation);
+                    propertiesBuilder.Add(OperationKey, operationKey);
                     propertiesBuilder.Add(ShouldNegateKey, null);
                     if (this._isAsync) propertiesBuilder.Add(IsAsyncKey, null);
                     var properties = propertiesBuilder.ToImmutable();
@@ -302,15 +302,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 if (binaryOperation.IsComparisonOperator())
                 {
-                    string operation;
+                    string operationKey;
 
                     if (IsLeftCountComparison(binaryOperation, out var methodName, out var shouldNegate))
                     {
-                        operation = OperationBinaryLeft;
+                        operationKey = OperationBinaryLeft;
                     }
                     else if (IsRightCountComparison(binaryOperation, out methodName, out shouldNegate))
                     {
-                        operation = OperationBinaryRight;
+                        operationKey = OperationBinaryRight;
                     }
                     else
                     {
@@ -318,7 +318,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     }
 
                     var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
-                    propertiesBuilder.Add(OperationKey, operation);
+                    propertiesBuilder.Add(OperationKey, operationKey);
                     if (shouldNegate) propertiesBuilder.Add(ShouldNegateKey, null);
                     if (this._isAsync) propertiesBuilder.Add(IsAsyncKey, null);
                     var properties = propertiesBuilder.ToImmutable();

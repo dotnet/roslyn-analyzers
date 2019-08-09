@@ -152,6 +152,21 @@
         <target state="translated">コードで宣言されているとおり、P/Invoke {0} の戻り値の型は {2} プラットフォームで {1} バイトになります。この API の実際のネイティブ宣言は {2} プラットフォームで {3} バイトでなければならないことを示しているため、この状態は正しくありません。{4} の代わりにどのデータ型を使用する必要があるかを判断するには、MSDN のプラットフォーム SDK ドキュメントを参照してください。</target>
         <note />
       </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookie">
+        <source>Set HttpOnly to true for HttpCookie</source>
+        <target state="new">Set HttpOnly to true for HttpCookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieDescription">
+        <source>As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</source>
+        <target state="new">As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieMessage">
+        <source>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</source>
+        <target state="new">HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">P/Invoke 文字列引数に対してマーシャリングを指定します</target>

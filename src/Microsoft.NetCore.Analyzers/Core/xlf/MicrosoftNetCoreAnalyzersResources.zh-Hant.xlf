@@ -152,6 +152,21 @@
         <target state="translated">因為其宣告於您的程式碼中，因此 P/Invoke {0} 的傳回型別在 {2} 平台上將會是 {1} 個位元組寬。但這是錯誤的，因為此 API 的實際原生宣告指出，其在 {2} 平台上應為 {3} 個位元組寬。請參閱 MSDN Platform SDK 文件中的說明，決定應使用何種資料類型來取代 {4}。</target>
         <note />
       </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookie">
+        <source>Set HttpOnly to true for HttpCookie</source>
+        <target state="new">Set HttpOnly to true for HttpCookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieDescription">
+        <source>As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</source>
+        <target state="new">As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieMessage">
+        <source>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</source>
+        <target state="new">HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">指定 P/Invoke 字串引數的封送處理</target>

@@ -152,6 +152,21 @@
         <target state="translated">코드에 선언된 것처럼 P/Invoke {0}의 반환 형식은 {2} 플랫폼에서 {1}바이트가 됩니다. 이 API의 실제 네이티브 선언에 따르면 {2} 플랫폼에서 {3}바이트여야 하므로 잘못된 상황입니다. {4} 대신 사용할 데이터 형식을 결정하려면 MSDN Platform SDK 문서를 참조하세요.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookie">
+        <source>Set HttpOnly to true for HttpCookie</source>
+        <target state="new">Set HttpOnly to true for HttpCookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieDescription">
+        <source>As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</source>
+        <target state="new">As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieMessage">
+        <source>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</source>
+        <target state="new">HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">P/Invoke 문자열 인수에 대해 마샬링을 지정하세요.</target>

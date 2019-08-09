@@ -152,6 +152,21 @@
         <target state="translated">如代码中所声明的，P/Invoke {0} 的返回类型在 {2} 平台上的字节宽度将为 {1}。这是不正确的，因为此 API 的实际本机声明表明该返回类型在 {2} 平台上的字节宽度应为 {3}。请参考 MSDN Platform SDK 文档来获取帮助，确定应使用哪种数据类型来代替 {4}。</target>
         <note />
       </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookie">
+        <source>Set HttpOnly to true for HttpCookie</source>
+        <target state="new">Set HttpOnly to true for HttpCookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieDescription">
+        <source>As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</source>
+        <target state="new">As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieMessage">
+        <source>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</source>
+        <target state="new">HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">指定对 P/Invoke 字符串参数进行封送处理</target>

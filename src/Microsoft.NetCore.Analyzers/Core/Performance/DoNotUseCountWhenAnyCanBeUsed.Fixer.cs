@@ -53,14 +53,37 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span);
-            var isAsync = context.Diagnostics[0].Id == DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId;
+            var properties = context.Diagnostics[0].Properties;
+            var shouldNegateKey = properties.ContainsKey(DoNotUseCountWhenAnyCanBeUsedAnalyzer.ShouldNegateKey);
+            var isAsync = properties.ContainsKey(DoNotUseCountWhenAnyCanBeUsedAnalyzer.IsAsyncKey) ||
+                context.Diagnostics[0].Id == DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId;
 
             if (node is object &&
-                this.TryGetFixer(node, isAsync, out var expression, out var arguments, out var negate))
+                properties.TryGetValue(DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationKey, out var operation) &&
+                this.TryGetFixer(node, operation, isAsync, out var expression, out var arguments))
             {
                 context.RegisterCodeFix(
-                    new DoNotUseCountWhenAnyCanBeUsedCodeAction(isAsync, context.Document, node, expression, arguments, negate),
+                    new DoNotUseCountWhenAnyCanBeUsedCodeAction(isAsync, context.Document, node, expression, arguments, shouldNegateKey),
                     context.Diagnostics);
+            }
+        }
+
+
+        /// <summary>
+        /// Determines whether the specified <paramref name="value"/> is a match for <paramref name="expected"/>.
+        /// </summary>
+        /// <param name="value">The value to match.</param>
+        /// <param name="expected">The expected value.</param>
+        /// <returns><see langword="true" /> if the specified <paramref name="value"/> is a match for <paramref name="expected"/>; otherwise, <see langword="false" />.</returns>
+        protected static bool IsMatch(object value, int expected)
+        {
+            switch (value)
+            {
+                case int intValue: return intValue == expected;
+                case uint uintValue: return uintValue == expected;
+                case long longValue: return longValue == expected;
+                case ulong ulongValue: return ulongValue < long.MaxValue && (long)ulongValue == expected;
+                default: return false;
             }
         }
 
@@ -68,12 +91,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// Tries the get a fixer the specified <paramref name="node" />.
         /// </summary>
         /// <param name="node">The node to get a fixer for.</param>
-        /// <param name="isAsync"><see langword="true" /> if it's an asynchronous method; <see langword="false"/> otherwise.</param>
+        /// <param name="operation">The operation to get the fixer from.</param>
+        /// <param name="isAsync"><see langword="true" /> if it's an asynchronous method; <see langword="false" /> otherwise.</param>
         /// <param name="expression">If this method returns <see langword="true" />, contains the expression to be used to invoke <c>Any</c>.</param>
         /// <param name="arguments">If this method returns <see langword="true" />, contains the arguments from <c>Any</c> to be used on <c>Count</c>.</param>
-        /// <param name="negate">If this method returns <see langword="true" />, indicates whether to negate the expression.</param>
         /// <returns><see langword="true" /> if a fixer was found., <see langword="false" /> otherwise.</returns>
-        protected abstract bool TryGetFixer(SyntaxNode node, bool isAsync, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments, out bool negate);
+        protected abstract bool TryGetFixer(SyntaxNode node, string operation, bool isAsync, out SyntaxNode expression, out IEnumerable<SyntaxNode> arguments);
 
         private class DoNotUseCountWhenAnyCanBeUsedCodeAction : CodeAction
         {
@@ -82,7 +105,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             private readonly SyntaxNode _pattern;
             private readonly SyntaxNode _expression;
             private readonly IEnumerable<SyntaxNode> _arguments;
-            private readonly bool _negate;
+            private readonly bool _shouldNegateKey;
 
             public DoNotUseCountWhenAnyCanBeUsedCodeAction(
                 bool isAsync,
@@ -90,14 +113,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 SyntaxNode pattern,
                 SyntaxNode expression,
                 IEnumerable<SyntaxNode> arguments,
-                bool negate)
+                bool shouldNegateKey)
             {
                 this._isAsync = isAsync;
                 this._document = document;
                 this._pattern = pattern;
                 this._expression = expression;
                 this._arguments = arguments;
-                this._negate = negate;
+                this._shouldNegateKey = shouldNegateKey;
             }
 
             public override string Title { get; } = MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle;
@@ -116,7 +139,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     replacementSyntax = generator.AwaitExpression(replacementSyntax);
                 }
 
-                if (this._negate)
+                if (this._shouldNegateKey)
                 {
                     replacementSyntax = generator.LogicalNotExpression(replacementSyntax);
                 }

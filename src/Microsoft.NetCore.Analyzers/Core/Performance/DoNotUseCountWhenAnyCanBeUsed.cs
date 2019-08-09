@@ -101,6 +101,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
     {
         internal const string AsyncRuleId = "CA1828";
         internal const string SyncRuleId = "CA1827";
+        internal const string OperationKey = "Operation";
+        internal const string IsAsyncKey = "IsAsync";
+        internal const string ShouldNegateKey = "ShouldNegate";
+        internal const string OperationEqualsInstance = "Equals.Instance";
+        internal const string OperationEqualsArgument = "Equals.Argument";
+        internal const string OperationBinaryLeft = "Binary.Left ";
+        internal const string OperationBinaryRight = "Binary.Right ";
         private static readonly LocalizableString s_asyncLocalizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_asyncLocalizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -251,18 +258,37 @@ namespace Microsoft.NetCore.Analyzers.Performance
             public void AnalyzeInvocationOperation(OperationAnalysisContext context)
             {
                 var invocationOperation = (IInvocationOperation)context.Operation;
+                var method = invocationOperation.TargetMethod;
 
-                if (invocationOperation.Arguments.Length == 1)
+                if (invocationOperation.Arguments.Length == 1 &&
+                    IsEqualsMethod(method))
                 {
-                    var method = invocationOperation.TargetMethod;
-                    if (IsInt32EqualsMethod(method) &&
-                        (IsCountEqualsZero(invocationOperation, out var methodName) || IsZeroEqualsCount(invocationOperation, out methodName)))
+                    string operation;
+
+                    if (IsCountEqualsZero(invocationOperation, out var methodName))
                     {
-                        context.ReportDiagnostic(
-                            invocationOperation.Syntax.CreateDiagnostic(
-                                this._rule,
-                                methodName));
+                        operation = OperationEqualsInstance;
                     }
+                    else if (IsZeroEqualsCount(invocationOperation, out methodName))
+                    {
+                        operation = OperationEqualsArgument;
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
+                    propertiesBuilder.Add(OperationKey, operation);
+                    propertiesBuilder.Add(ShouldNegateKey, null);
+                    if (this._isAsync) propertiesBuilder.Add(IsAsyncKey, null);
+                    var properties = propertiesBuilder.ToImmutable();
+
+                    context.ReportDiagnostic(
+                        invocationOperation.Syntax.CreateDiagnostic(
+                            rule: this._rule,
+                            properties: properties,
+                            args: methodName));
                 }
             }
 
@@ -274,13 +300,34 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var binaryOperation = (IBinaryOperation)context.Operation;
 
-                if (binaryOperation.IsComparisonOperator() &&
-                    (IsLeftCountComparison(binaryOperation, out var methodName) || IsRightCountComparison(binaryOperation, out methodName)))
+                if (binaryOperation.IsComparisonOperator())
                 {
+                    string operation;
+
+                    if (IsLeftCountComparison(binaryOperation, out var methodName, out var shouldNegate))
+                    {
+                        operation = OperationBinaryLeft;
+                    }
+                    else if (IsRightCountComparison(binaryOperation, out methodName, out shouldNegate))
+                    {
+                        operation = OperationBinaryRight;
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
+                    propertiesBuilder.Add(OperationKey, operation);
+                    if (shouldNegate) propertiesBuilder.Add(ShouldNegateKey, null);
+                    if (this._isAsync) propertiesBuilder.Add(IsAsyncKey, null);
+                    var properties = propertiesBuilder.ToImmutable();
+
                     context.ReportDiagnostic(
                         binaryOperation.Syntax.CreateDiagnostic(
-                            this._rule,
-                            methodName));
+                            rule: this._rule,
+                            properties: properties,
+                            args: methodName));
                 }
             }
 
@@ -289,10 +336,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// </summary>
             /// <param name="methodSymbol">The method symbol.</param>
             /// <returns><see langword="true"/> if the given method is the <see cref="int.Equals(int)"/> method; otherwise, <see langword="false"/>.</returns>
-            private static bool IsInt32EqualsMethod(IMethodSymbol methodSymbol)
+            private static bool IsEqualsMethod(IMethodSymbol methodSymbol)
             {
                 return string.Equals(methodSymbol.Name, WellKnownMemberNames.ObjectEquals, StringComparison.Ordinal) &&
-                       methodSymbol.ContainingType.SpecialType == SpecialType.System_Int32;
+                       (methodSymbol.ContainingType.SpecialType == SpecialType.System_Int32 ||
+                            methodSymbol.ContainingType.SpecialType == SpecialType.System_UInt32 ||
+                            methodSymbol.ContainingType.SpecialType == SpecialType.System_Int64 ||
+                            methodSymbol.ContainingType.SpecialType == SpecialType.System_UInt64);
             }
 
             /// <summary>
@@ -306,13 +356,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
             private bool IsCountEqualsZero(IInvocationOperation invocationOperation, out string methodName)
             {
-                if (!TryGetInt32Constant(invocationOperation.Arguments[0].Value, out var constant) || constant != 0)
+                if (!TryGetZeroOrOneConstant(invocationOperation.Arguments[0].Value, out var constant) || constant != 0)
                 {
                     methodName = null;
                     return false;
                 }
 
-                return IsCountMethodInvocationAwaited(invocationOperation.Instance, out methodName);
+                return IsCountMethodInvocation(invocationOperation.Instance, out methodName);
             }
 
             /// <summary>
@@ -324,13 +374,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
             private bool IsZeroEqualsCount(IInvocationOperation invocationOperation, out string methodName)
             {
-                if (!TryGetInt32Constant(invocationOperation.Instance, out var constant) || constant != 0)
+                if (!TryGetZeroOrOneConstant(invocationOperation.Instance, out var constant) || constant != 0)
                 {
                     methodName = null;
                     return false;
                 }
 
-                return IsCountMethodInvocationAwaited(invocationOperation.Arguments[0].Value, out methodName);
+                return IsCountMethodInvocation(invocationOperation.Arguments[0].Value, out methodName);
             }
 
             /// <summary>
@@ -341,35 +391,53 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <param name="methodName">If the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
             /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-            private bool IsLeftCountComparison(IBinaryOperation binaryOperation, out string methodName)
+            private bool IsLeftCountComparison(IBinaryOperation binaryOperation, out string methodName, out bool shouldNegate)
             {
                 methodName = null;
+                shouldNegate = false;
 
-                if (!TryGetInt32Constant(binaryOperation.RightOperand, out var constant))
-                {
-                    return false;
-                }
-
-                if (constant == 0 &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.Equals &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.NotEquals &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.LessThanOrEqual &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.GreaterThan)
-                {
-                    return false;
-                }
-                else if (constant == 1 &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.LessThan &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.GreaterThanOrEqual)
-                {
-                    return false;
-                }
-                else if (constant > 1)
+                if (!TryGetZeroOrOneConstant(binaryOperation.RightOperand, out var constant))
                 {
                     return false;
                 }
 
-                return IsCountMethodInvocationAwaited(binaryOperation.LeftOperand, out methodName);
+                switch (constant)
+                {
+                    case 0:
+                        switch (binaryOperation.OperatorKind)
+                        {
+                            case BinaryOperatorKind.Equals:
+                            case BinaryOperatorKind.LessThanOrEqual:
+                                shouldNegate = true;
+                                break;
+                            case BinaryOperatorKind.NotEquals:
+                            case BinaryOperatorKind.GreaterThan:
+                                shouldNegate = false;
+                                break;
+                            default:
+                                return false;
+                        }
+
+                        break;
+                    case 1:
+                        switch (binaryOperation.OperatorKind)
+                        {
+                            case BinaryOperatorKind.LessThan:
+                                shouldNegate = true;
+                                break;
+                            case BinaryOperatorKind.GreaterThanOrEqual:
+                                shouldNegate = false;
+                                break;
+                            default:
+                                return false;
+                        }
+
+                        break;
+                    default:
+                        return false;
+                }
+
+                return IsCountMethodInvocation(binaryOperation.LeftOperand, out methodName);
             }
 
             /// <summary>
@@ -380,51 +448,79 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <param name="methodName">If the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
             /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-            private bool IsRightCountComparison(IBinaryOperation binaryOperation, out string methodName)
+            private bool IsRightCountComparison(IBinaryOperation binaryOperation, out string methodName, out bool shouldNegate)
             {
                 methodName = null;
+                shouldNegate = false;
 
-                if (!TryGetInt32Constant(binaryOperation.LeftOperand, out var constant))
-                {
-                    return false;
-                }
-
-                if (constant == 0 &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.Equals &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.NotEquals &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.LessThan &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.GreaterThanOrEqual)
-                {
-                    return false;
-                }
-                else if (constant == 1 &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.LessThanOrEqual &&
-                    binaryOperation.OperatorKind != BinaryOperatorKind.GreaterThan)
-                {
-                    return false;
-                }
-                else if (constant > 1)
+                if (!TryGetZeroOrOneConstant(binaryOperation.LeftOperand, out var constant))
                 {
                     return false;
                 }
 
-                return IsCountMethodInvocationAwaited(binaryOperation.RightOperand, out methodName);
+                switch (constant)
+                {
+                    case 0:
+                        switch (binaryOperation.OperatorKind)
+                        {
+                            case BinaryOperatorKind.Equals:
+                            case BinaryOperatorKind.LessThan:
+                                shouldNegate = true;
+                                break;
+
+                            case BinaryOperatorKind.NotEquals:
+                            case BinaryOperatorKind.GreaterThanOrEqual:
+                                shouldNegate = false;
+                                break;
+
+                            default:
+                                return false;
+                        }
+
+                        break;
+                    case 1:
+                        switch (binaryOperation.OperatorKind)
+                        {
+                            case BinaryOperatorKind.LessThanOrEqual:
+                                shouldNegate = false;
+                                break;
+
+                            case BinaryOperatorKind.GreaterThan:
+                                shouldNegate = true;
+                                break;
+
+                            default:
+                                return false;
+                        }
+
+                        break;
+                    default:
+                        return false;
+                }
+
+                return IsCountMethodInvocation(binaryOperation.RightOperand, out methodName);
             }
 
             /// <summary>
             /// Tries the get an <see cref="int"/> constant from the <paramref name="operation"/>.
             /// </summary>
             /// <param name="operation">The operation.</param>
-            /// <param name="constant">The constant the <paramref name="operation"/> represents, if succeeded, or zero if <paramref name="operation"/> is not a constant.</param>
-            /// <returns><see langword="true" /> <paramref name="operation"/> is a constant, <see langword="false" /> otherwise.</returns>
-            private static bool TryGetInt32Constant(IOperation operation, out int constant)
+            /// <param name="constant">If this method returns <see langword="true"/>, this parameter is guaranteed to be 0 or 1; otherwise, it's meaningless.</param>
+            /// <returns><see langword="true" /> <paramref name="operation"/> is a 0 or 1 constant, <see langword="false" /> otherwise.</returns>
+            private static bool TryGetZeroOrOneConstant(IOperation operation, out int constant)
             {
                 constant = default;
 
-                if (operation?.Type?.SpecialType != SpecialType.System_Int32)
+                if (operation?.Type?.SpecialType != SpecialType.System_Int32 &&
+                    operation?.Type?.SpecialType != SpecialType.System_Int64 &&
+                    operation?.Type?.SpecialType != SpecialType.System_UInt32 &&
+                    operation?.Type?.SpecialType != SpecialType.System_UInt64 &&
+                    operation?.Type?.SpecialType != SpecialType.System_Object)
                 {
                     return false;
                 }
+
+                operation = operation.WalkDownConversion();
 
                 var comparandValueOpt = operation.ConstantValue;
 
@@ -433,9 +529,50 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     return false;
                 }
 
-                constant = (int)comparandValueOpt.Value;
+                switch (comparandValueOpt.Value)
+                {
+                    case int intValue:
 
-                return true;
+                        if (intValue >= 0 && intValue <= 1)
+                        {
+                            constant = intValue;
+                            return true;
+                        }
+
+                        break;
+
+                    case uint uintValue:
+
+                        if (uintValue >= 0 && uintValue <= 1)
+                        {
+                            constant = (int)uintValue;
+                            return true;
+                        }
+
+                        break;
+
+                    case long longValue:
+
+                        if (longValue >= 0 && longValue <= 1)
+                        {
+                            constant = (int)longValue;
+                            return true;
+                        }
+
+                        break;
+
+                    case ulong ulongValue:
+
+                        if (ulongValue >= 0 && ulongValue <= 1)
+                        {
+                            constant = (int)ulongValue;
+                            return true;
+                        }
+
+                        break;
+                }
+
+                return false;
             }
 
             /// <summary>
@@ -445,11 +582,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// <param name="methodName">If the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
             /// <returns><see langword="true" /> if the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />;
             /// <see langword="false" /> otherwise.</returns>
-            private bool IsCountMethodInvocationAwaited(IOperation operation, out string methodName)
+            private bool IsCountMethodInvocation(IOperation operation, out string methodName)
             {
                 methodName = null;
 
                 operation = operation.WalkDownParenthesis();
+
+                operation = operation.WalkDownConversion();
 
                 if (this._isAsync)
                 {
@@ -462,6 +601,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
                         return false;
                     }
                 }
+
+                operation = operation.WalkDownConversion();
 
                 if (operation is IInvocationOperation invocationOperation &&
                     this._targetMethodNames.Contains(invocationOperation.TargetMethod.Name) &&

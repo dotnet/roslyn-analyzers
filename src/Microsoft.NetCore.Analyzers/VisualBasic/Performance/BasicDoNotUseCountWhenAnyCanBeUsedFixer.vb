@@ -3,7 +3,6 @@
 Imports System.Composition
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
-Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.NetCore.Analyzers.Performance
 
@@ -20,169 +19,91 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
         ''' Tries the get a fixer the specified <paramref name="node" />.
         ''' </summary>
         ''' <param name="node">The node to get a fixer for.</param>
-        ''' <param name="isAsync"><see langword="true" /> if it's an asynchronous method; <see langword="false" /> otherwise.</param>
+        ''' <param name="operation">The operation to get the fixer from.</param>
+        ''' <param name="isAsync"><see langword="true" /> if it's an asynchronous method <see langword="false" /> otherwise.</param>
         ''' <param name="expression">If this method returns <see langword="true" />, contains the expression to be used to invoke <c>Any</c>.</param>
         ''' <param name="arguments">If this method returns <see langword="true" />, contains the arguments from <c>Any</c> to be used on <c>Count</c>.</param>
-        ''' <param name="negate">If this method returns <see langword="true" />, indicates whether to negate the expression.</param>
         ''' <returns><see langword="true" /> if a fixer was found., <see langword="false" /> otherwise.</returns>
-        Protected Overrides Function TryGetFixer(node As SyntaxNode, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode), ByRef negate As Boolean) As Boolean
+        Protected Overrides Function TryGetFixer(node As SyntaxNode, operation As String, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode)) As Boolean
 
-            If node.IsKind(SyntaxKind.InvocationExpression) Then
+            Select Case operation
 
-                GetFixerForEqualsMethod(DirectCast(node, InvocationExpressionSyntax), isAsync, expression, arguments)
-                negate = True
-                Return True
+                Case DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationEqualsInstance
 
-            ElseIf (node.IsKind(SyntaxKind.EqualsExpression)) Then
+                    Dim invocation = TryCast(node, InvocationExpressionSyntax)
 
-                GetFixerForEqualityExpression(DirectCast(node, BinaryExpressionSyntax), isAsync, expression, arguments)
-                negate = True
-                Return True
+                    If Not invocation Is Nothing Then
 
-            ElseIf (node.IsKind(SyntaxKind.NotEqualsExpression)) Then
+                        Dim member = TryCast(invocation.Expression, MemberAccessExpressionSyntax)
 
-                GetFixerForEqualityExpression(DirectCast(node, BinaryExpressionSyntax), isAsync, expression, arguments)
-                negate = False
-                Return True
+                        If Not member Is Nothing Then
 
-            ElseIf (node.IsKind(SyntaxKind.LessThanExpression)) Then
+                            GetExpressionAndInvocationArguments(
+                                sourceExpression:=member.Expression,
+                                isAsync:=isAsync,
+                                expression:=expression,
+                                arguments:=arguments)
 
-                GetFixerForLessThanExpression(DirectCast(node, BinaryExpressionSyntax), isAsync, expression, arguments, negate)
-                Return True
+                            Return True
 
-            ElseIf (node.IsKind(SyntaxKind.LessThanOrEqualExpression)) Then
+                        End If
 
-                GetFixerForLessThanOrEqualExpression(DirectCast(node, BinaryExpressionSyntax), isAsync, expression, arguments, negate)
-                Return True
+                    End If
 
-            ElseIf (node.IsKind(SyntaxKind.GreaterThanExpression)) Then
+                Case DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationEqualsArgument
 
-                GetFixerForGreaterThanExpression(DirectCast(node, BinaryExpressionSyntax), isAsync, expression, arguments, negate)
-                Return True
+                    Dim invocation = TryCast(node, InvocationExpressionSyntax)
 
-            ElseIf (node.IsKind(SyntaxKind.GreaterThanOrEqualExpression)) Then
+                    If Not invocation Is Nothing AndAlso invocation.ArgumentList.Arguments.Count = 1 Then
 
-                GetFixerForGreaterThanOrEqualExpression(DirectCast(node, BinaryExpressionSyntax), isAsync, expression, arguments, negate)
-                Return True
+                        GetExpressionAndInvocationArguments(
+                            sourceExpression:=invocation.ArgumentList.Arguments(0).GetExpression(),
+                            isAsync:=isAsync,
+                            expression:=expression,
+                            arguments:=arguments)
 
-            End If
+                        Return True
 
-            expression = Nothing
-            arguments = Nothing
-            negate = Nothing
+                    End If
+
+                Case DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationBinaryLeft
+
+                    Dim binary = TryCast(node, BinaryExpressionSyntax)
+
+                    If Not binary Is Nothing Then
+
+                        GetExpressionAndInvocationArguments(
+                            sourceExpression:=binary.Left,
+                            isAsync:=isAsync,
+                            expression:=expression,
+                            arguments:=arguments)
+
+                        Return True
+
+                    End If
+
+                Case DoNotUseCountWhenAnyCanBeUsedAnalyzer.OperationBinaryRight
+
+                    Dim binary = TryCast(node, BinaryExpressionSyntax)
+
+                    If Not binary Is Nothing Then
+
+                        GetExpressionAndInvocationArguments(
+                            sourceExpression:=binary.Right,
+                            isAsync:=isAsync,
+                            expression:=expression,
+                            arguments:=arguments)
+
+                        Return True
+
+                    End If
+
+
+            End Select
+
             Return False
 
         End Function
-
-        Private Shared Sub GetFixerForEqualsMethod(equalsMethodInvocation As InvocationExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode))
-
-            Dim argument = equalsMethodInvocation.ArgumentList.Arguments.Item(0).GetExpression()
-
-            Dim countInvocation = If(TypeOf argument Is LiteralExpressionSyntax,
-                DirectCast(equalsMethodInvocation.Expression, MemberAccessExpressionSyntax).Expression,
-                argument)
-            GetExpressionAndInvocationArguments(
-                sourceExpression:=countInvocation,
-                isAsync:=isAsync,
-                expression:=expression,
-                arguments:=arguments)
-
-        End Sub
-
-        Private Shared Sub GetFixerForEqualityExpression(binaryExpression As BinaryExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode))
-
-            GetExpressionAndInvocationArguments(
-                sourceExpression:=If(TypeOf binaryExpression.Left Is LiteralExpressionSyntax, binaryExpression.Right, binaryExpression.Left),
-                isAsync:=isAsync,
-                expression:=expression,
-                arguments:=arguments)
-
-        End Sub
-
-        Private Shared Sub GetFixerForLessThanOrEqualExpression(binaryExpression As BinaryExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode), ByRef negate As Boolean)
-
-            negate = TypeOf binaryExpression.Right Is LiteralExpressionSyntax
-            GetExpressionAndInvocationArguments(
-                 sourceExpression:=If(Not (negate), binaryExpression.Right, binaryExpression.Left),
-                 isAsync:=isAsync,
-                expression:=expression,
-                 arguments:=arguments)
-
-        End Sub
-
-        Private Shared Sub GetFixerForLessThanExpression(binaryExpression As BinaryExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode), ByRef negate As Boolean)
-
-            If TypeOf binaryExpression.Left Is LiteralExpressionSyntax Then
-
-                GetFixerForBinaryExpression(
-                    sourceExpression:=binaryExpression.Right,
-                isAsync:=isAsync,
-                    literalExpression:=DirectCast(binaryExpression.Left, LiteralExpressionSyntax),
-                    value:=0,
-                    expression:=expression,
-                    arguments:=arguments,
-                    negate:=negate)
-
-            Else
-
-                GetFixerForBinaryExpression(
-                    sourceExpression:=binaryExpression.Left,
-                isAsync:=isAsync,
-                    literalExpression:=DirectCast(binaryExpression.Right, LiteralExpressionSyntax),
-                    value:=1,
-                    expression:=expression,
-                    arguments:=arguments,
-                    negate:=negate)
-
-            End If
-
-        End Sub
-
-        Private Shared Sub GetFixerForGreaterThanExpression(binaryExpression As BinaryExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode), ByRef negate As Boolean)
-
-            negate = TypeOf binaryExpression.Left Is LiteralExpressionSyntax
-            GetExpressionAndInvocationArguments(
-                 sourceExpression:=If(negate, binaryExpression.Right, binaryExpression.Left),
-                isAsync:=isAsync,
-                 expression:=expression,
-                 arguments:=arguments)
-
-        End Sub
-
-        Private Shared Sub GetFixerForGreaterThanOrEqualExpression(binaryExpression As BinaryExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode), ByRef negate As Boolean)
-
-            If TypeOf binaryExpression.Left Is LiteralExpressionSyntax Then
-
-                GetFixerForBinaryExpression(
-                    sourceExpression:=binaryExpression.Right,
-                isAsync:=isAsync,
-                    literalExpression:=DirectCast(binaryExpression.Left, LiteralExpressionSyntax),
-                    value:=1,
-                    expression:=expression,
-                    arguments:=arguments,
-                    negate:=negate)
-
-            Else
-
-                GetFixerForBinaryExpression(
-                    sourceExpression:=binaryExpression.Left,
-                isAsync:=isAsync,
-                    literalExpression:=DirectCast(binaryExpression.Right, LiteralExpressionSyntax),
-                    value:=0,
-                    expression:=expression,
-                    arguments:=arguments,
-                    negate:=negate)
-
-            End If
-
-        End Sub
-
-        Private Shared Sub GetFixerForBinaryExpression(sourceExpression As ExpressionSyntax, isAsync As Boolean, literalExpression As LiteralExpressionSyntax, value As Integer, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode), ByRef negate As Boolean)
-
-            GetExpressionAndInvocationArguments(sourceExpression, isAsync, expression, arguments)
-            negate = DirectCast(literalExpression.Token.Value, Integer) = value
-
-        End Sub
 
         Private Shared Sub GetExpressionAndInvocationArguments(sourceExpression As ExpressionSyntax, isAsync As Boolean, ByRef expression As SyntaxNode, ByRef arguments As IEnumerable(Of SyntaxNode))
 

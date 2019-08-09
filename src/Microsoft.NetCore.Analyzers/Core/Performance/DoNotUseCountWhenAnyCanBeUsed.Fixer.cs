@@ -68,25 +68,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
-
-        /// <summary>
-        /// Determines whether the specified <paramref name="value"/> is a match for <paramref name="expected"/>.
-        /// </summary>
-        /// <param name="value">The value to match.</param>
-        /// <param name="expected">The expected value.</param>
-        /// <returns><see langword="true" /> if the specified <paramref name="value"/> is a match for <paramref name="expected"/>; otherwise, <see langword="false" />.</returns>
-        protected static bool IsMatch(object value, int expected)
-        {
-            switch (value)
-            {
-                case int intValue: return intValue == expected;
-                case uint uintValue: return uintValue == expected;
-                case long longValue: return longValue == expected;
-                case ulong ulongValue: return ulongValue < long.MaxValue && (long)ulongValue == expected;
-                default: return false;
-            }
-        }
-
         /// <summary>
         /// Tries the get a fixer the specified <paramref name="node" />.
         /// </summary>

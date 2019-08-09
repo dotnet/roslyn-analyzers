@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         // TODO Lingxia Chen: Help links URLs.
         internal static DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5393",
+            "CA5396",
             typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookie),
             nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookieMessage),

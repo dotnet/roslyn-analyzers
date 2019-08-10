@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="es" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
+      <trans-unit id="DeprecatedSslProtocolsDescription">
+        <source>Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.</source>
+        <target state="new">Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeprecatedSslProtocolsMessage">
+        <source>Hardcoded use of deprecated Transport Layer Security protocol version '{0}'</source>
+        <target state="new">Hardcoded use of deprecated Transport Layer Security protocol version '{0}'</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeprecatedSslProtocolsTitle">
+        <source>Do not use deprecated SslProtocols values</source>
+        <target state="new">Do not use deprecated SslProtocols values</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomness">
         <source>Do not use insecure randomness</source>
         <target state="new">Do not use insecure randomness</target>
@@ -30,6 +45,21 @@
       <trans-unit id="DoNotUseUnsafeDllImportSearchPathMessage">
         <source>Use of unsafe DllImportSearchPath value {0}</source>
         <target state="new">Use of unsafe DllImportSearchPath value {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardcodedSslProtocolsDescription">
+        <source>Existing Transport Layer Security protocol verions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure.</source>
+        <target state="new">Existing Transport Layer Security protocol verions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardcodedSslProtocolsMessage">
+        <source>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future</source>
+        <target state="new">Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardcodedSslProtocolsTitle">
+        <source>Avoid hardcoded SslProtocols values</source>
+        <target state="new">Avoid hardcoded SslProtocols values</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetInsecureSerializerMessage">

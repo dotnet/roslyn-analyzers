@@ -7,6 +7,7 @@ using System.Collections.Immutable;
 using System.Dynamic;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.NetCore.Analyzers.Runtime;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer,
@@ -19,6 +20,28 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 {
     public static partial class UsePropertyInsteadOfCountMethodWhenAvailableTests
     {
+        [Fact]
+        public static Task CSharp_ImmutableArray_Tests()
+            => VerifyCS.VerifyCodeFixAsync(
+                $@"using System;
+using System.Linq;
+public static class C
+{{
+    public static System.Collections.Immutable.ImmutableArray<int> GetData() => default;
+    public static int M() => {{|{UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.RuleId}:GetData().Count()|}};
+    public static int N() => {{|{UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.RuleId}:GetData().Count()|}};
+}}
+",
+                $@"using System;
+using System.Linq;
+public static class C
+{{
+    public static System.Collections.Immutable.ImmutableArray<int> GetData() => default;
+    public static int M() => GetData().Length;
+    public static int N() => GetData().Length;
+}}
+");
+
         [Theory]
         [InlineData("string[]", nameof(Array.Length))]
         [InlineData("System.Collections.Immutable.ImmutableArray<int>", nameof(ImmutableArray<int>.Length))]

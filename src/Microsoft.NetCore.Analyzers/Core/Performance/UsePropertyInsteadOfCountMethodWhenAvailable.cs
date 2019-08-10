@@ -1,16 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
-using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.NetCore.Analyzers;
 
 namespace Microsoft.NetCore.Analyzers.Performance
 {
@@ -71,10 +67,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 var operationActionsContext = new UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsContext(
                     context.Compilation,
-                    enumerableType,
-                    WellKnownTypes.ICollection(context.Compilation)?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().SingleOrDefault(),
-                    WellKnownTypes.GenericICollection(context.Compilation)?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().SingleOrDefault(),
-                    WellKnownTypes.ImmutableArray(context.Compilation));
+                    enumerableType);
 
                 var operationActionsHandler = context.Compilation.Language == LanguageNames.CSharp
                     ? (OperationActionsHandler)new CSharpOperationActionsHandler(operationActionsContext)
@@ -86,22 +79,114 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
+        private void AnalyzeInvocationOperation(OperationAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
+
         private sealed class OperationActionsContext
         {
-            public OperationActionsContext(Compilation compilation, INamedTypeSymbol enumerableType, IPropertySymbol collectionCountProperty, IPropertySymbol collectionOfTCountProperty, INamedTypeSymbol immutableArrayType)
+            private /*readonly*/ Lazy<INamedTypeSymbol> _immutableArrayType;
+            private readonly Lazy<IPropertySymbol> _iCollectionCountProperty;
+            private readonly Lazy<INamedTypeSymbol> _iCollectionOfType;
+            private readonly Lazy<IPropertySymbol> _iCollectionOfTCountProperty;
+
+            public OperationActionsContext(Compilation compilation, INamedTypeSymbol enumerableType)
             {
                 Compilation = compilation;
                 EnumerableType = enumerableType;
-                CollectionCountProperty = collectionCountProperty;
-                CollectionOfTCountProperty = collectionOfTCountProperty;
-                ImmutableArrayType = immutableArrayType;
+                _immutableArrayType = new Lazy<INamedTypeSymbol>(() => Compilation.GetTypeByMetadataName("System.Collections.Immutable.ImmutableArray`1"), true);
+                _iCollectionCountProperty = new Lazy<IPropertySymbol>(() => WellKnownTypes.ICollection(Compilation)?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Single(), true);
+                _iCollectionOfType = new Lazy<INamedTypeSymbol>(() => WellKnownTypes.GenericICollection(Compilation), true);
+                _iCollectionOfTCountProperty = new Lazy<IPropertySymbol>(() => ICollectionOfTType?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Single(), true);
             }
 
-            public Compilation Compilation { get; }
-            public INamedTypeSymbol EnumerableType { get; }
-            public IPropertySymbol CollectionCountProperty { get; }
-            public IPropertySymbol CollectionOfTCountProperty { get; }
-            public INamedTypeSymbol ImmutableArrayType { get; }
+            internal Compilation Compilation { get; }
+
+            internal INamedTypeSymbol EnumerableType { get; }
+
+            internal IPropertySymbol ICollectionCountProperty => _iCollectionCountProperty.Value;
+
+            internal IPropertySymbol ICollectionOfTCountProperty => _iCollectionOfTCountProperty.Value;
+
+            internal INamedTypeSymbol ICollectionOfTType => _iCollectionOfType.Value;
+
+            internal INamedTypeSymbol ImmutableArrayType => _immutableArrayType.Value;
+
+            internal bool IsImmutableArrayType(ITypeSymbol typeSymbol)
+            {
+                if (typeSymbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.ConstructedFrom is INamedTypeSymbol constructedFrom)
+                {
+                    if (ImmutableArrayType is null &&
+                        constructedFrom.MetadataName.ToString().Equals("ImmutableArray`1", StringComparison.Ordinal) &&
+                        constructedFrom.ContainingNamespace.ToString().Equals("System.Collections.Immutable", StringComparison.Ordinal))
+                    {
+                        _immutableArrayType = new Lazy<INamedTypeSymbol>(() => constructedFrom, true);
+                        return true;
+                    }
+
+                    return constructedFrom.Equals(ImmutableArrayType);
+                }
+
+                return false;
+            }
+
+            internal bool IsICollectionImplementation(ITypeSymbol invocationTarget)
+                => this.ICollectionCountProperty is object &&
+                    invocationTarget.FindImplementationForInterfaceMember(this.ICollectionCountProperty) is IPropertySymbol countProperty &&
+                    !countProperty.ExplicitInterfaceImplementations.Any();
+
+            internal bool IsICollectionOfTImplementation(ITypeSymbol invocationTarget)
+            {
+                if (ICollectionOfTType is null)
+                {
+                    return false;
+                }
+
+                if (isCollectionOfTInterface(invocationTarget))
+                {
+                    return true;
+                }
+
+                if (invocationTarget.TypeKind == TypeKind.Interface)
+                {
+                    if (invocationTarget.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Any())
+                    {
+                        return false;
+                    }
+
+                    foreach (var @interface in invocationTarget.AllInterfaces)
+                    {
+                        if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
+                            isCollectionOfTInterface(originalInterfaceDefinition))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var @interface in invocationTarget.AllInterfaces)
+                    {
+                        if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
+                            isCollectionOfTInterface(originalInterfaceDefinition))
+                        {
+                            if (invocationTarget.FindImplementationForInterfaceMember(@interface.GetMembers(CountPropertyName)[0]) is IPropertySymbol propertyImplementation &&
+                                !propertyImplementation.ExplicitInterfaceImplementations.Any())
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
+
+                bool isCollectionOfTInterface(ITypeSymbol type)
+                {
+                    return type.OriginalDefinition?.Equals(this.ICollectionOfTType) ?? false;
+                }
+            }
         }
 
         /// <summary>
@@ -140,75 +225,17 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             private string GetReplacementProperty(ITypeSymbol invocationTarget)
             {
-                if (invocationTarget.TypeKind == TypeKind.Array)
+                if ((invocationTarget.TypeKind == TypeKind.Array) || Context.IsImmutableArrayType(invocationTarget))
                 {
                     return LengthPropertyName;
                 }
 
-                if (invocationTarget.OriginalDefinition is ITypeSymbol originalDefinition &&
-                    originalDefinition.MetadataName.ToString().Equals(typeof(ImmutableArray<>).Name, StringComparison.Ordinal) &&
-                    originalDefinition.ContainingNamespace.ToString().Equals(typeof(ImmutableArray<>).Namespace, StringComparison.Ordinal))
-                {
-                    return LengthPropertyName;
-                }
-
-                if (invocationTarget.FindImplementationForInterfaceMember(this.Context.CollectionCountProperty) is IPropertySymbol countProperty &&
-                    !countProperty.ExplicitInterfaceImplementations.Any())
-                {
-                    return CountPropertyName;
-                }
-
-                if (findImplementationForCollectionOfTInterfaceCountProperty(invocationTarget))
+                if (Context.IsICollectionImplementation(invocationTarget) || Context.IsICollectionOfTImplementation(invocationTarget))
                 {
                     return CountPropertyName;
                 }
 
                 return null;
-
-                bool findImplementationForCollectionOfTInterfaceCountProperty(ITypeSymbol invocationTarget)
-                {
-                    if (isCollectionOfTInterface(invocationTarget))
-                    {
-                        return true;
-                    }
-
-                    if (invocationTarget.TypeKind == TypeKind.Interface)
-                    {
-                        if (invocationTarget.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Any())
-                        {
-                            return false;
-                        }
-
-                        foreach (var @interface in invocationTarget.AllInterfaces)
-                        {
-                            if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
-                                isCollectionOfTInterface(originalInterfaceDefinition))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (var @interface in invocationTarget.AllInterfaces)
-                        {
-                            if (@interface.OriginalDefinition is INamedTypeSymbol originalInterfaceDefinition &&
-                                isCollectionOfTInterface(originalInterfaceDefinition))
-                            {
-                                if (invocationTarget.FindImplementationForInterfaceMember(@interface.GetMembers(CountPropertyName)[0]) is IPropertySymbol propertyImplementation &&
-                                    !propertyImplementation.ExplicitInterfaceImplementations.Any())
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-
-                    return false;
-
-                    bool isCollectionOfTInterface(ITypeSymbol type)
-                        => type.OriginalDefinition?.Equals(this.Context.CollectionOfTCountProperty.ContainingSymbol) ?? false;
-                }
             }
         }
 

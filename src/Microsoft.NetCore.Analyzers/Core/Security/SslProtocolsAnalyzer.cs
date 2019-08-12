@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -16,20 +17,20 @@ namespace Microsoft.NetCore.Analyzers.Security
     public sealed class SslProtocolsAnalyzer : DiagnosticAnalyzer
     {
         internal static DiagnosticDescriptor DeprecatedRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5395",
+            "CA5397",
             nameof(MicrosoftNetCoreAnalyzersResources.DeprecatedSslProtocolsTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.DeprecatedSslProtocolsMessage),
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DeprecatedSslProtocolsDescription),
             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5395",
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5397",
             customTags: WellKnownDiagnosticTags.Telemetry);
         internal static DiagnosticDescriptor HardcodedRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5396",
+            "CA5398",
             nameof(MicrosoftNetCoreAnalyzersResources.HardcodedSslProtocolsTitle),
             nameof(MicrosoftNetCoreAnalyzersResources.HardcodedSslProtocolsMessage),
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.HardcodedSslProtocolsDescription),
             isEnabledByDefault: false,
-            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5396",
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5398",
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         private readonly ImmutableHashSet<string> HardcodedSslProtocolsMetadataNames = ImmutableHashSet.Create(
@@ -68,15 +69,21 @@ namespace Microsoft.NetCore.Analyzers.Security
                             if (IsReferencingSslProtocols(
                                     fieldReferenceOperation,
                                     out bool isDeprecatedProtocol,
-                                    out bool isHardCodedOkayProtocol))
+                                    out bool isHardcodedOkayProtocol))
                             {
                                 if (isDeprecatedProtocol)
                                 {
-                                    operationAnalysisContext.ReportDiagnostic(fieldReferenceOperation.CreateDiagnostic(DeprecatedRule, fieldReferenceOperation.Field.Name));
+                                    operationAnalysisContext.ReportDiagnostic(
+                                        fieldReferenceOperation.CreateDiagnostic(
+                                            DeprecatedRule,
+                                            fieldReferenceOperation.Field.Name));
                                 }
-                                else if (isHardCodedOkayProtocol)
+                                else if (isHardcodedOkayProtocol)
                                 {
-                                    operationAnalysisContext.ReportDiagnostic(fieldReferenceOperation.CreateDiagnostic(HardcodedRule, fieldReferenceOperation.Field.Name));
+                                    operationAnalysisContext.ReportDiagnostic(
+                                        fieldReferenceOperation.CreateDiagnostic(
+                                            HardcodedRule,
+                                            fieldReferenceOperation.Field.Name));
                                 }
                             }
                         },
@@ -85,35 +92,77 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationAction(
                         (OperationAnalysisContext operationAnalysisContext) =>
                         {
-                            IAssignmentOperation assignmentOperation = (IAssignmentOperation)operationAnalysisContext.Operation;
-
-                            // Make sure this is an assignment operation for a SslProtocols value.
-                            if (!sslProtocolsSymbol.Equals(assignmentOperation.Target.Type))
+                            IOperation valueOperation;
+                            switch (operationAnalysisContext.Operation)
                             {
-                                return;
+                                case IAssignmentOperation assignmentOperation:
+                                    // Make sure this is an assignment operation for a SslProtocols value.
+                                    if (!sslProtocolsSymbol.Equals(assignmentOperation.Target.Type))
+                                    {
+                                        return;
+                                    }
+
+                                    valueOperation = assignmentOperation.Value;
+                                    break;
+
+                                case IArgumentOperation argumentOperation:
+                                    if (!sslProtocolsSymbol.Equals(argumentOperation.Type))
+                                    {
+                                        return;
+                                    }
+
+                                    valueOperation = argumentOperation.Value;
+                                    break;
+
+                                case IReturnOperation returnOperation:
+                                    if (returnOperation.ReturnedValue == null
+                                        || !sslProtocolsSymbol.Equals(returnOperation.ReturnedValue.Type))
+                                    {
+                                        return;
+                                    }
+
+                                    valueOperation = returnOperation.ReturnedValue;
+                                    break;
+
+                                case IVariableInitializerOperation variableInitializerOperation:
+                                    if (variableInitializerOperation.Value != null
+                                        && !sslProtocolsSymbol.Equals(variableInitializerOperation.Value.Type))
+                                    {
+                                        return;
+                                    }
+
+                                    valueOperation = variableInitializerOperation.Value;
+                                    break;
+
+                                default:
+                                    Debug.Fail("Unhandled IOperation " + operationAnalysisContext.Operation.Kind);
+                                    return;
                             }
 
                             // Find the topmost operation with a bad bit set, unless we find an operation that would've been
                             // flagged by the FieldReference callback above.
                             IOperation foundDeprecatedOperation = null;
                             bool foundDeprecatedReference = false;
-                            IOperation foundHardCodedOperation = null;
-                            bool foundHardCodedReference = false;
-                            foreach (IOperation childOperation in assignmentOperation.Value.DescendantsAndSelf())
+                            IOperation foundHardcodedOperation = null;
+                            bool foundHardcodedReference = false;
+                            foreach (IOperation childOperation in valueOperation.DescendantsAndSelf())
                             {
                                 if (childOperation is IFieldReferenceOperation fieldReferenceOperation
-                                    && IsReferencingSslProtocols(fieldReferenceOperation, out var isDeprecatedProtocol, out var isHardCodedOkayProtocol))
+                                    && IsReferencingSslProtocols(
+                                        fieldReferenceOperation,
+                                        out var isDeprecatedProtocol,
+                                        out var isHardcodedOkayProtocol))
                                 {
                                     if (isDeprecatedProtocol)
                                     {
                                         foundDeprecatedReference = true;
                                     }
-                                    else if (isHardCodedOkayProtocol)
+                                    else if (isHardcodedOkayProtocol)
                                     {
-                                        foundHardCodedReference = true;
+                                        foundHardcodedReference = true;
                                     }
 
-                                    if (foundDeprecatedReference && foundHardCodedReference)
+                                    if (foundDeprecatedReference && foundHardcodedReference)
                                     {
                                         return;
                                     }
@@ -128,54 +177,68 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         foundDeprecatedOperation = childOperation;
                                     }
 
-                                    if (foundHardCodedOperation == null    // Only want the first.
+                                    if (foundHardcodedOperation == null    // Only want the first.
                                         && (integerValue & HardcodedBits) != 0)
                                     {
-                                        foundHardCodedOperation = childOperation;
+                                        foundHardcodedOperation = childOperation;
                                     }
                                 }
                             }
 
                             if (foundDeprecatedOperation != null && !foundDeprecatedReference)
                             {
-                                operationAnalysisContext.ReportDiagnostic(foundDeprecatedOperation.CreateDiagnostic(DeprecatedRule, foundDeprecatedOperation.ConstantValue));
+                                operationAnalysisContext.ReportDiagnostic(
+                                    foundDeprecatedOperation.CreateDiagnostic(
+                                        DeprecatedRule,
+                                        foundDeprecatedOperation.ConstantValue));
                             }
 
-                            if (foundHardCodedOperation != null && !foundHardCodedReference)
+                            if (foundHardcodedOperation != null && !foundHardcodedReference)
                             {
-                                operationAnalysisContext.ReportDiagnostic(foundHardCodedOperation.CreateDiagnostic(HardcodedRule, foundHardCodedOperation.ConstantValue));
+                                operationAnalysisContext.ReportDiagnostic(
+                                    foundHardcodedOperation.CreateDiagnostic(
+                                        HardcodedRule,
+                                        foundHardcodedOperation.ConstantValue));
                             }
                         },
                         OperationKind.SimpleAssignment,
-                        OperationKind.CompoundAssignment);
+                        OperationKind.CompoundAssignment,
+                        OperationKind.Argument,
+                        OperationKind.Return,
+                        OperationKind.VariableInitializer);
 
                     return;
 
                     // Local function(s).
                     bool IsReferencingSslProtocols(
                         IFieldReferenceOperation fieldReferenceOperation,
-                        out bool isDeprecated,
-                        out bool isHardcoded)
+                        out bool isDeprecatedProtocol,
+                        out bool isHardcodedOkayProtocol)
                     {
                         if (sslProtocolsSymbol.Equals(fieldReferenceOperation.Field.ContainingType))
                         {
                             if (HardcodedSslProtocolsMetadataNames.Contains(fieldReferenceOperation.Field.Name))
                             {
-                                isHardcoded = true;
-                                isDeprecated = false;
+                                isHardcodedOkayProtocol = true;
+                                isDeprecatedProtocol = false;
+                            }
+                            else if (fieldReferenceOperation.Field.Name == "None")
+                            {
+                                isHardcodedOkayProtocol = false;
+                                isDeprecatedProtocol = false;
                             }
                             else
                             {
-                                isDeprecated = true;
-                                isHardcoded = false;
+                                isDeprecatedProtocol = true;
+                                isHardcodedOkayProtocol = false;
                             }
 
                             return true;
                         }
                         else
                         {
-                            isHardcoded = false;
-                            isDeprecated = false;
+                            isHardcodedOkayProtocol = false;
+                            isDeprecatedProtocol = false;
                             return false;
                         }
                     }

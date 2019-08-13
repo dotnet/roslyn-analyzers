@@ -79,57 +79,40 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
         }
 
-        private void AnalyzeInvocationOperation(OperationAnalysisContext obj)
-        {
-            throw new NotImplementedException();
-        }
-
         private sealed class OperationActionsContext
         {
-            private /*readonly*/ Lazy<INamedTypeSymbol> _immutableArrayType;
+            ////private /*readonly*/ Lazy<INamedTypeSymbol> _immutableArrayType;
             private readonly Lazy<IPropertySymbol> _iCollectionCountProperty;
             private readonly Lazy<INamedTypeSymbol> _iCollectionOfType;
-            private readonly Lazy<IPropertySymbol> _iCollectionOfTCountProperty;
 
             public OperationActionsContext(Compilation compilation, INamedTypeSymbol enumerableType)
             {
                 Compilation = compilation;
                 EnumerableType = enumerableType;
-                _immutableArrayType = new Lazy<INamedTypeSymbol>(() => Compilation.GetTypeByMetadataName("System.Collections.Immutable.ImmutableArray`1"), true);
+                ////_immutableArrayType = new Lazy<INamedTypeSymbol>(() => Compilation.GetTypeByMetadataName("System.Collections.Immutable.ImmutableArray`1"), true);
                 _iCollectionCountProperty = new Lazy<IPropertySymbol>(() => WellKnownTypes.ICollection(Compilation)?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Single(), true);
                 _iCollectionOfType = new Lazy<INamedTypeSymbol>(() => WellKnownTypes.GenericICollection(Compilation), true);
-                _iCollectionOfTCountProperty = new Lazy<IPropertySymbol>(() => ICollectionOfTType?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Single(), true);
             }
 
             internal Compilation Compilation { get; }
 
-            internal INamedTypeSymbol EnumerableType { get; }
+            private INamedTypeSymbol EnumerableType { get; }
 
-            internal IPropertySymbol ICollectionCountProperty => _iCollectionCountProperty.Value;
+            private IPropertySymbol ICollectionCountProperty => _iCollectionCountProperty.Value;
 
-            internal IPropertySymbol ICollectionOfTCountProperty => _iCollectionOfTCountProperty.Value;
+            private INamedTypeSymbol ICollectionOfTType => _iCollectionOfType.Value;
 
-            internal INamedTypeSymbol ICollectionOfTType => _iCollectionOfType.Value;
+            ////internal INamedTypeSymbol ImmutableArrayType => _immutableArrayType.Value;
 
-            internal INamedTypeSymbol ImmutableArrayType => _immutableArrayType.Value;
-
+#pragma warning disable CA1822
             internal bool IsImmutableArrayType(ITypeSymbol typeSymbol)
-            {
-                if (typeSymbol is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.ConstructedFrom is INamedTypeSymbol constructedFrom)
-                {
-                    if (ImmutableArrayType is null &&
-                        constructedFrom.MetadataName.ToString().Equals("ImmutableArray`1", StringComparison.Ordinal) &&
-                        constructedFrom.ContainingNamespace.ToString().Equals("System.Collections.Immutable", StringComparison.Ordinal))
-                    {
-                        _immutableArrayType = new Lazy<INamedTypeSymbol>(() => constructedFrom, true);
-                        return true;
-                    }
-
-                    return constructedFrom.Equals(ImmutableArrayType);
-                }
-
-                return false;
-            }
+                => typeSymbol is INamedTypeSymbol namedTypeSymbol &&
+                    namedTypeSymbol.MetadataName.Equals("ImmutableArray`1", StringComparison.Ordinal) &&
+                    namedTypeSymbol.ContainingNamespace.ToDisplayString().Equals("System.Collections.Immutable", StringComparison.Ordinal) &&
+                    namedTypeSymbol.ConstructedFrom is INamedTypeSymbol constructedFrom &&
+                    constructedFrom.MetadataName.Equals("ImmutableArray`1", StringComparison.Ordinal) &&
+                    constructedFrom.ContainingNamespace.ToDisplayString().Equals("System.Collections.Immutable", StringComparison.Ordinal);
+#pragma warning restore CA1822
 
             internal bool IsICollectionImplementation(ITypeSymbol invocationTarget)
                 => this.ICollectionCountProperty is object &&
@@ -183,10 +166,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 return false;
 
                 bool isCollectionOfTInterface(ITypeSymbol type)
-                {
-                    return type.OriginalDefinition?.Equals(this.ICollectionOfTType) ?? false;
-                }
+                    => this.ICollectionOfTType.Equals(type.OriginalDefinition);
             }
+
+            internal bool IsEnumerableType(ISymbol symbol)
+                => this.EnumerableType.Equals(symbol);
         }
 
         /// <summary>
@@ -257,7 +241,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 if (invocationOperation.Arguments.Length == 1 &&
                     method.Name.Equals(nameof(Enumerable.Count), StringComparison.Ordinal) &&
-                    method.ContainingSymbol.Equals(this.Context.EnumerableType) &&
+                    this.Context.IsEnumerableType(method.ContainingSymbol) &&
                     ((INamedTypeSymbol)(method.Parameters[0].Type)).TypeArguments[0] is ITypeSymbol methodSourceItemType)
                 {
                     return invocationOperation.Arguments[0].Value is IConversionOperation convertionOperation
@@ -287,7 +271,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
                 if (invocationOperation.Arguments.Length == 0 &&
                     method.Name.Equals(nameof(Enumerable.Count), StringComparison.Ordinal) &&
-                    method.ContainingSymbol.Equals(this.Context.EnumerableType) &&
+                    this.Context.IsEnumerableType(method.ContainingSymbol) &&
                     ((INamedTypeSymbol)(invocationOperation.Instance.Type)).TypeArguments[0] is ITypeSymbol methodSourceItemType)
                 {
                     return invocationOperation.Instance is IConversionOperation convertionOperation

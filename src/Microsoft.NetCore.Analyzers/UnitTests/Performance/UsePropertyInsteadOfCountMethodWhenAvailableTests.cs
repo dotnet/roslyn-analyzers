@@ -5,7 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Dynamic;
+using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Runtime;
 using Xunit;
@@ -22,7 +24,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
     {
         [Fact]
         public static Task CSharp_ImmutableArray_Tests()
-            => VerifyCS.VerifyCodeFixAsync(
+            => new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources=
+                    {
                 $@"using System;
 using System.Linq;
 public static class C
@@ -32,6 +39,16 @@ public static class C
     public static int N() => {{|{UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.RuleId}:GetData().Count()|}};
 }}
 ",
+                    },
+                    AdditionalReferences =
+                    {
+                        MetadataReference.CreateFromFile(typeof(ImmutableArray<>).GetTypeInfo().Assembly.Location, default(MetadataReferenceProperties), null),
+                    },
+                },
+                FixedState =
+                {
+                    Sources=
+                    {
                 $@"using System;
 using System.Linq;
 public static class C
@@ -40,7 +57,11 @@ public static class C
     public static int M() => GetData().Length;
     public static int N() => GetData().Length;
 }}
-");
+" ,
+                    },
+                },
+                IncludeImmutableCollectionsReference = false,
+            }.RunAsync();
 
         [Theory]
         [InlineData("string[]", nameof(Array.Length))]

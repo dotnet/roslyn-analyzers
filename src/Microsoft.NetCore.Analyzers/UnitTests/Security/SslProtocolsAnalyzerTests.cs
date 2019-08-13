@@ -25,7 +25,7 @@ public class ExampleClass
 {
     public void ExampleMethod()
     {
-        // CA5395 violation for using Tls11
+        // CA5397 violation for using Tls11
         SslProtocols protocols = SslProtocols.Tls11 | SslProtocols.Tls12;
     }
 }",
@@ -42,7 +42,7 @@ Imports System.Security.Authentication
 
 Public Class TestClass
     Public Sub ExampleMethod()
-        ' CA5395 violation for using Tls11
+        ' CA5397 violation for using Tls11
         Dim sslProtocols As SslProtocols = SslProtocols.Tls11 Or SslProtocols.Tls12
     End Sub
 End Class
@@ -62,7 +62,7 @@ public class ExampleClass
 {
     public void ExampleMethod()
     {
-        // CA5395 violation
+        // CA5397 violation
         SslProtocols sslProtocols = (SslProtocols) 768;    // TLS 1.1
     }
 }",
@@ -78,7 +78,7 @@ Imports System.Security.Authentication
 
 Public Class TestClass
     Public Sub ExampleMethod()
-        ' CA5395 violation
+        ' CA5397 violation
         Dim sslProtocols As SslProtocols = CType(768, SslProtocols)   ' TLS 1.1
     End Sub
 End Class
@@ -97,7 +97,7 @@ public class TestClass
 {
     public void Method()
     {
-        // In .NET Framework 4.7.1 or later, let the operating system decide what TLS protocol version to use.
+        // Let the operating system decide what TLS protocol version to use.
         // See https://docs.microsoft.com/dotnet/framework/network-programming/tls
         SslProtocols sslProtocols = SslProtocols.None;
     }
@@ -113,7 +113,7 @@ Imports System.Security.Authentication
 
 Public Class TestClass
     Public Sub ExampleMethod()
-        ' In .NET Framework 4.7.1 or later, let the operating system decide what TLS protocol version to use.
+        ' Let the operating system decide what TLS protocol version to use.
         ' See https://docs.microsoft.com/dotnet/framework/network-programming/tls
         Dim sslProtocols As SslProtocols = SslProtocols.None
     End Sub
@@ -132,7 +132,7 @@ public class ExampleClass
 {
     public void ExampleMethod()
     {
-        // CA5396 violation
+        // CA5398 violation
         SslProtocols sslProtocols = SslProtocols.Tls12;
     }
 }",
@@ -148,7 +148,7 @@ Imports System.Security.Authentication
 
 Public Class TestClass
     Public Function ExampleMethod() As SslProtocols
-        ' CA5396 violation
+        ' CA5398 violation
         Return SslProtocols.Tls12
     End Function
 End Class
@@ -167,7 +167,7 @@ public class ExampleClass
 {
     public SslProtocols ExampleMethod()
     {
-        // CA5396 violation
+        // CA5398 violation
         return (SslProtocols) 3072;    // TLS 1.2
     }
 }",
@@ -183,7 +183,7 @@ Imports System.Security.Authentication
 
 Public Class TestClass
     Public Function ExampleMethod() As SslProtocols
-        ' CA5396 violation
+        ' CA5398 violation
         Return CType(3072, SslProtocols)   ' TLS 1.2
     End Function
 End Class

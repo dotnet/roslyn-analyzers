@@ -38,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             "Tls12",
             "Tls13");
 
-        private const int UnsafeBits = 12 | 48 | 192 | 768;    // SslProtocols Ssl2 Ssl3 Tls10 Tls11
+        private const int UnsafeBits = 12 | 48 | 192 | 768;    // SslProtocols Ssl2 Ssl3 Tls Tls11
 
         private const int HardcodedBits = 3072 | 12288;    // SslProtocols Tls12 Tls13
 

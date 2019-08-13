@@ -8,8 +8,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DeprecatedSslProtocolsMessage">
-        <source>Hardcoded use of deprecated Transport Layer Security protocol version '{0}'</source>
-        <target state="new">Hardcoded use of deprecated Transport Layer Security protocol version '{0}'</target>
+        <source>Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operation System choose a version.</source>
+        <target state="new">Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operation System choose a version.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeprecatedSslProtocolsTitle">
@@ -48,13 +48,13 @@
         <note />
       </trans-unit>
       <trans-unit id="HardcodedSslProtocolsDescription">
-        <source>Existing Transport Layer Security protocol verions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure.</source>
-        <target state="new">Existing Transport Layer Security protocol verions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure.</target>
+        <source>Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.</source>
+        <target state="new">Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.</target>
         <note />
       </trans-unit>
       <trans-unit id="HardcodedSslProtocolsMessage">
-        <source>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future</source>
-        <target state="new">Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future</target>
+        <source>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operation System choose a version.</source>
+        <target state="new">Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operation System choose a version.</target>
         <note />
       </trans-unit>
       <trans-unit id="HardcodedSslProtocolsTitle">

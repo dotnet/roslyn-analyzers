@@ -1132,16 +1132,16 @@
     <value>Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.</value>
   </data>
   <data name="DeprecatedSslProtocolsMessage" xml:space="preserve">
-    <value>Hardcoded use of deprecated Transport Layer Security protocol version '{0}'</value>
+    <value>Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operation System choose a version.</value>
   </data>
   <data name="DeprecatedSslProtocolsTitle" xml:space="preserve">
     <value>Do not use deprecated SslProtocols values</value>
   </data>
   <data name="HardcodedSslProtocolsDescription" xml:space="preserve">
-    <value>Existing Transport Layer Security protocol verions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure.</value>
+    <value>Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.</value>
   </data>
   <data name="HardcodedSslProtocolsMessage" xml:space="preserve">
-    <value>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future</value>
+    <value>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operation System choose a version.</value>
   </data>
   <data name="HardcodedSslProtocolsTitle" xml:space="preserve">
     <value>Avoid hardcoded SslProtocols values</value>

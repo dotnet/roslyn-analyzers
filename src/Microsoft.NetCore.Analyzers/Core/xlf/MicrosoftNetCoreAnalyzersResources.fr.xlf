@@ -2,6 +2,51 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="fr" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
+      <trans-unit id="DefinitelyDisableHttpClientCRLCheck">
+        <source>Definitely disable HttpClient CRL check</source>
+        <target state="new">Definitely disable HttpClient CRL check</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyDisableHttpClientCRLCheckMessage">
+        <source>HttpClient is created without enabling CheckCertificateRevocationList</source>
+        <target state="new">HttpClient is created without enabling CheckCertificateRevocationList</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDisableHttpClientCRLCheckDescription">
+        <source>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</source>
+        <target state="new">Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
+        <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
+        <target state="new">For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
+        <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
+        <target state="new">{0}() is used where AnyAsync() could be used instead to improve performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
+        <source>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</source>
+        <target state="new">Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
+        <source>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
+        <target state="new">For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
+        <source>{0}() is used where Any() could be used instead to improve performance.</source>
+        <target state="new">{0}() is used where Any() could be used instead to improve performance.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
+        <source>Do not use Count() or LongCount() when Any() can be used</source>
+        <target state="new">Do not use Count() or LongCount() when Any() can be used</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomness">
         <source>Do not use insecure randomness</source>
         <target state="new">Do not use insecure randomness</target>
@@ -52,34 +97,14 @@
         <target state="new">Ensure that JsonSerializer has a secure configuration when deserializing</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
-        <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="new">For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</target>
+      <trans-unit id="MaybeDisableHttpClientCRLCheck">
+        <source>Ensure HttpClient CRL check is not disabled</source>
+        <target state="new">Ensure HttpClient CRL check is not disabled</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
-        <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
-        <target state="new">{0}() is used where AnyAsync() could be used instead to improve performance.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
-        <source>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</source>
-        <target state="new">Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
-        <source>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="new">For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
-        <source>{0}() is used where Any() could be used instead to improve performance.</source>
-        <target state="new">{0}() is used where Any() could be used instead to improve performance.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
-        <source>Do not use Count() or LongCount() when Any() can be used</source>
-        <target state="new">Do not use Count() or LongCount() when Any() can be used</target>
+      <trans-unit id="MaybeDisableHttpClientCRLCheckMessage">
+        <source>HttpClient may be created without enabling CheckCertificateRevocationList</source>
+        <target state="new">HttpClient may be created without enabling CheckCertificateRevocationList</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">

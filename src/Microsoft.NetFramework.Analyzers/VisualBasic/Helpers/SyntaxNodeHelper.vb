@@ -167,6 +167,11 @@ Namespace Microsoft.NetFramework.VisualBasic.Analyzers.Helpers
                 argList = CType(node, InvocationExpressionSyntax).ArgumentList
             ElseIf ((kind = SyntaxKind.ObjectCreationExpression) AndAlso ((callKind And CallKinds.ObjectCreation) <> 0)) Then
                 argList = CType(node, ObjectCreationExpressionSyntax).ArgumentList
+            ElseIf ((kind = SyntaxKind.AsNewClause) AndAlso ((callKind And CallKinds.ObjectCreation) <> 0)) Then
+                Dim asNewClause As AsNewClauseSyntax = (CType(node, AsNewClauseSyntax))
+                If (asNewClause.NewExpression IsNot Nothing AndAlso asNewClause.NewExpression.Kind = SyntaxKind.ObjectCreationExpression) Then
+                    argList = (CType(asNewClause.NewExpression, ObjectCreationExpressionSyntax)).ArgumentList
+                End If
             End If
 
             If (argList IsNot Nothing) Then

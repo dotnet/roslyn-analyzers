@@ -2,7 +2,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -12,70 +11,51 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.NetCore.Analyzers.Security.Helpers;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    class DoNotDisableHttpClientCRLCheck : DiagnosticAnalyzer
+    class SetHttpOnlyForHttpCookie : DiagnosticAnalyzer
     {
-        internal static DiagnosticDescriptor DefinitelyDisableHttpClientCRLCheckRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5397",
+        // TODO Lingxia Chen: Help links URLs.
+        internal static DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
+            "CA5396",
             typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyDisableHttpClientCRLCheck),
-            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyDisableHttpClientCRLCheckMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookie),
+            nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookieMessage),
+            false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableHttpClientCRLCheckDescription),
-            customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
-        internal static DiagnosticDescriptor MaybeDisableHttpClientCRLCheckRule = SecurityHelpers.CreateDiagnosticDescriptor(
-            "CA5398",
-            typeof(MicrosoftNetCoreAnalyzersResources),
-            nameof(MicrosoftNetCoreAnalyzersResources.MaybeDisableHttpClientCRLCheck),
-            nameof(MicrosoftNetCoreAnalyzersResources.MaybeDisableHttpClientCRLCheckMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null,
-            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableHttpClientCRLCheckDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.SetHttpOnlyForHttpCookieDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
             ImmutableArray.Create(
-                DefinitelyDisableHttpClientCRLCheckRule,
-                MaybeDisableHttpClientCRLCheckRule);
-
-        /// <summary>
-        /// PropertySetAbstractValue index for CheckCertificateRevocationList property.
-        /// </summary>
-        private const int CheckCertificateRevocationListIndex = 0;
+                Rule);
 
         private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(
-            (IMethodSymbol constructorMethod, IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
+            (IMethodSymbol constructorMethod,
+            IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
             {
                 return PropertySetAbstractValue.GetInstance(PropertySetAbstractValueKind.Flagged);
             });
 
+        // If HttpOnly is set explictly, the callbacks of OperationKind.SimpleAssignment can cover that case.
+        // Otherwise, using PropertySetAnalysis to cover the case where HttpCookie object is returned without initializing or assgining HttpOnly property.
         private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
             new PropertyMapper(
-                "CheckCertificateRevocationList",
-                (ValueContentAbstractValue valueContentAbstractValue) =>
-                    PropertySetCallbacks.EvaluateLiteralValues(
-                        valueContentAbstractValue,
-                        (object o) => o is bool booleanValue && booleanValue == false),
-                CheckCertificateRevocationListIndex));
+                "HttpOnly",
+                (PointsToAbstractValue pointsToAbstractValue) =>
+                   PropertySetAbstractValueKind.Unflagged));
 
         private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
-            new HazardousUsageEvaluator(
-                WellKnownTypeNames.SystemNetHttpHttpClient,
-                ".ctor",
-                "handler",
-                PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown));
-
-        private static readonly ImmutableHashSet<string> typeToTrackMetadataNames = ImmutableHashSet.Create<string>(
-            WellKnownTypeNames.SystemNetHttpWinHttpHandler,
-            WellKnownTypeNames.SystemNetHttpHttpClientHandler,
-            WellKnownTypeNames.SystemNetHttpUnixCurlHandler);
+                    new HazardousUsageEvaluator(
+                        HazardousUsageEvaluatorKind.Return,
+                        PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown),
+                    new HazardousUsageEvaluator(
+                        HazardousUsageEvaluatorKind.Argument,
+                        PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown));
 
         public override void Initialize(AnalysisContext context)
         {
@@ -87,19 +67,14 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
+                    WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClient, out INamedTypeSymbol httpClientTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemWebHttpCookie, out INamedTypeSymbol httpCookieSymbol))
                     {
                         return;
                     }
 
-                    if (typeToTrackMetadataNames.Any(s => !wellKnownTypeProvider.TryGetTypeByMetadataName(s, out _)))
-                    {
-                        return;
-                    }
-
-                    var rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
+                    PooledHashSet<(IOperation Operation, ISymbol ContainingSymbol)> rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();
 
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
@@ -108,12 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             if (owningSymbol.IsConfiguredToSkipAnalysis(
                                     operationBlockStartAnalysisContext.Options,
-                                    DefinitelyDisableHttpClientCRLCheckRule,
-                                    operationBlockStartAnalysisContext.Compilation,
-                                    operationBlockStartAnalysisContext.CancellationToken) &&
-                                owningSymbol.IsConfiguredToSkipAnalysis(
-                                    operationBlockStartAnalysisContext.Options,
-                                    MaybeDisableHttpClientCRLCheckRule,
+                                    Rule,
                                     operationBlockStartAnalysisContext.Compilation,
                                     operationBlockStartAnalysisContext.CancellationToken))
                             {
@@ -123,26 +93,53 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
-                                    var objectCreationOperation =
-                                        (IObjectCreationOperation)operationAnalysisContext.Operation;
+                                    ISimpleAssignmentOperation simpleAssignmentOperation =
+                                        (ISimpleAssignmentOperation)operationAnalysisContext.Operation;
 
-                                    if (httpClientTypeSymbol.Equals(objectCreationOperation.Type))
+                                    if (simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReferenceOperation &&
+                                        httpCookieSymbol.Equals(propertyReferenceOperation.Property.ContainingType) &&
+                                        propertyReferenceOperation.Property.Name == "HttpOnly" &&
+                                        simpleAssignmentOperation.Value.ConstantValue.HasValue &&
+                                        simpleAssignmentOperation.Value.ConstantValue.Value.Equals(false))
                                     {
-                                        if (objectCreationOperation.Arguments.Length == 0)
-                                        {
-                                            operationAnalysisContext.ReportDiagnostic(
-                                                objectCreationOperation.CreateDiagnostic(
-                                                    DefinitelyDisableHttpClientCRLCheckRule));
-                                        }
+                                        operationAnalysisContext.ReportDiagnostic(
+                                            simpleAssignmentOperation.CreateDiagnostic(
+                                                Rule));
+                                    }
+                                },
+                                OperationKind.SimpleAssignment);
 
+                            operationBlockStartAnalysisContext.RegisterOperationAction(
+                                (OperationAnalysisContext operationAnalysisContext) =>
+                                {
+                                    IReturnOperation returnOperation = (IReturnOperation)operationAnalysisContext.Operation;
+
+                                    if (httpCookieSymbol.Equals(returnOperation.ReturnedValue?.Type))
+                                    {
                                         lock (rootOperationsNeedingAnalysis)
                                         {
                                             rootOperationsNeedingAnalysis.Add(
-                                                (objectCreationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
+                                                (returnOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
                                         }
                                     }
                                 },
-                                OperationKind.ObjectCreation);
+                                OperationKind.Return);
+
+                            operationBlockStartAnalysisContext.RegisterOperationAction(
+                                (OperationAnalysisContext operationAnalysisContext) =>
+                                {
+                                    IArgumentOperation argumentOperation = (IArgumentOperation)operationAnalysisContext.Operation;
+
+                                    if (httpCookieSymbol.Equals(argumentOperation.Value.Type))
+                                    {
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(
+                                                (argumentOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
+                                        }
+                                    }
+                                },
+                                OperationKind.Argument);
                         });
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
@@ -163,7 +160,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
                                         compilationAnalysisContext.Options,
-                                        typeToTrackMetadataNames,
+                                        WellKnownTypeNames.SystemWebHttpCookie,
                                         ConstructorMapper,
                                         PropertyMappers,
                                         HazardousUsageEvaluators,
@@ -182,28 +179,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 foreach (KeyValuePair<(Location Location, IMethodSymbol Method), HazardousUsageEvaluationResult> kvp
                                     in allResults)
                                 {
-                                    DiagnosticDescriptor descriptor;
-                                    switch (kvp.Value)
+                                    if (kvp.Value == HazardousUsageEvaluationResult.Flagged)
                                     {
-                                        case HazardousUsageEvaluationResult.Flagged:
-                                            descriptor = DefinitelyDisableHttpClientCRLCheckRule;
-                                            break;
-
-                                        case HazardousUsageEvaluationResult.MaybeFlagged:
-                                            descriptor = MaybeDisableHttpClientCRLCheckRule;
-                                            break;
-
-                                        default:
-                                            Debug.Fail($"Unhandled result value {kvp.Value}");
-                                            continue;
+                                        compilationAnalysisContext.ReportDiagnostic(
+                                            Diagnostic.Create(
+                                                Rule,
+                                                kvp.Key.Location));
                                     }
-
-                                    compilationAnalysisContext.ReportDiagnostic(
-                                        Diagnostic.Create(
-                                            descriptor,
-                                            kvp.Key.Location,
-                                            kvp.Key.Method.ToDisplayString(
-                                                SymbolDisplayFormat.MinimallyQualifiedFormat)));
                                 }
                             }
                             finally

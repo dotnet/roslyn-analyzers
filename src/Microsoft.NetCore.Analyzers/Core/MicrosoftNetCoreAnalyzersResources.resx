@@ -1147,7 +1147,7 @@
     <value>Avoid hardcoded SslProtocols values</value>
   </data>
   <data name="DefinitelyDisableHttpClientCRLCheck" xml:space="preserve">
-    <value>Definitely disable HttpClient CRL check</value>
+    <value>Definitely disable HttpClient certificate revocation list check</value>
   </data>
   <data name="DefinitelyDisableHttpClientCRLCheckMessage" xml:space="preserve">
     <value>HttpClient is created without enabling CheckCertificateRevocationList</value>
@@ -1156,7 +1156,7 @@
     <value>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</value>
   </data>
   <data name="MaybeDisableHttpClientCRLCheck" xml:space="preserve">
-    <value>Ensure HttpClient CRL check is not disabled</value>
+    <value>Ensure HttpClient certificate revocation list check is not disabled</value>
   </data>
   <data name="MaybeDisableHttpClientCRLCheckMessage" xml:space="preserve">
     <value>HttpClient may be created without enabling CheckCertificateRevocationList</value>

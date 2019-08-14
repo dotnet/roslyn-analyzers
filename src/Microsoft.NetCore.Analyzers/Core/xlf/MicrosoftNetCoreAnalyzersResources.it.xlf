@@ -18,8 +18,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheck">
-        <source>Definitely disable HttpClient CRL check</source>
-        <target state="new">Definitely disable HttpClient CRL check</target>
+        <source>Definitely disable HttpClient certificate revocation list check</source>
+        <target state="new">Definitely disable HttpClient certificate revocation list check</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheckMessage">
@@ -128,8 +128,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MaybeDisableHttpClientCRLCheck">
-        <source>Ensure HttpClient CRL check is not disabled</source>
-        <target state="new">Ensure HttpClient CRL check is not disabled</target>
+        <source>Ensure HttpClient certificate revocation list check is not disabled</source>
+        <target state="new">Ensure HttpClient certificate revocation list check is not disabled</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeDisableHttpClientCRLCheckMessage">

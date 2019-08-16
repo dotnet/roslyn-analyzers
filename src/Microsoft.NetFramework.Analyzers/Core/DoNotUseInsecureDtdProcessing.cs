@@ -9,6 +9,7 @@ using Microsoft.NetFramework.Analyzers.Helpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using System.Diagnostics;
 
 namespace Microsoft.NetFramework.Analyzers
 {
@@ -49,6 +50,8 @@ namespace Microsoft.NetFramework.Analyzers
         public override void Initialize(AnalysisContext analysisContext)
 #pragma warning restore RS1026 // Enable concurrent execution
         {
+            Debugger.Launch();
+            Debugger.Break();
             // TODO: Make analyzer thread-safe
             //analysisContext.EnableConcurrentExecution();
 

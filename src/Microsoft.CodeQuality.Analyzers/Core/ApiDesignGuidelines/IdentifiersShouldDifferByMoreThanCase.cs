@@ -133,7 +133,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
 
             using var overloadsToSkip = PooledHashSet<ISymbol>.GetInstance();
-            var membersByName = PooledDictionary<string, PooledHashSet<ISymbol>>.GetInstance(StringComparer.OrdinalIgnoreCase);
+            using var membersByName = PooledDictionary<string, PooledHashSet<ISymbol>>.GetInstance(StringComparer.OrdinalIgnoreCase);
             foreach (var member in members)
             {
                 // Ignore constructors, indexers, operators and destructors for name check

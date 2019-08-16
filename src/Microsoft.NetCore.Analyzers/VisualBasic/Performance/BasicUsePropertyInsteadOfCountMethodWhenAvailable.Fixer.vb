@@ -16,27 +16,39 @@ Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
         Inherits UsePropertyInsteadOfCountMethodWhenAvailableFixer
 
         ''' <summary>
-        ''' Gets the expression from the specified <paramref name="node" /> where to replace the invocation of the
-        ''' <see cref="Enumerable.Count(Of TSource)(IEnumerable(Of TSource))"/> method with a property invocation.
+        ''' Gets the expression from the specified <paramref name="invocationNode" /> where to replace the invocation of the
+        ''' <see cref="Enumerable.Count(Of TSource)(IEnumerable(Of TSource))" /> method with a property invocation.
         ''' </summary>
-        ''' <param name="node">The node to get a fixer for.</param>
-        ''' <returns>The expression from the specified <paramref name="node" /> where to replace the invocation of the
-        ''' <see cref="Enumerable.Count(Of TSource)(IEnumerable(Of TSource))"/> method with a property invocation
-        ''' if found; <see langword="null" /> otherwise.</returns>
-        ''' <exception cref="NotImplementedException"></exception>
-        Protected Overrides Function GetExpression(node As SyntaxNode) As SyntaxNode
+        ''' <param name="invocationNode">The invocation node to get a fixer for.</param>
+        ''' <param name="memberAccessNode">The member access node for the invocation node.</param>
+        ''' <param name="nameNode">The name node for the invocation node.</param>
+        ''' <returns><see langword="true" /> if a <paramref name="memberAccessNode" /> and <paramref name="nameNode" /> were found;
+        ''' <see langword="false" /> otherwise.</returns>
+        Protected Overrides Function TryGetExpression(invocationNode As SyntaxNode, ByRef memberAccessNode As SyntaxNode, ByRef nameNode As SyntaxNode) As Boolean
 
-            Dim invocationExpression = TryCast(node, InvocationExpressionSyntax)
+            Dim invocationExpression = TryCast(invocationNode, InvocationExpressionSyntax)
 
-            If Not invocationExpression Is Nothing Then
+            If invocationExpression Is Nothing Then
 
-                Return DirectCast(invocationExpression.Expression, MemberAccessExpressionSyntax).Expression
+                Return False
 
             End If
 
-            Return Nothing
+            Dim memberAccessExpression = TryCast(invocationExpression.Expression, MemberAccessExpressionSyntax)
+
+            If Not memberAccessExpression Is Nothing Then
+
+                memberAccessNode = memberAccessExpression
+                nameNode = memberAccessExpression.Name
+
+                Return True
+
+            End If
+
+            Return False
 
         End Function
+
     End Class
 
 End Namespace

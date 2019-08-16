@@ -51,40 +51,44 @@ namespace Microsoft.NetCore.Analyzers.Performance
             var node = root.FindNode(context.Span);
             var propertyName = context.Diagnostics[0].Properties["PropertyName"];
 
-            if (node is object && propertyName is object && GetExpression(node) is SyntaxNode expression)
+            if (node is object && propertyName is object && TryGetExpression(node, out var expressionNode, out var nameNode))
             {
                 context.RegisterCodeFix(
-                    new UsePropertyInsteadOfCountMethodWhenAvailableCodeAction(context.Document, node, expression, propertyName),
+                    new UsePropertyInsteadOfCountMethodWhenAvailableCodeAction(context.Document, node, expressionNode, nameNode, propertyName),
                     context.Diagnostics);
             }
         }
 
         /// <summary>
-        /// Gets the expression from the specified <paramref name="node"/> where to replace the invocation of the
-        /// <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> method with a property invocation.
+        /// Gets the expression from the specified <paramref name="invocationNode" /> where to replace the invocation of the
+        /// <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})" /> method with a property invocation.
         /// </summary>
-        /// <param name="node">The node to get a fixer for.</param>
-        /// <returns>The expression from the specified <paramref name="node"/> where to replace the invocation of the
-        /// <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> method with a property invocation
-        /// if found; <see langword="null" /> otherwise.</returns>
-        protected abstract SyntaxNode GetExpression(SyntaxNode node);
+        /// <param name="invocationNode">The invocation node to get a fixer for.</param>
+        /// <param name="memberAccessNode">The member access node for the invocation node.</param>
+        /// <param name="nameNode">The name node for the invocation node.</param>
+        /// <returns><see langword="true"/> if a <paramref name="memberAccessNode" /> and <paramref name="nameNode"/> were found;
+        /// <see langword="false" /> otherwise.</returns>
+        protected abstract bool TryGetExpression(SyntaxNode invocationNode, out SyntaxNode memberAccessNode, out SyntaxNode nameNode);
 
         private class UsePropertyInsteadOfCountMethodWhenAvailableCodeAction : CodeAction
         {
             private readonly Document document;
-            private readonly SyntaxNode node;
-            private readonly SyntaxNode expression;
+            private readonly SyntaxNode invocationNode;
+            private readonly SyntaxNode memberAccessNode;
+            private readonly SyntaxNode nameNode;
             private readonly string propertyName;
 
             public UsePropertyInsteadOfCountMethodWhenAvailableCodeAction(
                 Document document,
-                SyntaxNode node,
-                SyntaxNode expression,
+                SyntaxNode invocationNode,
+                SyntaxNode memberAccessNode,
+                SyntaxNode nameNode,
                 string propertyName)
             {
                 this.document = document;
-                this.node = node;
-                this.expression = expression;
+                this.invocationNode = invocationNode;
+                this.memberAccessNode = memberAccessNode;
+                this.nameNode = nameNode;
                 this.propertyName = propertyName;
             }
 
@@ -92,17 +96,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             public override string EquivalenceKey { get; } = MicrosoftNetCoreAnalyzersResources.UsePropertyInsteadOfCountMethodWhenAvailableTitle;
 
-            protected override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
+            protected sealed override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
                 var editor = await DocumentEditor.CreateAsync(this.document, cancellationToken).ConfigureAwait(false);
                 var generator = editor.Generator;
-                var replacementSyntax = generator.MemberAccessExpression(this.expression.WithoutTrailingTrivia(), this.propertyName);
-
-                replacementSyntax = replacementSyntax
+                var replacementSyntax = generator.ReplaceNode(this.memberAccessNode, this.nameNode, generator.IdentifierName(propertyName))
                     .WithAdditionalAnnotations(Formatter.Annotation)
-                    .WithTriviaFrom(this.node);
+                    .WithTriviaFrom(this.invocationNode);
 
-                editor.ReplaceNode(this.node, replacementSyntax);
+                editor.ReplaceNode(this.invocationNode, replacementSyntax);
 
                 return editor.GetChangedDocument();
             }

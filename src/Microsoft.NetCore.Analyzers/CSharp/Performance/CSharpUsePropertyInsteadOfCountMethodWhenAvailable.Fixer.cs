@@ -15,21 +15,34 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
     public sealed class CSharpUsePropertyInsteadOfCountMethodWhenAvailableFixer : UsePropertyInsteadOfCountMethodWhenAvailableFixer
     {
         /// <summary>
-        /// Gets the expression from the specified <paramref name="node" /> where to replace the invocation of the
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> method with a property invocation.
+        /// Gets the expression from the specified <paramref name="invocationNode" /> where to replace the invocation of the
+        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})" /> method with a property invocation.
         /// </summary>
-        /// <param name="node">The node to get a fixer for.</param>
-        /// <returns>The expression from the specified <paramref name="node" /> where to replace the invocation of the
-        /// <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> method with a property invocation
-        /// if found; <see langword="null" /> otherwise.</returns>
-        protected override SyntaxNode GetExpression(SyntaxNode node)
+        /// <param name="invocationNode">The invocation node to get a fixer for.</param>
+        /// <param name="memberAccessNode">The member access node for the invocation node.</param>
+        /// <param name="nameNode">The name node for the invocation node.</param>
+        /// <returns><see langword="true" /> if a <paramref name="memberAccessNode" /> and <paramref name="nameNode" /> were found;
+        /// <see langword="false" /> otherwise.</returns>
+        protected override bool TryGetExpression(SyntaxNode invocationNode, out SyntaxNode memberAccessNode, out SyntaxNode nameNode)
         {
-            if (node is InvocationExpressionSyntax invocationExpression)
+            if (invocationNode is InvocationExpressionSyntax invocationExpression)
             {
-                return ((MemberAccessExpressionSyntax)invocationExpression.Expression).Expression;
+                switch (invocationExpression.Expression)
+                {
+                    case MemberAccessExpressionSyntax memberAccessExpression:
+                        memberAccessNode = invocationExpression.Expression;
+                        nameNode = memberAccessExpression.Name;
+                        return true;
+                    case MemberBindingExpressionSyntax memberBindingExpression:
+                        memberAccessNode = invocationExpression.Expression;
+                        nameNode = memberBindingExpression.Name;
+                        return true;
+                }
             }
 
-            return null;
+            memberAccessNode = default;
+            nameNode = default;
+            return false;
         }
     }
 }

@@ -1,15 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Dynamic;
-using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Operations;
-using Microsoft.NetCore.Analyzers.Runtime;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Performance.UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer,
@@ -40,10 +34,6 @@ public static class C
 }}
 ",
                     },
-                    AdditionalReferences =
-                    {
-                        MetadataReference.CreateFromFile(typeof(ImmutableArray<>).GetTypeInfo().Assembly.Location, default(MetadataReferenceProperties), null),
-                    },
                 },
                 FixedState =
                 {
@@ -60,7 +50,54 @@ public static class C
 " ,
                     },
                 },
-                IncludeImmutableCollectionsReference = false,
+                IncludeImmutableCollectionsReference = true,
+            }.RunAsync();
+
+        [Fact]
+        public static Task Basic_ImmutableArray_Tests()
+            => new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources=
+                    {
+                $@"Imports System
+Imports System.Linq
+Public Module C
+    Public Function GetData() As System.Collections.Immutable.ImmutableArray(Of Integer)
+        Return Nothing
+    End Function
+    Public Function F() As Integer
+        Return {{|{UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.RuleId}:GetData().Count()|}}
+    End Function
+    Public Function G() As Integer
+        Return {{|{UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.RuleId}:GetData().Count()|}}
+    End Function
+End Module
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources=
+                    {
+                $@"Imports System
+Imports System.Linq
+Public Module C
+    Public Function GetData() As System.Collections.Immutable.ImmutableArray(Of Integer)
+        Return Nothing
+    End Function
+    Public Function F() As Integer
+        Return GetData().Length
+    End Function
+    Public Function G() As Integer
+        Return GetData().Length
+    End Function
+End Module
+" ,
+                    },
+                },
+                IncludeImmutableCollectionsReference = true,
             }.RunAsync();
 
         [Theory]
@@ -92,6 +129,34 @@ public static class C
 ");
 
         [Theory]
+        [InlineData("string[]", nameof(Array.Length))]
+        [InlineData("System.Collections.Immutable.ImmutableArray<int>?", nameof(ImmutableArray<int>.Length))]
+        [InlineData("System.Collections.Generic.List<int>", nameof(List<int>.Count))]
+        [InlineData("System.Collections.Generic.IList<int>", nameof(IList<int>.Count))]
+        [InlineData("System.Collections.Generic.ICollection<int>", nameof(ICollection<int>.Count))]
+        public static Task CSharp_Conditional_Fixed(string type, string propertyName)
+            => VerifyCS.VerifyCodeFixAsync(
+                $@"using System;
+using System.Linq;
+public static class C
+{{
+    public static {type} GetData() => default;
+    public static int? M() => GetData()?.Count();
+}}
+",
+                VerifyCS.Diagnostic(UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.RuleId)
+                    .WithLocation(6, 41)
+                    .WithArguments(propertyName),
+                $@"using System;
+using System.Linq;
+public static class C
+{{
+    public static {type} GetData() => default;
+    public static int? M() => GetData()?.{propertyName};
+}}
+");
+
+        [Theory]
         [InlineData("string()", nameof(Array.Length))]
         [InlineData("System.Collections.Immutable.ImmutableArray(Of Integer)", nameof(ImmutableArray<int>.Length))]
         public static Task Basic_Fixed(string type, string propertyName)
@@ -118,6 +183,37 @@ Public Module M
     End Function
     Public Function F() As Integer
         Return GetData().{propertyName}
+    End Function
+End Module
+");
+
+        [Theory]
+        [InlineData("string()", nameof(Array.Length))]
+        [InlineData("System.Collections.Immutable.ImmutableArray(Of Integer)?", nameof(ImmutableArray<int>.Length))]
+        public static Task Basic_Conditional_Fixed(string type, string propertyName)
+            => VerifyVB.VerifyCodeFixAsync(
+                $@"Imports System
+Imports System.Linq
+Public Module M
+    Public Function GetData() As {type}
+        Return Nothing
+    End Function
+    Public Function F() As Integer
+        Return GetData()?.Count()
+    End Function
+End Module
+",
+                VerifyCS.Diagnostic(UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.RuleId)
+                    .WithLocation(8, 26)
+                    .WithArguments(propertyName),
+                $@"Imports System
+Imports System.Linq
+Public Module M
+    Public Function GetData() As {type}
+        Return Nothing
+    End Function
+    Public Function F() As Integer
+        Return GetData()?.{propertyName}
     End Function
 End Module
 ");

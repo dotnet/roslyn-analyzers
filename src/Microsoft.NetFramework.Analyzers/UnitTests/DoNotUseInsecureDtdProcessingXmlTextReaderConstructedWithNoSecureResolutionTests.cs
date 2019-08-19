@@ -64,29 +64,6 @@ End Namespace
         }
 
         [Fact]
-        public async Task ConstructXmlTextReaderInitializerDtdDisabled()
-        {
-            await VerifyCS.VerifyAnalyzerAsync(@"
-using System;
-using System.IO;
-using System.Xml;
-using System.Xml.Schema;
-
-namespace TestNamespace
-{
-    public class TestClass
-    {
-        public void TestMethod(Stream stream, string path)
-        {
-            XmlTextReader reader = new XmlTextReader(stream) { DtdProcessing = DtdProcessing.Prohibit };
-            XmlSchema.Read(reader, null);
-        }
-    }
-}
-");
-        }
-
-        [Fact]
         public async Task ConstructXmlTextReaderShouldGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

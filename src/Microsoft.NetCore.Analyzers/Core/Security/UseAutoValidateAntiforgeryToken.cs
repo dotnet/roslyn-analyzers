@@ -34,9 +34,9 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttribute),
             nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttributeMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
-            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.MissHttpVerbAttributeDescription),
             customTags: WellKnownDiagnosticTags.Telemetry);
 
         private static readonly Regex s_AntiForgeryAttributeRegex = new Regex("^[a-zA-Z]*Validate[a-zA-Z]*Anti[Ff]orgery[a-zA-Z]*Attribute$", RegexOptions.Compiled);
@@ -267,7 +267,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         {
                                             actionMethodNeedAddingHttpVerbAttributeSymbols.Add((actionMethodSymbol));
                                         }
-
                                     }
                                 }
                             }

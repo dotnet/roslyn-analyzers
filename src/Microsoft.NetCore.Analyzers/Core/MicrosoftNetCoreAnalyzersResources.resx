@@ -1134,4 +1134,7 @@
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle" xml:space="preserve">
     <value>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</value>
   </data>
+  <data name="MissHttpVerbAttributeDescription" xml:space="preserve">
+    <value>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forigery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</value>
+  </data>
 </root>

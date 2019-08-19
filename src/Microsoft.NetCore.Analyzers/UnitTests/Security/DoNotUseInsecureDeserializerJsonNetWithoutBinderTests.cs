@@ -19,6 +19,356 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
             DoNotUseInsecureDeserializerJsonNetWithoutBinder.MaybeInsecureSerializer;
 
         [Fact]
+        public void DocSample1_CSharp_Violation()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+public class BookRecord
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public object Location { get; set; }
+}
+
+public abstract class Location
+{
+    public string StoreId { get; set; }
+}
+
+public class AisleLocation : Location
+{
+    public char Aisle { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class WarehouseLocation : Location
+{
+    public string Bay { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(JsonReader reader)
+    {
+        JsonSerializer jsonSerializer = new JsonSerializer();
+        jsonSerializer.TypeNameHandling = TypeNameHandling.Auto;
+        return jsonSerializer.Deserialize<BookRecord>(reader);    // CA2329 violation
+    }
+}
+",
+            GetCSharpResultAt(34, 16, DefinitelyRule));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation()
+        {
+            this.VerifyBasicWithJsonNet(@"
+Imports Newtonsoft.Json
+
+Public Class BookRecord
+    Public Property Title As String
+    Public Property Author As String
+    Public Property Location As Location
+End Class
+
+Public MustInherit Class Location
+    Public Property StoreId As String
+End Class
+
+Public Class AisleLocation
+    Inherits Location
+
+    Public Property Aisle As Char
+    Public Property Shelf As Byte
+End Class
+
+Public Class WarehouseLocation
+    Inherits Location
+
+    Public Property Bay As String
+    Public Property Shelf As Byte
+End Class
+
+Public Class ExampleClass
+    Public Function DeserializeBookRecord(reader As JsonReader) As BookRecord
+        Dim jsonSerializer As JsonSerializer = New JsonSerializer()
+        jsonSerializer.TypeNameHandling = TypeNameHandling.Auto
+        Return JsonSerializer.Deserialize(Of BookRecord)(reader)    ' CA2329 violation
+    End Function
+End Class
+",
+                GetBasicResultAt(32, 16, DefinitelyRule));
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Solution()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+public class BookRecordSerializationBinder : ISerializationBinder
+{
+    // To maintain backwards compatibility with serialized data before using an ISerializationBinder.
+    private static readonly DefaultSerializationBinder Binder = new DefaultSerializationBinder();
+
+    public void BindToName(Type serializedType, out string assemblyName, out string typeName)
+    {
+        Binder.BindToName(serializedType, out assemblyName, out typeName);
+    }
+
+    public Type BindToType(string assemblyName, string typeName)
+    {
+        // If the type isn't expected, then stop deserialization.
+        if (typeName != ""BookRecord"" && typeName != ""AisleLocation"" && typeName != ""WarehouseLocation"")
+        {
+            return null;
+        }
+
+        return Binder.BindToType(assemblyName, typeName);
+    }
+}
+
+public class BookRecord
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public object Location { get; set; }
+}
+
+public abstract class Location
+{
+    public string StoreId { get; set; }
+}
+
+public class AisleLocation : Location
+{
+    public char Aisle { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class WarehouseLocation : Location
+{
+    public string Bay { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class ExampleClass
+{
+    public BookRecord DeserializeBookRecord(JsonReader reader)
+    {
+        JsonSerializer jsonSerializer = new JsonSerializer();
+        jsonSerializer.TypeNameHandling = TypeNameHandling.Auto;
+        jsonSerializer.SerializationBinder = new BookRecordSerializationBinder();
+        return jsonSerializer.Deserialize<BookRecord>(reader);
+    }
+}
+");
+        }
+
+        [Fact]
+        public void DocSample1_VB_Solution()
+        {
+            this.VerifyBasicWithJsonNet(@"
+Imports System
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Serialization
+
+Public Class BookRecordSerializationBinder
+    Implements ISerializationBinder
+
+    ' To maintain backwards compatibility with serialized data before using an ISerializationBinder.
+    Private Shared ReadOnly Property Binder As New DefaultSerializationBinder()
+
+    Public Sub BindToName(serializedType As Type, ByRef assemblyName As String, ByRef typeName As String) Implements ISerializationBinder.BindToName
+        Binder.BindToName(serializedType, assemblyName, typeName)
+    End Sub
+
+    Public Function BindToType(assemblyName As String, typeName As String) As Type Implements ISerializationBinder.BindToType
+        ' If the type isn't expected, then stop deserialization.
+        If typeName <> ""BookRecord"" AndAlso typeName <> ""AisleLocation"" AndAlso typeName <> ""WarehouseLocation"" Then
+            Return Nothing
+        End If
+
+        Return Binder.BindToType(assemblyName, typeName)
+    End Function
+End Class
+
+Public Class BookRecord
+    Public Property Title As String
+    Public Property Author As String
+    Public Property Location As Location
+End Class
+
+Public MustInherit Class Location
+    Public Property StoreId As String
+End Class
+
+Public Class AisleLocation
+    Inherits Location
+
+    Public Property Aisle As Char
+    Public Property Shelf As Byte
+End Class
+
+Public Class WarehouseLocation
+    Inherits Location
+
+    Public Property Bay As String
+    Public Property Shelf As Byte
+End Class
+
+Public Class ExampleClass
+    Public Function DeserializeBookRecord(reader As JsonReader) As BookRecord
+        Dim jsonSerializer As JsonSerializer = New JsonSerializer()
+        jsonSerializer.TypeNameHandling = TypeNameHandling.Auto
+        jsonSerializer.SerializationBinder = New BookRecordSerializationBinder()
+        Return jsonSerializer.Deserialize(Of BookRecord)(reader)
+    End Function
+End Class
+");
+        }
+
+        [Fact]
+        public void DocSample2_CSharp_Violation()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+public class BookRecordSerializationBinder : ISerializationBinder
+{
+    // To maintain backwards compatibility with serialized data before using an ISerializationBinder.
+    private static readonly DefaultSerializationBinder Binder = new DefaultSerializationBinder();
+
+    public void BindToName(Type serializedType, out string assemblyName, out string typeName)
+    {
+        Binder.BindToName(serializedType, out assemblyName, out typeName);
+    }
+
+    public Type BindToType(string assemblyName, string typeName)
+    {
+        // If the type isn't expected, then stop deserialization.
+        if (typeName != ""BookRecord"" && typeName != ""AisleLocation"" && typeName != ""WarehouseLocation"")
+        {
+            return null;
+        }
+
+        return Binder.BindToType(assemblyName, typeName);
+    }
+}
+
+public class BookRecord
+{
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public object Location { get; set; }
+}
+
+public abstract class Location
+{
+    public string StoreId { get; set; }
+}
+
+public class AisleLocation : Location
+{
+    public char Aisle { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class WarehouseLocation : Location
+{
+    public string Bay { get; set; }
+    public byte Shelf { get; set; }
+}
+
+public class ExampleClass
+{
+    public ISerializationBinder SerializationBinder { get; set; }
+
+    public BookRecord DeserializeBookRecord(JsonReader reader)
+    {
+        JsonSerializer jsonSerializer = new JsonSerializer();
+        jsonSerializer.TypeNameHandling = TypeNameHandling.Auto;
+        jsonSerializer.SerializationBinder = this.SerializationBinder;
+        return jsonSerializer.Deserialize<BookRecord>(reader);    // CA2330 -- SerializationBinder might be null
+    }
+}
+",
+                GetCSharpResultAt(61, 16, MaybeRule));
+        }
+
+        [Fact]
+        public void DocSample2_VB_Violation()
+        {
+            this.VerifyBasicWithJsonNet(@"
+Imports System
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Serialization
+
+Public Class BookRecordSerializationBinder
+    Implements ISerializationBinder
+
+    ' To maintain backwards compatibility with serialized data before using an ISerializationBinder.
+    Private Shared ReadOnly Property Binder As New DefaultSerializationBinder()
+
+    Public Sub BindToName(serializedType As Type, ByRef assemblyName As String, ByRef typeName As String) Implements ISerializationBinder.BindToName
+        Binder.BindToName(serializedType, assemblyName, typeName)
+    End Sub
+
+    Public Function BindToType(assemblyName As String, typeName As String) As Type Implements ISerializationBinder.BindToType
+        ' If the type isn't expected, then stop deserialization.
+        If typeName <> ""BookRecord"" AndAlso typeName <> ""AisleLocation"" AndAlso typeName <> ""WarehouseLocation"" Then
+            Return Nothing
+        End If
+
+        Return Binder.BindToType(assemblyName, typeName)
+    End Function
+End Class
+
+Public Class BookRecord
+    Public Property Title As String
+    Public Property Author As String
+    Public Property Location As Location
+End Class
+
+Public MustInherit Class Location
+    Public Property StoreId As String
+End Class
+
+Public Class AisleLocation
+    Inherits Location
+
+    Public Property Aisle As Char
+    Public Property Shelf As Byte
+End Class
+
+Public Class WarehouseLocation
+    Inherits Location
+
+    Public Property Bay As String
+    Public Property Shelf As Byte
+End Class
+
+Public Class ExampleClass
+    Public Property SerializationBinder As ISerializationBinder
+
+    Public Function DeserializeBookRecord(reader As JsonReader) As BookRecord
+        Dim jsonSerializer As JsonSerializer = New JsonSerializer()
+        jsonSerializer.TypeNameHandling = TypeNameHandling.Auto
+        jsonSerializer.SerializationBinder = Me.SerializationBinder
+        Return jsonSerializer.Deserialize(Of BookRecord)(reader)    ' CA23330 -- SerializationBinder might be null
+    End Function
+End Class
+",
+                GetBasicResultAt(57, 16, MaybeRule));
+        }
+
+        [Fact]
         public void Insecure_JsonSerializer_Deserialize_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
@@ -59,6 +409,7 @@ class Blah
             this.VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 class Blah
 {
@@ -107,6 +458,7 @@ class Blah
             this.VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 class Blah
 {
@@ -122,7 +474,7 @@ class Blah
         return o;
     }
 }",
-                GetCSharpResultAt(15, 9, MaybeRule));
+                GetCSharpResultAt(16, 9, MaybeRule));
         }
 
         [Fact]
@@ -131,6 +483,7 @@ class Blah
             this.VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 class Blah
 {
@@ -144,7 +497,7 @@ class Blah
         return serializer.Deserialize<T>(jr);
     }
 }",
-                GetCSharpResultAt(14, 16, MaybeRule));
+                GetCSharpResultAt(15, 16, MaybeRule));
         }
 
         // Ideally, we'd transfer the JsonSerializerSettings' TypeNameHandling's state to the JsonSerializer's TypeNameHandling's state.
@@ -154,6 +507,7 @@ class Blah
             this.VerifyCSharpWithJsonNet(@"
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 class Blah
 {
@@ -250,6 +604,11 @@ class Blah
         private void VerifyCSharpWithJsonNet(string source, params DiagnosticResult[] expected)
         {
             this.VerifyCSharpAcrossTwoAssemblies(NewtonsoftJsonNetApis.CSharp, source, expected);
+        }
+
+        private void VerifyBasicWithJsonNet(string source, params DiagnosticResult[] expected)
+        {
+            this.VerifyBasicAcrossTwoAssemblies(NewtonsoftJsonNetApis.VisualBasic, source, expected);
         }
     }
 }

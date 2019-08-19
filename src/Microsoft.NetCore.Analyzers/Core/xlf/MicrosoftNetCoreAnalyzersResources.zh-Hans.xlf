@@ -53,8 +53,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MissHttpVerbAttribute">
-        <source>Miss HttpVerb Attribute for action methods</source>
-        <target state="new">Miss HttpVerb Attribute for action methods</target>
+        <source>Miss HttpVerb attribute for action methods</source>
+        <target state="new">Miss HttpVerb attribute for action methods</target>
         <note />
       </trans-unit>
       <trans-unit id="MissHttpVerbAttributeDescription">

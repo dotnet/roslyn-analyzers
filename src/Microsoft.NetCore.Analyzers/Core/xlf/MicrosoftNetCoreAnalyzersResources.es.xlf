@@ -58,8 +58,8 @@
         <note />
       </trans-unit>
       <trans-unit id="MissHttpVerbAttributeDescription">
-        <source>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forigery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</source>
-        <target state="new">All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forigery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</target>
+        <source>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</source>
+        <target state="new">All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</target>
         <note />
       </trans-unit>
       <trans-unit id="MissHttpVerbAttributeMessage">

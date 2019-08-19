@@ -1141,7 +1141,7 @@
     <value>Use the "{0}" property instead of Enumerable.Count().</value>
   </data>
   <data name="UsePropertyInsteadOfCountMethodWhenAvailableTitle" xml:space="preserve">
-    <value>Use property instead of Count() when available</value>
+    <value>Use Length/Count property instead of Count() when available</value>
   </data>
   <data name="SetHttpOnlyForHttpCookie" xml:space="preserve">
     <value>Set HttpOnly to true for HttpCookie</value>

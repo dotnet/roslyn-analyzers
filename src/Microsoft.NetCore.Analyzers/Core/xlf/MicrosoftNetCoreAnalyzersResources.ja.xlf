@@ -1673,8 +1673,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableTitle">
-        <source>Use property instead of Count() when available</source>
-        <target state="new">Use property instead of Count() when available</target>
+        <source>Use Length/Count property instead of Count() when available</source>
+        <target state="new">Use Length/Count property instead of Count() when available</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">

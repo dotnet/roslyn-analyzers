@@ -2128,22 +2128,6 @@
             ]
           }
         },
-        "CA1829": {
-          "id": "CA1829",
-          "shortDescription": "Use property instead of Count() when available",
-          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
-            "languages": [
-              "C#",
-              "Visual Basic"
-            ]
-          }
-        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",
@@ -3802,6 +3786,21 @@
             ]
           }
         },
+        "CA1829": {
+          "id": "CA1829",
+          "shortDescription": "Use Length/Count property instead of Count() when available",
+          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
         "CA2010": {
           "id": "CA2010",
           "shortDescription": "Always consume the value returned by methods marked with PreserveSigAttribute",
@@ -3962,6 +3961,21 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA1829": {
+          "id": "CA1829",
+          "shortDescription": "Use Length/Count property instead of Count() when available",
+          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
             "languages": [
               "Visual Basic"
             ]

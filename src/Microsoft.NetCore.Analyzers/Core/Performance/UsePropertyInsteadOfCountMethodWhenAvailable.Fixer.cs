@@ -49,9 +49,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var node = root.FindNode(context.Span);
-            var propertyName = context.Diagnostics[0].Properties["PropertyName"];
 
-            if (node is object && propertyName is object && TryGetExpression(node, out var expressionNode, out var nameNode))
+            if (node is object &&
+                context.Diagnostics[0].Properties.TryGetValue(UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.PropertyNameKey, out var propertyName) &&
+                propertyName is object &&
+                TryGetExpression(node, out var expressionNode, out var nameNode))
             {
                 context.RegisterCodeFix(
                     new UsePropertyInsteadOfCountMethodWhenAvailableCodeAction(context.Document, node, expressionNode, nameNode, propertyName),

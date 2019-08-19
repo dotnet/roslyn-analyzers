@@ -19,9 +19,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// <c>Length</c>, <c>Count</c>.
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer : DiagnosticAnalyzer
+    public abstract class UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1829";
+        internal const string PropertyNameKey = nameof(PropertyNameKey);
         private const string CountPropertyName = "Count";
         private const string LengthPropertyName = "Length";
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.UsePropertyInsteadOfCountMethodWhenAvailableTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -61,7 +62,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// Called on compilation start.
         /// </summary>
         /// <param name="context">The context.</param>
-        private static void OnCompilationStart(CompilationStartAnalysisContext context)
+        private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             if (WellKnownTypes.Enumerable(context.Compilation) is INamedTypeSymbol enumerableType)
             {
@@ -69,17 +70,20 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     context.Compilation,
                     enumerableType);
 
-                var operationActionsHandler = context.Compilation.Language == LanguageNames.CSharp
-                    ? (OperationActionsHandler)new CSharpOperationActionsHandler(operationActionsContext)
-                    : (OperationActionsHandler)new BasicOperationActionsHandler(operationActionsContext);
-
                 context.RegisterOperationAction(
-                    operationActionsHandler.AnalyzeInvocationOperation,
+                    CreateOperationActionsHandler(operationActionsContext).AnalyzeInvocationOperation,
                     OperationKind.Invocation);
             }
         }
 
-        private sealed class OperationActionsContext
+        /// <summary>
+        /// Creates the operation actions handler.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>The operation actions handler.</returns>
+        protected abstract OperationActionsHandler CreateOperationActionsHandler(OperationActionsContext context);
+
+        protected sealed class OperationActionsContext
         {
             private readonly Lazy<INamedTypeSymbol> _immutableArrayType;
             private readonly Lazy<IPropertySymbol> _iCollectionCountProperty;
@@ -172,14 +176,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <summary>
         /// Handler for operaction actions.
         /// </summary>
-        private abstract class OperationActionsHandler
+        protected abstract class OperationActionsHandler
         {
             protected OperationActionsHandler(OperationActionsContext context)
             {
                 Context = context;
             }
 
-            public OperationActionsContext Context { get; }
+            protected OperationActionsContext Context { get; }
 
             internal void AnalyzeInvocationOperation(OperationAnalysisContext context)
             {
@@ -189,7 +193,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     GetReplacementProperty(invocationTarget) is string propertyName)
                 {
                     var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>();
-                    propertiesBuilder.Add("PropertyName", propertyName);
+                    propertiesBuilder.Add(PropertyNameKey, propertyName);
 
                     var diagnostic = Diagnostic.Create(
                         s_rule,
@@ -213,66 +217,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 if (Context.IsICollectionImplementation(invocationTarget) || Context.IsICollectionOfTImplementation(invocationTarget))
                 {
                     return CountPropertyName;
-                }
-
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Handler for operaction actions for C#. This class cannot be inherited.
-        /// Implements the <see cref="Microsoft.NetCore.Analyzers.Performance.UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsHandler" />
-        /// </summary>
-        /// <seealso cref="Microsoft.NetCore.Analyzers.Performance.UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsHandler" />
-        private sealed class CSharpOperationActionsHandler : OperationActionsHandler
-        {
-            internal CSharpOperationActionsHandler(UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsContext context)
-                : base(context)
-            {
-            }
-
-            protected override ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation)
-            {
-                var method = invocationOperation.TargetMethod;
-
-                if (invocationOperation.Arguments.Length == 1 &&
-                    method.Name.Equals(nameof(Enumerable.Count), StringComparison.Ordinal) &&
-                    this.Context.IsEnumerableType(method.ContainingSymbol) &&
-                    ((INamedTypeSymbol)(method.Parameters[0].Type)).TypeArguments[0] is ITypeSymbol methodSourceItemType)
-                {
-                    return invocationOperation.Arguments[0].Value is IConversionOperation convertionOperation
-                        ? convertionOperation.Operand.Type
-                        : invocationOperation.Arguments[0].Value.Type;
-                }
-
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Handler for operaction actions fro Visual Basic. This class cannot be inherited.
-        /// Implements the <see cref="Microsoft.NetCore.Analyzers.Performance.UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsHandler" />
-        /// </summary>
-        /// <seealso cref="Microsoft.NetCore.Analyzers.Performance.UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsHandler" />
-        private sealed class BasicOperationActionsHandler : OperationActionsHandler
-        {
-            internal BasicOperationActionsHandler(UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsContext context)
-                : base(context)
-            {
-            }
-
-            protected override ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation)
-            {
-                var method = invocationOperation.TargetMethod;
-
-                if (invocationOperation.Arguments.Length == 0 &&
-                    method.Name.Equals(nameof(Enumerable.Count), StringComparison.Ordinal) &&
-                    this.Context.IsEnumerableType(method.ContainingSymbol) &&
-                    ((INamedTypeSymbol)(invocationOperation.Instance.Type)).TypeArguments[0] is ITypeSymbol methodSourceItemType)
-                {
-                    return invocationOperation.Instance is IConversionOperation convertionOperation
-                       ? convertionOperation.Operand.Type
-                       : invocationOperation.Instance.Type;
                 }
 
                 return null;

@@ -81,7 +81,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
         private sealed class OperationActionsContext
         {
-            ////private /*readonly*/ Lazy<INamedTypeSymbol> _immutableArrayType;
+            private readonly Lazy<INamedTypeSymbol> _immutableArrayType;
             private readonly Lazy<IPropertySymbol> _iCollectionCountProperty;
             private readonly Lazy<INamedTypeSymbol> _iCollectionOfType;
 
@@ -89,7 +89,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
             {
                 Compilation = compilation;
                 EnumerableType = enumerableType;
-                ////_immutableArrayType = new Lazy<INamedTypeSymbol>(() => Compilation.GetTypeByMetadataName("System.Collections.Immutable.ImmutableArray`1"), true);
+                _immutableArrayType = new Lazy<INamedTypeSymbol>(() => WellKnownTypes.ImmutableArray(Compilation), true);
                 _iCollectionCountProperty = new Lazy<IPropertySymbol>(() => WellKnownTypes.ICollection(Compilation)?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Single(), true);
                 _iCollectionOfType = new Lazy<INamedTypeSymbol>(() => WellKnownTypes.GenericICollection(Compilation), true);
             }
@@ -102,17 +102,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             private INamedTypeSymbol ICollectionOfTType => _iCollectionOfType.Value;
 
-            ////internal INamedTypeSymbol ImmutableArrayType => _immutableArrayType.Value;
+            internal INamedTypeSymbol ImmutableArrayType => _immutableArrayType.Value;
 
-#pragma warning disable CA1822
             internal bool IsImmutableArrayType(ITypeSymbol typeSymbol)
-                => typeSymbol is INamedTypeSymbol namedTypeSymbol &&
-                    namedTypeSymbol.MetadataName.Equals("ImmutableArray`1", StringComparison.Ordinal) &&
-                    namedTypeSymbol.ContainingNamespace.ToDisplayString().Equals("System.Collections.Immutable", StringComparison.Ordinal) &&
+                => this.ImmutableArrayType is object &&
+                    typeSymbol is INamedTypeSymbol namedTypeSymbol &&
                     namedTypeSymbol.ConstructedFrom is INamedTypeSymbol constructedFrom &&
-                    constructedFrom.MetadataName.Equals("ImmutableArray`1", StringComparison.Ordinal) &&
-                    constructedFrom.ContainingNamespace.ToDisplayString().Equals("System.Collections.Immutable", StringComparison.Ordinal);
-#pragma warning restore CA1822
+                    constructedFrom.Equals(this.ImmutableArrayType);
 
             internal bool IsICollectionImplementation(ITypeSymbol invocationTarget)
                 => this.ICollectionCountProperty is object &&

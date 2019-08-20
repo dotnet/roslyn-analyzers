@@ -10,16 +10,16 @@ using Microsoft.CodeAnalysis.Operations;
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
-    /// ReferenceChanged: Prevent objects from being referenced in statements where they are reassigned
+    /// CA2246: Prevent objects from being referenced in statements where they are reassigned
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class ReferringToObjectAndReassigningItInTheSameStatement : DiagnosticAnalyzer
+    public sealed class ReferencingAndReassigningObjectInSameStatement : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2246";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferringToObjectAndReassigningItInTheSameStatementTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferringToObjectAndReassigningItInTheSameStatementMessage), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferringToObjectAndReassigningItInTheSameStatementDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferencingAndReassigningObjectInSameStatementTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferencingAndReassigningObjectInSameStatementMessage), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferencingAndReassigningObjectInSameStatementDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
             s_localizableTitle,

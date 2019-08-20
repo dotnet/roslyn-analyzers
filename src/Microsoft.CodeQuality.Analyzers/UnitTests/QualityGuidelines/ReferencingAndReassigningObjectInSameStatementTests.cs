@@ -8,26 +8,26 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
 {
-    public partial class ReferringToObjectAndReassigningItInTheSameStatementTests : DiagnosticAnalyzerTestBase
+    public partial class ReferencingAndReassigningObjectInSameStatementTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
-            return new ReferringToObjectAndReassigningItInTheSameStatement();
+            return new ReferencingAndReassigningObjectInSameStatement();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new ReferringToObjectAndReassigningItInTheSameStatement();
+            return new ReferencingAndReassigningObjectInSameStatement();
         }
 
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
         {
-            return GetCSharpResultAt(line, column, ReferringToObjectAndReassigningItInTheSameStatement.Rule, symbolName);
+            return GetCSharpResultAt(line, column, ReferencingAndReassigningObjectInSameStatement.Rule, symbolName);
         }
 
         private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
         {
-            return GetBasicResultAt(line, column, ReferringToObjectAndReassigningItInTheSameStatement.Rule, symbolName);
+            return GetBasicResultAt(line, column, ReferencingAndReassigningObjectInSameStatement.Rule, symbolName);
         }
 
         [Fact]

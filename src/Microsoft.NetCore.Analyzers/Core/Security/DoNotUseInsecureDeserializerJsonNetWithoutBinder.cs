@@ -27,14 +27,13 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     internal class DoNotUseInsecureDeserializerJsonNetWithoutBinder : DiagnosticAnalyzer
     {
-        // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor DefinitelyInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2329",
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSerializerMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2329",
                 customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static readonly DiagnosticDescriptor MaybeInsecureSerializer =
             SecurityHelpers.CreateDiagnosticDescriptor(
@@ -42,7 +41,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSerializerMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2330",
                 customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>

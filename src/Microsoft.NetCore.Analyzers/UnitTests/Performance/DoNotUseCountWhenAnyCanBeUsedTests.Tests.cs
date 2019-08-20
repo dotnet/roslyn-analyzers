@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.NetCore.CSharp.Analyzers.Performance;
 using Microsoft.NetCore.VisualBasic.Analyzers.Performance;
 using Xunit;
@@ -232,14 +233,98 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new CSharpVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
+                  new CSharpVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
                   output)
         {
         }
 
+#pragma warning disable xUnit1024
+        [Theory]
+        [MemberData(nameof(LeftCount_Fixer_Predicate_TheoryData))]
+        public new async Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
+        {
+            if (withPredicate)
+            {
+                await base.LeftTargetCountComparison_Fixed(@operator, value, withPredicate, negate);
+            }
+            else
+            {
+                await this.VerifyAsync(
+                testSource:
+                    SourceProvider.GetCodeWithExpression(
+                        SourceProvider.WithDiagnostic(SourceProvider.GetTargetExpressionBinaryExpressionCode(@operator, value, withPredicate, SourceProvider.MethodName)),
+                        SourceProvider.ExtensionsNamespace),
+                    extensionsSource:
+                        null);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(RightCount_Fixer_Predicate_TheoryData))]
+        public new async Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
+        {
+            if (withPredicate)
+            {
+                await base.RightTargetCountComparison_Fixed(value, @operator, withPredicate, negate);
+            }
+            else
+            {
+                await this.VerifyAsync(
+                testSource:
+                    SourceProvider.GetCodeWithExpression(
+                        SourceProvider.WithDiagnostic(SourceProvider.GetTargetExpressionBinaryExpressionCode(value, @operator, withPredicate, SourceProvider.MethodName)),
+                        SourceProvider.ExtensionsNamespace),
+                    extensionsSource:
+                        null);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public new async Task CountEqualsZero_Fixed(bool withPredicate)
+        {
+            if (withPredicate)
+            {
+                await base.CountEqualsZero_Fixed(withPredicate);
+            }
+            else
+            {
+                await this.VerifyAsync(
+                    testSource:
+                        SourceProvider.GetCodeWithExpression(
+                            SourceProvider.GetTargetExpressionEqualsInvocationCode(0, withPredicate, SourceProvider.MethodName),
+                            SourceProvider.ExtensionsNamespace),
+                    extensionsSource:
+                        null);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public new async Task ZeroEqualsCount_Fixed(bool withPredicate)
+        {
+            if (withPredicate)
+            {
+                await base.ZeroEqualsCount_Fixed(withPredicate);
+            }
+            else
+            {
+                await this.VerifyAsync(
+                    testSource:
+                        SourceProvider.GetCodeWithExpression(
+                            SourceProvider.GetEqualsTargetExpressionInvocationCode(0, withPredicate, SourceProvider.MethodName),
+                            SourceProvider.ExtensionsNamespace),
+                    extensionsSource:
+                        null);
+            }
+        }
+#pragma warning restore xUnit1024
+
         [Fact]
         public Task TestConstIdentifiers()
-            => Test.Utilities.CSharpCodeFixVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
+            => Test.Utilities.CSharpCodeFixVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"using System;
 using System.Linq;
 class C
@@ -255,30 +340,30 @@ class C
     System.Collections.Generic.IEnumerable<string> GetData() => default;
     void M()
     {{
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(IntZero)|}};
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(UIntZero)|}};
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(LongZero)|}};
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(ULongZero)|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true).Equals(IntZero)|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true).Equals(UIntZero)|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true).Equals(LongZero)|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true).Equals(ULongZero)|}};
 
-        _ = {{|{this.Verifier.DiagnosticId}:IntZero.Equals(GetData().Count())|}};
-        _ = {{|{this.Verifier.DiagnosticId}:UIntZero.Equals(GetData().Count())|}};
-        _ = {{|{this.Verifier.DiagnosticId}:LongZero.Equals(GetData().Count())|}};
-        _ = {{|{this.Verifier.DiagnosticId}:ULongZero.Equals(GetData().Count())|}};
+        _ = {{|{this.Verifier.DiagnosticId}:IntZero.Equals(GetData().Count(_ => true))|}};
+        _ = {{|{this.Verifier.DiagnosticId}:UIntZero.Equals(GetData().Count(_ => true))|}};
+        _ = {{|{this.Verifier.DiagnosticId}:LongZero.Equals(GetData().Count(_ => true))|}};
+        _ = {{|{this.Verifier.DiagnosticId}:ULongZero.Equals(GetData().Count(_ => true))|}};
 
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count() == IntZero|}};
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count() >= IntOne|}};
-        _ = {{|{this.Verifier.DiagnosticId}:IntZero == GetData().Count()|}};
-        _ = {{|{this.Verifier.DiagnosticId}:IntOne > GetData().Count()|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true) == IntZero|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true) >= IntOne|}};
+        _ = {{|{this.Verifier.DiagnosticId}:IntZero == GetData().Count(_ => true)|}};
+        _ = {{|{this.Verifier.DiagnosticId}:IntOne > GetData().Count(_ => true)|}};
 
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count() == UIntZero|}};
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count() >= UIntOne|}};
-        _ = {{|{this.Verifier.DiagnosticId}:UIntZero == GetData().Count()|}};
-        _ = {{|{this.Verifier.DiagnosticId}:UIntOne > GetData().Count()|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true) == UIntZero|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true) >= UIntOne|}};
+        _ = {{|{this.Verifier.DiagnosticId}:UIntZero == GetData().Count(_ => true)|}};
+        _ = {{|{this.Verifier.DiagnosticId}:UIntOne > GetData().Count(_ => true)|}};
 
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count() == LongZero|}};
-        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count() >= LongOne|}};
-        _ = {{|{this.Verifier.DiagnosticId}:LongZero == GetData().Count()|}};
-        _ = {{|{this.Verifier.DiagnosticId}:LongOne > GetData().Count()|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true) == LongZero|}};
+        _ = {{|{this.Verifier.DiagnosticId}:GetData().Count(_ => true) >= LongOne|}};
+        _ = {{|{this.Verifier.DiagnosticId}:LongZero == GetData().Count(_ => true)|}};
+        _ = {{|{this.Verifier.DiagnosticId}:LongOne > GetData().Count(_ => true)|}};
     }}
 }}
 ",
@@ -297,30 +382,30 @@ class C
     System.Collections.Generic.IEnumerable<string> GetData() => default;
     void M()
     {
-        _ = !GetData().Any();
-        _ = !GetData().Any();
-        _ = !GetData().Any();
-        _ = !GetData().Any();
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
 
-        _ = !GetData().Any();
-        _ = !GetData().Any();
-        _ = !GetData().Any();
-        _ = !GetData().Any();
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
 
-        _ = !GetData().Any();
-        _ = GetData().Any();
-        _ = !GetData().Any();
-        _ = !GetData().Any();
+        _ = !GetData().Any(_ => true);
+        _ = GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
 
-        _ = !GetData().Any();
-        _ = GetData().Any();
-        _ = !GetData().Any();
-        _ = !GetData().Any();
+        _ = !GetData().Any(_ => true);
+        _ = GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
 
-        _ = !GetData().Any();
-        _ = GetData().Any();
-        _ = !GetData().Any();
-        _ = !GetData().Any();
+        _ = !GetData().Any(_ => true);
+        _ = GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
+        _ = !GetData().Any(_ => true);
     }
 }
 ");
@@ -337,14 +422,14 @@ class C
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new CSharpVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
+                  new CSharpVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
                   output)
         {
         }
 
         [Fact]
         public Task TestConstIdentifiers()
-            => Test.Utilities.CSharpCodeFixVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
+            => Test.Utilities.CSharpCodeFixVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"using System;
 using System.Linq;
 class C
@@ -442,14 +527,98 @@ class C
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new BasicVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
+                  new BasicVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
                   output)
         {
         }
 
+#pragma warning disable xUnit1024
+        [Theory]
+        [MemberData(nameof(LeftCount_Fixer_Predicate_TheoryData))]
+        public new async Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
+        {
+            if (withPredicate)
+            {
+                await base.LeftTargetCountComparison_Fixed(@operator, value, withPredicate, negate);
+            }
+            else
+            {
+                await this.VerifyAsync(
+                testSource:
+                    SourceProvider.GetCodeWithExpression(
+                        SourceProvider.WithDiagnostic(SourceProvider.GetTargetExpressionBinaryExpressionCode(@operator, value, withPredicate, SourceProvider.MethodName)),
+                        SourceProvider.ExtensionsNamespace),
+                    extensionsSource:
+                        null);
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(RightCount_Fixer_Predicate_TheoryData))]
+        public new async Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
+        {
+            if (withPredicate)
+            {
+                await base.RightTargetCountComparison_Fixed(value, @operator, withPredicate, negate);
+            }
+            else
+            {
+                await this.VerifyAsync(
+                testSource:
+                    SourceProvider.GetCodeWithExpression(
+                        SourceProvider.WithDiagnostic(SourceProvider.GetTargetExpressionBinaryExpressionCode(value, @operator, withPredicate, SourceProvider.MethodName)),
+                        SourceProvider.ExtensionsNamespace),
+                    extensionsSource:
+                        null);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public new async Task CountEqualsZero_Fixed(bool withPredicate)
+        {
+            if (withPredicate)
+            {
+                await base.CountEqualsZero_Fixed(withPredicate);
+            }
+            else
+            {
+                await this.VerifyAsync(
+                    testSource:
+                        SourceProvider.GetCodeWithExpression(
+                            SourceProvider.GetTargetExpressionEqualsInvocationCode(0, withPredicate, SourceProvider.MethodName),
+                            SourceProvider.ExtensionsNamespace),
+                    extensionsSource:
+                        null);
+            }
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public new async Task ZeroEqualsCount_Fixed(bool withPredicate)
+        {
+            if (withPredicate)
+            {
+                await base.ZeroEqualsCount_Fixed(withPredicate);
+            }
+            else
+            {
+                await this.VerifyAsync(
+                    testSource:
+                        SourceProvider.GetCodeWithExpression(
+                            SourceProvider.GetEqualsTargetExpressionInvocationCode(0, withPredicate, SourceProvider.MethodName),
+                            SourceProvider.ExtensionsNamespace),
+                    extensionsSource:
+                        null);
+            }
+        }
+#pragma warning restore xUnit1024
+
         [Fact]
         public Task TestConstIdentifiers()
-            => Test.Utilities.VisualBasicCodeFixVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
+            => Test.Utilities.VisualBasicCodeFixVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"Imports System
 Imports System.Linq
 Module C
@@ -467,30 +636,30 @@ Module C
     Sub M()
         Dim b As Boolean
 
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(IntegerZero)|}}
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(UIntegerZero)|}}
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(LongZero)|}}
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count().Equals(ULongZero)|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True).Equals(IntegerZero)|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True).Equals(UIntegerZero)|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True).Equals(LongZero)|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True).Equals(ULongZero)|}}
 
-        b = {{|{this.Verifier.DiagnosticId}:IntegerZero.Equals(GetData().Count())|}}
-        b = {{|{this.Verifier.DiagnosticId}:UIntegerZero.Equals(GetData().Count())|}}
-        b = {{|{this.Verifier.DiagnosticId}:LongZero.Equals(GetData().Count())|}}
-        b = {{|{this.Verifier.DiagnosticId}:ULongZero.Equals(GetData().Count())|}}
+        b = {{|{this.Verifier.DiagnosticId}:IntegerZero.Equals(GetData().Count(Function(x) True))|}}
+        b = {{|{this.Verifier.DiagnosticId}:UIntegerZero.Equals(GetData().Count(Function(x) True))|}}
+        b = {{|{this.Verifier.DiagnosticId}:LongZero.Equals(GetData().Count(Function(x) True))|}}
+        b = {{|{this.Verifier.DiagnosticId}:ULongZero.Equals(GetData().Count(Function(x) True))|}}
 
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count() = IntegerZero|}}
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count() >= IntegerOne|}}
-        b = {{|{this.Verifier.DiagnosticId}:IntegerZero = GetData().Count()|}}
-        b = {{|{this.Verifier.DiagnosticId}:IntegerOne > GetData().Count()|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True) = IntegerZero|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True) >= IntegerOne|}}
+        b = {{|{this.Verifier.DiagnosticId}:IntegerZero = GetData().Count(Function(x) True)|}}
+        b = {{|{this.Verifier.DiagnosticId}:IntegerOne > GetData().Count(Function(x) True)|}}
 
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count() = UIntegerZero|}}
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count() >= UIntegerOne|}}
-        b = {{|{this.Verifier.DiagnosticId}:UIntegerZero = GetData().Count()|}}
-        b = {{|{this.Verifier.DiagnosticId}:UIntegerOne > GetData().Count()|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True) = UIntegerZero|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True) >= UIntegerOne|}}
+        b = {{|{this.Verifier.DiagnosticId}:UIntegerZero = GetData().Count(Function(x) True)|}}
+        b = {{|{this.Verifier.DiagnosticId}:UIntegerOne > GetData().Count(Function(x) True)|}}
 
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count() = LongZero|}}
-        b = {{|{this.Verifier.DiagnosticId}:GetData().Count() >= LongOne|}}
-        b = {{|{this.Verifier.DiagnosticId}:LongZero = GetData().Count()|}}
-        b = {{|{this.Verifier.DiagnosticId}:LongOne > GetData().Count()|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True) = LongZero|}}
+        b = {{|{this.Verifier.DiagnosticId}:GetData().Count(Function(x) True) >= LongOne|}}
+        b = {{|{this.Verifier.DiagnosticId}:LongZero = GetData().Count(Function(x) True)|}}
+        b = {{|{this.Verifier.DiagnosticId}:LongOne > GetData().Count(Function(x) True)|}}
     End Sub
 End Module
 ",
@@ -511,30 +680,30 @@ Module C
     Sub M()
         Dim b As Boolean
 
-        b = Not GetData().Any()
-        b = Not GetData().Any()
-        b = Not GetData().Any()
-        b = Not GetData().Any()
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
 
-        b = Not GetData().Any()
-        b = Not GetData().Any()
-        b = Not GetData().Any()
-        b = Not GetData().Any()
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
 
-        b = Not GetData().Any()
-        b = GetData().Any()
-        b = Not GetData().Any()
-        b = Not GetData().Any()
+        b = Not GetData().Any(Function(x) True)
+        b = GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
 
-        b = Not GetData().Any()
-        b = GetData().Any()
-        b = Not GetData().Any()
-        b = Not GetData().Any()
+        b = Not GetData().Any(Function(x) True)
+        b = GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
 
-        b = Not GetData().Any()
-        b = GetData().Any()
-        b = Not GetData().Any()
-        b = Not GetData().Any()
+        b = Not GetData().Any(Function(x) True)
+        b = GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
+        b = Not GetData().Any(Function(x) True)
     End Sub
 End Module
 ");
@@ -551,14 +720,14 @@ End Module
                       "System.Linq",
                       "Enumerable",
                       false),
-                  new BasicVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
+                  new BasicVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
                   output)
         {
         }
 
         [Fact]
         public Task TestConstIdentifiers()
-            => Test.Utilities.VisualBasicCodeFixVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
+            => Test.Utilities.VisualBasicCodeFixVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"Imports System
 Imports System.Linq
 Module C
@@ -660,7 +829,7 @@ End Module
                       "System.Linq",
                       "Queryable",
                       false),
-                  new CSharpVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
+                  new CSharpVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
                   output)
         {
         }
@@ -677,7 +846,7 @@ End Module
                       "System.Linq",
                       "Queryable",
                       false),
-                  new CSharpVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
+                  new CSharpVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
                   output)
         {
         }
@@ -694,7 +863,7 @@ End Module
                       "System.Linq",
                       "Queryable",
                       false),
-                  new BasicVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
+                  new BasicVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
                   output)
         {
         }
@@ -711,7 +880,7 @@ End Module
                       "System.Linq",
                       "Queryable",
                       false),
-                  new BasicVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
+                  new BasicVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId),
                   output)
         {
         }
@@ -728,14 +897,14 @@ End Module
                       "System.Data.Entity",
                       "QueryableExtensions",
                       true),
-                  new CSharpVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
+                  new CSharpVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
                   output)
         {
         }
 
         [Fact]
         public Task TestConstIdentifiers()
-            => Test.Utilities.CSharpCodeFixVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
+            => Test.Utilities.CSharpCodeFixVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"using System;
 using System.Linq;
 namespace System.Data.Entity
@@ -849,14 +1018,14 @@ namespace System.Data.Entity
                       "System.Data.Entity",
                       "QueryableExtensions",
                       true),
-                  new CSharpVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
+                  new CSharpVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
                   output)
         {
         }
 
         [Fact]
         public Task TestConstIdentifiers()
-            => Test.Utilities.CSharpCodeFixVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
+            => Test.Utilities.CSharpCodeFixVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"using System;
 using System.Linq;
 namespace System.Data.Entity
@@ -970,14 +1139,14 @@ namespace System.Data.Entity
                       "System.Data.Entity",
                       "QueryableExtensions",
                       true),
-                  new BasicVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
+                  new BasicVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
                   output)
         {
         }
 
         [Fact]
         public Task TestConstIdentifiers()
-            => Test.Utilities.VisualBasicCodeFixVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
+            => Test.Utilities.VisualBasicCodeFixVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"Imports System
 Imports System.Linq
 Namespace System.Data.Entity
@@ -1105,14 +1274,14 @@ End Namespace
                       "System.Data.Entity",
                       "QueryableExtensions",
                       true),
-                  new BasicVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
+                  new BasicVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
                   output)
         {
         }
 
         [Fact]
         public Task TestConstIdentifiers()
-            => Test.Utilities.VisualBasicCodeFixVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
+            => Test.Utilities.VisualBasicCodeFixVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>.VerifyCodeFixAsync(
                     $@"Imports System
 Imports System.Linq
 Namespace System.Data.Entity
@@ -1240,7 +1409,7 @@ End Namespace
                       "Microsoft.EntityFrameworkCore",
                       "EntityFrameworkQueryableExtensions",
                       true),
-                  new CSharpVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
+                  new CSharpVerifier<CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer, CSharpDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
                   output)
         {
         }
@@ -1257,7 +1426,7 @@ End Namespace
                       "Microsoft.EntityFrameworkCore",
                       "EntityFrameworkQueryableExtensions",
                       true),
-                  new BasicVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
+                  new BasicVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
                   output)
         {
         }
@@ -1274,7 +1443,7 @@ End Namespace
                       "Microsoft.EntityFrameworkCore",
                       "EntityFrameworkQueryableExtensions",
                       true),
-                  new BasicVerifier<DoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
+                  new BasicVerifier<BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer, BasicDoNotUseCountWhenAnyCanBeUsedFixer>(DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId),
                   output)
         {
         }

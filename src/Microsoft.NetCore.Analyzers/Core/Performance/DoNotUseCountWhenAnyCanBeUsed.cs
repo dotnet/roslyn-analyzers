@@ -27,20 +27,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// </para>
     /// <list type="table">
     /// <listheader><term>detected</term><term>fix</term></listheader>
-    /// <item><term><c> enumerable.Count() == 0               </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> enumerable.Count() != 0               </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> enumerable.Count() &lt;= 0            </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> enumerable.Count() > 0                </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> enumerable.Count() &lt; 1             </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> enumerable.Count() >= 1               </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> 0 == enumerable.Count()               </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> 0 != enumerable.Count()               </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> 0 >= enumerable.Count()               </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> 0 &lt; enumerable.Count()             </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> 1 > enumerable.Count()                </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> 1 &lt;= enumerable.Count()            </c></term><description><c> enumerable.Any()  </c></description></item>
-    /// <item><term><c> enumerable.Count().Equals(0)          </c></term><description><c> !enumerable.Any() </c></description></item>
-    /// <item><term><c> 0.Equals(enumerable.Count())          </c></term><description><c> !enumerable.Any() </c></description></item>
     /// <item><term><c> enumerable.Count(_ => true) == 0      </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
     /// <item><term><c> enumerable.Count(_ => true) != 0      </c></term><description><c> enumerable.Any(_ => true)  </c></description></item>
     /// <item><term><c> enumerable.Count(_ => true) &lt;= 0   </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
@@ -56,8 +42,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// <item><term><c> enumerable.Count(_ => true).Equals(0) </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
     /// <item><term><c> 0.Equals(enumerable.Count(_ => true)) </c></term><description><c> !enumerable.Any(_ => true) </c></description></item>
     /// </list>
-    /// </remarks>
-    /// <remarks>
     /// <para>
     /// <b>CA1827</b> applies to <see cref="T:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AnyAsync{TSource}(Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IQueryable{TSource})"/> and
     /// <see cref="T:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.AnyAsync{TSource}(Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IQueryable{TSource}, System.Linq.Expressions.Expression{System.Func{TSource}, bool})"/>
@@ -96,8 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// </list>
     /// </remarks>
 #pragma warning restore CA1200 // Avoid using cref tags with a prefix
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public sealed class DoNotUseCountWhenAnyCanBeUsedAnalyzer : DiagnosticAnalyzer
+    public abstract class DoNotUseCountWhenAnyCanBeUsedAnalyzer : DiagnosticAnalyzer
     {
         internal const string AsyncRuleId = "CA1828";
         internal const string SyncRuleId = "CA1827";
@@ -108,6 +91,10 @@ namespace Microsoft.NetCore.Analyzers.Performance
         internal const string OperationEqualsArgument = nameof(OperationEqualsArgument);
         internal const string OperationBinaryLeft = nameof(OperationBinaryLeft);
         internal const string OperationBinaryRight = nameof(OperationBinaryRight);
+        internal const string CountMethodName = "Count";
+        internal const string LongCountMethodName = "LongCount";
+        internal const string CountAsyncMethodName = "CountAsync";
+        internal const string LongCountAsyncMethodName = "LongCountAsync";
         private static readonly LocalizableString s_asyncLocalizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_asyncLocalizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
@@ -137,8 +124,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/" + SyncRuleId.ToLowerInvariant());
 #pragma warning restore CA1308 // Normalize strings to uppercase
 
-        private static readonly ImmutableHashSet<string> s_syncMethodNames = ImmutableHashSet.Create(StringComparer.Ordinal, "Count", "LongCount");
-        private static readonly ImmutableHashSet<string> s_asyncMethodNames = ImmutableHashSet.Create(StringComparer.Ordinal, "CountAsync", "LongCountAsync");
+        private static readonly ImmutableHashSet<string> s_syncMethodNames = ImmutableHashSet.Create(StringComparer.Ordinal, CountMethodName, LongCountMethodName);
+        private static readonly ImmutableHashSet<string> s_asyncMethodNames = ImmutableHashSet.Create(StringComparer.Ordinal, CountAsyncMethodName, LongCountAsyncMethodName);
 
         /// <summary>
         /// Returns a set of descriptors for the diagnostics that this analyzer is capable of producing.
@@ -162,14 +149,13 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// Called on compilation start.
         /// </summary>
         /// <param name="context">The context.</param>
-        private static void OnCompilationStart(CompilationStartAnalysisContext context)
+        private void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             if (WellKnownTypes.Enumerable(context.Compilation) is INamedTypeSymbol enumerableType)
             {
-                var operationActionsHandler = new OperationActionsHandler(
+                var operationActionsHandler = CreateOperationActionsHandlerForEnuumerables(
                     targetType: enumerableType,
                     targetMethodNames: s_syncMethodNames,
-                    isAsync: false,
                     rule: s_syncRule);
 
                 context.RegisterOperationAction(
@@ -186,7 +172,6 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: queryableType,
                     targetMethodNames: s_syncMethodNames,
-                    isAsync: false,
                     rule: s_syncRule);
 
                 context.RegisterOperationAction(
@@ -200,10 +185,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             if (context.Compilation.GetTypeByMetadataName("Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions") is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
             {
-                var operationActionsHandler = new OperationActionsHandler(
+                var operationActionsHandler = new AsyncOperationActionsHandler(
                     targetType: entityFrameworkQueryableExtensionsType,
                     targetMethodNames: s_asyncMethodNames,
-                    isAsync: true,
                     rule: s_asyncRule);
 
                 context.RegisterOperationAction(
@@ -217,10 +201,9 @@ namespace Microsoft.NetCore.Analyzers.Performance
 
             if (context.Compilation.GetTypeByMetadataName("System.Data.Entity.QueryableExtensions") is INamedTypeSymbol queryableExtensionsType)
             {
-                var operationActionsHandler = new OperationActionsHandler(
+                var operationActionsHandler = new AsyncOperationActionsHandler(
                     targetType: queryableExtensionsType,
                     targetMethodNames: s_asyncMethodNames,
-                    isAsync: true,
                     rule: s_asyncRule);
 
                 context.RegisterOperationAction(
@@ -234,22 +217,45 @@ namespace Microsoft.NetCore.Analyzers.Performance
         }
 
         /// <summary>
-        /// Handler for operaction actions. This class cannot be inherited.
+        /// Creates the operation actions handler for enuumerables.
         /// </summary>
-        private sealed class OperationActionsHandler
+        /// <param name="targetType">Type of the target.</param>
+        /// <param name="targetMethodNames">The target method names.</param>
+        /// <param name="rule">The rule.</param>
+        /// <returns>The operation actions handler for enuumerables.</returns>
+        protected abstract OperationActionsHandler CreateOperationActionsHandlerForEnuumerables(INamedTypeSymbol targetType, ImmutableHashSet<string> targetMethodNames, DiagnosticDescriptor rule);
+
+        /// <summary>
+        /// Handler for operaction actions.
+        /// </summary>
+        protected class OperationActionsHandler
         {
-            private readonly INamedTypeSymbol _targetType;
-            private readonly ImmutableHashSet<string> _targetMethodNames;
-            private readonly bool _isAsync;
             private readonly DiagnosticDescriptor _rule;
 
-            public OperationActionsHandler(INamedTypeSymbol targetType, ImmutableHashSet<string> targetMethodNames, bool isAsync, DiagnosticDescriptor rule)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="OperationActionsHandler"/> class.
+            /// </summary>
+            /// <param name="targetType">Type of the target.</param>
+            /// <param name="targetMethodNames">The target method names.</param>
+            /// <param name="rule">The rule.</param>
+            public OperationActionsHandler(INamedTypeSymbol targetType, ImmutableHashSet<string> targetMethodNames, DiagnosticDescriptor rule)
             {
-                this._targetType = targetType;
-                this._targetMethodNames = targetMethodNames;
-                this._isAsync = isAsync;
+                this.TargetType = targetType;
+                this.TargetMethodNames = targetMethodNames;
                 this._rule = rule;
             }
+
+            /// <summary>
+            /// Gets the type of the target.
+            /// </summary>
+            /// <value>The type of the target.</value>
+            protected INamedTypeSymbol TargetType { get; }
+
+            /// <summary>
+            /// Gets the target method names.
+            /// </summary>
+            /// <value>The target method names.</value>
+            protected ImmutableHashSet<string> TargetMethodNames { get; }
 
             /// <summary>
             /// Analyzes the invocation operation.
@@ -265,23 +271,30 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     string operationKey;
 
-                    if (IsCountEqualsZero(invocationOperation, out var methodName))
+                    var methodName = IsCountEqualsZero(invocationOperation);
+
+                    if (methodName is object)
                     {
                         operationKey = OperationEqualsInstance;
                     }
-                    else if (IsZeroEqualsCount(invocationOperation, out methodName))
-                    {
-                        operationKey = OperationEqualsArgument;
-                    }
                     else
                     {
-                        return;
+                        methodName = IsZeroEqualsCount(invocationOperation);
+
+                        if (methodName is object)
+                        {
+                            operationKey = OperationEqualsArgument;
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
 
                     var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
                     propertiesBuilder.Add(OperationKey, operationKey);
                     propertiesBuilder.Add(ShouldNegateKey, null);
-                    if (this._isAsync) propertiesBuilder.Add(IsAsyncKey, null);
+                    this.AddDiagnosticsProperties(propertiesBuilder);
                     var properties = propertiesBuilder.ToImmutable();
 
                     context.ReportDiagnostic(
@@ -304,23 +317,30 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 {
                     string operationKey;
 
-                    if (IsLeftCountComparison(binaryOperation, out var methodName, out var shouldNegate))
+                    var methodName = IsLeftCountComparison(binaryOperation, out var shouldNegate);
+
+                    if (methodName is object)
                     {
                         operationKey = OperationBinaryLeft;
                     }
-                    else if (IsRightCountComparison(binaryOperation, out methodName, out shouldNegate))
-                    {
-                        operationKey = OperationBinaryRight;
-                    }
                     else
                     {
-                        return;
+                        methodName = IsRightCountComparison(binaryOperation, out shouldNegate);
+
+                        if (methodName is object)
+                        {
+                            operationKey = OperationBinaryRight;
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
 
                     var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>(StringComparer.Ordinal);
                     propertiesBuilder.Add(OperationKey, operationKey);
                     if (shouldNegate) propertiesBuilder.Add(ShouldNegateKey, null);
-                    if (this._isAsync) propertiesBuilder.Add(IsAsyncKey, null);
+                    this.AddDiagnosticsProperties(propertiesBuilder);
                     var properties = propertiesBuilder.ToImmutable();
 
                     context.ReportDiagnostic(
@@ -329,6 +349,14 @@ namespace Microsoft.NetCore.Analyzers.Performance
                             properties: properties,
                             args: methodName));
                 }
+            }
+
+            /// <summary>
+            /// Adds handler specifc diagnostics properties.
+            /// </summary>
+            /// <param name="propertiesBuilder">The properties builder.</param>
+            protected virtual void AddDiagnosticsProperties(ImmutableDictionary<string, string>.Builder propertiesBuilder)
+            {
             }
 
             /// <summary>
@@ -346,59 +374,54 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks whether the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
+            /// Checks whether the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
             /// is being compared with 0 using <see cref="int.Equals(int)"/>.
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
-            /// 
-            /// 
-            /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
-            /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-            private bool IsCountEqualsZero(IInvocationOperation invocationOperation, out string methodName)
+            /// <returns>The name of the invoked method if the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
+            /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="null" />.</returns>
+            private string IsCountEqualsZero(IInvocationOperation invocationOperation)
             {
                 if (!TryGetZeroOrOneConstant(invocationOperation.Arguments[0].Value, out var constant) || constant != 0)
                 {
-                    methodName = null;
-                    return false;
+                    return null;
                 }
 
-                return IsCountMethodInvocation(invocationOperation.Instance, out methodName);
+                return IsCountMethodInvocation(invocationOperation.Instance);
             }
 
             /// <summary>
-            /// Checks whether 0 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
+            /// Checks whether 0 is being compared with the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
             /// using <see cref="int.Equals(int)"/>.
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
-            /// <returns><see langword="true" /> if 0 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
-            /// using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
-            private bool IsZeroEqualsCount(IInvocationOperation invocationOperation, out string methodName)
+            /// <returns>The name of the invoked method if 0 is being compared with the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
+            /// using <see cref="int.Equals(int)"/>; otherwise, <see langword="null" />.</returns>
+            private string IsZeroEqualsCount(IInvocationOperation invocationOperation)
             {
                 if (!TryGetZeroOrOneConstant(invocationOperation.Instance, out var constant) || constant != 0)
                 {
-                    methodName = null;
-                    return false;
+                    return null;
                 }
 
-                return IsCountMethodInvocation(invocationOperation.Arguments[0].Value, out methodName);
+                return IsCountMethodInvocation(invocationOperation.Arguments[0].Value);
             }
 
             /// <summary>
-            /// Checks whether the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
+            /// Checks whether the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
             /// is being compared with 0 or 1 using <see cref="int" /> comparison operators.
             /// </summary>
             /// <param name="binaryOperation">The binary operation.</param>
-            /// <param name="methodName">If the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
-            /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
-            /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-            private bool IsLeftCountComparison(IBinaryOperation binaryOperation, out string methodName, out bool shouldNegate)
+            /// <param name="shouldNegate">If set to <see langword="true" /> the result of the invocation should be negated.</param>
+            /// <returns>The name of the invoked method if the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
+            /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="null" />.</returns>
+            private string IsLeftCountComparison(IBinaryOperation binaryOperation, out bool shouldNegate)
             {
-                methodName = null;
                 shouldNegate = false;
 
                 if (!TryGetZeroOrOneConstant(binaryOperation.RightOperand, out var constant))
                 {
-                    return false;
+                    return null;
                 }
 
                 switch (constant)
@@ -415,7 +438,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                                 shouldNegate = false;
                                 break;
                             default:
-                                return false;
+                                return null;
                         }
 
                         break;
@@ -429,33 +452,32 @@ namespace Microsoft.NetCore.Analyzers.Performance
                                 shouldNegate = false;
                                 break;
                             default:
-                                return false;
+                                return null;
                         }
 
                         break;
                     default:
-                        return false;
+                        return null;
                 }
 
-                return IsCountMethodInvocation(binaryOperation.LeftOperand, out methodName);
+                return IsCountMethodInvocation(binaryOperation.LeftOperand);
             }
 
             /// <summary>
-            /// Checks whether 0 or 1 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
+            /// Checks whether 0 or 1 is being compared with the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
             /// using <see cref="int" /> comparison operators.
             /// </summary>
             /// <param name="binaryOperation">The binary operation.</param>
-            /// <param name="methodName">If the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
-            /// <returns><see langword="true" /> if 0 or 1 is being compared with the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
-            /// using <see cref="int" /> comparison operators; otherwise, <see langword="false" />.</returns>
-            private bool IsRightCountComparison(IBinaryOperation binaryOperation, out string methodName, out bool shouldNegate)
+            /// <param name="shouldNegate">If set to <see langword="true" /> the result of the invocation should be negated.</param>
+            /// <returns>The name of the invoked method if the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
+            /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="null" />.</returns>
+            private string IsRightCountComparison(IBinaryOperation binaryOperation, out bool shouldNegate)
             {
-                methodName = null;
                 shouldNegate = false;
 
                 if (!TryGetZeroOrOneConstant(binaryOperation.LeftOperand, out var constant))
                 {
-                    return false;
+                    return null;
                 }
 
                 switch (constant)
@@ -474,7 +496,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                                 break;
 
                             default:
-                                return false;
+                                return null;
                         }
 
                         break;
@@ -490,15 +512,15 @@ namespace Microsoft.NetCore.Analyzers.Performance
                                 break;
 
                             default:
-                                return false;
+                                return null;
                         }
 
                         break;
                     default:
-                        return false;
+                        return null;
                 }
 
-                return IsCountMethodInvocation(binaryOperation.RightOperand, out methodName);
+                return IsCountMethodInvocation(binaryOperation.RightOperand);
             }
 
             /// <summary>
@@ -576,43 +598,90 @@ namespace Microsoft.NetCore.Analyzers.Performance
             }
 
             /// <summary>
-            /// Checks the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />.
+            /// Checks the <paramref name="operation" /> is an invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />.
             /// </summary>
             /// <param name="operation">The operation.</param>
-            /// <param name="methodName">If the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />, contains the method name; <see langword="null"/> otherwise.</param>
-            /// <returns><see langword="true" /> if the <paramref name="operation" /> is an invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />;
-            /// <see langword="false" /> otherwise.</returns>
-            private bool IsCountMethodInvocation(IOperation operation, out string methodName)
+            /// <returns>The name of the invoked method if the value of the invocation of one of the <see cref="TargetMethodNames" /> in the <see cref="TargetType" />
+            /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="null" />.</returns>
+            protected virtual string IsCountMethodInvocation(IOperation operation)
             {
-                methodName = null;
-
-                operation = operation.WalkDownParenthesis();
-
-                operation = operation.WalkDownConversion();
-
-                if (this._isAsync)
-                {
-                    if (operation is IAwaitOperation awaitOperation)
-                    {
-                        operation = awaitOperation.Operation;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-
-                operation = operation.WalkDownConversion();
+                operation = operation
+                    .WalkDownParenthesis()
+                    .WalkDownConversion()
+                    .WalkDownParenthesis();
 
                 if (operation is IInvocationOperation invocationOperation &&
-                    this._targetMethodNames.Contains(invocationOperation.TargetMethod.Name) &&
-                    invocationOperation.TargetMethod.ContainingSymbol.Equals(this._targetType))
+                    this.TargetMethodNames.Contains(invocationOperation.TargetMethod.Name) &&
+                    invocationOperation.TargetMethod.ContainingSymbol.Equals(this.TargetType))
                 {
-                    methodName = invocationOperation.TargetMethod.Name;
-                    return true;
+                    return invocationOperation.TargetMethod.Name;
                 }
 
-                return false;
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Handler for operaction actions specific to asynchronous methods. This class cannot be inherited.
+        /// </summary>
+        private sealed class AsyncOperationActionsHandler
+            : OperationActionsHandler
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="AsyncOperationActionsHandler"/> class.
+            /// </summary>
+            /// <param name="targetType">Type of the target.</param>
+            /// <param name="targetMethodNames">The target method names.</param>
+            /// <param name="rule">The rule.</param>
+            public AsyncOperationActionsHandler(INamedTypeSymbol targetType, ImmutableHashSet<string> targetMethodNames, DiagnosticDescriptor rule)
+                : base(targetType, targetMethodNames, rule)
+            {
+            }
+
+            /// <summary>
+            /// Checks the <paramref name="operation" /> is an invocation of one of the <see cref="OperationActionsHandler.TargetMethodNames" /> in the <see cref="OperationActionsHandler.TargetType" />.
+            /// </summary>
+            /// <param name="operation">The operation.</param>
+            /// <returns>The name of the invoked method if the value of the invocation of one of the <see cref="OperationActionsHandler.TargetMethodNames" /> in the <see cref="OperationActionsHandler.TargetType" />
+            /// is being compared with 0 or 1 using <see cref="int" /> comparison operators; otherwise, <see langword="null" />.</returns>
+            protected override string IsCountMethodInvocation(IOperation operation)
+            {
+                operation = operation
+                    .WalkDownParenthesis()
+                    .WalkDownConversion();
+
+                if (operation is IAwaitOperation awaitOperation)
+                {
+                    operation = awaitOperation.Operation;
+                }
+                else
+                {
+                    return null;
+                }
+
+                operation = operation
+                    .WalkDownConversion()
+                    .WalkDownParenthesis();
+
+                if (operation is IInvocationOperation invocationOperation &&
+                    this.TargetMethodNames.Contains(invocationOperation.TargetMethod.Name) &&
+                    invocationOperation.TargetMethod.ContainingSymbol.Equals(this.TargetType))
+                {
+                    return invocationOperation.TargetMethod.Name;
+                }
+
+                return null;
+            }
+
+            /// <summary>
+            /// Adds handler specifc diagnostics properties.
+            /// </summary>
+            /// <param name="propertiesBuilder">The properties builder.</param>
+            protected override void AddDiagnosticsProperties(ImmutableDictionary<string, string>.Builder propertiesBuilder)
+            {
+                base.AddDiagnosticsProperties(propertiesBuilder);
+
+                propertiesBuilder.Add(IsAsyncKey, null);
             }
         }
     }

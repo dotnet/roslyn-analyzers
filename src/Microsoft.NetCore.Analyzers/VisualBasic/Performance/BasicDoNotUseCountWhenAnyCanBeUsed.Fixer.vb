@@ -7,6 +7,7 @@ Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
 Imports Microsoft.NetCore.Analyzers.Performance
 
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
+
     ''' <summary>
     ''' CA1827: Do not use Count()/LongCount() when Any() can be used.
     ''' CA1828: Do not use CountAsync()/LongCountAsync() when AnyAsync() can be used.

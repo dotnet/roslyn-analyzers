@@ -2017,6 +2017,46 @@ Class Test
 End Class");
         }
 
+        [Fact, WorkItem(37528, "https://github.com/dotnet/roslyn/issues/37528")]
+        public void ArrayInitializer_MultipleElementsWithDisposableAssignment_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A[] a = new A[] { new A(), new A() };   // TODO: https://github.com/dotnet/roslyn-analyzers/issues/1577
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim a As A() = New A() {New A(), New A()}    ' TODO: https://github.com/dotnet/roslyn-analyzers/issues/1577
+    End Sub
+End Class");
+        }
+
         [Fact]
         public void ArrayInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
         {
@@ -2055,6 +2095,50 @@ Class Test
     Sub M1()
         Dim a As A() = New A() {New A()}
         a(0).Dispose()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(37528, "https://github.com/dotnet/roslyn/issues/37528")]
+        public void ArrayInitializer_MultipleElementsWithDisposableAssignment_ConstantIndices_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A[] a = new A[] { new A(), new A() };
+        a[0].Dispose();
+        a[1].Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim a As A() = New A() {New A(), New A()}
+        a(0).Dispose()
+        a(1).Dispose()
     End Sub
 End Class");
         }

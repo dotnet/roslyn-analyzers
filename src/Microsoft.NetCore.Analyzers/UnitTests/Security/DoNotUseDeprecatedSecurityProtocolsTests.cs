@@ -490,6 +490,43 @@ class TestClass
 }");
         }
 
+        [Fact]
+        public void TestMaskOutUnsafeOnServicePointManagerNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11);
+    }
+}");
+        }
+
+        [Fact]
+        public void TestMaskOutUnsafeOnVariableDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        SecurityProtocolType t = default(SecurityProtocolType);
+        t &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11);
+    }
+}",
+                GetCSharpResultAt(10, 14, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "-1009"),
+                GetCSharpResultAt(10, 16, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Ssl3"),
+                GetCSharpResultAt(10, 44, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls"),
+                GetCSharpResultAt(10, 71, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"));
+        }
+
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new DoNotUseDeprecatedSecurityProtocols();

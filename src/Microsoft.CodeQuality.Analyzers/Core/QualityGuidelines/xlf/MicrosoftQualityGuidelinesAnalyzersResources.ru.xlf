@@ -22,9 +22,14 @@
         <target state="translated">Не удалось исправить некоторые ссылки на "{0}". Их следует исправить вручную.</target>
         <note />
       </trans-unit>
+      <trans-unit id="ReferringToObjectAndReassigningItInTheSameStatementDescription">
+        <source>When you go through the assignment chain right to left, firstly, reference in object '{0}' will be changed, but when you reffer to this object second time, since it's still the same statement, it will be pointing to it's old value. So if old value of '{0}' isn't saved elsewhere, result of the later assignment will be lost.</source>
+        <target state="new">When you go through the assignment chain right to left, firstly, reference in object '{0}' will be changed, but when you reffer to this object second time, since it's still the same statement, it will be pointing to it's old value. So if old value of '{0}' isn't saved elsewhere, result of the later assignment will be lost.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReferringToObjectAndReassigningItInTheSameStatementMessage">
-        <source>Object '{0}' is being referred to and reassigned in the same statement. You are at risk of referring to unintended object.</source>
-        <target state="new">Object '{0}' is being referred to and reassigned in the same statement. You are at risk of referring to unintended object.</target>
+        <source>Object '{0}' is referenced and reassigned in the same statement. You are at risk of referring to unintended object.</source>
+        <target state="new">Object '{0}' is referenced and reassigned in the same statement. You are at risk of referring to unintended object.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReferringToObjectAndReassigningItInTheSameStatementTitle">

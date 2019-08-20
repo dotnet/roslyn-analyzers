@@ -13,20 +13,21 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     /// ReferenceChanged: Prevent objects from being referenced in statements where they are reassigned
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-
     public sealed class ReferringToObjectAndReassigningItInTheSameStatement : DiagnosticAnalyzer
     {
-        internal const string RuleId = "ReferenceChanged";
+        internal const string RuleId = "CA2246";
 
         private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferringToObjectAndReassigningItInTheSameStatementTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
         private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferringToObjectAndReassigningItInTheSameStatementMessage), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.ReferringToObjectAndReassigningItInTheSameStatementDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.Usage,
             DiagnosticHelpers.DefaultDiagnosticSeverity,
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX);
+            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            s_localizableDescription);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -79,7 +80,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
         private static bool AnalyzeMemberAssignment<T>(ISimpleAssignmentOperation assignmentOperation, T instance, Func<T, T, bool> equalityComparer) where T : class, IOperation
         {
             // Check every simple assignments target in a statement for equality to `instance`
-            while (assignmentOperation.Value != null && assignmentOperation.Value.Kind == OperationKind.SimpleAssignment)
+            while (assignmentOperation.Value.Kind == OperationKind.SimpleAssignment)
             {
                 assignmentOperation = (ISimpleAssignmentOperation)assignmentOperation.Value;
 

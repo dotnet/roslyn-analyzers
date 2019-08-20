@@ -22,14 +22,14 @@
         <target state="translated">Не удалось исправить некоторые ссылки на "{0}". Их следует исправить вручную.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ReferingToObjectAndReassigningItInTheSameStatementMessage">
+      <trans-unit id="ReferringToObjectAndReassigningItInTheSameStatementMessage">
         <source>Object '{0}' is being referred to and reassigned in the same statement. You are at risk of referring to unintended object.</source>
         <target state="new">Object '{0}' is being referred to and reassigned in the same statement. You are at risk of referring to unintended object.</target>
         <note />
       </trans-unit>
-      <trans-unit id="ReferingToObjectAndReassigningItInTheSameStatementTitle">
-        <source>Refering to object and reassigning it in the same statement.</source>
-        <target state="new">Refering to object and reassigning it in the same statement.</target>
+      <trans-unit id="ReferringToObjectAndReassigningItInTheSameStatementTitle">
+        <source>Referring to object and reassigning it in the same statement.</source>
+        <target state="new">Referring to object and reassigning it in the same statement.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">

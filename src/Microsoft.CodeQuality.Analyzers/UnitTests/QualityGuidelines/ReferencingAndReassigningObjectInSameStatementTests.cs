@@ -90,7 +90,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "Property"));
+            GetCSharpResultAt(12, 9, "a.Property"));
         }
 
         [Fact]
@@ -111,7 +111,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "Property"),
+            GetCSharpResultAt(12, 9, "a.Property"),
             GetCSharpResultAt(12, 31, "a"));
         }
 
@@ -156,7 +156,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "Property"));
+            GetCSharpResultAt(13, 9, "x.Property"));
         }
 
         [Fact]
@@ -178,7 +178,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "Property"),
+            GetCSharpResultAt(13, 9, "x.Property"),
             GetCSharpResultAt(13, 31, "x"));
         }
 
@@ -203,7 +203,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(14, 9, "Property"),
+            GetCSharpResultAt(14, 9, "x.Property"),
             GetCSharpResultAt(14, 31, "x"));
         }
 
@@ -225,6 +225,67 @@ public class Test
     }
 }
 ");
+        }
+
+        [Fact]
+        public void CSharpReassignPropertyOfFirstLocalVariableWithSecondAndReferToPropertyOfSecondVariable()
+        {
+            VerifyCSharpDiagnostic(@"
+public class C
+{
+    public C Property { get; set; }
+}
+
+public class Test
+{
+    public void Method()
+    {
+        C a, b, c;
+        b.Property.Property = a.Property = b;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharpReassignPropertyOfFirstLocalVariableWithThirdAndReferToPropertyOfSecondVariable()
+        {
+            VerifyCSharpDiagnostic(@"
+public class C
+{
+    public C Property { get; set; }
+}
+
+public class Test
+{
+    public void Method()
+    {
+        C a, b, c;
+        b.Property.Property = a.Property = c;
+    }
+}
+");
+        }
+
+        [Fact]
+        public void CSharpReassignMethodParameterAndReferToItsProperty()
+        {
+            VerifyCSharpDiagnostic(@"
+public class C
+{
+    public C Property { get; set; }
+}
+
+public class Test
+{
+    public void Method(C b)
+    {
+        C a;
+        b.Property = b = a;
+    }
+}
+",
+            GetCSharpResultAt(12, 9, "b"));
         }
 
         [Fact]

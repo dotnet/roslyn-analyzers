@@ -54,16 +54,17 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // Search for object equal to operationTarget.Instance further in assignment chain
             bool isViolationFound = false;
-            string violatingObjectName;
             if (operationTarget.Instance is ILocalReferenceOperation localInstance)
             {
-                violatingObjectName = localInstance.Local.Name;
-                isViolationFound = AnalyzeMemberAssignment(assignmentOperation, localInstance, (a, b) => a.Local == b.Local);
+                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, localInstance, (a, b) => a.Local == b.Local);
             }
             else if (operationTarget.Instance is IMemberReferenceOperation memberInstance)
             {
-                violatingObjectName = memberInstance.Member.Name;
-                isViolationFound = AnalyzeMemberAssignment(assignmentOperation, memberInstance, (a, b) => a.Member == b.Member);
+                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, memberInstance, (a, b) => a.Member == b.Member);
+            }
+            else if (operationTarget.Instance is IParameterReferenceOperation parameterInstance)
+            {
+                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, parameterInstance, (a, b) => a.Parameter == b.Parameter);
             }
             else
             {
@@ -72,12 +73,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             if (isViolationFound)
             {
-                var diagnostic = Diagnostic.Create(Rule, operationTarget.Syntax.GetLocation(), violatingObjectName);
+                var diagnostic = Diagnostic.Create(Rule, operationTarget.Syntax.GetLocation(), operationTarget.Instance.Syntax.ToString());
                 context.ReportDiagnostic(diagnostic);
             }
         }
 
-        private static bool AnalyzeMemberAssignment<T>(ISimpleAssignmentOperation assignmentOperation, T instance, Func<T, T, bool> equalityComparer) where T : class, IOperation
+        private static bool AnalyzeAssignmentToMember<T>(ISimpleAssignmentOperation assignmentOperation, T instance, Func<T, T, bool> equalityComparer) where T : class, IOperation
         {
             // Check every simple assignments target in a statement for equality to `instance`
             while (assignmentOperation.Value.Kind == OperationKind.SimpleAssignment)

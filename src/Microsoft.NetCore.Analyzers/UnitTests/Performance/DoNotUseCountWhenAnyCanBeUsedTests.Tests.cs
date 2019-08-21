@@ -155,9 +155,10 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 extensionsSource:
                     SourceProvider.GetExtensionsCode(SourceProvider.TestNamespace, SourceProvider.TestExtensionsClass));
 
+#pragma warning disable CA1716 // Identifiers should not match keywords
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_Predicate_TheoryData))]
-        public Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
+        public virtual Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MethodName,
                 testSource:
@@ -173,7 +174,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_Predicate_TheoryData))]
-        public Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
+        public virtual Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MethodName,
                 testSource:
@@ -190,7 +191,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public Task CountEqualsZero_Fixed(bool withPredicate)
+        public virtual Task CountEqualsZero_Fixed(bool withPredicate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MethodName,
                 testSource:
@@ -207,7 +208,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public Task ZeroEqualsCount_Fixed(bool withPredicate)
+        public virtual Task ZeroEqualsCount_Fixed(bool withPredicate)
             => this.VerifyAsync(
                 methodName: this.SourceProvider.MethodName,
                 testSource:
@@ -221,6 +222,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 extensionsSource:
                     SourceProvider.IsAsync ? SourceProvider.GetExtensionsCode(SourceProvider.ExtensionsNamespace, SourceProvider.ExtensionsClass) : null);
     }
+#pragma warning restore CA1716 // Identifiers should not match keywords
 
     public class CSharpDoNotUseCountWhenAnyCanBeUsedTestsEnumerable
         : DoNotUseCountWhenAnyCanBeUsedTestsBase
@@ -241,7 +243,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 #pragma warning disable xUnit1024
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_Predicate_TheoryData))]
-        public new async Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
+        public override async Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
         {
             if (withPredicate)
             {
@@ -252,7 +254,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 await this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
-                        SourceProvider.WithDiagnostic(SourceProvider.GetTargetExpressionBinaryExpressionCode(@operator, value, withPredicate, SourceProvider.MethodName)),
+                        SourceProvider.GetTargetExpressionBinaryExpressionCode(@operator, value, withPredicate, SourceProvider.MethodName),
                         SourceProvider.ExtensionsNamespace),
                     extensionsSource:
                         null);
@@ -261,7 +263,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_Predicate_TheoryData))]
-        public new async Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
+        public override async Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
         {
             if (withPredicate)
             {
@@ -272,7 +274,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 await this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
-                        SourceProvider.WithDiagnostic(SourceProvider.GetTargetExpressionBinaryExpressionCode(value, @operator, withPredicate, SourceProvider.MethodName)),
+                        SourceProvider.GetTargetExpressionBinaryExpressionCode(value, @operator, withPredicate, SourceProvider.MethodName),
                         SourceProvider.ExtensionsNamespace),
                     extensionsSource:
                         null);
@@ -282,7 +284,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public new async Task CountEqualsZero_Fixed(bool withPredicate)
+        public override async Task CountEqualsZero_Fixed(bool withPredicate)
         {
             if (withPredicate)
             {
@@ -303,7 +305,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public new async Task ZeroEqualsCount_Fixed(bool withPredicate)
+        public override async Task ZeroEqualsCount_Fixed(bool withPredicate)
         {
             if (withPredicate)
             {
@@ -535,7 +537,7 @@ class C
 #pragma warning disable xUnit1024
         [Theory]
         [MemberData(nameof(LeftCount_Fixer_Predicate_TheoryData))]
-        public new async Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
+        public override async Task LeftTargetCountComparison_Fixed(BinaryOperatorKind @operator, int value, bool withPredicate, bool negate)
         {
             if (withPredicate)
             {
@@ -546,7 +548,7 @@ class C
                 await this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
-                        SourceProvider.WithDiagnostic(SourceProvider.GetTargetExpressionBinaryExpressionCode(@operator, value, withPredicate, SourceProvider.MethodName)),
+                        SourceProvider.GetTargetExpressionBinaryExpressionCode(@operator, value, withPredicate, SourceProvider.MethodName),
                         SourceProvider.ExtensionsNamespace),
                     extensionsSource:
                         null);
@@ -555,7 +557,7 @@ class C
 
         [Theory]
         [MemberData(nameof(RightCount_Fixer_Predicate_TheoryData))]
-        public new async Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
+        public override async Task RightTargetCountComparison_Fixed(int value, BinaryOperatorKind @operator, bool withPredicate, bool negate)
         {
             if (withPredicate)
             {
@@ -566,7 +568,7 @@ class C
                 await this.VerifyAsync(
                 testSource:
                     SourceProvider.GetCodeWithExpression(
-                        SourceProvider.WithDiagnostic(SourceProvider.GetTargetExpressionBinaryExpressionCode(value, @operator, withPredicate, SourceProvider.MethodName)),
+                        SourceProvider.GetTargetExpressionBinaryExpressionCode(value, @operator, withPredicate, SourceProvider.MethodName),
                         SourceProvider.ExtensionsNamespace),
                     extensionsSource:
                         null);
@@ -576,7 +578,7 @@ class C
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public new async Task CountEqualsZero_Fixed(bool withPredicate)
+        public override async Task CountEqualsZero_Fixed(bool withPredicate)
         {
             if (withPredicate)
             {
@@ -597,7 +599,7 @@ class C
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public new async Task ZeroEqualsCount_Fixed(bool withPredicate)
+        public override async Task ZeroEqualsCount_Fixed(bool withPredicate)
         {
             if (withPredicate)
             {

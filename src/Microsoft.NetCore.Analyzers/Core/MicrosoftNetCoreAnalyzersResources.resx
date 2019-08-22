@@ -1101,6 +1101,21 @@
   <data name="DoNotUseUnsafeDllImportSearchPathMessage" xml:space="preserve">
     <value>Use of unsafe DllImportSearchPath value {0}</value>
   </data>
+  <data name="UseAutoValidateAntiforgeryToken" xml:space="preserve">
+    <value>Use antiforgery tokens in ASP.NET Core MVC controllers</value>
+  </data>
+  <data name="UseAutoValidateAntiforgeryTokenDescription" xml:space="preserve">
+    <value>Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.</value>
+  </data>
+  <data name="UseAutoValidateAntiforgeryTokenMessage" xml:space="preserve">
+    <value>Method {0} handles a {1} request without performing antiforgery token validation. You also need to ensure that your HTML form sends an antiforgery token.</value>
+  </data>
+  <data name="MissHttpVerbAttribute" xml:space="preserve">
+    <value>Miss HttpVerb attribute for action methods</value>
+  </data>
+  <data name="MissHttpVerbAttributeMessage" xml:space="preserve">
+    <value>Action method {0} needs to specify the Http request kind explictly</value>
+  </data>
   <data name="DoNotUseInsecureRandomness" xml:space="preserve">
     <value>Do not use insecure randomness</value>
   </data>
@@ -1145,5 +1160,8 @@
   </data>
   <data name="HardcodedSslProtocolsTitle" xml:space="preserve">
     <value>Avoid hardcoded SslProtocols values</value>
+  </data>
+  <data name="MissHttpVerbAttributeDescription" xml:space="preserve">
+    <value>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</value>
   </data>
 </root>

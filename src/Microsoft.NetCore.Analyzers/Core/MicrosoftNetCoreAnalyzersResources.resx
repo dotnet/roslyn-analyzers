@@ -1108,7 +1108,7 @@
     <value>Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.</value>
   </data>
   <data name="UseAutoValidateAntiforgeryTokenMessage" xml:space="preserve">
-    <value>Method {0} handles a {1} request without performing antiforgery token validation. You also need to ensure that your HTML form sends an antiforgery token validation.</value>
+    <value>Method {0} handles a {1} request without performing antiforgery token validation. You also need to ensure that your HTML form sends an antiforgery token.</value>
   </data>
   <data name="MissHttpVerbAttribute" xml:space="preserve">
     <value>Miss HttpVerb attribute for action methods</value>

@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
@@ -17,10 +19,48 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 
         protected override DiagnosticDescriptor Rule => DoNotHardCodeEncryptionKey.Rule;
 
+        protected override IEnumerable<string> AdditionalCSharpSources => new string[] { readOnlySpanAndAesGcmAndAesCcmCSharpSourceCode };
+
+        public const string readOnlySpanAndAesGcmAndAesCcmCSharpSourceCode = @"
+namespace System
+{
+    public struct ReadOnlySpan<T>
+    {
+        public ReadOnlySpan (T[] array)
+        {
+        }
+    }
+}
+
+namespace System.Security.Cryptography
+{
+    public sealed class AesGcm
+    {
+        public AesGcm (byte[] key)
+        {
+        }
+
+        public AesGcm (ReadOnlySpan<byte> key)
+        {
+        }
+    }
+
+    public sealed class AesCcm
+    {
+        public AesCcm (byte[] key)
+        {
+        }
+
+        public AesCcm (ReadOnlySpan<byte> key)
+        {
+        }
+    }
+}";
+
         [Fact]
         public void Test_HardcodedInString_CreateEncryptor_NeedValueContentAnalysis_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -39,7 +79,7 @@ class TestClass
         [Fact]
         public void Test_ASCIIEncodingGetBytesWithStringParameter_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.Text;
 using System.Security.Cryptography;
 
@@ -58,7 +98,7 @@ class TestClass
         [Fact]
         public void Test_EncodingUTF8GetBytesWithStringParameter_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.Text;
 using System.Security.Cryptography;
 
@@ -77,7 +117,7 @@ class TestClass
         [Fact]
         public void Test_ASCIIEncodingGetBytesWithStringAndInt32AndInt32AndByteArrayAndInt32Parameters_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.Text;
 using System.Security.Cryptography;
 
@@ -96,7 +136,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInStringWithVariable_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -116,7 +156,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInMultilinesString_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -139,7 +179,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInByteArray_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -156,9 +196,119 @@ class TestClass
         }
 
         [Fact]
-        public void Test_HardcodedInByteArray_CreateDecryptor_Diagnostic()
+        public void Test_AesGcmWithByteArrayParameter_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        byte[] key = new byte[] {1, 2, 3};
+        AesGcm aesGcm = new AesGcm(key);
+    }
+}",
+            GetCSharpResultAt(10, 25, 9, 22, "AesGcm.AesGcm(byte[] key)", "void TestClass.TestMethod()", "byte[]", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void Test_AesGcmWithReadOnlySpanParameter_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ReadOnlySpan<byte> key = new ReadOnlySpan<byte>(new byte[] {1, 2, 3});
+        AesGcm aesGcm = new AesGcm(key);
+    }
+}",
+            GetCSharpResultAt(10, 25, 9, 57, "AesGcm.AesGcm(ReadOnlySpan<byte> key)", "void TestClass.TestMethod()", "byte[]", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void Test_HardcodedInStringWithVariable_AesGcm_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        string someHardCodedBase64String = ""AAAAAaazaoensuth"";
+        byte[] key = Convert.FromBase64String(someHardCodedBase64String);
+        AesGcm aesGcm = new AesGcm(key);
+    }
+}",
+            GetCSharpResultAt(11, 25, 10, 22, "AesGcm.AesGcm(byte[] key)", "void TestClass.TestMethod()", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void Test_AesCcmWithByteArrayParameter_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        byte[] key = new byte[] {1, 2, 3};
+        AesCcm aesCcm = new AesCcm(key);
+    }
+}",
+            GetCSharpResultAt(10, 25, 9, 22, "AesCcm.AesCcm(byte[] key)", "void TestClass.TestMethod()", "byte[]", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void Test_AesCcmWithReadOnlySpanParameter_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ReadOnlySpan<byte> key = new ReadOnlySpan<byte>(new byte[] {1, 2, 3});
+        AesCcm aesCcm = new AesCcm(key);
+    }
+}",
+            GetCSharpResultAt(10, 25, 9, 57, "AesCcm.AesCcm(ReadOnlySpan<byte> key)", "void TestClass.TestMethod()", "byte[]", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void Test_HardcodedInStringWithVariable_AesCcm_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        string someHardCodedBase64String = ""AAAAAaazaoensuth"";
+        byte[] key = Convert.FromBase64String(someHardCodedBase64String);
+        AesCcm aesCcm = new AesCcm(key);
+    }
+}",
+            GetCSharpResultAt(11, 25, 10, 22, "AesCcm.AesCcm(byte[] key)", "void TestClass.TestMethod()", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
+        public void Test_HardcodedInByteArray_CreateDecryptor_Diagnostic()
+        {
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -177,7 +327,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInByteArrayWithVariable_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -197,7 +347,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInByteArray_KeyProperty_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -216,7 +366,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInByteArray_CreateEncryptorFromDerivedClassOfSymmetricAlgorithm_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -235,7 +385,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInByteArray_CreateEncryptor_Multivalues_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -262,7 +412,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInByteArray_CreateEncryptor_WithoutAssignment_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -280,7 +430,7 @@ class TestClass
         [Fact]
         public void Test_MaybeHardcoded_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -305,7 +455,7 @@ class TestClass
         [Fact]
         public void Test_PassTaintedSourceInfoAsParameter_SinkMethodParameters_Interprocedual_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -329,7 +479,7 @@ class TestClass
         [Fact]
         public void Test_PassTaintedSourceInfoAsParameter_SinkProperties_Interprocedual_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -353,7 +503,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedIn2DByteArray_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -373,7 +523,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInJaggedArrayInitializer_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -399,7 +549,7 @@ class TestClass
         [Fact]
         public void Test_HardcodeByParamsBytesArray_CreateEncryptor_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -423,7 +573,7 @@ class TestClass
         [Fact]
         public void Test_ASCIIEncodingGetBytesWithCharArrayParameter_CreateEncryptor_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System.Text;
 using System.Security.Cryptography;
 
@@ -441,7 +591,7 @@ class TestClass
         [Fact]
         public void Test_ElementTypeIsTypeParameter_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 
 class TestClass<T1> where T1 : struct
@@ -460,7 +610,7 @@ class TestClass<T1> where T1 : struct
         [Fact]
         public void Test_HardcodedInJaggedArray_CreateEncryptor_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -481,7 +631,7 @@ class TestClass
         [Fact]
         public void Test_NotHardcoded_CreateEncryptor_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -498,7 +648,7 @@ class TestClass
         [Fact]
         public void Test_HardcodedInArrayThenOverwrite_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -517,7 +667,7 @@ class TestClass
         [Fact]
         public void Test_NotHardcodedInString_CreateEncryptor_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -536,7 +686,7 @@ class TestClass
         [Fact]
         public void Test_ReturnTaintedSourceInfo_Interprocedual_NoDiagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 using System.Security.Cryptography;
 
@@ -559,7 +709,7 @@ class TestClass
         [Fact, WorkItem(2723, "https://github.com/dotnet/roslyn-analyzers/issues/2723")]
         public void Test_ArrayInitializerInAttribute()
         {
-            VerifyCSharpWithDependencies(@"
+            VerifyCSharp(@"
 using System;
 
 class MyAttr : Attribute

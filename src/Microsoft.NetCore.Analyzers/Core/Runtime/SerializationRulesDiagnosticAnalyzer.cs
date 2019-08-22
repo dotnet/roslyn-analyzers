@@ -1,9 +1,7 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Reflection;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -18,13 +16,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string RuleCA2229Id = "CA2229";
 
         private static readonly LocalizableString s_localizableTitleCA2229 =
-            new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsTitle),
-                SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsTitle),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2229 =
             new LocalizableResourceString(
-                nameof(SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsDescription),
-                SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+                nameof(MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsDescription),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleCA2229 = new DiagnosticDescriptor(RuleCA2229Id,
                                                                         s_localizableTitleCA2229,
@@ -40,17 +38,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string RuleCA2237Id = "CA2237";
 
         private static readonly LocalizableString s_localizableTitleCA2237 =
-            new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.MarkISerializableTypesWithSerializableTitle),
-                SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkISerializableTypesWithSerializableTitle),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageCA2237 =
-            new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.MarkISerializableTypesWithSerializableMessage),
-                SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkISerializableTypesWithSerializableMessage),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2237 =
             new LocalizableResourceString(
-                nameof(SystemRuntimeAnalyzersResources.MarkISerializableTypesWithSerializableDescription),
-                SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+                nameof(MicrosoftNetCoreAnalyzersResources.MarkISerializableTypesWithSerializableDescription),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleCA2237 = new DiagnosticDescriptor(RuleCA2237Id,
                                                                         s_localizableTitleCA2237,
@@ -66,17 +64,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string RuleCA2235Id = "CA2235";
 
         private static readonly LocalizableString s_localizableTitleCA2235 =
-            new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.MarkAllNonSerializableFieldsTitle),
-                SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkAllNonSerializableFieldsTitle),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableMessageCA2235 =
-            new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.MarkAllNonSerializableFieldsMessage),
-                SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+            new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkAllNonSerializableFieldsMessage),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescriptionCA2235 =
             new LocalizableResourceString(
-                nameof(SystemRuntimeAnalyzersResources.MarkAllNonSerializableFieldsDescription),
-                SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+                nameof(MicrosoftNetCoreAnalyzersResources.MarkAllNonSerializableFieldsDescription),
+                MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleCA2235 = new DiagnosticDescriptor(RuleCA2235Id,
                                                                         s_localizableTitleCA2235,
@@ -191,7 +189,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         if (serializationCtor == null)
                         {
                             context.ReportDiagnostic(namedTypeSymbol.CreateDiagnostic(RuleCA2229,
-                                string.Format(SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor,
+                                string.Format(MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageCreateMagicConstructor,
                                     namedTypeSymbol.Name)));
                         }
                         else
@@ -203,7 +201,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 context.ReportDiagnostic(serializationCtor.CreateDiagnostic(RuleCA2229,
                                     string.Format(
-                                        SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate,
+                                        MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageMakeSealedMagicConstructorPrivate,
                                         namedTypeSymbol.Name)));
                             }
 
@@ -212,7 +210,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                             {
                                 context.ReportDiagnostic(serializationCtor.CreateDiagnostic(RuleCA2229,
                                     string.Format(
-                                        SystemRuntimeAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily,
+                                        MicrosoftNetCoreAnalyzersResources.ImplementSerializationConstructorsMessageMakeUnsealedMagicConstructorFamily,
                                         namedTypeSymbol.Name)));
                             }
                         }

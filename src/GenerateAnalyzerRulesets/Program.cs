@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -11,7 +12,6 @@ using System.Text;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 
 namespace GenerateAnalyzerRulesets
 {
@@ -63,7 +63,7 @@ namespace GenerateAnalyzerRulesets
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
                 var rulesById = new SortedList<string, DiagnosticDescriptor>();
 
-                var assemblyRulesMetadata = (path: path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
+                var assemblyRulesMetadata = (path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
 
                 foreach (var analyzer in analyzers)
                 {
@@ -91,22 +91,19 @@ namespace GenerateAnalyzerRulesets
                 "AllRulesDefault.ruleset",
                 "All Rules with default action",
                 @"All Rules with default action. Rules with IsEnabledByDefault = false are disabled.",
-                RulesetKind.AllDefault,
-                categoryOpt: null);
+                RulesetKind.AllDefault);
 
             createRuleset(
                 "AllRulesEnabled.ruleset",
                 "All Rules Enabled with default action",
                 "All Rules are enabled with default action. Rules with IsEnabledByDefault = false are force enabled with default action.",
-                RulesetKind.AllEnabled,
-                categoryOpt: null);
+                RulesetKind.AllEnabled);
 
             createRuleset(
                 "AllRulesDisabled.ruleset",
                 "All Rules Disabled",
                 @"All Rules are disabled.",
-                RulesetKind.AllDisabled,
-                categoryOpt: null);
+                RulesetKind.AllDisabled);
 
             foreach (var category in categories)
             {
@@ -125,6 +122,28 @@ namespace GenerateAnalyzerRulesets
                     categoryOpt: category);
             }
 
+            // We generate custom tag based rulesets only for select custom tags.
+            var customTagsToGenerateRulesets = ImmutableArray.Create(
+                WellKnownDiagnosticTagsExtensions.Dataflow,
+                FxCopWellKnownDiagnosticTags.PortedFromFxCop);
+
+            foreach (var customTag in customTagsToGenerateRulesets)
+            {
+                createRuleset(
+                    $"{customTag}RulesDefault.ruleset",
+                    $"{customTag} Rules with default action",
+                    $@"All {customTag} Rules with default action. Rules with IsEnabledByDefault = false and non-{customTag} rules are disabled.",
+                    RulesetKind.CustomTagDefault,
+                    customTagOpt: customTag);
+
+                createRuleset(
+                    $"{customTag}RulesEnabled.ruleset",
+                    $"{customTag} Rules Enabled with default action",
+                    $@"All {customTag} Rules are enabled with default action. {customTag} Rules with IsEnabledByDefault = false are force enabled with default action. Non-{customTag} Rules are disabled.",
+                    RulesetKind.CustomTagEnabled,
+                    customTagOpt: customTag);
+            }
+
             createPropsFile();
 
             createAnalyzerDocumentationFile();
@@ -139,23 +158,26 @@ namespace GenerateAnalyzerRulesets
                 string rulesetName,
                 string rulesetDescription,
                 RulesetKind rulesetKind,
-                string categoryOpt)
+                string categoryOpt = null,
+                string customTagOpt = null)
             {
+                Debug.Assert(categoryOpt == null || customTagOpt == null);
                 Debug.Assert((categoryOpt != null) == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
+                Debug.Assert((customTagOpt != null) == (rulesetKind == RulesetKind.CustomTagDefault || rulesetKind == RulesetKind.CustomTagEnabled));
 
                 var result = new StringBuilder();
                 startRuleset();
-                if (categoryOpt == null)
+                if (categoryOpt == null && customTagOpt == null)
                 {
-                    addRules(categoryPass: false);
+                    addRules(categoryPass: false, customTagPass: false);
                 }
                 else
                 {
-                    result.AppendLine($@"   <!-- {categoryOpt} Rules -->");
-                    addRules(categoryPass: true);
+                    result.AppendLine($@"   <!-- {categoryOpt ?? customTagOpt} Rules -->");
+                    addRules(categoryPass: categoryOpt != null, customTagPass: customTagOpt != null);
                     result.AppendLine();
                     result.AppendLine($@"   <!-- Other Rules -->");
-                    addRules(categoryPass: false);
+                    addRules(categoryPass: false, customTagPass: false);
                 }
 
                 endRuleset();
@@ -175,12 +197,18 @@ namespace GenerateAnalyzerRulesets
                     result.AppendLine("</RuleSet>");
                 }
 
-                void addRules(bool categoryPass)
+                void addRules(bool categoryPass, bool customTagPass)
                 {
                     foreach (var rulesByAssembly in allRulesByAssembly)
                     {
                         string assemblyName = rulesByAssembly.Key;
                         SortedList<string, DiagnosticDescriptor> sortedRulesById = rulesByAssembly.Value;
+
+                        if (!sortedRulesById.Any(r => !shouldSkipRule(r.Value)))
+                        {
+                            // Bail out if we don't have any rule to be added for this assembly.
+                            continue;
+                        }
 
                         startRules(assemblyName);
 
@@ -231,6 +259,17 @@ namespace GenerateAnalyzerRulesets
                                     return rule.Category == categoryOpt;
                                 }
 
+                            case RulesetKind.CustomTagDefault:
+                            case RulesetKind.CustomTagEnabled:
+                                if (customTagPass)
+                                {
+                                    return !rule.CustomTags.Contains(customTagOpt);
+                                }
+                                else
+                                {
+                                    return rule.CustomTags.Contains(customTagOpt);
+                                }
+
                             default:
                                 return false;
                         }
@@ -245,6 +284,12 @@ namespace GenerateAnalyzerRulesets
 
                             case RulesetKind.CategoryEnabled:
                                 return getRuleActionCore(enable: categoryPass);
+
+                            case RulesetKind.CustomTagDefault:
+                                return getRuleActionCore(enable: customTagPass && rule.IsEnabledByDefault);
+
+                            case RulesetKind.CustomTagEnabled:
+                                return getRuleActionCore(enable: customTagPass);
 
                             case RulesetKind.AllDefault:
                                 return getRuleActionCore(enable: rule.IsEnabledByDefault);
@@ -291,7 +336,7 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
                 File.WriteAllText(fileWithPath, fileContents);
             }
 
-            string getFlowAnalysisFeatureFlag()
+            static string getFlowAnalysisFeatureFlag()
             {
                 return @"
 
@@ -358,7 +403,7 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
                 return string.Empty;
             }
 
-            string getEditorConfigAsAdditionalFile()
+            static string getEditorConfigAsAdditionalFile()
             {
                 return $@"
   <!-- 
@@ -429,116 +474,113 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                 var directory = Directory.CreateDirectory(analyzerSarifFileDir);
                 var fileWithPath = Path.Combine(directory.FullName, analyzerSarifFileName);
 
-                using (var textWriter = new StreamWriter(fileWithPath, false, Encoding.UTF8))
-                using (var writer = new Roslyn.Utilities.JsonWriter(textWriter))
+                using var textWriter = new StreamWriter(fileWithPath, false, Encoding.UTF8);
+                using var writer = new Roslyn.Utilities.JsonWriter(textWriter);
+                writer.WriteObjectStart(); // root
+                writer.Write("$schema", "http://json.schemastore.org/sarif-1.0.0");
+                writer.Write("version", "1.0.0");
+                writer.WriteArrayStart("runs");
+
+                foreach (var assemblymetadata in rulesMetadata)
                 {
-                    writer.WriteObjectStart(); // root
-                    writer.Write("$schema", "http://json.schemastore.org/sarif-1.0.0");
-                    writer.Write("version", "1.0.0");
-                    writer.WriteArrayStart("runs");
+                    writer.WriteObjectStart(); // run
 
-                    foreach (var assemblymetadata in rulesMetadata)
+                    writer.WriteObjectStart("tool");
+                    writer.Write("name", assemblymetadata.Key);
+
+                    if (!string.IsNullOrWhiteSpace(analyzerVersion))
                     {
-                        writer.WriteObjectStart(); // run
-
-                        writer.WriteObjectStart("tool");
-                        writer.Write("name", assemblymetadata.Key);
-
-                        if (!string.IsNullOrWhiteSpace(analyzerVersion))
-                        {
-                            writer.Write("version", analyzerVersion);
-                        }
-
-                        writer.Write("language", culture.Name);
-                        writer.WriteObjectEnd(); // tool
-
-                        writer.WriteObjectStart("rules"); // rules
-
-                        foreach (var rule in assemblymetadata.Value.rules)
-                        {
-                            var ruleId = rule.Key;
-                            var descriptor = rule.Value.rule;
-
-                            writer.WriteObjectStart(descriptor.Id); // rule
-                            writer.Write("id", descriptor.Id);
-
-                            writer.Write("shortDescription", descriptor.Title.ToString(culture));
-
-                            string fullDescription = descriptor.Description.ToString(culture);
-                            writer.Write("fullDescription", !string.IsNullOrEmpty(fullDescription) ? fullDescription : descriptor.MessageFormat.ToString());
-
-                            writer.Write("defaultLevel", getLevel(descriptor.DefaultSeverity));
-
-                            if (!string.IsNullOrEmpty(descriptor.HelpLinkUri))
-                            {
-                                writer.Write("helpUri", descriptor.HelpLinkUri);
-                            }
-
-                            writer.WriteObjectStart("properties");
-
-                            writer.Write("category", descriptor.Category);
-
-                            writer.Write("isEnabledByDefault", descriptor.IsEnabledByDefault);
-
-                            writer.Write("typeName", rule.Value.typeName);
-
-                            if ((rule.Value.languages?.Length ?? 0) > 0)
-                            {
-                                writer.WriteArrayStart("languages");
-
-                                foreach (var language in rule.Value.languages.OrderBy(l => l, StringComparer.InvariantCultureIgnoreCase))
-                                {
-                                    writer.Write(language);
-                                }
-
-                                writer.WriteArrayEnd(); // languages
-                            }
-
-                            if (descriptor.CustomTags.Any())
-                            {
-                                writer.WriteArrayStart("tags");
-
-                                foreach (string tag in descriptor.CustomTags)
-                                {
-                                    writer.Write(tag);
-                                }
-
-                                writer.WriteArrayEnd(); // tags
-                            }
-
-                            writer.WriteObjectEnd(); // properties
-                            writer.WriteObjectEnd(); // rule
-                        }
-
-                        writer.WriteObjectEnd(); // rules
-                        writer.WriteObjectEnd(); // run
+                        writer.Write("version", analyzerVersion);
                     }
 
-                    writer.WriteArrayEnd(); // runs
-                    writer.WriteObjectEnd(); // root
+                    writer.Write("language", culture.Name);
+                    writer.WriteObjectEnd(); // tool
 
-                    return;
+                    writer.WriteObjectStart("rules"); // rules
 
-                    string getLevel(DiagnosticSeverity severity)
+                    foreach (var rule in assemblymetadata.Value.rules)
                     {
-                        switch (severity)
+                        var ruleId = rule.Key;
+                        var descriptor = rule.Value.rule;
+
+                        writer.WriteObjectStart(descriptor.Id); // rule
+                        writer.Write("id", descriptor.Id);
+
+                        writer.Write("shortDescription", descriptor.Title.ToString(culture));
+
+                        string fullDescription = descriptor.Description.ToString(culture);
+                        writer.Write("fullDescription", !string.IsNullOrEmpty(fullDescription) ? fullDescription : descriptor.MessageFormat.ToString());
+
+                        writer.Write("defaultLevel", getLevel(descriptor.DefaultSeverity));
+
+                        if (!string.IsNullOrEmpty(descriptor.HelpLinkUri))
                         {
-                            case DiagnosticSeverity.Info:
-                                return "note";
-
-                            case DiagnosticSeverity.Error:
-                                return "error";
-
-                            case DiagnosticSeverity.Warning:
-                                return "warning";
-
-                            case DiagnosticSeverity.Hidden:
-                            default:
-                                // hidden diagnostics are not reported on the command line and therefore not currently given to 
-                                // the error logger. We could represent it with a custom property in the SARIF log if that changes.
-                                Debug.Assert(false);
-                                goto case DiagnosticSeverity.Warning;
+                            writer.Write("helpUri", descriptor.HelpLinkUri);
                         }
+
+                        writer.WriteObjectStart("properties");
+
+                        writer.Write("category", descriptor.Category);
+
+                        writer.Write("isEnabledByDefault", descriptor.IsEnabledByDefault);
+
+                        writer.Write("typeName", rule.Value.typeName);
+
+                        if ((rule.Value.languages?.Length ?? 0) > 0)
+                        {
+                            writer.WriteArrayStart("languages");
+
+                            foreach (var language in rule.Value.languages.OrderBy(l => l, StringComparer.InvariantCultureIgnoreCase))
+                            {
+                                writer.Write(language);
+                            }
+
+                            writer.WriteArrayEnd(); // languages
+                        }
+
+                        if (descriptor.CustomTags.Any())
+                        {
+                            writer.WriteArrayStart("tags");
+
+                            foreach (string tag in descriptor.CustomTags)
+                            {
+                                writer.Write(tag);
+                            }
+
+                            writer.WriteArrayEnd(); // tags
+                        }
+
+                        writer.WriteObjectEnd(); // properties
+                        writer.WriteObjectEnd(); // rule
+                    }
+
+                    writer.WriteObjectEnd(); // rules
+                    writer.WriteObjectEnd(); // run
+                }
+
+                writer.WriteArrayEnd(); // runs
+                writer.WriteObjectEnd(); // root
+
+                return;
+                static string getLevel(DiagnosticSeverity severity)
+                {
+                    switch (severity)
+                    {
+                        case DiagnosticSeverity.Info:
+                            return "note";
+
+                        case DiagnosticSeverity.Error:
+                            return "error";
+
+                        case DiagnosticSeverity.Warning:
+                            return "warning";
+
+                        case DiagnosticSeverity.Hidden:
+                        default:
+                            // hidden diagnostics are not reported on the command line and therefore not currently given to 
+                            // the error logger. We could represent it with a custom property in the SARIF log if that changes.
+                            Debug.Assert(false);
+                            goto case DiagnosticSeverity.Warning;
                     }
                 }
             }
@@ -548,8 +590,10 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
         {
             AllDefault,
             CategoryDefault,
+            CustomTagDefault,
             AllEnabled,
             CategoryEnabled,
+            CustomTagEnabled,
             AllDisabled,
         }
 

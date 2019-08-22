@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -1620,5 +1621,57 @@ End Class", ReferenceFlags.RemoveSystemData);
             ",
                 GetCSharpResultAt(102, 21, "string Command.CommandText", "Page_Load"));
         }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality." + ReviewSqlQueriesForSecurityVulnerabilities.RuleId + ".excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpResultAt(92, 9, "string Command.CommandText", "M1")
+                };
+            }
+
+            VerifyCSharp($@"
+{SetupCodeCSharp}
+
+class Test
+{{
+    void M1(string param)
+    {{
+        Command c = new Command();
+        var str = param;
+        c.CommandText = str;
+    }}
+}}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetBasicResultAt(128, 9, "Property Command.CommandText As String", "M1")
+                };
+            }
+
+            VerifyBasic($@"
+{SetupCodeBasic}
+
+Module Test
+    Sub M1(param As String)
+        Dim c As New Command()
+        Dim str As String = param
+        c.CommandText = str
+    End Sub
+End Module", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
+
     }
 }

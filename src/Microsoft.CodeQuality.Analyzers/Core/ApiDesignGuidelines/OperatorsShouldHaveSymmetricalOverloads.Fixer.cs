@@ -34,9 +34,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             context.RegisterCodeFix(
                 CodeAction.Create(
-                    MicrosoftApiDesignGuidelinesAnalyzersResources.Generate_missing_operators,
+                    MicrosoftCodeQualityAnalyzersResources.Generate_missing_operators,
                     c => CreateChangedDocument(context, c),
-                    nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.Generate_missing_operators)),
+                    nameof(MicrosoftCodeQualityAnalyzersResources.Generate_missing_operators)),
                 context.Diagnostics);
             return Task.FromResult(true);
         }

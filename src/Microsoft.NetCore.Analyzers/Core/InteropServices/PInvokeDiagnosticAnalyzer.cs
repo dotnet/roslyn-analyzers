@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -16,9 +16,9 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
         public const string RuleCA1401Id = "CA1401";
         public const string RuleCA2101Id = "CA2101";
 
-        private static readonly LocalizableString s_localizableTitleCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleMessage), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1401 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.PInvokesShouldNotBeVisibleDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1401 = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PInvokesShouldNotBeVisibleTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1401 = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PInvokesShouldNotBeVisibleMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1401 = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.PInvokesShouldNotBeVisibleDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
         internal static DiagnosticDescriptor RuleCA1401 = new DiagnosticDescriptor(RuleCA1401Id,
                                                                          s_localizableTitleCA1401,
                                                                          s_localizableMessageCA1401,
@@ -29,8 +29,8 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1401-p-invokes-should-not-be-visible",
                                                                          customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        private static readonly LocalizableString s_localizableMessageAndTitleCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA2101 = new LocalizableResourceString(nameof(SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsDescription), SystemRuntimeInteropServicesAnalyzersResources.ResourceManager, typeof(SystemRuntimeInteropServicesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageAndTitleCA2101 = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA2101 = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleCA2101 = new DiagnosticDescriptor(RuleCA2101Id,
                                                                          s_localizableMessageAndTitleCA2101,

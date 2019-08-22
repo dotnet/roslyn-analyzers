@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -19,17 +19,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5377";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseContainerLevelAccessPolicy),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseContainerLevelAccessPolicy),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseContainerLevelAccessPolicyMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseContainerLevelAccessPolicyMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseContainerLevelAccessPolicyDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseContainerLevelAccessPolicyDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -104,6 +104,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
+                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
+                            Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    {
+                        return;
+                    }
 
                     operationBlockStartContext.RegisterOperationAction(operationAnalysisContext =>
                     {
@@ -133,29 +138,34 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                 if (argumentOperation != null)
                                 {
-                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
-                                                                            operationBlockStartContext.Options,
-                                                                            SupportedDiagnostics,
-                                                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
-                                                                            cancellationToken: operationBlockStartContext.CancellationToken,
-                                                                            defaultMaxInterproceduralMethodCallChain: 1);
-                                    var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
-                                                                    invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
-                                                                    owningSymbol,
-                                                                    wellKnownTypeProvider,
-                                                                    interproceduralAnalysisConfig,
-                                                                    interproceduralAnalysisPredicateOpt: null,
-                                                                    false);
-                                    if (pointsToAnalysisResult == null)
+                                    var cfg = invocationOperation.GetTopmostParentBlock()?.GetEnclosingControlFlowGraph();
+                                    if (cfg != null)
                                     {
-                                        return;
-                                    }
+                                        var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                                                                operationBlockStartContext.Options,
+                                                                                SupportedDiagnostics,
+                                                                                defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
+                                                                                cancellationToken: operationBlockStartContext.CancellationToken,
+                                                                                defaultMaxInterproceduralMethodCallChain: 1);
+                                        var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
+                                                                        cfg,
+                                                                        owningSymbol,
+                                                                        operationBlockStartContext.Options,
+                                                                        wellKnownTypeProvider,
+                                                                        interproceduralAnalysisConfig,
+                                                                        interproceduralAnalysisPredicateOpt: null,
+                                                                        false);
+                                        if (pointsToAnalysisResult == null)
+                                        {
+                                            return;
+                                        }
 
-                                    var pointsToAbstractValue = pointsToAnalysisResult[argumentOperation.Kind, argumentOperation.Syntax];
+                                        var pointsToAbstractValue = pointsToAnalysisResult[argumentOperation.Kind, argumentOperation.Syntax];
 
-                                    if (pointsToAbstractValue.NullState != NullAbstractValue.Null)
-                                    {
-                                        return;
+                                        if (pointsToAbstractValue.NullState != NullAbstractValue.Null)
+                                        {
+                                            return;
+                                        }
                                     }
                                 }
 

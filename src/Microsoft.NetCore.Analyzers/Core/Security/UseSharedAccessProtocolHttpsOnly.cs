@@ -1,6 +1,5 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -18,17 +17,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5376";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseSharedAccessProtocolHttpsOnly),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseSharedAccessProtocolHttpsOnly),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseSharedAccessProtocolHttpsOnlyMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseSharedAccessProtocolHttpsOnlyMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.UseSharedAccessProtocolHttpsOnlyDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.UseSharedAccessProtocolHttpsOnlyDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -89,6 +88,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                 compilationStartAnalysisContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
                     var owningSymbol = operationBlockStartContext.OwningSymbol;
+                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options, Rule,
+                            operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                    {
+                        return;
+                    }
 
                     operationBlockStartContext.RegisterOperationAction(operationAnalysisContext =>
                     {
@@ -130,32 +134,37 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                             if (protocolsArgumentOperation != null)
                             {
-                                var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                var cfg = invocationOperation.GetTopmostParentBlock()?.GetEnclosingControlFlowGraph();
+                                if (cfg != null)
+                                {
+                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
                                                                         operationBlockStartContext.Options,
                                                                         SupportedDiagnostics,
                                                                         defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.None,
                                                                         cancellationToken: operationBlockStartContext.CancellationToken,
                                                                         defaultMaxInterproceduralMethodCallChain: 1);
-                                var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
-                                                                                            invocationOperation.GetTopmostParentBlock().GetEnclosingControlFlowGraph(),
-                                                                                            owningSymbol,
-                                                                                            wellKnownTypeProvider,
-                                                                                            interproceduralAnalysisConfig,
-                                                                                            out var copyAnalysisResult,
-                                                                                            out var pointsToAnalysisResult);
-                                if (valueContentAnalysisResult == null)
-                                {
-                                    return;
-                                }
+                                    var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
+                                                                                                cfg,
+                                                                                                owningSymbol,
+                                                                                                operationAnalysisContext.Options,
+                                                                                                wellKnownTypeProvider,
+                                                                                                interproceduralAnalysisConfig,
+                                                                                                out var copyAnalysisResult,
+                                                                                                out var pointsToAnalysisResult);
+                                    if (valueContentAnalysisResult == null)
+                                    {
+                                        return;
+                                    }
 
-                                var protocolsArgument = valueContentAnalysisResult[protocolsArgumentOperation.Kind, protocolsArgumentOperation.Syntax];
+                                    var protocolsArgument = valueContentAnalysisResult[protocolsArgumentOperation.Kind, protocolsArgumentOperation.Syntax];
 
-                                if (protocolsArgument.IsLiteralState &&
-                                    !protocolsArgument.LiteralValues.Contains(SharedAccessProtocolHttpsOnly))
-                                {
-                                    operationAnalysisContext.ReportDiagnostic(
-                                        invocationOperation.CreateDiagnostic(
-                                            Rule));
+                                    if (protocolsArgument.IsLiteralState &&
+                                        !protocolsArgument.LiteralValues.Contains(SharedAccessProtocolHttpsOnly))
+                                    {
+                                        operationAnalysisContext.ReportDiagnostic(
+                                            invocationOperation.CreateDiagnostic(
+                                                Rule));
+                                    }
                                 }
                             }
                         }

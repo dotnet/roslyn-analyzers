@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -29,7 +29,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -48,7 +48,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -68,7 +68,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry",
               "RuleNoZero"
             ]
@@ -89,7 +89,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -109,7 +109,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -129,7 +129,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -149,7 +149,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -169,7 +169,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -189,7 +189,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -209,7 +209,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -229,7 +229,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -249,7 +249,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -269,7 +269,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -289,6 +289,7 @@
               "Visual Basic"
             ],
             "tags": [
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -308,7 +309,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -328,7 +329,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -348,7 +349,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -368,7 +369,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -388,7 +389,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -408,7 +409,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -428,7 +429,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -448,7 +449,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -468,7 +469,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -488,7 +489,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -508,7 +509,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -528,7 +529,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -548,7 +549,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -568,7 +569,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -588,7 +589,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -608,7 +609,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Dataflow",
               "Telemetry"
             ]
@@ -629,7 +630,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -649,7 +650,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -716,7 +717,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -736,7 +737,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -756,7 +757,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -776,7 +777,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -833,7 +834,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -853,7 +854,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -873,7 +874,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -893,7 +894,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -913,7 +914,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -933,7 +934,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -953,7 +954,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -973,7 +974,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -993,7 +994,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1013,7 +1014,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1033,7 +1034,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1053,7 +1054,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1073,7 +1074,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1081,7 +1082,7 @@
         "CA1801": {
           "id": "CA1801",
           "shortDescription": "Review unused parameters",
-          "fullDescription": "A method signature includes a parameter that is not used in the method body.",
+          "fullDescription": "Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1801-review-unused-parameters",
           "properties": {
@@ -1093,7 +1094,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1113,7 +1114,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1133,7 +1134,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1153,7 +1154,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1173,7 +1174,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1193,7 +1194,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1213,7 +1214,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1233,7 +1234,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1253,7 +1254,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1292,7 +1293,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1312,7 +1313,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1332,7 +1333,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1352,7 +1353,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1372,7 +1373,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1392,7 +1393,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1412,7 +1413,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1432,7 +1433,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1452,7 +1453,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1473,13 +1474,28 @@
               "Telemetry"
             ]
           }
+        },
+        "CA2245": {
+          "id": "CA2245",
+          "shortDescription": "Do not assign a property to itself.",
+          "fullDescription": "The property {0} should not be assigned to itself.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Usage",
+            "isEnabledByDefault": true,
+            "typeName": "AvoidPropertySelfAssignment",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
         }
       }
     },
     {
       "tool": {
         "name": "Microsoft.CodeQuality.CSharp.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -1497,7 +1513,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1516,7 +1532,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1535,7 +1551,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1554,7 +1570,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1573,7 +1589,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1627,7 +1643,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1646,7 +1662,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1665,7 +1681,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1675,7 +1691,7 @@
     {
       "tool": {
         "name": "Microsoft.CodeQuality.VisualBasic.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -1693,7 +1709,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1712,7 +1728,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1731,7 +1747,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1750,7 +1766,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1769,7 +1785,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1823,7 +1839,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1842,7 +1858,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1861,7 +1877,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1880,7 +1896,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1899,7 +1915,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1909,7 +1925,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -1928,7 +1944,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Dataflow",
               "Telemetry"
             ]
@@ -1949,7 +1965,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1969,7 +1985,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -1989,7 +2005,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2009,7 +2025,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2029,7 +2045,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2049,7 +2065,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2069,7 +2085,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2089,7 +2105,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2112,6 +2128,38 @@
             ]
           }
         },
+        "CA1827": {
+          "id": "CA1827",
+          "shortDescription": "Do not use Count() or LongCount() when Any() can be used",
+          "fullDescription": "For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA1828": {
+          "id": "CA1828",
+          "shortDescription": "Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used",
+          "fullDescription": "For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1828",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",
@@ -2127,7 +2175,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Dataflow",
               "Telemetry"
             ]
@@ -2148,7 +2196,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2204,7 +2252,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Dataflow",
               "Telemetry"
             ]
@@ -2225,7 +2273,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2245,7 +2293,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2265,7 +2313,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Dataflow",
               "Telemetry"
             ]
@@ -2286,7 +2334,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2306,7 +2354,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2326,7 +2374,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2346,7 +2394,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2366,7 +2414,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2386,7 +2434,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2406,7 +2454,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -2440,6 +2488,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -2456,6 +2508,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -2504,6 +2560,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -2520,6 +2580,10 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -2542,7 +2606,7 @@
         "CA2321": {
           "id": "CA2321",
           "shortDescription": "Do not deserialize with JavaScriptSerializer using a SimpleTypeResolver",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2321",
           "properties": {
@@ -2552,13 +2616,17 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
         "CA2322": {
           "id": "CA2322",
           "shortDescription": "Ensure JavaScriptSerializer is not initialized with SimpleTypeResolver before deserializing",
-          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits that types of objects in the deserialized object graph.",
+          "fullDescription": "The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2322",
           "properties": {
@@ -2568,6 +2636,106 @@
             "languages": [
               "C#",
               "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2326": {
+          "id": "CA2326",
+          "shortDescription": "Do not use TypeNameHandling values other than None",
+          "fullDescription": "Deserializing JSON when using a TypeNameHandling value other than None can be insecure.  If you need to instead detect Json.NET deserialization when a SerializationBinder isn't specified, then disable rule CA2326, and enable rules CA2327, CA2328, CA2329, and CA2330.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2326",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "JsonNetTypeNameHandling",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA2327": {
+          "id": "CA2327",
+          "shortDescription": "Do not use insecure JsonSerializerSettings",
+          "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2327",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureSettingsForJsonNet",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2328": {
+          "id": "CA2328",
+          "shortDescription": "Ensure that JsonSerializerSettings are secure",
+          "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2328",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureSettingsForJsonNet",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2329": {
+          "id": "CA2329",
+          "shortDescription": "Do not deserialize with JsonSerializer using an insecure configuration",
+          "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2329",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerJsonNetWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA2330": {
+          "id": "CA2330",
+          "shortDescription": "Ensure that JsonSerializer has a secure configuration when deserializing",
+          "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2330",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureDeserializerJsonNetWithoutBinder",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
             ]
           }
         },
@@ -2878,6 +3046,7 @@
           "shortDescription": "Do Not Disable SChannel Use of Strong Crypto",
           "fullDescription": "Starting with the .NET Framework 4.6, the System.Net.ServicePointManager and System.Net.Security.SslStream classes are recommeded to use new protocols. The old ones have protocol weaknesses and are not supported. Setting Switch.System.Net.DontEnableSchUseStrongCrypto with true will use the old weak crypto check and opt out of the protocol migration.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5361",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -2933,6 +3102,7 @@
           "shortDescription": "Do Not Use Deprecated Security Protocols",
           "fullDescription": "Using a deprecated security protocol rather than the system default is risky.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5364",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3187,6 +3357,7 @@
           "shortDescription": "Do not disable ServicePointManagerSecurityProtocols",
           "fullDescription": "Do not set Switch.System.ServiceModel.DisableUsingServicePointManagerSecurityProtocols to true.  Setting this switch limits Windows Communication Framework (WCF) to using Transport Layer Security (TLS) 1.0, which is insecure and obsolete.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5378",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3309,7 +3480,6 @@
               "Visual Basic"
             ],
             "tags": [
-              "Dataflow",
               "Telemetry"
             ]
           }
@@ -3328,7 +3498,6 @@
               "Visual Basic"
             ],
             "tags": [
-              "Dataflow",
               "Telemetry"
             ]
           }
@@ -3338,6 +3507,7 @@
           "shortDescription": "Avoid hardcoding SecurityProtocolType value",
           "fullDescription": "Avoid hardcoding SecurityProtocolType {0}, and instead use SecurityProtocolType.SystemDefault to allow the operating system to choose the best Transport Layer Security protocol to use.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5386",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -3407,13 +3577,143 @@
               "Telemetry"
             ]
           }
+        },
+        "CA5390": {
+          "id": "CA5390",
+          "shortDescription": "Do Not Hard Code Encryption Key",
+          "fullDescription": "SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotHardCodeEncryptionKey",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5392": {
+          "id": "CA5392",
+          "shortDescription": "Use DefaultDllImportSearchPaths attribute for P/Invokes",
+          "fullDescription": "By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "UseDefaultDllImportSearchPathsAttribute",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5393": {
+          "id": "CA5393",
+          "shortDescription": "Do not use unsafe DllImportSearchPath value",
+          "fullDescription": "There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "UseDefaultDllImportSearchPathsAttribute",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5394": {
+          "id": "CA5394",
+          "shortDescription": "Do not use insecure randomness",
+          "fullDescription": "{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseInsecureRandomness",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5396": {
+          "id": "CA5396",
+          "shortDescription": "Set HttpOnly to true for HttpCookie",
+          "fullDescription": "As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "SetHttpOnlyForHttpCookie",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5397": {
+          "id": "CA5397",
+          "shortDescription": "Do not use deprecated SslProtocols values",
+          "fullDescription": "Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5397",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "SslProtocolsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5398": {
+          "id": "CA5398",
+          "shortDescription": "Avoid hardcoded SslProtocols values",
+          "fullDescription": "Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5398",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "SslProtocolsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
         }
       }
     },
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -3431,7 +3731,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3450,7 +3750,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3469,7 +3769,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3519,7 +3819,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3538,7 +3838,7 @@
               "C#"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3548,7 +3848,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -3566,7 +3866,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3585,7 +3885,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3604,7 +3904,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3654,7 +3954,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3673,7 +3973,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3683,7 +3983,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -3702,7 +4002,7 @@
               "Visual Basic"
             ],
             "tags": [
-              "PortedFxCopRuleTag",
+              "PortedFromFxCop",
               "Telemetry"
             ]
           }
@@ -3766,7 +4066,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.CSharp.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {
@@ -3811,7 +4111,7 @@
     {
       "tool": {
         "name": "Microsoft.NetFramework.VisualBasic.Analyzers",
-        "version": "2.9.4",
+        "version": "2.9.5",
         "language": "en-US"
       },
       "rules": {

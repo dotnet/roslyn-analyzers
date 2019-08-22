@@ -1,10 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -88,32 +86,32 @@ namespace ReleaseNotesUtil
             IEnumerable<RuleInfo> removedRules =
                 oldContent.Rules
                     .Where(r => !newRulesById.ContainsKey(r.Id));
+            IEnumerable<RuleInfo> changedRules =
+                newContent.Rules
+                    .Where(r => oldRulesById.TryGetValue(r.Id, out RuleInfo oldRule)
+                                && r.IsEnabledByDefault != oldRule.IsEnabledByDefault);
             StringBuilder sb = new StringBuilder();
-            GenerateRulesDiffMarkdown(sb, "### Added", addedRules);
-            GenerateRulesDiffMarkdown(sb, "### Removed", removedRules);
+            GenerateAddRemovedRulesDiffMarkdown(sb, "### Added", addedRules);
+            GenerateAddRemovedRulesDiffMarkdown(sb, "### Removed", removedRules);
+            GenerateChangedRulesDiffMarkdown(sb, "### Changed", changedRules);
             File.WriteAllText(outputPath, sb.ToString());
         }
 
         private static void WriteRuleFileContent(RuleFileContent ruleFileContent, string outputPath)
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RuleFileContent));
-            using (FileStream fs = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                serializer.WriteObject(fs, ruleFileContent);
-            }
+            using FileStream fs = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None);
+            serializer.WriteObject(fs, ruleFileContent);
         }
 
         private static RuleFileContent ReadRuleFileContent(string path)
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(RuleFileContent));
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                return (RuleFileContent)serializer.ReadObject(fs);
-            }
-
+            using FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return (RuleFileContent)serializer.ReadObject(fs);
         }
 
-        private static void GenerateRulesDiffMarkdown(StringBuilder sb, string heading, IEnumerable<RuleInfo> rules)
+        private static void GenerateAddRemovedRulesDiffMarkdown(StringBuilder sb, string heading, IEnumerable<RuleInfo> rules)
         {
             if (!rules.Any())
             {
@@ -136,6 +134,29 @@ namespace ReleaseNotesUtil
             }
         }
 
+        private static void GenerateChangedRulesDiffMarkdown(StringBuilder sb, string heading, IEnumerable<RuleInfo> rules)
+        {
+            if (!rules.Any())
+            {
+                return;
+            }
+
+            IEnumerable<RuleInfo> sortedRules = rules.OrderBy(r => r, CategoryThenIdComparer.Instance);
+
+            sb.AppendLine(heading);
+            string previousCategory = null;
+            foreach (RuleInfo rule in sortedRules)
+            {
+                if (rule.Category != previousCategory)
+                {
+                    sb.AppendLine($"- {rule.Category}");
+                    previousCategory = rule.Category;
+                }
+
+                sb.AppendLine($"  - {rule.IdWithHelpLinkMarkdown}: {rule.Title} -- {(rule.IsEnabledByDefault ? "Now **enabled by default**" : "Now disabled by default")}");
+            }
+        }
+
         private static IEnumerable<string> GetFxCopAnalyzerBinaries(string nugetInstalledPackagesPath, string version)
         {
             if (!Directory.Exists(nugetInstalledPackagesPath))
@@ -148,58 +169,49 @@ namespace ReleaseNotesUtil
                 "Microsoft.NetCore.Analyzers",
                 "Microsoft.NetFramework.Analyzers",
                 "Text.Analyzers",   // deprecated
+                "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
             };
-            string dllPath;
             foreach (string roslynAnalyzerPackage in roslynAnalyzerPackages)
             {
                 string packageWithVersion = $"{roslynAnalyzerPackage}.{version}";
-                string baseDll = $"{roslynAnalyzerPackage}.dll";
-                dllPath = Path.Combine(
-                    nugetInstalledPackagesPath,
-                    packageWithVersion,
-                    "analyzers",
-                    "dotnet",
-                    "cs",
-                    baseDll);
-                if (File.Exists(dllPath))
+                string packageDirectory = Path.Combine(nugetInstalledPackagesPath, packageWithVersion);
+                foreach (string dllFile in GetAllAnalyzerBinaries(packageDirectory))
                 {
-                    yield return dllPath;
-                }
-
-                dllPath = Path.Combine(
-                    nugetInstalledPackagesPath,
-                    packageWithVersion,
-                    "analyzers",
-                    "dotnet",
-                    "cs",
-                    baseDll.Replace(".Analyzers.dll", ".CSharp.Analyzers.dll", StringComparison.Ordinal));
-                if (File.Exists(dllPath))
-                {
-                    yield return dllPath;
-                }
-
-                dllPath = Path.Combine(
-                    nugetInstalledPackagesPath,
-                    packageWithVersion,
-                    "analyzers",
-                    "dotnet",
-                    "vb",
-                    baseDll.Replace(".Analyzers.dll", ".VisualBasic.Analyzers.dll", StringComparison.Ordinal));
-                if (File.Exists(dllPath))
-                {
-                    yield return dllPath;
+                    yield return dllFile;
                 }
             }
+        }
 
-            dllPath = Path.Combine(
-                nugetInstalledPackagesPath,
-                $"Microsoft.CodeAnalysis.VersionCheckAnalyzer.{version}",
-                "analyzers",
-                "dotnet",
-                "Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll");
-            if (File.Exists(dllPath))
+        private static readonly string[] LanguageDirectoryNames = new string[] { "cs", "vb" };
+
+        private static IEnumerable<string> GetAllAnalyzerBinaries(string nugetInstalledPackagePath)
+        {
+            // Assuming analyzers are located in directories as in
+            // https://github.com/dotnet/roslyn-analyzers/blob/32d8f1e397439035f0ecb5f61a9e672225f0ecdb/tools/AnalyzerCodeGenerator/template/src/REPLACE.ME/Core/install.ps1
+            string analyzersDirectory = Path.Combine(nugetInstalledPackagePath, "analyzers");
+            if (!Directory.Exists(analyzersDirectory))
             {
-                yield return dllPath;
+                yield break;
+            }
+
+            foreach (string frameworkDirectory in Directory.EnumerateDirectories(analyzersDirectory))
+            {
+                foreach (string dllFile in Directory.EnumerateFiles(frameworkDirectory, "*.dll"))
+                {
+                    yield return dllFile;
+                }
+
+                foreach (string languageName in LanguageDirectoryNames)
+                {
+                    string languageDirectory = Path.Combine(frameworkDirectory, languageName);
+                    if (Directory.Exists(languageDirectory))
+                    {
+                        foreach (string languageDllFile in Directory.EnumerateFiles(languageDirectory, "*.dll"))
+                        {
+                            yield return languageDllFile;
+                        }
+                    }
+                }
             }
         }
 

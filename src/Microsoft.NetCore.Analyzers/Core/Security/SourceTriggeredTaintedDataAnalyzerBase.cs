@@ -7,6 +7,7 @@ using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
@@ -64,6 +65,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                         operationBlockStartContext =>
                         {
                             ISymbol owningSymbol = operationBlockStartContext.OwningSymbol;
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
+                                    TaintedDataEnteringSinkDescriptor, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             PooledHashSet<IOperation> rootOperationsNeedingAnalysis = PooledHashSet<IOperation>.GetInstance();
 
                             operationBlockStartContext.RegisterOperationAction(
@@ -90,11 +97,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     PooledDictionary<IsInvocationTaintedWithValueContentAnalysis, ImmutableHashSet<string>> evaluateWithValueContentAnalysis = null;
                                     PointsToAnalysisResult pointsToAnalysisResult = null;
                                     ValueContentAnalysisResult valueContentAnalysisResult = null;
-                                    if (sourceInfoSymbolMap.RequiresPointsToAnalysis)
+                                    if (sourceInfoSymbolMap.RequiresPointsToAnalysis
+                                        && rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
                                     {
                                         pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
-                                            rootOperation.GetEnclosingControlFlowGraph(),
+                                            cfg,
                                             owningSymbol,
+                                            operationAnalysisContext.Options,
                                             WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
                                             InterproceduralAnalysisConfiguration.Create(
                                                 operationAnalysisContext.Options,
@@ -102,13 +111,19 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
                                                 cancellationToken: operationAnalysisContext.CancellationToken),
                                             interproceduralAnalysisPredicateOpt: null);
+                                        if (pointsToAnalysisResult == null)
+                                        {
+                                            return;
+                                        }
                                     }
 
-                                    if (sourceInfoSymbolMap.RequiresValueContentAnalysis)
+                                    if (sourceInfoSymbolMap.RequiresValueContentAnalysis
+                                        && rootOperation.TryGetEnclosingControlFlowGraph(out cfg))
                                     {
                                         valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
-                                            rootOperation.GetEnclosingControlFlowGraph(),
+                                            cfg,
                                             owningSymbol,
+                                            operationAnalysisContext.Options,
                                             WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
                                             InterproceduralAnalysisConfiguration.Create(
                                                 operationAnalysisContext.Options,
@@ -117,7 +132,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                                                 cancellationToken: operationAnalysisContext.CancellationToken),
                                             out var copyAnalysisResult,
                                             out pointsToAnalysisResult);
+                                        if (valueContentAnalysisResult == null)
+                                        {
+                                            return;
+                                        }
                                     }
+
                                     try
                                     {
                                         if (sourceInfoSymbolMap.IsSourceMethod(
@@ -173,8 +193,13 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                             foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {
+                                                if (!rootOperation.TryGetEnclosingControlFlowGraph(out var cfg))
+                                                {
+                                                    continue;
+                                                }
+
                                                 TaintedDataAnalysisResult taintedDataAnalysisResult = TaintedDataAnalysis.TryGetOrComputeResult(
-                                                    rootOperation.GetEnclosingControlFlowGraph(),
+                                                    cfg,
                                                     operationBlockAnalysisContext.Compilation,
                                                     operationBlockAnalysisContext.OwningSymbol,
                                                     operationBlockAnalysisContext.Options,

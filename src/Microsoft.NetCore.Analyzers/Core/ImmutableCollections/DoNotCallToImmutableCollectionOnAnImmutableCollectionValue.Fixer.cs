@@ -46,14 +46,13 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             }
 
             var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            var invocationOperation = semanticModel.GetOperation(invocationNode) as IInvocationOperation;
-            if (invocationOperation == null ||
+            if (!(semanticModel.GetOperation(invocationNode) is IInvocationOperation invocationOperation) ||
                 !DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.ToImmutableMethodNames.Contains(invocationOperation.TargetMethod.Name))
             {
                 return;
             }
 
-            var title = SystemCollectionsImmutableAnalyzersResources.RemoveRedundantCall;
+            var title = MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall;
 
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async cancellationToken => await RemoveRedundantCall(document, root, invocationNode, invocationOperation).ConfigureAwait(false),

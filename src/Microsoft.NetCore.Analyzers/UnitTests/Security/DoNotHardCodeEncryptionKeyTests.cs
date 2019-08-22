@@ -2,6 +2,7 @@
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Test.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -552,6 +553,23 @@ class TestClass
         SymmetricAlgorithm rijn = SymmetricAlgorithm.Create();
         rijn.CreateEncryptor(key, someOtherBytesForIV);
     }
+}");
+        }
+
+        [Fact, WorkItem(2723, "https://github.com/dotnet/roslyn-analyzers/issues/2723")]
+        public void Test_ArrayInitializerInAttribute()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+
+class MyAttr : Attribute
+{
+    public MyAttr (byte[] array) { }
+}
+
+[MyAttr(new byte[]{ 1 })]
+class C
+{
 }");
         }
 

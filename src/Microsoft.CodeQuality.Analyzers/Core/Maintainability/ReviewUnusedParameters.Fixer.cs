@@ -35,9 +35,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             context.RegisterCodeFix(
                 new MyCodeAction(
-                    MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage,
+                    MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
                     async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false),
-                    equivalenceKey: MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage),
+                    equivalenceKey: MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage),
                 diagnostic);
 
             return Task.CompletedTask;

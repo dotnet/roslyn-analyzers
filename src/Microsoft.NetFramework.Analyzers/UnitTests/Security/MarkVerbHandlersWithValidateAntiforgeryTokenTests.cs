@@ -786,6 +786,138 @@ namespace TestNamespace
             );
         }
 
+        [Fact]
+        public async Task MissingVerbsAndTokenAsync_CSharp_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
+namespace Blah
+{
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
 
+    public class ApiController : Controller
+    {
+        public async Task<ActionResult> DoSomethingAsync(string input)
+        {
+            return null;
+        }
+    }
+}
+",
+                GetCA3147CSharpNoVerbsNoToken(SystemWebMvcNamespaceCSharpLineCount + 9, 41, "DoSomethingAsync"));
+        }
+
+        [Fact]
+        public async Task AcceptVerbsNoTokenAsync_CSharp_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
+namespace Blah
+{
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+
+    public class AcceptVerbsNoTokenController : Controller
+    {
+        private const HttpVerbs AllowedVerbs = HttpVerbs.Post | HttpVerbs.Put;
+
+        [AcceptVerbs(AllowedVerbs)]
+        public async Task<ActionResult> DoSomethingAsync()
+        {
+            return null;
+        }
+    }
+}
+",
+            GetCA3147CSharpVerbsAndNoToken(SystemWebMvcNamespaceCSharpLineCount + 12, 41, "DoSomethingAsync"));
+        }
+
+        [Fact]
+        public async Task HaveAcceptStringPutAndTokenAsync_CSharp_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
+namespace Blah
+{
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+
+    public class ApiController : Controller
+    {
+        [AcceptVerbs(""Put"")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DoSomethingAsync(string input)
+        {
+            return null;
+        }
+    }
+}"
+            );
+        }
+
+        [Fact]
+        public async Task MissingVerbsAndTokenTaskButNotAsync_CSharp_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
+namespace Blah
+{
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+
+    public class ApiController : Controller
+    {
+        public Task<ActionResult> DoSomethingAsync(string input)
+        {
+            return null;
+        }
+    }
+}
+",
+                GetCA3147CSharpNoVerbsNoToken(SystemWebMvcNamespaceCSharpLineCount + 9, 35, "DoSomethingAsync"));
+        }
+
+        [Fact]
+        public async Task AcceptVerbsNoTokenTaskButNotAsync_CSharp_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
+namespace Blah
+{
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+
+    public class AcceptVerbsNoTokenController : Controller
+    {
+        private const HttpVerbs AllowedVerbs = HttpVerbs.Post | HttpVerbs.Put;
+
+        [AcceptVerbs(AllowedVerbs)]
+        public Task<ActionResult> DoSomethingAsync()
+        {
+            return null;
+        }
+    }
+}
+",
+            GetCA3147CSharpVerbsAndNoToken(SystemWebMvcNamespaceCSharpLineCount + 12, 35, "DoSomethingAsync"));
+        }
+
+        [Fact]
+        public async Task HaveAcceptStringPutAndTokenTaskButNotAsync_CSharp_NoDiagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(SystemWebMvcNamespaceCSharp + @"
+namespace Blah
+{
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+
+    public class ApiController : Controller
+    {
+        [AcceptVerbs(""Put"")]
+        [ValidateAntiForgeryToken]
+        public Task<ActionResult> DoSomethingAsync(string input)
+        {
+            return null;
+        }
+    }
+}"
+            );
+        }
     }
 }

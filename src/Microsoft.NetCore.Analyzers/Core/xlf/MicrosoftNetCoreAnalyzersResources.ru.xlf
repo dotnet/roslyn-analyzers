@@ -8,8 +8,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DeprecatedSslProtocolsMessage">
-        <source>Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operation System choose a version.</source>
-        <target state="new">Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operation System choose a version.</target>
+        <source>Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operating System choose a version.</source>
+        <target state="new">Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operating System choose a version.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeprecatedSslProtocolsTitle">
@@ -53,8 +53,8 @@
         <note />
       </trans-unit>
       <trans-unit id="HardcodedSslProtocolsMessage">
-        <source>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operation System choose a version.</source>
-        <target state="new">Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operation System choose a version.</target>
+        <source>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operating System choose a version.</source>
+        <target state="new">Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operating System choose a version.</target>
         <note />
       </trans-unit>
       <trans-unit id="HardcodedSslProtocolsTitle">

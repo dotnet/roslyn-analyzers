@@ -87,8 +87,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
                             var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
                                     operationBlockContext.Options, AlwaysTrueFalseOrNullRule, operationBlockContext.CancellationToken,
-                                    out var copyAnalysisResultOpt, out var pointsToAnalysisResult,
-                                    performCopyAnalysisIfNotUserConfigured: false); // TODO: Enable copy analysis by default.
+                                    out var copyAnalysisResultOpt, out var pointsToAnalysisResult);
                             if (valueContentAnalysisResult == null)
                             {
                                 continue;

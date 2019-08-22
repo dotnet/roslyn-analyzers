@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="tr" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
+      <trans-unit id="DeprecatedSslProtocolsDescription">
+        <source>Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.</source>
+        <target state="new">Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeprecatedSslProtocolsMessage">
+        <source>Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operating System choose a version.</source>
+        <target state="new">Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operating System choose a version.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DeprecatedSslProtocolsTitle">
+        <source>Do not use deprecated SslProtocols values</source>
+        <target state="new">Do not use deprecated SslProtocols values</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomness">
         <source>Do not use insecure randomness</source>
         <target state="new">Do not use insecure randomness</target>
@@ -30,6 +45,21 @@
       <trans-unit id="DoNotUseUnsafeDllImportSearchPathMessage">
         <source>Use of unsafe DllImportSearchPath value {0}</source>
         <target state="new">Use of unsafe DllImportSearchPath value {0}</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardcodedSslProtocolsDescription">
+        <source>Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.</source>
+        <target state="new">Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardcodedSslProtocolsMessage">
+        <source>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operating System choose a version.</source>
+        <target state="new">Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operating System choose a version.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="HardcodedSslProtocolsTitle">
+        <source>Avoid hardcoded SslProtocols values</source>
+        <target state="new">Avoid hardcoded SslProtocols values</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetInsecureSerializerMessage">
@@ -167,6 +197,21 @@
         <target state="translated">Kodunuzda bildirildiği gibi, P/Invoke {0} öğesinin dönüş türü {2} platformlarında {1} bayt genişliğinde olacaktır. Bu API’nin gerçek yerel bildirimi {2} platformlarında {3} genişliğinde olması gerektiğini bildirdiğinden, bu doğru değildir. {4} yerine hangi veri türünün kullanılması gerektiğini belirleme hakkında yardım için MSDN Platform SDK’sı belgelerine başvurun.</target>
         <note />
       </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookie">
+        <source>Set HttpOnly to true for HttpCookie</source>
+        <target state="new">Set HttpOnly to true for HttpCookie</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieDescription">
+        <source>As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</source>
+        <target state="new">As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="SetHttpOnlyForHttpCookieMessage">
+        <source>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</source>
+        <target state="new">HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</target>
+        <note />
+      </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
         <source>Specify marshaling for P/Invoke string arguments</source>
         <target state="translated">P/Invoke dize bağımsız değişkenleri için sıralamayı belirtme</target>
@@ -208,8 +253,8 @@
         <note />
       </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryTokenMessage">
-        <source>Method {0} handles a {1} request without performing CSRF token validation</source>
-        <target state="new">Method {0} handles a {1} request without performing CSRF token validation</target>
+        <source>Method {0} handles a {1} request without performing antiforgery token validation. You also need to ensure that your HTML form sends an antiforgery token validation.</source>
+        <target state="new">Method {0} handles a {1} request without performing antiforgery token validation. You also need to ensure that your HTML form sends an antiforgery token validation.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseDefaultDllImportSearchPathsAttribute">

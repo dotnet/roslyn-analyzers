@@ -29,7 +29,7 @@ echo.
 echo.
 
 if exist "%DIFFNOTES%" (
-    echo Added/Removed notes in %DIFFNOTES%
+    echo Added/Removed/Changed notes in %DIFFNOTES%
 ) else (
     echo Guess something went wrong
 )

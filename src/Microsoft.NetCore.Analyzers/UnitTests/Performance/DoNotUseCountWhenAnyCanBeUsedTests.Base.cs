@@ -51,11 +51,12 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             }
         }
 
-        protected async Task VerifyAsync(string testSource, string fixedSource, string extensionsSource)
+        protected async Task VerifyAsync(string methodName, string testSource, string fixedSource, string extensionsSource)
         {
             try
             {
                 await this.Verifier.VerifyAsync(
+                    methodName,
                     new string[] { testSource, extensionsSource },
                     new string[] { fixedSource, extensionsSource });
             }

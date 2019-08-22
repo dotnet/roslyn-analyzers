@@ -26,14 +26,13 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotUseInsecureSettingsForJsonNet : DiagnosticAnalyzer
     {
-        // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor DefinitelyInsecureSettings =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2327",
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetInsecureSettingsMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2327",
                 customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static readonly DiagnosticDescriptor MaybeInsecureSettings =
             SecurityHelpers.CreateDiagnosticDescriptor(
@@ -41,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetMaybeInsecureSettingsMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2328",
                 customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>

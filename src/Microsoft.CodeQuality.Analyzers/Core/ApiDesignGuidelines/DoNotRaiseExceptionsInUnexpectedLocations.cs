@@ -96,7 +96,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     operationBlockContext.RegisterOperationAction(operationContext =>
                     {
                         // Get ThrowOperation's ExceptionType
-                        if (((IThrowOperation)operationContext.Operation).Exception?.Type is INamedTypeSymbol thrownExceptionType && thrownExceptionType.DerivesFrom(exceptionType))
+                        if (((IThrowOperation)operationContext.Operation).GetThrownExceptionType() is INamedTypeSymbol thrownExceptionType && thrownExceptionType.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
                             if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Any(n => IsAssignableTo(thrownExceptionType, n, compilation)))

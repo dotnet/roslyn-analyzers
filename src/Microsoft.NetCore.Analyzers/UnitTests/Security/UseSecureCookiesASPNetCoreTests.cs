@@ -1,65 +1,19 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
+using Test.Utilities.MinimalImplementations;
 using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class UseSecureCookiesASPNetCoreTests : DiagnosticAnalyzerTestBase
     {
-        private const string MicrosoftAspNetCoreHttpNamespaceCSharpSourceCode = @"
-namespace Microsoft.AspNetCore.Http
-{
-    public interface IResponseCookies
-    {
-        void Append(string key, string value);
-
-        void Append(string key, string value, CookieOptions options);
-    }
-
-    public class CookieOptions
-    {
-        public CookieOptions()
-        {
-        }
-
-        public bool Secure { get; set; }
-    }
-
-    namespace Internal
-    {
-        public class ResponseCookies : IResponseCookies
-        {
-            public ResponseCookies()
-            {
-            }
-
-            public void Append(string key, string value)
-            {
-            }
-
-            public void Append(string key, string value, CookieOptions options)
-            {
-            }
-        }
-    }
-}";
         protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
         {
             this.VerifyCSharp(
-                new[] { source, MicrosoftAspNetCoreHttpNamespaceCSharpSourceCode }.ToFileAndSource(),
-                expected);
-        }
-
-        protected void VerifyCSharpWithDependencies(string source, FileAndSource additionalFile, params DiagnosticResult[] expected)
-        {
-            this.VerifyCSharp(
-                new[] { source, MicrosoftAspNetCoreHttpNamespaceCSharpSourceCode },
-                additionalFile,
-                ReferenceFlags.None,
+                new[] { source, ASPNetCoreApis.CSharp }.ToFileAndSource(),
                 expected);
         }
 
@@ -366,39 +320,6 @@ class TestClass
         responseCookies.Append(key, value, cookieOptions);
     }
 }");
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData("dotnet_code_quality.excluded_symbol_names = TestMethod")]
-        [InlineData(@"dotnet_code_quality.CA5382.excluded_symbol_names = TestMethod
-                      dotnet_code_quality.CA5383.excluded_symbol_names = TestMethod")]
-        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = TestMethod")]
-        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
-        {
-            var expected = Array.Empty<DiagnosticResult>();
-            if (editorConfigText.Length == 0)
-            {
-                expected = new DiagnosticResult[]
-                {
-                    GetCSharpResultAt(12, 9, UseSecureCookiesASPNetCore.DefinitelyUseSecureCookiesASPNetCoreRule)
-                };
-            }
-
-            VerifyCSharpWithDependencies(@"
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
-
-class TestClass
-{
-    public void TestMethod(string key, string value)
-    {
-        var cookieOptions = new CookieOptions();
-        cookieOptions.Secure = false;
-        var responseCookies = new ResponseCookies(); 
-        responseCookies.Append(key, value, cookieOptions);
-    }
-}", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

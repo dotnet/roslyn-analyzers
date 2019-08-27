@@ -34,13 +34,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             // Get syntax root node
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            // No multiple overlapping diagnostics of this id. So get the only diagnostic.
-            var diagnostic = context.Diagnostics.Single();
-
-            // Register fixer
-            context.RegisterCodeFix(new MyCodeAction(title,
-                     c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c),
-                     equivalenceKey: title), context.Diagnostics.First());
+            foreach (var diagnostic in context.Diagnostics)
+            {
+                // Register fixer
+                context.RegisterCodeFix(new MyCodeAction(title,
+                         c => ChangeEnumTypeToInt32Async(context.Document, diagnostic, root, c),
+                         equivalenceKey: title), diagnostic);
+            }
         }
 
         private async Task<Document> ChangeEnumTypeToInt32Async(Document document, Diagnostic diagnostic, SyntaxNode root, CancellationToken cancellationToken)

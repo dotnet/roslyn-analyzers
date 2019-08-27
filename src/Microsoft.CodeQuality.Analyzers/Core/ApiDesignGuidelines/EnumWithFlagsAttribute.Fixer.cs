@@ -35,15 +35,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            string fixTitle = diagnostic.Id == EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags ?
-                                                    MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsCodeFix :
-                                                    MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
-            context.RegisterCodeFix(new MyCodeAction(fixTitle,
-                                         async ct => await AddOrRemoveFlagsAttribute(context.Document, context.Span, diagnostic.Id, flagsAttributeType, ct).ConfigureAwait(false),
-                                         equivalenceKey: fixTitle),
-                        diagnostic);
+            foreach (var diagnostic in context.Diagnostics)
+            {
+                string fixTitle = diagnostic.Id == EnumWithFlagsAttributeAnalyzer.RuleIdMarkEnumsWithFlags ?
+                                                        MicrosoftCodeQualityAnalyzersResources.MarkEnumsWithFlagsCodeFix :
+                                                        MicrosoftCodeQualityAnalyzersResources.DoNotMarkEnumsWithFlagsCodeFix;
+                context.RegisterCodeFix(new MyCodeAction(fixTitle,
+                                             async ct => await AddOrRemoveFlagsAttribute(context.Document, context.Span, diagnostic.Id, flagsAttributeType, ct).ConfigureAwait(false),
+                                             equivalenceKey: fixTitle),
+                                        diagnostic);
+            }
         }
 
         private static async Task<Document> AddOrRemoveFlagsAttribute(Document document, TextSpan span, string diagnosticId, INamedTypeSymbol flagsAttributeType, CancellationToken cancellationToken)

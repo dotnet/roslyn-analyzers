@@ -31,13 +31,11 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers;
             context.RegisterCodeFix(new MyCodeAction(title,
                              async ct => await RemoveFinalizer(context.Document, node, ct).ConfigureAwait(false),
                              equivalenceKey: title),
-                        diagnostic);
+                        context.Diagnostics);
             return;
         }
 

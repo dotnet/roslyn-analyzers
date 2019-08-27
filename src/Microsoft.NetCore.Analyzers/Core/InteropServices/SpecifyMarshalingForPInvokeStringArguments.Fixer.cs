@@ -40,8 +40,6 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftNetCoreAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
 
             if (IsAttribute(node))
@@ -49,14 +47,14 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await FixAttributeArguments(context.Document, node, charSetType, dllImportType, marshalAsType, unmanagedType, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
-                                        diagnostic);
+                                        context.Diagnostics);
             }
             else if (IsDeclareStatement(node))
             {
                 context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await FixDeclareStatement(context.Document, node, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
-                                        diagnostic);
+                                        context.Diagnostics);
             }
         }
 

@@ -32,12 +32,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftNetCoreAnalyzersResources.AddSerializableAttributeCodeActionTitle;
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async ct => await AddSerializableAttribute(context.Document, node, ct).ConfigureAwait(false),
                                         equivalenceKey: title),
-                                    diagnostic);
+                                    context.Diagnostics);
         }
 
         private static async Task<Document> AddSerializableAttribute(Document document, SyntaxNode node, CancellationToken cancellationToken)

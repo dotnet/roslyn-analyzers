@@ -17,6 +17,7 @@
     <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
     <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <PackageLicenseExpression Condition="'$(PackageLicenseExpression)' == ''">Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
   <Target Name="GenerateAnalyzerRulesets"
@@ -73,7 +74,7 @@
       <_NuspecMetadata Include="requireLicenseAcceptance=$(PackageRequireLicenseAcceptance)" />
       <_NuspecMetadata Include="description=$(Description)" />
       <_NuspecMetadata Include="copyright=$(Copyright)" />
-      <_NuspecMetadata Include="licenseUrl=$(PackageLicenseUrl)" />
+      <_NuspecMetadata Include="license=$(PackageLicenseExpression)" />
       <_NuspecMetadata Include="projectUrl=$(PackageProjectUrl)" />
       <_NuspecMetadata Include="iconUrl=$(PackageIconUrl)" />
       <_NuspecMetadata Include="releaseNotes=$(PackageReleaseNotes)" />

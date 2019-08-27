@@ -34,13 +34,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftCodeQualityAnalyzersResources.ImplementIDisposableInterface;
             context.RegisterCodeFix(new MyCodeAction(title,
                                                      async ct => await ImplementIDisposable(context.Document, declaration, ct).ConfigureAwait(false),
                                                      equivalenceKey: title),
-                                    diagnostic);
+                                    context.Diagnostics);
         }
 
         private static async Task<Document> ImplementIDisposable(Document document, SyntaxNode declaration, CancellationToken cancellationToken)

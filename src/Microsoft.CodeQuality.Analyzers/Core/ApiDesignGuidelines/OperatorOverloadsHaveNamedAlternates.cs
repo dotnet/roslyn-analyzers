@@ -100,7 +100,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     // don't report a diagnostic on the `op_False` method because then the user would see two diagnostics for what is really one error
                     // special-case looking for `IsTrue` instance property
                     // named properties can't be overloaded so there will only ever be 0 or 1
-                    IPropertySymbol property = typeSymbol.GetMembers(IsTrueText).OfType<IPropertySymbol>().SingleOrDefault();
+                    IPropertySymbol property = typeSymbol.GetMembers(IsTrueText).OfType<IPropertySymbol>().FirstOrDefault();
                     if (property == null || property.Type.SpecialType != SpecialType.System_Boolean)
                     {
                         symbolContext.ReportDiagnostic(CreateDiagnostic(PropertyRule, GetSymbolLocation(methodSymbol), AddAlternateText, IsTrueText, operatorName));

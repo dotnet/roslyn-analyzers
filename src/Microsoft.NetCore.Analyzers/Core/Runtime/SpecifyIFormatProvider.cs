@@ -86,39 +86,39 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
                 var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
 
-                var stringFormatMemberWithStringAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithStringAndObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                          GetParameterInfo(stringType),
                                                                          GetParameterInfo(objectType));
-                var stringFormatMemberWithStringObjectAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithStringObjectAndObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                GetParameterInfo(stringType),
                                                                                GetParameterInfo(objectType),
                                                                                GetParameterInfo(objectType));
-                var stringFormatMemberWithStringObjectObjectAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithStringObjectObjectAndObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                      GetParameterInfo(stringType),
                                                                                      GetParameterInfo(objectType),
                                                                                      GetParameterInfo(objectType),
                                                                                      GetParameterInfo(objectType));
-                var stringFormatMemberWithStringAndParamsObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithStringAndParamsObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                GetParameterInfo(stringType),
                                                                                GetParameterInfo(objectType, isArray: true, arrayRank: 1, isParams: true));
-                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                               GetParameterInfo(iformatProviderType),
                                                                                               GetParameterInfo(stringType),
                                                                                               GetParameterInfo(objectType, isArray: true, arrayRank: 1, isParams: true));
 
-                var currentCultureProperty = cultureInfoType?.GetMembers("CurrentCulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var invariantCultureProperty = cultureInfoType?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var currentUICultureProperty = cultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var installedUICultureProperty = cultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var currentCultureProperty = cultureInfoType?.GetMembers("CurrentCulture").OfType<IPropertySymbol>().FirstOrDefault();
+                var invariantCultureProperty = cultureInfoType?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().FirstOrDefault();
+                var currentUICultureProperty = cultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
+                var installedUICultureProperty = cultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
                 var threadType = csaContext.Compilation.GetTypeByMetadataName("System.Threading.Thread");
-                var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
                 var activatorType = csaContext.Compilation.GetTypeByMetadataName("System.Activator");
                 var resourceManagerType = csaContext.Compilation.GetTypeByMetadataName("System.Resources.ResourceManager");
 
                 var computerInfoType = csaContext.Compilation.GetTypeByMetadataName("Microsoft.VisualBasic.Devices.ComputerInfo");
-                var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
                 var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
                 #endregion

@@ -35,15 +35,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // CONSIDER: Do we need to confirm that System.Object.GetHashCode isn't shadowed in a base type?
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,
                     cancellationToken => OverrideObjectGetHashCode(context.Document, typeDeclaration, cancellationToken),
                     equivalenceKey: title),
-                diagnostic);
+                context.Diagnostics);
         }
 
         private static async Task<Document> OverrideObjectGetHashCode(Document document, SyntaxNode typeDeclaration, CancellationToken cancellationToken)

@@ -25,47 +25,48 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            if (diagnostic.Properties.TryGetValue("case", out string fixCase))
+            foreach (var diagnostic in context.Diagnostics)
             {
-                string title;
-                switch (fixCase)
+                if (diagnostic.Properties.TryGetValue("case", out string fixCase))
                 {
-                    case DefineAccessorsForAttributeArgumentsAnalyzer.AddAccessorCase:
-                        SyntaxNode parameter = generator.GetDeclaration(node, DeclarationKind.Parameter);
-                        if (parameter != null)
-                        {
-                            title = MicrosoftCodeQualityAnalyzersResources.CreatePropertyAccessorForParameter;
+                    string title;
+                    switch (fixCase)
+                    {
+                        case DefineAccessorsForAttributeArgumentsAnalyzer.AddAccessorCase:
+                            SyntaxNode parameter = generator.GetDeclaration(node, DeclarationKind.Parameter);
+                            if (parameter != null)
+                            {
+                                title = MicrosoftCodeQualityAnalyzersResources.CreatePropertyAccessorForParameter;
+                                context.RegisterCodeFix(new MyCodeAction(title,
+                                                             async ct => await AddAccessor(context.Document, parameter, ct).ConfigureAwait(false),
+                                                             equivalenceKey: title),
+                                                        diagnostic);
+                            }
+                            return;
+
+                        case DefineAccessorsForAttributeArgumentsAnalyzer.MakePublicCase:
+                            SyntaxNode property = generator.GetDeclaration(node, DeclarationKind.Property);
+                            if (property != null)
+                            {
+                                title = MicrosoftCodeQualityAnalyzersResources.MakeGetterPublic;
+                                context.RegisterCodeFix(new MyCodeAction(title,
+                                                                 async ct => await MakePublic(context.Document, node, property, ct).ConfigureAwait(false),
+                                                                 equivalenceKey: title),
+                                                        diagnostic);
+                            }
+                            return;
+
+                        case DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterCase:
+                            title = MicrosoftCodeQualityAnalyzersResources.MakeSetterNonPublic;
                             context.RegisterCodeFix(new MyCodeAction(title,
-                                                         async ct => await AddAccessor(context.Document, parameter, ct).ConfigureAwait(false),
+                                                         async ct => await RemoveSetter(context.Document, node, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
                                                     diagnostic);
-                        }
-                        return;
+                            return;
 
-                    case DefineAccessorsForAttributeArgumentsAnalyzer.MakePublicCase:
-                        SyntaxNode property = generator.GetDeclaration(node, DeclarationKind.Property);
-                        if (property != null)
-                        {
-                            title = MicrosoftCodeQualityAnalyzersResources.MakeGetterPublic;
-                            context.RegisterCodeFix(new MyCodeAction(title,
-                                                             async ct => await MakePublic(context.Document, node, property, ct).ConfigureAwait(false),
-                                                             equivalenceKey: title),
-                                                    diagnostic);
-                        }
-                        return;
-
-                    case DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterCase:
-                        title = MicrosoftCodeQualityAnalyzersResources.MakeSetterNonPublic;
-                        context.RegisterCodeFix(new MyCodeAction(title,
-                                                     async ct => await RemoveSetter(context.Document, node, ct).ConfigureAwait(false),
-                                                     equivalenceKey: title),
-                                                diagnostic);
-                        return;
-
-                    default:
-                        return;
+                        default:
+                            return;
+                    }
                 }
             }
         }

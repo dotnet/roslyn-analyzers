@@ -31,13 +31,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
             // Fix 1: Add a NonSerialized attribute to the field
             context.RegisterCodeFix(new MyCodeAction(MicrosoftNetCoreAnalyzersResources.AddNonSerializedAttributeCodeActionTitle,
                                         async ct => await AddNonSerializedAttribute(context.Document, fieldNode, ct).ConfigureAwait(false),
                                         equivalenceKey: MicrosoftNetCoreAnalyzersResources.AddNonSerializedAttributeCodeActionTitle),
-                                    diagnostic);
+                                    context.Diagnostics);
 
 
             // Fix 2: If the type of the field is defined in source, then add the serializable attribute to the type.
@@ -49,7 +47,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 context.RegisterCodeFix(new MyCodeAction(MicrosoftNetCoreAnalyzersResources.AddSerializableAttributeCodeActionTitle,
                             async ct => await AddSerializableAttributeToType(context.Document, type, ct).ConfigureAwait(false),
                             equivalenceKey: MicrosoftNetCoreAnalyzersResources.AddSerializableAttributeCodeActionTitle),
-                        diagnostic);
+                        context.Diagnostics);
             }
         }
 

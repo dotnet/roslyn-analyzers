@@ -208,6 +208,38 @@
             ]
           }
         },
+        "CA1827": {
+          "id": "CA1827",
+          "shortDescription": "Do not use Count() or LongCount() when Any() can be used",
+          "fullDescription": "For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA1828": {
+          "id": "CA1828",
+          "shortDescription": "Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used",
+          "fullDescription": "For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1828",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "DoNotUseCountWhenAnyCanBeUsedAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        },
         "CA2000": {
           "id": "CA2000",
           "shortDescription": "Dispose objects before losing scope",
@@ -1645,6 +1677,24 @@
             ]
           }
         },
+        "CA5391": {
+          "id": "CA5391",
+          "shortDescription": "Use antiforgery tokens in ASP.NET Core MVC controllers",
+          "fullDescription": "Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "UseAutoValidateAntiforgeryToken",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA5392": {
           "id": "CA5392",
           "shortDescription": "Use DefaultDllImportSearchPaths attribute for P/Invokes",
@@ -1690,6 +1740,24 @@
             "category": "Security",
             "isEnabledByDefault": false,
             "typeName": "DoNotUseInsecureRandomness",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5395": {
+          "id": "CA5395",
+          "shortDescription": "Miss HttpVerb attribute for action methods",
+          "fullDescription": "All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "UseAutoValidateAntiforgeryToken",
             "languages": [
               "C#",
               "Visual Basic"
@@ -1831,36 +1899,6 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "CSharpAvoidZeroLengthArrayAllocationsAnalyzer",
-            "languages": [
-              "C#"
-            ]
-          }
-        },
-        "CA1827": {
-          "id": "CA1827",
-          "shortDescription": "Do not use Count() or LongCount() when Any() can be used",
-          "fullDescription": "For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer",
-            "languages": [
-              "C#"
-            ]
-          }
-        },
-        "CA1828": {
-          "id": "CA1828",
-          "shortDescription": "Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used",
-          "fullDescription": "For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1828",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "CSharpDoNotUseCountWhenAnyCanBeUsedAnalyzer",
             "languages": [
               "C#"
             ]
@@ -2011,36 +2049,6 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "BasicAvoidZeroLengthArrayAllocationsAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ]
-          }
-        },
-        "CA1827": {
-          "id": "CA1827",
-          "shortDescription": "Do not use Count() or LongCount() when Any() can be used",
-          "fullDescription": "For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1827",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer",
-            "languages": [
-              "Visual Basic"
-            ]
-          }
-        },
-        "CA1828": {
-          "id": "CA1828",
-          "shortDescription": "Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used",
-          "fullDescription": "For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.",
-          "defaultLevel": "warning",
-          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1828",
-          "properties": {
-            "category": "Performance",
-            "isEnabledByDefault": true,
-            "typeName": "BasicDoNotUseCountWhenAnyCanBeUsedAnalyzer",
             "languages": [
               "Visual Basic"
             ]

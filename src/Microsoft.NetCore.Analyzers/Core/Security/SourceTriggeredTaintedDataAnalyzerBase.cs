@@ -93,12 +93,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 {
                                     IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
                                     IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
-                                    PooledDictionary<IsInvocationTaintedWithPointsToAnalysis, ImmutableHashSet<string>> evaluateWithPointsToAnalysis = null;
-                                    PooledDictionary<IsInvocationTaintedWithValueContentAnalysis, ImmutableHashSet<string>> evaluateWithValueContentAnalysis = null;
+                                    PooledDictionary<PointsToCheck, ImmutableHashSet<string>> evaluateWithPointsToAnalysis = null;
+                                    PooledDictionary<ValueContentCheck, ImmutableHashSet<string>> evaluateWithValueContentAnalysis = null;
                                     PointsToAnalysisResult pointsToAnalysisResult = null;
                                     ValueContentAnalysisResult valueContentAnalysisResult = null;
-                                    if (sourceInfoSymbolMap.RequiresPointsToAnalysis
-                                        && rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
+                                    if (rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
                                     {
                                         pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
                                             cfg,
@@ -117,8 +116,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         }
                                     }
 
-                                    if (sourceInfoSymbolMap.RequiresValueContentAnalysis
-                                        && rootOperation.TryGetEnclosingControlFlowGraph(out cfg))
+                                    if (sourceInfoSymbolMap.RequiresValueContentAnalysis)
                                     {
                                         valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
                                             cfg,
@@ -143,8 +141,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         if (sourceInfoSymbolMap.IsSourceMethod(
                                             invocationOperation.TargetMethod,
                                             invocationOperation.Arguments,
-                                            invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]),
-                                            invocationOperation.Arguments.Select(o => valueContentAnalysisResult[o.Kind, o.Syntax]),
+                                            invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
+                                            invocationOperation.Arguments.Select(o => valueContentAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
                                             out _))
                                         {
                                             lock (rootOperationsNeedingAnalysis)

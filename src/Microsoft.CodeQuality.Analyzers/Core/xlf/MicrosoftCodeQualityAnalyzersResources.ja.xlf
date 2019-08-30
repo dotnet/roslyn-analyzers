@@ -1709,7 +1709,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersDescription">
         <source>Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.</source>
-        <target state="needs-review-translation">メソッドのシグネチャに、メソッドの本体で使用されていないパラメーターが含まれています。</target>
+        <target state="translated">コード内に使用されないパラメーターを指定しないでください。パラメーターを削除できない場合は、パラメーターの名前をアンダースコアの後にオプションで整数が続く名前 ('_'、'_1'、'_2' など) に変更してください。これらは、特別なディスカード シンボル名として扱われます。</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">

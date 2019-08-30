@@ -58,9 +58,9 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
                 var immutableArraySymbol = compilation.GetTypeByMetadataName(ImmutableArrayMetadataName);
                 if (immutableArraySymbol is null)
                 {
-                    var systemNamespace = compilation.GlobalNamespace.GetMembers(nameof(System)).OfType<INamespaceSymbol>().SingleOrDefault();
-                    var systemCollectionsNamespace = systemNamespace?.GetMembers(nameof(System.Collections)).OfType<INamespaceSymbol>().SingleOrDefault();
-                    var systemCollectionsImmutableNamespace = systemCollectionsNamespace?.GetMembers(nameof(System.Collections.Immutable)).OfType<INamespaceSymbol>().SingleOrDefault();
+                    var systemNamespace = compilation.GlobalNamespace.GetMembers(nameof(System)).OfType<INamespaceSymbol>().FirstOrDefault();
+                    var systemCollectionsNamespace = systemNamespace?.GetMembers(nameof(System.Collections)).OfType<INamespaceSymbol>().FirstOrDefault();
+                    var systemCollectionsImmutableNamespace = systemCollectionsNamespace?.GetMembers(nameof(System.Collections.Immutable)).OfType<INamespaceSymbol>().FirstOrDefault();
                     if (systemCollectionsImmutableNamespace is null)
                     {
                         return;

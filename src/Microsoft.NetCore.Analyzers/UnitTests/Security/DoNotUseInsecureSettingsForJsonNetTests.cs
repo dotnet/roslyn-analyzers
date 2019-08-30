@@ -369,6 +369,27 @@ End Class
         }
 
         [Fact]
+        public void Secure_SometimesInitialization_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public void EnsureInitialized()
+    {
+        if (this.Settings == null)
+        {
+            this.Settings = new JsonSerializerSettings();
+        }
+    }
+}
+");
+        }
+
+        [Fact]
         public void Insecure_JsonConvert_DeserializeObject_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"

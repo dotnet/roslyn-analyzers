@@ -77,7 +77,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                         .GetTypeByMetadataName("System.GC")
                                                         ?.GetMembers("SuppressFinalize")
                                                         .OfType<IMethodSymbol>()
-                                                        .SingleOrDefault();
+                                                        .FirstOrDefault();
 
                 if (gcSuppressFinalizeMethodSymbol == null)
                 {

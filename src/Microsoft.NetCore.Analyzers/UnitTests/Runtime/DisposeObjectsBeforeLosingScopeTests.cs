@@ -9984,7 +9984,9 @@ class A : IDisposable
     {
     }
 }
-");
+",
+            // Test0.cs(20,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'Create()' before all references to it are out of scope.
+            GetCSharpResultAt(20, 17, "Create()"));
         }
 
         [Fact]
@@ -10024,7 +10026,9 @@ class A : IDisposable
     {
     }
 }
-");
+",
+            // Test0.cs(22,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'Create()' before all references to it are out of scope.
+            GetCSharpResultAt(22, 17, "Create()"));
         }
 
         [Fact]
@@ -10058,7 +10062,9 @@ class A : IDisposable
     {
     }
 }
-");
+",
+            // Test0.cs(21,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(21, 17, "new A()"));
         }
 
         [Fact]
@@ -11028,6 +11034,48 @@ Class Test
         a.Dispose()
     End Sub
 End Class", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
+        [Fact]
+        [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746#issuecomment-518959894")]
+        public void DisposableObject_ReturnOperationWithInvocation_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public interface IMyDisposable : IDisposable
+{
+    bool IsItFalse();
+}
+
+public class MyDisposable : IMyDisposable
+{
+    public void Dispose()
+    {
+        return;
+    }
+
+    public bool IsItFalse()
+    {
+        return false;
+    }
+}
+
+public class Consumer
+{
+    public IMyDisposable CreateMyDisposable()
+    {
+        return new MyDisposable();
+    }
+
+    public bool Foo()
+    {
+        var myDisposable = CreateMyDisposable();
+        return myDisposable.IsItFalse();
+    }
+}",
+            // Test0.cs(31,28): warning CA2000: Call System.IDisposable.Dispose on object created by 'CreateMyDisposable()' before all references to it are out of scope.
+            GetCSharpResultAt(31, 28, "CreateMyDisposable()"));
         }
     }
 }

@@ -38,6 +38,7 @@ foreach (string entry in metadataList)
         case "repositoryType": repositoryType = value; continue;
         case "repositoryUrl": repositoryUrl = value; continue;
         case "repositoryCommit": repositoryCommit = value; continue;
+		case "license": result.AppendLine($"    <license type=\"expression\">{value}</license>"); continue;
     }
     
     if (value != "")

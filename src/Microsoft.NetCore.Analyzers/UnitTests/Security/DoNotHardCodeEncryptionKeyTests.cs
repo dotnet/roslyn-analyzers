@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
@@ -272,7 +273,9 @@ class TestClass
         [Fact]
         public void Test_PassTaintedSourceInfoAsParameter_SinkProperties_Interprocedual_Diagnostic()
         {
-            VerifyCSharpWithDependencies(@"
+            Parallel.For(1, 100, _ =>
+            {
+                VerifyCSharpWithDependencies(@"
 using System;
 using System.Security.Cryptography;
 
@@ -290,7 +293,8 @@ class TestClass
         rijn.Key = rgbKey;
     }
 }",
-            GetCSharpResultAt(16, 9, 9, 22, "byte[] SymmetricAlgorithm.Key", "void TestClass.CreateEncryptor(byte[] rgbKey)", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod()"));
+                GetCSharpResultAt(16, 9, 9, 22, "byte[] SymmetricAlgorithm.Key", "void TestClass.CreateEncryptor(byte[] rgbKey)", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod()"));
+            });
         }
 
         [Fact]

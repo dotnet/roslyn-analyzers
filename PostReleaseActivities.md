@@ -12,7 +12,7 @@ Please follow the below steps after publishing analyzer NuGet packages from this
    2. Update `VERSIONING.md`: Add a new row in the released version table.
    3. Update `.github\ISSUE_TEMPLATE.md`: Update the package version in the example section to the latest released package version.
    4. Update `eng\Versions.props`:
-      1. Bump up the `VersionPrefix`.
+      1. Bump up the `VersionPrefix`. If the new version prefix is greater then or equals the current `FlowAnalysisUtilitiesVersionPrefix`, then update `FlowAnalysisUtilitiesVersionPrefix` to `$(VersionPrefix)`.
       2. Reset `PreReleaseVersionLabel` to `beta1`.
       3. Update `MicrosoftCodeAnalysisFXCopAnalyersVersion` to the latest released package version.
    5. Build the repo by invoking `eng\common\CIBuild.cmd` and fix/suppress any new CA diagnostics, as appropriate. This should also update the analyzer documentation files in the repo to use the new version prefix.

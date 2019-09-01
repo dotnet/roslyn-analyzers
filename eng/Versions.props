@@ -3,6 +3,7 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     
     <VersionPrefix>2.9.5</VersionPrefix>
+    <FlowAnalysisUtilitiesVersionPrefix>2.9.6</FlowAnalysisUtilitiesVersionPrefix>
     <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->

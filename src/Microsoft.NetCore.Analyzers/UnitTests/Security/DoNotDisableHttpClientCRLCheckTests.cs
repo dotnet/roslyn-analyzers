@@ -130,24 +130,6 @@ class TestClass
         }
 
         [Fact]
-        public void Test_HttpClientConstructorWithoutParameter_handlerSetByDefault_DefinitelyDiagnostic()
-        {
-            this.VerifyCSharpWithDependencies(@"
-using System.Net.Http;
-
-class TestClass
-{
-    void TestMethod()
-    {
-        var winHttpHandler = new WinHttpHandler();
-        winHttpHandler.CheckCertificateRevocationList = false;
-        var httpClient = new HttpClient();
-    }
-}",
-                GetCSharpResultAt(10, 26, DefinitelyRule));
-        }
-
-        [Fact]
         public void Test_WinHttpHandler_CheckCertificateRevocationList_UnknownOrRight_MaybeDiagnostic()
         {
             this.VerifyCSharpWithDependencies(@"
@@ -223,6 +205,48 @@ class TestClass
     }
 }",
                 GetCSharpResultAt(18, 26, MaybeRule));
+        }
+
+        [Fact]
+        public void Test_DerivedClassOfHttpClient_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithDependencies(@"
+using System.Net.Http;
+
+class DerivedClass : HttpClient
+{
+    public DerivedClass (HttpMessageHandler handler)
+    {
+    }
+}
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var winHttpHandler = new WinHttpHandler();
+        winHttpHandler.CheckCertificateRevocationList = false;
+        var derivedClass = new DerivedClass(winHttpHandler);
+    }
+}",
+                GetCSharpResultAt(17, 28, DefinitelyRule));
+        }
+
+        [Fact]
+        public void Test_HttpClientConstructorWithoutParameter_handlerSetByDefault_NoDiagnostic()
+        {
+            this.VerifyCSharpWithDependencies(@"
+using System.Net.Http;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var winHttpHandler = new WinHttpHandler();
+        winHttpHandler.CheckCertificateRevocationList = false;
+        var httpClient = new HttpClient();
+    }
+}");
         }
 
         [Fact]

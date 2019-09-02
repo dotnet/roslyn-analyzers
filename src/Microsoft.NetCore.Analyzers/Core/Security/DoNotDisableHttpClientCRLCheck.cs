@@ -23,7 +23,6 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DefinitelyDisableHttpClientCRLCheckRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5399",
-            typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyDisableHttpClientCRLCheck),
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyDisableHttpClientCRLCheckMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
@@ -32,7 +31,6 @@ namespace Microsoft.NetCore.Analyzers.Security
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor MaybeDisableHttpClientCRLCheckRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5400",
-            typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeDisableHttpClientCRLCheck),
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeDisableHttpClientCRLCheckMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
@@ -70,7 +68,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 WellKnownTypeNames.SystemNetHttpHttpClient,
                 ".ctor",
                 "handler",
-                PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown));
+                PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown,
+                true));
 
         private static readonly ImmutableHashSet<string> typeToTrackMetadataNames = ImmutableHashSet.Create<string>(
             WellKnownTypeNames.SystemNetHttpWinHttpHandler,
@@ -94,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
-                    if (typeToTrackMetadataNames.Any(s => !wellKnownTypeProvider.TryGetTypeByMetadataName(s, out _)))
+                    if (typeToTrackMetadataNames.All(s => !wellKnownTypeProvider.TryGetTypeByMetadataName(s, out _)))
                     {
                         return;
                     }
@@ -126,19 +125,15 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     var objectCreationOperation =
                                         (IObjectCreationOperation)operationAnalysisContext.Operation;
 
-                                    if (httpClientTypeSymbol.Equals(objectCreationOperation.Type))
+                                    if (objectCreationOperation.Type.GetBaseTypesAndThis().Contains(httpClientTypeSymbol))
                                     {
-                                        if (objectCreationOperation.Arguments.Length == 0)
+                                        if (objectCreationOperation.Arguments.Length != 0)
                                         {
-                                            operationAnalysisContext.ReportDiagnostic(
-                                                objectCreationOperation.CreateDiagnostic(
-                                                    DefinitelyDisableHttpClientCRLCheckRule));
-                                        }
-
-                                        lock (rootOperationsNeedingAnalysis)
-                                        {
-                                            rootOperationsNeedingAnalysis.Add(
-                                                (objectCreationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
+                                            lock (rootOperationsNeedingAnalysis)
+                                            {
+                                                rootOperationsNeedingAnalysis.Add(
+                                                    (objectCreationOperation.GetRoot(), operationAnalysisContext.ContainingSymbol));
+                                            }
                                         }
                                     }
                                 },

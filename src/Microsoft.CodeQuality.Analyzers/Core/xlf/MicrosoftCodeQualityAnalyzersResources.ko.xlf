@@ -38,13 +38,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="translated">System.Exception 또는 System.SystemException과 같은 일반 예외가 catch 문에서 catch되거나, 일반 catch 절이 사용됩니다. 일반 예외는 catch되면 안 됩니다.</target>
+        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">System.Exception 또는 System.SystemException과 같은 일반 예외가 catch 문에서 catch되거나, 일반 catch 절이 사용됩니다. 일반 예외는 catch되면 안 됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
-        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="translated">'{0}'을(를) 수정하여 좀 더 구체적인 예외 유형을 catch하거나 예외를 다시 throw합니다.</target>
+        <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
+        <target state="needs-review-translation">'{0}'을(를) 수정하여 좀 더 구체적인 예외 유형을 catch하거나 예외를 다시 throw합니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">

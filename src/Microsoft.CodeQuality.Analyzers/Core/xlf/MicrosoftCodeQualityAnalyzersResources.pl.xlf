@@ -38,13 +38,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="translated">W instrukcji catch przechwycono wyjątek ogólny, taki jak System.Exception lub System.SystemException, lub jest używana ogólna klauzula catch. Wyjątki ogólne nie powinny być przechwytywane.</target>
+        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">W instrukcji catch przechwycono wyjątek ogólny, taki jak System.Exception lub System.SystemException, lub jest używana ogólna klauzula catch. Wyjątki ogólne nie powinny być przechwytywane.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
-        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="translated">Zmodyfikuj element „{0}”, aby przechwytywać dokładniej określony typ wyjątku, lub ponownie zgłoś wyjątek.</target>
+        <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
+        <target state="needs-review-translation">Zmodyfikuj element „{0}”, aby przechwytywać dokładniej określony typ wyjątku, lub ponownie zgłoś wyjątek.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">

@@ -38,13 +38,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="translated">System.Exception または System.SystemException などの一般的な例外は catch ステートメントでキャッチされます。または一般的な catch 句を使用します。一般的な例外をキャッチしないでください。</target>
+        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">System.Exception または System.SystemException などの一般的な例外は catch ステートメントでキャッチされます。または一般的な catch 句を使用します。一般的な例外をキャッチしないでください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
-        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="translated">'{0}' を変更して特定の例外の種類をさらにキャッチするか、例外を再スローします。</target>
+        <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
+        <target state="needs-review-translation">'{0}' を変更して特定の例外の種類をさらにキャッチするか、例外を再スローします。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">

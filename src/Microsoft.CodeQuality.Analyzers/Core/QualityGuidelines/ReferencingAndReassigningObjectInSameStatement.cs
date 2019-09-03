@@ -60,7 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
             else if (operationTarget.Instance is IMemberReferenceOperation memberInstance)
             {
-                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, memberInstance, (a, b) => a.Member == b.Member);
+                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, memberInstance, (a, b) => a.Member == b.Member && a.Instance?.Syntax.ToString() == b.Instance?.Syntax.ToString());
             }
             else if (operationTarget.Instance is IParameterReferenceOperation parameterInstance)
             {

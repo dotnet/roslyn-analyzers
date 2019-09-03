@@ -23,8 +23,8 @@
         <note />
       </trans-unit>
       <trans-unit id="ReferencingAndReassigningObjectInSameStatementDescription">
-        <source>When you go through the assignment chain right to left, firstly, reference in object '{0}' will be changed, but when you reffer to this object second time, since it's still the same statement, it will be pointing to it's old value. So if old value of '{0}' isn't saved elsewhere, result of the later assignment will be lost.</source>
-        <target state="new">When you go through the assignment chain right to left, firstly, reference in object '{0}' will be changed, but when you reffer to this object second time, since it's still the same statement, it will be pointing to it's old value. So if old value of '{0}' isn't saved elsewhere, result of the later assignment will be lost.</target>
+        <source>When you go through the assignment chain right to left, firstly, reference in object '{0}' will be changed, but when you reffer to this object second time, since it's still the same statement, it will be pointing to it's old value. So if old value of '{0}' isn't saved elsewhere, result of the latter assignment will be lost.</source>
+        <target state="new">When you go through the assignment chain right to left, firstly, reference in object '{0}' will be changed, but when you reffer to this object second time, since it's still the same statement, it will be pointing to it's old value. So if old value of '{0}' isn't saved elsewhere, result of the latter assignment will be lost.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReferencingAndReassigningObjectInSameStatementMessage">

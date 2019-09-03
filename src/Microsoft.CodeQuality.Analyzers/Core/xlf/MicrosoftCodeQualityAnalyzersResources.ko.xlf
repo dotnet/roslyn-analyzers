@@ -1709,7 +1709,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersDescription">
         <source>Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.</source>
-        <target state="needs-review-translation">메서드 시그니처가 메서드 본문에서 사용하지 않는 매개 변수를 포함합니다.</target>
+        <target state="translated">코드에 사용되지 않는 매개 변수를 사용하지 않도록 합니다. 매개 변수를 제거할 수 없는 경우 이름을 변경하여 밑줄로 시작하고 필요에 따라 뒤에 정수가 있도록 합니다(예: '_', '_1', '_2' 등). 해당 이름은 특수 무시 기호 이름으로 처리됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">

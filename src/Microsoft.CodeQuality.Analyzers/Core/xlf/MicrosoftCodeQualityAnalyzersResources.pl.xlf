@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">Pole „{0}” zostało zadeklarowane jako statyczne pole tylko do odczytu, ale zainicjowano je za pomocą wartości stałej. Zamiast tego oznacz to pole jako pole wartości stałej.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">Pole „{0}” zostało zadeklarowane jako statyczne pole tylko do odczytu, ale zainicjowano je za pomocą wartości stałej. Zamiast tego oznacz to pole jako pole wartości stałej.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">Pole „{0}” zostało zadeklarowane jako statyczne pole tylko do odczytu, ale zainicjowano je za pomocą pustego ciągu (""). Zamiast tego oznacz to pole jako pole wartości stałej.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">Pole „{0}” zostało zadeklarowane jako statyczne pole tylko do odczytu, ale zainicjowano je za pomocą pustego ciągu (""). Zamiast tego oznacz to pole jako pole wartości stałej.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

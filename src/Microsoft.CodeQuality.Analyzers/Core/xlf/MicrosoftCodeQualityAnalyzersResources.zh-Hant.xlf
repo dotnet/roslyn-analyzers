@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">欄位 '{0}' 宣告為 'static readonly'，但卻使用了常數值進行初始化。將此欄位改標記為 'const'。</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">欄位 '{0}' 宣告為 'static readonly'，但卻使用了常數值進行初始化。將此欄位改標記為 'const'。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">欄位 '{0}' 宣告為 'static readonly'，但卻使用了空字串 ("") 進行初始化。將此欄位改標記為 'const'。</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">欄位 '{0}' 宣告為 'static readonly'，但卻使用了空字串 ("") 進行初始化。將此欄位改標記為 'const'。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

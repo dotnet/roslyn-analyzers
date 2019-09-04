@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">フィールド '{0}' は 'static readonly' として宣言されていますが、定数値を伴って初期化されています。代わりに、このフィールドを 'const' として設定してください。</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">フィールド '{0}' は 'static readonly' として宣言されていますが、定数値を伴って初期化されています。代わりに、このフィールドを 'const' として設定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">フィールド '{0}' は 'static readonly' として宣言されていますが、空の文字列 ("") を伴って初期化されています。代わりに、このフィールドを 'const' として設定してください。</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">フィールド '{0}' は 'static readonly' として宣言されていますが、空の文字列 ("") を伴って初期化されています。代わりに、このフィールドを 'const' として設定してください。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

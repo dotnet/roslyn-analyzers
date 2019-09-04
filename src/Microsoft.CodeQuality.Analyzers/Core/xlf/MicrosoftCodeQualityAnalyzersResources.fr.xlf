@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une valeur de constante. À la place, marquez ce champ comme étant un champ 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une valeur de constante. À la place, marquez ce champ comme étant un champ 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une chaîne vide (""). À la place, marquez ce champ comme étant un champ 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une chaîne vide (""). À la place, marquez ce champ comme étant un champ 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

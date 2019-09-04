@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">'{0}' alanı 'static readonly' olarak bildirilmiş ama sabit bir değerle başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">'{0}' alanı 'static readonly' olarak bildirilmiş ama sabit bir değerle başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">'{0}' alanı 'static readonly' olarak bildirilmiş ama boş bir dizeyle ("") başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">'{0}' alanı 'static readonly' olarak bildirilmiş ama boş bir dizeyle ("") başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

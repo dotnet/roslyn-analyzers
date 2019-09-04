@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">'{0}' 필드가 'static readonly'로 선언되었지만 상수 값으로 초기화되었습니다. 이 필드를 'const'로 표시하세요.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">'{0}' 필드가 'static readonly'로 선언되었지만 상수 값으로 초기화되었습니다. 이 필드를 'const'로 표시하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">'{0}' 필드가 'static readonly'로 선언되었지만 빈 문자열("")로 초기화되었습니다. 이 필드를 'const'로 표시하세요.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">'{0}' 필드가 'static readonly'로 선언되었지만 빈 문자열("")로 초기화되었습니다. 이 필드를 'const'로 표시하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

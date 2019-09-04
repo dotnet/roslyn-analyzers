@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">Il campo '{0}' è dichiarato come 'static readonly' ma viene inizializzato con un valore constant. Contrassegnare questo campo come 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">Il campo '{0}' è dichiarato come 'static readonly' ma viene inizializzato con un valore constant. Contrassegnare questo campo come 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">Il campo '{0}' è dichiarato come 'static readonly' ma viene inizializzato con una stringa vuota (""). Contrassegnare questo campo come 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">Il campo '{0}' è dichiarato come 'static readonly' ma viene inizializzato con una stringa vuota (""). Contrassegnare questo campo come 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

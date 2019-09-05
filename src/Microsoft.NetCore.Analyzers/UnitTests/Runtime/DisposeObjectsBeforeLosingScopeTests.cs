@@ -11151,5 +11151,43 @@ class B : IDisposable
     }
 }", editorConfigFile);
         }
+
+        [Fact]
+        [WorkItem(2681, "https://github.com/dotnet/roslyn-analyzers/issues/2681")]
+        public void DisposableObject_InterlockedAssignmentToField_NotDisposed_NoDiagnostic()
+        {
+            var editorConfigFile = GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
+
+            VerifyCSharp(@"
+using System;
+using System.Threading;
+
+class CustomDisposable : IDisposable
+{
+    public void Dispose() { }
+}
+
+class Test
+{
+    private CustomDisposable field1;
+
+    private void NoWarning()
+    {
+        field1 = new CustomDisposable();
+    }
+
+    private void Warning1()
+    {
+        var temp = new CustomDisposable();
+        Interlocked.Exchange(ref field1, temp)?.Dispose();
+    }
+
+    private void Warning2()
+    {
+        var temp = new CustomDisposable();
+        Interlocked.CompareExchange(ref field1, temp, null);
+    }
+}", editorConfigFile);
+        }
     }
 }

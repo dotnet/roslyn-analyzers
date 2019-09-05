@@ -518,7 +518,6 @@ class TestClass
     }
 }",
                 GetCSharpResultAt(16, 9, 9, 22, "byte[] SymmetricAlgorithm.Key", "void TestClass.CreateEncryptor(byte[] rgbKey)", "byte[] Convert.FromBase64String(string s)", "void TestClass.TestMethod()"));
-            });
         }
 
         [Fact]

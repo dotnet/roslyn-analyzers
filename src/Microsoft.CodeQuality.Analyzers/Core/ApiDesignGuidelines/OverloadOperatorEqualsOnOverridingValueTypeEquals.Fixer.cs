@@ -40,13 +40,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftCodeQualityAnalyzersResources.OverloadOperatorEqualsOnOverridingValueTypeEqualsTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(title,
                     async ct => await ImplementOperatorEquals(context.Document, declaration, typeSymbol, ct).ConfigureAwait(false),
-                    equivalenceKey: title), diagnostic);
+                    equivalenceKey: title), context.Diagnostics);
         }
 
         private static async Task<Document> ImplementOperatorEquals(Document document, SyntaxNode declaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)

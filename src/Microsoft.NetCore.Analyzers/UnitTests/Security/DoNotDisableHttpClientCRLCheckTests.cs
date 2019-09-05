@@ -80,7 +80,6 @@ class TestClass
         {
             this.VerifyCSharpWithDependencies(@"
 using System.Net.Http;
-using System.Net.Http.Unix;
 
 class TestClass
 {
@@ -91,7 +90,7 @@ class TestClass
         var httpClient = new HttpClient(curlHandler);
     }
 }",
-                GetCSharpResultAt(11, 26, DefinitelyRule));
+                GetCSharpResultAt(10, 26, DefinitelyRule));
         }
 
         [Fact]
@@ -153,6 +152,70 @@ class TestClass
     }
 }",
                 GetCSharpResultAt(18, 26, MaybeRule));
+        }
+
+        [Fact]
+        public void Test_WinHttpHandler_CheckCertificateRevocationList_Wrong_ServerCertificateValidationCallback_Null_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithDependencies(@"
+using System.Net.Http;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var winHttpHandler = new WinHttpHandler();
+        winHttpHandler.CheckCertificateRevocationList = false;
+        winHttpHandler.ServerCertificateValidationCallback = null;
+        var httpClient = new HttpClient(winHttpHandler);
+    }
+}",
+                GetCSharpResultAt(11, 26, DefinitelyRule));
+        }
+
+        [Fact]
+        public void Test_WinHttpHandler_CheckCertificateRevocationList_Wrong_ServerCertificateValidationCallback_MaybeNull_MaybeDiagnostic()
+        {
+            this.VerifyCSharpWithDependencies(@"
+using System;
+using System.Net.Http;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var winHttpHandler = new WinHttpHandler();
+        winHttpHandler.CheckCertificateRevocationList = false;
+        Random r = new Random();
+
+        if (r.Next(6) == 4)
+        {
+            winHttpHandler.ServerCertificateValidationCallback = (HttpRequestMessage,X509Certificate2,X509Chain,SslPolicyErrors) => true;
+        }
+        
+        var httpClient = new HttpClient(winHttpHandler);
+    }
+}",
+                GetCSharpResultAt(18, 26, MaybeRule));
+        }
+
+        [Fact]
+        public void Test_WinHttpHandler_CheckCertificateRevocationList_Wrong_ServerCertificateValidationCallback_NotNull_DefinitelyDiagnostic()
+        {
+            this.VerifyCSharpWithDependencies(@"
+using System;
+using System.Net.Http;
+
+class TestClass
+{
+    void TestMethod()
+    {
+        var winHttpHandler = new WinHttpHandler();
+        winHttpHandler.CheckCertificateRevocationList = false;
+        winHttpHandler.ServerCertificateValidationCallback = (HttpRequestMessage,X509Certificate2,X509Chain,SslPolicyErrors) => true;
+        var httpClient = new HttpClient(winHttpHandler);
+    }
+}");
         }
 
         [Fact]

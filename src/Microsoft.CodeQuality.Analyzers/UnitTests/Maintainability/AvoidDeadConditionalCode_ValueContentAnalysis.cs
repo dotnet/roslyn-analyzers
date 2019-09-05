@@ -2508,5 +2508,82 @@ namespace ClassLibrary14
 }
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueContentAnalysisWithLocalFunctionInvocationsInStaticMethods()
+        {
+            var editorconfig = "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive";
+
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    public static float NextSingle(this Random random, float minValue, float maxValue)
+    {
+        float AdjustValue(float value) => Single.IsNegativeInfinity(value) ? Single.MinValue : (Single.IsPositiveInfinity(value) ? Single.MaxValue : value);
+
+        return (float)random.NextDouble(AdjustValue(minValue), AdjustValue(maxValue));
+    }
+
+    public static double NextDouble(this Random random, double minValue, double maxValue)
+    {
+        return minValue;
+    }
+}
+", GetEditorConfigAdditionalFile(editorconfig));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void PredicateAnalysisWithCast()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    private static int _f;
+    public static bool M1(int x, int y)
+    {
+        y = x > 0 ?  x : 0;
+        return !(bool)GetObject(y);
+    }
+
+    private static object GetObject(int o)
+    {
+        return (object)(o > _f);
+    }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact, WorkItem(2246, "https://github.com/dotnet/roslyn-analyzers/issues/2246")]
+        public void NestedPredicateAnalysisWithDifferentStrings()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    private static bool Test(string A, string B, string C, string D)
+    {
+        bool result = false;
+
+        if (string.Compare(A, B, StringComparison.OrdinalIgnoreCase) == 0)
+        {
+            if (string.Compare(C, D, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+}
+");
+        }
     }
 }

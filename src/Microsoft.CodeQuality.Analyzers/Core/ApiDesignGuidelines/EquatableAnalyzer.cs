@@ -78,6 +78,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 .FirstOrDefault(x => x.Equals(constructedEquatable));
             bool implementsEquatable = implementation != null;
 
+            if (implementsEquatable)
+            {
+                // Bail out for following cases:
+                // 1. There is no method implementing IEquatable.Equals method, indicating compiler error.
+                // 2. Base type is implementing the IEquatable for this type, and hence is responsible for overriding object Equals.
+                //    For example, we should not flag type B below as IEquatable<B> is implemented by its base type:
+                //       class B : A<B> { }
+                //       class A<T> : IEquatable<T>
+                //          where T: A<T>
+                //       { ... }
+                if (!(constructedEquatable.GetMembers("Equals").FirstOrDefault() is IMethodSymbol equatableEqualsMethod) ||
+                    !Equals(namedType, namedType.FindImplementationForInterfaceMember(equatableEqualsMethod)?.ContainingType))
+                {
+                    return;
+                }
+            }
+
             if (overridesObjectEquals && !implementsEquatable && namedType.TypeKind == TypeKind.Struct)
             {
                 context.ReportDiagnostic(namedType.CreateDiagnostic(s_implementIEquatableDescriptor, namedType));

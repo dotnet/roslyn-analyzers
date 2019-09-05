@@ -101,7 +101,7 @@ class C : IEquatable<C>
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithNoParameterListAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithNoParameterListAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -114,13 +114,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithMalformedParameterListAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithMalformedParameterListAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -133,13 +131,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithMalformedParameterListAndNoEqualsOverride2()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithMalformedParameterListAndNoEqualsOverride2()
         {
             var code = @"
 using System;
@@ -152,13 +148,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithNoParametersAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithNoParametersAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -171,13 +165,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithMalformedParameterDeclarationAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithMalformedParameterDeclarationAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -190,13 +182,11 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithWrongReturnTypeAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithWrongReturnTypeAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -209,9 +199,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -231,7 +219,7 @@ class C : IEquatable<C>
         }
 
         [Fact]
-        public void DiagnosticForClassWithIEquatableImplementationWithNoReturnTypeAndNoEqualsOverride()
+        public void NoDiagnosticForClassWithIEquatableImplementationWithNoReturnTypeAndNoEqualsOverride()
         {
             var code = @"
 using System;
@@ -244,9 +232,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
-            VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
-                GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
+            VerifyCSharp(code, TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -331,6 +317,55 @@ public struct S : IValueObject<S>
     public bool Equals(S other) => value == other.value;
 
     public override int GetHashCode() => value;
+}";
+            VerifyCSharp(code);
+        }
+
+        [Fact, WorkItem(2027, "https://github.com/dotnet/roslyn-analyzers/issues/2027")]
+        public void NoDiagnosticForDerivedTypesWithBaseTypeWithIEquatableImplementation_01()
+        {
+            var code = @"
+using System;
+
+public class A<T> : IEquatable<T>
+    where T : A<T>
+{
+    public virtual bool Equals(T other) => false;
+
+    public override bool Equals(object obj) => Equals(obj as T);
+}
+
+public class B : A<B>
+{
+}";
+            VerifyCSharp(code);
+        }
+
+        [Fact, WorkItem(2027, "https://github.com/dotnet/roslyn-analyzers/issues/2027")]
+        public void NoDiagnosticForDerivedTypesWithBaseTypeWithIEquatableImplementation_02()
+        {
+            var code = @"
+using System;
+
+public class A<T> : IEquatable<T>
+    where T: class
+{
+    public virtual bool Equals(T other) => false;
+
+    public override bool Equals(object obj) => Equals(obj as T);
+}
+
+public class B : A<B>
+{
+}
+
+public class C<T> : A<T>
+    where T : class
+{
+}
+
+public class D : C<D>
+{
 }";
             VerifyCSharp(code);
         }

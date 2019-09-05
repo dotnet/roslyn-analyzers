@@ -19,14 +19,13 @@ namespace Microsoft.NetCore.Analyzers.Security
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     internal class JsonNetTypeNameHandling : DiagnosticAnalyzer
     {
-        // TODO paulming: Help links URLs.
         internal static readonly DiagnosticDescriptor Rule =
             SecurityHelpers.CreateDiagnosticDescriptor(
                 "CA2326",
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetTypeNameHandlingTitle),
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetTypeNameHandlingMessage),
                 isEnabledByDefault: false,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2326",
                 nameof(MicrosoftNetCoreAnalyzersResources.JsonNetTypeNameHandlingDescription));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>

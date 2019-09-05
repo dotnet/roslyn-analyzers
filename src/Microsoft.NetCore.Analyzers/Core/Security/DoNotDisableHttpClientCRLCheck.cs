@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             "CA5399",
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyDisableHttpClientCRLCheck),
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyDisableHttpClientCRLCheckMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableHttpClientCRLCheckDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
@@ -33,7 +33,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             "CA5400",
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeDisableHttpClientCRLCheck),
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeDisableHttpClientCRLCheckMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableHttpClientCRLCheckDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
@@ -48,10 +48,15 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// </summary>
         private const int CheckCertificateRevocationListIndex = 0;
 
+        /// <summary>
+        /// PropertySetAbstractValue index for ServerCertificateValidationCallback property.
+        /// </summary>
+        private const int ServerCertificateValidationCallbackIndex = 1;
+
         private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(
             (IMethodSymbol constructorMethod, IReadOnlyList<PointsToAbstractValue> argumentPointsToAbstractValues) =>
             {
-                return PropertySetAbstractValue.GetInstance(PropertySetAbstractValueKind.Flagged);
+                return PropertySetAbstractValue.GetInstance(PropertySetAbstractValueKind.Flagged, PropertySetAbstractValueKind.Flagged);
             });
 
         private static readonly PropertyMapperCollection PropertyMappers = new PropertyMapperCollection(
@@ -61,20 +66,55 @@ namespace Microsoft.NetCore.Analyzers.Security
                     PropertySetCallbacks.EvaluateLiteralValues(
                         valueContentAbstractValue,
                         (object o) => o is bool booleanValue && booleanValue == false),
-                CheckCertificateRevocationListIndex));
+                CheckCertificateRevocationListIndex),
+            new PropertyMapper(
+                "ServerCertificateCustomValidationCallback",
+                PropertySetCallbacks.FlagIfNull,
+                ServerCertificateValidationCallbackIndex),
+            new PropertyMapper(
+                "ServerCertificateValidationCallback",
+                PropertySetCallbacks.FlagIfNull,
+                ServerCertificateValidationCallbackIndex));
 
         private static readonly HazardousUsageEvaluatorCollection HazardousUsageEvaluators = new HazardousUsageEvaluatorCollection(
             new HazardousUsageEvaluator(
                 WellKnownTypeNames.SystemNetHttpHttpClient,
                 ".ctor",
                 "handler",
-                PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown,
+                (IMethodSymbol methodSymbol, PropertySetAbstractValue abstractValue) =>
+                {
+                    switch (abstractValue[ServerCertificateValidationCallbackIndex])
+                    {
+                        case PropertySetAbstractValueKind.Flagged:
+                            switch (abstractValue[CheckCertificateRevocationListIndex])
+                            {
+                                case PropertySetAbstractValueKind.Flagged:
+                                    return HazardousUsageEvaluationResult.Flagged;
+                                case PropertySetAbstractValueKind.MaybeFlagged:
+                                    return HazardousUsageEvaluationResult.MaybeFlagged;
+                                default:
+                                    return HazardousUsageEvaluationResult.Unflagged;
+                            }
+
+                        case PropertySetAbstractValueKind.MaybeFlagged:
+                            switch (abstractValue[CheckCertificateRevocationListIndex])
+                            {
+                                case PropertySetAbstractValueKind.Unflagged:
+                                    return HazardousUsageEvaluationResult.Unflagged;
+                                default:
+                                    return HazardousUsageEvaluationResult.MaybeFlagged;
+                            }
+
+                        default:
+                            return HazardousUsageEvaluationResult.Unflagged;
+                    }
+                },
                 true));
 
         private static readonly ImmutableHashSet<string> typeToTrackMetadataNames = ImmutableHashSet.Create<string>(
             WellKnownTypeNames.SystemNetHttpWinHttpHandler,
             WellKnownTypeNames.SystemNetHttpHttpClientHandler,
-            WellKnownTypeNames.SystemNetHttpUnixCurlHandler);
+            WellKnownTypeNames.SystemNetHttpCurlHandler);
 
         public override void Initialize(AnalysisContext context)
         {

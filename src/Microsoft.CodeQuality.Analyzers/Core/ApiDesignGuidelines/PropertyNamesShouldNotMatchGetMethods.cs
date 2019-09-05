@@ -88,6 +88,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         continue;
                     }
 
+                    // Ignore members whose IsStatic does not match with the symbol's IsStatic
+                    if (symbol.IsStatic != member.IsStatic)
+                    {
+                        continue;
+                    }
+
                     // If the declared type is a property, was a matching method found?
                     if (symbol.Kind == SymbolKind.Property && member.Kind == SymbolKind.Method)
                     {

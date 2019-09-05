@@ -43,15 +43,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // CONSIDER: Do we need to confirm that System.Object.Equals isn't shadowed in a base type?
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftCodeQualityAnalyzersResources.OverrideEqualsOnOverloadingOperatorEqualsCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,
                     cancellationToken => OverrideObjectEquals(context.Document, typeDeclaration, typeSymbol, cancellationToken),
                     equivalenceKey: title),
-                diagnostic);
+                context.Diagnostics);
         }
 
         private static async Task<Document> OverrideObjectEquals(Document document, SyntaxNode typeDeclaration, INamedTypeSymbol typeSymbol, CancellationToken cancellationToken)

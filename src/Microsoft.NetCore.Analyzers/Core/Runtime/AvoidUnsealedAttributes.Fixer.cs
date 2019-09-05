@@ -30,14 +30,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (declaration != null)
             {
-                // We cannot have multiple overlapping diagnostics of this id.
-                Diagnostic diagnostic = context.Diagnostics.Single();
-
                 string title = MicrosoftNetCoreAnalyzersResources.AvoidUnsealedAttributesMessage;
                 context.RegisterCodeFix(new MyCodeAction(title,
                     async ct => await MakeSealed(editor, declaration).ConfigureAwait(false),
                     equivalenceKey: title),
-                    diagnostic);
+                    context.Diagnostics);
             }
         }
 

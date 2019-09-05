@@ -26,14 +26,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
             string title = MicrosoftCodeQualityAnalyzersResources.AbstractTypesShouldNotHavePublicConstructorsCodeFix;
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async ct => await ChangeAccessibilityCodeFix(context.Document, root, node, ct).ConfigureAwait(false),
                                         equivalenceKey: title),
-                                    diagnostic);
+                                    context.Diagnostics);
         }
 
         private static SyntaxNode GetDeclaration(ISymbol symbol)

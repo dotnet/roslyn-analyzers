@@ -55,28 +55,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var booleanType = csaContext.Compilation.GetSpecialType(SpecialType.System_Boolean);
                 var integerType = csaContext.Compilation.GetSpecialType(SpecialType.System_Int32);
                 var stringCompareToNamedMethods = stringType.GetMembers("CompareTo").OfType<IMethodSymbol>();
-                var stringCompareToParameterString = stringCompareToNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareToParameterString = stringCompareToNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                          GetParameterInfo(stringType));
-                var stringCompareToParameterObject = stringCompareToNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareToParameterObject = stringCompareToNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                          GetParameterInfo(objectType));
 
                 var stringCompareNamedMethods = stringType.GetMembers("Compare").OfType<IMethodSymbol>();
-                var stringCompareParameterStringStringBool = stringCompareNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareParameterStringStringBool = stringCompareNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                                  GetParameterInfo(stringType),
                                                                  GetParameterInfo(stringType),
                                                                  GetParameterInfo(booleanType));
-                var stringCompareParameterStringStringStringComparison = stringCompareNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareParameterStringStringStringComparison = stringCompareNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                                              GetParameterInfo(stringType),
                                                                              GetParameterInfo(stringType),
                                                                              GetParameterInfo(stringComparisonType));
-                var stringCompareParameterStringIntStringIntIntBool = stringCompareNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareParameterStringIntStringIntIntBool = stringCompareNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                                           GetParameterInfo(stringType),
                                                                           GetParameterInfo(integerType),
                                                                           GetParameterInfo(stringType),
                                                                           GetParameterInfo(integerType),
                                                                           GetParameterInfo(integerType),
                                                                           GetParameterInfo(booleanType));
-                var stringCompareParameterStringIntStringIntIntComparison = stringCompareNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareParameterStringIntStringIntIntComparison = stringCompareNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                 GetParameterInfo(stringType),
                                                                                 GetParameterInfo(integerType),
                                                                                 GetParameterInfo(stringType),

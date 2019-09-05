@@ -37,15 +37,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id. 
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftCodeQualityAnalyzersResources.AvoidUnusedPrivateFieldsTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,
                     async ct => await RemoveField(context.Document, node, ct).ConfigureAwait(false),
                     equivalenceKey: title),
-                diagnostic);
+                context.Diagnostics);
 
             return;
         }

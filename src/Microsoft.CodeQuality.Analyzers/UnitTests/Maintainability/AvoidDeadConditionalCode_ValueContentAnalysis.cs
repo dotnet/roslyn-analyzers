@@ -2558,5 +2558,32 @@ public static class C
 }
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact, WorkItem(2246, "https://github.com/dotnet/roslyn-analyzers/issues/2246")]
+        public void NestedPredicateAnalysisWithDifferentStrings()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    private static bool Test(string A, string B, string C, string D)
+    {
+        bool result = false;
+
+        if (string.Compare(A, B, StringComparison.OrdinalIgnoreCase) == 0)
+        {
+            if (string.Compare(C, D, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+}
+");
+        }
     }
 }

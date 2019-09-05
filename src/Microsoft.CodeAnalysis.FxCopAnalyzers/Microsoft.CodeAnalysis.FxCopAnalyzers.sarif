@@ -3597,6 +3597,24 @@
             ]
           }
         },
+        "CA5391": {
+          "id": "CA5391",
+          "shortDescription": "Use antiforgery tokens in ASP.NET Core MVC controllers",
+          "fullDescription": "Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "UseAutoValidateAntiforgeryToken",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA5392": {
           "id": "CA5392",
           "shortDescription": "Use DefaultDllImportSearchPaths attribute for P/Invokes",
@@ -3642,6 +3660,24 @@
             "category": "Security",
             "isEnabledByDefault": false,
             "typeName": "DoNotUseInsecureRandomness",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5395": {
+          "id": "CA5395",
+          "shortDescription": "Miss HttpVerb attribute for action methods",
+          "fullDescription": "All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "UseAutoValidateAntiforgeryToken",
             "languages": [
               "C#",
               "Visual Basic"

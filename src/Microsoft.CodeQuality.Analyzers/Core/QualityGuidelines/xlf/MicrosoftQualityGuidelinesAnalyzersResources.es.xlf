@@ -2,6 +2,21 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="es" original="../MicrosoftQualityGuidelinesAnalyzersResources.resx">
     <body>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
+        <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
+        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
+        <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
+        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
+        <source>Assigning symbol and its member in the same statement.</source>
+        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentMessage">
         <source>The property {0} should not be assigned to itself.</source>
         <target state="translated">La propiedad {0} no debe asignarse a sí misma.</target>
@@ -20,21 +35,6 @@
       <trans-unit id="MarkMembersAsStaticCodeFix_WarningAnnotation">
         <source>Some references to '{0}' could not be fixed, they should be fixed manually.</source>
         <target state="translated">Algunas referencias a "{0}" podrían no corregirse, así que tendría que hacerlo manualmente.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReferencingAndReassigningObjectInSameStatementDescription">
-        <source>When you go through the assignment chain right to left, firstly, reference in object '{0}' will be changed, but when you reffer to this object second time, since it's still the same statement, it will be pointing to it's old value. So if old value of '{0}' isn't saved elsewhere, result of the latter assignment will be lost.</source>
-        <target state="new">When you go through the assignment chain right to left, firstly, reference in object '{0}' will be changed, but when you reffer to this object second time, since it's still the same statement, it will be pointing to it's old value. So if old value of '{0}' isn't saved elsewhere, result of the latter assignment will be lost.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReferencingAndReassigningObjectInSameStatementMessage">
-        <source>Object '{0}' is referenced and reassigned in the same statement. You are at risk of referring to unintended object.</source>
-        <target state="new">Object '{0}' is referenced and reassigned in the same statement. You are at risk of referring to unintended object.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="ReferencingAndReassigningObjectInSameStatementTitle">
-        <source>Referring to object and reassigning it in the same statement.</source>
-        <target state="new">Referring to object and reassigning it in the same statement.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateTitle">

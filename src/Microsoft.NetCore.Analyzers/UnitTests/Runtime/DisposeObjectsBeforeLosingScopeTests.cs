@@ -11078,6 +11078,7 @@ public class Consumer
             GetCSharpResultAt(31, 28, "CreateMyDisposable()"));
         }
 
+        [Fact]
         [WorkItem(2782, "https://github.com/dotnet/roslyn-analyzers/issues/2782")]
         public void DisposableObject_CoalesceAssignment_NotDisposed_Diagnostic()
         {

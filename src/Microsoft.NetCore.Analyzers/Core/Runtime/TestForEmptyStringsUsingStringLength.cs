@@ -17,8 +17,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// Comparing strings using the <see cref="string.Length"/> property or the <see cref="string.IsNullOrEmpty"/> method is significantly faster than using <see cref="string.Equals(string)"/>.
     /// This is because Equals executes significantly more MSIL instructions than either IsNullOrEmpty or the number of instructions executed to retrieve the Length property value and compare it to zero.
     /// </para>
+    /// <remarks>NOTE: This rule is not supported for VisualBasic. See https://github.com/dotnet/roslyn-analyzers/issues/2684 for details.</remarks>
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class TestForEmptyStringsUsingStringLengthAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1820";

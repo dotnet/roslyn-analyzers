@@ -225,8 +225,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // If this is type is marked Serializable and doesn't implement ISerializable, check its fields' types as well
-                // NOTE: We bail out from CA2235 for netstandard assemblies due to missing support: https://github.com/dotnet/roslyn-analyzers/issues/1775#issuecomment-519686818
-                if (isSerializable && !implementsISerializable && !_isNetStandardAssembly)
+                if (isSerializable && !implementsISerializable)
                 {
                     foreach (ISymbol member in namedTypeSymbol.GetMembers())
                     {
@@ -244,6 +243,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                         // Only process non-serializable fields
                         if (IsSerializable(field.Type))
+                        {
+                            continue;
+                        }
+
+                        // We bail out from reporting CA2235 in netstandard assemblies for types in metadata
+                        // due to missing support: https://github.com/dotnet/roslyn-analyzers/issues/1775#issuecomment-519686818
+                        if (_isNetStandardAssembly && field.Type.Locations.All(l => !l.IsInSource))
                         {
                             continue;
                         }

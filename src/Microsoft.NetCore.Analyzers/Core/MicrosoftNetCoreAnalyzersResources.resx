@@ -1164,4 +1164,19 @@
   <data name="MissHttpVerbAttributeDescription" xml:space="preserve">
     <value>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</value>
   </data>
+  <data name="DefinitelyDisableHttpClientCRLCheck" xml:space="preserve">
+    <value>Definitely disable HttpClient certificate revocation list check</value>
+  </data>
+  <data name="DefinitelyDisableHttpClientCRLCheckMessage" xml:space="preserve">
+    <value>HttpClient is created without enabling CheckCertificateRevocationList</value>
+  </data>
+  <data name="DoNotDisableHttpClientCRLCheckDescription" xml:space="preserve">
+    <value>Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</value>
+  </data>
+  <data name="MaybeDisableHttpClientCRLCheck" xml:space="preserve">
+    <value>Ensure HttpClient certificate revocation list check is not disabled</value>
+  </data>
+  <data name="MaybeDisableHttpClientCRLCheckMessage" xml:space="preserve">
+    <value>HttpClient may be created without enabling CheckCertificateRevocationList</value>
+  </data>
 </root>

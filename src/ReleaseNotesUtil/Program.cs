@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -51,6 +52,7 @@ namespace ReleaseNotesUtil
             IEnumerable<string> dllPaths = GetFxCopAnalyzerBinaries(nugetInstalledPackagesPath, version);
             RuleFileContent ruleFileContent = new RuleFileContent();
             ruleFileContent.Rules = GetRules(dllPaths);
+            ruleFileContent.Rules.Sort(CategoryThenIdComparer.Instance);
             WriteRuleFileContent(ruleFileContent, outputPath);
         }
 

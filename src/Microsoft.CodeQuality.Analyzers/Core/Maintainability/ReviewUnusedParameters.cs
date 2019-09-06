@@ -167,6 +167,16 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return;
             }
 
+            // Bail out if user has configured to skip analysis for the method.
+            if (!method.MatchesConfiguredVisibility(
+                    startOperationBlockContext.Options,
+                    Rule,
+                    startOperationBlockContext.CancellationToken,
+                    defaultRequiredVisibility: SymbolVisibilityGroup.All))
+            {
+                return;
+            }
+
             // Initialize local mutable state in the start action.
             var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
 

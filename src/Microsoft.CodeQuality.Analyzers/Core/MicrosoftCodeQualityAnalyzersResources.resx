@@ -1008,10 +1008,10 @@
     <comment>1 is a comma-separated list</comment>
   </data>
   <data name="DoNotCatchGeneralExceptionTypesDescription" xml:space="preserve">
-    <value>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</value>
+    <value>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</value>
   </data>
   <data name="DoNotCatchGeneralExceptionTypesMessage" xml:space="preserve">
-    <value>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</value>
+    <value>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</value>
   </data>
   <data name="DoNotCatchGeneralExceptionTypesTitle" xml:space="preserve">
     <value>Do not catch general exception types</value>
@@ -1206,10 +1206,10 @@
     <value>A field is declared static and read-only (Shared and ReadOnly in Visual Basic), and is initialized by using a value that is computable at compile time. Because the value that is assigned to the targeted field is computable at compile time, change the declaration to a const (Const in Visual Basic) field so that the value is computed at compile time instead of at run?time.</value>
   </data>
   <data name="UseLiteralsWhereAppropriateMessageDefault" xml:space="preserve">
-    <value>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</value>
+    <value>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</value>
   </data>
   <data name="UseLiteralsWhereAppropriateMessageEmptyString" xml:space="preserve">
-    <value>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</value>
+    <value>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</value>
   </data>
   <data name="DoNotInitializeUnnecessarilyTitle" xml:space="preserve">
     <value>Do not initialize unnecessarily</value>

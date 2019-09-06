@@ -77,6 +77,21 @@
         <target state="new">Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIV">
+        <source>Do not use CreateEncryptor with non default IV</source>
+        <target state="new">Do not use CreateEncryptor with non default IV</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage">
+        <source>Symmetric encryption uses potentially repeatable initialization vector</source>
+        <target state="new">Symmetric encryption uses potentially repeatable initialization vector</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
+        <source>Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</source>
+        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPath">
         <source>Do not use unsafe DllImportSearchPath value</source>
         <target state="new">Do not use unsafe DllImportSearchPath value</target>
@@ -150,6 +165,16 @@
       <trans-unit id="MaybeDisableHttpClientCRLCheckMessage">
         <source>HttpClient may be created without enabling CheckCertificateRevocationList</source>
         <target state="new">HttpClient may be created without enabling CheckCertificateRevocationList</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIV">
+        <source>Ensure use CreateEncryptor with the default IV </source>
+        <target state="new">Ensure use CreateEncryptor with the default IV </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIVMessage">
+        <source>Non default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</source>
+        <target state="new">Non default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">

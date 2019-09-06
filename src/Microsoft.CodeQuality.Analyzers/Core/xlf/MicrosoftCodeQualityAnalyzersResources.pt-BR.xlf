@@ -38,13 +38,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="translated">Uma exception geral como System.Exception ou System.SystemException foi lançada em uma instrução catch. Exceções gerais não devem ser detectadas.</target>
+        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">Uma exception geral como System.Exception ou System.SystemException foi lançada em uma instrução catch. Exceções gerais não devem ser detectadas.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
-        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="translated">Modificar '{0}' para capturar um tipo de exceção mais específico ou relançar a exceção.</target>
+        <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
+        <target state="needs-review-translation">Modificar '{0}' para capturar um tipo de exceção mais específico ou relançar a exceção.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">O campo '{0}' é declarado como 'static readonly', mas inicializado com um valor constante. Em vez disso, marque esse campo como 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">O campo '{0}' é declarado como 'static readonly', mas inicializado com um valor constante. Em vez disso, marque esse campo como 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">O campo '{0}' é declarado como 'static readonly', mas inicializado com uma cadeia de caracteres vazia (""). Em vez disso, marque esse campo como 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">O campo '{0}' é declarado como 'static readonly', mas inicializado com uma cadeia de caracteres vazia (""). Em vez disso, marque esse campo como 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

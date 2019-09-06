@@ -368,6 +368,7 @@ Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.WellKnownTypeProvider.GenericIEquat
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.WellKnownTypeProvider.GenericTask.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.WellKnownTypeProvider.IDisposable.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.WellKnownTypeProvider.Monitor.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.WellKnownTypeProvider.Interlocked.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.WellKnownTypeProvider.SerializationInfo.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.WellKnownTypeProvider.Task.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.WellKnownTypeProvider.TryGetTypeByMetadataName(string fullTypeName, out Microsoft.CodeAnalysis.INamedTypeSymbol namedTypeSymbol) -> bool

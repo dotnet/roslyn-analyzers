@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -93,13 +92,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public override void Initialize(AnalysisContext analysisContext)
         {
-            if (!CultureInfo.CurrentCulture.Name.Equals("en", StringComparison.Ordinal) &&
-                !CultureInfo.CurrentCulture.Parent.Name.Equals("en", StringComparison.Ordinal))
-            {
-                // FxCop compat: Skip for non-English cultures.
-                return;
-            }
-
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
@@ -126,7 +127,10 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         return;
                     }
 
-                    context.RegisterSymbolAction(new SymbolAnalyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol, nonSerializedAttributeTypeSymbol).AnalyzeSymbol, SymbolKind.NamedType);
+                    var isNetStandardAssembly = context.Compilation.ReferencedAssemblyNames.Any(identity => string.Equals(identity.Name, "netstandard", StringComparison.OrdinalIgnoreCase));
+
+                    var symbolAnalyzer = new SymbolAnalyzer(iserializableTypeSymbol, serializationInfoTypeSymbol, streamingContextTypeSymbol, serializableAttributeTypeSymbol, nonSerializedAttributeTypeSymbol, isNetStandardAssembly);
+                    context.RegisterSymbolAction(symbolAnalyzer.AnalyzeSymbol, SymbolKind.NamedType);
                 });
         }
 
@@ -137,19 +141,22 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             private readonly INamedTypeSymbol _streamingContextTypeSymbol;
             private readonly INamedTypeSymbol _serializableAttributeTypeSymbol;
             private readonly INamedTypeSymbol _nonSerializedAttributeTypeSymbol;
+            private readonly bool _isNetStandardAssembly;
 
             public SymbolAnalyzer(
                 INamedTypeSymbol iserializableTypeSymbol,
                 INamedTypeSymbol serializationInfoTypeSymbol,
                 INamedTypeSymbol streamingContextTypeSymbol,
                 INamedTypeSymbol serializableAttributeTypeSymbol,
-                INamedTypeSymbol nonSerializedAttributeTypeSymbol)
+                INamedTypeSymbol nonSerializedAttributeTypeSymbol,
+                bool isNetStandardAssembly)
             {
                 _iserializableTypeSymbol = iserializableTypeSymbol;
                 _serializationInfoTypeSymbol = serializationInfoTypeSymbol;
                 _streamingContextTypeSymbol = streamingContextTypeSymbol;
                 _serializableAttributeTypeSymbol = serializableAttributeTypeSymbol;
                 _nonSerializedAttributeTypeSymbol = nonSerializedAttributeTypeSymbol;
+                _isNetStandardAssembly = isNetStandardAssembly;
             }
 
             public void AnalyzeSymbol(SymbolAnalysisContext context)
@@ -218,7 +225,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
 
                 // If this is type is marked Serializable and doesn't implement ISerializable, check its fields' types as well
-                if (isSerializable && !implementsISerializable)
+                // NOTE: We bail out from CA2235 for netstandard assemblies due to missing support: https://github.com/dotnet/roslyn-analyzers/issues/1775#issuecomment-519686818
+                if (isSerializable && !implementsISerializable && !_isNetStandardAssembly)
                 {
                     foreach (ISymbol member in namedTypeSymbol.GetMembers())
                     {

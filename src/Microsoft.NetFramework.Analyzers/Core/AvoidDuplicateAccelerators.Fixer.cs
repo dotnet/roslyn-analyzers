@@ -11,7 +11,7 @@ namespace Microsoft.NetFramework.Analyzers
     /// </summary>
     public abstract class AvoidDuplicateAcceleratorsFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AvoidDuplicateAcceleratorsAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

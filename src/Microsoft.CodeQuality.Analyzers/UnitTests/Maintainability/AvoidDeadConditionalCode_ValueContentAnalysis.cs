@@ -2585,5 +2585,60 @@ public static class C
 }
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        [WorkItem(2681, "https://github.com/dotnet/roslyn-analyzers/issues/2681")]
+        public void InterlockedOperations_NoDiagnostic()
+        {
+            // Ensure that Interlocked increment/decrement/add operations
+            // are not treated as absolute writes as it likely involves multiple threads
+            // invoking the method and that can lead to false positives.
+            VerifyCSharp(@"
+class Test
+{
+    private int a;
+    void M1()
+    {
+        a = 0;
+        System.Threading.Interlocked.Increment(ref a);
+        if (a == 1)
+        {
+        }
+
+        a = 1;
+        System.Threading.Interlocked.Decrement(ref a);
+        if (a == 0)
+        {
+        }
+
+        a = 2;
+        System.Threading.Interlocked.Add(ref a, 1);
+        if (a == 3)
+        {
+        }
+    }
+}");
+
+            VerifyBasic(@"
+Module Test
+    Sub M1()
+        Dim a As Integer = 0
+        System.Threading.Interlocked.Increment(a)
+        If a = 1 Then
+        End If
+
+        a = 1
+        System.Threading.Interlocked.Decrement(a)
+        If a = 0 Then
+        End If
+
+        a = 2
+        System.Threading.Interlocked.Add(a, 1)
+        If a = 3 Then
+        End If
+    End Sub
+End Module");
+        }
     }
 }

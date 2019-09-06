@@ -38,13 +38,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="translated">System.Exception veya System.SystemException gibi genel bir ifade bir catch ifadesinde yakalandı ya da genel bir catch clause is used. General exceptions should not be caught.</target>
+        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">System.Exception veya System.SystemException gibi genel bir ifade bir catch ifadesinde yakalandı ya da genel bir catch clause is used. General exceptions should not be caught.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
-        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="translated">Daha belirli bir özel durum türünü yakalamak için '{0}' öğesini değiştirin veya özel durumu yeniden oluşturun.</target>
+        <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
+        <target state="needs-review-translation">Daha belirli bir özel durum türünü yakalamak için '{0}' öğesini değiştirin veya özel durumu yeniden oluşturun.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">'{0}' alanı 'static readonly' olarak bildirilmiş ama sabit bir değerle başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">'{0}' alanı 'static readonly' olarak bildirilmiş ama sabit bir değerle başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">'{0}' alanı 'static readonly' olarak bildirilmiş ama boş bir dizeyle ("") başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">'{0}' alanı 'static readonly' olarak bildirilmiş ama boş bir dizeyle ("") başlatılıyor. Bunun yerine, bu alanı 'const' olarak işaretleyin.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

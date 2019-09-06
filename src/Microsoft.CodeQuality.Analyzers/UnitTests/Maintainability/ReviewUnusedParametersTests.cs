@@ -807,6 +807,34 @@ public class C
 ");
         }
 
+        [Theory]
+        [WorkItem(1375, "https://github.com/dotnet/roslyn-analyzers/issues/1375")]
+        [InlineData("public", "dotnet_code_quality.api_surface = private")]
+        [InlineData("private", "dotnet_code_quality.api_surface = internal, public")]
+        [InlineData("public", "dotnet_code_quality.CA1801.api_surface = internal, private")]
+        [InlineData("public", "dotnet_code_quality.CA1801.api_surface = Friend, Private")]
+        [InlineData("public", "dotnet_code_quality.Usage.api_surface = internal, private")]
+        [InlineData("public", @"dotnet_code_quality.api_surface = all
+                                dotnet_code_quality.CA1801.api_surface = private")]
+        public void EditorConfigConfiguration_ApiSurfaceOption(string accessibility, string editorConfigText)
+        {
+            VerifyCSharp($@"
+public class C
+{{
+    {accessibility} void M(int unused)
+    {{
+    }}
+}}",
+                GetEditorConfigAdditionalFile(editorConfigText));
+
+            VerifyBasic($@"
+Public Class C
+    {accessibility} Sub M(unused As Integer)
+    End Sub
+End Class",
+                GetEditorConfigAdditionalFile(editorConfigText));
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)

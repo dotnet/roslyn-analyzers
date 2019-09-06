@@ -1709,7 +1709,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersDescription">
         <source>Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.</source>
-        <target state="needs-review-translation">Podpis metody obsahuje parametr, který se nepoužívá v těle metody.</target>
+        <target state="translated">Vyhněte se v kódu nepoužitým parametrům. Pokud parametr nelze odebrat, změňte jeho název tak, aby začínal podtržítkem, za kterým volitelně následuje celé číslo, například _, _1, _2 atd. Tyto řetězce se považují za názvy speciálních symbolů pro vyřazení.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">

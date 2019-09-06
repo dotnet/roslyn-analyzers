@@ -11078,6 +11078,62 @@ public class Consumer
             GetCSharpResultAt(31, 28, "CreateMyDisposable()"));
         }
 
+        [WorkItem(2782, "https://github.com/dotnet/roslyn-analyzers/issues/2782")]
+        public void DisposableObject_CoalesceAssignment_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+using System.IO;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+        }
+
+        internal void RunDotNetNewAsync(
+            string fileName,
+            IDictionary<string, string> environmentVariables = null)
+        {
+            environmentVariables ??= new Dictionary<string, string>();
+            var f = File.Open(fileName, FileMode.Open);
+        }
+    }
+}", parseOptions: new CSharpParseOptions(CSharpLanguageVersion.CSharp8), expected:
+            // Test0.cs(18,21): warning CA2000: Call System.IDisposable.Dispose on object created by 'File.Open(fileName, FileMode.Open)' before all references to it are out of scope.
+            GetCSharpResultAt(18, 21, "File.Open(fileName, FileMode.Open)"));
+        }
+
+        [Fact]
+        [WorkItem(2782, "https://github.com/dotnet/roslyn-analyzers/issues/2782")]
+        public void DisposableObject_CoalesceAssignment_NotDisposed_Diagnostic_02()
+        {
+            VerifyCSharp(@"
+using System.Collections.Generic;
+using System.IO;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+        }
+
+        internal void RunDotNetNewAsync(
+            string fileName,
+            FileStream f = null)
+        {
+            f ??= File.Open(fileName, FileMode.Open);
+        }
+    }
+}", parseOptions: new CSharpParseOptions(CSharpLanguageVersion.CSharp8), expected:
+            // Test0.cs(17,19): warning CA2000: Call System.IDisposable.Dispose on object created by 'File.Open(fileName, FileMode.Open)' before all references to it are out of scope.
+            GetCSharpResultAt(17, 19, "File.Open(fileName, FileMode.Open)"));
+        }
+
         [Fact]
         [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746")]
         public void DisposableObject_FieldAsOutArgument_NotDisposed_NoDiagnostic()

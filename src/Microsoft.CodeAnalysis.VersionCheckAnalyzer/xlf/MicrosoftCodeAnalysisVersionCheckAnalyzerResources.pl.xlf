@@ -9,7 +9,7 @@
       </trans-unit>
       <trans-unit id="VersionCheckMessage">
         <source>Version mismatch between the analyzer package '{0}' and Microsoft.CodeAnalysis '{1}'. Certain analyzers in this package will not run until the version mismatch is fixed. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
-        <target state="translated">Niezgodność wersji między pakietem analizatorów \x201e{0} i metodą Microsoft.CodeAnalysis \x201e{1}”. Niektóre analizatory w tym pakiecie nie uruchomią się, dopóki niezgodność wersji nie zostanie naprawiona. Skorzystaj ze strony https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions, aby zainstalować prawidłową wersję analizatora.</target>
+        <target state="translated">Niezgodność wersji między pakietem analizatorów „{0} i metodą Microsoft.CodeAnalysis „{1}”. Niektóre analizatory w tym pakiecie nie uruchomią się, dopóki niezgodność wersji nie zostanie naprawiona. Skorzystaj ze strony https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions, aby zainstalować prawidłową wersję analizatora.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckTitle">

@@ -38,13 +38,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="translated">在 catch 语句中捕获到了 System.Exception 或 System.SystemException 等常规异常，或者已使用常规 catch 子句。不应捕获常规异常。</target>
+        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">在 catch 语句中捕获到了 System.Exception 或 System.SystemException 等常规异常，或者已使用常规 catch 子句。不应捕获常规异常。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
-        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="translated">请修改“{0}”以捕获更具体的异常类型，或者重新抛出该异常。</target>
+        <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
+        <target state="needs-review-translation">请修改“{0}”以捕获更具体的异常类型，或者重新抛出该异常。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -1833,13 +1833,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">虽然字段“{0}”声明为 "static readonly"，但它是用常量值初始化的。请将此字段标记为 "const"。</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">虽然字段“{0}”声明为 "static readonly"，但它是用常量值初始化的。请将此字段标记为 "const"。</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">虽然字段“{0}”声明为 "static readonly"，但它是用空字符串 ("") 初始化的。请将此字段标记为 "const"。</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">虽然字段“{0}”声明为 "static readonly"，但它是用空字符串 ("") 初始化的。请将此字段标记为 "const"。</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

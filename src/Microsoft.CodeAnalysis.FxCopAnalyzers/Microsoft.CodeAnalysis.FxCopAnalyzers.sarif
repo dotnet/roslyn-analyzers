@@ -3565,7 +3565,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotAddArchiveItemPathToTheTargetFileSystemPath",
             "languages": [
               "C#",
@@ -3584,7 +3584,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotHardCodeEncryptionKey",
             "languages": [
               "C#",

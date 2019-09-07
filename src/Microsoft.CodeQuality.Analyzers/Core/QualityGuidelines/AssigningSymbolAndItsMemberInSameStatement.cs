@@ -73,7 +73,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             if (isViolationFound)
             {
-                var diagnostic = Diagnostic.Create(Rule, operationTarget.Syntax.GetLocation(), operationTarget.Instance.Syntax.ToString());
+                var diagnostic = Diagnostic.Create(Rule, operationTarget.Syntax.GetLocation(), operationTarget.Instance.Syntax, operationTarget.Member.Name);
                 context.ReportDiagnostic(diagnostic);
             }
         }

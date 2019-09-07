@@ -48,7 +48,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "a"));
+            GetCSharpResultAt(12, 9, "a", "Field"));
         }
 
         [Fact]
@@ -69,7 +69,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "a"));
+            GetCSharpResultAt(12, 9, "a", "Property"));
         }
 
         [Fact]
@@ -90,7 +90,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "a.Property"));
+            GetCSharpResultAt(12, 9, "a.Property", "Property"));
         }
 
         [Fact]
@@ -111,8 +111,8 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "a.Property"),
-            GetCSharpResultAt(12, 31, "a"));
+            GetCSharpResultAt(12, 9, "a.Property", "Property"),
+            GetCSharpResultAt(12, 31, "a", "Property"));
         }
 
         [Fact]
@@ -134,7 +134,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "x"));
+            GetCSharpResultAt(13, 9, "x", "Field"));
         }
 
         [Fact]
@@ -156,7 +156,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "x.Property"));
+            GetCSharpResultAt(13, 9, "x.Property", "Property"));
         }
 
         [Fact]
@@ -178,8 +178,8 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "x.Property"),
-            GetCSharpResultAt(13, 31, "x"));
+            GetCSharpResultAt(13, 9, "x.Property", "Property"),
+            GetCSharpResultAt(13, 31, "x", "Property"));
         }
 
 
@@ -203,8 +203,8 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(14, 9, "x.Property"),
-            GetCSharpResultAt(14, 31, "x"));
+            GetCSharpResultAt(14, 9, "x.Property", "Property"),
+            GetCSharpResultAt(14, 31, "x", "Property"));
         }
 
         [Fact]
@@ -285,7 +285,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "b"));
+            GetCSharpResultAt(12, 9, "b", "Property"));
         }
 
         [Fact]

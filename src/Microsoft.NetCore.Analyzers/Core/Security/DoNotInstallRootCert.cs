@@ -229,7 +229,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 allResults?.Free();
                             }
                         });
-
                 });
         }
     }

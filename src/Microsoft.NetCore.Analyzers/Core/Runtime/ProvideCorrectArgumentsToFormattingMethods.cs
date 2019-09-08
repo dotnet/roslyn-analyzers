@@ -49,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var invocation = (IInvocationOperation)operationContext.Operation;
 
-                    StringFormatInfo.Info info = formatInfo.TryGet(invocation.TargetMethod);
+                    StringFormatInfo.Info info = formatInfo.TryGet(invocation.TargetMethod, operationContext);
                     if (info == null || invocation.Arguments.Length <= info.FormatStringIndex)
                     {
                         // not a target method
@@ -339,9 +339,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             public INamedTypeSymbol String { get; }
             public INamedTypeSymbol Object { get; }
 
-            public Info TryGet(IMethodSymbol method)
+            public Info TryGet(IMethodSymbol method, OperationAnalysisContext context)
             {
                 if (_map.TryGetValue(method, out Info info))
+                {
+                    return info;
+                }
+
+                // Check if this the underlying method is user configured string formatting method.
+                var additionalStringFormatMethodsOption = context.Options.GetAdditionalStringFormattingMethodsOption(Rule, context.Compilation, context.CancellationToken);
+                if (additionalStringFormatMethodsOption.Contains(method.OriginalDefinition) &&
+                    TryGetFormatInfo(method, out info))
                 {
                     return info;
                 }
@@ -358,16 +366,27 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 foreach (IMethodSymbol method in type.GetMembers(methodName).OfType<IMethodSymbol>())
                 {
-                    int formatIndex = FindParameterIndexOfName(method.Parameters, Format);
-                    if (formatIndex < 0 || formatIndex == method.Parameters.Length - 1)
+                    if (TryGetFormatInfo(method, out var formatInfo))
                     {
-                        // no valid format string
-                        continue;
+                        builder.Add(method, formatInfo);
                     }
-
-                    int expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
-                    builder.Add(method, new Info(formatIndex, expectedArguments));
                 }
+            }
+
+            private static bool TryGetFormatInfo(IMethodSymbol method, out Info formatInfo)
+            {
+                formatInfo = default;
+
+                int formatIndex = FindParameterIndexOfName(method.Parameters, Format);
+                if (formatIndex < 0 || formatIndex == method.Parameters.Length - 1)
+                {
+                    // no valid format string
+                    return false;
+                }
+
+                int expectedArguments = GetExpectedNumberOfArguments(method.Parameters, formatIndex);
+                formatInfo = new Info(formatIndex, expectedArguments);
+                return true;
             }
 
             private static int GetExpectedNumberOfArguments(ImmutableArray<IParameterSymbol> parameters, int formatIndex)

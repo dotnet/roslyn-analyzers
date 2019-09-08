@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -106,6 +107,46 @@ Public Class Class1
         Throw New System.NotImplementedException()
     End Function
 End Class");
+        }
+
+        [Theory]
+        [WorkItem(2772, "https://github.com/dotnet/roslyn-analyzers/issues/2772")]
+        [InlineData("", false)]
+        [InlineData("dotnet_code_quality.required_modifiers = static", false)]
+        [InlineData("dotnet_code_quality.required_modifiers = none", true)]
+        [InlineData("dotnet_code_quality." + UseLiteralsWhereAppropriateAnalyzer.RuleId + ".required_modifiers = none", true)]
+        public void EditorConfigConfiguration_RequiredModifiersOption(string editorConfigText, bool reportDiagnostic)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (reportDiagnostic)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCSharpDefaultResultAt(4, 26, "field")
+                };
+            }
+
+            VerifyCSharp(@"
+public class Test
+{
+    private readonly int field = 0;
+}
+", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (reportDiagnostic)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetBasicDefaultResultAt(3, 22, "field")
+                };
+            }
+
+            VerifyBasic(@"
+Public Class Test
+    Private ReadOnly field As Integer = 0
+End Class
+", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName)

@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     /// </summary>
     public abstract class VariableNamesShouldNotMatchFieldNamesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(VariableNamesShouldNotMatchFieldNamesAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

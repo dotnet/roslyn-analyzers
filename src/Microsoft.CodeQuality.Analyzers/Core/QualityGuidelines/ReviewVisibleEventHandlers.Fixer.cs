@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     /// </summary>
     public abstract class ReviewVisibleEventHandlersFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ReviewVisibleEventHandlersAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

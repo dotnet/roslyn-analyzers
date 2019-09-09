@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Analyzer.Utilities;
@@ -38,6 +39,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         protected override Diagnostic CreateDiagnostic(IMethodSymbol containingMethod, SyntaxToken catchKeyword)
         {
             return catchKeyword.CreateDiagnostic(Rule, containingMethod.Name);
+        }
+
+        protected override bool IsConfiguredDisallowedExceptionType(INamedTypeSymbol namedTypeSymbol, Compilation compilation, AnalyzerOptions analyzerOptions, CancellationToken cancellationToken)
+        {
+            if (base.IsConfiguredDisallowedExceptionType(namedTypeSymbol, compilation, analyzerOptions, cancellationToken))
+            {
+                return true;
+            }
+
+            var symbolNamesOption = analyzerOptions.GetDisallowedSymbolNamesOption(Rule, compilation, cancellationToken);
+            return symbolNamesOption.Contains(namedTypeSymbol);
         }
     }
 }

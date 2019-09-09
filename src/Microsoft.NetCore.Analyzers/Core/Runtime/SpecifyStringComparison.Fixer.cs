@@ -11,7 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// </summary>
     public abstract class SpecifyStringComparisonFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(SpecifyStringComparisonAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

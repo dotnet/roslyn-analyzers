@@ -181,8 +181,7 @@
             "isEnabledByDefault": true,
             "typeName": "TestForEmptyStringsUsingStringLengthAnalyzer",
             "languages": [
-              "C#",
-              "Visual Basic"
+              "C#"
             ],
             "tags": [
               "PortedFromFxCop",
@@ -1646,7 +1645,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotAddArchiveItemPathToTheTargetFileSystemPath",
             "languages": [
               "C#",
@@ -1665,7 +1664,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotHardCodeEncryptionKey",
             "languages": [
               "C#",
@@ -1820,6 +1819,44 @@
               "Visual Basic"
             ],
             "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5399": {
+          "id": "CA5399",
+          "shortDescription": "Definitely disable HttpClient certificate revocation list check",
+          "fullDescription": "Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotDisableHttpClientCRLCheck",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5400": {
+          "id": "CA5400",
+          "shortDescription": "Ensure HttpClient certificate revocation list check is not disabled",
+          "fullDescription": "Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotDisableHttpClientCRLCheck",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
               "Telemetry"
             ]
           }

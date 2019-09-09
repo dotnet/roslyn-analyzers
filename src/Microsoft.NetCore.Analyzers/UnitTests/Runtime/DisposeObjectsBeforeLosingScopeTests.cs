@@ -11077,5 +11077,117 @@ public class Consumer
             // Test0.cs(31,28): warning CA2000: Call System.IDisposable.Dispose on object created by 'CreateMyDisposable()' before all references to it are out of scope.
             GetCSharpResultAt(31, 28, "CreateMyDisposable()"));
         }
+
+        [Fact]
+        [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746")]
+        public void DisposableObject_FieldAsOutArgument_NotDisposed_NoDiagnostic()
+        {
+            var editorConfigFile = GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A _a;
+    public bool Flag;
+    public void M()
+    {
+        TryCreate(out _a);
+    }
+
+    private void TryCreate(out A a)
+    {
+        a = Flag ? new A() : null;
+    }
+
+    public void Dispose()
+    {
+        _a?.Dispose();
+    }
+}", editorConfigFile);
+        }
+
+        [Fact]
+        [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746")]
+        public void DisposableObject_FieldAsRefArgument_NotDisposed_NoDiagnostic()
+        {
+            var editorConfigFile = GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A _a;
+    public bool Flag;
+    public void M()
+    {
+        TryCreate(ref _a);
+    }
+
+    private void TryCreate(ref A a)
+    {
+        a = Flag ? new A() : null;
+    }
+
+    public void Dispose()
+    {
+        _a?.Dispose();
+    }
+}", editorConfigFile);
+        }
+
+        [Fact]
+        [WorkItem(2681, "https://github.com/dotnet/roslyn-analyzers/issues/2681")]
+        public void DisposableObject_InterlockedAssignmentToField_NotDisposed_NoDiagnostic()
+        {
+            var editorConfigFile = GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
+
+            VerifyCSharp(@"
+using System;
+using System.Threading;
+
+class CustomDisposable : IDisposable
+{
+    public void Dispose() { }
+}
+
+class Test
+{
+    private CustomDisposable field1;
+
+    private void NoWarning()
+    {
+        field1 = new CustomDisposable();
+    }
+
+    private void Warning1()
+    {
+        var temp = new CustomDisposable();
+        Interlocked.Exchange(ref field1, temp)?.Dispose();
+    }
+
+    private void Warning2()
+    {
+        var temp = new CustomDisposable();
+        Interlocked.CompareExchange(ref field1, temp, null);
+    }
+}", editorConfigFile);
+        }
     }
 }

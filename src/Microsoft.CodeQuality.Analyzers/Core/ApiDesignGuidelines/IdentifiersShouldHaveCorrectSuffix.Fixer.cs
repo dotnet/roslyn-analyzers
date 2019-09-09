@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// </summary>
     public abstract class IdentifiersShouldHaveCorrectSuffixFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

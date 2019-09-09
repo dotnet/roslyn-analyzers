@@ -16,6 +16,8 @@ var analyzerDocumentationFileDir = Args[14];
 var analyzerDocumentationFileName = Args[15];
 var analyzerSarifFileDir = Args[16];
 var analyzerSarifFileName = Args[17];
+var analyzerConfigurationFileDir = Args[18];
+var analyzerConfigurationFileName = Args[19];
 
 var result = new StringBuilder();
 
@@ -38,6 +40,7 @@ foreach (string entry in metadataList)
         case "repositoryType": repositoryType = value; continue;
         case "repositoryUrl": repositoryUrl = value; continue;
         case "repositoryCommit": repositoryCommit = value; continue;
+		case "license": result.AppendLine($"    <license type=\"expression\">{value}</license>"); continue;
     }
     
     if (value != "")
@@ -196,6 +199,15 @@ if (analyzerDocumentationFileDir.Length > 0 && Directory.Exists(analyzerDocument
 if (analyzerSarifFileDir.Length > 0 && Directory.Exists(analyzerSarifFileDir) && analyzerSarifFileName.Length > 0)
 {
     var fileWithPath = Path.Combine(analyzerSarifFileDir, analyzerSarifFileName);
+    if (File.Exists(fileWithPath))
+    {
+        result.AppendLine(FileElement(fileWithPath, "documentation"));
+    }
+}
+
+if (analyzerConfigurationFileDir.Length > 0 && Directory.Exists(analyzerConfigurationFileDir) && analyzerConfigurationFileName.Length > 0)
+{
+    var fileWithPath = Path.Combine(analyzerConfigurationFileDir, analyzerConfigurationFileName);
     if (File.Exists(fileWithPath))
     {
         result.AppendLine(FileElement(fileWithPath, "documentation"));

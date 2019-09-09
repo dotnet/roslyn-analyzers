@@ -262,7 +262,7 @@
         "CA1031": {
           "id": "CA1031",
           "shortDescription": "Do not catch general exception types",
-          "fullDescription": "A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.",
+          "fullDescription": "A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.",
           "defaultLevel": "warning",
           "helpUri": "https://docs.microsoft.com/en-us/visualstudio/code-quality/ca1031-do-not-catch-general-exception-types",
           "properties": {

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines;
@@ -669,6 +670,57 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                     }
                 }
             }");
+        }
+
+        [Theory]
+        [WorkItem(2713, "https://github.com/dotnet/roslyn-analyzers/issues/2713")]
+        // No configuration - validate no diagnostics in default configuration
+        [InlineData("")]
+        // Match by type name
+        [InlineData("dotnet_code_quality.disallowed_symbol_names = NullReferenceException")]
+        // Setting only for Rule ID
+        [InlineData("dotnet_code_quality." + DoNotCatchGeneralExceptionTypesAnalyzer.RuleId + ".disallowed_symbol_names = NullReferenceException")]
+        // Match by type documentation ID
+        [InlineData(@"dotnet_code_quality.disallowed_symbol_names = T:System.NullReferenceException")]
+        public void EditorConfigConfiguration_DisallowedExceptionTypes(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length > 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCA1031CSharpResultAt(7, 9, "M1")
+                };
+            }
+
+            VerifyCSharp(@"
+class Test
+{
+    void M1(string param)
+    {
+        try { }
+        catch (System.NullReferenceException ex) { }
+    }
+}", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length > 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    GetCA1031BasicResultAt(5, 9, "M1")
+
+                };
+            }
+
+            VerifyBasic(@"
+Class Test
+    Private Sub M1(param As String)
+        Try
+        Catch ex As System.NullReferenceException
+        End Try
+    End Sub
+End Class", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
 
         private static DiagnosticResult GetCA1031CSharpResultAt(int line, int column, string signature)

@@ -50,8 +50,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
-            INamedTypeSymbol assemblyVersionAttributeSymbol = WellKnownTypes.AssemblyVersionAttribute(context.Compilation);
-            INamedTypeSymbol assemblyComplianceAttributeSymbol = WellKnownTypes.CLSCompliantAttribute(context.Compilation);
+            var assemblyVersionAttributeSymbol = WellKnownTypes.AssemblyVersionAttribute(context.Compilation);
+            var assemblyComplianceAttributeSymbol = WellKnownTypes.CLSCompliantAttribute(context.Compilation);
 
             if (assemblyVersionAttributeSymbol == null && assemblyComplianceAttributeSymbol == null)
             {
@@ -60,6 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             bool assemblyVersionAttributeFound = false;
             bool assemblyComplianceAttributeFound = false;
+            var razorCompiledItemAttribute = WellKnownTypes.RazorCompiledItemAttribute(context.Compilation);
 
             // Check all assembly level attributes for the target attribute
             foreach (AttributeData attribute in context.Compilation.Assembly.GetAttributes())
@@ -73,6 +74,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 {
                     // Mark the compliance attribute as found
                     assemblyComplianceAttributeFound = true;
+                }
+                else if (razorCompiledItemAttribute != null &&
+                    attribute.AttributeClass.Equals(razorCompiledItemAttribute))
+                {
+                    // Bail out for dummy compilation for Razor code behind file.
+                    return;
                 }
             }
 

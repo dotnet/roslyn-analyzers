@@ -6008,5 +6008,54 @@ Public Class Test
 End Class
 ", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
+
+        [Theory]
+        [WorkItem(2691, "https://github.com/dotnet/roslyn-analyzers/issues/2691")]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.exclude_extension_method_this_parameter = true")]
+        [InlineData("dotnet_code_quality." + ValidateArgumentsOfPublicMethods.RuleId + ".exclude_extension_method_this_parameter = true")]
+        [InlineData("dotnet_code_quality.dataflow.exclude_extension_method_this_parameter = true")]
+        public void EditorConfigConfiguration_ExcludeExtensionMethodThisParameterOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.cs(6,17): warning CA1062: In externally visible method 'void Test.M1(string str)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                    GetCSharpResultAt(6, 17, "void Test.M1(string str)", "str")
+                };
+            }
+
+            VerifyCSharp(@"
+public static class Test
+{
+    public static void M1(this string str)
+    {
+        var x = str.ToString();
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.vb(7,17): warning CA1062: In externally visible method 'Sub Test.M1(str As String)', validate parameter 'str' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                    GetBasicResultAt(7, 17, "Sub Test.M1(str As String)", "str")
+                };
+            }
+
+            VerifyBasic(@"
+Imports System.Runtime.CompilerServices
+
+Public Module Test
+    <Extension()>
+    Public Sub M1(str As String)
+        Dim x = str.ToString()
+    End Sub
+End Module", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
     }
 }

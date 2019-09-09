@@ -101,6 +101,21 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                             IParameterSymbol parameter = kvp.Key;
                             SyntaxNode node = kvp.Value;
 
+                            // Check if user has configured to skip extension method 'this' parameter analysis.
+                            if (containingMethod.IsExtensionMethod &&
+                                Equals(containingMethod.Parameters[0], parameter))
+                            {
+                                bool excludeThisParameterOption = operationBlockContext.Options.GetBoolOptionValue(
+                                    optionName: EditorConfigOptionNames.ExcludeExtensionMethodThisParameter,
+                                    rule: Rule,
+                                    defaultValue: false,
+                                    cancellationToken: operationBlockContext.CancellationToken);
+                                if (excludeThisParameterOption)
+                                {
+                                    continue;
+                                }
+                            }
+
                             // In externally visible method '{0}', validate parameter '{1}' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
                             var arg1 = containingMethod.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
                             var arg2 = parameter.Name;

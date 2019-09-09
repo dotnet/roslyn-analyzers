@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// </summary>
     public abstract class UsePropertiesWhereAppropriateFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UsePropertiesWhereAppropriateAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

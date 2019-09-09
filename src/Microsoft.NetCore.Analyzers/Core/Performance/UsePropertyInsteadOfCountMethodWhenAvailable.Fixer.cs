@@ -11,11 +11,10 @@ using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Formatting;
 
 namespace Microsoft.NetCore.Analyzers.Performance
-
 {
     /// <summary>
     /// CA1829: Use property instead of <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>, when available.
-    /// Implements the <see cref="Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer" />
+    /// Implements the <see cref="CodeFixProvider" />
     /// </summary>
     public abstract class UsePropertyInsteadOfCountMethodWhenAvailableFixer : CodeFixProvider
     {
@@ -72,13 +71,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <see langword="false" /> otherwise.</returns>
         protected abstract bool TryGetExpression(SyntaxNode invocationNode, out SyntaxNode memberAccessNode, out SyntaxNode nameNode);
 
-        private class UsePropertyInsteadOfCountMethodWhenAvailableCodeAction : CodeAction
+        /// <summary>
+        /// Implements the <see cref="CodeAction"/> for replacing the use of <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> 
+        /// for the use of a property of the receiving type.
+        /// This class cannot be inherited.
+        /// </summary>
+        /// <seealso cref="Microsoft.CodeAnalysis.CodeActions.CodeAction" />
+        private sealed class UsePropertyInsteadOfCountMethodWhenAvailableCodeAction : CodeAction
         {
-            private readonly Document document;
-            private readonly SyntaxNode invocationNode;
-            private readonly SyntaxNode memberAccessNode;
-            private readonly SyntaxNode nameNode;
-            private readonly string propertyName;
+            private readonly Document _document;
+            private readonly SyntaxNode _invocationNode;
+            private readonly SyntaxNode _memberAccessNode;
+            private readonly SyntaxNode _nameNode;
+            private readonly string _propertyName;
 
             public UsePropertyInsteadOfCountMethodWhenAvailableCodeAction(
                 Document document,
@@ -87,26 +92,29 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 SyntaxNode nameNode,
                 string propertyName)
             {
-                this.document = document;
-                this.invocationNode = invocationNode;
-                this.memberAccessNode = memberAccessNode;
-                this.nameNode = nameNode;
-                this.propertyName = propertyName;
+                this._document = document;
+                this._invocationNode = invocationNode;
+                this._memberAccessNode = memberAccessNode;
+                this._nameNode = nameNode;
+                this._propertyName = propertyName;
             }
 
+            /// <inheritdoc/>
             public override string Title { get; } = MicrosoftNetCoreAnalyzersResources.UsePropertyInsteadOfCountMethodWhenAvailableTitle;
 
+            /// <inheritdoc/>
             public override string EquivalenceKey { get; } = MicrosoftNetCoreAnalyzersResources.UsePropertyInsteadOfCountMethodWhenAvailableTitle;
 
+            /// <inheritdoc/>
             protected sealed override async Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
-                var editor = await DocumentEditor.CreateAsync(this.document, cancellationToken).ConfigureAwait(false);
+                var editor = await DocumentEditor.CreateAsync(this._document, cancellationToken).ConfigureAwait(false);
                 var generator = editor.Generator;
-                var replacementSyntax = generator.ReplaceNode(this.memberAccessNode, this.nameNode, generator.IdentifierName(propertyName))
+                var replacementSyntax = generator.ReplaceNode(this._memberAccessNode, this._nameNode, generator.IdentifierName(_propertyName))
                     .WithAdditionalAnnotations(Formatter.Annotation)
-                    .WithTriviaFrom(this.invocationNode);
+                    .WithTriviaFrom(this._invocationNode);
 
-                editor.ReplaceNode(this.invocationNode, replacementSyntax);
+                editor.ReplaceNode(this._invocationNode, replacementSyntax);
 
                 return editor.GetChangedDocument();
             }

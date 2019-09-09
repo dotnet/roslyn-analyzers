@@ -9,8 +9,10 @@ Imports Microsoft.NetCore.Analyzers.Performance
 Namespace Microsoft.NetCore.VisualBasic.Analyzers.Performance
 
     ''' <summary>
-    ''' CA1829: Use property instead of <see cref="Enumerable.Count(Of TSource)(IEnumerable(Of TSource))"/>, when available.
+    ''' CA1829: C# implementation Of use Property instead Of <see cref="Enumerable.Count(Of TSource)(IEnumerable(Of TSource))"/>, When available.
+    ''' Implements the <see cref="CodeFixProvider" />
     ''' </summary>
+    ''' <seealso cref="UsePropertyInsteadOfCountMethodWhenAvailableFixer"/>
     <ExportCodeFixProvider(LanguageNames.VisualBasic), [Shared]>
     Public NotInheritable Class BasicUsePropertyInsteadOfCountMethodWhenAvailableFixer
         Inherits UsePropertyInsteadOfCountMethodWhenAvailableFixer

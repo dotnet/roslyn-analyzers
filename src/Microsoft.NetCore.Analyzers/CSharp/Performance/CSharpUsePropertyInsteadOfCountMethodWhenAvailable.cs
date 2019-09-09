@@ -9,6 +9,15 @@ using Microsoft.NetCore.Analyzers.Performance;
 
 namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
+    /// <summary>
+    /// CA1829: C# implementation of use property instead of <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>, when available.
+    /// Implements the <see cref="UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer" />
+    /// </summary>
+    /// <remarks>
+    /// Flags the use of <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> on types that are know to have a property with the same semantics:
+    /// <c>Length</c>, <c>Count</c>.
+    /// </remarks>
+    /// <seealso cref="UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer"/>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class CSharpUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer
         : UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer
@@ -39,8 +48,7 @@ namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 
                 if (invocationOperation.Arguments.Length == 1 &&
                     method.Name.Equals(nameof(Enumerable.Count), StringComparison.Ordinal) &&
-                    this.Context.IsEnumerableType(method.ContainingSymbol) &&
-                    ((INamedTypeSymbol)(method.Parameters[0].Type)).TypeArguments[0] is ITypeSymbol methodSourceItemType)
+                    this.Context.IsEnumerableType(method.ContainingSymbol))
                 {
                     return invocationOperation.Arguments[0].Value is IConversionOperation convertionOperation
                         ? convertionOperation.Operand.Type

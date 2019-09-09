@@ -9,8 +9,10 @@ using Microsoft.NetCore.Analyzers.Performance;
 namespace Microsoft.NetCore.CSharp.Analyzers.Performance
 {
     /// <summary>
-    /// CA1829: Use property instead of <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>, when available.
+    /// CA1829: C# implementation of use property instead of <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>, when available.
+    /// Implements the <see cref="CodeFixProvider" />
     /// </summary>
+    /// <seealso cref="UsePropertyInsteadOfCountMethodWhenAvailableFixer"/>
     [ExportCodeFixProvider(LanguageNames.CSharp), Shared]
     public sealed class CSharpUsePropertyInsteadOfCountMethodWhenAvailableFixer : UsePropertyInsteadOfCountMethodWhenAvailableFixer
     {

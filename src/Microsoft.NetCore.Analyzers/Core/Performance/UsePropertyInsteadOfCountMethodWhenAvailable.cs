@@ -12,13 +12,12 @@ namespace Microsoft.NetCore.Analyzers.Performance
 {
     /// <summary>
     /// CA1829: Use property instead of <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>, when available.
-    /// Implements the <see cref="Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer" />
+    /// Implements the <see cref="DiagnosticAnalyzer" />
     /// </summary>
     /// <remarks>
     /// Flags the use of <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> on types that are know to have a property with the same semantics:
     /// <c>Length</c>, <c>Count</c>.
     /// </remarks>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public abstract class UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1829";
@@ -66,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         {
             if (WellKnownTypes.Enumerable(context.Compilation) is INamedTypeSymbol enumerableType)
             {
-                var operationActionsContext = new UsePropertyInsteadOfCountMethodWhenAvailableAnalyzer.OperationActionsContext(
+                var operationActionsContext = new OperationActionsContext(
                     context.Compilation,
                     enumerableType);
 
@@ -83,42 +82,110 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <returns>The operation actions handler.</returns>
         protected abstract OperationActionsHandler CreateOperationActionsHandler(OperationActionsContext context);
 
+        /// <summary>
+        /// Holds the <see cref="Microsoft.CodeAnalysis.Compilation"/> and helper methods.
+        /// </summary>
         protected sealed class OperationActionsContext
         {
             private readonly Lazy<INamedTypeSymbol> _immutableArrayType;
             private readonly Lazy<IPropertySymbol> _iCollectionCountProperty;
             private readonly Lazy<INamedTypeSymbol> _iCollectionOfType;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="OperationActionsContext"/> class.
+            /// </summary>
+            /// <param name="compilation">The compilation.</param>
+            /// <param name="enumerableType">Type of the enumerable.</param>
             public OperationActionsContext(Compilation compilation, INamedTypeSymbol enumerableType)
             {
                 Compilation = compilation;
                 EnumerableType = enumerableType;
                 _immutableArrayType = new Lazy<INamedTypeSymbol>(() => WellKnownTypes.ImmutableArray(Compilation), true);
-                _iCollectionCountProperty = new Lazy<IPropertySymbol>(() => WellKnownTypes.ICollection(Compilation)?.GetMembers(CountPropertyName).OfType<IPropertySymbol>().Single(), true);
+                _iCollectionCountProperty = new Lazy<IPropertySymbol>(ResolveICollectionCountProperty, true);
                 _iCollectionOfType = new Lazy<INamedTypeSymbol>(() => WellKnownTypes.GenericICollection(Compilation), true);
             }
 
+            /// <summary>
+            /// Gets the <see cref="Microsoft.CodeAnalysis.Compilation"/>.
+            /// </summary>
+            /// <value>The <see cref="Microsoft.CodeAnalysis.Compilation"/>.</value>
             internal Compilation Compilation { get; }
 
             private INamedTypeSymbol EnumerableType { get; }
 
+            /// <summary>
+            /// Gets the <see cref="System.Collections.ICollection.Count"/> property.
+            /// </summary>
+            /// <value>The <see cref="System.Collections.ICollection.Count"/> property.</value>
             private IPropertySymbol ICollectionCountProperty => _iCollectionCountProperty.Value;
 
+            /// <summary>
+            /// Gets the type of the <see cref="System.Collections.Immutable.ImmutableArray{TSource}"/> type.
+            /// </summary>
+            /// <value>The <see cref="System.Collections.Immutable.ImmutableArray{TSource}"/> type.</value>
             private INamedTypeSymbol ICollectionOfTType => _iCollectionOfType.Value;
 
+            /// <summary>
+            /// Gets the type of the <see cref="System.Collections.Generic.ICollection{TSource}"/> type.
+            /// </summary>
+            /// <value>The <see cref="System.Collections.Generic.ICollection{TSource}"/> type.</value>
             internal INamedTypeSymbol ImmutableArrayType => _immutableArrayType.Value;
 
+            /// <summary>
+            /// Gets the type of the <see cref="System.Collections.ICollection.Count"/> property, if one and only one exists.
+            /// </summary>
+            /// <returns>The <see cref="System.Collections.ICollection.Count"/> property.</returns>
+            private IPropertySymbol ResolveICollectionCountProperty()
+            {
+                IPropertySymbol countProperty = null;
+
+                if (WellKnownTypes.ICollection(Compilation) is INamedTypeSymbol iCollectionType)
+                {
+                    foreach (var member in iCollectionType.GetMembers())
+                    {
+                        if (member is IPropertySymbol property && property.Name.Equals(CountPropertyName, StringComparison.Ordinal))
+                        {
+                            if (countProperty is null)
+                            {
+                                countProperty = property;
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                }
+
+                return countProperty;
+            }
+
+            /// <summary>
+            /// Determines whether the specified type symbol is the immutable array generic type.
+            /// </summary>
+            /// <param name="typeSymbol">The type symbol.</param>
+            /// <returns><see langword="true" /> if the specified type symbol is the immutable array generic type; otherwise, <see langword="false" />.</returns>
             internal bool IsImmutableArrayType(ITypeSymbol typeSymbol)
                 => this.ImmutableArrayType is object &&
                     typeSymbol is INamedTypeSymbol namedTypeSymbol &&
                     namedTypeSymbol.ConstructedFrom is INamedTypeSymbol constructedFrom &&
                     constructedFrom.Equals(this.ImmutableArrayType);
 
+            /// <summary>
+            /// Determines whether the specified invocation target implements <see cref="System.Collections.ICollection"/>.
+            /// </summary>
+            /// <param name="invocationTarget">The invocation target.</param>
+            /// <returns><see langword="true" /> if the specified invocation target implements <see cref="System.Collections.ICollection"/>; otherwise, <see langword="false" />.</returns>
             internal bool IsICollectionImplementation(ITypeSymbol invocationTarget)
                 => this.ICollectionCountProperty is object &&
                     invocationTarget.FindImplementationForInterfaceMember(this.ICollectionCountProperty) is IPropertySymbol countProperty &&
                     !countProperty.ExplicitInterfaceImplementations.Any();
 
+            /// <summary>
+            /// Determines whether the specified invocation target implements System.Collections.Generic.ICollection{TSource}.
+            /// </summary>
+            /// <param name="invocationTarget">The invocation target.</param>
+            /// <returns><see langword="true" /> if the specified invocation target implements System.Collections.Generic.ICollection{TSource}; otherwise, <see langword="false" />.</returns>
             internal bool IsICollectionOfTImplementation(ITypeSymbol invocationTarget)
             {
                 if (ICollectionOfTType is null)
@@ -169,6 +236,11 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     => this.ICollectionOfTType.Equals(type.OriginalDefinition);
             }
 
+            /// <summary>
+            /// Determines whether [is enumerable type] [the specified symbol].
+            /// </summary>
+            /// <param name="symbol">The symbol.</param>
+            /// <returns><see langword="true" /> if [is enumerable type] [the specified symbol]; otherwise, <see langword="false" />.</returns>
             internal bool IsEnumerableType(ISymbol symbol)
                 => this.EnumerableType.Equals(symbol);
         }
@@ -178,11 +250,19 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// </summary>
         protected abstract class OperationActionsHandler
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="OperationActionsHandler"/> class.
+            /// </summary>
+            /// <param name="context">The context.</param>
             protected OperationActionsHandler(OperationActionsContext context)
             {
                 Context = context;
             }
 
+            /// <summary>
+            /// Gets the context.
+            /// </summary>
+            /// <value>The context.</value>
             protected OperationActionsContext Context { get; }
 
             internal void AnalyzeInvocationOperation(OperationAnalysisContext context)
@@ -205,8 +285,18 @@ namespace Microsoft.NetCore.Analyzers.Performance
                 }
             }
 
+            /// <summary>
+            /// Gets the type of the receiver of the <see cref="Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>.
+            /// </summary>
+            /// <param name="invocationOperation">The invocation operation.</param>
+            /// <returns>The <see cref="ITypeSymbol"/> of the receiver of the extension method.</returns>
             protected abstract ITypeSymbol GetEnumerableCountInvocationTargetType(IInvocationOperation invocationOperation);
 
+            /// <summary>
+            /// Gets the replacement property.
+            /// </summary>
+            /// <param name="invocationTarget">The invocation target.</param>
+            /// <returns>The name of the replacement property.</returns>
             private string GetReplacementProperty(ITypeSymbol invocationTarget)
             {
                 if ((invocationTarget.TypeKind == TypeKind.Array) || Context.IsImmutableArrayType(invocationTarget))

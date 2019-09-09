@@ -232,11 +232,26 @@ public static class C
 ");
 
         [Theory]
+        [InlineData("System.Collections.Generic.IEnumerable(Of Integer)")]
+        public static Task Basic_NoDiagnostic(string type)
+            => VerifyVB.VerifyAnalyzerAsync(
+                $@"Imports System
+Imports System.Linq
+Public Module M
+    Public Function GetData() As {type}
+        Return Nothing
+    End Function
+    Public Function F() As Integer
+        Return GetData().Count()
+    End Function
+End Module
+");
+
+        [Theory]
         [InlineData("System.Collections.Generic.List(Of Integer)")]
         [InlineData("System.Collections.Generic.IList(Of Integer)")]
         [InlineData("System.Collections.Generic.ICollection(Of Integer)")]
-        [InlineData("System.Collections.Generic.IEnumerable(Of Integer)")]
-        public static Task Basic_NoDiagnostic(string type)
+        public static Task Basic_PropertyInvocationWithParenthesis_NoDiagnostic(string type)
             => VerifyVB.VerifyAnalyzerAsync(
                 $@"Imports System
 Imports System.Linq

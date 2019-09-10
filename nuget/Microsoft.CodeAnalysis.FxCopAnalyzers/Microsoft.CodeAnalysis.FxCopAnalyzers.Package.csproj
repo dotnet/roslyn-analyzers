@@ -42,8 +42,6 @@
     <AnalyzerLegacyRuleset Include="LegacyRulesets\GlobalizationRules.ruleset" />
     <AnalyzerLegacyRuleset Include="LegacyRulesets\ManagedMinimumRules.ruleset" />
     <AnalyzerLegacyRuleset Include="LegacyRulesets\MinimumRecommendedRules.ruleset" />
-    <AnalyzerLegacyRuleset Include="LegacyRulesets\Sdl-7.1.Recommended.ruleset" />
-    <AnalyzerLegacyRuleset Include="LegacyRulesets\Sdl-7.1.Required.ruleset" />
     <AnalyzerLegacyRuleset Include="LegacyRulesets\SecurityRules.ruleset" />
   </ItemGroup>
 

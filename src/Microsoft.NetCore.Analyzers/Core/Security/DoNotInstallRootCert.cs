@@ -28,7 +28,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyInstallRootCert),
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyInstallRootCertMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5380",
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotInstallRootCertDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor MaybeInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
@@ -37,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeInstallRootCert),
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeInstallRootCertMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5381",
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotInstallRootCertDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 

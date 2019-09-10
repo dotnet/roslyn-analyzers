@@ -214,6 +214,7 @@ if (legacyRulesets.Length > 0)
     }
 }
 
+result.AppendLine(FileElement(Path.Combine(assetsDir, "EULA.rtf"), ""));
 result.AppendLine(FileElement(Path.Combine(assetsDir, "ThirdPartyNotices.rtf"), ""));
 result.AppendLine(@"  </files>");
 

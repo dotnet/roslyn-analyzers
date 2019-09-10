@@ -1,4 +1,16 @@
 <!-- Copyright (c)  Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information. -->
 <Project>
   <Import Project="Sdk.targets" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+
+  <!-- Add License and Third Party Notices files into each VSIX. -->
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)\assets\EULA.rtf">
+      <Link>EULA.rtf</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)\assets\ThirdPartyNotices.rtf">
+       <Link>ThirdPartyNotices.rtf</Link>
+       <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
 </Project>

@@ -51,6 +51,7 @@ namespace ReleaseNotesUtil
             IEnumerable<string> dllPaths = GetFxCopAnalyzerBinaries(nugetInstalledPackagesPath, version);
             RuleFileContent ruleFileContent = new RuleFileContent();
             ruleFileContent.Rules = GetRules(dllPaths);
+            ruleFileContent.Rules.Sort(CategoryThenIdComparer.Instance);
             WriteRuleFileContent(ruleFileContent, outputPath);
         }
 

@@ -152,36 +152,6 @@
         <target state="new">HttpClient may be created without enabling CheckCertificateRevocationList</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
-        <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="translated">對於非空白集合，CountAsync() 和 LongCountAsync() 會列舉整個序列，而 AnyAsync() 則會停止於第一個項目或第一個符合條件的項目。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
-        <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
-        <target state="translated">會在可使用 AnyAsync() 的地方改用 {0}() 來提升效能。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
-        <source>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</source>
-        <target state="translated">不要在可使用 AnyAsync() 時使用 CountAsync() 或 LongCountAsync()</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
-        <source>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="translated">對於非空白集合，Count() 和 LongCount() 會列舉整個序列，而 Any() 則會停止於第一個項目或第一個符合條件的項目。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
-        <source>{0}() is used where Any() could be used instead to improve performance.</source>
-        <target state="translated">會在可使用 Any() 的地方改用 {0}() 來提升效能。</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
-        <source>Do not use Count() or LongCount() when Any() can be used</source>
-        <target state="translated">不要在可使用 Any() 時使用 Count() 或 LongCount()</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
         <target state="translated">直接利用使用者輸入的 SQL 查詢，有可能會受到插入 SQL 的攻擊。請檢閱此 SQL 查詢是否有潛在的弱點，並請考慮使用參數化的 SQL 查詢。</target>

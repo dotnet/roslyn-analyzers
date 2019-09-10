@@ -152,36 +152,6 @@
         <target state="new">HttpClient may be created without enabling CheckCertificateRevocationList</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
-        <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="translated">비어 있지 않은 컬렉션의 경우 CountAsync() 및 LongCountAsync()는 전체 시퀀스를 열거하고, AnyAsync()는 첫 번째 항목 또는 조건을 충족하는 첫 번째 항목에서 중지합니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
-        <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
-        <target state="translated">{0}()는 성능 개선을 위해 AnyAsync()를 대신 사용할 수 있는 경우에 사용됩니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
-        <source>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</source>
-        <target state="translated">AnyAsync()를 사용할 수 있는 경우 CountAsync() 또는 LongCountAsync() 사용 안 함</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
-        <source>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="translated">비어 있지 않은 컬렉션의 경우 Count() 및 LongCount()는 전체 시퀀스를 열거하고, Any()는 첫 번째 항목 또는 조건을 충족하는 첫 번째 항목에서 중지합니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
-        <source>{0}() is used where Any() could be used instead to improve performance.</source>
-        <target state="translated">{0}()는 성능 개선을 위해 Any()를 대신 사용할 수 있는 경우에 사용됩니다.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
-        <source>Do not use Count() or LongCount() when Any() can be used</source>
-        <target state="translated">Any()를 사용할 수 있는 경우 Count() 또는 LongCount() 사용 안 함</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
         <target state="translated">사용자 입력을 직접 사용하는 SQL 쿼리는 SQL 삽입 공격에 취약할 수 있습니다. 이 SQL 쿼리에 잠재적인 취약성이 있는지 검토하고 매개 변수화된 SQL 쿼리를 사용하는 것이 좋습니다.</target>

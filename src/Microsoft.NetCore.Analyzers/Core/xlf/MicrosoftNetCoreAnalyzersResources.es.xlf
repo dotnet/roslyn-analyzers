@@ -152,36 +152,6 @@
         <target state="new">HttpClient may be created without enabling CheckCertificateRevocationList</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
-        <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="translated">Para colecciones no vacías, CountAsync() y LongCountAsync() enumeran la secuencia completa, mientras que AnyAsync() se detiene en el primer elemento o en el primer elemento que satisface una condición.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedMessage">
-        <source>{0}() is used where AnyAsync() could be used instead to improve performance.</source>
-        <target state="translated">Se usa {0}() donde podría usarse AnyAsync() y mejorar el rendimiento.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedTitle">
-        <source>Do not use CountAsync() or LongCountAsync() when AnyAsync() can be used</source>
-        <target state="translated">No usar CountAsync() ni LongCountAsync() si se puede usar AnyAsync()</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedDescription">
-        <source>For non-empty collections, Count() and LongCount() enumerate the entire sequence, while Any() stops at the first item or the first item that satisfies a condition.</source>
-        <target state="translated">Para colecciones no vacías, Count() y LongCount() enumeran la secuencia completa, mientras que Any() se detiene en el primer elemento o en el primer elemento que satisface una condición.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedMessage">
-        <source>{0}() is used where Any() could be used instead to improve performance.</source>
-        <target state="translated">Se usa {0}() donde podría usarse Any() y mejorar el rendimiento.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCountWhenAnyCanBeUsedTitle">
-        <source>Do not use Count() or LongCount() when Any() can be used</source>
-        <target state="translated">No usar Count() ni LongCount() si se puede usar Any()</target>
-        <note />
-      </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
         <target state="translated">Las consultas SQL que usan los datos del usuario directamente pueden ser vulnerables a ataques por inyección de código SQL. Revise la consulta SQL en busca de posibles vulnerabilidades y considere la posibilidad de usar una consulta SQL parametrizada.</target>

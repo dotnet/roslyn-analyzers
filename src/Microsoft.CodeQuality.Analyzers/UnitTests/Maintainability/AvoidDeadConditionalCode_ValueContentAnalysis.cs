@@ -2640,5 +2640,37 @@ Module Test
     End Sub
 End Module");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueContentAnalysis_MergeForUnreachableCode()
+        {
+            var editorconfig = "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive";
+
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void Load(C c1, C c2)
+    {
+        var x = c1 ?? c2;
+        this.Load(null);
+    }
+
+    public void Load(Uri productFileUrl, Uri originalLocation = null)
+    {
+        if (productFileUrl == null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        Uri feedLocationUri = originalLocation ?? productFileUrl;
+
+        _ = feedLocationUri.LocalPath;
+    }
+}
+", GetEditorConfigAdditionalFile(editorconfig));
+        }
     }
 }

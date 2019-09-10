@@ -1709,7 +1709,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersDescription">
         <source>Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.</source>
-        <target state="needs-review-translation">Una firma di metodo include un parametro non usato nel corpo del metodo.</target>
+        <target state="translated">Evitare parametri inutilizzati nel codice. Se non è possibile rimuovere il parametro, modificarne il nome in modo che inizi con un carattere di sottolineatura e, facoltativamente, sia seguito da un numero intero, seguito da un numero intero, ad esempio '_', '_1', '_1', '_2' e così via. Questi vengono considerati come nomi di simboli speciali di rimozione.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">
@@ -1809,7 +1809,7 @@
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentTitle">
         <source>Do not assign a property to itself.</source>
-        <target state="translated">Non assegnare una proprietà a se stessa.</target>
+        <target state="translated">Non assegnare una proprietà a se stessa. </target>
         <note />
       </trans-unit>
       <trans-unit id="MarkMembersAsStaticCodeFix">

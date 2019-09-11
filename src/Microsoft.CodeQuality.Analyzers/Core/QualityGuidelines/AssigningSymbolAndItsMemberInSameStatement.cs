@@ -17,9 +17,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     {
         internal const string RuleId = "CA2246";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementTitle), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementMessage), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AssigningSymbolAndItsMemberInSameStatementDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
             s_localizableTitle,
@@ -33,6 +33,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterOperationAction(AnalyzeAssignment, OperationKind.SimpleAssignment);
         }
 
@@ -56,15 +59,15 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             bool isViolationFound = false;
             if (operationTarget.Instance is ILocalReferenceOperation localInstance)
             {
-                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, localInstance, (a, b) => a.Local == b.Local);
+                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, localInstance, (a, b) => a.Local.Equals(b.Local));
             }
             else if (operationTarget.Instance is IMemberReferenceOperation memberInstance)
             {
-                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, memberInstance, (a, b) => a.Member == b.Member && a.Instance?.Syntax.ToString() == b.Instance?.Syntax.ToString());
+                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, memberInstance, (a, b) => a.Member.Equals(b.Member) && a.Instance?.Syntax.ToString() == b.Instance?.Syntax.ToString());
             }
             else if (operationTarget.Instance is IParameterReferenceOperation parameterInstance)
             {
-                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, parameterInstance, (a, b) => a.Parameter == b.Parameter);
+                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, parameterInstance, (a, b) => a.Parameter.Equals(b.Parameter));
             }
             else
             {

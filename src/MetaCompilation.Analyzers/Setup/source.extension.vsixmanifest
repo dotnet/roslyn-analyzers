@@ -5,6 +5,7 @@
     <Identity Id="5c6391a0-1c50-455e-af26-4625f610bc62" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft DevLabs"/>
     <DisplayName>MetaCompilation Analyzers</DisplayName>
     <Description xml:space="preserve">This is a sample diagnostic extension for the .NET Compiler Platform ("Roslyn").</Description>
+    <License>EULA.rtf</License>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0.0.0,17.0.0.0)" />

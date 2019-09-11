@@ -2935,6 +2935,7 @@
           "shortDescription": "Do Not Add Schema By URL",
           "fullDescription": "This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3061",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3083,6 +3084,7 @@
           "shortDescription": "Do Not Disable Request Validation",
           "fullDescription": "Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5363",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3192,6 +3194,7 @@
           "shortDescription": "Use XmlReader For Deserialize",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5369",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3210,6 +3213,7 @@
           "shortDescription": "Use XmlReader For Validating Reader",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5370",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3228,6 +3232,7 @@
           "shortDescription": "Use XmlReader For Schema Read",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5371",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3246,6 +3251,7 @@
           "shortDescription": "Use XmlReader For XPathDocument",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5372",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3264,6 +3270,7 @@
           "shortDescription": "Do not use obsolete key derivation function",
           "fullDescription": "Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5373",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3394,6 +3401,7 @@
           "shortDescription": "Do Not Add Certificates To Root Store",
           "fullDescription": "By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5380",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3413,6 +3421,7 @@
           "shortDescription": "Ensure Certificates Are Not Added To Root Store",
           "fullDescription": "By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5381",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -3563,9 +3572,10 @@
           "shortDescription": "Do Not Add Archive Item's Path To The Target File System Path",
           "fullDescription": "When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5389",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotAddArchiveItemPathToTheTargetFileSystemPath",
             "languages": [
               "C#",
@@ -3584,7 +3594,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotHardCodeEncryptionKey",
             "languages": [
               "C#",

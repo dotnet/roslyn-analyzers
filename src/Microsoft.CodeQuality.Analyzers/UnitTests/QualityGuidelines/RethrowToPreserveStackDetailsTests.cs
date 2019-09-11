@@ -142,6 +142,49 @@ End Class
         }
 
         [Fact]
+        public void CA2200_NoDiagnosticsForThrowCaughtReassignedException()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitlyReassigned()
+    {
+        try
+        {
+            ThrowException();
+        }
+        catch (SystemException e)
+        { 
+            e = new ArithmeticException();
+            throw e;
+        }
+    }
+
+    void ThrowException()
+    {
+        throw new SystemException();
+    }
+}
+");
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New Exception()
+        Catch e As Exception
+            e = New ArithmeticException()
+            Throw e
+        End Try
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
         public void CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScope()
         {
             VerifyCSharp(@"

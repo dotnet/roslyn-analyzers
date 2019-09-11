@@ -78,13 +78,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIV">
-        <source>Do not use CreateEncryptor with non default IV</source>
-        <target state="new">Do not use CreateEncryptor with non default IV</target>
+        <source>Do not use CreateEncryptor with non-default IV</source>
+        <target state="new">Do not use CreateEncryptor with non-default IV</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage">
-        <source>Symmetric encryption uses potentially repeatable initialization vector</source>
-        <target state="new">Symmetric encryption uses potentially repeatable initialization vector</target>
+        <source>Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</source>
+        <target state="new">Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
@@ -168,13 +168,13 @@
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIV">
-        <source>Ensure use CreateEncryptor with the default IV </source>
-        <target state="new">Ensure use CreateEncryptor with the default IV </target>
+        <source>Use CreateEncryptor with the default IV </source>
+        <target state="new">Use CreateEncryptor with the default IV </target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIVMessage">
-        <source>Non default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</source>
-        <target state="new">Non default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</target>
+        <source>The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</source>
+        <target state="new">The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">

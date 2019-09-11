@@ -1180,16 +1180,16 @@
     <value>HttpClient may be created without enabling CheckCertificateRevocationList</value>
   </data>
   <data name="DefinitelyUseCreateEncryptorWithNonDefaultIV" xml:space="preserve">
-    <value>Do not use CreateEncryptor with non default IV</value>
+    <value>Do not use CreateEncryptor with non-default IV</value>
   </data>
   <data name="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage" xml:space="preserve">
-    <value>Symmetric encryption uses potentially repeatable initialization vector</value>
+    <value>Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</value>
   </data>
   <data name="MaybeUseCreateEncryptorWithNonDefaultIV" xml:space="preserve">
-    <value>Ensure use CreateEncryptor with the default IV </value>
+    <value>Use CreateEncryptor with the default IV </value>
   </data>
   <data name="MaybeUseCreateEncryptorWithNonDefaultIVMessage" xml:space="preserve">
-    <value>Non default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</value>
+    <value>The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</value>
   </data>
   <data name="DoNotUseCreateEncryptorWithNonDefaultIVDescription" xml:space="preserve">
     <value>Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</value>

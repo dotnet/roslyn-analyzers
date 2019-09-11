@@ -24,7 +24,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             "CA5401",
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseCreateEncryptorWithNonDefaultIV),
             nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyUseCreateEncryptorWithNonDefaultIVMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCreateEncryptorWithNonDefaultIVDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
@@ -32,7 +32,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             "CA5402",
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseCreateEncryptorWithNonDefaultIV),
             nameof(MicrosoftNetCoreAnalyzersResources.MaybeUseCreateEncryptorWithNonDefaultIVMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseCreateEncryptorWithNonDefaultIVDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
@@ -60,11 +60,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 "CreateEncryptor",
                 (IMethodSymbol methodSymbol, PropertySetAbstractValue abstractValue) =>
                 {
+                    // The passed rgbIV can't be null cause CreateEncryptor method has an ANE exception.
+                    // It definitely uses a non-default IV and will be flagged a diagnostic directly without PropertySetAnalysis.
+                    // So, it returns Unflagged to avoid repeated diagnostic.
                     if (methodSymbol.Parameters.Length != 0)
                     {
                         return HazardousUsageEvaluationResult.Unflagged;
                     }
-                    else
+                    else //Only look into the case using CreateEncryptor() and see if the property IV is set manually.
                     {
                         return PropertySetCallbacks.HazardousIfAllFlaggedAndAtLeastOneKnown(abstractValue);
                     }

@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.Analyzers.QualityGuidelines;
 using Test.Utilities;
 using Xunit;
@@ -20,16 +19,6 @@ namespace Microsoft.CodeQuality.Analyzers.UnitTests.QualityGuidelines
             return new AssigningSymbolAndItsMemberInSameStatement();
         }
 
-        private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
-        {
-            return GetCSharpResultAt(line, column, AssigningSymbolAndItsMemberInSameStatement.Rule, symbolName);
-        }
-
-        private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
-        {
-            return GetBasicResultAt(line, column, AssigningSymbolAndItsMemberInSameStatement.Rule, symbolName);
-        }
-
         [Fact]
         public void CSharpReassignLocalVariableAndReferToItsField()
         {
@@ -43,12 +32,12 @@ public class Test
 {
     public void Method()
     {
-        C a, b;
+        C a = new C(), b = new C();
         a.Field = a = b;
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "a", "Field"));
+            GetCSharpResultAt(12, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "a", "Field"));
         }
 
         [Fact]
@@ -64,12 +53,12 @@ public class Test
 {
     public void Method()
     {
-        C a, b, c;
+        C a = new C(), b = new C(), c;
         a.Property = c = a = b;
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "a", "Property"));
+            GetCSharpResultAt(12, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "a", "Property"));
         }
 
         [Fact]
@@ -85,12 +74,12 @@ public class Test
 {
     public void Method()
     {
-        C a, b;
+        C a = new C(), b = new C();
         a.Property.Property = a.Property = b;
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "a.Property", "Property"));
+            GetCSharpResultAt(12, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "a.Property", "Property"));
         }
 
         [Fact]
@@ -106,13 +95,13 @@ public class Test
 {
     public void Method()
     {
-        C a, b;
+        C a = new C(), b = new C();
         a.Property.Property = a.Property = a = b;
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "a.Property", "Property"),
-            GetCSharpResultAt(12, 31, "a", "Property"));
+            GetCSharpResultAt(12, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "a.Property", "Property"),
+            GetCSharpResultAt(12, 31, AssigningSymbolAndItsMemberInSameStatement.Rule, "a", "Property"));
         }
 
         [Fact]
@@ -134,7 +123,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "x", "Field"));
+            GetCSharpResultAt(13, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "x", "Field"));
         }
 
         [Fact]
@@ -156,7 +145,7 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "x.Property", "Property"));
+            GetCSharpResultAt(13, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "x.Property", "Property"));
         }
 
         [Fact]
@@ -178,8 +167,8 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(13, 9, "x.Property", "Property"),
-            GetCSharpResultAt(13, 31, "x", "Property"));
+            GetCSharpResultAt(13, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "x.Property", "Property"),
+            GetCSharpResultAt(13, 31, AssigningSymbolAndItsMemberInSameStatement.Rule, "x", "Property"));
         }
 
 
@@ -203,8 +192,8 @@ public class Test
     }
 }
 ",
-            GetCSharpResultAt(14, 9, "x.Property", "Property"),
-            GetCSharpResultAt(14, 31, "x", "Property"));
+            GetCSharpResultAt(14, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "x.Property", "Property"),
+            GetCSharpResultAt(14, 31, AssigningSymbolAndItsMemberInSameStatement.Rule, "x", "Property"));
         }
 
         [Fact]
@@ -220,7 +209,7 @@ public class Test
 {
     public void Method()
     {
-        C a, b;
+        C a = new C(), b;
         a.Property = b = a;
     }
 }
@@ -240,7 +229,7 @@ public class Test
 {
     public void Method()
     {
-        C a, b, c;
+        C a = new C(), b = new C(), c;
         b.Property.Property = a.Property = b;
     }
 }
@@ -260,7 +249,7 @@ public class Test
 {
     public void Method()
     {
-        C a, b, c;
+        C a = new C(), b = new C(), c = new C();
         b.Property.Property = a.Property = c;
     }
 }
@@ -280,12 +269,12 @@ public class Test
 {
     public void Method(C b)
     {
-        C a;
+        C a = new C();
         b.Property = b = a;
     }
 }
 ",
-            GetCSharpResultAt(12, 9, "b", "Property"));
+            GetCSharpResultAt(12, 9, AssigningSymbolAndItsMemberInSameStatement.Rule, "b", "Property"));
         }
 
         [Fact]
@@ -305,7 +294,7 @@ public class Test
         a.Field = a = b;
     }
 }
-");
+", TestValidationMode.AllowCompileErrors);
         }
 
         [Fact]
@@ -325,7 +314,7 @@ public class Test
         a.Property = c = a = b;
     }
 }
-");
+", TestValidationMode.AllowCompileErrors);
         }
     }
 }

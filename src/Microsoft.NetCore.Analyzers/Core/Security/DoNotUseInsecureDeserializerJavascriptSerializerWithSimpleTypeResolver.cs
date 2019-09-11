@@ -54,15 +54,12 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
-            switch (propertySetAbstractValue[0])
+            return (propertySetAbstractValue[0]) switch
             {
-                case PropertySetAbstractValueKind.Flagged:
-                    return HazardousUsageEvaluationResult.Flagged;
-                case PropertySetAbstractValueKind.Unflagged:
-                    return HazardousUsageEvaluationResult.Unflagged;
-                default:
-                    return HazardousUsageEvaluationResult.MaybeFlagged;
-            }
+                PropertySetAbstractValueKind.Flagged => HazardousUsageEvaluationResult.Flagged,
+                PropertySetAbstractValueKind.Unflagged => HazardousUsageEvaluationResult.Unflagged,
+                _ => HazardousUsageEvaluationResult.MaybeFlagged,
+            };
         }
 
         public override void Initialize(AnalysisContext context)

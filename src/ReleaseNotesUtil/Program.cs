@@ -49,8 +49,10 @@ namespace ReleaseNotesUtil
         private static void GetRulesJson(string nugetInstalledPackagesPath, string version, string outputPath)
         {
             IEnumerable<string> dllPaths = GetFxCopAnalyzerBinaries(nugetInstalledPackagesPath, version);
-            RuleFileContent ruleFileContent = new RuleFileContent();
-            ruleFileContent.Rules = GetRules(dllPaths);
+            RuleFileContent ruleFileContent = new RuleFileContent
+            {
+                Rules = GetRules(dllPaths)
+            };
             ruleFileContent.Rules.Sort(CategoryThenIdComparer.Instance);
             WriteRuleFileContent(ruleFileContent, outputPath);
         }
@@ -65,13 +67,13 @@ namespace ReleaseNotesUtil
             RuleFileContent newContent = ReadRuleFileContent(newRulesJsonPath);
 
             // If we have the latest rules, we can backfill missing help link URLs.
-            if (!String.IsNullOrWhiteSpace(latestRulesJsonPath))
+            if (!string.IsNullOrWhiteSpace(latestRulesJsonPath))
             {
                 RuleFileContent latestContent = ReadRuleFileContent(latestRulesJsonPath);
                 Dictionary<string, RuleInfo> latestRulesById = latestContent.Rules.ToDictionary(r => r.Id);
                 foreach (RuleInfo rule in oldContent.Rules.Concat(newContent.Rules))
                 {
-                    if (String.IsNullOrWhiteSpace(rule.HelpLink)
+                    if (string.IsNullOrWhiteSpace(rule.HelpLink)
                         && latestRulesById.TryGetValue(rule.Id, out RuleInfo latestRule))
                     {
                         rule.HelpLink = latestRule.HelpLink;

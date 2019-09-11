@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities.Extensions;
@@ -92,95 +93,44 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
-
-                                    if (!sourceInfoSymbolMap.IsSourceMethodFast(
-                                            invocationOperation.TargetMethod,
-                                            invocationOperation.Arguments,
-                                            out bool isSourceMethod,
-                                            out bool requiresPointsTo,
-                                            out bool requiresValueContent))
-                                    {
-                                        return;
-                                    }
-
                                     IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
-
-                                    if (isSourceMethod)
-                                    {
-                                        lock (rootOperationsNeedingAnalysis)
-                                        {
-                                            rootOperationsNeedingAnalysis.Add(rootOperation);
-                                        }
-
-                                        return;
-                                    }
-                                    else if (!requiresPointsTo && !requiresValueContent)
-                                    {
-                                        return;
-                                    }
-
-                                    PooledDictionary<PointsToCheck, ImmutableHashSet<string>> evaluateWithPointsToAnalysis = null;
-                                    PooledDictionary<ValueContentCheck, ImmutableHashSet<string>> evaluateWithValueContentAnalysis = null;
-                                    PointsToAnalysisResult pointsToAnalysisResult = null;
-                                    ValueContentAnalysisResult valueContentAnalysisResult = null;
                                     if (rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
-                                    {
-                                        pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(
-                                            cfg,
-                                            owningSymbol,
-                                            operationAnalysisContext.Options,
-                                            WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
-                                            InterproceduralAnalysisConfiguration.Create(
-                                                operationAnalysisContext.Options,
-                                                SupportedDiagnostics,
-                                                defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                                cancellationToken: operationAnalysisContext.CancellationToken),
-                                            interproceduralAnalysisPredicateOpt: null);
-                                        if (pointsToAnalysisResult == null)
-                                        {
-                                            return;
-                                        }
-                                    }
-
-                                    if (requiresValueContent)
-                                    {
-                                        valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
-                                            cfg,
-                                            owningSymbol,
-                                            operationAnalysisContext.Options,
-                                            WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
-                                            InterproceduralAnalysisConfiguration.Create(
-                                                operationAnalysisContext.Options,
-                                                SupportedDiagnostics,
-                                                defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                                cancellationToken: operationAnalysisContext.CancellationToken),
-                                            out var copyAnalysisResult,
-                                            out pointsToAnalysisResult);
-                                        if (valueContentAnalysisResult == null)
-                                        {
-                                            return;
-                                        }
-                                    }
-
-                                    try
                                     {
                                         if (sourceInfoSymbolMap.IsSourceMethod(
                                                 invocationOperation.TargetMethod,
                                                 invocationOperation.Arguments,
-                                                invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
-                                                invocationOperation.Arguments.Select(o => valueContentAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
-                                            out _))
+                                                new Lazy<PointsToAnalysisResult>(() =>
+                                                    PointsToAnalysis.TryGetOrComputeResult(
+                                                        cfg,
+                                                        owningSymbol,
+                                                        operationAnalysisContext.Options,
+                                                        WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
+                                                        InterproceduralAnalysisConfiguration.Create(
+                                                            operationAnalysisContext.Options,
+                                                            SupportedDiagnostics,
+                                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                            cancellationToken: operationAnalysisContext.CancellationToken),
+                                                        interproceduralAnalysisPredicateOpt: null)),
+                                                new Lazy<ValueContentAnalysisResult>(() =>
+                                                    ValueContentAnalysis.TryGetOrComputeResult(
+                                                        cfg,
+                                                        owningSymbol,
+                                                        operationAnalysisContext.Options,
+                                                        WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
+                                                        InterproceduralAnalysisConfiguration.Create(
+                                                            operationAnalysisContext.Options,
+                                                            SupportedDiagnostics,
+                                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                            cancellationToken: operationAnalysisContext.CancellationToken),
+                                                        out _,
+                                                        out _)),
+                                                out _))
                                         {
                                             lock (rootOperationsNeedingAnalysis)
                                             {
                                                 rootOperationsNeedingAnalysis.Add(rootOperation);
                                             }
                                         }
-                                    }
-                                    finally
-                                    {
-                                        evaluateWithPointsToAnalysis?.Free();
-                                        evaluateWithValueContentAnalysis?.Free();
                                     }
                                 },
                                 OperationKind.Invocation);
@@ -217,7 +167,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                                             foreach (IOperation rootOperation in rootOperationsNeedingAnalysis)
                                             {
-                                                if (!rootOperation.TryGetEnclosingControlFlowGraph(out var cfg))
+                                                if (!rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
                                                 {
                                                     continue;
                                                 }

@@ -55,10 +55,12 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
 
         Private Shared Function IsCaughtLocalThrown(semanticModel As SemanticModel, catchStatement As CatchStatementSyntax, throwExpression As ExpressionSyntax) As Boolean
             Dim local = TryCast(semanticModel.GetSymbolInfo(throwExpression).Symbol, ILocalSymbol)
-            Dim catchBlock = TryCast(catchStatement.Parent, CatchBlockSyntax)
+            Dim catchBlock = DirectCast(catchStatement.Parent, CatchBlockSyntax)
             If local Is Nothing _
                     OrElse local.Locations.Length = 0 _
-                    OrElse semanticModel.AnalyzeDataFlow(catchBlock?.Statements.First, catchBlock?.Statements.Last).WrittenInside.Contains(local) Then
+                    OrElse catchBlock Is Nothing _
+                    OrElse catchBlock.Statements.Count = 0 _
+                    OrElse semanticModel.AnalyzeDataFlow(catchBlock.Statements.First, catchBlock.Statements.Last).WrittenInside.Contains(local) Then
                 Return False
             End If
 

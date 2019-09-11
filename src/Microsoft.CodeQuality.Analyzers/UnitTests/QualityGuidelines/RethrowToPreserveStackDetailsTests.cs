@@ -185,6 +185,47 @@ End Class
         }
 
         [Fact]
+        public void CA2200_NoDiagnosticsForEmptyBlock()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitlyReassigned()
+    {
+        try
+        {
+            ThrowException();
+        }
+        catch (SystemException e)
+        { 
+
+        }
+    }
+
+    void ThrowException()
+    {
+        throw new SystemException();
+    }
+}
+");
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New Exception()
+        Catch e As Exception
+
+        End Try
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
         public void CA2200_NoDiagnosticsForThrowCaughtExceptionInAnotherScope()
         {
             VerifyCSharp(@"

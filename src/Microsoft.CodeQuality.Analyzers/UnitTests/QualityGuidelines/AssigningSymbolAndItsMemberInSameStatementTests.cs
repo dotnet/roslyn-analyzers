@@ -230,7 +230,7 @@ public class Test
         [Fact]
         public void CSharpReassignPropertyOfFirstLocalVariableWithSecondAndReferToPropertyOfSecondVariable()
         {
-            VerifyCSharpDiagnostic(@"
+            VerifyCSharp(@"
 public class C
 {
     public C Property { get; set; }
@@ -250,7 +250,7 @@ public class Test
         [Fact]
         public void CSharpReassignPropertyOfFirstLocalVariableWithThirdAndReferToPropertyOfSecondVariable()
         {
-            VerifyCSharpDiagnostic(@"
+            VerifyCSharp(@"
 public class C
 {
     public C Property { get; set; }
@@ -270,7 +270,7 @@ public class Test
         [Fact]
         public void CSharpReassignMethodParameterAndReferToItsProperty()
         {
-            VerifyCSharpDiagnostic(@"
+            VerifyCSharp(@"
 public class C
 {
     public C Property { get; set; }

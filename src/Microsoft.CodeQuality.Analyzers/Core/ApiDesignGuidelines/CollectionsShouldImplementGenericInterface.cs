@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
@@ -21,21 +20,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableStandardMessage =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule =
             new DiagnosticDescriptor(

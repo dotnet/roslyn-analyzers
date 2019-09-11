@@ -16,6 +16,9 @@
     -->
     <PackageId>*$(MSBuildProjectFullPath)*</PackageId>
     <DevelopmentDependency>false</DevelopmentDependency>
+
+    <!-- Override the version prefix for this package to allow more frequent stable releases -->
+    <VersionPrefix>$(FlowAnalysisUtilitiesVersionPrefix)</VersionPrefix>
   </PropertyGroup>
   
   <ItemGroup>

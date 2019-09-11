@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -35,15 +34,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             // CONSIDER: Do we need to confirm that System.Object.GetHashCode isn't shadowed in a base type?
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsCodeActionTitle;
+            string title = MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsCodeActionTitle;
             context.RegisterCodeFix(
                 new MyCodeAction(
                     title,
                     cancellationToken => OverrideObjectGetHashCode(context.Document, typeDeclaration, cancellationToken),
                     equivalenceKey: title),
-                diagnostic);
+                context.Diagnostics);
         }
 
         private static async Task<Document> OverrideObjectGetHashCode(Document document, SyntaxNode typeDeclaration, CancellationToken cancellationToken)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
@@ -13,8 +13,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string CA1016RuleId = "CA1016";
         internal const string CA1014RuleId = "CA1014";
 
-        private static readonly LocalizableString s_localizableMessageCA1016 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1016 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithAssemblyVersionDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1016 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkAssembliesWithAssemblyVersionTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1016 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkAssembliesWithAssemblyVersionDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor CA1016Rule = new DiagnosticDescriptor(CA1016RuleId,
                                                                          s_localizableMessageCA1016,
@@ -26,8 +26,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                                          helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca1016-mark-assemblies-with-assemblyversionattribute",
                                                                          customTags: FxCopWellKnownDiagnosticTags.PortedFxCopRule);
 
-        private static readonly LocalizableString s_localizableMessageCA1014 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithClsCompliantTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1014 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.MarkAssembliesWithClsCompliantDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1014 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkAssembliesWithClsCompliantTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1014 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.MarkAssembliesWithClsCompliantDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         internal static DiagnosticDescriptor CA1014Rule = new DiagnosticDescriptor(CA1014RuleId,
                                                                          s_localizableMessageCA1014,
                                                                          s_localizableMessageCA1014,
@@ -50,8 +50,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
-            INamedTypeSymbol assemblyVersionAttributeSymbol = WellKnownTypes.AssemblyVersionAttribute(context.Compilation);
-            INamedTypeSymbol assemblyComplianceAttributeSymbol = WellKnownTypes.CLSCompliantAttribute(context.Compilation);
+            var assemblyVersionAttributeSymbol = WellKnownTypes.AssemblyVersionAttribute(context.Compilation);
+            var assemblyComplianceAttributeSymbol = WellKnownTypes.CLSCompliantAttribute(context.Compilation);
 
             if (assemblyVersionAttributeSymbol == null && assemblyComplianceAttributeSymbol == null)
             {
@@ -60,6 +60,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             bool assemblyVersionAttributeFound = false;
             bool assemblyComplianceAttributeFound = false;
+            var razorCompiledItemAttribute = WellKnownTypes.RazorCompiledItemAttribute(context.Compilation);
 
             // Check all assembly level attributes for the target attribute
             foreach (AttributeData attribute in context.Compilation.Assembly.GetAttributes())
@@ -73,6 +74,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 {
                     // Mark the compliance attribute as found
                     assemblyComplianceAttributeFound = true;
+                }
+                else if (razorCompiledItemAttribute != null &&
+                    attribute.AttributeClass.Equals(razorCompiledItemAttribute))
+                {
+                    // Bail out for dummy compilation for Razor code behind file.
+                    return;
                 }
             }
 

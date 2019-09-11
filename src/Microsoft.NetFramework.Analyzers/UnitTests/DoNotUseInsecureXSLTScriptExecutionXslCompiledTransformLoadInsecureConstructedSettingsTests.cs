@@ -27,6 +27,62 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
         }
 
         [Fact]
+        public async Task Issue2752()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Xml.Xsl
+
+Public Module Foobar
+    Friend Sub foo()
+        Dim internalSettings As New XsltSettings(False, False)
+    End Sub
+End Module
+
+Public Class MDIMain
+    Public Sub New()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public async Task Issue2752_WorkAround()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Xml.Xsl
+
+Public Module Foobar
+    Friend Sub foo()
+        Dim internalSettings As New XsltSettings()
+        internalSettings.EnableDocumentFunction = False
+        internalSettings.EnableScript = False
+    End Sub
+End Module
+
+Public Class MDIMain
+    Public Sub New()
+    End Sub
+End Class");
+        }
+
+        [Fact]
+        public async Task Issue2752_WorkAround2()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Xml.Xsl
+
+Public Module Foobar
+    Friend Sub foo()
+        Dim internalSettings = New XsltSettings(False, False)
+    End Sub
+End Module
+
+Public Class MDIMain
+    Public Sub New()
+    End Sub
+End Class");
+        }
+
+        [Fact]
         public async Task UseXslCompiledTransformLoadSecureOverload1ShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

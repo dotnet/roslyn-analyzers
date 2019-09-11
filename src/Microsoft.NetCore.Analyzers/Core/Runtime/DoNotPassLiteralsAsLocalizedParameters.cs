@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -30,9 +30,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1303";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DoNotPassLiteralsAsLocalizedParametersDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -60,7 +60,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
-                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod))
+                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod) ||
+                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockStartContext.Options,
+                            Rule, operationBlockStartContext.Compilation, operationBlockStartContext.CancellationToken))
                     {
                         return;
                     }
@@ -262,12 +264,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 }
             }
 
-            // FxCop compat: If a localizable attribute isn't defined then fall back to name heuristics.
-            bool IsLocalizableByNameHeuristic(ISymbol symbol) =>
-                symbol.Name.Equals("message", StringComparison.OrdinalIgnoreCase) ||
-                symbol.Name.Equals("text", StringComparison.OrdinalIgnoreCase) ||
-                symbol.Name.Equals("caption", StringComparison.OrdinalIgnoreCase);
-
             if (IsLocalizableByNameHeuristic(parameterSymbol) ||
                 containingPropertySymbolOpt != null && IsLocalizableByNameHeuristic(containingPropertySymbolOpt))
             {
@@ -284,6 +280,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             return false;
+
+            // FxCop compat: If a localizable attribute isn't defined then fall back to name heuristics.
+            static bool IsLocalizableByNameHeuristic(ISymbol symbol) =>
+                symbol.Name.Equals("message", StringComparison.OrdinalIgnoreCase) ||
+                symbol.Name.Equals("text", StringComparison.OrdinalIgnoreCase) ||
+                symbol.Name.Equals("caption", StringComparison.OrdinalIgnoreCase);
         }
 
         private static LocalizableAttributeState GetLocalizableAttributeState(ISymbol symbol, INamedTypeSymbol localizableAttributeTypeSymbol)

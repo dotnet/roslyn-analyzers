@@ -1,7 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
@@ -26,13 +25,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     public abstract class UseGenericEventHandlerInstancesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1003";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForDelegate = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForDelegateMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForDelegate = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForDelegateDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForEvent = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForEventMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForEvent = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForEventDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageForEvent2 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Message), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionForEvent2 = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Description), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageForDelegate = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForDelegateMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionForDelegate = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForDelegateDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageForEvent = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEventMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionForEvent = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEventDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageForEvent2 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Message), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionForEvent2 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UseGenericEventHandlerInstancesForEvent2Description), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor RuleForDelegates = new DiagnosticDescriptor(
             RuleId,
@@ -90,7 +89,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    bool IsDelegateTypeWithInvokeMethod(INamedTypeSymbol namedType) =>
+                    static bool IsDelegateTypeWithInvokeMethod(INamedTypeSymbol namedType) =>
                         namedType.TypeKind == TypeKind.Delegate && namedType.DelegateInvokeMethod != null;
 
                     bool IsEventArgsParameter(IParameterSymbol parameter)

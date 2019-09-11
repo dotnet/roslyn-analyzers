@@ -1,9 +1,8 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -40,23 +39,21 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = SystemRuntimeInteropServicesAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
+            string title = MicrosoftNetCoreAnalyzersResources.SpecifyMarshalingForPInvokeStringArgumentsTitle;
 
             if (IsAttribute(node))
             {
                 context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await FixAttributeArguments(context.Document, node, charSetType, dllImportType, marshalAsType, unmanagedType, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
-                                        diagnostic);
+                                        context.Diagnostics);
             }
             else if (IsDeclareStatement(node))
             {
                 context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await FixDeclareStatement(context.Document, node, ct).ConfigureAwait(false),
                                                          equivalenceKey: title),
-                                        diagnostic);
+                                        context.Diagnostics);
             }
         }
 

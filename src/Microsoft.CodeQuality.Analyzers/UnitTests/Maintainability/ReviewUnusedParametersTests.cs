@@ -807,6 +807,34 @@ public class C
 ");
         }
 
+        [Theory]
+        [WorkItem(1375, "https://github.com/dotnet/roslyn-analyzers/issues/1375")]
+        [InlineData("public", "dotnet_code_quality.api_surface = private")]
+        [InlineData("private", "dotnet_code_quality.api_surface = internal, public")]
+        [InlineData("public", "dotnet_code_quality.CA1801.api_surface = internal, private")]
+        [InlineData("public", "dotnet_code_quality.CA1801.api_surface = Friend, Private")]
+        [InlineData("public", "dotnet_code_quality.Usage.api_surface = internal, private")]
+        [InlineData("public", @"dotnet_code_quality.api_surface = all
+                                dotnet_code_quality.CA1801.api_surface = private")]
+        public void EditorConfigConfiguration_ApiSurfaceOption(string accessibility, string editorConfigText)
+        {
+            VerifyCSharp($@"
+public class C
+{{
+    {accessibility} void M(int unused)
+    {{
+    }}
+}}",
+                GetEditorConfigAdditionalFile(editorConfigText));
+
+            VerifyBasic($@"
+Public Class C
+    {accessibility} Sub M(unused As Integer)
+    End Sub
+End Class",
+                GetEditorConfigAdditionalFile(editorConfigText));
+        }
+
         #endregion
 
         #region Unit tests for analyzer diagnostic(s)
@@ -997,13 +1025,13 @@ public class C
 
         private static DiagnosticResult GetCSharpUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetCSharpResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            string message = string.Format(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetBasicResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
 using Microsoft.CodeAnalysis;
@@ -12,8 +12,8 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static readonly DiagnosticDescriptor Rule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA3010",
-            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForXamlInjectionVulnerabilitiesTitle),
-            nameof(MicrosoftNetCoreSecurityResources.ReviewCodeForXamlInjectionVulnerabilitiesMessage),
+            nameof(MicrosoftNetCoreAnalyzersResources.ReviewCodeForXamlInjectionVulnerabilitiesTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.ReviewCodeForXamlInjectionVulnerabilitiesMessage),
             isEnabledByDefault: false,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca3010-review-code-for-xaml-injection-vulnerabilities");
 

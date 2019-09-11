@@ -5,6 +5,7 @@
     <Identity Id="bed80bcf-3952-4747-8c03-6770eeeb1595" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft" />
     <DisplayName>Microsoft.NetFramework Analyzers</DisplayName>
     <Description xml:space="preserve">Analyzers for APIs specific to the full .NetFramework which are not present in .NetCore</Description>
+    <License>EULA.rtf</License>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0.27130.0,]" />

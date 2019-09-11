@@ -5,6 +5,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Microsoft.NetFramework.Analyzers
 {
@@ -15,34 +16,34 @@ namespace Microsoft.NetFramework.Analyzers
         private const string HelpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca3147-mark-verb-handlers-with-validateantiforgerytoken";
 
         private static readonly LocalizableString Title = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenTitle),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenTitle),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString NoVerbsMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString NoVerbsNoTokenMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString GetAndTokenMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString GetAndOtherAndTokenMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         private static readonly LocalizableString VerbsAndNoTokenMessage = new LocalizableResourceString(
-            nameof(MicrosoftSecurityAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage),
-            MicrosoftSecurityAnalyzersResources.ResourceManager,
-            typeof(MicrosoftSecurityAnalyzersResources));
+            nameof(MicrosoftNetFrameworkAnalyzersResources.MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage),
+            MicrosoftNetFrameworkAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetFrameworkAnalyzersResources));
 
         internal static readonly DiagnosticDescriptor NoVerbsRule = new DiagnosticDescriptor(
             RuleId,
@@ -99,6 +100,7 @@ namespace Microsoft.NetFramework.Analyzers
             analysisContext.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartContext) =>
                 {
+                    WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartContext.Compilation);
                     INamedTypeSymbol mvcControllerSymbol = WellKnownTypes.MvcController(compilationStartContext.Compilation);
                     INamedTypeSymbol mvcControllerBaseSymbol = WellKnownTypes.MvcControllerBase(compilationStartContext.Compilation);
                     INamedTypeSymbol actionResultSymbol = WellKnownTypes.ActionResult(compilationStartContext.Compilation);
@@ -114,12 +116,15 @@ namespace Microsoft.NetFramework.Analyzers
                     compilationStartContext.RegisterSymbolAction(
                         (SymbolAnalysisContext symbolContext) =>
                         {
-                            // TODO enhancements: Consider looking at non-ActionResult-derived return types as well.
+                            // TODO enhancements: Consider looking at IAsyncResult-based action methods.
                             if (!(symbolContext.Symbol is IMethodSymbol methodSymbol)
                                 || methodSymbol.MethodKind != MethodKind.Ordinary
                                 || methodSymbol.IsStatic
                                 || !methodSymbol.IsPublic()
-                                || !methodSymbol.ReturnType.Inherits(actionResultSymbol)  // FxCop implementation only looks at ActionResult-derived return types.
+                                || !(methodSymbol.ReturnType.Inherits(actionResultSymbol)  // FxCop implementation only looked at ActionResult-derived return types.
+                                     || wellKnownTypeProvider.IsTaskOfType(
+                                            methodSymbol.ReturnType,
+                                            (ITypeSymbol typeArgument) => typeArgument.Inherits(actionResultSymbol)))
                                 || (!methodSymbol.ContainingType.Inherits(mvcControllerSymbol)
                                     && !methodSymbol.ContainingType.Inherits(mvcControllerBaseSymbol)))
                             {

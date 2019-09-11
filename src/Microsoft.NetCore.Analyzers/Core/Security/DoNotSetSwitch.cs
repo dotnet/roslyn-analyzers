@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
@@ -24,17 +23,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DoNotDisableSchUseStrongCryptoRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5361",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCrypto),
-            nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCrypto),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCryptoMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5361",
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotDisableSchUseStrongCryptoDescription),
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableSchUseStrongCryptoDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor DoNotDisableSpmSecurityProtocolsRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5378",
-            nameof(MicrosoftNetCoreSecurityResources.DoNotDisableUsingServicePointManagerSecurityProtocolsTitle),
-            nameof(MicrosoftNetCoreSecurityResources.DoNotDisableUsingServicePointManagerSecurityProtocolsMessage),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableUsingServicePointManagerSecurityProtocolsTitle),
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableUsingServicePointManagerSecurityProtocolsMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
             helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5378",
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
@@ -94,6 +93,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return;
                     }
 
+                    if (IsConfiguredToSkipAnalysis(DoNotDisableSchUseStrongCryptoRule, operationAnalysisContext) &&
+                        IsConfiguredToSkipAnalysis(DoNotDisableSpmSecurityProtocolsRule, operationAnalysisContext))
+                    {
+                        return;
+                    }
+
                     var values = invocationOperation.Arguments.Select(s => s.Value.ConstantValue).ToArray();
 
                     if (values[0].HasValue &&
@@ -101,7 +106,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                     {
                         if (values[0].Value is string switchName &&
                             BadSwitches.TryGetValue(switchName, out var pair) &&
-                            pair.BadValue.Equals(values[1].Value))
+                            pair.BadValue.Equals(values[1].Value) &&
+                            !IsConfiguredToSkipAnalysis(pair.Rule, operationAnalysisContext))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
@@ -109,11 +115,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     methodSymbol.Name));
                         }
                     }
-                    else
+                    else if (invocationOperation.TryGetEnclosingControlFlowGraph(out var cfg))
                     {
                         var valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(
-                            invocationOperation.GetEnclosingControlFlowGraph(),
+                            cfg,
                             operationAnalysisContext.ContainingSymbol,
+                            operationAnalysisContext.Options,
                             wellKnownTypeProvider,
                             InterproceduralAnalysisConfiguration.Create(
                                 operationAnalysisContext.Options,
@@ -131,10 +138,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                             invocationOperation.Arguments[1].Syntax];
 
                         // Just check for simple cases with one possible literal value.
-                        if (switchNameValueContent.TryGetSingleLiteral<string>(out var switchName) &&
-                            switchValueValueContent.TryGetSingleLiteral<bool>(out var switchValue) &&
+                        if (switchNameValueContent.TryGetSingleNonNullLiteral<string>(out var switchName) &&
+                            switchValueValueContent.TryGetSingleNonNullLiteral<bool>(out var switchValue) &&
                             BadSwitches.TryGetValue(switchName, out var pair) &&
-                            pair.BadValue.Equals(switchValue))
+                            pair.BadValue.Equals(switchValue) &&
+                            !IsConfiguredToSkipAnalysis(pair.Rule, operationAnalysisContext))
                         {
                             operationAnalysisContext.ReportDiagnostic(
                                 invocationOperation.CreateDiagnostic(
@@ -146,5 +154,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 OperationKind.Invocation);
             });
         }
+
+        static bool IsConfiguredToSkipAnalysis(DiagnosticDescriptor rule, OperationAnalysisContext context)
+            => context.ContainingSymbol.IsConfiguredToSkipAnalysis(context.Options, rule, context.Compilation, context.CancellationToken);
     }
 }

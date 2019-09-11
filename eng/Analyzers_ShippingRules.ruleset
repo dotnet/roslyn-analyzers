@@ -28,6 +28,7 @@
   
   <!-- TODO: Move the below configurations to .editorconfig once compilers supports .editorconfig -->
   <Rules AnalyzerId="Microsoft.CodeAnalysis.Features" RuleNamespace="Microsoft.CodeAnalysis.Features">
+    <Rule Id="IDE0005" Action="Warning" /> <!-- Remove unused imports/usings -->
     <Rule Id="IDE0051" Action="Warning" /> <!-- Remove unused private members -->
     <Rule Id="IDE0052" Action="Warning" /> <!-- Remove unread private members -->
     <Rule Id="IDE0055" Action="Warning" /> <!-- Fix Formatting -->

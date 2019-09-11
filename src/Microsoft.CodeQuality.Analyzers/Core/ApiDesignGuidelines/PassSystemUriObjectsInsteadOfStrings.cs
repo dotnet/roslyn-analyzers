@@ -19,10 +19,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA2234";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PassSystemUriObjectsInsteadOfStringsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PassSystemUriObjectsInsteadOfStringsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PassSystemUriObjectsInsteadOfStringsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.PassSystemUriObjectsInsteadOfStringsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PassSystemUriObjectsInsteadOfStringsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.PassSystemUriObjectsInsteadOfStringsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -55,12 +55,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 var analyzer = new PerCompilationAnalyzer(c.Compilation, @string, uri, GetInvocationExpression);
-
-                // REVIEW: I need to do this thing because OperationAnalysisContext doesn't give me OwningSymbol
-                c.RegisterOperationBlockStartAction(sc =>
-                {
-                    sc.RegisterOperationAction(oc => analyzer.Analyze(oc, sc.OwningSymbol), OperationKind.Invocation);
-                });
+                c.RegisterOperationAction(analyzer.Analyze, OperationKind.Invocation);
             });
         }
 
@@ -86,13 +81,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 _expressionGetter = expressionGetter;
             }
 
-            public void Analyze(OperationAnalysisContext context, ISymbol owningSymbol)
+            public void Analyze(OperationAnalysisContext context)
             {
                 var invocation = (IInvocationOperation)context.Operation;
-                if (invocation.TargetMethod == null)
-                {
-                    return;
-                }
                 var method = invocation.TargetMethod;
 
                 // check basic stuff that FxCop checks. 
@@ -117,10 +108,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     return;
                 }
 
-                // REVIEW: why IOperation doesn't contain things like compilation and semantic model?
-                //         it seems wierd that I need to do this to get thsoe.
-                var model = _compilation.GetSemanticModel(context.Operation.Syntax.SyntaxTree);
-
                 var stringParameters = method.Parameters.GetParametersOfType(_string);
                 if (!stringParameters.Any())
                 {
@@ -136,7 +123,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
                 // now we make sure we actually have overloads that contains uri type parameter
-                var overloads = model.GetMemberGroup(node, context.CancellationToken).OfType<IMethodSymbol>();
+                var overloads = context.Operation.SemanticModel.GetMemberGroup(node, context.CancellationToken).OfType<IMethodSymbol>();
                 if (!overloads.HasOverloadWithParameterOfType(method, _uri, context.CancellationToken))
                 {
                     // no overload that contains uri as parameter
@@ -175,12 +162,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
 
                         // okay all other type match. check the main one
-                        if (overload.Parameters[index].Type?.Equals(_uri) == true)
+                        if (overload.Parameters[index].Type?.Equals(_uri) == true &&
+                            !Equals(overload, context.ContainingSymbol))
                         {
                             context.ReportDiagnostic(
                                 node.CreateDiagnostic(
                                     Rule,
-                                    owningSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
+                                    context.ContainingSymbol.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                                     overload.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat),
                                     method.ToDisplayString(SymbolDisplayFormats.ShortSymbolDisplayFormat)));
 

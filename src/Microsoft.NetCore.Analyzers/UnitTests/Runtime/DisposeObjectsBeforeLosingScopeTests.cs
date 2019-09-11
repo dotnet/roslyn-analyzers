@@ -2017,6 +2017,46 @@ Class Test
 End Class");
         }
 
+        [Fact, WorkItem(37528, "https://github.com/dotnet/roslyn/issues/37528")]
+        public void ArrayInitializer_MultipleElementsWithDisposableAssignment_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A[] a = new A[] { new A(), new A() };   // TODO: https://github.com/dotnet/roslyn-analyzers/issues/1577
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim a As A() = New A() {New A(), New A()}    ' TODO: https://github.com/dotnet/roslyn-analyzers/issues/1577
+    End Sub
+End Class");
+        }
+
         [Fact]
         public void ArrayInitializer_ElementWithDisposableAssignment_ConstantIndex_NoDiagnostic()
         {
@@ -2055,6 +2095,50 @@ Class Test
     Sub M1()
         Dim a As A() = New A() {New A()}
         a(0).Dispose()
+    End Sub
+End Class");
+        }
+
+        [Fact, WorkItem(37528, "https://github.com/dotnet/roslyn/issues/37528")]
+        public void ArrayInitializer_MultipleElementsWithDisposableAssignment_ConstantIndices_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        A[] a = new A[] { new A(), new A() };
+        a[0].Dispose();
+        a[1].Dispose();
+    }
+}
+");
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim a As A() = New A() {New A(), New A()}
+        a(0).Dispose()
+        a(1).Dispose()
     End Sub
 End Class");
         }
@@ -9900,7 +9984,9 @@ class A : IDisposable
     {
     }
 }
-");
+",
+            // Test0.cs(20,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'Create()' before all references to it are out of scope.
+            GetCSharpResultAt(20, 17, "Create()"));
         }
 
         [Fact]
@@ -9940,7 +10026,9 @@ class A : IDisposable
     {
     }
 }
-");
+",
+            // Test0.cs(22,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'Create()' before all references to it are out of scope.
+            GetCSharpResultAt(22, 17, "Create()"));
         }
 
         [Fact]
@@ -9974,7 +10062,9 @@ class A : IDisposable
     {
     }
 }
-");
+",
+            // Test0.cs(21,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+            GetCSharpResultAt(21, 17, "new A()"));
         }
 
         [Fact]
@@ -10813,6 +10903,291 @@ public class C
 }",
             // Test0.cs(11,30): warning CA2000: Call System.IDisposable.Dispose on object created by 'GetStreamAsync()' before all references to it are out of scope.
             GetCSharpResultAt(11, 30, "GetStreamAsync()"));
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality." + DisposeObjectsBeforeLosingScope.RuleId + ".excluded_symbol_names = M1")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M1")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.cs(15,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                    GetCSharpResultAt(15, 17, "new A()")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        var a = new A();
+    }
+}
+", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.vb(12,18): warning CA2000: Call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                    GetBasicResultAt(12, 18, "New A()")
+                };
+            }
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim a As New A()
+    End Sub
+End Class", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = M2")]
+        [InlineData("dotnet_code_quality.interproceduraldataflow.excluded_symbol_names = M2")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption_InterproceduralDataflow(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length > 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.cs(15,17): warning CA2000: Call System.IDisposable.Dispose on object created by 'new A()' before all references to it are out of scope.
+                    GetCSharpResultAt(15, 17, "new A()")
+                };
+            }
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class Test
+{
+    void M1()
+    {
+        var a = new A();
+        M2(a);
+    }
+
+    void M2(A a) => a.Dispose();
+}
+", GetEditorConfigAdditionalFile(editorConfigText), expected);
+
+            expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length > 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // Test0.vb(12,18): warning CA2000: Call System.IDisposable.Dispose on object created by 'New A()' before all references to it are out of scope.
+                    GetBasicResultAt(12, 18, "New A()")
+                };
+            }
+
+            VerifyBasic(@"
+Imports System
+
+Class A
+    Implements IDisposable
+    Public Sub Dispose() Implements IDisposable.Dispose
+    End Sub
+End Class
+
+Class Test
+    Sub M1()
+        Dim a As New A()
+        M2(a)
+    End Sub
+
+    Sub M2(a As A)
+        a.Dispose()
+    End Sub
+End Class", GetEditorConfigAdditionalFile(editorConfigText), expected);
+        }
+
+        [Fact]
+        [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746#issuecomment-518959894")]
+        public void DisposableObject_ReturnOperationWithInvocation_NotDisposed_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+
+public interface IMyDisposable : IDisposable
+{
+    bool IsItFalse();
+}
+
+public class MyDisposable : IMyDisposable
+{
+    public void Dispose()
+    {
+        return;
+    }
+
+    public bool IsItFalse()
+    {
+        return false;
+    }
+}
+
+public class Consumer
+{
+    public IMyDisposable CreateMyDisposable()
+    {
+        return new MyDisposable();
+    }
+
+    public bool Foo()
+    {
+        var myDisposable = CreateMyDisposable();
+        return myDisposable.IsItFalse();
+    }
+}",
+            // Test0.cs(31,28): warning CA2000: Call System.IDisposable.Dispose on object created by 'CreateMyDisposable()' before all references to it are out of scope.
+            GetCSharpResultAt(31, 28, "CreateMyDisposable()"));
+        }
+
+        [Fact]
+        [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746")]
+        public void DisposableObject_FieldAsOutArgument_NotDisposed_NoDiagnostic()
+        {
+            var editorConfigFile = GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A _a;
+    public bool Flag;
+    public void M()
+    {
+        TryCreate(out _a);
+    }
+
+    private void TryCreate(out A a)
+    {
+        a = Flag ? new A() : null;
+    }
+
+    public void Dispose()
+    {
+        _a?.Dispose();
+    }
+}", editorConfigFile);
+        }
+
+        [Fact]
+        [WorkItem(2746, "https://github.com/dotnet/roslyn-analyzers/issues/2746")]
+        public void DisposableObject_FieldAsRefArgument_NotDisposed_NoDiagnostic()
+        {
+            var editorConfigFile = GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
+
+            VerifyCSharp(@"
+using System;
+
+class A : IDisposable
+{
+    public void Dispose()
+    {
+    }
+}
+
+class B : IDisposable
+{
+    private A _a;
+    public bool Flag;
+    public void M()
+    {
+        TryCreate(ref _a);
+    }
+
+    private void TryCreate(ref A a)
+    {
+        a = Flag ? new A() : null;
+    }
+
+    public void Dispose()
+    {
+        _a?.Dispose();
+    }
+}", editorConfigFile);
+        }
+
+        [Fact]
+        [WorkItem(2681, "https://github.com/dotnet/roslyn-analyzers/issues/2681")]
+        public void DisposableObject_InterlockedAssignmentToField_NotDisposed_NoDiagnostic()
+        {
+            var editorConfigFile = GetEditorConfigFileToDisableInterproceduralAnalysis(DisposeAnalysisKind.AllPaths);
+
+            VerifyCSharp(@"
+using System;
+using System.Threading;
+
+class CustomDisposable : IDisposable
+{
+    public void Dispose() { }
+}
+
+class Test
+{
+    private CustomDisposable field1;
+
+    private void NoWarning()
+    {
+        field1 = new CustomDisposable();
+    }
+
+    private void Warning1()
+    {
+        var temp = new CustomDisposable();
+        Interlocked.Exchange(ref field1, temp)?.Dispose();
+    }
+
+    private void Warning2()
+    {
+        var temp = new CustomDisposable();
+        Interlocked.CompareExchange(ref field1, temp, null);
+    }
+}", editorConfigFile);
         }
     }
 }

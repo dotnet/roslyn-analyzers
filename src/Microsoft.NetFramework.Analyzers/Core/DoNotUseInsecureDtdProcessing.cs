@@ -579,9 +579,9 @@ namespace Microsoft.NetFramework.Analyzers
             private void AnalyzeXmlResolverPropertyAssignmentForXmlDocument(OperationAnalysisContext context, ISymbol assignedSymbol, IAssignmentOperation expression)
             {
                 bool isSecureResolver = false;
-                IConversionOperation conv = expression.Value as IConversionOperation;
 
-                if (SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
+                IConversionOperation conv = expression.Value as IConversionOperation;
+                if (conv != null && SecurityDiagnosticHelpers.IsXmlSecureResolverType(conv.Operand.Type, _xmlTypes))
                 {
                     isSecureResolver = true;
                 }

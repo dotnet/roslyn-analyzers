@@ -45,25 +45,25 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
         // New rule for invalid entries in CodeMetricsConfigurationFile.
         internal const string CA1509RuleId = "CA1509";
 
-        private static readonly LocalizableString s_localizableTitleCA1501 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveInheritanceTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1501 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveInheritanceMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1501 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveInheritanceDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1501 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveInheritanceTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1501 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveInheritanceMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1501 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveInheritanceDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA1502 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveComplexityTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1502 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveComplexityMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1502 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveComplexityDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1502 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveComplexityTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1502 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveComplexityMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1502 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveComplexityDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA1505 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUnmantainableCodeTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1505 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUnmantainableCodeMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1505 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidUnmantainableCodeDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1505 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnmantainableCodeTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1505 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnmantainableCodeMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1505 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidUnmantainableCodeDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA1506 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveClassCouplingTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1506 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveClassCouplingMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1506 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidExcessiveClassCouplingDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1506 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveClassCouplingTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1506 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveClassCouplingMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1506 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidExcessiveClassCouplingDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableTitleCA1509 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCA1509 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescriptionCA1509 = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitleCA1509 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCA1509 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescriptionCA1509 = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.InvalidEntryInCodeMetricsConfigFileDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor CA1501Rule = new DiagnosticDescriptor(CA1501RuleId,
                                                                      s_localizableTitleCA1501,
@@ -237,7 +237,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     return getDefaultThreshold(ruleId, symbolKind);
                 }
 
-                bool isApplicableByDefault(string ruleId, SymbolKind symbolKind)
+                static bool isApplicableByDefault(string ruleId, SymbolKind symbolKind)
                 {
                     switch (ruleId)
                     {
@@ -280,7 +280,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     }
                 }
 
-                uint? getDefaultThreshold(string ruleId, SymbolKind symbolKind)
+                static uint? getDefaultThreshold(string ruleId, SymbolKind symbolKind)
                 {
                     if (!isApplicableByDefault(ruleId, symbolKind))
                     {
@@ -288,23 +288,18 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     }
 
                     // Compat: we match the default threshold values for old FxCop implementation.
-                    switch (ruleId)
+                    return ruleId switch
                     {
-                        case CA1501RuleId:
-                            return 5;
+                        CA1501RuleId => 5,
 
-                        case CA1502RuleId:
-                            return 25;
+                        CA1502RuleId => 25,
 
-                        case CA1505RuleId:
-                            return 10;
+                        CA1505RuleId => 10,
 
-                        case CA1506RuleId:
-                            return symbolKind == SymbolKind.NamedType ? 95 : (uint)40;
+                        CA1506RuleId => symbolKind == SymbolKind.NamedType ? 95 : (uint)40,
 
-                        default:
-                            throw new NotImplementedException();
-                    }
+                        _ => throw new NotImplementedException(),
+                    };
                 }
             });
         }
@@ -460,7 +455,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     string arg2 = Path.GetFileName(additionalText.Path);
                     LinePositionSpan linePositionSpan = lines.GetLinePositionSpan(line.Span);
                     Location location = Location.Create(additionalText.Path, line.Span, linePositionSpan);
-                    invalidFileDiagnostics = invalidFileDiagnostics ?? new List<Diagnostic>();
+                    invalidFileDiagnostics ??= new List<Diagnostic>();
                     var diagnostic = Diagnostic.Create(InvalidEntryInCodeMetricsConfigFileRule, location, arg1, arg2);
                     invalidFileDiagnostics.Add(diagnostic);
                 }

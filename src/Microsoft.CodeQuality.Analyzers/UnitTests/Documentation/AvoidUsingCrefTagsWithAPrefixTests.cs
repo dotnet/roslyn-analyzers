@@ -95,12 +95,12 @@ End Class
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, AvoidUsingCrefTagsWithAPrefixAnalyzer.RuleId, XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage);
+            return GetCSharpResultAt(line, column, AvoidUsingCrefTagsWithAPrefixAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage);
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, AvoidUsingCrefTagsWithAPrefixAnalyzer.RuleId, XmlDocumentationCommentsAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage);
+            return GetBasicResultAt(line, column, AvoidUsingCrefTagsWithAPrefixAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.AvoidUsingCrefTagsWithAPrefixMessage);
         }
     }
 }

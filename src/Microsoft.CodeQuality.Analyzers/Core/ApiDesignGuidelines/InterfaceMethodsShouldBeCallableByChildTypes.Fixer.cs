@@ -185,20 +185,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return null;
             }
 
-            switch (symbol.Kind)
+            return symbol.Kind switch
             {
-                case SymbolKind.Method:
-                    return ((IMethodSymbol)symbol).ExplicitInterfaceImplementations;
+                SymbolKind.Method => ((IMethodSymbol)symbol).ExplicitInterfaceImplementations,
 
-                case SymbolKind.Event:
-                    return ((IEventSymbol)symbol).ExplicitInterfaceImplementations;
+                SymbolKind.Event => ((IEventSymbol)symbol).ExplicitInterfaceImplementations,
 
-                case SymbolKind.Property:
-                    return ((IPropertySymbol)symbol).ExplicitInterfaceImplementations;
+                SymbolKind.Property => ((IPropertySymbol)symbol).ExplicitInterfaceImplementations,
 
-                default:
-                    return null;
-            }
+                _ => null,
+            };
         }
 
         private static async Task<Document> MakeContainingTypeSealed(Document document, IMethodSymbol methodSymbol, CancellationToken cancellationToken)

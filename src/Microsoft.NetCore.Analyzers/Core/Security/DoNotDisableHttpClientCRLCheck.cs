@@ -83,31 +83,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                 "handler",
                 (IMethodSymbol methodSymbol, PropertySetAbstractValue abstractValue) =>
                 {
-                    switch (abstractValue[ServerCertificateValidationCallbackIndex])
+                    return (abstractValue[ServerCertificateValidationCallbackIndex]) switch
                     {
-                        case PropertySetAbstractValueKind.Flagged:
-                            switch (abstractValue[CheckCertificateRevocationListIndex])
-                            {
-                                case PropertySetAbstractValueKind.Flagged:
-                                    return HazardousUsageEvaluationResult.Flagged;
-                                case PropertySetAbstractValueKind.MaybeFlagged:
-                                    return HazardousUsageEvaluationResult.MaybeFlagged;
-                                default:
-                                    return HazardousUsageEvaluationResult.Unflagged;
-                            }
+                        PropertySetAbstractValueKind.Flagged => (abstractValue[CheckCertificateRevocationListIndex]) switch
+                        {
+                            PropertySetAbstractValueKind.Flagged => HazardousUsageEvaluationResult.Flagged,
+                            PropertySetAbstractValueKind.MaybeFlagged => HazardousUsageEvaluationResult.MaybeFlagged,
+                            _ => HazardousUsageEvaluationResult.Unflagged,
+                        },
 
-                        case PropertySetAbstractValueKind.MaybeFlagged:
-                            switch (abstractValue[CheckCertificateRevocationListIndex])
-                            {
-                                case PropertySetAbstractValueKind.Unflagged:
-                                    return HazardousUsageEvaluationResult.Unflagged;
-                                default:
-                                    return HazardousUsageEvaluationResult.MaybeFlagged;
-                            }
+                        PropertySetAbstractValueKind.MaybeFlagged => (abstractValue[CheckCertificateRevocationListIndex]) switch
+                        {
+                            PropertySetAbstractValueKind.Unflagged => HazardousUsageEvaluationResult.Unflagged,
+                            _ => HazardousUsageEvaluationResult.MaybeFlagged,
+                        },
 
-                        default:
-                            return HazardousUsageEvaluationResult.Unflagged;
-                    }
+                        _ => HazardousUsageEvaluationResult.Unflagged,
+                    };
                 },
                 true));
 

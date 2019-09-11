@@ -198,17 +198,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
             public override string GetOperatorCode(BinaryOperatorKind binaryOperatorKind)
             {
-                switch (binaryOperatorKind)
+                return binaryOperatorKind switch
                 {
-                    case BinaryOperatorKind.Add: return "+";
-                    case BinaryOperatorKind.Equals: return "==";
-                    case BinaryOperatorKind.GreaterThan: return ">";
-                    case BinaryOperatorKind.GreaterThanOrEqual: return ">=";
-                    case BinaryOperatorKind.LessThan: return "<";
-                    case BinaryOperatorKind.LessThanOrEqual: return "<=";
-                    case BinaryOperatorKind.NotEquals: return "!=";
-                    default: throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}");
-                }
+                    BinaryOperatorKind.Add => "+",
+                    BinaryOperatorKind.Equals => "==",
+                    BinaryOperatorKind.GreaterThan => ">",
+                    BinaryOperatorKind.GreaterThanOrEqual => ">=",
+                    BinaryOperatorKind.LessThan => "<",
+                    BinaryOperatorKind.LessThanOrEqual => "<=",
+                    BinaryOperatorKind.NotEquals => "!=",
+                    _ => throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}"),
+                };
             }
 
             public override string GetPredicateCode() => "_ => true";
@@ -345,17 +345,17 @@ End Namespace
 
             public override string GetOperatorCode(BinaryOperatorKind binaryOperatorKind)
             {
-                switch (binaryOperatorKind)
+                return binaryOperatorKind switch
                 {
-                    case BinaryOperatorKind.Add: return "+";
-                    case BinaryOperatorKind.Equals: return "=";
-                    case BinaryOperatorKind.GreaterThan: return ">";
-                    case BinaryOperatorKind.GreaterThanOrEqual: return ">=";
-                    case BinaryOperatorKind.LessThan: return "<";
-                    case BinaryOperatorKind.LessThanOrEqual: return "<=";
-                    case BinaryOperatorKind.NotEquals: return "<>";
-                    default: throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}");
-                }
+                    BinaryOperatorKind.Add => "+",
+                    BinaryOperatorKind.Equals => "=",
+                    BinaryOperatorKind.GreaterThan => ">",
+                    BinaryOperatorKind.GreaterThanOrEqual => ">=",
+                    BinaryOperatorKind.LessThan => "<",
+                    BinaryOperatorKind.LessThanOrEqual => "<=",
+                    BinaryOperatorKind.NotEquals => "<>",
+                    _ => throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}"),
+                };
             }
 
             public override string GetPredicateCode() => "Function(x) True";

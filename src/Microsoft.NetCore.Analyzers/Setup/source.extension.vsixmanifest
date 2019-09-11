@@ -5,6 +5,7 @@
     <Identity Id="8e93bd53-8b59-4c05-ae8a-b8e16de6a5d6" Version="|%CurrentProject%;GetVsixVersion|" Language="en-US" Publisher="Microsoft DevLabs" />
     <DisplayName>Microsoft.NetCore Analyzers</DisplayName>
     <Description xml:space="preserve">Analyzers for .NetCore APIs.</Description>
+    <License>EULA.rtf</License>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0.0.0,17.0.0.0)" />

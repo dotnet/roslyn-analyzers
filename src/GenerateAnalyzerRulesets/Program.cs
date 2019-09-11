@@ -277,32 +277,24 @@ namespace GenerateAnalyzerRulesets
 
                     string getRuleAction(DiagnosticDescriptor rule)
                     {
-                        switch (rulesetKind)
+                        return rulesetKind switch
                         {
-                            case RulesetKind.CategoryDefault:
-                                return getRuleActionCore(enable: categoryPass && rule.IsEnabledByDefault);
+                            RulesetKind.CategoryDefault => getRuleActionCore(enable: categoryPass && rule.IsEnabledByDefault),
 
-                            case RulesetKind.CategoryEnabled:
-                                return getRuleActionCore(enable: categoryPass);
+                            RulesetKind.CategoryEnabled => getRuleActionCore(enable: categoryPass),
 
-                            case RulesetKind.CustomTagDefault:
-                                return getRuleActionCore(enable: customTagPass && rule.IsEnabledByDefault);
+                            RulesetKind.CustomTagDefault => getRuleActionCore(enable: customTagPass && rule.IsEnabledByDefault),
 
-                            case RulesetKind.CustomTagEnabled:
-                                return getRuleActionCore(enable: customTagPass);
+                            RulesetKind.CustomTagEnabled => getRuleActionCore(enable: customTagPass),
 
-                            case RulesetKind.AllDefault:
-                                return getRuleActionCore(enable: rule.IsEnabledByDefault);
+                            RulesetKind.AllDefault => getRuleActionCore(enable: rule.IsEnabledByDefault),
 
-                            case RulesetKind.AllEnabled:
-                                return getRuleActionCore(enable: true);
+                            RulesetKind.AllEnabled => getRuleActionCore(enable: true),
 
-                            case RulesetKind.AllDisabled:
-                                return getRuleActionCore(enable: false);
+                            RulesetKind.AllDisabled => getRuleActionCore(enable: false),
 
-                            default:
-                                throw new InvalidProgramException();
-                        }
+                            _ => throw new InvalidProgramException(),
+                        };
 
                         string getRuleActionCore(bool enable)
                         {

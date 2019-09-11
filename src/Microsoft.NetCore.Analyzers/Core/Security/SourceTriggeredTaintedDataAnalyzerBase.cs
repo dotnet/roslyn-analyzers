@@ -92,7 +92,33 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 operationAnalysisContext =>
                                 {
                                     IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
+
+                                    if (!sourceInfoSymbolMap.IsSourceMethodFast(
+                                            invocationOperation.TargetMethod,
+                                            invocationOperation.Arguments,
+                                            out bool isSourceMethod,
+                                            out bool requiresPointsTo,
+                                            out bool requiresValueContent))
+                                    {
+                                        return;
+                                    }
+
                                     IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
+
+                                    if (isSourceMethod)
+                                    {
+                                        lock (rootOperationsNeedingAnalysis)
+                                        {
+                                            rootOperationsNeedingAnalysis.Add(rootOperation);
+                                        }
+
+                                        return;
+                                    }
+                                    else if (!requiresPointsTo && !requiresValueContent)
+                                    {
+                                        return;
+                                    }
+
                                     PooledDictionary<PointsToCheck, ImmutableHashSet<string>> evaluateWithPointsToAnalysis = null;
                                     PooledDictionary<ValueContentCheck, ImmutableHashSet<string>> evaluateWithValueContentAnalysis = null;
                                     PointsToAnalysisResult pointsToAnalysisResult = null;
@@ -116,7 +142,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         }
                                     }
 
-                                    if (sourceInfoSymbolMap.RequiresValueContentAnalysis)
+                                    if (requiresValueContent)
                                     {
                                         valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(
                                             cfg,
@@ -139,10 +165,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     try
                                     {
                                         if (sourceInfoSymbolMap.IsSourceMethod(
-                                            invocationOperation.TargetMethod,
-                                            invocationOperation.Arguments,
-                                            invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
-                                            invocationOperation.Arguments.Select(o => valueContentAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
+                                                invocationOperation.TargetMethod,
+                                                invocationOperation.Arguments,
+                                                invocationOperation.Arguments.Select(o => pointsToAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
+                                                invocationOperation.Arguments.Select(o => valueContentAnalysisResult[o.Kind, o.Syntax]).ToImmutableArray(),
                                             out _))
                                         {
                                             lock (rootOperationsNeedingAnalysis)

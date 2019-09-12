@@ -12,7 +12,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
     /// <summary>
     /// CA2246: Prevent objects from being referenced in statements where they are reassigned
     /// </summary>
-    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AssigningSymbolAndItsMemberInSameStatement : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA2246";

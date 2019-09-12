@@ -1687,6 +1687,21 @@
         <target state="translated">Mümkünse Paylaşılan Erişim İmzası (SAS) yerine Azure'un rol tabanlı erişim denetimini kullanmayı düşünün. Yine de SAS kullanmanız gerekiyorsa, SAS oluştururken kapsayıcı düzeyinde bir erişim ilkesi kullanın</target>
         <note />
       </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableDescription">
+        <source>Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</source>
+        <target state="new">Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableMessage">
+        <source>Use the "{0}" property instead of Enumerable.Count().</source>
+        <target state="new">Use the "{0}" property instead of Enumerable.Count().</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableTitle">
+        <source>Use Length/Count property instead of Count() when available</source>
+        <target state="new">Use Length/Count property instead of Count() when available</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">
         <source>Use Rivest–Shamir–Adleman (RSA) Algorithm With Sufficient Key Size</source>
         <target state="translated">Yeterli Anahtar Boyutuna Sahip Rivest–Shamir–Adleman (RSA) Algoritmasını Kullan</target>

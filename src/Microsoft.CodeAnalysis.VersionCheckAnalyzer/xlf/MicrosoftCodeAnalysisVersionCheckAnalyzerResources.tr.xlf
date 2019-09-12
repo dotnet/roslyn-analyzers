@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="VersionCheckDescription">
         <source>Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.</source>
-        <target state="translated">Bu paketteki çözümleyicilerin düzgün yürütme yapabilmesi için Microsoft.CodeAnalysis'in belirli bir en düşük sürümü gerekir. Doğru çözümleyici sürümünü yüklemek için https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versionsadresine başvurun.</target>
+        <target state="translated">Bu paketteki çözümleyicilerin düzgün yürütme yapabilmesi için Microsoft.CodeAnalysis'in belirli bir en düşük sürümü gerekir. Doğru çözümleyici sürümünü yüklemek için https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions adresine başvurun.</target>
         <note />
       </trans-unit>
       <trans-unit id="VersionCheckMessage">

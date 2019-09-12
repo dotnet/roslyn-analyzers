@@ -288,23 +288,18 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability.CodeMetrics
                     }
 
                     // Compat: we match the default threshold values for old FxCop implementation.
-                    switch (ruleId)
+                    return ruleId switch
                     {
-                        case CA1501RuleId:
-                            return 5;
+                        CA1501RuleId => 5,
 
-                        case CA1502RuleId:
-                            return 25;
+                        CA1502RuleId => 25,
 
-                        case CA1505RuleId:
-                            return 10;
+                        CA1505RuleId => 10,
 
-                        case CA1506RuleId:
-                            return symbolKind == SymbolKind.NamedType ? 95 : (uint)40;
+                        CA1506RuleId => symbolKind == SymbolKind.NamedType ? 95 : (uint)40,
 
-                        default:
-                            throw new NotImplementedException();
-                    }
+                        _ => throw new NotImplementedException(),
+                    };
                 }
             });
         }

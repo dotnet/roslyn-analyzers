@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Analyzer.Utilities;
 using Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -15,7 +14,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             "CA5403",
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeCertificate),
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeCertificateMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotHardCodeCertificateDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);

@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryToken),
             nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription),
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -49,11 +49,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                 WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpDeleteAttribute,
                 WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPatchAttribute);
 
+        // It is used to translate ConcurrentDictionary into ConcurrentHashset, which is not provided.
+        private const bool placeholder = true;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
             UseAutoValidateAntiforgeryTokenRule,
             MissHttpVerbAttributeRule);
-
-        public delegate bool RequirementsOfValidateMethod(IMethodSymbol methodSymbol);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -90,8 +91,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                     return;
                 }
 
+                var cancellationToken = compilationStartAnalysisContext.CancellationToken;
+                var onlyLookAtDerivedClassesOfController = compilationStartAnalysisContext.Options.GetBoolOptionValue(
+                    optionName: EditorConfigOptionNames.OnlyLookAtDerivedClassesOfController,
+                    rule: UseAutoValidateAntiforgeryTokenRule,
+                    defaultValue: true,
+                    cancellationToken: cancellationToken);
+
                 // A dictionary from method symbol to set of methods calling it directly.
-                // The bool value in the sub ConcurrentDictionary is not used, use ConcurrentDictionary rather than HashSet just for the concurrency security.
                 var inverseGraph = new ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>>();
 
                 // Ignore cases where a global anti forgery filter is in use.
@@ -100,7 +107,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 // Verify that validate anti forgery token attributes are used somewhere within this project,
                 // to avoid reporting false positives on projects that use an alternative approach to mitigate CSRF issues.
                 var usingValidateAntiForgeryAttribute = false;
-                var onAuthorizationAsyncMethodSymbols = new HashSet<IMethodSymbol>();
+                var onAuthorizationAsyncMethodSymbols = new ConcurrentDictionary<IMethodSymbol, bool>();
                 var actionMethodSymbols = new HashSet<(IMethodSymbol, string)>();
                 var actionMethodNeedAddingHttpVerbAttributeSymbols = new HashSet<IMethodSymbol>();
 
@@ -152,7 +159,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
 
                             callers = inverseGraph.GetOrAdd(calledSymbol, (_) => new ConcurrentDictionary<ISymbol, bool>());
-                            callers.TryAdd(owningSymbol, true);
+                            callers.TryAdd(owningSymbol, placeholder);
                         }, OperationKind.Invocation, OperationKind.FieldReference);
                     });
 
@@ -190,16 +197,18 @@ namespace Microsoft.NetCore.Analyzers.Security
                             else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAsyncAuthorizationFilterTypeSymbol) ||
                                 potentialAntiForgeryFilter.AllInterfaces.Contains(iAuthorizationFilterTypeSymbol))
                             {
-                                onAuthorizationAsyncMethodSymbols.Add(
+                                onAuthorizationAsyncMethodSymbols.TryAdd(
                                     potentialAntiForgeryFilter
                                     .GetMembers()
                                     .OfType<IMethodSymbol>()
                                     .FirstOrDefault(
-                                        s => (s.Name == "OnAuthorizationAsync" ||
-                                            s.Name == "OnAuthorization") &&
-                                            s.ReturnType.Equals(taskTypeSymbol) &&
+                                        s => (s.Name == "OnAuthorizationAsync" &&
+                                            s.ReturnType.Equals(taskTypeSymbol) ||
+                                            s.Name == "OnAuthorization" &&
+                                            s.ReturnType.SpecialType == SpecialType.System_Void) &&
                                             s.Parameters.Length == 1 &&
-                                            s.Parameters[0].Type.Equals(authorizationFilterContextTypeSymbol)));
+                                            s.Parameters[0].Type.Equals(authorizationFilterContextTypeSymbol)),
+                                    placeholder);
                             }
                         }
                     }
@@ -215,9 +224,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var derivedControllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
                     var baseTypes = derivedControllerTypeSymbol.GetBaseTypes();
 
-                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`).
+                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller`, which indicates that cookie-based authentication is used and thus CSRF is a concern.
                     if (baseTypes.Contains(controllerTypeSymbol) ||
-                        baseTypes.Contains(controllerBaseTypeSymbol))
+                            (!onlyLookAtDerivedClassesOfController &&
+                            baseTypes.Contains(controllerBaseTypeSymbol)))
                     {
                         // The controller class is not protected by a validate anti forgery token attribute.
                         if (!IsUsingAntiFogeryAttribute(derivedControllerTypeSymbol))
@@ -340,7 +350,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         foreach (var child in callingMethods.Keys)
                         {
-                            if (onAuthorizationAsyncMethodSymbols.Contains(child))
+                            if (child is IMethodSymbol childMethodSymbol &&
+                                onAuthorizationAsyncMethodSymbols.ContainsKey(childMethodSymbol))
                             {
                                 results[methodSymbol].Add(child);
                             }

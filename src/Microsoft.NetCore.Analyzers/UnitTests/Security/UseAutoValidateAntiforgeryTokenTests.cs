@@ -28,7 +28,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
@@ -42,7 +42,7 @@ class FilterClass : IAsyncAuthorizationFilter
     }
 }
 
-class TestClass : ControllerBase
+class TestClass : Controller
 {
     [HttpDelete]
     public AcceptedAtActionResult CustomizedActionMethod (string actionName)
@@ -73,7 +73,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
@@ -81,13 +81,12 @@ class FilterClass : IAuthorizationFilter
 {
     public DefaultAntiforgery defaultAntiforgery;
 
-    public Task OnAuthorization (AuthorizationFilterContext context)
+    public void OnAuthorization (AuthorizationFilterContext context)
     {
-        return null;
     }
 }
 
-class TestClass : ControllerBase
+class TestClass : Controller
 {
     [HttpDelete]
     public AcceptedAtActionResult CustomizedActionMethod (string actionName)
@@ -104,43 +103,21 @@ class BlahClass
         filterCollection.Add(typeof(FilterClass));
     }
 }",
-            GetCSharpResultAt(26, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
+            GetCSharpResultAt(25, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPostAttribute_Diagnostic()
+        public void Test_ChildrenOfController_ActionMethodWithHttpPostAndHttpGetAttributes_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
-class TestClass : ControllerBase
-{
-    [HttpPost]
-    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
-    {
-        return null;
-    }
-}",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPost"));
-        }
-
-        [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPostAndHttpGetAttributes_Diagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using Microsoft.AspNetCore.Mvc;
-
-[MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
-{
-}
-
-class TestClass : ControllerBase
+class TestClass : Controller
 {
     [HttpGet]
     [HttpPost]
@@ -153,63 +130,18 @@ class TestClass : ControllerBase
         }
 
         [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPutAttribute_Diagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using Microsoft.AspNetCore.Mvc;
-
-[MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
-{
-}
-
-class TestClass : ControllerBase
-{
-    [HttpPut]
-    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
-    {
-        return null;
-    }
-}",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"));
-        }
-
-        [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpDeleteAttribute_Diagnostic()
+        public void Test_ChildrenOfController_ActionMethodWithHttpPatchAttribute_Diagnostic()
         {
             VerifyCSharpWithDependencies(@"
 using System;
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
-class TestClass : ControllerBase
-{
-    [HttpDelete]
-    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
-    {
-        return null;
-    }
-}",
-            GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
-        }
-
-        [Fact]
-        public void Test_ChildrenOfControllerBase_ActionMethodWithHttpPatchAttribute_Diagnostic()
-        {
-            VerifyCSharpWithDependencies(@"
-using System;
-using Microsoft.AspNetCore.Mvc;
-
-[MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
-{
-}
-
-class TestClass : ControllerBase
+class TestClass : Controller
 {
     [HttpPatch]
     public AcceptedAtActionResult CustomizedActionMethod (string actionName)
@@ -227,7 +159,7 @@ class TestClass : ControllerBase
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
@@ -249,7 +181,7 @@ class TestClass : Controller
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
@@ -271,7 +203,7 @@ class TestClass : Controller
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
@@ -297,11 +229,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
-class TestClass : ControllerBase
+class TestClass : Controller
 {
     [HttpDelete]
     [HttpPost]
@@ -324,11 +256,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
-class TestClass : ControllerBase
+class TestClass : Controller
 {
     public AcceptedAtActionResult CustomizedActionMethod (string actionName)
     {
@@ -336,6 +268,33 @@ class TestClass : ControllerBase
     }
 }",
             GetCSharpResultAt(15, 35, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "CustomizedActionMethod"));
+        }
+
+        [Theory]
+        [InlineData("dotnet_code_quality.CA5391.only_look_at_derived_classes_of_Controller = false")]
+        public void EditorConfigConfiguration_OnlyLookAtDerivedClassesOfController_DefaultValue_Diagnostic(string editorConfigText)
+        {
+            VerifyCSharpAcrossTwoAssemblies(
+                ASPNetCoreApis.CSharp,
+                @"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class TestClass : ControllerBase
+{
+    [HttpDelete]
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
+    {
+        return null;
+    }
+}",
+                GetEditorConfigAdditionalFile(editorConfigText),
+                GetCSharpResultAt(13, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpDelete"));
         }
 
         [Fact]
@@ -1353,6 +1312,33 @@ class BlahClass
         filterCollection.Add(typeof(FilterClass));
     }
 }");
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.CA5391.only_look_at_derived_classes_of_Controller = true")]
+        public void EditorConfigConfiguration_OnlyLookAtDerivedClassesOfController_NonDefaultValue_NoDiagnostic(string editorConfigText)
+        {
+            VerifyCSharpAcrossTwoAssemblies(
+                ASPNetCoreApis.CSharp,
+                @"
+using System;
+using Microsoft.AspNetCore.Mvc;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class TestClass : ControllerBase
+{
+    [HttpDelete]
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
+    {
+        return null;
+    }
+}",
+                GetEditorConfigAdditionalFile(editorConfigText));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

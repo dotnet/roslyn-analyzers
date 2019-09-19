@@ -93,7 +93,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 var cancellationToken = compilationStartAnalysisContext.CancellationToken;
                 var onlyLookAtDerivedClassesOfController = compilationStartAnalysisContext.Options.GetBoolOptionValue(
-                    optionName: EditorConfigOptionNames.OnlyLookAtDerivedClassesOfController,
+                    optionName: EditorConfigOptionNames.ExcludeAspnetCoreMvcControllerBase,
                     rule: UseAutoValidateAntiforgeryTokenRule,
                     defaultValue: true,
                     cancellationToken: cancellationToken);
@@ -108,8 +108,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                 // to avoid reporting false positives on projects that use an alternative approach to mitigate CSRF issues.
                 var usingValidateAntiForgeryAttribute = false;
                 var onAuthorizationAsyncMethodSymbols = new ConcurrentDictionary<IMethodSymbol, bool>();
-                var actionMethodSymbols = new HashSet<(IMethodSymbol, string)>();
-                var actionMethodNeedAddingHttpVerbAttributeSymbols = new HashSet<IMethodSymbol>();
+                var actionMethodSymbols = new ConcurrentDictionary<(IMethodSymbol, string), bool>();
+                var actionMethodNeedAddingHttpVerbAttributeSymbols = new ConcurrentDictionary<IMethodSymbol, bool>();
 
                 // Constructing inverse callGraph.
                 // When it comes to delegate function assignment Del handler = DelegateMethod;, inverse call Graph will add:
@@ -205,7 +205,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         s => (s.Name == "OnAuthorizationAsync" &&
                                             s.ReturnType.Equals(taskTypeSymbol) ||
                                             s.Name == "OnAuthorization" &&
-                                            s.ReturnType.SpecialType == SpecialType.System_Void) &&
+                                            s.ReturnsVoid) &&
                                             s.Parameters.Length == 1 &&
                                             s.Parameters[0].Type.Equals(authorizationFilterContextTypeSymbol)),
                                     placeholder);
@@ -269,13 +269,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         if (httpVerbAttributeTypeSymbolAbleToModify != null)
                                         {
                                             var attributeName = httpVerbAttributeTypeSymbolAbleToModify.AttributeClass.Name;
-                                            actionMethodSymbols.Add(
+                                            actionMethodSymbols.TryAdd(
                                                 (actionMethodSymbol,
-                                                attributeName.EndsWith("Attribute", StringComparison.Ordinal) ? attributeName.Remove(attributeName.Length - "Attribute".Length) : attributeName));
+                                                    attributeName.EndsWith("Attribute", StringComparison.Ordinal) ? attributeName.Remove(attributeName.Length - "Attribute".Length) : attributeName),
+                                                placeholder);
                                         }
                                         else if (!actionMethodSymbol.GetAttributes().Any(s => s.AttributeClass.GetBaseTypes().Contains(httpMethodAttributeTypeSymbol)))
                                         {
-                                            actionMethodNeedAddingHttpVerbAttributeSymbols.Add((actionMethodSymbol));
+                                            actionMethodNeedAddingHttpVerbAttributeSymbols.TryAdd(actionMethodSymbol, placeholder);
                                         }
                                     }
                                 }
@@ -310,7 +311,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         }
 
-                        foreach (var (methodSymbol, attributeName) in actionMethodSymbols)
+                        foreach (var (methodSymbol, attributeName) in actionMethodSymbols.Keys)
                         {
                             compilationAnalysisContext.ReportDiagnostic(
                                 methodSymbol.CreateDiagnostic(
@@ -319,7 +320,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     attributeName));
                         }
 
-                        foreach (var methodSymbol in actionMethodNeedAddingHttpVerbAttributeSymbols)
+                        foreach (var methodSymbol in actionMethodNeedAddingHttpVerbAttributeSymbols.Keys)
                         {
                             compilationAnalysisContext.ReportDiagnostic(
                                 methodSymbol.CreateDiagnostic(

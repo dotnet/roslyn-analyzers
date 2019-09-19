@@ -271,7 +271,7 @@ class TestClass : Controller
         }
 
         [Theory]
-        [InlineData("dotnet_code_quality.CA5391.only_look_at_derived_classes_of_Controller = false")]
+        [InlineData("dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controller_base = false")]
         public void EditorConfigConfiguration_OnlyLookAtDerivedClassesOfController_DefaultValue_Diagnostic(string editorConfigText)
         {
             VerifyCSharpAcrossTwoAssemblies(
@@ -1316,7 +1316,7 @@ class BlahClass
 
         [Theory]
         [InlineData("")]
-        [InlineData("dotnet_code_quality.CA5391.only_look_at_derived_classes_of_Controller = true")]
+        [InlineData("dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controller_base = true")]
         public void EditorConfigConfiguration_OnlyLookAtDerivedClassesOfController_NonDefaultValue_NoDiagnostic(string editorConfigText)
         {
             VerifyCSharpAcrossTwoAssemblies(

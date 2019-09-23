@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.UseDefaultDllImportSearchPathsAttribute),
             nameof(MicrosoftNetCoreAnalyzersResources.UseDefaultDllImportSearchPathsAttributeMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseDefaultDllImportSearchPathsAttributeDescription),
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -29,7 +29,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             "CA5393",
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseUnsafeDllImportSearchPath),
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseUnsafeDllImportSearchPathMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotUseUnsafeDllImportSearchPathDescription),
             customTags: WellKnownDiagnosticTags.Telemetry);

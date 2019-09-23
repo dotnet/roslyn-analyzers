@@ -3645,7 +3645,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "UseDefaultDllImportSearchPathsAttribute",
             "languages": [
               "C#",
@@ -3663,7 +3663,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "UseDefaultDllImportSearchPathsAttribute",
             "languages": [
               "C#",

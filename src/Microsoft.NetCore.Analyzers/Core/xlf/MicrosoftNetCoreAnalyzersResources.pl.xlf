@@ -152,6 +152,21 @@
         <target state="translated">Metoda akcji {0} musi jawnie określać rodzaj żądania Http</target>
         <note />
       </trans-unit>
+      <trans-unit id="MutableStructsShouldNotBeUsedForReadonlyFieldsDescription">
+        <source>Certain value types (e.g. SpinLock, GCHandle) are explicitly designed to be mutable. Declaring a field of such type as readonly might cause unintentional shadow copying by the compiler, leading to performance degradation or bugs.</source>
+        <target state="new">Certain value types (e.g. SpinLock, GCHandle) are explicitly designed to be mutable. Declaring a field of such type as readonly might cause unintentional shadow copying by the compiler, leading to performance degradation or bugs.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MutableStructsShouldNotBeUsedForReadonlyFieldsMessage">
+        <source>Field {0} of type {1} should not be readonly.</source>
+        <target state="new">Field {0} of type {1} should not be readonly.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MutableStructsShouldNotBeUsedForReadonlyFieldsTitle">
+        <source>Certain readonly structs should not be used as readonly fields</source>
+        <target state="new">Certain readonly structs should not be used as readonly fields</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
         <source>SQL queries that directly use user input can be vulnerable to SQL injection attacks. Review this SQL query for potential vulnerabilities, and consider using a parameterized SQL query.</source>
         <target state="translated">Zapytania SQL korzystające bezpośrednio z danych wejściowych użytkownika mogą być podatne na ataki polegające na wstrzyknięciu kodu SQL. Sprawdź to zapytanie SQL pod kątem potencjalnych luk i rozważ użycie sparametryzowanego zapytania SQL.</target>

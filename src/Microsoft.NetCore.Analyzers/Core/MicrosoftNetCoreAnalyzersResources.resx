@@ -1188,4 +1188,13 @@
   <data name="MaybeDisableHttpClientCRLCheckMessage" xml:space="preserve">
     <value>HttpClient may be created without enabling CheckCertificateRevocationList</value>
   </data>
+  <data name="MutableStructsShouldNotBeUsedForReadonlyFieldsTitle" xml:space="preserve">
+    <value>Certain readonly structs should not be used as readonly fields</value>
+  </data>
+  <data name="MutableStructsShouldNotBeUsedForReadonlyFieldsDescription" xml:space="preserve">
+    <value>Certain value types (e.g. SpinLock, GCHandle) are explicitly designed to be mutable. Declaring a field of such type as readonly might cause unintentional shadow copying by the compiler, leading to performance degradation or bugs.</value>
+  </data>
+  <data name="MutableStructsShouldNotBeUsedForReadonlyFieldsMessage" xml:space="preserve">
+    <value>Field {0} of type {1} should not be readonly.</value>
+  </data>
 </root>

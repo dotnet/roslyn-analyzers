@@ -52,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     Equals(item.ContainingAssembly, context.Compilation.Assembly) &&
                     MatchesConfiguredVisibility(item, context.Options, context.CancellationToken));
 
-            CheckTypeNames(globalTypes, context.ReportDiagnostic);
+            CheckTypeNames(globalTypes, context);
             CheckNamespaceMembers(globalNamespaces, context);
         }
 
@@ -97,7 +97,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (typeMembers.Any())
                 {
-                    CheckTypeNames(typeMembers, context.ReportDiagnostic);
+                    CheckTypeNames(typeMembers, context);
                 }
                 else
                 {
@@ -224,7 +224,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             return false;
         }
 
-        private static void CheckTypeNames(IEnumerable<INamedTypeSymbol> types, Action<Diagnostic> addDiagnostic)
+        private static void CheckTypeNames(IEnumerable<INamedTypeSymbol> types, CompilationAnalysisContext context)
         {
             // If there is only one type, then return
             if (!types.Skip(1).Any())
@@ -249,7 +249,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 if (typesWithName.Count > 1)
                 {
-                    addDiagnostic(Diagnostic.Create(Rule, Location.None, Type, GetSymbolDisplayString(typesWithName)));
+                    context.ReportNoLocationDiagnostic(Rule, Type, GetSymbolDisplayString(typesWithName));
                 }
 
                 typesWithName.Free();
@@ -281,7 +281,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 if (namespacesWithName.Count > 1)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, Location.None, Namespace, GetSymbolDisplayString(namespacesWithName)));
+                    context.ReportNoLocationDiagnostic(Rule, Namespace, GetSymbolDisplayString(namespacesWithName));
                 }
 
                 namespacesWithName.Free();

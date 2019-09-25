@@ -21,6 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         protected abstract class TestsSourceCodeProvider
         {
             protected TestsSourceCodeProvider(
+                string operationName,
                 string targetType,
                 string extensionsNamespace,
                 string extensionsClass,
@@ -37,7 +38,7 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
                 AwaitKeyword = awaitKeyword;
                 CommentPrefix = commentPrefix;
                 MethodSuffix = IsAsync ? "Async" : string.Empty;
-                MethodName = "Count" + MethodSuffix;
+                MethodName = operationName + MethodSuffix;
             }
 
             public string MethodName { get; }
@@ -53,29 +54,29 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
             public bool IsAsync { get; }
 
             public string GetTargetCode(string methodName)
-                => $"{(IsAsync ? $"{AwaitKeyword} " : string.Empty)}GetData().{methodName}{(IsAsync ? "Async" : string.Empty)}";
+                => $"{(IsAsync ? $"{AwaitKeyword} " : string.Empty)}GetData().{methodName}";
 
             public abstract string GetCodeWithExpression(string expression, params string[] additionalNamspaces);
 
             internal string WithDiagnostic(string code)
-                => $"{{|{(IsAsync ? DoNotUseCountWhenAnyCanBeUsedAnalyzer.AsyncRuleId : DoNotUseCountWhenAnyCanBeUsedAnalyzer.SyncRuleId)}:{code}|}}";
+                => code;
 
             internal string GetFixedExpressionCode(bool withPredicate, bool negate)
-                => $@"{GetLogicalNotText(negate)}{GetTargetExpressionCode(withPredicate, "Any")}";
+                => $@"{GetLogicalNotText(negate)}{GetTargetExpressionCode(withPredicate, "Any" + this.MethodSuffix)}";
 
-            internal string GetTargetExpressionBinaryExpressionCode(int value, BinaryOperatorKind @operator, bool withPredicate, string methodName = "Count")
+            internal string GetTargetExpressionBinaryExpressionCode(int value, BinaryOperatorKind @operator, bool withPredicate, string methodName)
                 => $@"{value} {GetOperatorCode(@operator)} {GetTargetExpressionCode(withPredicate, methodName)}";
 
-            internal string GetTargetExpressionBinaryExpressionCode(BinaryOperatorKind @operator, int value, bool withPredicate, string methodName = "Count")
+            internal string GetTargetExpressionBinaryExpressionCode(BinaryOperatorKind @operator, int value, bool withPredicate, string methodName)
                 => $@"{GetTargetExpressionCode(withPredicate, methodName)} {GetOperatorCode(@operator)} {value}";
 
-            public string GetTargetExpressionEqualsInvocationCode(int value, bool withPredicate, string methodName = "Count")
+            public string GetTargetExpressionEqualsInvocationCode(int value, bool withPredicate, string methodName)
                 => $@"{(IsAsync ? "(" : string.Empty)}{GetTargetExpressionCode(withPredicate, methodName)}{(IsAsync ? ")" : string.Empty)}.Equals({value})";
 
-            internal string GetEqualsTargetExpressionInvocationCode(int value, bool withPredicate, string methodName = "Count")
+            internal string GetEqualsTargetExpressionInvocationCode(int value, bool withPredicate, string methodName)
                 => $@"{value}.Equals({GetTargetExpressionCode(withPredicate, methodName)})";
 
-            public string GetTargetExpressionCode(bool withPredicate, string methodName = "Count")
+            public string GetTargetExpressionCode(bool withPredicate, string methodName)
                 => $@"{GetTargetCode(methodName)}({(withPredicate ? GetPredicateCode() : string.Empty)})";
 
             public abstract string GetSymbolInvocationCode(string methodName, params string[] arguments);
@@ -88,11 +89,13 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         protected sealed class CSharpTestsSourceCodeProvider : TestsSourceCodeProvider
         {
             public CSharpTestsSourceCodeProvider(
+                string operationName,
                 string targetType,
                 string extensionsNamespace,
                 string extensionsClass,
                 bool isAsync)
                 : base(
+                    operationName,
                     targetType,
                     extensionsNamespace,
                     extensionsClass,
@@ -195,17 +198,17 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
 
             public override string GetOperatorCode(BinaryOperatorKind binaryOperatorKind)
             {
-                switch (binaryOperatorKind)
+                return binaryOperatorKind switch
                 {
-                    case BinaryOperatorKind.Add: return "+";
-                    case BinaryOperatorKind.Equals: return "==";
-                    case BinaryOperatorKind.GreaterThan: return ">";
-                    case BinaryOperatorKind.GreaterThanOrEqual: return ">=";
-                    case BinaryOperatorKind.LessThan: return "<";
-                    case BinaryOperatorKind.LessThanOrEqual: return "<=";
-                    case BinaryOperatorKind.NotEquals: return "!=";
-                    default: throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}");
-                }
+                    BinaryOperatorKind.Add => "+",
+                    BinaryOperatorKind.Equals => "==",
+                    BinaryOperatorKind.GreaterThan => ">",
+                    BinaryOperatorKind.GreaterThanOrEqual => ">=",
+                    BinaryOperatorKind.LessThan => "<",
+                    BinaryOperatorKind.LessThanOrEqual => "<=",
+                    BinaryOperatorKind.NotEquals => "!=",
+                    _ => throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}"),
+                };
             }
 
             public override string GetPredicateCode() => "_ => true";
@@ -221,11 +224,13 @@ namespace Microsoft.NetCore.Analyzers.Performance.UnitTests
         protected sealed class BasicTestsSourceCodeProvider : TestsSourceCodeProvider
         {
             public BasicTestsSourceCodeProvider(
+                string operationName,
                 string targetType,
                 string extensionsNamespace,
                 string extensionsClass,
                 bool isAsync)
                 : base(
+                    operationName,
                     targetType,
                     extensionsNamespace,
                     extensionsClass,
@@ -340,17 +345,17 @@ End Namespace
 
             public override string GetOperatorCode(BinaryOperatorKind binaryOperatorKind)
             {
-                switch (binaryOperatorKind)
+                return binaryOperatorKind switch
                 {
-                    case BinaryOperatorKind.Add: return "+";
-                    case BinaryOperatorKind.Equals: return "=";
-                    case BinaryOperatorKind.GreaterThan: return ">";
-                    case BinaryOperatorKind.GreaterThanOrEqual: return ">=";
-                    case BinaryOperatorKind.LessThan: return "<";
-                    case BinaryOperatorKind.LessThanOrEqual: return "<=";
-                    case BinaryOperatorKind.NotEquals: return "<>";
-                    default: throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}");
-                }
+                    BinaryOperatorKind.Add => "+",
+                    BinaryOperatorKind.Equals => "=",
+                    BinaryOperatorKind.GreaterThan => ">",
+                    BinaryOperatorKind.GreaterThanOrEqual => ">=",
+                    BinaryOperatorKind.LessThan => "<",
+                    BinaryOperatorKind.LessThanOrEqual => "<=",
+                    BinaryOperatorKind.NotEquals => "<>",
+                    _ => throw new ArgumentOutOfRangeException(nameof(binaryOperatorKind), binaryOperatorKind, $"Invalid value: {binaryOperatorKind}"),
+                };
             }
 
             public override string GetPredicateCode() => "Function(x) True";
@@ -365,8 +370,23 @@ End Namespace
 
         protected abstract class VerifierBase
         {
+            protected VerifierBase(string diagnosticId)
+            {
+                DiagnosticId = diagnosticId;
+            }
+
+            public string DiagnosticId { get; }
+
             internal abstract Task VerifyAsync(string[] testSources);
-            internal abstract Task VerifyAsync(string[] testSources, string[] fixedSources);
+            internal abstract Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources);
+
+            protected static int GetNumberOfLines(string source)
+            {
+                var numberOfLines = 0;
+                var index = -Environment.NewLine.Length;
+                while ((index = source.IndexOf(Environment.NewLine, index + Environment.NewLine.Length, StringComparison.Ordinal)) >= 0) numberOfLines++;
+                return numberOfLines;
+            }
         }
 
         protected sealed class CSharpVerifier<TAnalyzer, TCodeFix>
@@ -374,6 +394,11 @@ End Namespace
             where TAnalyzer : DiagnosticAnalyzer, new()
             where TCodeFix : CodeFixProvider, new()
         {
+            public CSharpVerifier(string diagnosticId)
+                : base(diagnosticId)
+            {
+            }
+
             internal override Task VerifyAsync(string[] testSources)
             {
                 var test = new Test.Utilities.CSharpCodeFixVerifier<TAnalyzer, TCodeFix>.Test();
@@ -389,7 +414,7 @@ End Namespace
                 return test.RunAsync();
             }
 
-            internal override Task VerifyAsync(string[] testSources, string[] fixedSources)
+            internal override Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources)
             {
                 var test = new Test.Utilities.CSharpCodeFixVerifier<TAnalyzer, TCodeFix>.Test();
 
@@ -400,6 +425,11 @@ End Namespace
                         test.TestState.Sources.Add(testSource);
                     }
                 }
+
+                test.TestState.ExpectedDiagnostics.Add(
+                    Test.Utilities.CSharpCodeFixVerifier<TAnalyzer, TCodeFix>.Diagnostic(this.DiagnosticId)
+                        .WithLocation(GetNumberOfLines(testSources[0]) - 3, 21)
+                        .WithArguments(methodName));
 
                 foreach (var fixedSource in fixedSources)
                 {
@@ -418,6 +448,11 @@ End Namespace
             where TAnalyzer : DiagnosticAnalyzer, new()
             where TCodeFix : CodeFixProvider, new()
         {
+            public BasicVerifier(string diagnosticId)
+                : base(diagnosticId)
+            {
+            }
+
             internal override Task VerifyAsync(string[] testSources)
             {
                 var test = new Test.Utilities.VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>.Test();
@@ -433,7 +468,7 @@ End Namespace
                 return test.RunAsync();
             }
 
-            internal override Task VerifyAsync(string[] testSources, string[] fixedSources)
+            internal override Task VerifyAsync(string methodName, string[] testSources, string[] fixedSources)
             {
                 var test = new Test.Utilities.VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>.Test();
 
@@ -444,6 +479,11 @@ End Namespace
                         test.TestState.Sources.Add(testSource);
                     }
                 }
+
+                test.TestState.ExpectedDiagnostics.Add(
+                    Test.Utilities.VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>.Diagnostic(this.DiagnosticId)
+                        .WithLocation(GetNumberOfLines(testSources[0]) - 3, 21)
+                        .WithArguments(methodName));
 
                 foreach (var fixedSource in fixedSources)
                 {

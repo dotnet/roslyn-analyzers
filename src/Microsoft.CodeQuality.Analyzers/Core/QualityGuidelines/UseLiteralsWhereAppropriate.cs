@@ -60,10 +60,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 // will always have identical configured visibility.
                 var lastField = fieldInitializer?.InitializedFields.LastOrDefault();
                 var fieldInitializerValue = fieldInitializer?.Value;
-                if (fieldInitializerValue == null || lastField.IsConst ||
+                if (fieldInitializerValue == null ||
+                    lastField.IsConst ||
+                    !lastField.IsReadOnly ||
+                    !fieldInitializerValue.ConstantValue.HasValue ||
                     !lastField.MatchesConfiguredVisibility(saContext.Options, DefaultRule, saContext.CancellationToken, defaultRequiredVisibility: SymbolVisibilityGroup.Internal | SymbolVisibilityGroup.Private) ||
-                    !lastField.IsStatic ||
-                    !lastField.IsReadOnly || !fieldInitializerValue.ConstantValue.HasValue)
+                    !lastField.MatchesConfiguredModifiers(saContext.Options, DefaultRule, saContext.CancellationToken, defaultRequiredModifiers: SymbolModifiers.Static))
                 {
                     return;
                 }

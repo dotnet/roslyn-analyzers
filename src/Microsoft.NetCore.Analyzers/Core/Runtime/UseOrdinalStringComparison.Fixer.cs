@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
@@ -23,8 +22,6 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
             string title = MicrosoftNetCoreAnalyzersResources.UseOrdinalStringComparisonTitle;
 
             if (IsInArgumentContext(node))
@@ -34,7 +31,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await FixArgument(context.Document, syntaxGenerator, root, node).ConfigureAwait(false),
                                                          equivalenceKey: title),
-                                                    diagnostic);
+                                        context.Diagnostics);
             }
             else if (IsInIdentifierNameContext(node))
             {
@@ -43,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 context.RegisterCodeFix(new MyCodeAction(title,
                                                          async ct => await FixIdentifierName(context.Document, syntaxGenerator, root, node, context.CancellationToken).ConfigureAwait(false),
                                                          equivalenceKey: title),
-                                                    diagnostic);
+                                        context.Diagnostics);
             }
         }
 

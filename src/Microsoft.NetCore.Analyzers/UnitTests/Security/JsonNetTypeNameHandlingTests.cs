@@ -24,6 +24,78 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         }
 
         [Fact]
+        public void DocSample1_CSharp_Violation_Diagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+public class ExampleClass
+{
+    public JsonSerializerSettings Settings { get; }
+
+    public ExampleClass()
+    {
+        Settings = new JsonSerializerSettings();
+        Settings.TypeNameHandling = TypeNameHandling.All;    // CA2326 violation.
+    }
+}",
+                GetCSharpResultAt(11, 37, Rule));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation_Diagnostic()
+        {
+            this.VerifyBasicWithJsonNet(@"
+Imports Newtonsoft.Json
+
+Public Class ExampleClass
+    Public ReadOnly Property Settings() As JsonSerializerSettings
+
+    Public Sub New()
+        Settings = New JsonSerializerSettings()
+        Settings.TypeNameHandling = TypeNameHandling.All    ' CA2326 violation.
+    End Sub
+End Class",
+                GetBasicResultAt(9, 37, Rule));
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Solution_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+public class ExampleClass
+{
+    public JsonSerializerSettings Settings { get; }
+
+    public ExampleClass()
+    {
+        Settings = new JsonSerializerSettings();
+        
+        // The default value of Settings.TypeNameHandling is TypeNameHandling.None.
+    }
+}");
+        }
+
+        [Fact]
+        public void DocSample1_VB_Solution_NoDiagnostic()
+        {
+            this.VerifyBasicWithJsonNet(@"
+Imports Newtonsoft.Json
+
+Public Class ExampleClass
+    Public ReadOnly Property Settings() As JsonSerializerSettings
+
+    Public Sub New()
+        Settings = New JsonSerializerSettings()
+
+        ' The default value of Settings.TypeNameHandling is TypeNameHandling.None.
+    End Sub
+End Class");
+        }
+
+        [Fact]
         public void Reference_TypeNameHandling_None_NoDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"
@@ -141,6 +213,11 @@ class Blah
         private void VerifyCSharpWithJsonNet(string source, params DiagnosticResult[] expected)
         {
             this.VerifyCSharpAcrossTwoAssemblies(NewtonsoftJsonNetApis.CSharp, source, expected);
+        }
+
+        private void VerifyBasicWithJsonNet(string source, params DiagnosticResult[] expected)
+        {
+            this.VerifyBasicAcrossTwoAssemblies(NewtonsoftJsonNetApis.VisualBasic, source, expected);
         }
     }
 }

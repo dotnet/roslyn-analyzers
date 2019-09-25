@@ -181,8 +181,7 @@
             "isEnabledByDefault": true,
             "typeName": "TestForEmptyStringsUsingStringLengthAnalyzer",
             "languages": [
-              "C#",
-              "Visual Basic"
+              "C#"
             ],
             "tags": [
               "PortedFromFxCop",
@@ -728,6 +727,7 @@
           "shortDescription": "Do not use TypeNameHandling values other than None",
           "fullDescription": "Deserializing JSON when using a TypeNameHandling value other than None can be insecure.  If you need to instead detect Json.NET deserialization when a SerializationBinder isn't specified, then disable rule CA2326, and enable rules CA2327, CA2328, CA2329, and CA2330.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2326",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -743,6 +743,7 @@
           "shortDescription": "Do not use insecure JsonSerializerSettings",
           "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2327",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -762,6 +763,7 @@
           "shortDescription": "Ensure that JsonSerializerSettings are secure",
           "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2328",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -781,6 +783,7 @@
           "shortDescription": "Do not deserialize with JsonSerializer using an insecure configuration",
           "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2329",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -800,6 +803,7 @@
           "shortDescription": "Ensure that JsonSerializer has a secure configuration when deserializing",
           "fullDescription": "When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca2330",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": false,
@@ -1011,6 +1015,7 @@
           "shortDescription": "Do Not Add Schema By URL",
           "fullDescription": "This overload of XmlSchemaCollection.Add method internally enables DTD processing on the XML reader instance used, and uses UrlResolver for resolving external XML entities. The outcome is information disclosure. Content from file system or network shares for the machine processing the XML can be exposed to attacker. In addition, an attacker can use this as a DoS vector.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca3061",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1159,6 +1164,7 @@
           "shortDescription": "Do Not Disable Request Validation",
           "fullDescription": "Request validation is a feature in ASP.NET that examines HTTP requests and determines whether they contain potentially dangerous content. This check adds protection from markup or code in the URL query string, cookies, or posted form values that might have been added for malicious purposes. So, it is generally desirable and should be left enabled for defense in depth.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5363",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1268,6 +1274,7 @@
           "shortDescription": "Use XmlReader For Deserialize",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5369",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1286,6 +1293,7 @@
           "shortDescription": "Use XmlReader For Validating Reader",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5370",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1304,6 +1312,7 @@
           "shortDescription": "Use XmlReader For Schema Read",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5371",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1322,6 +1331,7 @@
           "shortDescription": "Use XmlReader For XPathDocument",
           "fullDescription": "Processing XML from untrusted data may load dangerous external references, which should be restricted by using an XmlReader with a secure resolver or with DTD processing disabled.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5372",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1340,6 +1350,7 @@
           "shortDescription": "Do not use obsolete key derivation function",
           "fullDescription": "Password-based key derivation should use PBKDF2 with SHA-2. Avoid using PasswordDeriveBytes since it generates a PBKDF1 key. Avoid using Rfc2898DeriveBytes.CryptDeriveKey since it doesn't use the iteration count or salt.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5373",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1470,6 +1481,7 @@
           "shortDescription": "Do Not Add Certificates To Root Store",
           "fullDescription": "By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5380",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1489,6 +1501,7 @@
           "shortDescription": "Ensure Certificates Are Not Added To Root Store",
           "fullDescription": "By default, the Trusted Root Certification Authorities certificate store is configured with a set of public CAs that has met the requirements of the Microsoft Root Certificate Program. Since all trusted root CAs can issue certificates for any domain, an attacker can pick a weak or coercible CA that you install by yourself to target for an attack – and a single vulnerable, malicious or coercible CA undermines the security of the entire system. To make matters worse, these attacks can go unnoticed quite easily.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5381",
           "properties": {
             "category": "Security",
             "isEnabledByDefault": true,
@@ -1639,9 +1652,10 @@
           "shortDescription": "Do Not Add Archive Item's Path To The Target File System Path",
           "fullDescription": "When extracting files from an archive and using the archive item's path, check if the path is safe. Archive path can be relative and can lead to file system access outside of the expected file system target path, leading to malicious config changes and remote code execution via lay-and-wait technique.",
           "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5389",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotAddArchiveItemPathToTheTargetFileSystemPath",
             "languages": [
               "C#",
@@ -1660,7 +1674,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "DoNotHardCodeEncryptionKey",
             "languages": [
               "C#",
@@ -1672,6 +1686,24 @@
             ]
           }
         },
+        "CA5391": {
+          "id": "CA5391",
+          "shortDescription": "Use antiforgery tokens in ASP.NET Core MVC controllers",
+          "fullDescription": "Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "UseAutoValidateAntiforgeryToken",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
         "CA5392": {
           "id": "CA5392",
           "shortDescription": "Use DefaultDllImportSearchPaths attribute for P/Invokes",
@@ -1679,7 +1711,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "UseDefaultDllImportSearchPathsAttribute",
             "languages": [
               "C#",
@@ -1697,7 +1729,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "UseDefaultDllImportSearchPathsAttribute",
             "languages": [
               "C#",
@@ -1722,6 +1754,119 @@
               "Visual Basic"
             ],
             "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5395": {
+          "id": "CA5395",
+          "shortDescription": "Miss HttpVerb attribute for action methods",
+          "fullDescription": "All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "UseAutoValidateAntiforgeryToken",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5396": {
+          "id": "CA5396",
+          "shortDescription": "Set HttpOnly to true for HttpCookie",
+          "fullDescription": "As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "SetHttpOnlyForHttpCookie",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5397": {
+          "id": "CA5397",
+          "shortDescription": "Do not use deprecated SslProtocols values",
+          "fullDescription": "Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5397",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": true,
+            "typeName": "SslProtocolsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5398": {
+          "id": "CA5398",
+          "shortDescription": "Avoid hardcoded SslProtocols values",
+          "fullDescription": "Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca5398",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "SslProtocolsAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5399": {
+          "id": "CA5399",
+          "shortDescription": "Definitely disable HttpClient certificate revocation list check",
+          "fullDescription": "Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotDisableHttpClientCRLCheck",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5400": {
+          "id": "CA5400",
+          "shortDescription": "Ensure HttpClient certificate revocation list check is not disabled",
+          "fullDescription": "Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotDisableHttpClientCRLCheck",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
               "Telemetry"
             ]
           }
@@ -1801,6 +1946,21 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "CSharpAvoidZeroLengthArrayAllocationsAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "CA1829": {
+          "id": "CA1829",
+          "shortDescription": "Use Length/Count property instead of Count() when available",
+          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "CSharpUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
             "languages": [
               "C#"
             ]
@@ -1936,6 +2096,21 @@
             "category": "Performance",
             "isEnabledByDefault": true,
             "typeName": "BasicAvoidZeroLengthArrayAllocationsAnalyzer",
+            "languages": [
+              "Visual Basic"
+            ]
+          }
+        },
+        "CA1829": {
+          "id": "CA1829",
+          "shortDescription": "Use Length/Count property instead of Count() when available",
+          "fullDescription": "Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.",
+          "defaultLevel": "warning",
+          "helpUri": "https://docs.microsoft.com/visualstudio/code-quality/ca1829",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "typeName": "BasicUsePropertyInsteadOfCountMethodWhenAvailableAnalyzer",
             "languages": [
               "Visual Basic"
             ]

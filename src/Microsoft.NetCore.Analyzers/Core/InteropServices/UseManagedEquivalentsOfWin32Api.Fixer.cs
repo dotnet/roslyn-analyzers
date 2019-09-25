@@ -11,7 +11,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
     /// </summary>
     public abstract class UseManagedEquivalentsOfWin32ApiFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UseManagedEquivalentsOfWin32ApiAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

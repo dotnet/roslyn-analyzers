@@ -14,6 +14,41 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
     public partial class DoNotUseInsecureDtdProcessingAnalyzerTests
     {
         [Fact]
+        public async Task Issue2753_CS_Diagnostic()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.Xml;
+
+namespace TestNamespace
+{
+    class TestClass
+    {
+        private static void TestMethod(XmlResolver resolver)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = resolver;
+        }
+    }
+}",
+                GetCA3075XmlDocumentWithNoSecureResolverCSharpResultAt(11, 13));
+        }
+
+        [Fact]
+        public async Task Issue2753_VB_Diagnostic()
+        {
+            await VerifyVB.VerifyAnalyzerAsync(@"
+Imports System.Xml
+
+Module foo
+    Public Sub LoadXmlSafe(resolver As XmlResolver)
+        Dim doc As New XmlDocument()
+        doc.XmlResolver = resolver
+    End Sub
+End Module",
+                GetCA3075XmlDocumentWithNoSecureResolverBasicResultAt(7, 9));
+        }
+
+        [Fact]
         public async Task XmlDocumentNoCtorSetResolverToNullShouldNotGenerateDiagnostic()
         {
             await VerifyCS.VerifyAnalyzerAsync(@"

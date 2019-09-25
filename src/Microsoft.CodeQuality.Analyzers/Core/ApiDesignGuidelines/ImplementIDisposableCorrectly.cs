@@ -135,7 +135,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    if (!(disposableType.GetMembers(DisposeMethodName).Single() is IMethodSymbol disposeInterfaceMethod))
+                    if (!(disposableType.GetMembers(DisposeMethodName).FirstOrDefault() is IMethodSymbol disposeInterfaceMethod))
                     {
                         return;
                     }
@@ -146,7 +146,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    if (!(garbageCollectorType.GetMembers(SuppressFinalizeMethodName).Single() is IMethodSymbol suppressFinalizeMethod))
+                    if (!(garbageCollectorType.GetMembers(SuppressFinalizeMethodName).FirstOrDefault() is IMethodSymbol suppressFinalizeMethod))
                     {
                         return;
                     }

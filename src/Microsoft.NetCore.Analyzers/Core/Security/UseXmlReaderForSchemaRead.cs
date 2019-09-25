@@ -23,7 +23,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: Description,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5371",
                 customTags: WellKnownDiagnosticTags.Telemetry);
 
         protected override string TypeMetadataName => WellKnownTypeNames.SystemXmlSchemaXmlSchema;

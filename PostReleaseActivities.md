@@ -12,7 +12,7 @@ Please follow the below steps after publishing analyzer NuGet packages from this
    2. Update `VERSIONING.md`: Add a new row in the released version table.
    3. Update `.github\ISSUE_TEMPLATE.md`: Update the package version in the example section to the latest released package version.
    4. Update `eng\Versions.props`:
-      1. Bump up the `VersionPrefix`.
+      1. Bump up the `VersionPrefix`. If the new version prefix is greater then or equals the current `FlowAnalysisUtilitiesVersionPrefix`, then update `FlowAnalysisUtilitiesVersionPrefix` to `$(VersionPrefix)`.
       2. Reset `PreReleaseVersionLabel` to `beta1`.
       3. Update `MicrosoftCodeAnalysisFXCopAnalyersVersion` to the latest released package version.
    5. Build the repo by invoking `eng\common\CIBuild.cmd` and fix/suppress any new CA diagnostics, as appropriate. This should also update the analyzer documentation files in the repo to use the new version prefix.
@@ -22,6 +22,6 @@ Steps to generate Release Notes
 =================================================================
 
 1. Checkout the sources for the release branch locally. This would normally be the master branch.
-2. Build ReleaseNotesUtil tool: `msbuild /t:restore /t:rebuild /v:m /m src\ReleaseNotesUtil\ReleaseNotesUtil.csproj`.
+2. Build.
 3. Ensure that nuget.exe is on path.
-4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\netcoreapp2.0` and execute `GenDiffNotes.cmd` from an admin command prompt to generate release notes.
+4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\netcoreapp2.0` and execute `GenDiffNotes.cmd` to generate release notes.  Example command line for v2.9.4 to v2.9.5: `GenDiffNotes.cmd C:\scratch nuget.org 2.9.3 2.9.4`.

@@ -79,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Resources
                     }
 
                     // attribute just don't exist
-                    ce.ReportDiagnostic(Diagnostic.Create(Rule, Location.None));
+                    ce.ReportNoLocationDiagnostic(Rule);
                 });
             });
         }

@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -68,13 +69,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         attributeInstance.ConstructorArguments[0].Value.Equals(true))
                     {
                         // Has the attribute, with the value 'true'.
-                        context.ReportDiagnostic(Diagnostic.Create(RuleA, Location.None, context.Compilation.Assembly.Name));
+                        context.ReportNoLocationDiagnostic(RuleA, context.Compilation.Assembly.Name);
                     }
                 }
                 else
                 {
                     // No ComVisible attribute at all.
-                    context.ReportDiagnostic(Diagnostic.Create(RuleB, Location.None, context.Compilation.Assembly.Name));
+                    context.ReportNoLocationDiagnostic(RuleB, context.Compilation.Assembly.Name);
                 }
             }
 

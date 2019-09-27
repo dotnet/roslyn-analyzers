@@ -224,7 +224,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var derivedControllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
                     var baseTypes = derivedControllerTypeSymbol.GetBaseTypes();
 
-                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller`, which indicates that cookie-based authentication is used and thus CSRF is a concern.
+                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller`, which probably indicates views are used and maybe cookie-based authentication is used and thus CSRF is a concern.
                     if (baseTypes.Contains(controllerTypeSymbol) ||
                             (!onlyLookAtDerivedClassesOfController &&
                             baseTypes.Contains(controllerBaseTypeSymbol)))

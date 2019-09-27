@@ -270,6 +270,37 @@ class TestClass : Controller
             GetCSharpResultAt(15, 35, UseAutoValidateAntiforgeryToken.MissHttpVerbAttributeRule, "CustomizedActionMethod"));
         }
 
+        [Fact, WorkItem(2844, "https://github.com/dotnet/roslyn-analyzers/issues/2844")]
+        public void Test_ConcurrencyIssue_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using Microsoft.AspNetCore.Mvc;
+
+[MyValidateAntiForgeryAttribute]
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+{
+}
+
+class TestClass : Controller
+{
+    [HttpPut]
+    public AcceptedAtActionResult CustomizedActionMethod (string actionName)
+    {
+        return null;
+    }
+}
+
+class TestClass2 : Controller
+{
+    [HttpPut]
+    public AcceptedAtActionResult CustomizedActionMethod2 (string actionName)
+    {
+        return null;
+    }
+}",
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"));
+        }
+
         [Theory]
         [InlineData("dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controller_base = false")]
         public void EditorConfigConfiguration_OnlyLookAtDerivedClassesOfController_DefaultValue_Diagnostic(string editorConfigText)

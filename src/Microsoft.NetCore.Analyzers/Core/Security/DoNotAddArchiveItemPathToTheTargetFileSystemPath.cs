@@ -18,7 +18,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPath),
             nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPathMessage),
             isEnabledByDefault: false,
-            helpLinkUri: null,
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5389",
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotAddArchiveItemPathToTheTargetFileSystemPathDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 

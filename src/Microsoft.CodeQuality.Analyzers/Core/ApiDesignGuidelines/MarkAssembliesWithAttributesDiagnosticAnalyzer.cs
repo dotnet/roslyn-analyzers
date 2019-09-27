@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -85,12 +86,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             if (!assemblyVersionAttributeFound && assemblyVersionAttributeSymbol != null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(CA1016Rule, Location.None));
+                context.ReportNoLocationDiagnostic(CA1016Rule);
             }
 
             if (!assemblyComplianceAttributeFound && assemblyComplianceAttributeSymbol != null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(CA1014Rule, Location.None));
+                context.ReportNoLocationDiagnostic(CA1014Rule);
             }
         }
     }

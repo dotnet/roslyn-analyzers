@@ -882,27 +882,18 @@ End Class
 
         private static string GetApproriateMessage(SymbolKind symbolKind)
         {
-            switch (symbolKind)
+            return symbolKind switch
             {
-                case SymbolKind.Assembly:
-                    return MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageAssembly;
-                case SymbolKind.Namespace:
-                    return MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageNamespace;
-                case SymbolKind.NamedType:
-                    return MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageType;
-                case SymbolKind.Member:
-                    return MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMember;
-                case SymbolKind.DelegateParameter:
-                    return MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageDelegateParameter;
-                case SymbolKind.MemberParameter:
-                    return MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMemberParameter;
-                case SymbolKind.TypeTypeParameter:
-                    return MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter;
-                case SymbolKind.MethodTypeParameter:
-                    return MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter;
-                default:
-                    throw new System.Exception("Unknown Symbol Kind");
-            }
+                SymbolKind.Assembly => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageAssembly,
+                SymbolKind.Namespace => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageNamespace,
+                SymbolKind.NamedType => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageType,
+                SymbolKind.Member => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMember,
+                SymbolKind.DelegateParameter => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageDelegateParameter,
+                SymbolKind.MemberParameter => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMemberParameter,
+                SymbolKind.TypeTypeParameter => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageTypeTypeParameter,
+                SymbolKind.MethodTypeParameter => MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainUnderscoresMessageMethodTypeParameter,
+                _ => throw new System.Exception("Unknown Symbol Kind"),
+            };
         }
 
         private enum SymbolKind

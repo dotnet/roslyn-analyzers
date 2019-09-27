@@ -77,6 +77,31 @@ namespace ReleaseNotesUtil
                 return ilInstructionCount != 177;
             }
 
+            // See if the method body is:
+            // {
+            //     return Task.CompletedTask;
+            // }
+            byte[] methodBodyIL = method?.GetMethodBody()?.GetILAsByteArray();
+            if (methodBodyIL != null
+                && methodBodyIL.Length == 6
+                && methodBodyIL[0] == 0x28    // call <method>
+                && methodBodyIL[5] == 0x2a)   // ret
+            {
+                if (!BitConverter.IsLittleEndian)
+                {
+                    Array.Reverse<byte>(methodBodyIL, 1, sizeof(Int32));
+                }
+
+                int metadataToken = BitConverter.ToInt32(methodBodyIL, 1);
+                MethodBase calledMethod = method.Module.ResolveMethod(metadataToken);
+                if (calledMethod != null
+                    && calledMethod.DeclaringType.FullName == "System.Threading.Tasks.Task"
+                    && calledMethod.Name == "get_CompletedTask")
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
     }

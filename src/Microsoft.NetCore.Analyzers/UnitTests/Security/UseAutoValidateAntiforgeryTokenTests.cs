@@ -277,7 +277,7 @@ class TestClass : Controller
 using Microsoft.AspNetCore.Mvc;
 
 [MyValidateAntiForgeryAttribute]
-class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : ControllerBase
+class MakeSureValidateAntiForgeryAttributeIsUsedSomeWhereClass : Controller
 {
 }
 
@@ -298,7 +298,8 @@ class TestClass2 : Controller
         return null;
     }
 }",
-            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"));
+            GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"),
+            GetCSharpResultAt(21, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod2", "HttpPut"));
         }
 
         [Theory]

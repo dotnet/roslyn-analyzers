@@ -1180,7 +1180,7 @@
     <value>HttpClient may be created without enabling CheckCertificateRevocationList</value>
   </data>
   <data name="DoNotHardCodeCertificate" xml:space="preserve">
-    <value>Do not hard code certificate</value>
+    <value>Do not hard-code certificate</value>
   </data>
   <data name="DoNotHardCodeCertificateDescription" xml:space="preserve">
     <value>Hardcoded certificates in source code are vulnerable to being exploited.</value>

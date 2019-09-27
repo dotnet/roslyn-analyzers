@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<RuleSet Name="Microsoft SDL 7.1 Required and Recommended" Description="This rule set contains all Microsoft SDL 7.1 required and recommended rules." ToolsVersion="10.0">
-  <Include Path="Sdl-7.1.Required.ruleset" Action="Default" />
-</RuleSet>

@@ -62,16 +62,14 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
 
         private static bool IsEmptyExpressionBody(ArrowExpressionClauseSyntax expressionBody, SemanticModel semanticModel)
         {
-            switch (expressionBody.Expression.Kind())
+            return (expressionBody.Expression.Kind()) switch
             {
-                case SyntaxKind.ThrowExpression:
-                    return true;
+                SyntaxKind.ThrowExpression => true,
 
-                case SyntaxKind.InvocationExpression:
-                    return IsConditionalInvocation((InvocationExpressionSyntax)expressionBody.Expression, semanticModel);
-            }
+                SyntaxKind.InvocationExpression => IsConditionalInvocation((InvocationExpressionSyntax)expressionBody.Expression, semanticModel),
 
-            return false;
+                _ => false,
+            };
         }
 
         private static bool IsConditionalInvocation(InvocationExpressionSyntax invocationExpr, SemanticModel semanticModel)

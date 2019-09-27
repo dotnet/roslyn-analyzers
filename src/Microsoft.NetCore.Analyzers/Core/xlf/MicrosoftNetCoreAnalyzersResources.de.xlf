@@ -2,19 +2,29 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="de" original="../MicrosoftNetCoreAnalyzersResources.resx">
     <body>
+      <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIV">
+        <source>Do not use CreateEncryptor with non-default IV</source>
+        <target state="new">Do not use CreateEncryptor with non-default IV</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage">
+        <source>Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</source>
+        <target state="new">Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DeprecatedSslProtocolsDescription">
         <source>Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.</source>
-        <target state="new">Older protocol versions of Transport Layer Security (TLS) are less secure than TLS 1.2 and TLS 1.3, and are more likely to have new vulnerabilities. Avoid older protocol versions to minimize risk.</target>
+        <target state="translated">Ältere Protokollversionen von Transport Layer Security (TLS) sind weniger sicher als TLS 1.2 und TLS 1.3 und weisen eine höhere Wahrscheinlichkeit für neue Sicherheitsrisiken auf. Vermeiden Sie ältere Protokollversionen, um das Risiko zu minimieren.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeprecatedSslProtocolsMessage">
         <source>Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operating System choose a version.</source>
-        <target state="new">Transport Layer Security protocol version '{0}' is deprecated.  Use 'None' to let the Operating System choose a version.</target>
+        <target state="translated">Die Transport Layer Security-Protokollversion {0} ist veraltet. Verwenden Sie "None", um dem Betriebssystem die Auswahl einer Version zu ermöglichen.</target>
         <note />
       </trans-unit>
       <trans-unit id="DeprecatedSslProtocolsTitle">
         <source>Do not use deprecated SslProtocols values</source>
-        <target state="new">Do not use deprecated SslProtocols values</target>
+        <target state="translated">Keine veralteten SslProtocols-Werte verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheck">
@@ -62,9 +72,14 @@
         <target state="new">Do not use Count() or LongCount() when Any() can be used</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
+        <source>Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</source>
+        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomness">
         <source>Do not use insecure randomness</source>
-        <target state="new">Do not use insecure randomness</target>
+        <target state="translated">Keine unsichere Zufälligkeitsstufe verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessDescription">
@@ -77,84 +92,54 @@
         <target state="new">{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security</target>
         <note />
       </trans-unit>
-      <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIV">
-        <source>Do not use CreateEncryptor with non-default IV</source>
-        <target state="new">Do not use CreateEncryptor with non-default IV</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage">
-        <source>Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</source>
-        <target state="new">Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
-        <source>Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</source>
-        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</target>
-        <note />
-      </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPath">
         <source>Do not use unsafe DllImportSearchPath value</source>
-        <target state="new">Do not use unsafe DllImportSearchPath value</target>
+        <target state="translated">Keinen unsicheren DllImportSearchPath-Wert verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPathDescription">
         <source>There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.</source>
-        <target state="new">There could be a malicious DLL in the default DLL search directories. Or, depending on where your application is run from, there could be a malicious DLL in the application's directory. Use a DllImportSearchPath value that specifies an explicit search path instead. The DllImportSearchPath flags that this rule looks for can be configured in .editorconfig.</target>
+        <target state="translated">Die Standard-DLL-Suchverzeichnisse enthalten möglicherweise eine schädliche DLL. Je nachdem, von wo aus Ihre Anwendung ausgeführt wird, befindet sich möglicherweise auch eine schädliche DLL im Anwendungsverzeichnis. Verwenden Sie einen DllImportSearchPath-Wert, der stattdessen einen expliziten Suchpfad angibt. Die DllImportSearchPath-Flags, nach denen diese Regel sucht, können in .editorconfig konfiguriert werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPathMessage">
         <source>Use of unsafe DllImportSearchPath value {0}</source>
-        <target state="new">Use of unsafe DllImportSearchPath value {0}</target>
+        <target state="translated">Verwendung eines unsicheren DllImportSearchPath-Werts "{0}"</target>
         <note />
       </trans-unit>
       <trans-unit id="HardcodedSslProtocolsDescription">
         <source>Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.</source>
-        <target state="new">Current Transport Layer Security protocol versions may become deprecated if vulnerabilities are found. Avoid hardcoding SslProtocols values to keep your application secure. Use 'None' to let the Operating System choose a version.</target>
+        <target state="translated">Aktuelle Transport Layer Security-Protokollversionen werden möglicherweise als veraltet markiert, wenn Sicherheitsrisiken gefunden werden. Vermeiden Sie das Hartcodieren von SslProtocols-Werten, um Ihre Anwendung zu schützen. Verwenden Sie "None", um dem Betriebssystem die Auswahl einer Version zu ermöglichen.</target>
         <note />
       </trans-unit>
       <trans-unit id="HardcodedSslProtocolsMessage">
         <source>Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operating System choose a version.</source>
-        <target state="new">Avoid hardcoding SslProtocols '{0}' to ensure your application remains secure in the future. Use 'None' to let the Operating System choose a version.</target>
+        <target state="translated">Vermeiden Sie die Hartcodierung von SslProtocols "{0}", um sicherzustellen, dass Ihre Anwendung in Zukunft sicher bleibt. Verwenden Sie "None", um dem Betriebssystem die Auswahl einer Version zu ermöglichen.</target>
         <note />
       </trans-unit>
       <trans-unit id="HardcodedSslProtocolsTitle">
         <source>Avoid hardcoded SslProtocols values</source>
-        <target state="new">Avoid hardcoded SslProtocols values</target>
+        <target state="translated">Hartcodierte SslProtocols-Werte vermeiden</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetInsecureSerializerMessage">
         <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
-        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
+        <target state="translated">Beim Deserialisieren nicht vertrauenswürdiger Eingaben ist das Zulassen der Deserialisierung beliebiger Typen unsicher. Geben Sie bei Verwendung von JsonSerializer zum Deserialisieren "TypeNameHandling.None" an, oder schränken Sie deserialisierte Typen für andere Werte als "None" mit einem SerializationBinder ein.</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetInsecureSerializerTitle">
         <source>Do not deserialize with JsonSerializer using an insecure configuration</source>
-        <target state="new">Do not deserialize with JsonSerializer using an insecure configuration</target>
+        <target state="translated">JsonSerializer nicht zum Deserialisieren mit einer unsicheren Konfiguration verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetMaybeInsecureSerializerMessage">
         <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
-        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure. When using deserializing JsonSerializer, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
+        <target state="translated">Beim Deserialisieren nicht vertrauenswürdiger Eingaben ist das Zulassen der Deserialisierung beliebiger Typen unsicher. Geben Sie bei Verwendung von JsonSerializer zum Deserialisieren "TypeNameHandling.None" an, oder schränken Sie deserialisierte Typen für andere Werte als "None" mit einem SerializationBinder ein.</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetMaybeInsecureSerializerTitle">
         <source>Ensure that JsonSerializer has a secure configuration when deserializing</source>
-        <target state="new">Ensure that JsonSerializer has a secure configuration when deserializing</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MissHttpVerbAttribute">
-        <source>Miss HttpVerb attribute for action methods</source>
-        <target state="new">Miss HttpVerb attribute for action methods</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MissHttpVerbAttributeDescription">
-        <source>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</source>
-        <target state="new">All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</target>
-        <note />
-      </trans-unit>
-      <trans-unit id="MissHttpVerbAttributeMessage">
-        <source>Action method {0} needs to specify the Http request kind explictly</source>
-        <target state="new">Action method {0} needs to specify the Http request kind explictly</target>
+        <target state="translated">Bei der Deserialisierung mit JsonSerializer eine sichere Konfiguration sicherstellen</target>
         <note />
       </trans-unit>
       <trans-unit id="MaybeDisableHttpClientCRLCheck">
@@ -175,6 +160,21 @@
       <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIVMessage">
         <source>The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</source>
         <target state="new">The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissHttpVerbAttribute">
+        <source>Miss HttpVerb attribute for action methods</source>
+        <target state="translated">Fehlendes HttpVerb-Attribut für Aktionsmethoden</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissHttpVerbAttributeDescription">
+        <source>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</source>
+        <target state="translated">Alle Methoden, die Daten erstellen, bearbeiten, löschen oder anderweitig ändern, führen diese Vorgänge in der [HttpPost]-Überladung der Methode durch, die mit dem Fälschungssicherheitsattribut vor Anforderungsfälschung geschützt werden muss. Das Ausführen eines GET-Vorgangs muss ein sicherer Vorgang sein, der keine Nebenwirkungen hat und Ihre persistenten Daten nicht ändert.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MissHttpVerbAttributeMessage">
+        <source>Action method {0} needs to specify the Http request kind explictly</source>
+        <target state="translated">Die Aktionsmethode "{0}" muss die Art der HTTP-Anforderung explizit angeben.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">
@@ -249,17 +249,17 @@
       </trans-unit>
       <trans-unit id="SetHttpOnlyForHttpCookie">
         <source>Set HttpOnly to true for HttpCookie</source>
-        <target state="new">Set HttpOnly to true for HttpCookie</target>
+        <target state="translated">HttpOnly für HttpCookie auf TRUE festlegen</target>
         <note />
       </trans-unit>
       <trans-unit id="SetHttpOnlyForHttpCookieDescription">
         <source>As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</source>
-        <target state="new">As a defense in depth measure, ensure security sensitive HTTP cookies are marked as HttpOnly. This indicates web browsers should disallow scripts from accessing the cookies. Injected malicious scripts are a common way of stealing cookies.</target>
+        <target state="translated">Stellen Sie als effektive Abwehrmaßnahme sicher, dass die sicherheitsrelevanten HTTP-Cookies als "HttpOnly" gekennzeichnet sind. Dadurch werden Webbrowser angewiesen, Skripts den Zugriff auf die Cookies zu verwehren. Eingefügte schädliche Skripts sind eine gängige Methode zum Stehlen von Cookies.</target>
         <note />
       </trans-unit>
       <trans-unit id="SetHttpOnlyForHttpCookieMessage">
         <source>HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</source>
-        <target state="new">HttpCookie.HttpOnly is set to false or not set at all when using an HttpCookie. Ensure security sensitive cookies are marked as HttpOnly to prevent malicious scripts from stealing the cookies</target>
+        <target state="translated">HttpCookie.HttpOnly ist bei Verwendung eines HttpCookie auf FALSE oder gar nicht festgelegt. Stellen Sie sicher, dass sicherheitsrelevante Cookies als HttpOnly gekennzeichnet sind, um zu verhindern, dass sie von schädlichen Skripts gestohlen werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="SpecifyMarshalingForPInvokeStringArgumentsTitle">
@@ -294,32 +294,32 @@
       </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryToken">
         <source>Use antiforgery tokens in ASP.NET Core MVC controllers</source>
-        <target state="new">Use antiforgery tokens in ASP.NET Core MVC controllers</target>
+        <target state="translated">Fälschungssicherheitstoken in ASP.NET Core MVC-Controllern verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryTokenDescription">
         <source>Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.</source>
-        <target state="new">Handling a POST, PUT, PATCH, or DELETE request without validating an antiforgery token may be vulnerable to cross-site request forgery attacks. A cross-site request forgery attack can send malicious requests from an authenticated user to your ASP.NET Core MVC controller.</target>
+        <target state="translated">Die Verarbeitung einer POST-, PUT-, PATCH- oder DELETE-Anforderung ohne Überprüfung eines Fälschungssicherheitstokens ist möglicherweise anfällig für Angriffe durch websiteübergreifende Anforderungsfälschung. Bei einem Angriff durch websiteübergreifende Anforderungsfälschung können schädliche Anforderungen von einem authentifizierten Benutzer an den ASP.NET Core MVC-Controller gesendet werden.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseAutoValidateAntiforgeryTokenMessage">
         <source>Method {0} handles a {1} request without performing antiforgery token validation. You also need to ensure that your HTML form sends an antiforgery token.</source>
-        <target state="new">Method {0} handles a {1} request without performing antiforgery token validation. You also need to ensure that your HTML form sends an antiforgery token.</target>
+        <target state="translated">Die Methode "{0}" verarbeitet eine {1}-Anforderung ohne Überprüfung eines Fälschungssicherheitstokens. Sie müssen außerdem sicherstellen, dass Ihr HTML-Formular ein Fälschungssicherheitstoken sendet.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseDefaultDllImportSearchPathsAttribute">
         <source>Use DefaultDllImportSearchPaths attribute for P/Invokes</source>
-        <target state="new">Use DefaultDllImportSearchPaths attribute for P/Invokes</target>
+        <target state="translated">DefaultDllImportSearchPaths-Attribut für P/Invokes verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="UseDefaultDllImportSearchPathsAttributeDescription">
         <source>By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</source>
-        <target state="new">By default, P/Invokes using DllImportAttribute probe a number of directories, including the current working directory for the library to load. This can be a security issue for certain applications, leading to DLL hijacking.</target>
+        <target state="translated">Standardmäßig wird von P/Invokes über DllImportAttribute eine Reihe von Verzeichnissen getestet, einschließlich des aktuellen Arbeitsverzeichnisses für die zu ladende Bibliothek. Dies kann für bestimmte Anwendungen ein Sicherheitsproblem darstellen, das zu DLL-Hijacking führt.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseDefaultDllImportSearchPathsAttributeMessage">
         <source>The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</source>
-        <target state="new">The method {0} didn't use DefaultDllImportSearchPaths attribute for P/Invokes.</target>
+        <target state="translated">Die Methode "{0}" hat das DefaultDllImportSearchPaths-Attribut für P/Invokes nicht verwendet.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseManagedEquivalentsOfWin32ApiTitle">
@@ -1054,7 +1054,7 @@
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Ensure that the JavaScriptSerializer is initialized without a JavaScriptTypeResolver specified, or initialized with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</source>
-        <target state="needs-review-translation">Die Methode "{0}" ist unsicher, wenn nicht vertrauenswürdige Daten mit einem JavaScriptSerializer deserialisiert werden, der mit einem SimpleTypeResolver initialisiert wurde. Stellen Sie sicher, dass der JavaScriptSerializer ohne Angabe eines JavaScriptTypeResolver oder mit einem JavaScriptTypeResolver initialisiert wird, der die Objekttypen im deserialisierten Objektdiagramm einschränkt.</target>
+        <target state="translated">Die Methode "{0}" ist unsicher, wenn nicht vertrauenswürdige Daten mit einem JavaScriptSerializer deserialisiert werden, der mit einem SimpleTypeResolver initialisiert wurde. Stellen Sie sicher, dass der JavaScriptSerializer ohne Angabe eines JavaScriptTypeResolver oder mit einem JavaScriptTypeResolver initialisiert wird, der die Objekttypen im deserialisierten Objektgraphen einschränkt.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerMaybeWithSimpleTypeResolverTitle">
@@ -1064,7 +1064,7 @@
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverMessage">
         <source>The method '{0}' is insecure when deserializing untrusted data with a JavaScriptSerializer initialized with a SimpleTypeResolver. Initialize JavaScriptSerializer without a JavaScriptTypeResolver specified, or initialize with a JavaScriptTypeResolver that limits the types of objects in the deserialized object graph.</source>
-        <target state="needs-review-translation">Die Methode "{0}" ist unsicher, wenn nicht vertrauenswürdige Daten mit einem JavaScriptSerializer deserialisiert werden, der mit einem SimpleTypeResolver initialisiert wurde. Initialisieren Sie den JavaScriptSerializer ohne Angabe eines JavaScriptTypeResolver oder mit einem JavaScriptTypeResolver, der die Objekttypen im deserialisierten Objektdiagramm einschränkt.</target>
+        <target state="translated">Die Methode "{0}" ist unsicher, wenn nicht vertrauenswürdige Daten mit einem JavaScriptSerializer deserialisiert werden, der mit einem SimpleTypeResolver initialisiert wurde. Initialisieren Sie den JavaScriptSerializer ohne Angabe eines JavaScriptTypeResolver oder mit einem JavaScriptTypeResolver, der die Objekttypen im deserialisierten Objektgraphen einschränkt.</target>
         <note />
       </trans-unit>
       <trans-unit id="JavaScriptSerializerWithSimpleTypeResolverTitle">
@@ -1074,37 +1074,37 @@
       </trans-unit>
       <trans-unit id="JsonNetInsecureSettingsMessage">
         <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</source>
-        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, use TypeNameHandling.None, or for values other than None, restrict deserialized types with a SerializationBinder.</target>
+        <target state="translated">Beim Deserialisieren nicht vertrauenswürdiger Eingaben ist das Zulassen der Deserialisierung beliebiger Typen unsicher. Geben Sie bei Verwendung von JsonSerializerSettings "TypeNameHandling.None" an, oder schränken Sie deserialisierte Typen für andere Werte als "None" mit einem SerializationBinder ein.</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetInsecureSettingsTitle">
         <source>Do not use insecure JsonSerializerSettings</source>
-        <target state="new">Do not use insecure JsonSerializerSettings</target>
+        <target state="translated">Keine unsicheren JsonSerializerSettings verwenden</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetMaybeInsecureSettingsMessage">
         <source>When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.</source>
-        <target state="new">When deserializing untrusted input, allowing arbitrary types to be deserialized is insecure.  When using JsonSerializerSettings, ensure TypeNameHandling.None is specified, or for values other than None, ensure a SerializationBinder is specified to restrict deserialized types.</target>
+        <target state="translated">Beim Deserialisieren nicht vertrauenswürdiger Eingaben ist das Zulassen der Deserialisierung beliebiger Typen unsicher. Geben Sie bei Verwendung von JsonSerializerSettings "TypeNameHandling.None" an, oder stellen Sie für andere Werte als "None" sicher, dass ein SerializationBinder zum Einschränken deserialisierter Typen angegeben wird.</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetMaybeInsecureSettingsTitle">
         <source>Ensure that JsonSerializerSettings are secure</source>
-        <target state="new">Ensure that JsonSerializerSettings are secure</target>
+        <target state="translated">Sicherheit von JsonSerializerSettings sicherstellen</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetTypeNameHandlingDescription">
         <source>Deserializing JSON when using a TypeNameHandling value other than None can be insecure.  If you need to instead detect Json.NET deserialization when a SerializationBinder isn't specified, then disable rule CA2326, and enable rules CA2327, CA2328, CA2329, and CA2330.</source>
-        <target state="new">Deserializing JSON when using a TypeNameHandling value other than None can be insecure.  If you need to instead detect Json.NET deserialization when a SerializationBinder isn't specified, then disable rule CA2326, and enable rules CA2327, CA2328, CA2329, and CA2330.</target>
+        <target state="translated">Die Deserialisierung von JSON bei Verwendung eines anderen TypeNameHandling-Werts als "None" kann unsicher sein. Wenn Sie stattdessen die Json.NET-Deserialisierung ermitteln müssen, wenn kein SerializationBinder angegeben wird, deaktivieren Sie Regel CA2326, und aktivieren Sie die Regeln CA2327, CA2328, CA2329 und CA2330.</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetTypeNameHandlingMessage">
         <source>Deserializing JSON when using a TypeNameHandling value other than None can be insecure.</source>
-        <target state="new">Deserializing JSON when using a TypeNameHandling value other than None can be insecure.</target>
+        <target state="translated">Die Deserialisierung von JSON bei Verwendung eines anderen TypeNameHandling-Werts als "None" kann unsicher sein.</target>
         <note />
       </trans-unit>
       <trans-unit id="JsonNetTypeNameHandlingTitle">
         <source>Do not use TypeNameHandling values other than None</source>
-        <target state="new">Do not use TypeNameHandling values other than None</target>
+        <target state="translated">Verwenden Sie keinen anderen TypeNameHandling-Wert als "None".</target>
         <note />
       </trans-unit>
       <trans-unit id="LosFormatterMethodUsedMessage">
@@ -1454,17 +1454,17 @@
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKey">
         <source>Do Not Hard Code Encryption Key</source>
-        <target state="new">Do Not Hard Code Encryption Key</target>
+        <target state="translated">Verschlüsselungsschlüssel nicht hartcodieren</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
         <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</source>
-        <target state="new">SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</target>
+        <target state="translated">Die .Key-Eigenschaft von SymmetricAlgorithm oder der rgbKey-Parameter einer Methode darf niemals ein hartcodierter Wert sein.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
         <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</source>
-        <target state="new">Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</target>
+        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch einen hartcodierten Schlüssel aus "{2}" in Methode "{3}" erweitert.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">
@@ -1710,6 +1710,21 @@
       <trans-unit id="UseContainerLevelAccessPolicyMessage">
         <source>Consider using Azure's role-based access control instead of a Shared Access Signature (SAS) if possible. If you still need to use a SAS, use a container-level access policy when creating a SAS</source>
         <target state="translated">Erwägen Sie (sofern möglich) die Verwendung der rollenbasierten Zugriffssteuerung von Azure anstelle einer Shared Access Signature (SAS). Wenn Sie weiterhin eine SAS benötigen, verwenden Sie beim Erstellen einer SAS eine Zugriffsrichtlinie auf Containerebene.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableDescription">
+        <source>Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</source>
+        <target state="new">Enumerable.Count() potentially enumerates the sequence while a Length/Count property is a direct access.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableMessage">
+        <source>Use the "{0}" property instead of Enumerable.Count().</source>
+        <target state="new">Use the "{0}" property instead of Enumerable.Count().</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UsePropertyInsteadOfCountMethodWhenAvailableTitle">
+        <source>Use Length/Count property instead of Count() when available</source>
+        <target state="new">Use Length/Count property instead of Count() when available</target>
         <note />
       </trans-unit>
       <trans-unit id="UseRSAWithSufficientKeySize">

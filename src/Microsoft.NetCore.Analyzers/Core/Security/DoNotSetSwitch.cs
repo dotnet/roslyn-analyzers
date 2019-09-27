@@ -138,8 +138,8 @@ namespace Microsoft.NetCore.Analyzers.Security
                             invocationOperation.Arguments[1].Syntax];
 
                         // Just check for simple cases with one possible literal value.
-                        if (switchNameValueContent.TryGetSingleLiteral<string>(out var switchName) &&
-                            switchValueValueContent.TryGetSingleLiteral<bool>(out var switchValue) &&
+                        if (switchNameValueContent.TryGetSingleNonNullLiteral<string>(out var switchName) &&
+                            switchValueValueContent.TryGetSingleNonNullLiteral<bool>(out var switchValue) &&
                             BadSwitches.TryGetValue(switchName, out var pair) &&
                             pair.BadValue.Equals(switchValue) &&
                             !IsConfiguredToSkipAnalysis(pair.Rule, operationAnalysisContext))

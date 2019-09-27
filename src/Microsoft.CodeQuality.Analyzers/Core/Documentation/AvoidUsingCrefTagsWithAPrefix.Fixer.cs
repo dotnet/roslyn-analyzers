@@ -11,7 +11,7 @@ namespace Microsoft.CodeQuality.Analyzers.Documentation
     /// </summary>
     public abstract class AvoidUsingCrefTagsWithAPrefixFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(AvoidUsingCrefTagsWithAPrefixAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

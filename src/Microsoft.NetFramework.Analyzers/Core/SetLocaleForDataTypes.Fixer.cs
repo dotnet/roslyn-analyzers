@@ -11,7 +11,7 @@ namespace Microsoft.NetFramework.Analyzers
     /// </summary>
     public abstract class SetLocaleForDataTypesFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(SetLocaleForDataTypesAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

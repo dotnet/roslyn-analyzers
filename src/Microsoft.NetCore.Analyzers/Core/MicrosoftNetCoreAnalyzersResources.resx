@@ -1183,7 +1183,7 @@
     <value>Do not hard-code certificate</value>
   </data>
   <data name="DoNotHardCodeCertificateDescription" xml:space="preserve">
-    <value>Hardcoded certificates in source code are vulnerable to being exploited.</value>
+    <value>Hard-coded certificates in source code are vulnerable to being exploited.</value>
   </data>
   <data name="DoNotHardCodeCertificateMessage" xml:space="preserve">
     <value>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded certificate from '{2}' in method '{3}'</value>

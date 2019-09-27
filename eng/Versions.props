@@ -3,7 +3,8 @@
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     
     <VersionPrefix>2.9.5</VersionPrefix>
-    <PreReleaseVersionLabel>beta1</PreReleaseVersionLabel>
+    <FlowAnalysisUtilitiesVersionPrefix>2.9.7</FlowAnalysisUtilitiesVersionPrefix>
+    <PreReleaseVersionLabel>beta2</PreReleaseVersionLabel>
 
     <!-- Opt-in repo features -->
     <UsingToolVSSDK>true</UsingToolVSSDK>
@@ -19,10 +20,10 @@
 
     <!-- Roslyn -->
     <MicrosoftCodeAnalysisVersion>2.9.0</MicrosoftCodeAnalysisVersion>
-    <MicrosoftNetCompilersVersion>3.0.0</MicrosoftNetCompilersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.4</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftNetCompilersVersion>3.3.1-beta3-final</MicrosoftNetCompilersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.5-beta1.final</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>3.0.0-beta2.19218.3+e96bad97</MicrosoftCodeAnalysisAnalyersVersion>
-    <CodeStyleAnalyersVersion>2.11.0-beta2-63603-03</CodeStyleAnalyersVersion>
+    <CodeStyleAnalyersVersion>3.3.0-beta2-19376-02</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>
 
     <!-- Roslyn Testing -->

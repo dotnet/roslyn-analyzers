@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
+using System.Linq;
 
 namespace Microsoft.NetCore.Analyzers.Data
 {
@@ -43,7 +44,7 @@ namespace Microsoft.NetCore.Analyzers.Data
             {
                 INamedTypeSymbol iDbCommandType = WellKnownTypes.IDbCommand(compilationContext.Compilation);
                 INamedTypeSymbol iDataAdapterType = WellKnownTypes.IDataAdapter(compilationContext.Compilation);
-                IPropertySymbol commandTextProperty = iDbCommandType?.GetProperty("CommandText");
+                IPropertySymbol commandTextProperty = iDbCommandType?.GetMembers("CommandText").OfType<IPropertySymbol>().FirstOrDefault();
 
                 if (iDbCommandType == null ||
                     iDataAdapterType == null ||

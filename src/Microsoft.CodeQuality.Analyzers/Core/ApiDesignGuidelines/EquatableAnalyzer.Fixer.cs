@@ -53,9 +53,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
             if (type.TypeKind == TypeKind.Struct && !TypeImplementsEquatable(type, equatableType))
             {
                 string title = MicrosoftCodeQualityAnalyzersResources.ImplementEquatable;
@@ -64,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     async ct =>
                         await ImplementEquatableInStructAsync(context.Document, declaration, type, model.Compilation,
                             equatableType, ct).ConfigureAwait(false),
-                    equivalenceKey: title), diagnostic);
+                    equivalenceKey: title), context.Diagnostics);
             }
 
             if (!type.OverridesEquals())
@@ -75,7 +72,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     async ct =>
                         await OverrideObjectEqualsAsync(context.Document, declaration, type, equatableType,
                             ct).ConfigureAwait(false),
-                    equivalenceKey: title), diagnostic);
+                    equivalenceKey: title), context.Diagnostics);
             }
         }
 
@@ -156,7 +153,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static bool HasExplicitEqualsImplementation(INamedTypeSymbol typeSymbol, INamedTypeSymbol equatableType)
         {
             INamedTypeSymbol constructedType = equatableType.Construct(typeSymbol);
-            IMethodSymbol constructedEqualsMethod = constructedType.GetMembers().OfType<IMethodSymbol>().Single();
+            IMethodSymbol constructedEqualsMethod = constructedType.GetMembers().OfType<IMethodSymbol>().FirstOrDefault();
 
             foreach (IMethodSymbol method in typeSymbol.GetMembers().OfType<IMethodSymbol>())
             {

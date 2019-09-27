@@ -369,6 +369,76 @@ End Class
         }
 
         [Fact]
+        public void Field_Interprocedural_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+class Blah
+{
+    public class BookRecordSerializationBinder : ISerializationBinder
+    {
+        // To maintain backwards compatibility with serialized data before using an ISerializationBinder.
+        private static readonly DefaultSerializationBinder Binder = new DefaultSerializationBinder();
+
+        public BookRecordSerializationBinder()
+        {
+        }
+
+        public void BindToName(Type serializedType, out string assemblyName, out string typeName)
+        {
+            Binder.BindToName(serializedType, out assemblyName, out typeName);
+        }
+
+        public Type BindToType(string assemblyName, string typeName)
+        {
+            // If the type isn't expected, then stop deserialization.
+            if (typeName != ""BookRecord"" && typeName != ""AisleLocation"" && typeName != ""WarehouseLocation"")
+            {
+                return null;
+            }
+
+            return Binder.BindToType(assemblyName, typeName);
+        }
+    }
+
+    private static ISerializationBinder GetSerializationBinder()
+    {
+        return new BookRecordSerializationBinder();
+    }
+
+    protected static readonly JsonSerializerSettings Settings = new JsonSerializerSettings()
+    {
+        SerializationBinder = GetSerializationBinder(),
+    };
+}
+");
+        }
+
+        [Fact]
+        public void Secure_SometimesInitialization_NoDiagnostic()
+        {
+            this.VerifyCSharpWithJsonNet(@"
+using Newtonsoft.Json;
+
+class Blah
+{
+    public JsonSerializerSettings Settings { get; set; }
+
+    public void EnsureInitialized()
+    {
+        if (this.Settings == null)
+        {
+            this.Settings = new JsonSerializerSettings();
+        }
+    }
+}
+");
+        }
+
+        [Fact]
         public void Insecure_JsonConvert_DeserializeObject_DefinitelyDiagnostic()
         {
             this.VerifyCSharpWithJsonNet(@"

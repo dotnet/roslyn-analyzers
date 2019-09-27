@@ -106,17 +106,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static OperatorKind GetInvertedOperatorKind(IMethodSymbol containingOperator)
         {
-            switch (containingOperator.Name)
+            return containingOperator.Name switch
             {
-                case WellKnownMemberNames.EqualityOperatorName: return OperatorKind.Inequality;
-                case WellKnownMemberNames.InequalityOperatorName: return OperatorKind.Equality;
-                case WellKnownMemberNames.LessThanOperatorName: return OperatorKind.GreaterThan;
-                case WellKnownMemberNames.LessThanOrEqualOperatorName: return OperatorKind.GreaterThanOrEqual;
-                case WellKnownMemberNames.GreaterThanOperatorName: return OperatorKind.LessThan;
-                case WellKnownMemberNames.GreaterThanOrEqualOperatorName: return OperatorKind.LessThanOrEqual;
-            }
-
-            throw new InvalidOperationException();
+                WellKnownMemberNames.EqualityOperatorName => OperatorKind.Inequality,
+                WellKnownMemberNames.InequalityOperatorName => OperatorKind.Equality,
+                WellKnownMemberNames.LessThanOperatorName => OperatorKind.GreaterThan,
+                WellKnownMemberNames.LessThanOrEqualOperatorName => OperatorKind.GreaterThanOrEqual,
+                WellKnownMemberNames.GreaterThanOperatorName => OperatorKind.LessThan,
+                WellKnownMemberNames.GreaterThanOrEqualOperatorName => OperatorKind.LessThanOrEqual,
+                _ => throw new InvalidOperationException(),
+            };
         }
     }
 }

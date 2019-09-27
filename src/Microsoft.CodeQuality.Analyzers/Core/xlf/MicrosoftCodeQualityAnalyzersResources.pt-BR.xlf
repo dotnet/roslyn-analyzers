@@ -7,6 +7,21 @@
         <target state="translated">Acrescentar .ConfigureAwait(true)</target>
         <note />
       </trans-unit>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
+        <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
+        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
+        <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
+        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
+        <source>Assigning symbol and its member in the same statement.</source>
+        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
         <source>Avoid Async Void</source>
         <target state="translated">Evitar async void</target>
@@ -38,13 +53,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="translated">Uma exception geral como System.Exception ou System.SystemException foi lançada em uma instrução catch. Exceções gerais não devem ser detectadas.</target>
+        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">Uma exception geral como System.Exception ou System.SystemException foi lançada em uma instrução catch. Exceções gerais não devem ser detectadas.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
-        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="translated">Modificar '{0}' para capturar um tipo de exceção mais específico ou relançar a exceção.</target>
+        <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
+        <target state="needs-review-translation">Modificar '{0}' para capturar um tipo de exceção mais específico ou relançar a exceção.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -1709,7 +1724,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersDescription">
         <source>Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.</source>
-        <target state="needs-review-translation">Uma assinatura de método inclui um parâmetro não usado no corpo do método.</target>
+        <target state="translated">Evite parâmetros não usados no código. Se o parâmetro não puder ser removido, altere seu nome para que ele comece com um sublinhado e seja seguido opcionalmente por um inteiro, como '_', '_1', '_2' etc. Esses nomes são tratados como nomes de símbolo de descarte especiais.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">
@@ -1833,13 +1848,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">O campo '{0}' é declarado como 'static readonly', mas inicializado com um valor constante. Em vez disso, marque esse campo como 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">O campo '{0}' é declarado como 'static readonly', mas inicializado com um valor constante. Em vez disso, marque esse campo como 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">O campo '{0}' é declarado como 'static readonly', mas inicializado com uma cadeia de caracteres vazia (""). Em vez disso, marque esse campo como 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">O campo '{0}' é declarado como 'static readonly', mas inicializado com uma cadeia de caracteres vazia (""). Em vez disso, marque esse campo como 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

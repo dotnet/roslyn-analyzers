@@ -21,6 +21,8 @@
   <ItemGroup>
     <Compile Include="..\Utilities\Compiler\DiagnosticCategory.cs" Link="DiagnosticCategory.cs" />
     <Compile Include="..\Utilities\Compiler\DiagnosticHelpers.cs" Link="DiagnosticHelpers.cs" />
+    <Compile Include="..\Utilities\Compiler\Extensions\DiagnosticExtensions.cs" Link="DiagnosticExtensions.cs" />
+    <Compile Include="..\Utilities\Compiler\Extensions\ReportDiagnosticExtensions.cs" Link="ReportDiagnosticExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="$(MicrosoftCodeAnalysisVersion)" />

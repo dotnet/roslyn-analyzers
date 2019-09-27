@@ -7,6 +7,21 @@
         <target state="translated">Ajouter .ConfigureAwait(true)</target>
         <note />
       </trans-unit>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementDescription">
+        <source>Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</source>
+        <target state="new">Assigning to a symbol and its member (field/property) in the same statement is not recommended. It is not clear if the member access was intended to use symbol's old value prior to the assignment or new value from the assignment in this statement. For clarity, consider splitting the assignments into separate statements.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementMessage">
+        <source>Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</source>
+        <target state="new">Symbol '{0}' and its member '{1}' are both assigned in the same statement. You are at risk of assigning the member of an unintended object.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="AssigningSymbolAndItsMemberInSameStatementTitle">
+        <source>Assigning symbol and its member in the same statement.</source>
+        <target state="new">Assigning symbol and its member in the same statement.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="AvoidAsyncVoidTitle">
         <source>Avoid Async Void</source>
         <target state="translated">Éviter Async Void</target>
@@ -38,13 +53,13 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesDescription">
-        <source>A general exception such as System.Exception or System.SystemException is caught in a catch statement, or a general catch clause is used. General exceptions should not be caught.</source>
-        <target state="translated">Une exception générale de type System.Exception ou System.SystemException est interceptée dans une instruction catch, ou une clause catch générale est utilisée. Les exceptions générales ne doivent pas être interceptées.</target>
+        <source>A general exception such as System.Exception or System.SystemException or a disallowed exception type is caught in a catch statement, or a general catch clause is used. General and disallowed exceptions should not be caught.</source>
+        <target state="needs-review-translation">Une exception générale de type System.Exception ou System.SystemException est interceptée dans une instruction catch, ou une clause catch générale est utilisée. Les exceptions générales ne doivent pas être interceptées.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesMessage">
-        <source>Modify '{0}' to catch a more specific exception type, or rethrow the exception.</source>
-        <target state="translated">Modifiez '{0}' pour intercepter un type d'exception plus spécifique ou relevez l'exception.</target>
+        <source>Modify '{0}' to catch a more specific allowed exception type, or rethrow the exception.</source>
+        <target state="needs-review-translation">Modifiez '{0}' pour intercepter un type d'exception plus spécifique ou relevez l'exception.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotCatchGeneralExceptionTypesTitle">
@@ -1709,7 +1724,7 @@
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersDescription">
         <source>Avoid unused paramereters in your code. If the parameter cannot be removed, then change its name so it starts with an underscore and is optionally followed by an integer, such as '_', '_1', '_2', etc. These are treated as special discard symbol names.</source>
-        <target state="needs-review-translation">Une signature de méthode inclut un paramètre qui n'est pas utilisé dans le corps de la méthode.</target>
+        <target state="translated">Évitez les paramètres inutilisés dans votre code. Évitez les paramètres inutilisés dans votre code. Si vous ne pouvez pas supprimer un paramètre, changez son nom en le faisant commencer par un trait de soulignement éventuellement suivi d'un entier, par exemple '_', '_1', '_2', etc. Ces types d'élément sont traités en tant que noms de symboles discard spéciaux.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewUnusedParametersMessage">
@@ -1804,7 +1819,7 @@
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentMessage">
         <source>The property {0} should not be assigned to itself.</source>
-        <target state="translated">La propriété {0} ne doit pas être assignée à elle-même.</target>
+        <target state="translated">La propriété {0} ne doit pas être assignée à elle-même. </target>
         <note />
       </trans-unit>
       <trans-unit id="AvoidPropertySelfAssignmentTitle">
@@ -1833,13 +1848,13 @@
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageDefault">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
-        <target state="translated">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une valeur de constante. À la place, marquez ce champ comme étant un champ 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with a constant value. Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une valeur de constante. À la place, marquez ce champ comme étant un champ 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="UseLiteralsWhereAppropriateMessageEmptyString">
-        <source>Field '{0}' is declared as 'static readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
-        <target state="translated">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une chaîne vide (""). À la place, marquez ce champ comme étant un champ 'const'.</target>
+        <source>Field '{0}' is declared as 'readonly' but is initialized with an empty string (""). Mark this field as 'const' instead.</source>
+        <target state="needs-review-translation">Le champ '{0}' est déclaré comme étant 'static readonly' mais il est initialisé avec une chaîne vide (""). À la place, marquez ce champ comme étant un champ 'const'.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInitializeUnnecessarilyTitle">

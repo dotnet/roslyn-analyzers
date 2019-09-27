@@ -1,6 +1,6 @@
 {
   "tools": {
-    "dotnet": "2.1.401",
+    "dotnet": "2.1.503",
     "vswhere": "2.2.7"
   },
   "msbuild-sdks": {

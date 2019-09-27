@@ -46,7 +46,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                     return;
                 }
 
-                var methodBody = methodSymbol.DeclaringSyntaxReferences.Single().GetSyntax();
+                var methodBody = methodSymbol.DeclaringSyntaxReferences.First().GetSyntax();
 
                 if (IsEmptyFinalizer(methodBody, codeBlockContext))
                 {

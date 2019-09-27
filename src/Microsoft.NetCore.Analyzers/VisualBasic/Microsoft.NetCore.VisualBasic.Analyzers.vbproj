@@ -9,7 +9,4 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.NetCore.Analyzers.UnitTests" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Security\" />
-  </ItemGroup>
 </Project>

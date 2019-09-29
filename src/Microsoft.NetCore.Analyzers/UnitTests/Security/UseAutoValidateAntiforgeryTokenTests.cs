@@ -297,13 +297,43 @@ class TestClass2 : Controller
     {
         return null;
     }
+}
+
+class TestClass3 : Controller
+{
+    [HttpPut]
+    public AcceptedAtActionResult CustomizedActionMethod3 (string actionName)
+    {
+        return null;
+    }
+}
+
+class TestClass4 : Controller
+{
+    [HttpPut]
+    public AcceptedAtActionResult CustomizedActionMethod4 (string actionName)
+    {
+        return null;
+    }
+}
+
+class TestClass5 : Controller
+{
+    [HttpPut]
+    public AcceptedAtActionResult CustomizedActionMethod5 (string actionName)
+    {
+        return null;
+    }
 }",
             GetCSharpResultAt(12, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod", "HttpPut"),
-            GetCSharpResultAt(21, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod2", "HttpPut"));
+            GetCSharpResultAt(21, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod2", "HttpPut"),
+            GetCSharpResultAt(30, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod3", "HttpPut"),
+            GetCSharpResultAt(39, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod4", "HttpPut"),
+            GetCSharpResultAt(48, 35, UseAutoValidateAntiforgeryToken.UseAutoValidateAntiforgeryTokenRule, "CustomizedActionMethod5", "HttpPut"));
         }
 
         [Theory]
-        [InlineData("dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controller_base = false")]
+        [InlineData("dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controllerbase = false")]
         public void EditorConfigConfiguration_OnlyLookAtDerivedClassesOfController_DefaultValue_Diagnostic(string editorConfigText)
         {
             VerifyCSharpAcrossTwoAssemblies(
@@ -1348,7 +1378,7 @@ class BlahClass
 
         [Theory]
         [InlineData("")]
-        [InlineData("dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controller_base = true")]
+        [InlineData("dotnet_code_quality.CA5391.exclude_aspnet_core_mvc_controllerbase = true")]
         public void EditorConfigConfiguration_OnlyLookAtDerivedClassesOfController_NonDefaultValue_NoDiagnostic(string editorConfigText)
         {
             VerifyCSharpAcrossTwoAssemblies(

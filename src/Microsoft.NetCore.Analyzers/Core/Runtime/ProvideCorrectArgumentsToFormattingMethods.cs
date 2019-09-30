@@ -327,13 +327,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 AddStringFormatMap(builder, console, "Write");
                 AddStringFormatMap(builder, console, "WriteLine");
 
-                INamedTypeSymbol @string = WellKnownTypeProvider.GetOrCreate(compilation).String;
+                INamedTypeSymbol @string = WellKnownTypeProvider.GetOrCreate(compilation).SystemString;
                 AddStringFormatMap(builder, @string, "Format");
 
                 _map = builder.ToImmutable();
 
                 String = @string;
-                Object = WellKnownTypeProvider.GetOrCreate(compilation).Object;
+                Object = WellKnownTypeProvider.GetOrCreate(compilation).SystemObject;
             }
 
             public INamedTypeSymbol String { get; }

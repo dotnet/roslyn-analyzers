@@ -43,7 +43,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(c =>
             {
-                var @string = WellKnownTypeProvider.GetOrCreate(c.Compilation).String;
+                var @string = WellKnownTypeProvider.GetOrCreate(c.Compilation).SystemString;
                 var uri = c.Compilation.GetTypeByMetadataName(typeof(System.Uri).FullName);
                 if (@string == null || uri == null)
                 {

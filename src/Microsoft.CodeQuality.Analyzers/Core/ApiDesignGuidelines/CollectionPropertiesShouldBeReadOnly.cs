@@ -59,7 +59,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 {
                     INamedTypeSymbol iCollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
                     INamedTypeSymbol genericICollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
-                    INamedTypeSymbol arrayType = WellKnownTypeProvider.GetOrCreate(context.Compilation).Array;
+                    INamedTypeSymbol arrayType = WellKnownTypeProvider.GetOrCreate(context.Compilation).SystemArray;
                     INamedTypeSymbol dataMemberAttribute = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationDataMemberAttribute);
                     ImmutableHashSet<INamedTypeSymbol> immutableInterfaces = GetIImmutableInterfaces(context.Compilation);
 

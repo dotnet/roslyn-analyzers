@@ -129,7 +129,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 context =>
                 {
-                    INamedTypeSymbol disposableType = WellKnownTypes.IDisposable(context.Compilation);
+                    INamedTypeSymbol disposableType = WellKnownTypeProvider.GetOrCreate(context.Compilation).IDisposable;
                     if (disposableType == null)
                     {
                         return;
@@ -558,7 +558,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         var expressionStatement = (IExpressionStatementOperation)operation;
                         return ValidateExpression(expressionStatement);
                     default:
-                        // Ignore operation roots with no IOperation API support (OperationKind.None) 
+                        // Ignore operation roots with no IOperation API support (OperationKind.None)
                         return operation.IsOperationNoneRoot();
                 }
             }
@@ -691,7 +691,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     case OperationKind.Try:
                         return ValidateTryOperation((ITryOperation)operation);
                     default:
-                        // Ignore operation roots with no IOperation API support (OperationKind.None) 
+                        // Ignore operation roots with no IOperation API support (OperationKind.None)
                         return operation.IsOperationNoneRoot();
                 }
             }

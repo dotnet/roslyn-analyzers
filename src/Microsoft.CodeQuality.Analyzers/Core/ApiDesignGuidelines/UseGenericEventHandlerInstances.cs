@@ -14,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     /// <summary>
     /// CA1003: Use generic event handler instances
     /// CA1009: A delegate that handles a public or protected event does not have the correct signature, return type, or parameter names.
-    /// 
+    ///
     /// Recommends that event handlers use <see cref="System.EventHandler{TEventArgs}"/>
     /// </summary>
     /// <remarks>
@@ -77,14 +77,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol eventArgs = WellKnownTypes.EventArgs(context.Compilation);
+                    INamedTypeSymbol eventArgs = context.Compilation.GetTypeByMetadataName(typeof(System.EventArgs).FullName);
                     if (eventArgs == null)
                     {
                         return;
                     }
 
                     // Only analyze compilations that have a generic event handler defined.
-                    if (WellKnownTypes.GenericEventHandler(context.Compilation) == null)
+                    if (context.Compilation.GetTypeByMetadataName(typeof(System.EventHandler<>).FullName) == null)
                     {
                         return;
                     }
@@ -133,7 +133,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
                     }, SymbolKind.NamedType);
 
-                    INamedTypeSymbol comSourceInterfacesAttribute = WellKnownTypes.ComSourceInterfaceAttribute(context.Compilation);
+#pragma warning disable CS0618 // Type or member is obsolete
+                    INamedTypeSymbol comSourceInterfacesAttribute = context.Compilation.GetTypeByMetadataName(typeof(System.Runtime.InteropServices.ComSourceInterfacesAttribute).FullName);
+#pragma warning restore CS0618 // Type or member is obsolete
                     bool ContainingTypeHasComSourceInterfacesAttribute(IEventSymbol eventSymbol) =>
                         comSourceInterfacesAttribute != null &&
                         eventSymbol.ContainingType.GetAttributes().Any(a => Equals(a.AttributeClass, comSourceInterfacesAttribute));

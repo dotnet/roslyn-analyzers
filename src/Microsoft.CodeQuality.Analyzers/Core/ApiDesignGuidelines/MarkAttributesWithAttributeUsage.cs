@@ -38,8 +38,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
-                INamedTypeSymbol attributeUsageAttributeType = WellKnownTypes.AttributeUsageAttribute(compilationContext.Compilation);
+                INamedTypeSymbol attributeType = compilationContext.Compilation.GetTypeByMetadataName(typeof(Attribute).FullName);
+                INamedTypeSymbol attributeUsageAttributeType = compilationContext.Compilation.GetTypeByMetadataName(typeof(AttributeUsageAttribute).FullName);
                 if (attributeType == null || attributeUsageAttributeType == null)
                 {
                     return;

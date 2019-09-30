@@ -75,7 +75,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         internal static SyntaxNode CreateOrdinalMemberAccess(SyntaxGenerator generator, SemanticModel model)
         {
-            INamedTypeSymbol stringComparisonType = WellKnownTypes.StringComparison(model.Compilation);
+            INamedTypeSymbol stringComparisonType = model.Compilation.GetTypeByMetadataName(typeof(System.StringComparison).FullName);
             return generator.MemberAccessExpression(
                 generator.TypeExpressionForStaticMemberAccess(stringComparisonType),
                 generator.IdentifierName(UseOrdinalStringComparisonAnalyzer.OrdinalText));
@@ -83,7 +83,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         protected static bool CanAddStringComparison(IMethodSymbol methodSymbol, SemanticModel model)
         {
-            if (WellKnownTypes.StringComparison(model.Compilation) == null)
+            if (model.Compilation.GetTypeByMetadataName(typeof(System.StringComparison).FullName) == null)
             {
                 return false;
             }

@@ -120,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var computerInfoType = csaContext.Compilation.GetTypeByMetadataName("Microsoft.VisualBasic.Devices.ComputerInfo");
                 var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
+                var obsoleteAttributeType = csaContext.Compilation.GetTypeByMetadataName(typeof(System.ObsoleteAttribute).FullName);
                 #endregion
 
                 csaContext.RegisterOperationAction(oaContext =>
@@ -204,7 +204,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                  symbol.Equals(currentThreadCurrentUICultureProperty) ||
                                  (installedUICulturePropertyOfComputerInfoType != null && symbol.Equals(installedUICulturePropertyOfComputerInfoType))))
                             {
-                                // Sample message 
+                                // Sample message
                                 // 1. UICultureStringRule - 'TestClass.TestMethod()' passes 'Thread.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.CalleeMethod(string, IFormatProvider)'.
                                 // This property returns a culture that is inappropriate for formatting methods.
                                 // 2. UICultureRule -'TestClass.TestMethod()' passes 'CultureInfo.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.Callee(IFormatProvider, string)'.

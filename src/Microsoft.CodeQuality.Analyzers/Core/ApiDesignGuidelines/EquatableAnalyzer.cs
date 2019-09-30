@@ -56,7 +56,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
             INamedTypeSymbol objectType = context.Compilation.GetSpecialType(SpecialType.System_Object);
-            INamedTypeSymbol equatableType = WellKnownTypes.GenericIEquatable(context.Compilation);
+            INamedTypeSymbol equatableType = WellKnownTypeProvider.GetOrCreate(context.Compilation).GenericIEquatable;
             if (objectType != null && equatableType != null)
             {
                 context.RegisterSymbolAction(c => AnalyzeSymbol(c, equatableType), SymbolKind.NamedType);

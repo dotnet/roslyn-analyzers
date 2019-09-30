@@ -51,11 +51,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = WellKnownTypes.SystemNetSecurityRemoteCertificateValidationCallback(compilation);
-                    var obj = WellKnownTypes.Object(compilation);
-                    var x509Certificate = WellKnownTypes.X509Certificate(compilation);
-                    var x509Chain = WellKnownTypes.X509Chain(compilation);
-                    var sslPolicyErrors = WellKnownTypes.SslPolicyErrors(compilation);
+                    var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNetSecurityRemoteCertificateValidationCallback);
+                    var obj = WellKnownTypeProvider.GetOrCreate(compilation).Object;
+                    var x509Certificate = compilation.GetTypeByMetadataName(typeof(System.Security.Cryptography.X509Certificates.X509Certificate).FullName);
+                    var x509Chain = compilation.GetTypeByMetadataName(typeof(System.Security.Cryptography.X509Certificates.X509Chain).FullName);
+                    var sslPolicyErrors = compilation.GetTypeByMetadataName(typeof(System.Net.Security.SslPolicyErrors).FullName);
 
                     if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null
                         || obj == null

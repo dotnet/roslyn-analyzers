@@ -317,7 +317,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            var taskSymbol = WellKnownTypes.Task(compilation);
+            var taskSymbol = WellKnownTypeProvider.GetOrCreate(compilation).Task;
             var genericTaskSymbol = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
 
             // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.

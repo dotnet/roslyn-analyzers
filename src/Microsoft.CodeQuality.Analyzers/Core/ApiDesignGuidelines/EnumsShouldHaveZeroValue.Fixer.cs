@@ -26,7 +26,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol flagsAttributeType = WellKnownTypes.FlagsAttribute(model.Compilation);
+            INamedTypeSymbol flagsAttributeType = model.Compilation.GetTypeByMetadataName(typeof(System.FlagsAttribute).FullName);
             if (flagsAttributeType == null)
             {
                 return;

@@ -52,7 +52,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol iDisposableTypeSymbol = WellKnownTypes.IDisposable(compilationContext.Compilation);
+                INamedTypeSymbol iDisposableTypeSymbol = WellKnownTypeProvider.GetOrCreate(compilationContext.Compilation).IDisposable;
                 if (iDisposableTypeSymbol == null)
                 {
                     return;

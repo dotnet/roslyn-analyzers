@@ -81,7 +81,7 @@ namespace Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines
                 return false;
             }
 
-            var conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(semanticModel.Compilation);
+            var conditionalAttributeSymbol = semanticModel.Compilation.GetTypeByMetadataName(typeof(System.Diagnostics.ConditionalAttribute).FullName);
             return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol);
         }
     }

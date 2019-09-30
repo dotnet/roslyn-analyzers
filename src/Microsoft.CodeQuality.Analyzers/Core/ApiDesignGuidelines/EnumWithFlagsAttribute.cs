@@ -14,16 +14,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// Implements CA1027 and CA2217
-    /// 
+    ///
     /// 1) CA1027: Mark enums with FlagsAttribute
-    /// 
+    ///
     /// Cause:
     /// The values of a public enumeration are powers of two or are combinations of other values that are defined in the enumeration,
     /// and the System.FlagsAttribute attribute is not present.
     /// To reduce false positives, this rule does not report a violation for enumerations that have contiguous values.
-    /// 
+    ///
     /// 2) CA2217: Do not mark enums with FlagsAttribute
-    /// 
+    ///
     /// Cause:
     /// An externally visible enumeration is marked with FlagsAttribute and it has one or more values that are not powers of two or
     /// a combination of the other defined values on the enumeration.
@@ -70,7 +70,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var flagsAttributeType = WellKnownTypes.FlagsAttribute(compilationStartContext.Compilation);
+                var flagsAttributeType = compilationStartContext.Compilation.GetTypeByMetadataName(typeof(System.FlagsAttribute).FullName);
                 if (flagsAttributeType == null)
                 {
                     return;

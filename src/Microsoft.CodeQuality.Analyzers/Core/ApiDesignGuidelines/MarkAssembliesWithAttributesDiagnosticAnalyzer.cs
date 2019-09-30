@@ -51,8 +51,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
-            var assemblyVersionAttributeSymbol = WellKnownTypes.AssemblyVersionAttribute(context.Compilation);
-            var assemblyComplianceAttributeSymbol = WellKnownTypes.CLSCompliantAttribute(context.Compilation);
+            var assemblyVersionAttributeSymbol = context.Compilation.GetTypeByMetadataName(typeof(System.Reflection.AssemblyVersionAttribute).FullName);
+            var assemblyComplianceAttributeSymbol = context.Compilation.GetTypeByMetadataName(typeof(System.CLSCompliantAttribute).FullName);
 
             if (assemblyVersionAttributeSymbol == null && assemblyComplianceAttributeSymbol == null)
             {
@@ -61,7 +61,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             bool assemblyVersionAttributeFound = false;
             bool assemblyComplianceAttributeFound = false;
-            var razorCompiledItemAttribute = WellKnownTypes.RazorCompiledItemAttribute(context.Compilation);
+            var razorCompiledItemAttribute = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreRazorHostingRazorCompiledItemAttribute);
 
             // Check all assembly level attributes for the target attribute
             foreach (AttributeData attribute in context.Compilation.Assembly.GetAttributes())

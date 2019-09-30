@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            INamedTypeSymbol notImplementedExceptionType = WellKnownTypes.NotImplementedException(model.Compilation);
+            INamedTypeSymbol notImplementedExceptionType = model.Compilation.GetTypeByMetadataName(typeof(System.NotImplementedException).FullName);
             if (notImplementedExceptionType == null)
             {
                 return;
@@ -73,8 +73,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                     typeSymbol.Name,
                                     new[]
                                     {
-                                            generator.ParameterDeclaration("serializationInfo", generator.TypeExpression(WellKnownTypes.SerializationInfo(docEditor.SemanticModel.Compilation))),
-                                            generator.ParameterDeclaration("streamingContext", generator.TypeExpression(WellKnownTypes.StreamingContext(docEditor.SemanticModel.Compilation)))
+                                            generator.ParameterDeclaration("serializationInfo", generator.TypeExpression(WellKnownTypeProvider.GetOrCreate(docEditor.SemanticModel.Compilation).SerializationInfo)),
+                                            generator.ParameterDeclaration("streamingContext", generator.TypeExpression(docEditor.SemanticModel.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext)))
                                     },
                                     typeSymbol.IsSealed ? Accessibility.Private : Accessibility.Protected,
                                     statements: new[] { throwStatement });

@@ -45,7 +45,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol flagsAttribute = WellKnownTypes.FlagsAttribute(compilationContext.Compilation);
+                INamedTypeSymbol flagsAttribute = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.FlagsAttribute).FullName);
                 if (flagsAttribute == null)
                 {
                     return;

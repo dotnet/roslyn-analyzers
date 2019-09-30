@@ -48,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SemanticModel model = editor.SemanticModel;
 
             // Add the interface to the baselist.
-            SyntaxNode interfaceType = generator.TypeExpression(WellKnownTypes.IDisposable(model.Compilation));
+            SyntaxNode interfaceType = generator.TypeExpression(WellKnownTypeProvider.GetOrCreate(model.Compilation).IDisposable);
             editor.AddInterfaceType(declaration, interfaceType);
 
             // Find a Dispose method. If one exists make that implement IDisposable, else generate a new method.
@@ -62,7 +62,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             }
             else
             {
-                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(WellKnownTypes.NotImplementedException(model.Compilation)));
+                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(model.Compilation.GetTypeByMetadataName(typeof(System.NotImplementedException).FullName)));
                 SyntaxNode member = generator.MethodDeclaration(TypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer<SyntaxNode>.Dispose, statements: new[] { throwStatement });
                 member = generator.AsPublicInterfaceImplementation(member, interfaceType);
                 editor.AddMember(declaration, member);

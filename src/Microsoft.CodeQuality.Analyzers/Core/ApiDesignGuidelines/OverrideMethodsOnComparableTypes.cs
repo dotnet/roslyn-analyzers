@@ -11,10 +11,10 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1036: A public or protected type implements the System.IComparable interface and 
+    /// CA1036: A public or protected type implements the System.IComparable interface and
     /// does not override Object.Equals or does not overload the language-specific operator
-    /// for equality, inequality, less than, less than or equal, greater than or 
-    /// greater than or equal. The rule does not report a violation if the type inherits 
+    /// for equality, inequality, less than, less than or equal, greater than or
+    /// greater than or equal. The rule does not report a violation if the type inherits
     /// only an implementation of the interface.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
@@ -66,8 +66,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol comparableType = WellKnownTypes.IComparable(compilationContext.Compilation);
-                INamedTypeSymbol genericComparableType = WellKnownTypes.GenericIComparable(compilationContext.Compilation);
+                INamedTypeSymbol comparableType = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.IComparable).FullName);
+                INamedTypeSymbol genericComparableType = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.IComparable<>).FullName);
 
                 // Even if one of them is available, we should continue analysis.
                 if (comparableType == null && genericComparableType == null)

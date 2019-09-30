@@ -47,11 +47,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     Compilation compilation = compilationStartAnalysisContext.Compilation;
 
                     ImmutableHashSet<INamedTypeSymbol> nativeResourceTypes = ImmutableHashSet.Create(
-                        WellKnownTypes.IntPtr(compilation),
-                        WellKnownTypes.UIntPtr(compilation),
-                        WellKnownTypes.HandleRef(compilation)
+                        WellKnownTypeProvider.GetOrCreate(compilation).IntPtr,
+                        WellKnownTypeProvider.GetOrCreate(compilation).UIntPtr,
+                        compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesHandleRef)
                     );
-                    var disposableType = WellKnownTypes.IDisposable(compilation);
+                    var disposableType = WellKnownTypeProvider.GetOrCreate(compilation).IDisposable;
 
                     compilationStartAnalysisContext.RegisterOperationAction(
                         operationAnalysisContext =>

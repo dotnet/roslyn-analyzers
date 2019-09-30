@@ -53,9 +53,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol localizableStateAttributeSymbol = WellKnownTypes.LocalizableAttribute(compilationContext.Compilation);
-                INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationContext.Compilation);
-                INamedTypeSymbol systemConsoleSymbol = WellKnownTypes.Console(compilationContext.Compilation);
+                INamedTypeSymbol localizableStateAttributeSymbol = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelLocalizableAttribute);
+                INamedTypeSymbol conditionalAttributeSymbol = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.Diagnostics.ConditionalAttribute).FullName);
+                INamedTypeSymbol systemConsoleSymbol = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.Console).FullName);
                 ImmutableHashSet<INamedTypeSymbol> typesToIgnore = GetTypesToIgnore(compilationContext.Compilation);
 
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
@@ -179,31 +179,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             var builder = PooledHashSet<INamedTypeSymbol>.GetInstance();
 
-            var xmlWriter = WellKnownTypes.XmlWriter(compilation);
+            var xmlWriter = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlWriter);
             if (xmlWriter != null)
             {
                 builder.Add(xmlWriter);
             }
 
-            var webUILiteralControl = WellKnownTypes.WebUILiteralControl(compilation);
+            var webUILiteralControl = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebUILiteralControl);
             if (webUILiteralControl != null)
             {
                 builder.Add(webUILiteralControl);
             }
 
-            var unitTestingAssert = WellKnownTypes.UnitTestingAssert(compilation);
+            var unitTestingAssert = compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingAssert);
             if (unitTestingAssert != null)
             {
                 builder.Add(unitTestingAssert);
             }
 
-            var unitTestingCollectionAssert = WellKnownTypes.UnitTestingCollectionAssert(compilation);
+            var unitTestingCollectionAssert = compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingCollectionAssert);
             if (unitTestingCollectionAssert != null)
             {
                 builder.Add(unitTestingCollectionAssert);
             }
 
-            var unitTestingCollectionStringAssert = WellKnownTypes.UnitTestingCollectionStringAssert(compilation);
+            var unitTestingCollectionStringAssert = compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingStringAssert);
             if (unitTestingCollectionStringAssert != null)
             {
                 builder.Add(unitTestingCollectionStringAssert);

@@ -93,7 +93,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
                     blockStartContext.RegisterOperationBlockEndAction(blockEndContext =>
                     {
-                        // Methods referenced by other non static methods 
+                        // Methods referenced by other non static methods
                         // and methods containing only NotImplementedException should not considered for marking them as static
                         if (!isInstanceReferenced && !blockEndContext.IsMethodNotImplementedOrSupported())
                         {
@@ -192,7 +192,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static bool IsEventArgs(ITypeSymbol type, Compilation compilation)
         {
-            if (type.DerivesFrom(WellKnownTypes.EventArgs(compilation)))
+            if (type.DerivesFrom(compilation.GetTypeByMetadataName(typeof(System.EventArgs).FullName)))
             {
                 return true;
             }
@@ -212,7 +212,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return false;
             }
 
-            var comVisibleAttribute = WellKnownTypes.ComVisibleAttribute(compilation);
+            var comVisibleAttribute = compilation.GetTypeByMetadataName(typeof(System.Runtime.InteropServices.ComVisibleAttribute).FullName);
             if (comVisibleAttribute == null)
             {
                 return false;
@@ -240,26 +240,26 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 }
             }
 
-            Add(WellKnownTypes.WebMethodAttribute(compilation));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebServicesWebMethodAttribute));
 
             // MSTest attributes
-            Add(WellKnownTypes.TestInitializeAttribute(compilation));
-            Add(WellKnownTypes.TestMethodAttribute(compilation));
-            Add(WellKnownTypes.DataTestMethodAttribute(compilation));
-            Add(WellKnownTypes.TestCleanupAttribute(compilation));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestInitializeAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestMethodAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingDataTestMethodAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestCleanupAttribute));
 
             // XUnit attributes
-            Add(WellKnownTypes.XunitFact(compilation));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.XunitFactAttribute));
 
             // NUnit Attributes
-            Add(WellKnownTypes.NunitSetUp(compilation));
-            Add(WellKnownTypes.NunitOneTimeSetUp(compilation));
-            Add(WellKnownTypes.NunitOneTimeTearDown(compilation));
-            Add(WellKnownTypes.NunitTest(compilation));
-            Add(WellKnownTypes.NunitTestCase(compilation));
-            Add(WellKnownTypes.NunitTestCaseSource(compilation));
-            Add(WellKnownTypes.NunitTheory(compilation));
-            Add(WellKnownTypes.NunitTearDown(compilation));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkSetUpAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkOneTimeSetUpAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkOneTimeTearDownAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestCaseAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestCaseSourceAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTheoryAttribute));
+            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTearDownAttribute));
 
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
         }

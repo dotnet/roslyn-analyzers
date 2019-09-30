@@ -13,7 +13,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1019: Define accessors for attribute arguments
-    /// 
+    ///
     /// Cause:
     /// In its constructor, an attribute defines arguments that do not have corresponding properties.
     /// </summary>
@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
+                INamedTypeSymbol attributeType = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.Attribute).FullName);
                 if (attributeType == null)
                 {
                     return;
@@ -97,7 +97,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static IEnumerable<IParameterSymbol> GetAllPublicConstructorParameters(INamedTypeSymbol attributeType)
         {
             // FxCop compatibility:
-            // Only examine parameters of public constructors. Can't use protected 
+            // Only examine parameters of public constructors. Can't use protected
             // constructors to define an attribute so this rule only applies to
             // public constructors.
             IEnumerable<IMethodSymbol> instanceConstructorsToCheck = attributeType.InstanceConstructors.Where(c => c.DeclaredAccessibility == Accessibility.Public);

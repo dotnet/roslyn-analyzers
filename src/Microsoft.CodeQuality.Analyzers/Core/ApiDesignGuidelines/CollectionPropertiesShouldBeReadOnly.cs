@@ -12,20 +12,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA2227: Collection properties should be read only
-    /// 
+    ///
     /// Cause:
-    /// An externally visible writable property is a type that implements System.Collections.ICollection.       
+    /// An externally visible writable property is a type that implements System.Collections.ICollection.
     /// Arrays, indexers(properties with the name 'Item'), and permission sets are ignored by the rule.
-    /// 
+    ///
     /// Description:
-    /// A writable collection property allows a user to replace the collection with a completely different collection. 
+    /// A writable collection property allows a user to replace the collection with a completely different collection.
     /// A read-only property stops the collection from being replaced but still allows the individual members to be set.
-    /// If replacing the collection is a goal, the preferred design pattern is to include a method to remove all the elements 
+    /// If replacing the collection is a goal, the preferred design pattern is to include a method to remove all the elements
     /// from the collection and a method to re-populate the collection.See the Clear and AddRange methods of the System.Collections.ArrayList class
     /// for an example of this pattern.
-    /// 
+    ///
     /// Both binary and XML serialization support read-only properties that are collections.
-    /// The System.Xml.Serialization.XmlSerializer class has specific requirements for types that implement ICollection and 
+    /// The System.Xml.Serialization.XmlSerializer class has specific requirements for types that implement ICollection and
     /// System.Collections.IEnumerable in order to be serializable.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
@@ -57,11 +57,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol iCollectionType = WellKnownTypes.ICollection(context.Compilation);
-                    INamedTypeSymbol genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
-                    INamedTypeSymbol arrayType = WellKnownTypes.Array(context.Compilation);
-                    INamedTypeSymbol dataMemberAttribute = WellKnownTypes.DataMemberAttribute(context.Compilation);
-                    ImmutableHashSet<INamedTypeSymbol> immutableInterfaces = WellKnownTypes.IImmutableInterfaces(context.Compilation);
+                    INamedTypeSymbol iCollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
+                    INamedTypeSymbol genericICollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+                    INamedTypeSymbol arrayType = WellKnownTypeProvider.GetOrCreate(context.Compilation).Array;
+                    INamedTypeSymbol dataMemberAttribute = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationDataMemberAttribute);
+                    ImmutableHashSet<INamedTypeSymbol> immutableInterfaces = GetIImmutableInterfaces(context.Compilation);
 
                     if (iCollectionType == null ||
                         genericICollectionType == null ||
@@ -134,6 +134,26 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             Debug.Assert(baseType.Equals(baseType.OriginalDefinition));
             return symbol?.OriginalDefinition.Inherits(baseType) ?? false;
+        }
+
+        private static ImmutableHashSet<INamedTypeSymbol> GetIImmutableInterfaces(Compilation compilation)
+        {
+            var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
+            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableDictionary));
+            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableList));
+            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableQueue));
+            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet));
+            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableStack));
+            return builder.ToImmutable();
+
+            // Local functions.
+            void AddIfNotNull(INamedTypeSymbol type)
+            {
+                if (type != null)
+                {
+                    builder.Add(type);
+                }
+            }
         }
     }
 }

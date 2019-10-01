@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            INamedTypeSymbol notImplementedExceptionType = model.Compilation.GetTypeByMetadataName(typeof(System.NotImplementedException).FullName);
+            INamedTypeSymbol notImplementedExceptionType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotImplementedException);
             if (notImplementedExceptionType == null)
             {
                 return;

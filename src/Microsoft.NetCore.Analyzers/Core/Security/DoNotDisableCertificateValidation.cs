@@ -51,11 +51,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNetSecurityRemoteCertificateValidationCallback);
+                    var systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetSecurityRemoteCertificateValidationCallback);
                     var obj = WellKnownTypeProvider.GetOrCreate(compilation).SystemObject;
-                    var x509Certificate = compilation.GetTypeByMetadataName(typeof(System.Security.Cryptography.X509Certificates.X509Certificate).FullName);
-                    var x509Chain = compilation.GetTypeByMetadataName(typeof(System.Security.Cryptography.X509Certificates.X509Chain).FullName);
-                    var sslPolicyErrors = compilation.GetTypeByMetadataName(typeof(System.Net.Security.SslPolicyErrors).FullName);
+                    var x509Certificate = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Certificate);
+                    var x509Chain = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Chain);
+                    var sslPolicyErrors = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetSecuritySslPolicyErrors);
 
                     if (systemNetSecurityRemoteCertificateValidationCallbackTypeSymbol == null
                         || obj == null

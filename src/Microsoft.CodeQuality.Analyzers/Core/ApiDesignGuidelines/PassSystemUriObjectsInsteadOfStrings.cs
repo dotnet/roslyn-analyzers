@@ -1,3 +1,4 @@
+
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
@@ -47,7 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(c =>
             {
                 INamedTypeSymbol @string = WellKnownTypeProvider.GetOrCreate(c.Compilation).SystemString;
-                INamedTypeSymbol uri = c.Compilation.GetTypeByMetadataName(typeof(System.Uri).FullName);
+                INamedTypeSymbol uri = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
                 if (@string == null || uri == null)
                 {
                     // we don't have required types

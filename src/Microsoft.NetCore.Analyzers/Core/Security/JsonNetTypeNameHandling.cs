@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(
                         compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.NewtonsoftJsonTypeNameHandling,
                             out INamedTypeSymbol typeNameHandlingSymbol))
                     {

@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 return;
             }
 
-            INamedTypeSymbol equatableType = WellKnownTypeProvider.GetOrCreate(model.Compilation).GenericIEquatable;
+            INamedTypeSymbol equatableType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
             if (equatableType == null)
             {
                 return;

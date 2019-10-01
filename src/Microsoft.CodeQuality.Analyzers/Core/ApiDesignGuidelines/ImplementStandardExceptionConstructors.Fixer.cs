@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Analyzer.Utilities;
 using System.Composition;
 using System.Collections.Generic;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
@@ -94,7 +95,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                                                     parameters: new[]
                                                     {
                                                     generator.ParameterDeclaration("message", generator.TypeExpression(WellKnownTypeProvider.GetOrCreate(editor.SemanticModel.Compilation).SystemString)),
-                                                    generator.ParameterDeclaration("innerException", generator.TypeExpression(WellKnownTypeProvider.GetOrCreate(editor.SemanticModel.Compilation).Exception))
+                                                    generator.ParameterDeclaration("innerException", generator.TypeExpression(editor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException)))
                                                     },
                                                     accessibility: Accessibility.Public,
                                                     baseConstructorArguments: new[]

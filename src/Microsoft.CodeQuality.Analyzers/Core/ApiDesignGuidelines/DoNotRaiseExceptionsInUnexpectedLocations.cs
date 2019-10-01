@@ -67,7 +67,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
-                INamedTypeSymbol exceptionType = WellKnownTypeProvider.GetOrCreate(compilation).Exception;
+                INamedTypeSymbol exceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
                 if (exceptionType == null)
                 {
                     return;
@@ -259,7 +259,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEquatable = WellKnownTypeProvider.GetOrCreate(compilation).GenericIEquatable;
+                INamedTypeSymbol iEquatable = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEquatable, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;

@@ -69,7 +69,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemWebHttpCookie, out INamedTypeSymbol httpCookieSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebHttpCookie, out INamedTypeSymbol httpCookieSymbol))
                     {
                         return;
                     }

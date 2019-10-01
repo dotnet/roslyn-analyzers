@@ -129,7 +129,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 context =>
                 {
-                    INamedTypeSymbol disposableType = WellKnownTypeProvider.GetOrCreate(context.Compilation).IDisposable;
+                    INamedTypeSymbol disposableType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
                     if (disposableType == null)
                     {
                         return;

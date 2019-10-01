@@ -99,7 +99,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                     WellKnownTypeProvider wellKnownTypeProvider =
                         WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             this.DeserializerTypeMetadataName,
                             out INamedTypeSymbol deserializerTypeSymbol))
                     {

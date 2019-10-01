@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         WellKnownTypeProvider.GetOrCreate(compilation).SystemUIntPtr,
                         compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesHandleRef)
                     );
-                    var disposableType = WellKnownTypeProvider.GetOrCreate(compilation).IDisposable;
+                    var disposableType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
 
                     compilationStartAnalysisContext.RegisterOperationAction(
                         operationAnalysisContext =>

@@ -538,11 +538,11 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             {
             }
 
-            static void startRulesSection(StringBuilder result)
+            static void startRulesSection(StringBuilder _)
             {
             }
 
-            static void endRulesSection(StringBuilder result)
+            static void endRulesSection(StringBuilder _)
             {
             }
 

@@ -316,5 +316,20 @@ public class Test
 }
 ", TestValidationMode.AllowCompileErrors);
         }
+
+        [Fact]
+        public void CSharpAssignmentInCodeWithOperationNone()
+        {
+            VerifyCSharpUnsafeCode(@"
+public struct Test
+{
+    public System.IntPtr PtrField;
+    public unsafe void Method(Test a, Test *b)
+    {
+        b->PtrField = a.PtrField;
+    }
+}
+");
+        }
     }
 }

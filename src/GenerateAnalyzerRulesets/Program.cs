@@ -481,9 +481,10 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                 result.AppendLine("   </Rules>");
             }
 
-            static void addRuleEntry(StringBuilder result, DiagnosticDescriptor rule, string severity, string spacingForTitle)
+            static void addRuleEntry(StringBuilder result, DiagnosticDescriptor rule, string severity)
             {
-                result.AppendLine($@"      <Rule Id=""{rule.Id}"" Action=""{severity}"" /> {spacingForTitle} <!-- {rule.Title} -->");
+                var spacing = new string(' ', count: 15 - severity.Length);
+                result.AppendLine($@"      <Rule Id=""{rule.Id}"" Action=""{severity}"" /> {spacing} <!-- {rule.Title} -->");
             }
 
             static string getSeverityString(DiagnosticSeverity? severityOpt)
@@ -546,9 +547,11 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             {
             }
 
-            static void addRuleEntry(StringBuilder result, DiagnosticDescriptor rule, string severity, string spacingForTitle)
+            static void addRuleEntry(StringBuilder result, DiagnosticDescriptor rule, string severity)
             {
-                result.AppendLine($@"dotnet_diagnostic.{rule.Id}.severity = {severity} {spacingForTitle} # {rule.Title}");
+                result.AppendLine();
+                result.AppendLine($"# {rule.Id}: {rule.Title}");
+                result.AppendLine($@"dotnet_diagnostic.{rule.Id}.severity = {severity}");
             }
 
             static string getSeverityString(DiagnosticSeverity? severityOpt)
@@ -575,7 +578,7 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             Action<StringBuilder> endRulesetOrEditorconfig,
             Action<StringBuilder> startRulesSection,
             Action<StringBuilder> endRulesSection,
-            Action<StringBuilder, DiagnosticDescriptor, string, string> addRuleEntry,
+            Action<StringBuilder, DiagnosticDescriptor, string> addRuleEntry,
             Func<DiagnosticSeverity?, string> getSeverityString,
             string commentStart,
             string commentEnd,
@@ -597,6 +600,8 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             {
                 result.AppendLine($@"{commentStart}{categoryOpt ?? customTagOpt} Rules{commentEnd}");
                 addRules(categoryPass: categoryOpt != null, customTagPass: customTagOpt != null);
+                result.AppendLine();
+                result.AppendLine();
                 result.AppendLine();
                 result.AppendLine($@"{commentStart}Other Rules{commentEnd}");
                 addRules(categoryPass: false, customTagPass: false);
@@ -632,8 +637,7 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                     }
 
                     string severity = getRuleAction(rule);
-                    var spacing = new string(' ', count: 15 - severity.Length);
-                    addRuleEntry(result, rule, severity, spacing);
+                    addRuleEntry(result, rule, severity);
                 }
 
                 bool shouldSkipRule(DiagnosticDescriptor rule)

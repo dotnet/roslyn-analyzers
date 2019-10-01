@@ -1,3 +1,5 @@
+using System.IO;
+
 string nuspecFile = Args[0];
 string assetsDir = Args[1];
 string projectDir = Args[2];
@@ -10,14 +12,15 @@ var assemblyList = Args[8].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEn
 var dependencyList = Args[9].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var libraryList = Args[10].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var rulesetsDir = Args[11];
-var legacyRulesets = Args[12].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var artifactsBinDir = Args[13];
-var analyzerDocumentationFileDir = Args[14];
-var analyzerDocumentationFileName = Args[15];
-var analyzerSarifFileDir = Args[16];
-var analyzerSarifFileName = Args[17];
-var analyzerConfigurationFileDir = Args[18];
-var analyzerConfigurationFileName = Args[19];
+var editorconfigsDir = Args[12];
+var legacyRulesets = Args[13].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var artifactsBinDir = Args[14];
+var analyzerDocumentationFileDir = Args[15];
+var analyzerDocumentationFileName = Args[16];
+var analyzerSarifFileDir = Args[17];
+var analyzerSarifFileName = Args[18];
+var analyzerConfigurationFileDir = Args[19];
+var analyzerConfigurationFileName = Args[20];
 
 var result = new StringBuilder();
 
@@ -183,6 +186,18 @@ if (rulesetsDir.Length > 0 && Directory.Exists(rulesetsDir))
         if (Path.GetExtension(ruleset) == ".ruleset")
         {
             result.AppendLine(FileElement(Path.Combine(rulesetsDir, ruleset), "rulesets"));
+        }
+    }
+}
+
+if (editorconfigsDir.Length > 0 && Directory.Exists(editorconfigsDir))
+{
+    foreach (string directory in Directory.EnumerateDirectories(editorconfigsDir))
+    {
+        var directoryName = new DirectoryInfo(directory).Name;
+        foreach (string editorconfig in Directory.EnumerateFiles(directory))
+        {
+            result.AppendLine(FileElement(Path.Combine(directory, editorconfig), $"editorconfig\\{directoryName}"));
         }
     }
 }

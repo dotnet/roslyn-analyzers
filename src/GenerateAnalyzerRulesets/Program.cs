@@ -19,7 +19,7 @@ namespace GenerateAnalyzerRulesets
     {
         public static int Main(string[] args)
         {
-            const int expectedArguments = 14;
+            const int expectedArguments = 15;
 
             if (args.Length != expectedArguments)
             {
@@ -40,12 +40,12 @@ namespace GenerateAnalyzerRulesets
             string analyzerSarifFileDir = args[10];
             string analyzerSarifFileName = args[11];
             var analyzerVersion = args[12];
-            if (!bool.TryParse(args[13], out var containsPortedFxCopRules))
+            var analyzerPackageName = args[13];
+            if (!bool.TryParse(args[14], out var containsPortedFxCopRules))
             {
                 containsPortedFxCopRules = false;
             }
 
-            var allRulesByAssembly = new SortedList<string, SortedList<string, DiagnosticDescriptor>>();
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
             var fixableDiagnosticIds = new HashSet<string>();
             var categories = new HashSet<string>();
@@ -62,7 +62,6 @@ namespace GenerateAnalyzerRulesets
 
                 var analyzerFileReference = new AnalyzerFileReference(path, AnalyzerAssemblyLoader.Instance);
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
-                var rulesById = new SortedList<string, DiagnosticDescriptor>();
 
                 var assemblyRulesMetadata = (path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
 
@@ -72,14 +71,12 @@ namespace GenerateAnalyzerRulesets
 
                     foreach (var rule in analyzer.SupportedDiagnostics)
                     {
-                        rulesById[rule.Id] = rule;
                         allRulesById[rule.Id] = rule;
                         categories.Add(rule.Category);
                         assemblyRulesMetadata.rules[rule.Id] = (rule, analyzerType.Name, analyzerType.GetCustomAttribute<DiagnosticAnalyzerAttribute>(true)?.Languages);
                     }
                 }
 
-                allRulesByAssembly.Add(assemblyName, rulesById);
                 rulesMetadata.Add(assemblyName, assemblyRulesMetadata);
 
                 foreach (var id in analyzerFileReference.GetFixers().SelectMany(fixer => fixer.FixableDiagnosticIds))
@@ -162,8 +159,8 @@ namespace GenerateAnalyzerRulesets
                 string categoryOpt = null,
                 string customTagOpt = null)
             {
-                CreateRuleset(analyzerRulesetsDir, fileName + ".ruleset", title, description, rulesetKind, categoryOpt, customTagOpt, allRulesByAssembly);
-                CreateEditorconfig(analyzerEditorconfigsDir, fileName, title, description, rulesetKind, categoryOpt, customTagOpt, allRulesByAssembly);
+                CreateRuleset(analyzerRulesetsDir, fileName + ".ruleset", title, description, rulesetKind, categoryOpt, customTagOpt, allRulesById, analyzerPackageName);
+                CreateEditorconfig(analyzerEditorconfigsDir, fileName, title, description, rulesetKind, categoryOpt, customTagOpt, allRulesById);
                 return;
             }
 
@@ -195,7 +192,7 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
 
             string getCodeAnalysisTreatWarningsNotAsErrors()
             {
-                var allRuleIds = string.Join(';', allRulesByAssembly.Values.SelectMany(l => l.Keys).Distinct());
+                var allRuleIds = string.Join(';', allRulesById.Keys);
                 return $@"
   <!-- 
     This property group prevents the rule ids implemented in this package to be bumped to errors when
@@ -216,11 +213,9 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
                         // Each rule entry format is: -[Category]#[ID];
                         // For example, -Microsoft.Design#CA1001;
                         var categoryPrefix = $"      -Microsoft.{category}#";
-                        var entries = allRulesByAssembly.Values
-                                          .SelectMany(l => l)
+                        var entries = allRulesById
                                           .Where(ruleIdAndDescriptor => ruleIdAndDescriptor.Value.Category == category &&
                                                                         FxCopWellKnownDiagnosticTags.IsPortedFxCopRule(ruleIdAndDescriptor.Value))
-                                          .OrderBy(ruleIdAndDescriptor => ruleIdAndDescriptor.Key)
                                           .Select(ruleIdAndDescriptor => $"{categoryPrefix}{ruleIdAndDescriptor.Key};")
                                           .Distinct();
 
@@ -442,21 +437,22 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             RulesetKind rulesetKind,
             string categoryOpt,
             string customTagOpt,
-            SortedList<string, SortedList<string, DiagnosticDescriptor>> allRulesByAssembly)
+            SortedList<string, DiagnosticDescriptor> sortedRulesById,
+            string analyzerPackageName)
         {
             var text = GetRulesetOrEditorconfigText(
                 rulesetKind,
                 startRuleset,
                 endRuleset,
-                startRulesSectionForAssembly,
-                endRulesSectionForAssembly,
+                startRulesSection,
+                endRulesSection,
                 addRuleEntry,
                 getSeverityString,
                 commentStart: "   <!-- ",
                 commentEnd: " -->",
                 categoryOpt,
                 customTagOpt,
-                allRulesByAssembly);
+                sortedRulesById);
 
             var directory = Directory.CreateDirectory(analyzerRulesetsDir);
             var rulesetFilePath = Path.Combine(directory.FullName, rulesetFileName);
@@ -475,12 +471,12 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                 result.AppendLine("</RuleSet>");
             }
 
-            static void startRulesSectionForAssembly(StringBuilder result, string assemblyName)
+            void startRulesSection(StringBuilder result)
             {
-                result.AppendLine($@"   <Rules AnalyzerId=""{assemblyName}"" RuleNamespace=""{assemblyName}"">");
+                result.AppendLine($@"   <Rules AnalyzerId=""{analyzerPackageName}"" RuleNamespace=""{analyzerPackageName}"">");
             }
 
-            static void endRulesSectionForAssembly(StringBuilder result)
+            static void endRulesSection(StringBuilder result)
             {
                 result.AppendLine("   </Rules>");
             }
@@ -504,21 +500,21 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             RulesetKind rulesetKind,
             string categoryOpt,
             string customTagOpt,
-            SortedList<string, SortedList<string, DiagnosticDescriptor>> allRulesByAssembly)
+            SortedList<string, DiagnosticDescriptor> sortedRulesById)
         {
             var text = GetRulesetOrEditorconfigText(
                 rulesetKind,
                 startEditorconfig,
                 endEditorconfig,
-                startRulesSectionForAssembly,
-                endRulesSectionForAssembly,
+                startRulesSection,
+                endRulesSection,
                 addRuleEntry,
                 getSeverityString,
                 commentStart: "# ",
                 commentEnd: string.Empty,
                 categoryOpt,
                 customTagOpt,
-                allRulesByAssembly);
+                sortedRulesById);
 
             var directory = Directory.CreateDirectory(Path.Combine(analyzerEditorconfigsDir, editorconfigFolder));
             var editorconfigFilePath = Path.Combine(directory.FullName, ".editorconfig");
@@ -533,24 +529,20 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                 result.AppendLine($@"# {editorconfigTitle}");
                 result.AppendLine($@"# Description: {editorconfigDescription}");
                 result.AppendLine();
-                result.AppendLine(@"# To learn more about .editorconfig see https://editorconfig.org/");
-                result.AppendLine(@"root = true");
-                result.AppendLine();
                 result.AppendLine(@"# Code files");
                 result.AppendLine(@"[*.{cs,vb}]");
+                result.AppendLine();
             }
 
             static void endEditorconfig(StringBuilder _)
             {
             }
 
-            static void startRulesSectionForAssembly(StringBuilder result, string assemblyName)
+            static void startRulesSection(StringBuilder result)
             {
-                result.AppendLine();
-                result.AppendLine($@"# Rules in '{assemblyName}.dll'");
             }
 
-            static void endRulesSectionForAssembly(StringBuilder _)
+            static void endRulesSection(StringBuilder result)
             {
             }
 
@@ -581,15 +573,15 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
             RulesetKind rulesetKind,
             Action<StringBuilder> startRulesetOrEditorconfig,
             Action<StringBuilder> endRulesetOrEditorconfig,
-            Action<StringBuilder, string> startRulesSectionForAssembly,
-            Action<StringBuilder> endRulesSectionForAssembly,
+            Action<StringBuilder> startRulesSection,
+            Action<StringBuilder> endRulesSection,
             Action<StringBuilder, DiagnosticDescriptor, string, string> addRuleEntry,
             Func<DiagnosticSeverity?, string> getSeverityString,
             string commentStart,
             string commentEnd,
             string categoryOpt,
             string customTagOpt,
-            SortedList<string, SortedList<string, DiagnosticDescriptor>> allRulesByAssembly)
+            SortedList<string, DiagnosticDescriptor> sortedRulesById)
         {
             Debug.Assert(categoryOpt == null || customTagOpt == null);
             Debug.Assert((categoryOpt != null) == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
@@ -615,26 +607,20 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
 
             void addRules(bool categoryPass, bool customTagPass)
             {
-                foreach (var rulesByAssembly in allRulesByAssembly)
+                if (!sortedRulesById.Any(r => !shouldSkipRule(r.Value)))
                 {
-                    string assemblyName = rulesByAssembly.Key;
-                    SortedList<string, DiagnosticDescriptor> sortedRulesById = rulesByAssembly.Value;
-
-                    if (!sortedRulesById.Any(r => !shouldSkipRule(r.Value)))
-                    {
-                        // Bail out if we don't have any rule to be added for this assembly.
-                        continue;
-                    }
-
-                    startRulesSectionForAssembly(result, assemblyName);
-
-                    foreach (var rule in sortedRulesById)
-                    {
-                        addRule(rule.Value);
-                    }
-
-                    endRulesSectionForAssembly(result);
+                    // Bail out if we don't have any rule to be added for this assembly.
+                    return;
                 }
+
+                startRulesSection(result);
+
+                foreach (var rule in sortedRulesById)
+                {
+                    addRule(rule.Value);
+                }
+
+                endRulesSection(result);
 
                 return;
 

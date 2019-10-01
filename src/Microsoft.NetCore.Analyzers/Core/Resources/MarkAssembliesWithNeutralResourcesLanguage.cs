@@ -124,7 +124,7 @@ namespace Microsoft.NetCore.Analyzers.Resources
         private static bool TryCheckNeutralResourcesLanguageAttribute(CompilationAnalysisContext context, out AttributeData attributeData)
         {
             INamedTypeSymbol attribute = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemResourcesNeutralResourcesLanguageAttribute);
-            INamedTypeSymbol @string = WellKnownTypeProvider.GetOrCreate(context.Compilation).SystemString;
+            INamedTypeSymbol @string = context.Compilation.GetSpecialType(SpecialType.System_String);
 
             IEnumerable<AttributeData> attributes = context.Compilation.Assembly.GetAttributes().Where(d => d.AttributeClass?.Equals(attribute) == true);
             foreach (AttributeData data in attributes)

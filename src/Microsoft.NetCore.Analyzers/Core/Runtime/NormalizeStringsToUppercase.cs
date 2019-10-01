@@ -46,7 +46,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var stringType = WellKnownTypeProvider.GetOrCreate(compilationStartContext.Compilation).SystemString;
+                var stringType = compilationStartContext.Compilation.GetSpecialType(SpecialType.System_String);
                 if (stringType == null)
                 {
                     return;

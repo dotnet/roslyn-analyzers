@@ -47,7 +47,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(c =>
             {
-                INamedTypeSymbol @string = WellKnownTypeProvider.GetOrCreate(c.Compilation).SystemString;
+                INamedTypeSymbol @string = c.Compilation.GetSpecialType(SpecialType.System_String);
                 INamedTypeSymbol uri = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
                 if (@string == null || uri == null)
                 {

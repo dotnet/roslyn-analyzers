@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -73,7 +72,7 @@ namespace GenerateAnalyzerRulesets
             if (moveNextMethod != null)
             {
                 MethodBody body = moveNextMethod.GetMethodBody();
-                int? ilInstructionCount = body?.GetILAsByteArray()?.Count();
+                int? ilInstructionCount = body?.GetILAsByteArray()?.Length;
                 return ilInstructionCount != 177;
             }
 

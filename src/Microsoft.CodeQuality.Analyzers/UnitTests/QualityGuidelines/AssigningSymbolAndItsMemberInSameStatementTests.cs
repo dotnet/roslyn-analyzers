@@ -331,5 +331,21 @@ public struct Test
 }
 ");
         }
+
+        [Fact]
+        [WorkItem(2889, "https://github.com/dotnet/roslyn-analyzers/issues/2889")]
+        public void CSharpAssignmentLocalReferenceOperation()
+        {
+            VerifyCSharp(@"
+public static class Class1
+{
+    public static void Foo()
+    {
+        var u = new System.UriBuilder();
+        u.Host = u.Path = string.Empty;
+    }
+}
+");
+        }
     }
 }

@@ -198,7 +198,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (context.Compilation.GetTypeByMetadataName("Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions") is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
+            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreEntityFrameworkQueryableExtensions) is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: entityFrameworkQueryableExtensionsType,
@@ -215,7 +215,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (context.Compilation.GetTypeByMetadataName("System.Data.Entity.QueryableExtensions") is INamedTypeSymbol queryableExtensionsType)
+            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataEntityQueryableExtensions) is INamedTypeSymbol queryableExtensionsType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: queryableExtensionsType,

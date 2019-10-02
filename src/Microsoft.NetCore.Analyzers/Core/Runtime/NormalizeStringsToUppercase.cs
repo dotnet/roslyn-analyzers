@@ -52,7 +52,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return;
                 }
 
-                var cultureInfo = compilationStartContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                var cultureInfo = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
                 var invariantCulture = cultureInfo?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().FirstOrDefault();
 
                 // We want to flag calls to "ToLowerInvariant" and "ToLower(CultureInfo.InvariantCulture)".

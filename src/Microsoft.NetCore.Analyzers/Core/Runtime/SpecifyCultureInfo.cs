@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 var obsoleteAttributeType = csaContext.Compilation.GetTypeByMetadataName(typeof(System.ObsoleteAttribute).FullName);
 
-                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
                 if (cultureInfoType != null)
                 {
                     csaContext.RegisterOperationAction(oaContext =>

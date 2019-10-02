@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationContext =>
                 {
                     Compilation compilation = compilationContext.Compilation;
-                    ITypeSymbol argumentExceptionType = compilation.GetTypeByMetadataName("System.ArgumentException");
+                    ITypeSymbol argumentExceptionType = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemArgumentException);
 
                     if (argumentExceptionType == null)
                     {

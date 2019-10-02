@@ -1,4 +1,5 @@
-﻿Versioning scheme for .NET Compiler Platform ("Roslyn") Analyzers
+﻿
+Versioning scheme for .NET Compiler Platform ("Roslyn") Analyzers
 =================================================================
 
 Following is the versioning scheme that is being used for analyzer packages:

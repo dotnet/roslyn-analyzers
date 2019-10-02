@@ -146,7 +146,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
                 , SymbolKind.NamedType);
 
-                var eventArgsType = context.Compilation.GetTypeByMetadataName(typeof(System.EventArgs).FullName);
+                var eventArgsType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
                 if (eventArgsType != null)
                 {
                     context.RegisterSymbolAction((saContext) =>

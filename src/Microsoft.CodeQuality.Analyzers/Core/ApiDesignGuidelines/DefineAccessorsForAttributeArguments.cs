@@ -65,7 +65,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol attributeType = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.Attribute).FullName);
+                INamedTypeSymbol attributeType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
                 if (attributeType == null)
                 {
                     return;

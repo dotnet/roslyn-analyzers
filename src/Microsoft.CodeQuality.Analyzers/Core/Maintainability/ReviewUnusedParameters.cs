@@ -53,14 +53,14 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 INamedTypeSymbol eventsArgSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
 
                 // Ignore conditional methods (FxCop compat - One conditional will often call another conditional method as its only use of a parameter)
-                INamedTypeSymbol conditionalAttributeSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(typeof(System.Diagnostics.ConditionalAttribute).FullName);
+                INamedTypeSymbol conditionalAttributeSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
 
                 // Ignore methods with special serialization attributes (FxCop compat - All serialization methods need to take 'StreamingContext')
                 INamedTypeSymbol onDeserializingAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnDeserializingAttribute);
                 INamedTypeSymbol onDeserializedAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnDeserializedAttribute);
                 INamedTypeSymbol onSerializingAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnSerializingAttribute);
                 INamedTypeSymbol onSerializedAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnSerializedAttribute);
-                INamedTypeSymbol obsoleteAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(typeof(System.ObsoleteAttribute).FullName);
+                INamedTypeSymbol obsoleteAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
 
                 ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(
                     conditionalAttributeSymbol,

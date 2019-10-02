@@ -70,7 +70,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var flagsAttributeType = compilationStartContext.Compilation.GetTypeByMetadataName(typeof(System.FlagsAttribute).FullName);
+                var flagsAttributeType = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
                 if (flagsAttributeType == null)
                 {
                     return;

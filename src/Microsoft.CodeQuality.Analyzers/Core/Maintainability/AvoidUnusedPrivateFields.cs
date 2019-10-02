@@ -49,7 +49,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     ConcurrentDictionary<IFieldSymbol, UnusedValue> referencedPrivateFields = new ConcurrentDictionary<IFieldSymbol, UnusedValue>();
 
                     ImmutableHashSet<INamedTypeSymbol> specialAttributes = GetSpecialAttributes(compilationContext.Compilation);
-                    var structLayoutAttribute = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.Runtime.InteropServices.StructLayoutAttribute).FullName);
+                    var structLayoutAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesStructLayoutAttribute);
 
                     compilationContext.RegisterSymbolAction(
                         (symbolContext) =>
@@ -132,7 +132,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
         {
             var specialAttributes = PooledHashSet<INamedTypeSymbol>.GetInstance();
 
-            var fieldOffsetAttribute = compilation.GetTypeByMetadataName(typeof(System.Runtime.InteropServices.FieldOffsetAttribute).FullName);
+            var fieldOffsetAttribute = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesFieldOffsetAttribute);
             if (fieldOffsetAttribute != null)
             {
                 specialAttributes.Add(fieldOffsetAttribute);

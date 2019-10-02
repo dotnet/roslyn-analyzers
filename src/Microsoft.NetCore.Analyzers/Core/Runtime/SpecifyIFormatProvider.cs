@@ -120,7 +120,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var computerInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualBasicDevicesComputerInfo);
                 var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var obsoleteAttributeType = csaContext.Compilation.GetTypeByMetadataName(typeof(System.ObsoleteAttribute).FullName);
+                var obsoleteAttributeType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
                 #endregion
 
                 csaContext.RegisterOperationAction(oaContext =>

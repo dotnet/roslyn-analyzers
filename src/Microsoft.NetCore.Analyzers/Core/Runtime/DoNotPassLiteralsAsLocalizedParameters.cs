@@ -54,8 +54,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol localizableStateAttributeSymbol = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelLocalizableAttribute);
-                INamedTypeSymbol conditionalAttributeSymbol = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.Diagnostics.ConditionalAttribute).FullName);
-                INamedTypeSymbol systemConsoleSymbol = compilationContext.Compilation.GetTypeByMetadataName(typeof(System.Console).FullName);
+                INamedTypeSymbol conditionalAttributeSymbol = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
+                INamedTypeSymbol systemConsoleSymbol = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemConsole);
                 ImmutableHashSet<INamedTypeSymbol> typesToIgnore = GetTypesToIgnore(compilationContext.Compilation);
 
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>

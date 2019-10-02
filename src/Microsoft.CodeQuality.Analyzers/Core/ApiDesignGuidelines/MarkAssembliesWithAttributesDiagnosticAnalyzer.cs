@@ -51,8 +51,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static void AnalyzeCompilation(CompilationAnalysisContext context)
         {
-            var assemblyVersionAttributeSymbol = context.Compilation.GetTypeByMetadataName(typeof(System.Reflection.AssemblyVersionAttribute).FullName);
-            var assemblyComplianceAttributeSymbol = context.Compilation.GetTypeByMetadataName(typeof(System.CLSCompliantAttribute).FullName);
+            var assemblyVersionAttributeSymbol = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemReflectionAssemblyVersionAttribute);
+            var assemblyComplianceAttributeSymbol = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCLSCompliantAttribute);
 
             if (assemblyVersionAttributeSymbol == null && assemblyComplianceAttributeSymbol == null)
             {

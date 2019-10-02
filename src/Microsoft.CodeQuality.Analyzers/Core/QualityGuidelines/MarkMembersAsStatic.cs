@@ -192,7 +192,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static bool IsEventArgs(ITypeSymbol type, Compilation compilation)
         {
-            if (type.DerivesFrom(compilation.GetTypeByMetadataName(typeof(System.EventArgs).FullName)))
+            if (type.DerivesFrom(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs)))
             {
                 return true;
             }
@@ -212,7 +212,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return false;
             }
 
-            var comVisibleAttribute = compilation.GetTypeByMetadataName(typeof(System.Runtime.InteropServices.ComVisibleAttribute).FullName);
+            var comVisibleAttribute = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComVisibleAttribute);
             if (comVisibleAttribute == null)
             {
                 return false;

@@ -1,2 +1,2 @@
-January 2018: v2.6.0 Official Release
-Requires Visual Studio 2017 15.5 or above.
+May 2019: v3.0.0 Official Release
+Requires Visual Studio 2019 RTW or later.

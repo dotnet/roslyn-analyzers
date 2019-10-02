@@ -80,8 +80,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             {
                 assignmentOperation = (ISimpleAssignmentOperation)assignmentOperation.Value;
 
-                var operationValue = assignmentOperation.Target as T;
-                if (equalityComparer(instance, operationValue))
+                if (assignmentOperation.Target is T operationValue &&
+                    equalityComparer(instance, operationValue))
                 {
                     return true;
                 }

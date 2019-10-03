@@ -29,7 +29,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyCodeFix,
-                        cancellationToken => ConvertToEqualsAsync(context.Document, diagnostic.Location.SourceSpan, cancellationToken),
+                        cancellationToken => AddDefaultEqualityComparerAsync(context.Document, diagnostic.Location.SourceSpan, cancellationToken),
                         equivalenceKey: nameof(CompareSymbolsCorrectlyFix)),
                     diagnostic);
             }
@@ -37,7 +37,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             return Task.CompletedTask;
         }
 
-        private async Task<Document> ConvertToEqualsAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
+        private async Task<Document> AddDefaultEqualityComparerAsync(Document document, TextSpan sourceSpan, CancellationToken cancellationToken)
         {
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);

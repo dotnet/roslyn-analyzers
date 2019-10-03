@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         public const string SymbolEqualityComparerName = "Microsoft.CodeAnalysis.SymbolEqualityComparer";
 
         public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            DiagnosticIds.CompareSymbolsCorrectlyRuleId,
+            DiagnosticIds.UseComparerInSymbolCollectionsRuleId,
             s_localizableTitle,
             s_localizableMessage,
             DiagnosticCategory.MicrosoftCodeAnalysisCorrectness,

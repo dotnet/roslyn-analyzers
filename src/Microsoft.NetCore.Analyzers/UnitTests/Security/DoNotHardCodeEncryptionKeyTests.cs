@@ -58,6 +58,28 @@ namespace System.Security.Cryptography
 }";
 
         [Fact]
+        public void Test_HardcodedStaticReadonlyField__Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Security.Cryptography;
+
+internal static class Program
+{
+    private static readonly Byte[] _key = { 1, 2, 3 };
+
+    private static void Main()
+    {
+        using (var aes = Aes.Create())
+        {
+            aes.Key = Program._key;
+        }
+    }
+}");
+            // Ideally, we'd treat _key as hardcoded.
+        }
+
+        [Fact]
         public void Test_HardcodedInString_CreateEncryptor_NeedValueContentAnalysis_Diagnostic()
         {
             VerifyCSharp(@"
@@ -419,7 +441,7 @@ class TestClass
         }
     }
 }",
-            GetCSharpResultAt(11, 9, 9, 25, "byte[] SymmetricAlgorithm.Key", "void TestClass.TestMethod()", "byte[]", "void TestClass.TestMethod()"));
+            GetCSharpResultAt(11, 13, 11, 23, "byte[] SymmetricAlgorithm.Key", "void TestClass.TestMethod()", "byte[]", "void TestClass.TestMethod()"));
         }
 
         [Fact]

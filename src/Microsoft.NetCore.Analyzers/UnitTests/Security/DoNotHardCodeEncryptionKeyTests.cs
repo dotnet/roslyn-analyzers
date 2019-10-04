@@ -403,6 +403,26 @@ class TestClass
         }
 
         [Fact]
+        public void Test_HardcodedInByteArray_AesKey_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Security.Cryptography;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        using (var aes = Aes.Create())
+        {
+            aes.Key = new Byte[] { 1, 2, 3 };
+        }
+    }
+}",
+            GetCSharpResultAt(11, 9, 9, 25, "byte[] SymmetricAlgorithm.Key", "void TestClass.TestMethod()", "byte[]", "void TestClass.TestMethod()"));
+        }
+
+        [Fact]
         public void Test_HardcodedInByteArray_CreateEncryptor_Multivalues_Diagnostic()
         {
             VerifyCSharp(@"

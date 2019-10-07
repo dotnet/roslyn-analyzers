@@ -52,7 +52,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 {
                     var lockStatement = (ILockOperation)context.Operation;
 
-                    if (lockStatement.LockedValue.Kind == OperationKind.InstanceReference)
+                    if (lockStatement.LockedValue is IInstanceReferenceOperation instanceReference &&
+                        instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                     {
                         context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, lockStatement.LockedValue.Syntax.ToString()));
                     }

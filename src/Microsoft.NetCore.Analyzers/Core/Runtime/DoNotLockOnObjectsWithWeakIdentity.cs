@@ -11,14 +11,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 {
     /// <summary>
     /// CA2002: Do not lock on objects with weak identities
-    /// 
+    ///
     /// Cause:
     /// A thread that attempts to acquire a lock on an object that has a weak identity could cause hangs.
-    /// 
+    ///
     /// Description:
-    /// An object is said to have a weak identity when it can be directly accessed across application domain boundaries. 
-    /// A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in 
-    /// a different application domain that has a lock on the same object. 
+    /// An object is said to have a weak identity when it can be directly accessed across application domain boundaries.
+    /// A thread that tries to acquire a lock on an object that has a weak identity can be blocked by a second thread in
+    /// a different application domain that has a lock on the same object.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotLockOnObjectsWithWeakIdentityAnalyzer : DiagnosticAnalyzer
@@ -51,10 +51,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationStartContext.RegisterOperationAction(context =>
                 {
                     var lockStatement = (ILockOperation)context.Operation;
-                    ITypeSymbol type = lockStatement.LockedValue?.Type;
-                    if (type != null && TypeHasWeakIdentity(type, compilation))
+
+                    if (lockStatement.LockedValue is IInstanceReferenceOperation instanceReference &&
+                        instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                     {
-                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, lockStatement.LockedValue.Syntax.ToString()));
+                    }
+                    else
+                    {
+                        ITypeSymbol type = lockStatement.LockedValue?.Type;
+                        if (type != null && TypeHasWeakIdentity(type, compilation))
+                        {
+                            context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                        }
                     }
                 },
                 OperationKind.Lock);

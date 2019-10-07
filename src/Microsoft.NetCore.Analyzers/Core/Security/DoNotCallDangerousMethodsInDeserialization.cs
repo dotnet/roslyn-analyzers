@@ -65,7 +65,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
 
                     if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                         WellKnownTypeNames.SystemSerializableAttribute,

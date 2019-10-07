@@ -39,10 +39,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             analysisContext.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(
-                        compilationStartAnalysisContext.Compilation);
-
-                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
+                    if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.NewtonsoftJsonTypeNameHandling,
                             out INamedTypeSymbol typeNameHandlingSymbol))
                     {

@@ -39,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 INamedTypeSymbol attributeType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
-                INamedTypeSymbol attributeUsageAttributeType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeAttributeUsageAttribute);
+                INamedTypeSymbol attributeUsageAttributeType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAttributeUsageAttribute);
                 if (attributeType == null || attributeUsageAttributeType == null)
                 {
                     return;

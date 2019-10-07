@@ -206,6 +206,16 @@ Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisD
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.ValueDomain.get -> Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractValueDomain<TAbstractAnalysisValue>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.VisitArray(System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.IOperation> operations, object argument) -> TAbstractAnalysisValue
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.WellKnownTypeProvider.get -> Analyzer.Utilities.WellKnownTypeProvider
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.ExceptionNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.TaskNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.InterlockedNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.ContractNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.IDisposableNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.GenericIEquatableNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.SerializationInfoNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.MonitorNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.GenericTaskNamedType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol
+Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DataFlowOperationVisitor<TAnalysisData, TAnalysisContext, TAnalysisResult, TAbstractAnalysisValue>.CollectionNamedTypes.get -> System.Collections.Immutable.ImmutableHashSet<Microsoft.CodeAnalysis.INamedTypeSymbol>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<TKey, TValue>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<TKey, TValue>.Add(System.Collections.Generic.KeyValuePair<TKey, TValue> item) -> void
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DictionaryAnalysisData<TKey, TValue>.Add(TKey key, TValue value) -> void
@@ -369,7 +379,9 @@ Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentBl
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentBlockAnalysisResult.Data.get -> System.Collections.Immutable.ImmutableDictionary<Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AnalysisEntity, Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentAbstractValue>
 Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis.ValueContentBlockAnalysisResult.IsReachable.get -> bool
 Analyzer.Utilities.WellKnownTypeProvider
-Analyzer.Utilities.WellKnownTypeProvider.TryGetTypeByMetadataName(string fullTypeName, out Microsoft.CodeAnalysis.INamedTypeSymbol namedTypeSymbol) -> bool
+Analyzer.Utilities.WellKnownTypeProvider.Compilation.get -> Microsoft.CodeAnalysis.Compilation
+Analyzer.Utilities.WellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(string fullTypeName, out Microsoft.CodeAnalysis.INamedTypeSymbol namedTypeSymbol) -> bool
+Analyzer.Utilities.WellKnownTypeProvider.GetOrCreateTypeByMetadataName(string fullTypeName) -> Microsoft.CodeAnalysis.INamedTypeSymbol
 abstract Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractAnalysisDomain<TAnalysisData>.Clone(TAnalysisData value) -> TAnalysisData
 abstract Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractAnalysisDomain<TAnalysisData>.Compare(TAnalysisData oldValue, TAnalysisData newValue) -> int
 abstract Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.AbstractAnalysisDomain<TAnalysisData>.Equals(TAnalysisData value1, TAnalysisData value2) -> bool

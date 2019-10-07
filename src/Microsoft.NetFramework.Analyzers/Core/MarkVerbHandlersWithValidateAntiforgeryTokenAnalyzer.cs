@@ -100,9 +100,9 @@ namespace Microsoft.NetFramework.Analyzers
                 (CompilationStartAnalysisContext compilationStartContext) =>
                 {
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartContext.Compilation);
-                    INamedTypeSymbol mvcControllerSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcController);
-                    INamedTypeSymbol mvcControllerBaseSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcControllerBase);
-                    INamedTypeSymbol actionResultSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcActionResult);
+                    INamedTypeSymbol mvcControllerSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcController);
+                    INamedTypeSymbol mvcControllerBaseSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcControllerBase);
+                    INamedTypeSymbol actionResultSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcActionResult);
 
                     if ((mvcControllerSymbol == null && mvcControllerBaseSymbol == null) || actionResultSymbol == null)
                     {

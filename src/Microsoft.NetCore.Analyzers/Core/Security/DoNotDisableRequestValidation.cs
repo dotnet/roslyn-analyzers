@@ -50,10 +50,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    var compilation = compilationStartAnalysisContext.Compilation;
-                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
-
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                                 WellKnownTypeNames.SystemWebMvcValidateInputAttribute,
                                 out INamedTypeSymbol validateInputAttributeTypeSymbol))
                     {

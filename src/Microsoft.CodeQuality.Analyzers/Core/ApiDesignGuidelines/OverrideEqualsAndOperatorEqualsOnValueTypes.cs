@@ -54,8 +54,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
-                var iEnumerator = WellKnownTypes.IEnumerator(compilationStartContext.Compilation);
-                var genericIEnumerator = WellKnownTypes.GenericIEnumerator(compilationStartContext.Compilation);
+                var iEnumerator = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerator);
+                var genericIEnumerator = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerator1);
 
                 compilationStartContext.RegisterSymbolAction(context =>
                 {

@@ -75,8 +75,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
                 #region "Get All the WellKnown Types and Members"
-                var iformatProviderType = csaContext.Compilation.GetTypeByMetadataName("System.IFormatProvider");
-                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                var iformatProviderType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemIFormatProvider);
+                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
                 if (iformatProviderType == null || cultureInfoType == null)
                 {
                     return;
@@ -111,16 +111,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var currentUICultureProperty = cultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
                 var installedUICultureProperty = cultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var threadType = csaContext.Compilation.GetTypeByMetadataName("System.Threading.Thread");
+                var threadType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
                 var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var activatorType = csaContext.Compilation.GetTypeByMetadataName("System.Activator");
-                var resourceManagerType = csaContext.Compilation.GetTypeByMetadataName("System.Resources.ResourceManager");
+                var activatorType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemActivator);
+                var resourceManagerType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemResourcesResourceManager);
 
-                var computerInfoType = csaContext.Compilation.GetTypeByMetadataName("Microsoft.VisualBasic.Devices.ComputerInfo");
+                var computerInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualBasicDevicesComputerInfo);
                 var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
+                var obsoleteAttributeType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
                 #endregion
 
                 csaContext.RegisterOperationAction(oaContext =>
@@ -204,7 +204,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                  symbol.Equals(currentThreadCurrentUICultureProperty) ||
                                  (installedUICulturePropertyOfComputerInfoType != null && symbol.Equals(installedUICulturePropertyOfComputerInfoType))))
                             {
-                                // Sample message 
+                                // Sample message
                                 // 1. UICultureStringRule - 'TestClass.TestMethod()' passes 'Thread.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.CalleeMethod(string, IFormatProvider)'.
                                 // This property returns a culture that is inappropriate for formatting methods.
                                 // 2. UICultureRule -'TestClass.TestMethod()' passes 'CultureInfo.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.Callee(IFormatProvider, string)'.

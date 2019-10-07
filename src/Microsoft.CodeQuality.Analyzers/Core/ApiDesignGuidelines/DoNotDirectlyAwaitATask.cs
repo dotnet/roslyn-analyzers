@@ -90,8 +90,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static ImmutableArray<INamedTypeSymbol> GetTaskTypes(Compilation compilation)
         {
-            INamedTypeSymbol taskType = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
-            INamedTypeSymbol taskOfTType = compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+            INamedTypeSymbol taskType = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+            INamedTypeSymbol taskOfTType = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
 
             return ImmutableArray.Create(taskType, taskOfTType);
         }

@@ -67,7 +67,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
-                INamedTypeSymbol exceptionType = WellKnownTypes.Exception(compilation);
+                INamedTypeSymbol exceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
                 if (exceptionType == null)
                 {
                     return;
@@ -167,21 +167,25 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var methodCategories = new List<MethodCategory> {
                 new MethodCategory(IsPropertyGetter, true,
                     PropertyGetterRule,
-                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation)),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemInvalidOperationException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException)),
 
                 new MethodCategory(IsIndexerGetter, true,
                     PropertyGetterRule,
-                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
-                    WellKnownTypes.ArgumentException(compilation), WellKnownTypes.KeyNotFoundException(compilation)),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemInvalidOperationException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericKeyNotFoundException)),
 
                 new MethodCategory(IsEventAccessor, true,
                     HasAllowedExceptionsRule,
-                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
-                    WellKnownTypes.ArgumentException(compilation)),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemInvalidOperationException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException)),
 
                 new MethodCategory(IsGetHashCodeInterfaceImplementation, true,
                     HasAllowedExceptionsRule,
-                    WellKnownTypes.ArgumentException(compilation)),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException)),
 
                 new MethodCategory(IsEqualsOverrideOrInterfaceImplementation, true,
                     NoAllowedExceptionsRule),
@@ -247,7 +251,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
+                INamedTypeSymbol iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
@@ -255,7 +259,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEquatable = WellKnownTypes.GenericIEquatable(compilation);
+                INamedTypeSymbol iEquatable = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEquatable, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
@@ -282,14 +286,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
+                INamedTypeSymbol iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;
                 }
 
 
-                INamedTypeSymbol iHashCodeProvider = WellKnownTypes.IHashCodeProvider(compilation);
+                INamedTypeSymbol iHashCodeProvider = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
                 if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;

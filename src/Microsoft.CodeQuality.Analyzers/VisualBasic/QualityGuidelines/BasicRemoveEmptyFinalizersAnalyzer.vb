@@ -31,7 +31,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines
                             Return False
                         End If
 
-                        Dim conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(analysisContext.SemanticModel.Compilation)
+                        Dim conditionalAttributeSymbol = analysisContext.SemanticModel.Compilation.GetTypeByMetadataName(GetType(ConditionalAttribute).FullName)
                         Return InvocationIsConditional(invocationSymbol, conditionalAttributeSymbol)
                     End If
                 End If

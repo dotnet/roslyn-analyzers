@@ -59,13 +59,13 @@ namespace Microsoft.NetCore.Analyzers.Security
             {
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyDSA,
                     out var dsaTypeSymbol);
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyAsymmetricAlgorithm,
                     out var asymmetricAlgorithmTypeSymbol);
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.SystemSecurityCryptographyCryptoConfig,
                     out var cryptoConfigTypeSymbol);
 

@@ -46,8 +46,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(c =>
             {
-                INamedTypeSymbol @string = WellKnownTypes.String(c.Compilation);
-                INamedTypeSymbol uri = WellKnownTypes.Uri(c.Compilation);
+                INamedTypeSymbol @string = c.Compilation.GetSpecialType(SpecialType.System_String);
+                INamedTypeSymbol uri = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
                 if (@string == null || uri == null)
                 {
                     // we don't have required types
@@ -63,7 +63,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private sealed class PerCompilationAnalyzer
         {
-            // this type will be created per compilation 
+            // this type will be created per compilation
             private readonly Compilation _compilation;
             private readonly INamedTypeSymbol _string;
             private readonly INamedTypeSymbol _uri;
@@ -86,11 +86,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var invocation = (IInvocationOperation)context.Operation;
                 var method = invocation.TargetMethod;
 
-                // check basic stuff that FxCop checks. 
+                // check basic stuff that FxCop checks.
                 if (method.IsFromMscorlib(_compilation))
                 {
                     // Methods defined within mscorlib are excluded from this rule,
-                    // since mscorlib cannot depend on System.Uri, which is defined 
+                    // since mscorlib cannot depend on System.Uri, which is defined
                     // in System.dll
                     return;
                 }
@@ -150,7 +150,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         continue;
                     }
 
-                    // original FxCop implementation doesnt account for case where original method call contains 
+                    // original FxCop implementation doesnt account for case where original method call contains
                     // 2+ string uri parameters that has overload with matching uri parameters. original implementation works
                     // when there is exactly 1 parameter having matching uri overload. this implementation follow that.
                     foreach (int index in indicesSet)

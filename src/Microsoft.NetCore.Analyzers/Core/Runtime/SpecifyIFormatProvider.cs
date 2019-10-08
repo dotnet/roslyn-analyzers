@@ -20,13 +20,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         internal const string RuleId = "CA1305";
         internal const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1305-specify-iformatprovider";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyIFormatProviderTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyIFormatProviderTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageIFormatProviderAlternateString = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyIFormatProviderMessageIFormatProviderAlternateString), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageIFormatProviderAlternate = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyIFormatProviderMessageIFormatProviderAlternate), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageUICultureString = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyIFormatProviderMessageUICultureString), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageUICulture = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyIFormatProviderMessageUICulture), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyIFormatProviderDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageIFormatProviderAlternateString = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyIFormatProviderMessageIFormatProviderAlternateString), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageIFormatProviderAlternate = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyIFormatProviderMessageIFormatProviderAlternate), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageUICultureString = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyIFormatProviderMessageUICultureString), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageUICulture = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyIFormatProviderMessageUICulture), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyIFormatProviderDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor IFormatProviderAlternateStringRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -75,8 +75,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
                 #region "Get All the WellKnown Types and Members"
-                var iformatProviderType = csaContext.Compilation.GetTypeByMetadataName("System.IFormatProvider");
-                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                var iformatProviderType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemIFormatProvider);
+                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
                 if (iformatProviderType == null || cultureInfoType == null)
                 {
                     return;
@@ -86,41 +86,41 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
                 var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
 
-                var stringFormatMemberWithStringAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithStringAndObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                          GetParameterInfo(stringType),
                                                                          GetParameterInfo(objectType));
-                var stringFormatMemberWithStringObjectAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithStringObjectAndObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                GetParameterInfo(stringType),
                                                                                GetParameterInfo(objectType),
                                                                                GetParameterInfo(objectType));
-                var stringFormatMemberWithStringObjectObjectAndObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithStringObjectObjectAndObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                      GetParameterInfo(stringType),
                                                                                      GetParameterInfo(objectType),
                                                                                      GetParameterInfo(objectType),
                                                                                      GetParameterInfo(objectType));
-                var stringFormatMemberWithStringAndParamsObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithStringAndParamsObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                GetParameterInfo(stringType),
                                                                                GetParameterInfo(objectType, isArray: true, arrayRank: 1, isParams: true));
-                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = stringFormatMembers.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringFormatMemberWithIFormatProviderStringAndParamsObjectParameter = stringFormatMembers.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                               GetParameterInfo(iformatProviderType),
                                                                                               GetParameterInfo(stringType),
                                                                                               GetParameterInfo(objectType, isArray: true, arrayRank: 1, isParams: true));
 
-                var currentCultureProperty = cultureInfoType?.GetMembers("CurrentCulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var invariantCultureProperty = cultureInfoType?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var currentUICultureProperty = cultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
-                var installedUICultureProperty = cultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var currentCultureProperty = cultureInfoType?.GetMembers("CurrentCulture").OfType<IPropertySymbol>().FirstOrDefault();
+                var invariantCultureProperty = cultureInfoType?.GetMembers("InvariantCulture").OfType<IPropertySymbol>().FirstOrDefault();
+                var currentUICultureProperty = cultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
+                var installedUICultureProperty = cultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var threadType = csaContext.Compilation.GetTypeByMetadataName("System.Threading.Thread");
-                var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var threadType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
+                var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var activatorType = csaContext.Compilation.GetTypeByMetadataName("System.Activator");
-                var resourceManagerType = csaContext.Compilation.GetTypeByMetadataName("System.Resources.ResourceManager");
+                var activatorType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemActivator);
+                var resourceManagerType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemResourcesResourceManager);
 
-                var computerInfoType = csaContext.Compilation.GetTypeByMetadataName("Microsoft.VisualBasic.Devices.ComputerInfo");
-                var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().SingleOrDefault();
+                var computerInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualBasicDevicesComputerInfo);
+                var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
+                var obsoleteAttributeType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
                 #endregion
 
                 csaContext.RegisterOperationAction(oaContext =>
@@ -161,7 +161,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     #region "IFormatProviderAlternateStringRule & IFormatProviderAlternateRule"
 
                     IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>().WhereMethodDoesNotContainAttribute(obsoleteAttributeType).ToList();
-                    if (methodsWithSameNameAsTargetMethod.Count() > 1)
+                    if (methodsWithSameNameAsTargetMethod.HasMoreThan(1))
                     {
                         var correctOverloads = methodsWithSameNameAsTargetMethod.GetMethodOverloadsWithDesiredParameterAtLeadingOrTrailing(targetMethod, iformatProviderType).ToList();
 
@@ -204,7 +204,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                  symbol.Equals(currentThreadCurrentUICultureProperty) ||
                                  (installedUICulturePropertyOfComputerInfoType != null && symbol.Equals(installedUICulturePropertyOfComputerInfoType))))
                             {
-                                // Sample message 
+                                // Sample message
                                 // 1. UICultureStringRule - 'TestClass.TestMethod()' passes 'Thread.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.CalleeMethod(string, IFormatProvider)'.
                                 // This property returns a culture that is inappropriate for formatting methods.
                                 // 2. UICultureRule -'TestClass.TestMethod()' passes 'CultureInfo.CurrentUICulture' as the 'IFormatProvider' parameter to 'TestClass.Callee(IFormatProvider, string)'.

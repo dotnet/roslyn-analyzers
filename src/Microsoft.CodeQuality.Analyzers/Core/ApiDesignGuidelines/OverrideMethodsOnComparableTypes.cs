@@ -1,6 +1,5 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -12,21 +11,21 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
-    /// CA1036: A public or protected type implements the System.IComparable interface and 
+    /// CA1036: A public or protected type implements the System.IComparable interface and
     /// does not override Object.Equals or does not overload the language-specific operator
-    /// for equality, inequality, less than, less than or equal, greater than or 
-    /// greater than or equal. The rule does not report a violation if the type inherits 
+    /// for equality, inequality, less than, less than or equal, greater than or
+    /// greater than or equal. The rule does not report a violation if the type inherits
     /// only an implementation of the interface.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class OverrideMethodsOnComparableTypesAnalyzer : DiagnosticAnalyzer
     {
         internal const string RuleId = "CA1036";
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageEquals = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageOperators = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageBoth = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageEquals = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageEquals), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageOperators = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageBoth = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static readonly DiagnosticDescriptor RuleEquals = new DiagnosticDescriptor(RuleId,
                                                                                   s_localizableTitle,
@@ -67,8 +66,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol comparableType = WellKnownTypes.IComparable(compilationContext.Compilation);
-                INamedTypeSymbol genericComparableType = WellKnownTypes.GenericIComparable(compilationContext.Compilation);
+                INamedTypeSymbol comparableType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemIComparable);
+                INamedTypeSymbol genericComparableType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemIComparable1);
 
                 // Even if one of them is available, we should continue analysis.
                 if (comparableType == null && genericComparableType == null)

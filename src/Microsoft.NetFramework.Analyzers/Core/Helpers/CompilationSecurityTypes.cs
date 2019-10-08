@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.NetFramework.Analyzers.Helpers
@@ -31,26 +32,26 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
         public CompilationSecurityTypes(Compilation compilation)
         {
             HandleProcessCorruptedStateExceptionsAttribute =
-                SecurityTypes.HandleProcessCorruptedStateExceptionsAttribute(compilation);
-            SystemObject = SecurityTypes.SystemObject(compilation);
-            SystemException = SecurityTypes.SystemException(compilation);
-            SystemSystemException = SecurityTypes.SystemSystemException(compilation);
-            XmlDocument = SecurityTypes.XmlDocument(compilation);
-            XPathDocument = SecurityTypes.XPathDocument(compilation);
-            XmlSchema = SecurityTypes.XmlSchema(compilation);
-            DataSet = SecurityTypes.DataSet(compilation);
-            XmlSerializer = SecurityTypes.XmlSerializer(compilation);
-            DataTable = SecurityTypes.DataTable(compilation);
-            XmlNode = SecurityTypes.XmlNode(compilation);
-            DataViewManager = SecurityTypes.DataViewManager(compilation);
-            XmlTextReader = SecurityTypes.XmlTextReader(compilation);
-            XmlReader = SecurityTypes.XmlReader(compilation);
-            DtdProcessing = SecurityTypes.DtdProcessing(compilation);
-            XmlReaderSettings = SecurityTypes.XmlReaderSettings(compilation);
-            XslCompiledTransform = SecurityTypes.XslCompiledTransform(compilation);
-            XmlResolver = SecurityTypes.XmlResolver(compilation);
-            XmlSecureResolver = SecurityTypes.XmlSecureResolver(compilation);
-            XsltSettings = SecurityTypes.XsltSettings(compilation);
+                compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeExceptionServicesHandleProcessCorruptedStateExceptionsAttribute);
+            SystemObject = compilation.GetSpecialType(SpecialType.System_Object);
+            SystemException = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemException);
+            SystemSystemException = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSystemException);
+            XmlDocument = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlDocument);
+            XPathDocument = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXPathXPathDocument);
+            XmlSchema = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlSchemaXmlSchema);
+            DataSet = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataDataSet);
+            XmlSerializer = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlSerializationXmlSerializer);
+            DataTable = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataDataTable);
+            XmlNode = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlNode);
+            DataViewManager = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataDataViewManager);
+            XmlTextReader = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlTextReader);
+            XmlReader = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReader);
+            DtdProcessing = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlDtdProcessing);
+            XmlReaderSettings = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReaderSettings);
+            XslCompiledTransform = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXslXslCompiledTransform);
+            XmlResolver = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlResolver);
+            XmlSecureResolver = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlSecureResolver);
+            XsltSettings = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlXslXsltSettings);
         }
     }
 }

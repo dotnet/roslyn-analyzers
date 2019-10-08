@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -15,17 +15,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5367";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotSerializeTypesWithPointerFields),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotSerializeTypesWithPointerFields),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotSerializeTypesWithPointerFieldsMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotSerializeTypesWithPointerFieldsMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotSerializeTypesWithPointerFieldsDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotSerializeTypesWithPointerFieldsDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -51,14 +51,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var serializableAttributeTypeSymbol = WellKnownTypes.SerializableAttribute(compilation);
+                    var serializableAttributeTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute);
 
                     if (serializableAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var nonSerializedAttribute = WellKnownTypes.NonSerializedAttribute(compilation);
+                    var nonSerializedAttribute = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
                     var visitedType = new ConcurrentDictionary<ITypeSymbol, bool>();
                     var pointerFields = new ConcurrentDictionary<IFieldSymbol, bool>();
 
@@ -81,11 +81,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         });
 
-                    /// <summary>
-                    /// Look for serialization of a type with valid pointer fields directly and indirectly.
-                    /// </summary>
-                    /// <param name="typeSymbol">The symbol of the type to be analyzed</param>
-                    /// <param name="relatedFieldSymbol">When relatedFieldSymbol is null, traverse all descendants of typeSymbol to find pointer fields; otherwise, traverse to find if relatedFieldSymbol is a pointer field</param>
+                    // Look for serialization of a type with valid pointer fields directly and indirectly.
+                    //
+                    // typeSymbol: The symbol of the type to be analyzed
+                    // relatedFieldSymbol: When relatedFieldSymbol is null, traverse all descendants of typeSymbol to
+                    //     find pointer fields; otherwise, traverse to find if relatedFieldSymbol is a pointer field
                     void LookForSerializationWithPointerFields(ITypeSymbol typeSymbol, IFieldSymbol relatedFieldSymbol)
                     {
                         if (typeSymbol is IPointerTypeSymbol pointerTypeSymbol)

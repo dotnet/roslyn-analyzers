@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using System.Linq;
@@ -6,6 +6,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {
@@ -14,17 +15,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5363";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableRequestValidation),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableRequestValidation),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableRequestValidationMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableRequestValidationMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotDisableRequestValidationDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotDisableRequestValidationDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -34,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 DiagnosticHelpers.DefaultDiagnosticSeverity,
                 isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                 description: s_Description,
-                helpLinkUri: null,
+                helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5363",
                 customTags: WellKnownDiagnosticTags.Telemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
@@ -49,9 +50,9 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    var validateInputAttributeTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcValidateInputAttribute);
-
-                    if (validateInputAttributeTypeSymbol == null)
+                    if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
+                                WellKnownTypeNames.SystemWebMvcValidateInputAttribute,
+                                out INamedTypeSymbol validateInputAttributeTypeSymbol))
                     {
                         return;
                     }
@@ -60,8 +61,23 @@ namespace Microsoft.NetCore.Analyzers.Security
                         (SymbolAnalysisContext symbolAnalysisContext) =>
                         {
                             var symbol = symbolAnalysisContext.Symbol;
+                            var typeSymbol = symbol.ContainingType;
+
+                            if (typeSymbol == null)
+                            {
+                                return;
+                            }
+
                             var attr = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(validateInputAttributeTypeSymbol));
 
+                            // If the method doesn't have the ValidateInput attribute, check its type.
+                            if (attr == null)
+                            {
+                                symbol = typeSymbol;
+                                attr = symbol.GetAttributes().FirstOrDefault(s => s.AttributeClass.Equals(validateInputAttributeTypeSymbol));
+                            }
+
+                            // By default, request validation is enabled.
                             if (attr == null)
                             {
                                 return;
@@ -78,7 +94,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         Rule,
                                         symbol.Name));
                             }
-                        }, SymbolKind.Method, SymbolKind.NamedType);
+                        }, SymbolKind.Method);
                 });
         }
     }

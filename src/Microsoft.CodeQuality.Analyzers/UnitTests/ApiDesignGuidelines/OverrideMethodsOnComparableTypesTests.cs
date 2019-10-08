@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class OverrideMethodsOnComparableTypesTests : CodeFixTestBase
+    public partial class OverrideMethodsOnComparableTypesTests : DiagnosticAnalyzerTestBase
     {
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
@@ -1301,25 +1301,25 @@ public class DerivedClass<T> : BaseClass<T>
 
         private static DiagnosticResult GetCA1036CSharpOperatorsResultAt(int line, int column, string typeName, string operators)
         {
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
+            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
             return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1036BasicOperatorsResultAt(int line, int column, string typeName, string operators)
         {
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
+            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageOperator, typeName, operators);
             return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1036CSharpBothResultAt(int line, int column, string typeName, string operators)
         {
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
+            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
             return GetCSharpResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1036BasicBothResultAt(int line, int column, string typeName, string operators)
         {
-            var message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
+            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideMethodsOnComparableTypesMessageBoth, typeName, operators);
             return GetBasicResultAt(line, column, OverrideMethodsOnComparableTypesAnalyzer.RuleId, message);
         }
     }

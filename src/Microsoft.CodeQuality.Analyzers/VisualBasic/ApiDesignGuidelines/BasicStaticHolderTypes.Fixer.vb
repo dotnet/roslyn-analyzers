@@ -1,17 +1,15 @@
-﻿' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-Imports System
 Imports System.Collections.Immutable
 Imports System.Composition
 Imports System.Threading
-Imports System.Threading.Tasks
 Imports Analyzer.Utilities
-Imports Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.CodeFixes
 Imports Microsoft.CodeAnalysis.Formatting
 Imports Microsoft.CodeAnalysis.VisualBasic
 Imports Microsoft.CodeAnalysis.VisualBasic.Syntax
+Imports Microsoft.CodeQuality.Analyzers
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
 
@@ -44,7 +42,7 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
             Dim root = Await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(False)
             Dim classStatement = root.FindToken(span.Start).Parent?.FirstAncestorOrSelf(Of ClassStatementSyntax)
             If classStatement IsNot Nothing Then
-                Dim title As String = MicrosoftApiDesignGuidelinesAnalyzersResources.MakeClassStatic
+                Dim title As String = MicrosoftCodeQualityAnalyzersResources.MakeClassStatic
                 Dim fix = New MyCodeAction(title, Async Function(ct) Await AddNotInheritableKeyword(document, root, classStatement).ConfigureAwait(False), equivalenceKey:=title)
                 context.RegisterCodeFix(fix, context.Diagnostics)
             End If

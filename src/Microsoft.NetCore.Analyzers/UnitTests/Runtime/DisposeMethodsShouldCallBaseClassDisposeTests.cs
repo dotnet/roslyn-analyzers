@@ -4,6 +4,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.DisposeMethodsShouldCallBaseClassDispose,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpDisposeMethodsShouldCallBaseClassDisposeFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.DisposeMethodsShouldCallBaseClassDispose,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicDisposeMethodsShouldCallBaseClassDisposeFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -769,7 +775,7 @@ Class B
 End Class");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1654"), WorkItem(1654, "https://github.com/dotnet/roslyn-analyzers/issues/1654")]
+        [Fact, WorkItem(1654, "https://github.com/dotnet/roslyn-analyzers/issues/1654")]
         public void BaseDisposeCalls_SomePaths_Diagnostic()
         {
             VerifyCSharp(@"

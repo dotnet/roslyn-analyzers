@@ -4,6 +4,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DeclareTypesInNamespacesAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpDeclareTypesInNamespacesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DeclareTypesInNamespacesAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicDeclareTypesInNamespacesFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -91,12 +97,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column)
         {
-            return GetCSharpResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DeclareTypesInNamespacesMessage);
+            return GetCSharpResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DeclareTypesInNamespacesMessage);
         }
 
         private static DiagnosticResult GetBasicExpectedResult(int line, int column)
         {
-            return GetBasicResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftApiDesignGuidelinesAnalyzersResources.DeclareTypesInNamespacesMessage);
+            return GetBasicResultAt(line, column, DeclareTypesInNamespacesAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DeclareTypesInNamespacesMessage);
         }
     }
 }

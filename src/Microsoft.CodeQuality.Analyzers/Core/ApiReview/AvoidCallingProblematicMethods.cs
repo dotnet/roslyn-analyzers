@@ -2,7 +2,6 @@
 
 using System.Collections.Immutable;
 using Analyzer.Utilities;
-using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 
@@ -15,19 +14,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
     {
         internal const string RuleId = "CA2001";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsTitle), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageSystemGCCollect = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemGCCollect), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemThreadingThreadResume = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemThreadingThreadResume), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemThreadingThreadSuspend = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemThreadingThreadSuspend), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemTypeInvokeMember = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemTypeInvokeMember), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCoInitializeSecurity = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageCoInitializeSecurity), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageCoSetProxyBlanket = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageCoSetProxyBlanket), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemReflectionAssemblyLoadFrom = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadFrom), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemReflectionAssemblyLoadFile = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadFile), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSystemReflectionAssemblyLoadWithPartialName = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadWithPartialName), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(ApiReviewAnalyzersResources.AvoidCallingProblematicMethodsDescription), ApiReviewAnalyzersResources.ResourceManager, typeof(ApiReviewAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystemGCCollect = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemGCCollect), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystemThreadingThreadResume = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemThreadingThreadResume), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystemThreadingThreadSuspend = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemThreadingThreadSuspend), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystemTypeInvokeMember = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemTypeInvokeMember), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCoInitializeSecurity = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageCoInitializeSecurity), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageCoSetProxyBlanket = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageCoSetProxyBlanket), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemRuntimeInteropServicesSafeHandleDangerousGetHandle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystemReflectionAssemblyLoadFrom = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadFrom), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystemReflectionAssemblyLoadFile = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadFile), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSystemReflectionAssemblyLoadWithPartialName = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsMessageSystemReflectionAssemblyLoadWithPartialName), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidCallingProblematicMethodsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor SystemGCCollectRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -123,7 +122,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiReview
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
         // ImmutableArray.Create(SystemGCCollectRule, SystemThreadingThreadResumeRule, SystemThreadingThreadSuspendRule, SystemTypeInvokeMemberRule, CoInitializeSecurityRule, CoSetProxyBlanketRule, SystemRuntimeInteropServicesSafeHandleDangerousGetHandleRule, SystemReflectionAssemblyLoadFromRule, SystemReflectionAssemblyLoadFileRule, SystemReflectionAssemblyLoadWithPartialNameRule);
 
+#pragma warning disable RS1025 // Configure generated code analysis
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1025 // Configure generated code analysis
         {
             analysisContext.EnableConcurrentExecution();
 

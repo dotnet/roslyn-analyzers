@@ -95,6 +95,7 @@ public class BadException1 : Exception
             GetCA1032CSharpMissingConstructorResultAt(line: 4, column: 14, typeName: "BadException1", constructor: "public BadException1(string message, Exception innerException)"));
         }
 
+        [Fact]
         public void CSharp_CA1032_Diagnostic_MissingTwoConstructors()
         {
             VerifyCSharp(@"
@@ -256,6 +257,7 @@ End Class
             GetCA1032BasicMissingConstructorResultAt(line: 4, column: 14, typeName: "BadException1", constructor: "Public Sub New(message As String, innerException As Exception)"));
         }
 
+        [Fact]
         public void Basic_CA1032_Diagnostic_MissingTwoConstructors()
         {
             VerifyBasic(@"
@@ -342,14 +344,14 @@ End Class
         private static DiagnosticResult GetCA1032CSharpMissingConstructorResultAt(int line, int column, string typeName, string constructor)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor);
             return GetCSharpResultAt(line, column, ImplementStandardExceptionConstructorsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1032BasicMissingConstructorResultAt(int line, int column, string typeName, string constructor)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementStandardExceptionConstructorsMessageMissingConstructor, typeName, constructor);
             return GetBasicResultAt(line, column, ImplementStandardExceptionConstructorsAnalyzer.RuleId, message);
         }
         #endregion

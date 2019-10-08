@@ -30,7 +30,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var title = MicrosoftApiDesignGuidelinesAnalyzersResources.UriParametersShouldNotBeStringsTitle;
+            var title = MicrosoftCodeQualityAnalyzersResources.UriParametersShouldNotBeStringsTitle;
 
             var document = context.Document;
             var cancellationToken = context.CancellationToken;
@@ -38,7 +38,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol uriType = WellKnownTypes.Uri(model.Compilation);
+            INamedTypeSymbol uriType = model.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemUri);
             if (uriType == null)
             {
                 return;

@@ -1,38 +1,21 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.ReviewUnusedParametersAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.Maintainability.CSharpReviewUnusedParametersFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.ReviewUnusedParametersAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability.BasicReviewUnusedParametersFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
-    public class ReviewUnusedParametersFixerTests : CodeFixTestBase
+    public class ReviewUnusedParametersFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new ReviewUnusedParametersAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new ReviewUnusedParametersAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicReviewUnusedParametersFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpReviewUnusedParametersFixer();
-        }
-
         [Fact]
-        public void BaseScenario_CSharp()
+        public async Task BaseScenario_CSharp()
         {
             var code = @"
 using System;
@@ -43,35 +26,35 @@ class C
 
     public int Field1;
 
-    public C(int param)
+    public C(int [|param|])
     {
     }
 
-    public void UnusedParamMethod(int param)
+    public void UnusedParamMethod(int [|param|])
     {
     }
 
-    public static void UnusedParamStaticMethod(int param1)
+    public static void UnusedParamStaticMethod(int [|param1|])
     {
     }
 
-    public void UnusedDefaultParamMethod(int defaultParam = 1)
+    public void UnusedDefaultParamMethod(int [|defaultParam|] = 1)
     {
     }
 
-    public void UnusedParamsArrayParamMethod(params int[] paramsArr)
+    public void UnusedParamsArrayParamMethod(params int[] [|paramsArr|])
     {
     }
 
-    public void MultipleUnusedParamsMethod(int param1, int param2)
+    public void MultipleUnusedParamsMethod(int [|param1|], int [|param2|])
     {
     }
 
-    private void UnusedRefParamMethod(ref int param1)
+    private void UnusedRefParamMethod(ref int [|param1|])
     {
     }
 
-    public void UnusedErrorTypeParamMethod(UndefinedType param1) // error CS0246: The type or namespace name 'UndefinedType' could not be found.
+    public void UnusedErrorTypeParamMethod({|CS0246:UndefinedType|} [|param1|]) // error CS0246: The type or namespace name 'UndefinedType' could not be found.
     {
     }
 
@@ -146,16 +129,21 @@ class C
     }
 }
 ";
-            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors, testFixAllScope: null);
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { fix } },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void ExternalFileScenario_CSharp()
+        public async Task ExternalFileScenario_CSharp()
         {
             var code = @"
 class C
 {
-    public static void UnusedParamStaticMethod(int param1)
+    public static void UnusedParamStaticMethod(int [|param1|])
     {
     }
 }
@@ -190,7 +178,7 @@ class D
             var anotherCode = @"
 class E
 {
-    public static void M(int param1) { }
+    public static void M(int [|param1|]) { }
 }
 ";
             var anotherCodeFix = @"
@@ -199,20 +187,39 @@ class E
     public static void M() { }
 }
 ";
-            VerifyCSharpFix(new[] { code, anotherCode }, new[] { fix, anotherCodeFix });
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        code,
+                        anotherCode,
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        fix,
+                        anotherCodeFix,
+                    },
+                },
+                NumberOfFixAllInDocumentIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void CommentsNearParams_CSharp()
+        public async Task CommentsNearParams_CSharp()
         {
             var code = @"
 class C
 {
-    public C(/* comment left */ int /* comment middle */ param /* comment right */)
+    public C(/* comment left */ int /* comment middle */ [|param|] /* comment right */)
     {
     }
 
-    public int M(/* comment 1 */ int /* comment 2 */ param1 /* comment 3 */, /* comment 4 */ int /* comment 5 */ param2 /* comment 6 */)
+    public int M(/* comment 1 */ int /* comment 2 */ [|param1|] /* comment 3 */, /* comment 4 */ int /* comment 5 */ param2 /* comment 6 */)
     {   
         return param2;
     }
@@ -243,16 +250,16 @@ class C
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void NamedParams_CSharp()
+        public async Task NamedParams_CSharp()
         {
             var code = @"
 class C
 {
-    public int UnusedParamMethod(int param1, int param2)
+    public int UnusedParamMethod(int param1, int [|param2|])
     {
         return param1;
     }
@@ -277,20 +284,20 @@ class C
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void MultipleNamespaces_CSharp()
+        public async Task MultipleNamespaces_CSharp()
         {
             var code = @"
 namespace A.B.C.D
 {
     public class Test
     {
-        public Test(int param1) { }
+        public Test(int [|param1|]) { }
         
-        public static void UnusedParamMethod(int param1) { }
+        public static void UnusedParamMethod(int [|param1|]) { }
     }
 }
 
@@ -329,11 +336,11 @@ namespace E
     }
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void CalculationsInParameter_CSharp()
+        public async Task CalculationsInParameter_CSharp()
         {
             var code = @"
 class C
@@ -348,22 +355,22 @@ class C
     }
 }
 ";
-            VerifyCSharpFix(code, code);
+            await VerifyCS.VerifyCodeFixAsync(code, code);
         }
 
         [Fact]
-        public void Conversion_CSharp()
+        public async Task Conversion_CSharp()
         {
             var code = @"
 class C
 {
-    public static explicit operator int(C value) => 0;
+    public static explicit operator int(C [|value|]) => 0;
 
-    public void M1(double d) { }
+    public void M1(double [|d|]) { }
 
-    public void M2(int i) { }
+    public void M2(int [|i|]) { }
 
-    public void M3(int x) { }
+    public void M3(int [|x|]) { }
 
     public void Caller()
     {
@@ -379,7 +386,7 @@ class C
             var fix = @"
 class C
 {
-    public static explicit operator int(C value) => 0;
+    public static explicit operator int(C [|value|]) => 0;
 
     public void M1() { }
 
@@ -398,17 +405,28 @@ class C
     }
 }
 ";
-            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { code },
+                },
+                FixedState =
+                {
+                    Sources = { fix },
+                    MarkupHandling = MarkupMode.Allow,
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void ExtensionMethod_CSharp()
+        public async Task ExtensionMethod_CSharp()
         {
             var code = @"
 static class C
 {
     static void ExtensionMethod(this int i) { }
-    static void ExtensionMethod(this int i, int anotherParam) { }
+    static void ExtensionMethod(this int i, int [|anotherParam|]) { }
 
     static void Caller()
     {
@@ -422,28 +440,28 @@ static class C
 static class C
 {
     static void ExtensionMethod(this int i) { }
-    static void ExtensionMethod(this int i) { }
+    static void {|CS0111:ExtensionMethod|}(this int i) { }
 
     static void Caller()
     {
         int i = 0;
-        i.ExtensionMethod();
-        i.ExtensionMethod();
+        i.{|CS0121:ExtensionMethod|}();
+        i.{|CS0121:ExtensionMethod|}();
     }
 }
 ";
-            VerifyCSharpFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact(Skip = "https://github.com/dotnet/roslyn/issues/22449")]
-        public void DictionaryConstructor_CSharp()
+        public async Task DictionaryConstructor_CSharp()
         {
             var code = @"
 using System.Collections.Generic;
 
 class Dict : Dictionary<int, MyValue>
 {
-    public void Add(int key, int a, int b)
+    public void Add(int key, int a, int [|b|])
     {
         var val = new MyValue();
         val.A = a;
@@ -491,11 +509,11 @@ class MyValue
     public int A;
 }
 ";
-            VerifyCSharpFix(code, fix);
+            await VerifyCS.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void BaseScenario_Basic()
+        public async Task BaseScenario_Basic()
         {
             var code = @"
 Class C
@@ -503,28 +521,28 @@ Class C
 
     Public Field1 As Integer
 
-    Public Sub New(param As Integer)
+    Public Sub New([|param|] As Integer)
     End Sub
 
-    Public Sub UnusedParamMethod(param As Integer)
+    Public Sub UnusedParamMethod([|param|] As Integer)
     End Sub
 
-    Public Shared Sub UnusedParamStaticMethod(param1 As Integer)
+    Public Shared Sub UnusedParamStaticMethod([|param1|] As Integer)
     End Sub
 
-    Public Sub UnusedDefaultParamMethod(Optional defaultParam As Integer = 1)
+    Public Sub UnusedDefaultParamMethod(Optional [|defaultParam|] As Integer = 1)
     End Sub
 
-    Public Sub UnusedParamsArrayParamMethod(ParamArray paramsArr As Integer())
+    Public Sub UnusedParamsArrayParamMethod(ParamArray [|paramsArr|] As Integer())
     End Sub
 
-    Public Sub MultipleUnusedParamsMethod(param1 As Integer, param2 As Integer)
+    Public Sub MultipleUnusedParamsMethod([|param1|] As Integer, [|param2|] As Integer)
     End Sub
 
-    Private Sub UnusedRefParamMethod(ByRef param1 As Integer)
+    Private Sub UnusedRefParamMethod(ByRef [|param1|] As Integer)
     End Sub
 
-    Public Sub UnusedErrorTypeParamMethod(param1 As UndefinedType) ' error BC30002: Type 'UndefinedType' is not defined.
+    Public Sub UnusedErrorTypeParamMethod([|param1|] As {|BC30002:UndefinedType|}) ' error BC30002: Type 'UndefinedType' is not defined.
     End Sub
 
     Public Sub Caller()
@@ -585,15 +603,20 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors, testFixAllScope: null);
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { fix } },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void ExternalFileScenario_Basic()
+        public async Task ExternalFileScenario_Basic()
         {
             var code = @"
 Class C
-    Public Shared Sub UnusedParamStaticMethod(param1 As Integer)
+    Public Shared Sub UnusedParamStaticMethod([|param1|] As Integer)
     End Sub
 End Class
 
@@ -620,7 +643,7 @@ End Class
 
             var anotherCode = @"
 Class E
-    Public Shared Sub M(param1 As Integer)
+    Public Shared Sub M([|param1|] As Integer)
     End Sub
 End Class
 ";
@@ -630,15 +653,34 @@ Class E
     End Sub
 End Class
 ";
-            VerifyBasicFix(new[] { code, anotherCode }, new[] { fix, anotherCodeFix });
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        code,
+                        anotherCode,
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        fix,
+                        anotherCodeFix,
+                    },
+                },
+                NumberOfFixAllInDocumentIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void NamedParams_Basic()
+        public async Task NamedParams_Basic()
         {
             var code = @"
 Class C
-    Public Function UnusedParamMethod(param1 As Integer, param2 As Integer) As Integer
+    Public Function UnusedParamMethod(param1 As Integer, [|param2|] As Integer) As Integer
         Return param1
     End Function
 
@@ -658,19 +700,19 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void MultipleNamespaces_Basic()
+        public async Task MultipleNamespaces_Basic()
         {
             var code = @"
 Namespace A.B.C.D
     Public Class Test
-        Public Sub New(param1 As Integer)
+        Public Sub New([|param1|] As Integer)
         End Sub
 
-        Public Shared Sub UnusedParamMethod(param1 As Integer)
+        Public Shared Sub UnusedParamMethod([|param1|] As Integer)
         End Sub
     End Class
 End Namespace
@@ -704,15 +746,15 @@ Namespace E
     End Class
 End Namespace
 ";
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void CalculationsInParameter_Basic()
+        public async Task CalculationsInParameter_Basic()
         {
             var code = @"
 Class C
-    Sub M(x As Integer)
+    Sub M([|x|] As Integer)
     End Sub
 
     Function N(x As Integer) As Integer
@@ -739,25 +781,25 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
 
         [Fact]
-        public void Conversion_Basic()
+        public async Task Conversion_Basic()
         {
             var code = @"
 Class C
-    Public Shared Narrowing Operator CType(value As C) As Integer
+    Public Shared Narrowing Operator CType([|value|] As C) As Integer
         Return 0
     End Operator
 
-    Public Sub M1(d As Double)
+    Public Sub M1([|d|] As Double)
     End Sub
 
-    Public Sub M2(i As Integer)
+    Public Sub M2([|i|] As Integer)
     End Sub
 
-    Public Sub M3(x As Integer)
+    Public Sub M3([|x|] As Integer)
     End Sub
 
     Public Sub Caller()
@@ -772,7 +814,7 @@ End Class
 ";
             var fix = @"
 Class C
-    Public Shared Narrowing Operator CType(value As C) As Integer
+    Public Shared Narrowing Operator CType([|value|] As C) As Integer
         Return 0
     End Operator
 
@@ -795,11 +837,22 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true);
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources = { code },
+                },
+                FixedState =
+                {
+                    Sources = { fix },
+                    MarkupHandling = MarkupMode.Allow,
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void ExtensionMethod_Basic()
+        public async Task ExtensionMethod_Basic()
         {
             var code = @"
 Imports System.Runtime.CompilerServices
@@ -810,7 +863,7 @@ Module D
     End Sub
 
     <Extension()> 
-    Public Sub ExtensionMethod(s As String, i As Integer)
+    Public Sub ExtensionMethod(s As String, [|i|] As Integer)
     End Sub
 
     Sub Caller()
@@ -825,7 +878,7 @@ Imports System.Runtime.CompilerServices
 
 Module D
     <Extension()> 
-    Public Sub ExtensionMethod(s As String)
+    Public Sub {|BC30269:ExtensionMethod|}(s As String)
     End Sub
 
     <Extension()> 
@@ -834,12 +887,12 @@ Module D
 
     Sub Caller()
         Dim s as String
-        s.ExtensionMethod()
-        s.ExtensionMethod()
+        s.{|BC30521:ExtensionMethod|}()
+        s.{|BC30521:ExtensionMethod|}()
     End Sub
 End Module
 ";
-            VerifyBasicFix(code, fix, allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+            await VerifyVB.VerifyCodeFixAsync(code, fix);
         }
     }
 }

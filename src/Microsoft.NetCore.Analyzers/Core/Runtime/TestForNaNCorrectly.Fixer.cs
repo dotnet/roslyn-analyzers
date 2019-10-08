@@ -2,7 +2,6 @@
 
 using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -38,8 +37,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol systemSingleType = model.Compilation.GetTypeByMetadataName("System.Single");
-            INamedTypeSymbol systemDoubleType = model.Compilation.GetTypeByMetadataName("System.Double");
+            INamedTypeSymbol systemSingleType = model.Compilation.GetSpecialType(SpecialType.System_Single);
+            INamedTypeSymbol systemDoubleType = model.Compilation.GetSpecialType(SpecialType.System_Double);
 
             if (systemSingleType == null || systemDoubleType == null)
             {
@@ -50,14 +49,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (resolution != null)
             {
-                // We cannot have multiple overlapping diagnostics of this id.
-                Diagnostic diagnostic = context.Diagnostics.Single();
-
-                var action = CodeAction.Create(SystemRuntimeAnalyzersResources.TestForNaNCorrectlyMessage,
+                var action = CodeAction.Create(MicrosoftNetCoreAnalyzersResources.TestForNaNCorrectlyMessage,
                     async ct => await ConvertToMethodInvocation(context, resolution).ConfigureAwait(false),
-                    equivalenceKey: SystemRuntimeAnalyzersResources.TestForNaNCorrectlyMessage);
+                    equivalenceKey: MicrosoftNetCoreAnalyzersResources.TestForNaNCorrectlyMessage);
 
-                context.RegisterCodeFix(action, diagnostic);
+                context.RegisterCodeFix(action, context.Diagnostics);
             }
         }
 

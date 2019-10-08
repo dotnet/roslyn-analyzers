@@ -1,15 +1,24 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using System.Composition;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.ImmutableCollections
 {
     /// <summary>
     /// CA2009: Do not call ToImmutableCollection on an ImmutableCollection value
     /// </summary>
-    public abstract class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, LanguageNames.VisualBasic), Shared]
+    public sealed class DoNotCallToImmutableCollectionOnAnImmutableCollectionValueFixer : CodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.RuleId);
 
@@ -19,10 +28,53 @@ namespace Microsoft.NetCore.Analyzers.ImmutableCollections
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // Fixer not yet implemented.
-            return Task.CompletedTask;
+            var diagnostic = context.Diagnostics.FirstOrDefault();
+            if (diagnostic == null)
+            {
+                return;
+            }
+
+            var document = context.Document;
+            var span = context.Span;
+            var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
+            if (invocationNode == null)
+            {
+                return;
+            }
+
+            var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            if (!(semanticModel.GetOperation(invocationNode) is IInvocationOperation invocationOperation) ||
+                !DoNotCallToImmutableCollectionOnAnImmutableCollectionValueAnalyzer.ToImmutableMethodNames.Contains(invocationOperation.TargetMethod.Name))
+            {
+                return;
+            }
+
+            var title = MicrosoftNetCoreAnalyzersResources.RemoveRedundantCall;
+
+            context.RegisterCodeFix(new MyCodeAction(title,
+                                        async cancellationToken => await RemoveRedundantCall(document, root, invocationNode, invocationOperation).ConfigureAwait(false),
+                                        equivalenceKey: title),
+                                    diagnostic);
+        }
+
+        private static Task<Document> RemoveRedundantCall(Document document, SyntaxNode root, SyntaxNode invocationNode, IInvocationOperation invocationOperation)
+        {
+            var instance = invocationOperation.GetInstance().WithTriviaFrom(invocationNode);
+            var newRoot = root.ReplaceNode(invocationNode, instance);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return Task.FromResult(newDocument);
+        }
+
+        // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)
+        private class MyCodeAction : DocumentChangeAction
+        {
+            public MyCodeAction(string title, Func<CancellationToken, Task<Document>> createChangedDocument, string equivalenceKey)
+                : base(title, createChangedDocument, equivalenceKey)
+            {
+            }
         }
     }
 }

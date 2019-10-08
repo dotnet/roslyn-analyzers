@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
@@ -21,21 +20,21 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private static readonly LocalizableString s_localizableTitle =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceTitle),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableStandardMessage =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceMessage),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         private static readonly LocalizableString s_localizableDescription =
             new LocalizableResourceString(
-                nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription),
-                MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager,
-                typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+                nameof(MicrosoftCodeQualityAnalyzersResources.CollectionsShouldImplementGenericInterfaceDescription),
+                MicrosoftCodeQualityAnalyzersResources.ResourceManager,
+                typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule =
             new DiagnosticDescriptor(
@@ -59,12 +58,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                (context) =>
                {
-                   INamedTypeSymbol iCollectionType = WellKnownTypes.ICollection(context.Compilation);
-                   INamedTypeSymbol genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
-                   INamedTypeSymbol iEnumerableType = WellKnownTypes.IEnumerable(context.Compilation);
-                   INamedTypeSymbol genericIEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
-                   INamedTypeSymbol iListType = WellKnownTypes.IList(context.Compilation);
-                   INamedTypeSymbol genericIListType = WellKnownTypes.GenericIList(context.Compilation);
+                   INamedTypeSymbol iCollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
+                   INamedTypeSymbol genericICollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+                   INamedTypeSymbol iEnumerableType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerable);
+                   INamedTypeSymbol genericIEnumerableType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
+                   INamedTypeSymbol iListType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIList);
+                   INamedTypeSymbol genericIListType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIList1);
 
                    if (iCollectionType == null && genericICollectionType == null &&
                        iEnumerableType == null && genericIEnumerableType == null &&

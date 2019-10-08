@@ -69,7 +69,7 @@ namespace Metrics
                     case SymbolKind.Property:
                         var location = data.Symbol.Locations.First();
                         writer.WriteAttributeString("Name", data.Symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
-                        writer.WriteAttributeString("File", location.SourceTree.FilePath);
+                        writer.WriteAttributeString("File", location.SourceTree?.FilePath ?? "UNKNOWN");
                         writer.WriteAttributeString("Line", (location.GetLineSpan().StartLinePosition.Line + 1).ToString());
                         break;
 
@@ -90,8 +90,15 @@ namespace Metrics
                 {
                     WriteMetric("DepthOfInheritance", data.DepthOfInheritance.Value.ToString(), writer);
                 }
-                WriteMetric("LinesOfCode", data.LinesOfCode.ToString(), writer);
 
+                // For legacy mode, output only ExecutableLinesOfCode
+                // For non-legacy mode, output both SourceLinesOfCode and ExecutableLinesOfCode
+#if LEGACY_CODE_METRICS_MODE
+                WriteMetric("LinesOfCode", data.ExecutableLines.ToString(), writer);
+#else
+                WriteMetric("SourceLines", data.SourceLines.ToString(), writer);
+                WriteMetric("ExecutableLines", data.ExecutableLines.ToString(), writer);
+#endif
                 writer.WriteEndElement();
             }
 

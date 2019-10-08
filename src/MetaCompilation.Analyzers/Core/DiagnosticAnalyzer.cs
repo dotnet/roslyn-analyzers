@@ -308,7 +308,11 @@ namespace MetaCompilation.Analyzers
             MessageRule,
             CategoryRule);
 
+#pragma warning disable RS1025 // Configure generated code analysis
+#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext context)
+#pragma warning restore RS1026 // Enable concurrent execution
+#pragma warning restore RS1025 // Configure generated code analysis
         {
             context.RegisterCompilationStartAction(SetupAnalysis);
         }
@@ -2044,7 +2048,7 @@ namespace MetaCompilation.Analyzers
                 }
 
                 IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
-                if (returnStatements.Count() == 0)
+                if (!returnStatements.Any())
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation);
                     return false;
@@ -2603,7 +2607,7 @@ namespace MetaCompilation.Analyzers
                         ReportDiagnostic(context, IncorrectAnalysisReturnTypeRule, analysisMethodSyntax.Identifier.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
                     }
-                    else if (analysisMethod.Parameters.Count() != 1 || analysisMethod.Parameters.First().Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext"))
+                    else if (analysisMethod.Parameters.Length != 1 || !Equals(analysisMethod.Parameters.First().Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext")))
                     {
                         ReportDiagnostic(context, IncorrectAnalysisParameterRule, analysisMethodSyntax.ParameterList.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
@@ -2708,7 +2712,7 @@ namespace MetaCompilation.Analyzers
                         var memberExpr = bodyResults.MemberExpr as MemberAccessExpressionSyntax;
                         invocExpr = invocationExpr;
 
-                        if (context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(memberExpr).CandidateSymbols.Count() == 0)
+                        if (!context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(memberExpr).CandidateSymbols.Any())
                         {
                             registerCall = context.Compilation.GetSemanticModel(memberExpr.SyntaxTree).GetSymbolInfo(memberExpr).Symbol as IMethodSymbol;
                         }
@@ -2762,7 +2766,7 @@ namespace MetaCompilation.Analyzers
             private BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext")
+                if (parameters.Length != 1 || !Equals(parameters[0].Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext"))
                     || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name);
@@ -2862,9 +2866,9 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
-                    if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
+                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
                     {
                         return;
                     }
@@ -2914,9 +2918,9 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
-                    if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
+                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
                     {
                         return;
                     }
@@ -2963,7 +2967,7 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     return;
                 }
@@ -2991,7 +2995,7 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (sym.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
+                if (!Equals(sym.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     if (sym.ContainingType == null)
                     {
@@ -3003,7 +3007,7 @@ namespace MetaCompilation.Analyzers
                         return;
                     }
 
-                    if (sym.ContainingType.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
+                    if (Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                     {
                         if (_otherAnalyzerClassSymbols.Contains(sym))
                         {
@@ -3017,7 +3021,7 @@ namespace MetaCompilation.Analyzers
                     }
                 }
 
-                if (sym.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
+                if (Equals(sym.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     _analyzerClassSymbol = sym;
                 }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,17 +16,17 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5362";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotReferSelfInSerializableClass),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotReferSelfInSerializableClass),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotReferSelfInSerializableClassMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotReferSelfInSerializableClassMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotReferSelfInSerializableClassDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotReferSelfInSerializableClassDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -52,14 +52,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var serializableAttributeTypeSymbol = WellKnownTypes.SerializableAttribute(compilation);
+                    var serializableAttributeTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute);
 
                     if (serializableAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var nonSerializedAttribute = WellKnownTypes.NonSerializedAttribute(compilation);
+                    var nonSerializedAttribute = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
 
                     if (nonSerializedAttribute == null)
                     {
@@ -106,10 +106,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         });
 
-                    /// <summary>
-                    /// Traverse from point to its descendants, save the information into a directed graph.
-                    /// </summary>
-                    /// <param name="point">The initial point</param>
+                    // Traverse from point to its descendants, save the information into a directed graph.
+                    //
+                    // point: The initial point
                     void DrawGraph(ITypeSymbol point)
                     {
                         // If the point has been visited, return;
@@ -147,7 +146,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                         }
                     }
 
-                    HashSet<ITypeSymbol> GetAssociatedTypes(ITypeSymbol type)
+                    static HashSet<ITypeSymbol> GetAssociatedTypes(ITypeSymbol type)
                     {
                         var result = new HashSet<ITypeSymbol>();
 
@@ -178,62 +177,54 @@ namespace Microsoft.NetCore.Analyzers.Security
                         return result;
                     }
 
-                    /// <summary>
-                    /// Add a line to the graph.
-                    /// </summary>
-                    /// <param name="from">The start point of the line</param>
-                    /// <param name="to">The end point of the line</param>
-                    /// <param name="degree">The out degree of all vertices in the graph</param>
-                    /// <param name="graph">The graph</param>
+                    // Add a line to the graph.
+                    //
+                    // from: The start point of the line
+                    // to: The end point of the line
+                    // degree: The out degree of all vertices in the graph
+                    // graph: The graph
                     void AddLine(ISymbol from, ISymbol to, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
                         graph.AddOrUpdate(from, new ConcurrentDictionary<ISymbol, bool> { [to] = true }, (k, v) => { v[to] = true; return v; });
                         degree.AddOrUpdate(from, 1, (k, v) => v + 1);
                     }
 
-                    /// <summary>
-                    /// Add a point to the graph.
-                    /// </summary>
-                    /// <param name="point">The point to be added</param>
-                    /// <param name="degree">The out degree of all vertices in the graph</param>
-                    /// <param name="graph">The graph</param>
-                    bool AddPoint(ISymbol point, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
+                    // Add a point to the graph.
+                    //
+                    // point: The point to be added
+                    // degree: The out degree of all vertices in the graph
+                    // graph: The graph
+                    static bool AddPoint(ISymbol point, ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
                         degree.TryAdd(point, 0);
                         return graph.TryAdd(point, new ConcurrentDictionary<ISymbol, bool>());
                     }
 
-                    /// <summary>
-                    /// Add a line to the forward graph and inverted graph unconditionally.
-                    /// </summary>
-                    /// <param name="from">The start point of the line</param>
-                    /// <param name="to">The end point of the line</param>
+                    // Add a line to the forward graph and inverted graph unconditionally.
+                    //
+                    // from: The start point of the line
+                    // to: The end point of the line
                     void AddLineToBothGraphs(ISymbol from, ISymbol to)
                     {
                         AddLine(from, to, outDegree, forwardGraph);
                         AddLine(to, from, inDegree, invertedGraph);
                     }
 
-                    /// <summary>
-                    /// Add a point to the forward graph and inverted graph unconditionally.
-                    /// </summary>
-                    /// <param name="point">The point to be added</param>
-                    /// <returns>
-                    /// <c>true</c> if <paramref name="point"/> is added to the forward graph successfully;
-                    /// otherwise <c>false</c>.
-                    /// </returns>
+                    // Add a point to the forward graph and inverted graph unconditionally.
+                    //
+                    // point: The point to be added
+                    // return: `true` if `point` is added to the forward graph successfully; otherwise `false`.
                     bool AddPointToBothGraphs(ISymbol point)
                     {
                         AddPoint(point, inDegree, invertedGraph);
                         return AddPoint(point, outDegree, forwardGraph);
                     }
 
-                    /// <summary>
-                    /// According to topological sorting, modify the degree of every vertex in the graph.
-                    /// </summary>
-                    /// <param name="degree">The in degree of all vertices in the graph</param>
-                    /// <param name="graph">The graph</param>
-                    void ModifyDegree(ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
+                    // According to topological sorting, modify the degree of every vertex in the graph.
+                    //
+                    // degree: The in degree of all vertices in the graph
+                    // graph: The graph
+                    static void ModifyDegree(ConcurrentDictionary<ISymbol, int> degree, ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>> graph)
                     {
                         var stack = new Stack<ISymbol>(degree.Where(s => s.Value == 0).Select(s => s.Key));
 

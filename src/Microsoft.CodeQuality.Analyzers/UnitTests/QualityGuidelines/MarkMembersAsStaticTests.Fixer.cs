@@ -1,79 +1,62 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpMarkMembersAsStaticFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicMarkMembersAsStaticFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public class MarkMembersAsStaticFixerTests : CodeFixTestBase
+    public class MarkMembersAsStaticFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new MarkMembersAsStaticAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new MarkMembersAsStaticAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicMarkMembersAsStaticFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpMarkMembersAsStaticFixer();
-        }
-
         [Fact]
-        public void TestCSharp_SimpleMembers_NoReferences()
+        public async Task TestCSharp_SimpleMembers_NoReferences()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class MembersTests
 {
     internal static int s_field;
     public const int Zero = 0;
 
-    public int Method1(string name)
+    public int [|Method1|](string name)
     {
         return name.Length;
     }
 
-    public void Method2() { }
+    public void [|Method2|]() { }
 
-    public void Method3()
+    public void [|Method3|]()
     {
         s_field = 4;
     }
 
-    public int Method4()
+    public int [|Method4|]()
     {
         return Zero;
     }
 
-    public int Property
+    public int [|Property|]
     {
         get { return 5; }
     }
 
-    public int Property2
+    public int [|Property2|]
     {
         set { s_field = value; }
     }
 
-    public int MyProperty
+    public int [|MyProperty|]
     {
         get { return 10; }
         set { System.Console.WriteLine(value); }
     }
 
-    public event System.EventHandler<System.EventArgs> CustomEvent { add {} remove {} }
+    public event System.EventHandler<System.EventArgs> [|CustomEvent|] { add {} remove {} }
 }",
 @"
 public class MembersTests
@@ -119,30 +102,30 @@ public class MembersTests
         }
 
         [Fact]
-        public void TestBasic_SimpleMembers_NoReferences()
+        public async Task TestBasic_SimpleMembers_NoReferences()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Public Class MembersTests
     Shared s_field As Integer
     Public Const Zero As Integer = 0
 
-    Public Function Method1(name As String) As Integer
+    Public Function [|Method1|](name As String) As Integer
         Return name.Length
     End Function
 
-    Public Sub Method2()
+    Public Sub [|Method2|]()
     End Sub
 
-    Public Sub Method3()
+    Public Sub [|Method3|]()
         s_field = 4
     End Sub
 
-    Public Function Method4() As Integer
+    Public Function [|Method4|]() As Integer
         Return Zero
     End Function
 
-    Public Property MyProperty As Integer
+    Public Property [|MyProperty|] As Integer
         Get
             Return 10
         End Get
@@ -151,7 +134,7 @@ Public Class MembersTests
         End Set
     End Property
 
-    Public Custom Event CustomEvent As EventHandler(Of EventArgs)
+    Public Custom Event [|CustomEvent|] As EventHandler(Of EventArgs)
         AddHandler(value As EventHandler(Of EventArgs))
         End AddHandler
         RemoveHandler(value As EventHandler(Of EventArgs))
@@ -201,10 +184,10 @@ Public Class MembersTests
 End Class");
         }
 
-        [Fact]
-        public void TestCSharp_ReferencesInSameType_MemberReferences()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_ReferencesInSameType_MemberReferences()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public class C
@@ -212,7 +195,7 @@ public class C
     private C fieldC;
     private C PropertyC { get; set; }
 
-    public int M1()
+    public int [|M1|]()
     {
         return 0;
     }
@@ -257,16 +240,16 @@ public class C
         }
 
         [Fact]
-        public void TestBasic_ReferencesInSameType_MemberReferences()
+        public async Task TestBasic_ReferencesInSameType_MemberReferences()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 Public Class C
     Private fieldC As C
     Private Property PropertyC As C
 
-    Public Function M1() As Integer
+    Public Function [|M1|]() As Integer
         Return 0
     End Function
 
@@ -305,17 +288,17 @@ Public Class C
 End Class");
         }
 
-        [Fact]
-        public void TestCSharp_ReferencesInSameType_Invocations()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_ReferencesInSameType_Invocations()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class C
 {
     private int x;
     private C fieldC;
     private C PropertyC { get; set; }
 
-    public int M1()
+    public int [|M1|]()
     {
         return 0;
     }
@@ -347,15 +330,15 @@ public class C
         }
 
         [Fact]
-        public void TestBasic_ReferencesInSameType_Invocations()
+        public async Task TestBasic_ReferencesInSameType_Invocations()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
     Private x As Integer
     Private fieldC As C
     Private Property PropertyC As C
 
-    Public Function M1() As Integer
+    Public Function [|M1|]() As Integer
         Return 0
     End Function
 
@@ -381,17 +364,17 @@ Public Class C
 End Class");
         }
 
-        [Fact]
-        public void TestCSharp_ReferencesInSameFile_MemberReferences()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_ReferencesInSameFile_MemberReferences()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public class C
 {
     public C PropertyC { get; set; }
 
-    public int M1()
+    public int [|M1|]()
     {
         return 0;
     }
@@ -442,17 +425,17 @@ class C2
 }");
         }
 
-        [Fact]
-        public void TestCSharp_ReferencesInSameFile_Invocations()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_ReferencesInSameFile_Invocations()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public class C
 {
     public C PropertyC { get; set; }
 
-    public int M1()
+    public int [|M1|]()
     {
         return 0;
     }
@@ -497,17 +480,23 @@ class C2
 }");
         }
 
-        [Fact]
-        public void TestCSharp_ReferencesInMultipleFiles_MemberReferences()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_ReferencesInMultipleFiles_MemberReferences()
         {
-            VerifyCSharpFix(new[] { @"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 public class C
 {
     public C PropertyC { get; set; }
 
-    public int M1()
+    public int [|M1|]()
     {
         return 0;
     }
@@ -528,7 +517,7 @@ class C2
             m5 = fieldC.PropertyC.M1;
     }
 }",
-@"
+                        @"
 using System;
 
 class C3
@@ -545,9 +534,14 @@ class C3
             m4 = PropertyC.M1,
             m5 = fieldC.PropertyC.M1;
     }
-}"
-            },
-            new[] {@"
+}",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 public class C
@@ -575,7 +569,7 @@ class C2
             m5 = C.M1;
     }
 }",
-@"
+                        @"
 using System;
 
 class C3
@@ -592,20 +586,29 @@ class C3
             m4 = C.M1,
             m5 = C.M1;
     }
-}" });
+}",
+                    },
+                },
+            }.RunAsync();
         }
 
-        [Fact]
-        public void TestCSharp_ReferencesInMultipleFiles_Invocations()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_ReferencesInMultipleFiles_Invocations()
         {
-            VerifyCSharpFix(new[] { @"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 public class C
 {
     public C PropertyC { get; set; }
 
-    public int M1()
+    public int [|M1|]()
     {
         return 0;
     }
@@ -623,7 +626,7 @@ class C2
         x = paramC.M1() + localC.M1() + fieldC.M1() + PropertyC.M1() + fieldC.PropertyC.M1();
     }
 }",
-@"
+                        @"
 using System;
 
 class C3
@@ -637,8 +640,14 @@ class C3
         var localC = fieldC;
         x = paramC.M1() + localC.M1() + fieldC.M1() + PropertyC.M1() + fieldC.PropertyC.M1();
     }
-}" },
-    new[] { @"
+}",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 public class C
@@ -663,7 +672,7 @@ class C2
         x = C.M1() + C.M1() + C.M1() + C.M1() + C.M1();
     }
 }",
-@"
+                        @"
 using System;
 
 class C3
@@ -677,17 +686,20 @@ class C3
         var localC = fieldC;
         x = C.M1() + C.M1() + C.M1() + C.M1() + C.M1();
     }
-}" });
+}",
+                    },
+                },
+            }.RunAsync();
         }
 
-        [Fact]
-        public void TestCSharp_ReferenceInArgument()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_ReferenceInArgument()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class C
 {
     private C fieldC;
-    public C M1(C c)
+    public C [|M1|](C c)
     {
         return c;
     }
@@ -716,13 +728,13 @@ public class C
         }
 
         [Fact]
-        public void TestBasic_ReferenceInArgument()
+        public async Task TestBasic_ReferenceInArgument()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
     Private fieldC As C
 
-    Public Function M1(c As C) As C
+    Public Function [|M1|](c As C) As C
         Return c
     End Function
 
@@ -746,14 +758,14 @@ Public Class C
 End Class");
         }
 
-        [Fact]
-        public void TestCSharp_GenericMethod()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_GenericMethod()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class C
 {
     private C fieldC;
-    public C M1<T>(C c, T t)
+    public C [|M1|]<T>(C c, T t)
     {
         return c;
     }
@@ -806,13 +818,13 @@ public class C2<T2>
         }
 
         [Fact]
-        public void TestBasic_GenericMethod()
+        public async Task TestBasic_GenericMethod()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
     Private fieldC As C
 
-    Public Function M1(Of T)(c As C, t1 As T) As C
+    Public Function [|M1|](Of T)(c As C, t1 As T) As C
         Return c
     End Function
 
@@ -858,15 +870,21 @@ Public Class C2(Of T2)
 End Class");
         }
 
-        [Fact]
-        public void TestCSharp_InvocationInInstance()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_InvocationInInstance()
         {
             // We don't make the replacement if instance has an invocation.
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class C
 {
     private C fieldC;
-    public C M1(C c)
+    public C [|M1|](C c)
     {
         return c;
     }
@@ -877,7 +895,13 @@ public class C
         return localC.M1(paramC).M1(paramC.M1(localC));
     }
 }",
-@"
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 public class C
 {
     private C fieldC;
@@ -891,18 +915,25 @@ public class C
         var localC = fieldC;
         return M1(paramC).M1(M1(localC));
     }
-}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+}",
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        DiagnosticResult.CompilerError("CS0176").WithSpan(13, 16, 13, 29).WithMessage("Member 'C.M1(C)' cannot be accessed with an instance reference; qualify it with a type name instead"),
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestBasic_InvocationInInstance()
+        public async Task TestBasic_InvocationInInstance()
         {
             // We don't make the replacement if instance has an invocation.
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
     Private fieldC As C
 
-    Public Function M1(c As C) As C
+    Public Function [|M1|](c As C) As C
         Return c
     End Function
 
@@ -923,18 +954,24 @@ Public Class C
         Dim localC = fieldC
         Return M1(paramC).M1(M1(localC))
     End Function
-End Class", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+End Class");
         }
 
         [Fact]
-        public void TestCSharp_ConversionInInstance()
+        public async Task TestCSharp_ConversionInInstance()
         {
             // We don't make the replacement if instance has a conversion.
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class C
 {
     private C fieldC;
-    public object M1(C c)
+    public object [|M1|](C c)
     {
         return c;
     }
@@ -944,8 +981,18 @@ public class C
         var localC = fieldC;
         return ((C)paramC).M1(localC);
     }
-}",
-@"
+}"
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        DiagnosticResult.CompilerError("CS0266").WithSpan(13, 16, 13, 38).WithMessage("Cannot implicitly convert type 'object' to 'C'. An explicit conversion exists (are you missing a cast?)"),
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 public class C
 {
     private C fieldC;
@@ -959,18 +1006,25 @@ public class C
         var localC = fieldC;
         return ((C)paramC).M1(localC);
     }
-}", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+}",
+                    },
+                    ExpectedDiagnostics =
+                    {
+                        DiagnosticResult.CompilerError("CS0176").WithSpan(13, 16, 13, 30).WithMessage("Member 'C.M1(C)' cannot be accessed with an instance reference; qualify it with a type name instead"),
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestBasic_ConversionInInstance()
+        public async Task TestBasic_ConversionInInstance()
         {
             // We don't make the replacement if instance has a conversion.
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
     Private fieldC As C
 
-    Public Function M1(c As C) As Object
+    Public Function [|M1|](c As C) As Object
         Return c
     End Function
 
@@ -991,25 +1045,31 @@ Public Class C
         Dim localC = fieldC
         Return (CType(paramC, C)).M1(localC)
     End Function
-End Class", allowNewCompilerDiagnostics: true, validationMode: TestValidationMode.AllowCompileErrors);
+End Class");
         }
 
-        [Fact]
-        public void TestCSharp_FixAll()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2286")]
+        public async Task TestCSharp_FixAll()
         {
-            VerifyCSharpFix(new[] { @"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 public class C
 {
     public C PropertyC { get; set; }
 
-    public int M1()
+    public int [|M1|]()
     {
         return 0;
     }
 
-    public int M2()
+    public int [|M2|]()
     {
         return 0;
     }
@@ -1027,7 +1087,7 @@ class C2
         x = paramC.M1() + localC.M2() + fieldC.M1() + PropertyC.M2() + fieldC.PropertyC.M1();
     }
 }",
-@"
+                        @"
 using System;
 
 class C3
@@ -1041,8 +1101,14 @@ class C3
         var localC = fieldC;
         x = paramC.M2() + localC.M1() + fieldC.M2() + PropertyC.M1() + fieldC.PropertyC.M2();
     }
-}" },
-    new[] { @"
+}",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 public class C
@@ -1072,7 +1138,7 @@ class C2
         x = C.M1() + C.M2() + C.M1() + C.M2() + C.M1();
     }
 }",
-@"
+                        @"
 using System;
 
 class C3
@@ -1086,23 +1152,32 @@ class C3
         var localC = fieldC;
         x = C.M2() + C.M1() + C.M2() + C.M1() + C.M2();
     }
-}" });
+}",
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestBasic_FixAll()
+        public async Task TestBasic_FixAll()
         {
-            VerifyBasicFix(new[] { @"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 
 Public Class C
     Public Property PropertyC As C
 
-    Public Function M1() As Integer
+    Public Function [|M1|]() As Integer
         Return 0
     End Function
 
-    Public Function M2() As Integer
+    Public Function [|M2|]() As Integer
         Return 0
     End Function
 End Class
@@ -1117,7 +1192,7 @@ Class C2
         x = paramC.M1() + localC.M2() + fieldC.M1() + PropertyC.M2() + fieldC.PropertyC.M1()
     End Sub
 End Class",
-@"
+                        @"
 Imports System
 
 Class C3
@@ -1129,8 +1204,14 @@ Class C3
         Dim localC = fieldC
         x = paramC.M2() + localC.M1() + fieldC.M2() + PropertyC.M1() + fieldC.PropertyC.M2()
     End Sub
-End Class" },
-    new[] { @"
+End Class",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System
 
 Public Class C
@@ -1155,7 +1236,7 @@ Class C2
         x = C.M1() + C.M2() + C.M1() + C.M2() + C.M1()
     End Sub
 End Class",
-@"
+                        @"
 Imports System
 
 Class C3
@@ -1167,17 +1248,20 @@ Class C3
         Dim localC = fieldC
         x = C.M2() + C.M1() + C.M2() + C.M1() + C.M2()
     End Sub
-End Class" });
+End Class",
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestCSharp_PropertyWithReferences()
+        public async Task TestCSharp_PropertyWithReferences()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class C
 {
     private C fieldC;
-    public C M1 { get { return null; } set { } }
+    public C [|M1|] { get { return null; } set { } }
 
     public C M2(C paramC)
     {
@@ -1202,13 +1286,13 @@ public class C
         }
 
         [Fact]
-        public void TestBasic_PropertyWithReferences()
+        public async Task TestBasic_PropertyWithReferences()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class C
     Private fieldC As C
 
-    Public Property M1 As C
+    Public Property [|M1|] As C
         Get
             Return Nothing
         End Get

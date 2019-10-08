@@ -2,7 +2,6 @@
 
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -31,18 +30,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(context.Span);
 
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
             // create one equivalence key value for all actions produced by this fixer 
             // i.e. Fix All fixes every occurrence of this diagnostic
             string equivalenceKey = nameof(ExceptionsShouldBePublicFixer);
 
             CodeAction action = CodeAction.Create(
-                MicrosoftApiDesignGuidelinesAnalyzersResources.MakeExceptionPublic,
+                MicrosoftCodeQualityAnalyzersResources.MakeExceptionPublic,
                 c => MakePublic(context.Document, node, context.CancellationToken),
                 equivalenceKey);
 
-            context.RegisterCodeFix(action, diagnostic);
+            context.RegisterCodeFix(action, context.Diagnostics);
         }
 
         private static async Task<Document> MakePublic(Document document, SyntaxNode classDecl, CancellationToken cancellationToken)

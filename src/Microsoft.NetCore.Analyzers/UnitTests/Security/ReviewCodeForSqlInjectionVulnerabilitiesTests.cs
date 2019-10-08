@@ -3,11 +3,17 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ReviewCodeForSqlInjectionVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        public ReviewCodeForSqlInjectionVulnerabilitiesTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticDescriptor Rule => ReviewCodeForSqlInjectionVulnerabilities.Rule;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
@@ -18,6 +24,197 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new ReviewCodeForSqlInjectionVulnerabilities();
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Violation_Diagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace TestNamespace
+{
+    public partial class WebForm : System.Web.UI.Page
+    {
+        public static string ConnectionString { get; set; }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string name = Request.Form[""product_name""];
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand()
+                {
+                    CommandText = ""SELECT ProductId FROM Products WHERE ProductName = '"" + name + ""'"",
+                    CommandType = CommandType.Text,
+                };
+
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+            }
+        }
+    }
+}
+            ",
+                GetCSharpResultAt(19, 21, 14, 27, "string SqlCommand.CommandText", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_ParameterizedSolution_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace TestNamespace
+{
+    public partial class WebForm : System.Web.UI.Page
+    {
+        public static string ConnectionString { get; set; }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string name = Request.Form[""product_name""];
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand()
+                {
+                    CommandText = ""SELECT ProductId FROM Products WHERE ProductName = @productName"",
+                    CommandType = CommandType.Text,
+                };
+
+                sqlCommand.Parameters.Add(""@productName"", SqlDbType.NVarChar, 128).Value = name;
+
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+            }
+        }
+    }
+}
+            ");
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_StoredProcedureSolution_NoDiagnostic()
+        {
+            VerifyCSharpWithDependencies(@"
+using System;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace TestNamespace
+{
+    public partial class WebForm : System.Web.UI.Page
+    {
+        public static string ConnectionString { get; set; }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string name = Request.Form[""product_name""];
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                SqlCommand sqlCommand = new SqlCommand()
+                {
+                    CommandText = ""sp_GetProductIdFromName"",
+                    CommandType = CommandType.StoredProcedure,
+                };
+
+                sqlCommand.Parameters.Add(""@productName"", SqlDbType.NVarChar, 128).Value = name;
+
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+            }
+        }
+    }
+}
+            ");
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation_Diagnostic()
+        {
+            VerifyBasicWithDependencies(@"
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Linq
+
+Namespace VulnerableWebApp
+    Partial Public Class WebForm
+        Inherits System.Web.UI.Page
+
+        Public Property ConnectionString As String
+
+        Protected Sub Page_Load(sender As Object, e As EventArgs)
+            Dim name As String = Me.Request.Form(""product_name"")
+            Using connection As SqlConnection = New SqlConnection(ConnectionString)
+                Dim sqlCommand As SqlCommand = New SqlCommand With {.CommandText = ""SELECT ProductId FROM Products WHERE ProductName = '"" + name + ""'"",
+                                                                    .CommandType = CommandType.Text}
+                Dim reader As SqlDataReader = sqlCommand.ExecuteReader()
+            End Using
+        End Sub
+    End Class
+End Namespace
+            ",
+                GetBasicResultAt(16, 70, 14, 34, "Property SqlCommand.CommandText As String", "Sub WebForm.Page_Load(sender As Object, e As EventArgs)", "Property HttpRequest.Form As NameValueCollection", "Sub WebForm.Page_Load(sender As Object, e As EventArgs)"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_ParameterizedSolution_NoDiagnostic()
+        {
+            VerifyBasicWithDependencies(@"
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Linq
+
+Namespace VulnerableWebApp
+    Partial Public Class WebForm
+        Inherits System.Web.UI.Page
+
+        Public Property ConnectionString As String
+
+        Protected Sub Page_Load(sender As Object, e As EventArgs)
+            Dim name As String = Me.Request.Form(""product_name"")
+            Using connection As SqlConnection = New SqlConnection(ConnectionString)
+                Dim sqlCommand As SqlCommand = New SqlCommand With {.CommandText = ""SELECT ProductId FROM Products WHERE ProductName = @productName"",
+                                                                    .CommandType = CommandType.Text}
+                sqlCommand.Parameters.Add(""@productName"", SqlDbType.NVarChar, 128).Value = name
+                Dim reader As SqlDataReader = sqlCommand.ExecuteReader()
+            End Using
+        End Sub
+    End Class
+End Namespace
+            ");
+        }
+
+        [Fact]
+        public void DocSample1_VB_StoredProcedureSolution_NoDiagnostic()
+        {
+            VerifyBasicWithDependencies(@"
+Imports System
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Linq
+
+Namespace VulnerableWebApp
+    Partial Public Class WebForm
+        Inherits System.Web.UI.Page
+
+        Public Property ConnectionString As String
+
+        Protected Sub Page_Load(sender As Object, e As EventArgs)
+            Dim name As String = Me.Request.Form(""product_name"")
+            Using connection As SqlConnection = New SqlConnection(ConnectionString)
+                Dim sqlCommand As SqlCommand = New SqlCommand With {.CommandText = ""sp_GetProductIdFromName"",
+                                                                    .CommandType = CommandType.StoredProcedure}
+                sqlCommand.Parameters.Add(""@productName"", SqlDbType.NVarChar, 128).Value = name
+                Dim reader As SqlDataReader = sqlCommand.ExecuteReader()
+            End Using
+        End Sub
+    End Class
+End Namespace
+            ");
         }
 
         [Fact]
@@ -1044,6 +1241,45 @@ namespace VulnerableWebApp
     }
 }",
                 GetCSharpResultAt(27, 17, 15, 35, "string SqlCommand.CommandText", "void MyDatabaseLayer.MakeSqlInjection(string sqlInjection)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        public void SimpleInterproceduralTwice()
+        {
+            VerifyCSharpWithDependencies(@"
+namespace VulnerableWebApp
+{
+    using System;
+    using System.Data;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Web;
+    using System.Web.UI;
+
+    public partial class WebForm : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string taintedInput = this.Request[""input""];
+            MyDatabaseLayer layer = new MyDatabaseLayer();
+            layer.MakeSqlInjection(taintedInput);
+            layer.MakeSqlInjection(taintedInput);
+        }
+    }
+
+    public class MyDatabaseLayer
+    {
+        public void MakeSqlInjection(string sqlInjection)
+        {
+            SqlCommand sqlCommand = new SqlCommand()
+            {
+                CommandText = ""SELECT * FROM users WHERE username = '"" + sqlInjection + ""'"",
+                CommandType = CommandType.Text,
+            };
+        }
+    }
+}",
+                GetCSharpResultAt(28, 17, 15, 35, "string SqlCommand.CommandText", "void MyDatabaseLayer.MakeSqlInjection(string sqlInjection)", "string HttpRequest.this[string key]", "void WebForm.Page_Load(object sender, EventArgs e)"));
         }
 
         [Fact]
@@ -2663,7 +2899,7 @@ public class Class1
 ");
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1891")]
+        [Fact]
         public void PointsToAnalysisAssertsLocationSetsComparison()
         {
             VerifyCSharp(@"

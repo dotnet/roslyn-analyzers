@@ -14,11 +14,11 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2239";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ProvideDeserializationMethodsForOptionalFieldsTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideDeserializationMethodsForOptionalFieldsTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessageOnDeserialized = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageOnDeserializing = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.ProvideDeserializationMethodsForOptionalFieldsDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageOnDeserialized = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserialized), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageOnDeserializing = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideDeserializationMethodsForOptionalFieldsMessageOnDeserializing), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.ProvideDeserializationMethodsForOptionalFieldsDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor OnDeserializedRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -42,7 +42,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray<DiagnosticDescriptor>.Empty;
         //ImmutableArray.Create(OnDeserializedRule, OnDeserializingRule);
 
+#pragma warning disable RS1025 // Configure generated code analysis
         public override void Initialize(AnalysisContext analysisContext)
+#pragma warning restore RS1025 // Configure generated code analysis
         {
             analysisContext.EnableConcurrentExecution();
 

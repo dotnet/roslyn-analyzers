@@ -19,12 +19,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1065";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessagePropertyGetter = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessagePropertyGetter), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageHasAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageNoAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessagePropertyGetter = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessagePropertyGetter), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageHasAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageHasAllowedExceptions), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageNoAllowedExceptions = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsMessageNoAllowedExceptions), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotRaiseExceptionsInUnexpectedLocationsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
         private const string helpLinkUri = "https://docs.microsoft.com/visualstudio/code-quality/ca1065-do-not-raise-exceptions-in-unexpected-locations";
 
         internal static DiagnosticDescriptor PropertyGetterRule = new DiagnosticDescriptor(RuleId,
@@ -67,7 +67,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(compilationStartContext =>
             {
                 Compilation compilation = compilationStartContext.Compilation;
-                INamedTypeSymbol exceptionType = WellKnownTypes.Exception(compilation);
+                INamedTypeSymbol exceptionType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
                 if (exceptionType == null)
                 {
                     return;
@@ -96,7 +96,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                     operationBlockContext.RegisterOperationAction(operationContext =>
                     {
                         // Get ThrowOperation's ExceptionType
-                        if (((IThrowOperation)operationContext.Operation).Exception?.Type is INamedTypeSymbol thrownExceptionType && thrownExceptionType.DerivesFrom(exceptionType))
+                        if (((IThrowOperation)operationContext.Operation).GetThrownExceptionType() is INamedTypeSymbol thrownExceptionType && thrownExceptionType.DerivesFrom(exceptionType))
                         {
                             // If no exceptions are allowed or if the thrown exceptions is not an allowed one..
                             if (methodCategory.AllowedExceptions.IsEmpty || !methodCategory.AllowedExceptions.Any(n => IsAssignableTo(thrownExceptionType, n, compilation)))
@@ -167,21 +167,25 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var methodCategories = new List<MethodCategory> {
                 new MethodCategory(IsPropertyGetter, true,
                     PropertyGetterRule,
-                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation)),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemInvalidOperationException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException)),
 
                 new MethodCategory(IsIndexerGetter, true,
                     PropertyGetterRule,
-                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
-                    WellKnownTypes.ArgumentException(compilation), WellKnownTypes.KeyNotFoundException(compilation)),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemInvalidOperationException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericKeyNotFoundException)),
 
                 new MethodCategory(IsEventAccessor, true,
                     HasAllowedExceptionsRule,
-                    WellKnownTypes.InvalidOperationException(compilation), WellKnownTypes.NotSupportedException(compilation),
-                    WellKnownTypes.ArgumentException(compilation)),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemInvalidOperationException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNotSupportedException),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException)),
 
                 new MethodCategory(IsGetHashCodeInterfaceImplementation, true,
                     HasAllowedExceptionsRule,
-                    WellKnownTypes.ArgumentException(compilation)),
+                    compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemArgumentException)),
 
                 new MethodCategory(IsEqualsOverrideOrInterfaceImplementation, true,
                     NoAllowedExceptionsRule),
@@ -247,7 +251,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
+                INamedTypeSymbol iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
@@ -255,7 +259,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEquatable = WellKnownTypes.GenericIEquatable(compilation);
+                INamedTypeSymbol iEquatable = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIEquatable1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEquatable, WellKnownMemberNames.ObjectEquals))
                 {
                     return true;
@@ -282,14 +286,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 // Substitute the type of the first parameter of Equals in the generic interface and then check if that
                 // interface method is implemented by the given method.
-                INamedTypeSymbol iEqualityComparer = WellKnownTypes.GenericIEqualityComparer(compilation);
+                INamedTypeSymbol iEqualityComparer = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEqualityComparer1);
                 if (method.IsImplementationOfInterfaceMethod(method.Parameters.First().Type, iEqualityComparer, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;
                 }
 
 
-                INamedTypeSymbol iHashCodeProvider = WellKnownTypes.IHashCodeProvider(compilation);
+                INamedTypeSymbol iHashCodeProvider = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
                 if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;

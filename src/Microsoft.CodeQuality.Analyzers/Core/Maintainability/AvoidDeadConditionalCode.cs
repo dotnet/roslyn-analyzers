@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -22,9 +22,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     {
         internal const string RuleId = "CA1508";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidDeadConditionalCodeTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableAlwaysTrueFalseOrNullMessage = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableNeverNullMessage = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.AvoidDeadConditionalCodeNeverNullMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidDeadConditionalCodeTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableAlwaysTrueFalseOrNullMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidDeadConditionalCodeAlwaysTruFalseOrNullMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableNeverNullMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.AvoidDeadConditionalCodeNeverNullMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor AlwaysTrueFalseOrNullRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -56,11 +56,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
                     var owningSymbol = operationBlockContext.OwningSymbol;
+                    if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockContext.Options,
+                        AlwaysTrueFalseOrNullRule, operationBlockContext.Compilation, operationBlockContext.CancellationToken))
+                    {
+                        return;
+                    }
+
                     var processedOperationRoots = new HashSet<IOperation>();
 
                     foreach (var operationRoot in operationBlockContext.OperationBlocks)
                     {
-                        bool ShouldAnalyze(IOperation op) =>
+                        static bool ShouldAnalyze(IOperation op) =>
                                 (op as IBinaryOperation)?.IsComparisonOperator() == true ||
                                 (op as IInvocationOperation)?.TargetMethod.ReturnType.SpecialType == SpecialType.System_Boolean ||
                                 op.Kind == OperationKind.Coalesce ||
@@ -79,10 +85,13 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
                             var cfg = operationBlockContext.GetControlFlowGraph(operationRoot);
                             var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationBlockContext.Compilation);
-                            var valueContentAnalysisResult = ValueContentAnalysis.GetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
+                            var valueContentAnalysisResult = ValueContentAnalysis.TryGetOrComputeResult(cfg, owningSymbol, wellKnownTypeProvider,
                                     operationBlockContext.Options, AlwaysTrueFalseOrNullRule, operationBlockContext.CancellationToken,
-                                    out var copyAnalysisResultOpt, out var pointsToAnalysisResult,
-                                    performCopyAnalysisIfNotUserConfigured: false); // TODO: Enable copy analysis by default.
+                                    out var copyAnalysisResultOpt, out var pointsToAnalysisResult);
+                            if (valueContentAnalysisResult == null)
+                            {
+                                continue;
+                            }
 
                             Debug.Assert(pointsToAnalysisResult != null);
 

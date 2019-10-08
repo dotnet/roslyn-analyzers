@@ -1,43 +1,27 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.AvoidUnsealedAttributesAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.AvoidUnsealedAttributesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.AvoidUnsealedAttributesAnalyzer,
+    Microsoft.NetCore.Analyzers.Runtime.AvoidUnsealedAttributesFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public partial class AvoidUnsealedAttributeFixerTests : CodeFixTestBase
+    public class AvoidUnsealedAttributeFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new AvoidUnsealedAttributesAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new AvoidUnsealedAttributesFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new AvoidUnsealedAttributesAnalyzer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new AvoidUnsealedAttributesFixer();
-        }
-
         #region CodeFix Tests
 
         [Fact]
-        public void CA1813CSharpCodeFixProviderTestFired()
+        public async Task CA1813CSharpCodeFixProviderTestFired()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
-public class AttributeClass : Attribute
+public class [|AttributeClass|] : Attribute
 {
 }", @"
 using System;
@@ -48,12 +32,12 @@ public sealed class AttributeClass : Attribute
         }
 
         [Fact]
-        public void CA1813VisualBasicCodeFixProviderTestFired()
+        public async Task CA1813VisualBasicCodeFixProviderTestFired()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
-Public Class AttributeClass
+Public Class [|AttributeClass|]
     Inherits Attribute
 End Class", @"
 Imports System

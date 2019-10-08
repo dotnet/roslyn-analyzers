@@ -4,14 +4,20 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpInstantiateArgumentExceptionsCorrectlyFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.InstantiateArgumentExceptionsCorrectlyAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicInstantiateArgumentExceptionsCorrectlyFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
     public class InstantiateArgumentExceptionsCorrectlyTests : DiagnosticAnalyzerTestBase
     {
-        private static readonly string s_noArguments = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageNoArguments;
-        private static readonly string s_incorrectMessage = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage;
-        private static readonly string s_incorrectParameterName = SystemRuntimeAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName;
+        private static readonly string s_noArguments = MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageNoArguments;
+        private static readonly string s_incorrectMessage = MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectMessage;
+        private static readonly string s_incorrectParameterName = MicrosoftNetCoreAnalyzersResources.InstantiateArgumentExceptionsCorrectlyMessageIncorrectParameterName;
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {

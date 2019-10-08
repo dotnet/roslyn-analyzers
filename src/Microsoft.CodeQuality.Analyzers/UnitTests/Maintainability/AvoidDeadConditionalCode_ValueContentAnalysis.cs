@@ -2457,5 +2457,220 @@ Enum SyntaxKind
 End Enum
 ");
         }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void PointsToAnalysisForLoopOnStructFields()
+        {
+            VerifyCSharp(@"
+using System.IO;
+
+namespace ClassLibrary14
+{
+    public class Class2
+    {
+        struct S
+        {
+            public string f1;
+            public string f2;
+            public bool f3;
+            public bool f4;
+            public bool f5;
+            public bool f6;
+        };
+
+        public void M(Class2 c)
+        {
+            c?.M(null);
+            S[] filesToReplace = new[]
+            {
+                new S { f1=""file1"", f2=@""string1"",f3=true, f4=true, f5=false, f6=true},
+                new S { f1=""file2"",f2=@""string2"", f3=true, f4=true, f5=false, f6=true},
+                new S { f1=""file3"", f2=@""string2"",f3=false, f4=false, f5=false, f6=true},
+                new S { f1=""file4"", f2=@""string2"", f3=false, f4=false, f5=true, f6=true},
+                new S { f1=""file5"", f2=@""string2"", f3=false, f4=false, f5=true, f6=false}
+            };
+
+            foreach (S fileDetails in filesToReplace)
+            {
+                bool fileIsUpToDate = false;
+                var x1 = fileDetails.f1;
+                var destinationDir = fileDetails.f2;
+                var x3 = Path.Combine(destinationDir, fileDetails.f1);
+                var x4 = fileDetails.f1;
+
+                foreach (var residual in Directory.GetFiles(destinationDir, fileDetails.f1 + "".delete.*""))
+                {                    
+                }
+            }
+        }
+    }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueContentAnalysisWithLocalFunctionInvocationsInStaticMethods()
+        {
+            var editorconfig = "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive";
+
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    public static float NextSingle(this Random random, float minValue, float maxValue)
+    {
+        float AdjustValue(float value) => Single.IsNegativeInfinity(value) ? Single.MinValue : (Single.IsPositiveInfinity(value) ? Single.MaxValue : value);
+
+        return (float)random.NextDouble(AdjustValue(minValue), AdjustValue(maxValue));
+    }
+
+    public static double NextDouble(this Random random, double minValue, double maxValue)
+    {
+        return minValue;
+    }
+}
+", GetEditorConfigAdditionalFile(editorconfig));
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void PredicateAnalysisWithCast()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    private static int _f;
+    public static bool M1(int x, int y)
+    {
+        y = x > 0 ?  x : 0;
+        return !(bool)GetObject(y);
+    }
+
+    private static object GetObject(int o)
+    {
+        return (object)(o > _f);
+    }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact, WorkItem(2246, "https://github.com/dotnet/roslyn-analyzers/issues/2246")]
+        public void NestedPredicateAnalysisWithDifferentStrings()
+        {
+            VerifyCSharp(@"
+using System;
+
+public static class C
+{
+    private static bool Test(string A, string B, string C, string D)
+    {
+        bool result = false;
+
+        if (string.Compare(A, B, StringComparison.OrdinalIgnoreCase) == 0)
+        {
+            if (string.Compare(C, D, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                result = true;
+            }
+        }
+
+        return result;
+    }
+}
+");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        [WorkItem(2681, "https://github.com/dotnet/roslyn-analyzers/issues/2681")]
+        public void InterlockedOperations_NoDiagnostic()
+        {
+            // Ensure that Interlocked increment/decrement/add operations
+            // are not treated as absolute writes as it likely involves multiple threads
+            // invoking the method and that can lead to false positives.
+            VerifyCSharp(@"
+class Test
+{
+    private int a;
+    void M1()
+    {
+        a = 0;
+        System.Threading.Interlocked.Increment(ref a);
+        if (a == 1)
+        {
+        }
+
+        a = 1;
+        System.Threading.Interlocked.Decrement(ref a);
+        if (a == 0)
+        {
+        }
+
+        a = 2;
+        System.Threading.Interlocked.Add(ref a, 1);
+        if (a == 3)
+        {
+        }
+    }
+}");
+
+            VerifyBasic(@"
+Module Test
+    Sub M1()
+        Dim a As Integer = 0
+        System.Threading.Interlocked.Increment(a)
+        If a = 1 Then
+        End If
+
+        a = 1
+        System.Threading.Interlocked.Decrement(a)
+        If a = 0 Then
+        End If
+
+        a = 2
+        System.Threading.Interlocked.Add(a, 1)
+        If a = 3 Then
+        End If
+    End Sub
+End Module");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.ValueContentAnalysis)]
+        [Fact]
+        public void ValueContentAnalysis_MergeForUnreachableCode()
+        {
+            var editorconfig = "dotnet_code_quality.interprocedural_analysis_kind = ContextSensitive";
+
+            VerifyCSharp(@"
+using System;
+
+public class C
+{
+    public void Load(C c1, C c2)
+    {
+        var x = c1 ?? c2;
+        this.Load(null);
+    }
+
+    public void Load(Uri productFileUrl, Uri originalLocation = null)
+    {
+        if (productFileUrl == null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        Uri feedLocationUri = originalLocation ?? productFileUrl;
+
+        _ = feedLocationUri.LocalPath;
+    }
+}
+", GetEditorConfigAdditionalFile(editorconfig));
+        }
     }
 }

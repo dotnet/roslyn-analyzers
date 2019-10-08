@@ -1,38 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.SealMethodsThatSatisfyPrivateInterfacesAnalyzer,
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.SealMethodsThatSatisfyPrivateInterfacesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.SealMethodsThatSatisfyPrivateInterfacesAnalyzer,
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.SealMethodsThatSatisfyPrivateInterfacesFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public class SealMethodsThatSatisfyPrivateInterfacesFixerTests : CodeFixTestBase
+    public class SealMethodsThatSatisfyPrivateInterfacesFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
+        [Fact]
+        public async Task TestCSharp_OverriddenMethodChangedToSealed()
         {
-            return new SealMethodsThatSatisfyPrivateInterfacesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SealMethodsThatSatisfyPrivateInterfacesAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new SealMethodsThatSatisfyPrivateInterfacesFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SealMethodsThatSatisfyPrivateInterfacesFixer();
-        }
-
-        [Fact(Skip = "Enable this when roslyn is available with needed fix")]
-        public void TestCSharp_OverriddenMethodChangedToSealed()
-        {
-            VerifyCSharpFix(
+            await VerifyCS.VerifyCodeFixAsync(
 @"internal interface IFace
 {
     void M();
@@ -45,7 +29,7 @@ public abstract class B
 
 public class C : B, IFace
 {
-    public override void M()
+    public override void [|M|]()
     {
     }
 }",
@@ -69,9 +53,9 @@ public class C : B, IFace
         }
 
         [Fact]
-        public void TestCSharp_VirtualMethodChangedToNotVirtual()
+        public async Task TestCSharp_VirtualMethodChangedToNotVirtual()
         {
-            VerifyCSharpFix(
+            await VerifyCS.VerifyCodeFixAsync(
 @"internal interface IFace
 {
     void M();
@@ -79,7 +63,7 @@ public class C : B, IFace
 
 public class C : IFace
 {
-    public virtual void M()
+    public virtual void [|M|]()
     {
     }
 }",
@@ -98,9 +82,9 @@ public class C : IFace
         }
 
         [Fact]
-        public void TestCSharp_AbstractMethodChangedToNotAbstract()
+        public async Task TestCSharp_AbstractMethodChangedToNotAbstract()
         {
-            VerifyCSharpFix(
+            await VerifyCS.VerifyCodeFixAsync(
 @"internal interface IFace
 {
     void M();
@@ -108,7 +92,7 @@ public class C : IFace
 
 public abstract class C : IFace
 {
-    public abstract void M();
+    public abstract void [|M|]();
 }",
 
 @"internal interface IFace
@@ -125,10 +109,15 @@ public abstract class C : IFace
         }
 
         [Fact]
-        public void TestCSharp_ContainingTypeChangedToSealed()
+        public async Task TestCSharp_ContainingTypeChangedToSealed()
         {
-            VerifyCSharpFix(
-@"internal interface IFace
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -140,12 +129,17 @@ public abstract class B
 
 public class C : B, IFace
 {
-    public override void M()
+    public override void [|M|]()
     {
     }
 }",
-
-@"internal interface IFace
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -160,14 +154,24 @@ public sealed class C : B, IFace
     public override void M()
     {
     }
-}", codeFixIndex: 1);
+}",
+                    },
+                },
+                CodeFixIndex = 1,
+                CodeFixEquivalenceKey = "MakeDeclaringTypeSealed",
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestCSharp_ContainingTypeChangedToInternal()
+        public async Task TestCSharp_ContainingTypeChangedToInternal()
         {
-            VerifyCSharpFix(
-@"internal interface IFace
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -179,12 +183,17 @@ public abstract class B
 
 public class C : B, IFace
 {
-    public override void M()
+    public override void [|M|]()
     {
     }
 }",
-
-@"internal interface IFace
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -199,14 +208,24 @@ internal class C : B, IFace
     public override void M()
     {
     }
-}", codeFixIndex: 2);
+}",
+                    },
+                },
+                CodeFixIndex = 2,
+                CodeFixEquivalenceKey = "MakeDeclaringTypeInternal",
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestCSharp_AbstractContainingTypeChangedToInternal()
+        public async Task TestCSharp_AbstractContainingTypeChangedToInternal()
         {
-            VerifyCSharpFix(
-@"internal interface IFace
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -218,12 +237,17 @@ public abstract class B
 
 public abstract class C : B, IFace
 {
-    public override void M()
+    public override void [|M|]()
     {
     }
 }",
-
-@"internal interface IFace
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -238,13 +262,18 @@ internal abstract class C : B, IFace
     public override void M()
     {
     }
-}", codeFixIndex: 1);  // sealed option is not available because class is abstract
+}",
+                    },
+                },
+                CodeFixIndex = 1, // sealed option is not available because class is abstract
+                CodeFixEquivalenceKey = "MakeDeclaringTypeInternal",
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestCSharp_ImplicitOverride_ContainingTypeChangedToSealed()
+        public async Task TestCSharp_ImplicitOverride_ContainingTypeChangedToSealed()
         {
-            VerifyCSharpFix(
+            await VerifyCS.VerifyCodeFixAsync(
 @"internal interface IFace
 {
     void M();
@@ -257,7 +286,7 @@ public class B
     }
 }
 
-public class C : B, IFace
+public class [|C|] : B, IFace
 {
 }",
 
@@ -279,10 +308,15 @@ public sealed class C : B, IFace
         }
 
         [Fact]
-        public void TestCSharp_ImplicitOverride_ContainingTypeChangedToInternal()
+        public async Task TestCSharp_ImplicitOverride_ContainingTypeChangedToInternal()
         {
-            VerifyCSharpFix(
-@"internal interface IFace
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -294,11 +328,16 @@ public class B
     }
 }
 
-public class C : B, IFace
+public class [|C|] : B, IFace
 {
 }",
-
-@"internal interface IFace
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -312,14 +351,24 @@ public class B
 
 internal class C : B, IFace
 {
-}", codeFixIndex: 1);
+}",
+                    },
+                },
+                CodeFixIndex = 1,
+                CodeFixEquivalenceKey = "MakeDeclaringTypeInternal",
+            }.RunAsync();
         }
 
         [Fact]
-        public void TestCSharp_ImplicitOverride_AbstractContainingTypeChangedToInternal()
+        public async Task TestCSharp_ImplicitOverride_AbstractContainingTypeChangedToInternal()
         {
-            VerifyCSharpFix(
-@"internal interface IFace
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -329,11 +378,16 @@ public abstract class B
     public abstract void M();
 }
 
-public abstract class C : B, IFace
+public abstract class [|C|] : B, IFace
 {
 }",
-
-@"internal interface IFace
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"internal interface IFace
 {
     void M();
 }
@@ -345,13 +399,18 @@ public abstract class B
 
 internal abstract class C : B, IFace
 {
-}", codeFixIndex: 0); // sealed option is not available because type is abstract
+}",
+                    },
+                },
+                CodeFixIndex = 0, // sealed option is not available because type is abstract
+                CodeFixEquivalenceKey = "MakeDeclaringTypeInternal",
+            }.RunAsync();
         }
 
-        [Fact(Skip = "Enable this when roslyn is available with needed fix")]
-        public void TestBasic_OverriddenMethodChangedToSealed()
+        [Fact]
+        public async Task TestBasic_OverriddenMethodChangedToSealed()
         {
-            VerifyBasicFix(
+            await VerifyVB.VerifyCodeFixAsync(
 @"Friend Interface IFace
     Sub M()
 End Interface
@@ -364,7 +423,7 @@ Public Class C
     Inherits B
     Implements IFace
 
-    Public Overrides Sub M() Implements IFace.M
+    Public Overrides Sub [|M|]() Implements IFace.M
     End Sub
 End Class",
 
@@ -385,10 +444,10 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "Enable this when roslyn is available with needed fix")]
-        public void TestBasic_VirtualMethodChangedToNotVirtual()
+        [Fact]
+        public async Task TestBasic_VirtualMethodChangedToNotVirtual()
         {
-            VerifyBasicFix(
+            await VerifyVB.VerifyCodeFixAsync(
 @"Friend Interface IFace
     Sub M()
 End Interface
@@ -396,7 +455,7 @@ End Interface
 Public Class C
     Implements IFace
 
-    Public Overridable Sub M() Implements IFace.M
+    Public Overridable Sub [|M|]() Implements IFace.M
     End Sub
 End Class",
 
@@ -412,10 +471,10 @@ Public Class C
 End Class");
         }
 
-        [Fact(Skip = "Enable this when roslyn is available with needed fix")]
-        public void TestBasic_AbstractMethodChangedToNotAbstract()
+        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/2285")]
+        public async Task TestBasic_AbstractMethodChangedToNotAbstract()
         {
-            VerifyBasicFix(
+            await VerifyVB.VerifyCodeFixAsync(
 @"Friend Interface IFace
     Sub M()
 End Interface
@@ -423,7 +482,7 @@ End Interface
 Public MustInherit Class C
     Implements IFace
 
-    Public MustOverride Sub M() Implements IFace.M
+    Public MustOverride Sub [|M|]() Implements IFace.M
 End Class",
 
 @"Friend Interface IFace

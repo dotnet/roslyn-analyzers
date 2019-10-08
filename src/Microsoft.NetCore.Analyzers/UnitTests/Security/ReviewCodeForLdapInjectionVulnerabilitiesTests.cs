@@ -5,11 +5,17 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities.MinimalImplementations;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ReviewCodeForLdapInjectionVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        public ReviewCodeForLdapInjectionVulnerabilitiesTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticDescriptor Rule => ReviewCodeForLdapInjectionVulnerabilities.Rule;
 
         protected override IEnumerable<string> AdditionalCSharpSources => new string[] { AntiXssApis.CSharp };
@@ -22,6 +28,67 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new ReviewCodeForLdapInjectionVulnerabilities();
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Violation_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.DirectoryServices;
+
+public partial class WebForm : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        string userName = Request.Params[""user""];
+        string filter = ""(uid="" + userName + "")"";  //searching for the user entry 
+
+        // In this example, if we send the * character in the user parameter which will
+        // result in the filter variable in the code to be initialized with (uid=*). 
+        // The resulting LDAP statement will make the server return any object that 
+        // contains a uid attribute.
+        DirectorySearcher searcher = new DirectorySearcher(filter);
+        SearchResultCollection results = searcher.FindAll();
+
+        // Iterate through each SearchResult in the SearchResultCollection.
+        foreach (SearchResult searchResult in results)
+        {
+            // ...
+        }
+    }
+}",
+                GetCSharpResultAt(16, 38, 9, 27, "DirectorySearcher.DirectorySearcher(string filter)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Params", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation_Diagnostic()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.DirectoryServices
+
+Partial Public Class WebForm
+    Inherits System.Web.UI.Page
+
+    Protected Sub Page_Load(send As Object, e As EventArgs)
+        Dim userName As String = Me.Request.Params(""user"")
+        Dim filter As String = ""(uid="" + userName + "")""    ' searching for the user entry
+
+        ' In this example, if we send the * character in the user parameter which will
+        ' result in the filter variable in the code to be initialized with (uid=*). 
+        ' The resulting LDAP statement will make the server return any object that 
+        ' contains a uid attribute.
+        Dim searcher As DirectorySearcher = new DirectorySearcher(filter)
+        Dim results As SearchResultCollection = searcher.FindAll()
+
+        ' Iterate through each SearchResult in the SearchResultCollection.
+        For Each searchResult As SearchResult in results
+            ' ...
+        Next searchResult
+    End Sub
+End Class",
+                GetBasicResultAt(16, 45, 9, 34, "Sub DirectorySearcher.New(filter As String)", "Sub WebForm.Page_Load(send As Object, e As EventArgs)", "Property HttpRequest.Params As NameValueCollection", "Sub WebForm.Page_Load(send As Object, e As EventArgs)"));
         }
 
         [Fact]

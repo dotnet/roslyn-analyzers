@@ -697,6 +697,205 @@ End Namespace",
         }
 
         [Fact]
+        public void TestOnDeserializationDeleteOfDirectoryDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        Directory.Delete(path);
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            Directory.Delete(path)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationDeleteOfFileInfoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        new FileInfo(""fileName"").Delete();
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim fileInfo As New FileInfo(""fileName"")
+            fileInfo.Delete()
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationDeleteOfDirectoryInfoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        new DirectoryInfo(""path"").Delete();
+    }
+}",
+            GetCSharpResultAt(13, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.Runtime.Serialization
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim directoryInfo As new DirectoryInfo(""path"")
+            directoryInfo.Delete()
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(12, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
+        public void TestOnDeserializationDeleteOfLogStoreDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.IO.Log;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+namespace System.IO.Log
+{
+    public sealed class LogStore : IDisposable
+    {
+        public static void Delete (string path)
+        {
+        }
+        
+        public void Dispose ()
+        {
+        }
+    }
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private string member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        var path = ""C:\\"";
+        LogStore.Delete(path);
+    }
+}",
+            GetCSharpResultAt(28, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "Delete"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.IO
+Imports System.IO.Log
+Imports System.Runtime.Serialization
+
+Namespace System.IO.Log
+    Public NotInheritable Class LogStore
+        Implements IDisposable
+        Public Shared Sub Delete (path As String)
+        End Sub
+        
+        Public Sub Dispose () Implements IDisposable.Dispose
+        End Sub
+    End Class
+End Namespace
+
+Namespace TestNamespace
+    <Serializable()> _
+    Class TestClass
+        Implements IDeserializationCallback
+        Private member As String
+        
+        Public Sub OnDeserialization(ByVal sender As Object) Implements IDeserializationCallback.OnDeserialization
+            Dim path As String
+            path = ""C:\\""
+            LogStore.Delete(path)
+        End Sub
+    End Class
+End Namespace",
+            GetBasicResultAt(24, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "Delete"));
+        }
+
+        [Fact]
         public void TestOnDeserializationGetLoadedModulesDiagnostic()
         {
             VerifyCSharp(@"
@@ -1105,6 +1304,190 @@ Namespace TestNamespace
     End Class
 End Namespace",
             GetBasicResultAt(13, 20, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "OnDeserialization", "UnsafeLoadFrom"));
+        }
+
+        [Fact]
+        public void TestUsingGenericwithTypeSpecifiedDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+[Serializable()]
+public class TestGenericClass<T>
+{
+    private T memberInGeneric;
+
+    public void TestGenericMethod()
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private TestGenericClass<int> member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        member.TestGenericMethod();
+    }
+}",
+            GetCSharpResultAt(26, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
+        public void TestUsingInterfaceDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+interface TestInterface
+{
+    void TestInterfaceMethod();
+}
+
+[Serializable()]
+public class TestInterfaceImplement : TestInterface
+{
+    public void TestInterfaceMethod()
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private TestInterfaceImplement member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        member.TestInterfaceMethod();
+    }
+}",
+            GetCSharpResultAt(29, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
+        public void TestStaticDelegateFieldDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+public delegate void TestDelegate();
+
+[Serializable()]
+public class TestAnotherClass
+{
+    public static TestDelegate staticDelegateField = () =>
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] { 0x20, 0x20, 0x20 };
+        File.WriteAllBytes(path, bytes);
+    };
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        TestAnotherClass.staticDelegateField();
+    }
+}",
+            GetCSharpResultAt(24, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
+        public void TestDelegateFieldDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+public delegate void TestDelegate();
+
+[Serializable()]
+public class TestAnotherClass
+{
+    public TestDelegate delegateField;
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        TestAnotherClass testAnotherClass = new TestAnotherClass();
+        testAnotherClass.delegateField = () =>
+        {
+            var path = ""C:\\"";
+            var bytes = new byte[] { 0x20, 0x20, 0x20 };
+            File.WriteAllBytes(path, bytes);
+        };
+        testAnotherClass.delegateField();
+    }
+}",
+            GetCSharpResultAt(19, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
+        }
+
+        [Fact]
+        public void TestUsingAbstractClassDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text;
+
+public abstract class TestAbstractClass
+{
+    public abstract void TestAbstractMethod();
+}
+
+[Serializable()]
+public class TestDerivedClass : TestAbstractClass
+{
+    public override void TestAbstractMethod()
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
+}
+
+[Serializable()]
+public class TestClass : IDeserializationCallback 
+{
+    private TestDerivedClass member;
+
+    void IDeserializationCallback.OnDeserialization(Object sender) 
+    {
+        member.TestAbstractMethod();
+    }
+}",
+            GetCSharpResultAt(29, 35, DoNotCallDangerousMethodsInDeserialization.Rule, "TestClass", "System.Runtime.Serialization.IDeserializationCallback.OnDeserialization", "WriteAllBytes"));
         }
 
         [Fact]
@@ -1943,6 +2326,171 @@ Namespace TestNamespace
         End Sub
     End Class
 End Namespace");
+        }
+
+        [Fact]
+        public void TestUsingGenericwithTypeSpecifiedNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+[Serializable()]
+public class TestGenericClass<T>
+{
+    private T memberInGeneric;
+
+    public void TestGenericMethod()
+    {
+    }
+}
+
+[Serializable()]
+public class TestClass : IDisposable
+{
+    private TestGenericClass<int> member;
+    bool disposed = false;
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);           
+    }
+    
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed)
+        {
+            return; 
+        }
+      
+        if (disposing) 
+        {
+        }
+      
+        disposed = true;
+    }
+
+    private void TestMethod()
+    {
+        member.TestGenericMethod();
+    }
+}");
+        }
+
+        [Fact]
+        public void TestUsingInterfaceNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+interface TestInterface
+{
+    void TestInterfaceMethod();
+}
+
+[Serializable()]
+public class TestInterfaceImplement : TestInterface
+{
+    public void TestInterfaceMethod()
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
+}
+
+[Serializable()]
+public class TestClass : IDisposable
+{
+    private TestInterface member;
+    bool disposed = false;
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);           
+    }
+    
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed)
+        {
+            return; 
+        }
+      
+        if (disposing) 
+        {
+        }
+      
+        disposed = true;
+    }
+
+    private void TestMethod()
+    {
+        member.TestInterfaceMethod();
+    }
+}");
+        }
+
+        [Fact]
+        public void TestUsingAbstractClassNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+
+public abstract class TestAbstractClass
+{
+    public abstract void TestAbstractMethod();
+}
+
+[Serializable()]
+public class TestDerivedClass : TestAbstractClass
+{
+    public override void TestAbstractMethod()
+    {
+        var path = ""C:\\"";
+        var bytes = new byte[] {0x20, 0x20, 0x20};
+        File.WriteAllBytes(path, bytes);
+    }
+}
+
+[Serializable()]
+public class TestClass : IDisposable
+{
+    private TestAbstractClass member;
+    bool disposed = false;
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);           
+    }
+    
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed)
+        {
+            return; 
+        }
+      
+        if (disposing) 
+        {
+        }
+      
+        disposed = true;
+    }
+
+    private void TestMethod()
+    {
+        member.TestAbstractMethod();
+    }
+}");
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

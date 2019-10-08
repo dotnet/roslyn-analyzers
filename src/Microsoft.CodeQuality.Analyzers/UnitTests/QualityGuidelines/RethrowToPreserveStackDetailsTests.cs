@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -139,6 +139,90 @@ Class Program
 End Class
 ",
             GetCA2200BasicResultAt(9, 13));
+        }
+
+        [Fact]
+        public void CA2200_NoDiagnosticsForThrowCaughtReassignedException()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitlyReassigned()
+    {
+        try
+        {
+            ThrowException();
+        }
+        catch (SystemException e)
+        { 
+            e = new ArithmeticException();
+            throw e;
+        }
+    }
+
+    void ThrowException()
+    {
+        throw new SystemException();
+    }
+}
+");
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New Exception()
+        Catch e As Exception
+            e = New ArithmeticException()
+            Throw e
+        End Try
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void CA2200_NoDiagnosticsForEmptyBlock()
+        {
+            VerifyCSharp(@"
+using System;
+
+class Program
+{
+    void CatchAndRethrowExplicitlyReassigned()
+    {
+        try
+        {
+            ThrowException();
+        }
+        catch (SystemException e)
+        { 
+
+        }
+    }
+
+    void ThrowException()
+    {
+        throw new SystemException();
+    }
+}
+");
+            VerifyBasic(@"
+Imports System
+Class Program
+    Sub CatchAndRethrowExplicitly()
+
+        Try
+            Throw New Exception()
+        Catch e As Exception
+
+        End Try
+    End Sub
+End Class
+");
         }
 
         [Fact]
@@ -419,12 +503,12 @@ End Class
 
         private static DiagnosticResult GetCA2200BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage);
+            return GetBasicResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.RethrowToPreserveStackDetailsMessage);
         }
 
         private static DiagnosticResult GetCA2200CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RethrowToPreserveStackDetailsMessage);
+            return GetCSharpResultAt(line, column, RethrowToPreserveStackDetailsAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.RethrowToPreserveStackDetailsMessage);
         }
     }
 }

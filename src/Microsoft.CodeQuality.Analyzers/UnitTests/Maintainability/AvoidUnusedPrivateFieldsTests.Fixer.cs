@@ -1,38 +1,22 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUnusedPrivateFieldsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUnusedPrivateFieldsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUnusedPrivateFieldsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.Maintainability.AvoidUnusedPrivateFieldsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
-    public class AvoidUnusedPrivateFieldsFixerTests : CodeFixTestBase
+    public class AvoidUnusedPrivateFieldsFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new AvoidUnusedPrivateFieldsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new AvoidUnusedPrivateFieldsAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new AvoidUnusedPrivateFieldsFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new AvoidUnusedPrivateFieldsFixer();
-        }
-
         [Fact]
-        public void CA1823CSharp()
+        public async Task CA1823CSharp()
         {
-            VerifyCSharpFix(
+            await VerifyCS.VerifyCodeFixAsync(
                 @"  
 class C  
 {  
@@ -40,9 +24,9 @@ class C
     public int y;
     public int z;
     private int a;
-    private int b;
+    private int [|b|];
     private int c;
-    private int d, e, f;
+    private int d, [|e|], f;
 
     public int Foo()
     {
@@ -65,22 +49,22 @@ class C
         return x + z + a + c + d + f;
     }
 }  
- ", allowNewCompilerDiagnostics: true);
+ ");
         }
 
         [Fact]
-        public void CA1823VisualBasic()
+        public async Task CA1823VisualBasic()
         {
-            VerifyBasicFix(
+            await VerifyVB.VerifyCodeFixAsync(
                 @"
 Class C
     Public x As Integer
     Public y As Integer
     Public z As Integer
     Private a As Integer
-    Private b As Integer
+    Private [|b|] As Integer
     Private c As Integer
-    Private d, e, f As Integer
+    Private d, [|e|], f As Integer
 
     Public Function Foo() As Integer
         Return x + z + a + c + d + f

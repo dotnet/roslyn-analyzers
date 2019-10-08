@@ -1,15 +1,19 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities.MinimalImplementations;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
 {
     public class ReviewCodeForXPathInjectionVulnerabilitiesTests : TaintedDataAnalyzerTestBase
     {
+        public ReviewCodeForXPathInjectionVulnerabilitiesTests(ITestOutputHelper output)
+            : base(output)
+        {
+        }
+
         protected override DiagnosticDescriptor Rule => ReviewCodeForXPathInjectionVulnerabilities.Rule;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
@@ -20,6 +24,61 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
         {
             return new ReviewCodeForXPathInjectionVulnerabilities();
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Diagnostic_Violation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Xml.XPath;
+
+public partial class WebForm : System.Web.UI.Page
+{
+    public XPathNavigator AuthorizedOperations { get; set; }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        string operation = Request.Form[""operation""];
+
+        // If an attacker uses this for input:
+        //     ' or 'a' = 'a
+        // Then the XPath query will be:
+        //     authorizedOperation[@username = 'anonymous' and @operationName = '' or 'a' = 'a']
+        // and it will return any authorizedOperation node.
+        XPathNavigator node = AuthorizedOperations.SelectSingleNode(
+            ""//authorizedOperation[@username = 'anonymous' and @operationName = '"" + operation + ""']"");
+    }
+}",
+                GetCSharpResultAt(18, 31, 11, 28, "XPathNavigator XPathNavigator.SelectSingleNode(string xpath)", "void WebForm.Page_Load(object sender, EventArgs e)", "NameValueCollection HttpRequest.Form", "void WebForm.Page_Load(object sender, EventArgs e)"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Diagnostic_Violation()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Xml.XPath
+
+Partial Public Class WebForm
+    Inherits System.Web.UI.Page
+
+    Public Property AuthorizedOperations As XPathNavigator
+
+    Protected Sub Page_Load(sender As Object, e As EventArgs)
+        Dim operation As String = Me.Request.Form(""operation"")
+        
+        ' If an attacker uses this for input:
+        '     ' or 'a' = 'a
+        ' Then the XPath query will be:
+        '      authorizedOperation[@username = 'anonymous' and @operationName = '' or 'a' = 'a']
+        ' and it will return any authorizedOperation node.
+        Dim node As XPathNavigator = AuthorizedOperations.SelectSingleNode( _
+            ""//authorizedOperation[@username = 'anonymous' and @operationName = '"" + operation + ""']"")
+    End Sub
+End Class
+",
+                GetBasicResultAt(18, 38, 11, 35, "Function XPathNavigator.SelectSingleNode(xpath As String) As XPathNavigator", "Sub WebForm.Page_Load(sender As Object, e As EventArgs)", "Property HttpRequest.Form As NameValueCollection", "Sub WebForm.Page_Load(sender As Object, e As EventArgs)"));
         }
 
         [Fact]

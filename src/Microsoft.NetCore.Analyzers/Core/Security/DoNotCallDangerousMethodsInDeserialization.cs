@@ -1,16 +1,15 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -20,41 +19,27 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal const string DiagnosticId = "CA5360";
         private static readonly LocalizableString s_Title = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotCallDangerousMethodsInDeserialization),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallDangerousMethodsInDeserialization),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Message = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotCallDangerousMethodsInDeserializationMessage),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallDangerousMethodsInDeserializationMessage),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
         private static readonly LocalizableString s_Description = new LocalizableResourceString(
-            nameof(SystemSecurityCryptographyResources.DoNotCallDangerousMethodsInDeserializationDescription),
-            SystemSecurityCryptographyResources.ResourceManager,
-            typeof(SystemSecurityCryptographyResources));
+            nameof(MicrosoftNetCoreAnalyzersResources.DoNotCallDangerousMethodsInDeserializationDescription),
+            MicrosoftNetCoreAnalyzersResources.ResourceManager,
+            typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private readonly ImmutableHashSet<string> SystemIOFileMethodMetadataNames = ImmutableHashSet.Create(
-                StringComparer.Ordinal,
-                "WriteAllBytes",
-                "WriteAllLines",
-                "WriteAllText",
-                "Copy",
-                "Move",
-                "AppendAllLines",
-                "AppendAllText",
-                "AppendText",
-                "Delete");
-
-        private readonly ImmutableHashSet<string> SystemReflectionAssemblyMethodMetadataNames = ImmutableHashSet.Create(
-                StringComparer.Ordinal,
-                "GetLoadedModules",
-                "Load",
-                "LoadFile",
-                "LoadFrom",
-                "LoadModule",
-                "LoadWithPartialName",
-                "ReflectionOnlyLoad",
-                "ReflectionOnlyLoadFrom",
-                "UnsafeLoadFrom");
+        private ImmutableArray<(string, string[])> DangerousCallable = ImmutableArray.Create<(string, string[])>
+            (
+                (WellKnownTypeNames.SystemIOFileFullName, new[] { "WriteAllBytes", "WriteAllLines", "WriteAllText", "Copy", "Move", "AppendAllLines", "AppendAllText", "AppendText", "Delete" }),
+                (WellKnownTypeNames.SystemIODirectory, new[] { "Delete" }),
+                (WellKnownTypeNames.SystemIOFileInfo, new[] { "Delete" }),
+                (WellKnownTypeNames.SystemIODirectoryInfo, new[] { "Delete" }),
+                (WellKnownTypeNames.SystemIOLogLogStore, new[] { "Delete" }),
+                (WellKnownTypeNames.SystemReflectionAssemblyFullName, new[] { "GetLoadedModules", "Load", "LoadFile", "LoadFrom", "LoadModule", "LoadWithPartialName", "ReflectionOnlyLoad", "ReflectionOnlyLoadFrom", "UnsafeLoadFrom" })
+            );
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 DiagnosticId,
@@ -80,103 +65,140 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var serializableAttributeTypeSymbol = WellKnownTypes.SerializableAttribute(compilation);
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
 
-                    if (serializableAttributeTypeSymbol == null)
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
+                        WellKnownTypeNames.SystemSerializableAttribute,
+                        out INamedTypeSymbol serializableAttributeTypeSymbol))
                     {
                         return;
                     }
 
-                    var dangerousMethodSymbolsBuilder = ImmutableArray.CreateBuilder<IMethodSymbol>();
-                    var systemIOFileTypeSymbol = WellKnownTypes.SystemIOFile(compilation);
+                    var dangerousMethodSymbolsBuilder = ImmutableHashSet.CreateBuilder<IMethodSymbol>();
 
-                    if (systemIOFileTypeSymbol != null)
+                    foreach (var (typeName, methodNames) in DangerousCallable)
                     {
-                        foreach (var targetMethodName in SystemIOFileMethodMetadataNames)
+                        if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
+                            typeName,
+                            out INamedTypeSymbol typeSymbol))
                         {
-                            dangerousMethodSymbolsBuilder.AddRange(systemIOFileTypeSymbol.GetMembers(targetMethodName).OfType<IMethodSymbol>());
+                            continue;
+                        }
+
+                        foreach (var methodName in methodNames)
+                        {
+                            dangerousMethodSymbolsBuilder.UnionWith(
+                                typeSymbol.GetMembers()
+                                    .OfType<IMethodSymbol>()
+                                    .Where(
+                                        s => s.Name == methodName));
                         }
                     }
 
-                    var systemReflectionAssemblyTypeSymbol = WellKnownTypes.SystemReflectionAssembly(compilation);
-
-                    if (systemReflectionAssemblyTypeSymbol != null)
-                    {
-                        foreach (var targetMethodName in SystemReflectionAssemblyMethodMetadataNames)
-                        {
-                            dangerousMethodSymbolsBuilder.AddRange(systemReflectionAssemblyTypeSymbol.GetMembers(targetMethodName).OfType<IMethodSymbol>());
-                        }
-                    }
-
-                    var dangerousMethodSymbols = dangerousMethodSymbolsBuilder.ToImmutable();
-
-                    if (dangerousMethodSymbols.Length == 0)
+                    if (!dangerousMethodSymbolsBuilder.Any())
                     {
                         return;
                     }
 
+                    var dangerousMethodSymbols = dangerousMethodSymbolsBuilder.ToImmutableHashSet();
                     var attributeTypeSymbolsBuilder = ImmutableArray.CreateBuilder<INamedTypeSymbol>();
-                    var onDeserializingAttributeTypeSymbol = WellKnownTypes.OnDeserializingAttribute(compilation);
 
-                    if (onDeserializingAttributeTypeSymbol != null)
+                    if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
+                        WellKnownTypeNames.SystemRuntimeSerializationOnDeserializingAttribute,
+                        out INamedTypeSymbol onDeserializingAttributeTypeSymbol))
                     {
                         attributeTypeSymbolsBuilder.Add(onDeserializingAttributeTypeSymbol);
                     }
 
-                    var onDeserializedAttributeTypeSymbol = WellKnownTypes.OnDeserializedAttribute(compilation);
-
-                    if (onDeserializedAttributeTypeSymbol != null)
+                    if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
+                        WellKnownTypeNames.SystemRuntimeSerializationOnDeserializedAttribute,
+                        out INamedTypeSymbol onDeserializedAttributeTypeSymbol))
                     {
                         attributeTypeSymbolsBuilder.Add(onDeserializedAttributeTypeSymbol);
                     }
 
                     var attributeTypeSymbols = attributeTypeSymbolsBuilder.ToImmutable();
-                    var streamingContextTypeSymbol = WellKnownTypes.StreamingContext(compilation);
-                    var IDeserializationCallbackTypeSymbol = WellKnownTypes.IDeserializationCallback(compilation);
+
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext, out INamedTypeSymbol streamingContextTypeSymbol) ||
+                        !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationIDeserializationCallback, out INamedTypeSymbol IDeserializationCallbackTypeSymbol))
+                    {
+                        return;
+                    }
 
                     // A dictionary from method symbol to set of methods invoked by it directly.
                     // The bool value in the sub ConcurrentDictionary is not used, use ConcurrentDictionary rather than HashSet just for the concurrency security.
-                    var callGraph = new ConcurrentDictionary<IMethodSymbol, ConcurrentDictionary<IMethodSymbol, bool>>();
+                    var callGraph = new ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>>();
 
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
                             var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+                            ConcurrentDictionary<ISymbol, bool> calledMethods;
 
-                            if (owningSymbol.Kind != SymbolKind.Method)
+                            if (owningSymbol is IMethodSymbol methodSymbol ||
+                                (owningSymbol is IFieldSymbol fieldSymbol &&
+                                fieldSymbol.Type.TypeKind == TypeKind.Delegate))
+                            {
+                                // Delegate member could be added already, so use GetOrAdd().
+                                calledMethods = callGraph.GetOrAdd(owningSymbol, new ConcurrentDictionary<ISymbol, bool>());
+                            }
+                            else
                             {
                                 return;
                             }
-
-                            var methodSymbol = (IMethodSymbol)owningSymbol;
-                            var classSymbol = methodSymbol.ContainingType;
-
-                            if (!classSymbol.HasAttribute(serializableAttributeTypeSymbol))
-                            {
-                                return;
-                            }
-
-                            var calledMethods = new ConcurrentDictionary<IMethodSymbol, bool>();
-                            callGraph.TryAdd(methodSymbol, calledMethods);
 
                             operationBlockStartAnalysisContext.RegisterOperationAction(operationContext =>
                             {
-                                calledMethods.TryAdd((operationContext.Operation as IInvocationOperation).TargetMethod, true);
-                            }, OperationKind.Invocation);
+                                ISymbol calledSymbol = null;
+                                ITypeSymbol possibleDelegateSymbol = null;
+
+                                switch (operationContext.Operation)
+                                {
+                                    case IInvocationOperation invocationOperation:
+                                        calledSymbol = invocationOperation.TargetMethod.OriginalDefinition;
+                                        possibleDelegateSymbol = calledSymbol.ContainingType; // Invoke().
+
+                                        break;
+
+                                    case IFieldReferenceOperation fieldReferenceOperation:
+                                        var fieldSymbol = (IFieldSymbol)fieldReferenceOperation.Field;
+                                        possibleDelegateSymbol = fieldSymbol.Type; // Delegate field.
+
+                                        if (possibleDelegateSymbol.TypeKind != TypeKind.Delegate)
+                                        {
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            calledSymbol = fieldSymbol;
+                                        }
+
+                                        break;
+                                }
+
+                                calledMethods.TryAdd(calledSymbol, true);
+
+                                if (!calledSymbol.IsInSource() ||
+                                    calledSymbol.ContainingType.TypeKind == TypeKind.Interface ||
+                                    calledSymbol.IsAbstract ||
+                                    possibleDelegateSymbol.TypeKind == TypeKind.Delegate)
+                                {
+                                    callGraph.TryAdd(calledSymbol, new ConcurrentDictionary<ISymbol, bool>());
+                                }
+                            }, OperationKind.Invocation, OperationKind.FieldReference);
                         });
 
                     compilationStartAnalysisContext.RegisterCompilationEndAction(
                         (CompilationAnalysisContext compilationAnalysisContext) =>
                         {
-                            var visited = new HashSet<IMethodSymbol>();
-                            var results = new Dictionary<IMethodSymbol, HashSet<IMethodSymbol>>();
+                            var visited = new HashSet<ISymbol>();
+                            var results = new Dictionary<ISymbol, HashSet<ISymbol>>();
 
-                            foreach (var kvp in callGraph)
+                            foreach (var methodSymbol in callGraph.Keys.OfType<IMethodSymbol>())
                             {
-                                var methodSymbol = kvp.Key;
-
                                 // Determine if the method is called automatically when an object is deserialized.
                                 // This includes methods with OnDeserializing attribute, method with OnDeserialized attribute, deserialization callbacks as well as cleanup/dispose calls.
+                                var flagSerializable = methodSymbol.ContainingType.HasAttribute(serializableAttributeTypeSymbol);
                                 var parameters = methodSymbol.GetParameters();
                                 var flagHasDeserializeAttributes = attributeTypeSymbols.Length != 0
                                     && attributeTypeSymbols.Any(s => methodSymbol.HasAttribute(s))
@@ -186,7 +208,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 var flagImplementDisposeMethod = methodSymbol.IsDisposeImplementation(compilation);
                                 var flagIsFinalizer = methodSymbol.IsFinalizer();
 
-                                if (!flagHasDeserializeAttributes && !flagImplementOnDeserializationMethod && !flagImplementDisposeMethod && !flagIsFinalizer)
+                                if (!flagSerializable || !flagHasDeserializeAttributes && !flagImplementOnDeserializationMethod && !flagImplementDisposeMethod && !flagIsFinalizer)
                                 {
                                     continue;
                                 }
@@ -205,29 +227,41 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         });
 
-                    /// <summary>
-                    /// Analyze the method to find all the dangerous method it calls.
-                    /// </summary>
-                    /// <param name="methodSymbol">The symbol of the method to be analyzed</param>
-                    /// <param name="visited">All the method has been analyzed</param>
-                    /// <param name="results">The result is organized by &lt;method to be analyzed, dangerous method it calls&gt;</param>
-                    void FindCalledDangerousMethod(IMethodSymbol methodSymbol, HashSet<IMethodSymbol> visited, Dictionary<IMethodSymbol, HashSet<IMethodSymbol>> results)
+                    // <summary>
+                    // Analyze the method to find all the dangerous method it calls.
+                    // </summary>
+                    // <param name="methodSymbol">The symbol of the method to be analyzed</param>
+                    // <param name="visited">All the method has been analyzed</param>
+                    // <param name="results">The result is organized by &lt;method to be analyzed, dangerous method it calls&gt;</param>
+                    void FindCalledDangerousMethod(ISymbol methodSymbol, HashSet<ISymbol> visited, Dictionary<ISymbol, HashSet<ISymbol>> results)
                     {
                         if (visited.Add(methodSymbol))
                         {
-                            results.Add(methodSymbol, new HashSet<IMethodSymbol>());
+                            results.Add(methodSymbol, new HashSet<ISymbol>());
 
-                            foreach (var child in callGraph[methodSymbol].Keys)
+                            if (!callGraph.TryGetValue(methodSymbol, out var calledMethods))
+                            {
+                                Debug.Fail(methodSymbol.Name + " was not found in callGraph");
+
+                                return;
+                            }
+
+                            foreach (var child in calledMethods.Keys)
                             {
                                 if (dangerousMethodSymbols.Contains(child))
                                 {
                                     results[methodSymbol].Add(child);
                                 }
 
-                                if (child.IsInSource())
+                                FindCalledDangerousMethod(child, visited, results);
+
+                                if (results.TryGetValue(child, out var result))
                                 {
-                                    FindCalledDangerousMethod(child, visited, results);
-                                    results[methodSymbol].UnionWith(results[child]);
+                                    results[methodSymbol].UnionWith(result);
+                                }
+                                else
+                                {
+                                    Debug.Fail(child.Name + " was not found in results");
                                 }
                             }
                         }

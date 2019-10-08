@@ -1,12 +1,11 @@
 ' Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 Imports System.Collections.Immutable
-Imports System.Diagnostics
 Imports Analyzer.Utilities
 Imports Analyzer.Utilities.Extensions
-Imports Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 Imports Microsoft.CodeAnalysis
 Imports Microsoft.CodeAnalysis.Diagnostics
+Imports Microsoft.CodeQuality.Analyzers
 
 Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
     ''' <summary>
@@ -21,10 +20,10 @@ Namespace Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines
 
         Friend Const RuleId As String = "CA2218"
 
-        Private Shared ReadOnly s_localizableTitle As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
+        Private Shared ReadOnly s_localizableTitle As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
 
-        Private Shared ReadOnly s_localizableMessage As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
-        Private Shared ReadOnly s_localizableDescription As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftApiDesignGuidelinesAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, GetType(MicrosoftApiDesignGuidelinesAnalyzersResources))
+        Private Shared ReadOnly s_localizableMessage As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
+        Private Shared ReadOnly s_localizableDescription As LocalizableString = New LocalizableResourceString(NameOf(MicrosoftCodeQualityAnalyzersResources.OverrideGetHashCodeOnOverridingEqualsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, GetType(MicrosoftCodeQualityAnalyzersResources))
 
         Friend Shared Rule As DiagnosticDescriptor = New DiagnosticDescriptor(
             RuleId,

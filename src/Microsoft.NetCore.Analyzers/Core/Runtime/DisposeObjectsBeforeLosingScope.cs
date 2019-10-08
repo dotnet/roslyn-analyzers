@@ -1,5 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Linq;
@@ -20,19 +21,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2000";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposeObjectsBeforeLosingScopeTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableNotDisposedMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposeObjectsBeforeLosingScopeNotDisposedMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMayBeDisposedMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposeObjectsBeforeLosingScopeMayBeDisposedMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableNotDisposedOnExceptionPathsMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposeObjectsBeforeLosingScopeNotDisposedOnExceptionPathsMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMayBeDisposedOnExceptionPathsMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposeObjectsBeforeLosingScopeMayBeDisposedOnExceptionPathsMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposeObjectsBeforeLosingScopeDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposeObjectsBeforeLosingScopeTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableNotDisposedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposeObjectsBeforeLosingScopeNotDisposedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMayBeDisposedMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposeObjectsBeforeLosingScopeMayBeDisposedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableNotDisposedOnExceptionPathsMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposeObjectsBeforeLosingScopeNotDisposedOnExceptionPathsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMayBeDisposedOnExceptionPathsMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposeObjectsBeforeLosingScopeMayBeDisposedOnExceptionPathsMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposeObjectsBeforeLosingScopeDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor NotDisposedRule = new DiagnosticDescriptor(RuleId,
                                                                                         s_localizableTitle,
                                                                                         s_localizableNotDisposedMessage,
                                                                                         DiagnosticCategory.Reliability,
                                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                        isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                         description: s_localizableDescription,
                                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -42,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                           s_localizableMayBeDisposedMessage,
                                                                                           DiagnosticCategory.Reliability,
                                                                                           DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                          isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                           description: s_localizableDescription,
                                                                                           helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                           customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -52,7 +53,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                         s_localizableNotDisposedOnExceptionPathsMessage,
                                                                                                         DiagnosticCategory.Reliability,
                                                                                                         DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                                        isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                                                        isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                                         description: s_localizableDescription,
                                                                                                         helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                                         customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -62,7 +63,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                                                                                           s_localizableMayBeDisposedOnExceptionPathsMessage,
                                                                                                           DiagnosticCategory.Reliability,
                                                                                                           DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                                                          isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                                                          isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                                                           description: s_localizableDescription,
                                                                                                           helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2000-dispose-objects-before-losing-scope",
                                                                                                           customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -85,7 +86,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationContext.RegisterOperationBlockAction(operationBlockContext =>
                 {
                     if (!(operationBlockContext.OwningSymbol is IMethodSymbol containingMethod) ||
-                        !disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockContext.OperationBlocks, containingMethod))
+                        !disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockContext.OperationBlocks, containingMethod) ||
+                        containingMethod.IsConfiguredToSkipAnalysis(operationBlockContext.Options,
+                            NotDisposedRule, operationBlockContext.Compilation, operationBlockContext.CancellationToken))
                     {
                         return;
                     }
@@ -135,6 +138,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                                 }
                             }
 
+                            if (!notDisposedDiagnostics.Any() && !mayBeNotDisposedDiagnostics.Any())
+                            {
+                                return;
+                            }
+
+                            if (disposeAnalysisResult.ControlFlowGraph.OriginalOperation.HasAnyOperationDescendant(o => o.Kind == OperationKind.None))
+                            {
+                                // Workaround for https://github.com/dotnet/roslyn/issues/32100
+                                // Bail out in presence of OperationKind.None - not implemented IOperation.
+                                return;
+                            }
+
                             // Report diagnostics preferring *not* disposed diagnostics over may be not disposed diagnostics
                             // and avoiding duplicates.
                             foreach (var diagnostic in notDisposedDiagnostics.Concat(mayBeNotDisposedDiagnostics))
@@ -159,21 +174,31 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 bool SkipInterproceduralAnalysis(IMethodSymbol invokedMethod)
                 {
-                    // Skip interprocedural analysis if we are invoking a method and not passing any disposable object as an argument.
+                    // Skip interprocedural analysis if we are invoking a method and not passing any disposable object as an argument
+                    // and not receiving a disposable object as a return value.
                     // We also check that we are not passing any object type argument which might hold disposable object
                     // and also check that we are not passing delegate type argument which can
                     // be a lambda or local function that has access to disposable object in current method's scope.
+
+                    if (CanBeDisposable(invokedMethod.ReturnType))
+                    {
+                        return false;
+                    }
+
                     foreach (var p in invokedMethod.Parameters)
                     {
-                        if (p.Type.SpecialType == SpecialType.System_Object ||
-                            p.Type.DerivesFrom(disposeAnalysisHelper.IDisposable) ||
-                            p.Type.TypeKind == TypeKind.Delegate)
+                        if (CanBeDisposable(p.Type))
                         {
                             return false;
                         }
                     }
 
                     return true;
+
+                    bool CanBeDisposable(ITypeSymbol type)
+                        => type.SpecialType == SpecialType.System_Object ||
+                            type.DerivesFrom(disposeAnalysisHelper.IDisposable) ||
+                            type.TypeKind == TypeKind.Delegate;
                 }
             });
         }
@@ -199,7 +224,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 var isNotDisposed = disposeValue.Kind == DisposeAbstractValueKind.NotDisposed ||
                     (disposeValue.DisposingOrEscapingOperations.Count > 0 &&
-                     disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph)));
+                     disposeValue.DisposingOrEscapingOperations.All(d => d.IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph) && !location.GetTopOfCreationCallStackOrCreation().IsInsideCatchRegion(disposeAnalysisResult.ControlFlowGraph)));
                 var isMayBeNotDisposed = !isNotDisposed && (disposeValue.Kind == DisposeAbstractValueKind.MaybeDisposed || disposeValue.Kind == DisposeAbstractValueKind.NotDisposedOrEscaped);
 
                 if (isNotDisposed ||
@@ -213,7 +238,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     // CA2000: Call System.IDisposable.Dispose on object created by '{0}' before all references to it are out of scope.
                     var rule = GetRule(isNotDisposed);
+
+                    // Ensure that we do not include multiple lines for the object creation expression in the diagnostic message.
                     var argument = syntax.ToString();
+                    var indexOfNewLine = argument.IndexOf(Environment.NewLine, StringComparison.Ordinal);
+                    if (indexOfNewLine > 0)
+                    {
+                        argument = argument.Substring(0, indexOfNewLine);
+                    }
+
                     var diagnostic = syntax.CreateDiagnostic(rule, argument);
                     if (isNotDisposed)
                     {

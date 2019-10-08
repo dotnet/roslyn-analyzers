@@ -1,27 +1,44 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ParameterNamesShouldMatchBaseDeclarationAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ParameterNamesShouldMatchBaseDeclarationFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ParameterNamesShouldMatchBaseDeclarationAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.ParameterNamesShouldMatchBaseDeclarationFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class ParameterNamesShouldMatchBaseDeclarationFixerTests : CodeFixTestBase
+    public class ParameterNamesShouldMatchBaseDeclarationFixerTests
     {
         [Fact]
-        public void VerifyOverrideWithWrongParameterNames()
+        public async Task VerifyOverrideWithWrongParameterNames()
         {
-            VerifyCSharpFix(@"public abstract class BaseClass
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string baseArg1, string baseArg2);
                               }
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string arg1, string arg2) { }
+                                  public override void TestMethod(string [|arg1|], string [|arg2|]) { }
                               }",
-                            @"public abstract class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string baseArg1, string baseArg2);
                               }
@@ -29,18 +46,34 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : BaseClass
                               {
                                   public override void TestMethod(string baseArg1, string baseArg2) { }
-                              }", testFixAllScope: null);
+                              }",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyCSharpFix(@"public abstract class BaseClass
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string baseArg1, string baseArg2, __arglist);
                               }
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string arg1, string arg2, __arglist) { }
+                                  public override void TestMethod(string [|arg1|], string [|arg2|], __arglist) { }
                               }",
-                            @"public abstract class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string baseArg1, string baseArg2, __arglist);
                               }
@@ -48,18 +81,34 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : BaseClass
                               {
                                   public override void TestMethod(string baseArg1, string baseArg2, __arglist) { }
-                              }", testFixAllScope: null);
+                              }",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyCSharpFix(@"public abstract class BaseClass
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
                               }
 
                               public class TestClass : BaseClass
                               {
-                                  public override void TestMethod(string arg1, string arg2, params string[] arg3) { }
+                                  public override void TestMethod(string [|arg1|], string [|arg2|], params string[] [|arg3|]) { }
                               }",
-                            @"public abstract class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
                               }
@@ -67,19 +116,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : BaseClass
                               {
                                   public override void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3) { }
-                              }", testFixAllScope: null);
+                              }",
+                    },
+                },
+                NumberOfFixAllIterations = 3,
+            }.RunAsync();
 
-            VerifyBasicFix(@"Public MustInherit Class BaseClass
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String)
                              End Class
 
                              Public Class TestClass 
                                  Inherits BaseClass
 
-                                 Public Overrides Sub TestMethod(arg1 as String, arg2 as String)
+                                 Public Overrides Sub TestMethod([|arg1|] as String, [|arg2|] as String)
                                  End Sub
                              End Class",
-                           @"Public MustInherit Class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String)
                              End Class
 
@@ -88,19 +153,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Overrides Sub TestMethod(baseArg1 as String, baseArg2 as String)
                                  End Sub
-                             End Class", testFixAllScope: null);
+                             End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyBasicFix(@"Public MustInherit Class BaseClass
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
                              End Class
 
                              Public Class TestClass
                                  Inherits BaseClass
 
-                                 Public Overrides Sub TestMethod(arg1 as String, arg2 as String, ParamArray arg3() As String)
+                                 Public Overrides Sub TestMethod([|arg1|] as String, [|arg2|] as String, ParamArray [|arg3|]() As String)
                                  End Sub
                              End Class",
-                           @"Public MustInherit Class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
                              End Class
 
@@ -109,22 +190,38 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Overrides Sub TestMethod(baseArg1 as String, baseArg2 as String, ParamArray baseArg3() As String)
                                  End Sub
-                             End Class", testFixAllScope: null);
+                             End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 3,
+            }.RunAsync();
         }
 
         [Fact]
-        public void VerifyInterfaceImplementationWithWrongParameterNames()
+        public async Task VerifyInterfaceImplementationWithWrongParameterNames()
         {
-            VerifyCSharpFix(@"public interface IBase
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"public interface IBase
                               {
                                   void TestMethod(string baseArg1, string baseArg2);
                               }
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string arg1, string arg2) { }
+                                  public void TestMethod(string [|arg1|], string [|arg2|]) { }
                               }",
-                            @"public interface IBase
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"public interface IBase
                               {
                                   void TestMethod(string baseArg1, string baseArg2);
                               }
@@ -132,18 +229,34 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IBase
                               {
                                   public void TestMethod(string baseArg1, string baseArg2) { }
-                              }", testFixAllScope: null);
+                              }",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyCSharpFix(@"public interface IBase
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"public interface IBase
                               {
                                   void TestMethod(string baseArg1, string baseArg2, __arglist);
                               }
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string arg1, string arg2, __arglist) { }
+                                  public void TestMethod(string [|arg1|], string [|arg2|], __arglist) { }
                               }",
-                            @"public interface IBase
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"public interface IBase
                               {
                                   void TestMethod(string baseArg1, string baseArg2, __arglist);
                               }
@@ -151,18 +264,34 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IBase
                               {
                                   public void TestMethod(string baseArg1, string baseArg2, __arglist) { }
-                              }", testFixAllScope: null);
+                              }",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyCSharpFix(@"public interface IBase
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"public interface IBase
                               {
                                   void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
                               }
 
                               public class TestClass : IBase
                               {
-                                  public void TestMethod(string arg1, string arg2, params string[] arg3) { }
+                                  public void TestMethod(string [|arg1|], string [|arg2|], params string[] [|arg3|]) { }
                               }",
-                            @"public interface IBase
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"public interface IBase
                               {
                                   void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3);
                               }
@@ -170,19 +299,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IBase
                               {
                                   public void TestMethod(string baseArg1, string baseArg2, params string[] baseArg3) { }
-                              }", testFixAllScope: null);
+                              }",
+                    },
+                },
+                NumberOfFixAllIterations = 3,
+            }.RunAsync();
 
-            VerifyBasicFix(@"Public Interface IBase
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String)
                              End Interface
 
                              Public Class TestClass
                                  Implements IBase
 
-                                 Public Sub TestMethod(arg1 As String, arg2 As String) Implements IBase.TestMethod
+                                 Public Sub TestMethod([|arg1|] As String, [|arg2|] As String) Implements IBase.TestMethod
                                  End Sub
                              End Class",
-                           @"Public Interface IBase
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String)
                              End Interface
 
@@ -191,19 +336,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Sub TestMethod(baseArg1 As String, baseArg2 As String) Implements IBase.TestMethod
                                  End Sub
-                             End Class", testFixAllScope: null);
+                             End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyBasicFix(@"Public Interface IBase
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
                              End Interface
 
                              Public Class TestClass
                                  Implements IBase
 
-                                 Public Sub TestMethod(arg1 As String, arg2 As String, ParamArray arg3() As String) Implements IBase.TestMethod
+                                 Public Sub TestMethod([|arg1|] As String, [|arg2|] As String, ParamArray [|arg3|]() As String) Implements IBase.TestMethod
                                  End Sub
                              End Class",
-                           @"Public Interface IBase
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
                              End Interface
 
@@ -212,11 +373,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String) Implements IBase.TestMethod
                                  End Sub
-                             End Class", testFixAllScope: null);
+                             End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 3,
+            }.RunAsync();
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
-        public void VerifyExplicitInterfaceImplementationWithWrongParameterNames_NoDiagnostic()
+        public async Task VerifyExplicitInterfaceImplementationWithWrongParameterNames_NoDiagnostic()
         {
             var source = @"public interface IBase
                               {
@@ -227,7 +392,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               {
                                   void IBase.TestMethod(string arg1, string arg2) { }
                               }";
-            VerifyCSharpFix(source, source);
+            await VerifyCS.VerifyCodeFixAsync(source, source);
 
             source = @"public interface IBase
                         {
@@ -238,7 +403,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                         {
                             void IBase.TestMethod(string arg1, string arg2, __arglist) { }
                         }";
-            VerifyCSharpFix(source, source);
+            await VerifyCS.VerifyCodeFixAsync(source, source);
 
             source = @"public interface IBase
                         {
@@ -249,23 +414,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                         {
                             void IBase.TestMethod(string arg1, string arg2, params string[] arg3) { }
                         }";
-            VerifyCSharpFix(source, source);
+            await VerifyCS.VerifyCodeFixAsync(source, source);
         }
 
         [Fact]
-        public void VerifyInterfaceImplementationWithDifferentMethodName()
+        public async Task VerifyInterfaceImplementationWithDifferentMethodName()
         {
-            VerifyBasicFix(@"Public Interface IBase
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String)
                              End Interface
 
                              Public Class TestClass
                                  Implements IBase
 
-                                 Public Sub AnotherTestMethod(arg1 As String, arg2 As String) Implements IBase.TestMethod
+                                 Public Sub AnotherTestMethod([|arg1|] As String, [|arg2|] As String) Implements IBase.TestMethod
                                  End Sub
                              End Class",
-                           @"Public Interface IBase
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String)
                              End Interface
 
@@ -274,19 +451,35 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Sub AnotherTestMethod(baseArg1 As String, baseArg2 As String) Implements IBase.TestMethod
                                  End Sub
-                             End Class", testFixAllScope: null);
+                             End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyBasicFix(@"Public Interface IBase
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
                              End Interface
 
                              Public Class TestClass
                                  Implements IBase
 
-                                 Public Sub AnotherTestMethod(arg1 As String, arg2 As String, ParamArray arg3() As String) Implements IBase.TestMethod
+                                 Public Sub AnotherTestMethod([|arg1|] As String, [|arg2|] As String, ParamArray [|arg3|]() As String) Implements IBase.TestMethod
                                  End Sub
                              End Class",
-                           @"Public Interface IBase
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"Public Interface IBase
                                  Sub TestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String)
                              End Interface
 
@@ -295,13 +488,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Sub AnotherTestMethod(baseArg1 As String, baseArg2 As String, ParamArray baseArg3() As String) Implements IBase.TestMethod
                                  End Sub
-                             End Class", testFixAllScope: null);
+                             End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 3,
+            }.RunAsync();
         }
 
         [Fact]
-        public void VerifyOverrideWithInheritanceChain()
+        public async Task VerifyOverrideWithInheritanceChain()
         {
-            VerifyCSharpFix(@"public abstract class BaseClass
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string baseArg1, string baseArg2);
                               }
@@ -312,9 +515,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                               public class TestClass : IntermediateBaseClass
                               {
-                                  public override void TestMethod(string arg1, string arg2) { }
+                                  public override void TestMethod(string [|arg1|], string [|arg2|]) { }
                               }",
-                            @"public abstract class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string baseArg1, string baseArg2);
                               }
@@ -326,9 +535,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : IntermediateBaseClass
                               {
                                   public override void TestMethod(string baseArg1, string baseArg2) { }
-                              }", testFixAllScope: null);
+                              }",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyBasicFix(@"Public MustInherit Class BaseClass
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String)
                              End Class
 
@@ -339,10 +558,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              Public Class TestClass
                                  Inherits IntermediateBaseClass
 
-                                 Public Overrides Sub TestMethod(arg1 As String, arg2 As String)
+                                 Public Overrides Sub TestMethod([|arg1|] As String, [|arg2|] As String)
                                  End Sub
                              End Class",
-                            @"Public MustInherit Class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(baseArg1 As String, baseArg2 As String)
                              End Class
 
@@ -355,13 +580,23 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                                  Public Overrides Sub TestMethod(baseArg1 As String, baseArg2 As String)
                                  End Sub
-                             End Class", testFixAllScope: null);
+                             End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void VerifyBaseClassNameHasPriority()
+        public async Task VerifyBaseClassNameHasPriority()
         {
-            VerifyCSharpFix(@"public abstract class BaseClass
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string arg1, string arg2);
                               }
@@ -373,9 +608,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                               public class TestClass : BaseClass, ITest
                               {
-                                  public override void TestMethod(string interfaceArg1, string interfaceArg2) { }
+                                  public override void TestMethod(string [|interfaceArg1|], string [|interfaceArg2|]) { }
                               }",
-                            @"public abstract class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"public abstract class BaseClass
                               {
                                   public abstract void TestMethod(string arg1, string arg2);
                               }
@@ -388,9 +629,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                               public class TestClass : BaseClass, ITest
                               {
                                   public override void TestMethod(string arg1, string arg2) { }
-                              }", testFixAllScope: null);
+                              }",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
 
-            VerifyBasicFix(@"Public MustInherit Class BaseClass
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(arg1 As String, arg2 As String)
                              End Class
     
@@ -402,10 +653,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                                  Inherits BaseClass
                                  Implements ITest
     
-                                 Public Overrides Sub TestMethod(interfaceArg1 As String, interfaceArg2 As String) Implements ITest.TestMethod
+                                 Public Overrides Sub TestMethod([|interfaceArg1|] As String, [|interfaceArg2|] As String) Implements ITest.TestMethod
                                  End Sub
                              End Class",
-                          @"Public MustInherit Class BaseClass
+                    }
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"Public MustInherit Class BaseClass
                                  Public MustOverride Sub TestMethod(arg1 As String, arg2 As String)
                              End Class
     
@@ -419,13 +676,17 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
     
                                  Public Overrides Sub TestMethod(arg1 As String, arg2 As String) Implements ITest.TestMethod
                                  End Sub
-                             End Class", testFixAllScope: null);
+                             End Class",
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void VerifyMultipleClashingInterfacesWithPartialMatch()
+        public async Task VerifyMultipleClashingInterfacesWithPartialMatch()
         {
-            VerifyCSharpFix(@"public interface ITest1
+            await VerifyCS.VerifyCodeFixAsync(@"public interface ITest1
                               {
                                   void TestMethod(string arg1, string arg2, string arg3);
                               }
@@ -437,7 +698,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
                               public class TestClass : ITest1, ITest2
                               {
-                                  public void TestMethod(string arg1, string arg2, string otherArg3) { }
+                                  public void TestMethod(string arg1, string arg2, string [|otherArg3|]) { }
                               }",
                             @"public interface ITest1
                               {
@@ -454,7 +715,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                                   public void TestMethod(string arg1, string arg2, string arg3) { }
                               }");
 
-            VerifyBasicFix(@"Public Interface ITest1
+            await VerifyVB.VerifyCodeFixAsync(@"Public Interface ITest1
                                  Sub TestMethod(arg1 As String, arg2 As String, arg3 As String)
                              End Interface
     
@@ -465,7 +726,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                              Public Class TestClass
                                  Implements ITest1, ITest2
     
-                                 Public Sub TestMethod(arg1 As String, arg2 As String, otherArg3 As String) Implements ITest1.TestMethod, ITest2.TestMethod
+                                 Public Sub TestMethod(arg1 As String, arg2 As String, [|otherArg3|] As String) Implements ITest1.TestMethod, ITest2.TestMethod
                                  End Sub
                              End Class",
                             @"Public Interface ITest1
@@ -482,26 +743,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
                                  Public Sub TestMethod(arg1 As String, arg2 As String, arg3 As String) Implements ITest1.TestMethod, ITest2.TestMethod
                                  End Sub
                              End Class");
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new ParameterNamesShouldMatchBaseDeclarationAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new ParameterNamesShouldMatchBaseDeclarationAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new ParameterNamesShouldMatchBaseDeclarationFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new ParameterNamesShouldMatchBaseDeclarationFixer();
         }
     }
 }

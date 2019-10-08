@@ -1253,9 +1253,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                         }
                     }
                 }
-            }",
-            GetCA2153CSharpResultAt(19, 25, "TestNamespace.TestClass.TestMethod()", "System.Exception")
-            );
+            }");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
@@ -1276,9 +1274,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                     End Sub
                 End Class
             End Namespace
-            ",
-            GetCA2153BasicResultAt(14, 25, "Public Shared Sub TestMethod()", "System.Exception")
-            );
+            ");
 
             await VerifyVB.VerifyAnalyzerAsync(@"
             Imports System
@@ -1300,9 +1296,7 @@ namespace Microsoft.NetFramework.Analyzers.UnitTests
                     End Function
                 End Class
             End Namespace
-            ",
-            GetCA2153BasicResultAt(14, 25, "Public Shared Function TestMethod() As Double", "System.Exception")
-            );
+            ");
         }
 
         [Fact]

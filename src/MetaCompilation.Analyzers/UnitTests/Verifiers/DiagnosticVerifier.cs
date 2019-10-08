@@ -7,7 +7,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
 
 namespace MetaCompilation.Analyzers.UnitTests
@@ -107,7 +106,7 @@ namespace MetaCompilation.Analyzers.UnitTests
         /// <param name="expectedResults">Diagnostic Results that should have appeared in the code</param>
         private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expectedResults)
         {
-            int expectedCount = expectedResults.Count();
+            int expectedCount = expectedResults.Length;
             int actualCount = actualResults.Count();
 
             if (expectedCount != actualCount)
@@ -181,35 +180,35 @@ namespace MetaCompilation.Analyzers.UnitTests
         /// <param name="diagnostic">The diagnostic that was found in the code</param>
         /// <param name="actual">The Location of the Diagnostic found in the code</param>
         /// <param name="expected">The DiagnosticResultLocation that should have been found</param>
-        private static void VerifyDiagnosticLocation(DiagnosticAnalyzer analyzer, Diagnostic diagnostic, Location actual, FileLinePositionSpan expected)
+        private static void VerifyDiagnosticLocation(DiagnosticAnalyzer analyzer, Diagnostic diagnostic, Location actual, DiagnosticLocation expected)
         {
             FileLinePositionSpan actualSpan = actual.GetLineSpan();
 
-            Assert.True(actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
+            Assert.True(actualSpan.Path == expected.Span.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Span.Path.Contains("Test.")),
                 string.Format("Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                    expected.Path, actualSpan.Path, FormatDiagnostics(analyzer, diagnostic)));
+                    expected.Span.Path, actualSpan.Path, FormatDiagnostics(analyzer, diagnostic)));
 
             Microsoft.CodeAnalysis.Text.LinePosition actualLinePosition = actualSpan.StartLinePosition;
 
             // Only check line position if there is an actual line in the real diagnostic
-            if (expected.StartLinePosition.Line > 0)
+            if (expected.Span.StartLinePosition.Line > 0)
             {
-                if (actualLinePosition.Line + 1 != expected.StartLinePosition.Line)
+                if (actualLinePosition.Line + 1 != expected.Span.StartLinePosition.Line)
                 {
                     Assert.True(false,
                         string.Format("Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.StartLinePosition.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzer, diagnostic)));
+                            expected.Span.StartLinePosition.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzer, diagnostic)));
                 }
             }
 
             // Only check column position if there is an actual column position in the real diagnostic
             if (actualLinePosition.Character > 0)
             {
-                if (actualLinePosition.Character + 1 != expected.StartLinePosition.Character)
+                if (actualLinePosition.Character + 1 != expected.Span.StartLinePosition.Character)
                 {
                     Assert.True(false,
                         string.Format("Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.StartLinePosition.Character, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
+                            expected.Span.StartLinePosition.Character, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
                 }
             }
         }

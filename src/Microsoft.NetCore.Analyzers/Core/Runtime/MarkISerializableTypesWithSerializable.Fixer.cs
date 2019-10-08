@@ -1,9 +1,8 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -32,18 +31,18 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            string title = SystemRuntimeAnalyzersResources.AddSerializableAttributeCodeActionTitle;
+            string title = MicrosoftNetCoreAnalyzersResources.AddSerializableAttributeCodeActionTitle;
             context.RegisterCodeFix(new MyCodeAction(title,
                                         async ct => await AddSerializableAttribute(context.Document, node, ct).ConfigureAwait(false),
                                         equivalenceKey: title),
-                                    diagnostic);
+                                    context.Diagnostics);
         }
 
         private static async Task<Document> AddSerializableAttribute(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(WellKnownTypes.SerializableAttribute(editor.SemanticModel.Compilation)));
+            SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(
+                editor.SemanticModel.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute)));
             editor.AddAttribute(node, attr);
             return editor.GetChangedDocument();
         }

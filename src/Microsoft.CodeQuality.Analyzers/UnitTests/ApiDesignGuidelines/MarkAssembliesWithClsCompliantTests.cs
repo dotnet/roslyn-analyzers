@@ -6,6 +6,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithAttributesDiagnosticAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpMarkAssembliesWithClsCompliantFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.MarkAssembliesWithAttributesDiagnosticAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicMarkAssembliesWithClsCompliantFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -187,6 +193,30 @@ class Program
 }
 ",
             s_diagnosticCA1016, s_diagnosticCA1014);
+        }
+
+        [Fact, WorkItem(2143, "https://github.com/dotnet/roslyn-analyzers/issues/2143")]
+        public void CA1014CSharpTestWithRazorCompiledItemAttribute()
+        {
+            VerifyCSharp(
+@"using System;
+
+[assembly:Microsoft.AspNetCore.Razor.Hosting.RazorCompiledItemAttribute((Type)null, null, null)]
+
+namespace Microsoft.AspNetCore.Razor.Hosting
+{
+    public class RazorCompiledItemAttribute : Attribute
+    {
+        public RazorCompiledItemAttribute(Type type, string kind, string identifier)
+        {
+        }
+    }
+}
+
+public class C
+{
+}
+");
         }
 
         private static readonly DiagnosticResult s_diagnosticCA1014 = new DiagnosticResult(MarkAssembliesWithAttributesDiagnosticAnalyzer.CA1014Rule);

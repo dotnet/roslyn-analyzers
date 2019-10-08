@@ -1,36 +1,22 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotDirectlyAwaitATaskAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotDirectlyAwaitATaskFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotDirectlyAwaitATaskAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DoNotDirectlyAwaitATaskFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class DoNotDirectlyAwaitATaskFixerTests : CodeFixTestBase
+    public class DoNotDirectlyAwaitATaskFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotDirectlyAwaitATaskAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotDirectlyAwaitATaskAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new DoNotDirectlyAwaitATaskFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new DoNotDirectlyAwaitATaskFixer();
-        }
-
         [Fact]
-        public void CSharpSimpleAwaitTask()
+        public async Task CSharpSimpleAwaitTask()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -40,7 +26,7 @@ public class C
     public async Task M()
     {
         Task t = null;
-        await t;
+        await [|t|];
     }
 }
 ";
@@ -56,11 +42,11 @@ public class C
     }
 }
 ";
-            VerifyCSharpFix(code, fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact, WorkItem(1962, "https://github.com/dotnet/roslyn-analyzers/issues/1962")]
-        public void CSharpSimpleAwaitTask_ConfigureAwaitTrue()
+        public async Task CSharpSimpleAwaitTask_ConfigureAwaitTrue()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -70,7 +56,7 @@ public class C
     public async Task M()
     {
         Task t = null;
-        await t;
+        await [|t|];
     }
 }
 ";
@@ -86,11 +72,18 @@ public class C
     }
 }
 ";
-            VerifyCSharpFix(code, fixedCode, codeFixIndex: 1);
+
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { fixedCode } },
+                CodeFixIndex = 1,
+                CodeFixEquivalenceKey = "Append .ConfigureAwait(true)",
+            }.RunAsync();
         }
 
         [Fact]
-        public void BasicSimpleAwaitTask()
+        public async Task BasicSimpleAwaitTask()
         {
             var code = @"
 Imports System.Threading.Tasks
@@ -98,7 +91,7 @@ Imports System.Threading.Tasks
 Public Class C
     Public Async Function M() As Task
         Dim t As Task
-        Await t
+        Await [|t|]
     End Function
 End Class
 ";
@@ -113,11 +106,11 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasicFix(code, fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact, WorkItem(1962, "https://github.com/dotnet/roslyn-analyzers/issues/1962")]
-        public void BasicSimpleAwaitTask_ConfigureAwaitTrue()
+        public async Task BasicSimpleAwaitTask_ConfigureAwaitTrue()
         {
             var code = @"
 Imports System.Threading.Tasks
@@ -125,7 +118,7 @@ Imports System.Threading.Tasks
 Public Class C
     Public Async Function M() As Task
         Dim t As Task
-        Await t
+        Await [|t|]
     End Function
 End Class
 ";
@@ -140,11 +133,18 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasicFix(code, fixedCode, codeFixIndex: 1);
+
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { fixedCode } },
+                CodeFixIndex = 1,
+                CodeFixEquivalenceKey = "Append .ConfigureAwait(true)",
+            }.RunAsync();
         }
 
         [Fact]
-        public void CSharpSimpleAwaitTaskWithTrivia()
+        public async Task CSharpSimpleAwaitTaskWithTrivia()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -154,7 +154,7 @@ public class C
     public async Task M()
     {
         Task t = null;
-        await /*leading */ t /*trailing*/; //Shouldn't matter
+        await /*leading */ [|t|] /*trailing*/; //Shouldn't matter
     }
 }
 ";
@@ -170,11 +170,11 @@ public class C
     }
 }
 ";
-            VerifyCSharpFix(code, fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
-        public void BasicSimpleAwaitTaskWithTrivia()
+        public async Task BasicSimpleAwaitTaskWithTrivia()
         {
             var code = @"
 Imports System.Threading.Tasks
@@ -182,7 +182,7 @@ Imports System.Threading.Tasks
 Public Class C
     Public Async Function M() As Task
         Dim t As Task
-        Await      t ' trailing
+        Await      [|t|] ' trailing
     End Function
 End Class
 ";
@@ -197,11 +197,11 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasicFix(code, fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
-        public void CSharpAwaitAwaitTask()
+        public async Task CSharpAwaitAwaitTask()
         {
             var code = @"
 using System.Threading.Tasks;
@@ -211,9 +211,9 @@ public class C
     public async Task M()
     {
         Task<Task> t = null;
-        await await t; // both have warnings.
-        await await t.ConfigureAwait(false); // outer await is wrong.
-        await (await t).ConfigureAwait(false); // inner await is wrong.
+        await [|await [|t|]|]; // both have warnings.
+        await [|await t.ConfigureAwait(false)|]; // outer await is wrong.
+        await (await [|t|]).ConfigureAwait(false); // inner await is wrong.
     }
 }
 ";
@@ -232,12 +232,41 @@ public class C
     }
 }
 ";
-            // Skip FixAll as the resultant document is different, but difference is not critical due to broken code scenario.
-            VerifyCSharpFix(code, fixedCode, testFixAllScope: null);
+
+            var fixAllCode = @"
+using System.Threading.Tasks;
+
+public class C
+{
+    public async Task M()
+    {
+        Task<Task> t = null;
+        await (await t.ConfigureAwait(false)).ConfigureAwait(false).ConfigureAwait(false); // both have warnings.
+        await (await t.ConfigureAwait(false)).ConfigureAwait(false); // outer await is wrong.
+        await (await t.ConfigureAwait(false)).ConfigureAwait(false); // inner await is wrong.
+    }
+}
+";
+
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { fixedCode } },
+                BatchFixedState =
+                {
+                    Sources = { fixAllCode },
+                    ExpectedDiagnostics =
+                    {
+                        // 🐛 the Fix All should not be producing this invalid code
+                        DiagnosticResult.CompilerError("CS1061").WithSpan(9, 69, 9, 83).WithMessage("'ConfiguredTaskAwaitable' does not contain a definition for 'ConfigureAwait' and no accessible extension method 'ConfigureAwait' accepting a first argument of type 'ConfiguredTaskAwaitable' could be found (are you missing a using directive or an assembly reference?)"),
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void BasicAwaitAwaitTask()
+        public async Task BasicAwaitAwaitTask()
         {
             var code = @"
 Imports System.Threading.Tasks
@@ -245,9 +274,9 @@ Imports System.Threading.Tasks
 Public Class C
     Public Async Function M() As Task
         Dim t As Task(Of Task)
-        Await Await t ' both have warnings.
-        Await Await t.ConfigureAwait(False) ' outer await is wrong.
-        Await (Await t).ConfigureAwait(False) ' inner await is wrong.
+        Await [|Await [|t|]|] ' both have warnings.
+        Await [|Await t.ConfigureAwait(False)|] ' outer await is wrong.
+        Await (Await [|t|]).ConfigureAwait(False) ' inner await is wrong.
     End Function
 End Class
 ";
@@ -263,12 +292,38 @@ Public Class C
     End Function
 End Class
 ";
-            // Skip FixAll as the resultant document is different, but difference is not critical due to broken code scenario.
-            VerifyBasicFix(code, fixedCode, testFixAllScope: null);
+            var fixAllCode = @"
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Async Function M() As Task
+        Dim t As Task(Of Task)
+        Await (Await t.ConfigureAwait(False)).ConfigureAwait(False).ConfigureAwait(False) ' both have warnings.
+        Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' outer await is wrong.
+        Await (Await t.ConfigureAwait(False)).ConfigureAwait(False) ' inner await is wrong.
+    End Function
+End Class
+";
+
+            await new VerifyVB.Test
+            {
+                TestState = { Sources = { code } },
+                FixedState = { Sources = { fixedCode } },
+                BatchFixedState =
+                {
+                    Sources = { fixAllCode },
+                    ExpectedDiagnostics =
+                    {
+                        // 🐛 the Fix All should not be producing this invalid code
+                        DiagnosticResult.CompilerError("BC30456").WithSpan(7, 15, 7, 83).WithMessage("'ConfigureAwait' is not a member of 'ConfiguredTaskAwaitable'."),
+                    },
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync();
         }
 
         [Fact]
-        public void CSharpComplexAwaitTask()
+        public async Task CSharpComplexAwaitTask()
         {
             var code = @"
 using System;
@@ -278,9 +333,9 @@ public class C
 {
     public async Task M()
     {
-        int x = 10 + await GetTask();
-        Func<Task<int>> a = async () => await GetTask();
-        Console.WriteLine(await GetTask());
+        int x = 10 + await [|GetTask()|];
+        Func<Task<int>> a = async () => await [|GetTask()|];
+        Console.WriteLine(await [|GetTask()|]);
     }
 
     public Task<int> GetTask() { throw new NotImplementedException(); }
@@ -302,11 +357,11 @@ public class C
     public Task<int> GetTask() { throw new NotImplementedException(); }
 }
 ";
-            VerifyCSharpFix(code, fixedCode);
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
         }
 
         [Fact]
-        public void BasicComplexeAwaitTask()
+        public async Task BasicComplexeAwaitTask()
         {
             var code = @"
 Imports System
@@ -314,9 +369,9 @@ Imports System.Threading.Tasks
 
 Public Class C
     Public Async Function M() As Task
-        Dim x As Integer = 10 + Await GetTask()
-        Dim a As Func(Of Task(Of Integer)) = Async Function() Await GetTask()
-        Console.WriteLine(Await GetTask())
+        Dim x As Integer = 10 + Await [|GetTask()|]
+        Dim a As Func(Of Task(Of Integer)) = Async Function() Await [|GetTask()|]
+        Console.WriteLine(Await [|GetTask()|])
     End Function
     Public Function GetTask() As Task(Of Integer)
         Throw New NotImplementedException()
@@ -338,7 +393,7 @@ Public Class C
     End Function
 End Class
 ";
-            VerifyBasicFix(code, fixedCode);
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             SyntaxGenerator generator = context.Document.Project?.LanguageServices?.GetService<SyntaxGenerator>();
             if (semanticModel != null && generator != null)
             {
-                string title = MicrosoftApiDesignGuidelinesAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
+                string title = MicrosoftCodeQualityAnalyzersResources.OperatorOverloadsHaveNamedAlternatesTitle;
                 context.RegisterCodeFix(new MyCodeAction(title, ct => Fix(context, root, generator, semanticModel, ct), equivalenceKey: title), context.Diagnostics.First());
             }
         }
@@ -79,7 +79,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                             var nullCheck = generator.IfStatement(
                                 generator.InvocationExpression(
                                     generator.IdentifierName("ReferenceEquals"),
-                                    generator.IdentifierName(expectedSignature.Parameters.First().Item1),
+                                    generator.IdentifierName(expectedSignature.Parameters.First().name),
                                     generator.NullLiteralExpression()),
                                 new[]
                                 {
@@ -91,7 +91,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         addedMember = generator.MethodDeclaration(
                             name: expectedSignature.Name,
-                            parameters: expectedSignature.Parameters.Select(p => generator.ParameterDeclaration(p.Item1, generator.TypeExpression(p.Item2))),
+                            parameters: expectedSignature.Parameters.Select(p => generator.ParameterDeclaration(p.name, generator.TypeExpression(p.typeSymbol))),
                             returnType: generator.TypeExpression(expectedSignature.ReturnType),
                             accessibility: Accessibility.Public,
                             modifiers: expectedSignature.IsStatic ? DeclarationModifiers.Static : DeclarationModifiers.None,
@@ -128,19 +128,19 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 case "op_LessThanOrEqual":
                     // e.g., public int CompareTo(MyClass other)
                     INamedTypeSymbol intType = compilation.GetSpecialType(SpecialType.System_Int32);
-                    return new ExpectedMethodSignature(expectedName, intType, ImmutableArray.Create(Tuple.Create("other", containingType)), isStatic: false);
+                    return new ExpectedMethodSignature(expectedName, intType, ImmutableArray.Create(("other", containingType)), isStatic: false);
                 case "op_Decrement":
                 case "op_Increment":
                 case "op_UnaryNegation":
                 case "op_UnaryPlus":
                     // e.g., public static MyClass Decrement(MyClass item)
-                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create(Tuple.Create("item", containingType)), isStatic: true);
+                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create(("item", containingType)), isStatic: true);
                 case "op_Implicit":
                     // e.g., public int ToInt32()
-                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create<Tuple<string, ITypeSymbol>>(), isStatic: false);
+                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create<(string name, ITypeSymbol typeSymbol)>(), isStatic: false);
                 default:
                     // e.g., public static MyClass Add(MyClass left, MyClass right)
-                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create(Tuple.Create("left", containingType), Tuple.Create("right", containingType)), isStatic: true);
+                    return new ExpectedMethodSignature(expectedName, returnType, ImmutableArray.Create(("left", containingType), ("right", containingType)), isStatic: true);
             }
         }
 
@@ -148,10 +148,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             public string Name { get; }
             public ITypeSymbol ReturnType { get; }
-            public IEnumerable<Tuple<string, ITypeSymbol>> Parameters { get; }
+            public IEnumerable<(string name, ITypeSymbol typeSymbol)> Parameters { get; }
             public bool IsStatic { get; }
 
-            public ExpectedMethodSignature(string name, ITypeSymbol returnType, IEnumerable<Tuple<string, ITypeSymbol>> parameters, bool isStatic)
+            public ExpectedMethodSignature(string name, ITypeSymbol returnType, IEnumerable<(string name, ITypeSymbol typeSymbol)> parameters, bool isStatic)
             {
                 Name = name;
                 ReturnType = returnType;

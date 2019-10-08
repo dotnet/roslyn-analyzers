@@ -480,6 +480,22 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 ", GetCA2234BasicResultAt(6, 13, "A.Method()", "A.Method(Uri, Integer, String)", "A.Method(String, Integer, String)"));
         }
 
+        [Fact, WorkItem(2688, "https://github.com/dotnet/roslyn-analyzers/issues/2688")]
+        public void CA2234NoWarningInvocationInUriOverload()
+        {
+            VerifyCSharp(@"
+    using System;
+
+    public class A : IComparable
+    {
+        public static void Method(string uri) { }
+        public static void Method(Uri uri) { Method(uri.ToString()); }
+
+        public int CompareTo(object obj) { throw new NotImplementedException(); }
+    }
+");
+        }
+
         private static DiagnosticResult GetCA2234CSharpResultAt(int line, int column, params string[] args)
         {
             return GetCSharpResultAt(line, column, PassSystemUriObjectsInsteadOfStringsAnalyzer.Rule, args);

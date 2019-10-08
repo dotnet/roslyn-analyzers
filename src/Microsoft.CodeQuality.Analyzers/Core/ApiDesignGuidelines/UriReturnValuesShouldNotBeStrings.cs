@@ -16,10 +16,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
     {
         internal const string RuleId = "CA1055";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UriReturnValuesShouldNotBeStringsTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UriReturnValuesShouldNotBeStringsTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UriReturnValuesShouldNotBeStringsMessage), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.UriReturnValuesShouldNotBeStringsDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UriReturnValuesShouldNotBeStringsMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.UriReturnValuesShouldNotBeStringsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -43,8 +43,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(c =>
             {
-                var @string = WellKnownTypes.String(c.Compilation);
-                var uri = WellKnownTypes.Uri(c.Compilation);
+                var @string = c.Compilation.GetSpecialType(SpecialType.System_String);
+                var uri = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
                 if (@string == null || uri == null)
                 {
                     // we don't have required types
@@ -71,11 +71,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 var method = (IMethodSymbol)context.Symbol;
 
-                // check basic stuff that FxCop checks. 
+                // check basic stuff that FxCop checks.
                 if (method.IsOverride || method.IsFromMscorlib(context.Compilation))
                 {
                     // Methods defined within mscorlib are excluded from this rule,
-                    // since mscorlib cannot depend on System.Uri, which is defined 
+                    // since mscorlib cannot depend on System.Uri, which is defined
                     // in System.dll
                     return;
                 }
@@ -94,7 +94,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                 if (method.Parameters.ContainsParameterOfType(_uri))
                 {
-                    // If you take a Uri, and return a string, then it's ok 
+                    // If you take a Uri, and return a string, then it's ok
                     return;
                 }
 

@@ -1,45 +1,29 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+#if !BUILDING_VSIX // Analyzer not supported in the Microsoft CodeAnalysis (FxCop analyzers) VSIX
+
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.TypesThatOwnDisposableFieldsShouldBeDisposableFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.TypesThatOwnDisposableFieldsShouldBeDisposableFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class TypesThatOwnDisposableFieldsShouldBeDisposableFixerTests : CodeFixTestBase
+    public class TypesThatOwnDisposableFieldsShouldBeDisposableFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new TypesThatOwnDisposableFieldsShouldBeDisposableFixer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpTypesThatOwnDisposableFieldsShouldBeDisposableAnalyzer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TypesThatOwnDisposableFieldsShouldBeDisposableFixer();
-        }
-
         [Fact]
-        public void CA1001CSharpCodeFixNoDispose()
+        public async Task CA1001CSharpCodeFixNoDispose()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.IO;
 
 // This class violates the rule.
-public class NoDisposeClass
+public class [|NoDisposeClass|]
 {
     FileStream newFile;
 
@@ -72,14 +56,14 @@ public class NoDisposeClass : IDisposable
         }
 
         [Fact]
-        public void CA1001BasicCodeFixNoDispose()
+        public async Task CA1001BasicCodeFixNoDispose()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.IO
 
 ' This class violates the rule. 
-Public Class NoDisposeMethod
+Public Class [|NoDisposeMethod|]
 
     Dim newFile As FileStream
 
@@ -111,14 +95,14 @@ End Class
         }
 
         [Fact]
-        public void CA1001CSharpCodeFixHasDispose()
+        public async Task CA1001CSharpCodeFixHasDispose()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.IO;
 
 // This class violates the rule.
-public class NoDisposeClass
+public class [|NoDisposeClass|]
 {
     FileStream newFile = new FileStream("""", FileMode.Append);
 
@@ -144,14 +128,14 @@ public class NoDisposeClass : IDisposable
         }
 
         [Fact]
-        public void CA1001CSharpCodeFixHasWrongDispose()
+        public async Task CA1001CSharpCodeFixHasWrongDispose()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 using System.IO;
 
 // This class violates the rule.
-public partial class NoDisposeClass
+public partial class [|NoDisposeClass|]
 {
     FileStream newFile = new FileStream("""", FileMode.Append);
 
@@ -182,14 +166,14 @@ public partial class NoDisposeClass : IDisposable
         }
 
         [Fact]
-        public void CA1001BasicCodeFixHasDispose()
+        public async Task CA1001BasicCodeFixHasDispose()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.IO
 
 ' This class violates the rule. 
-Public Class NoDisposeMethod
+Public Class [|NoDisposeMethod|]
 
     Dim newFile As FileStream = New FileStream("""", FileMode.Append)
 
@@ -215,14 +199,14 @@ End Class
         }
 
         [Fact]
-        public void CA1001BasicCodeFixHasWrongDispose()
+        public async Task CA1001BasicCodeFixHasWrongDispose()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 Imports System.IO
 
 ' This class violates the rule. 
-Public Class NoDisposeMethod
+Public Class [|NoDisposeMethod|]
 
     Dim newFile As FileStream = New FileStream("""", FileMode.Append)
 
@@ -251,3 +235,5 @@ End Class
         }
     }
 }
+
+#endif

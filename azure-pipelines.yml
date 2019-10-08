@@ -1,0 +1,44 @@
+# Branches that trigger a build on commit
+trigger:
+- master
+- 2.9.x
+
+# Branch(es) that trigger(s) build(s) on PR
+pr:
+- master
+- 2.9.x
+
+jobs:
+- job: Windows
+  strategy:
+    maxParallel: 4
+    matrix:
+      Debug:
+        _configuration: Debug
+      Release:
+        _configuration: Release
+  pool:
+    name: NetCorePublic-Pool
+    queue: buildpool.windows.10.amd64.vs2017.open
+  timeoutInMinutes: 20
+
+  steps:
+    - checkout: self
+      clean: true
+    - script: eng\common\cibuild.cmd -configuration $(_configuration) -prepareMachine
+      displayName: Build and Test
+
+    - task: PublishTestResults@1
+      inputs:
+        testRunner: XUnit
+        testResultsFiles: '$(Build.SourcesDirectory)\artifacts\TestResults\$(_configuration)\*.xml'
+        mergeTestResults: true
+        testRunTitle: 'Windows $(_configuration)'
+      condition: always()
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Logs
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\artifacts\log\$(_configuration)'
+        ArtifactName: 'Windows $(_configuration)'
+      continueOnError: true
+      condition: not(succeeded())

@@ -1,26 +1,28 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.NetCore.CSharp.Analyzers.Runtime;
-using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.TestForEmptyStringsUsingStringLengthAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpTestForEmptyStringsUsingStringLengthFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Runtime.TestForEmptyStringsUsingStringLengthAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicTestForEmptyStringsUsingStringLengthFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
-    public class TestForEmptyStringsUsingStringLengthFixerTests : CodeFixTestBase
+    public class TestForEmptyStringsUsingStringLengthFixerTests
     {
         const int c_StringLengthCodeActionIndex = 1;
         [Fact]
-        public void CA1820_FixTestEmptyStringsUsingIsNullOrEmpty()
+        public async Task CA1820_FixTestEmptyStringsUsingIsNullOrEmpty()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(string s)
     {
-        return s == string.Empty;
+        return [|s == string.Empty|];
     }
 }
 ", @"
@@ -32,10 +34,10 @@ public class A
     }
 }
 ");
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(s As String) As Boolean
-        Return s = String.Empty
+        Return [|s = String.Empty|]
     End Function
 End Class
 ", @"
@@ -48,17 +50,30 @@ End Class
         }
 
         [Fact]
-        public void CA1820_FixTestEmptyStringsUsingStringLength()
+        public async Task CA1820_FixTestEmptyStringsUsingStringLength()
         {
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     public bool Compare(string s)
     {
-        return s == string.Empty;
+        return [|s == string.Empty|];
     }
 }
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     public bool Compare(string s)
@@ -66,32 +81,55 @@ public class A
         return s.Length == 0;
     }
 }
-", c_StringLengthCodeActionIndex);
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
 
-            VerifyBasicFix(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Public Function Compare(s As String) As Boolean
-        Return s = String.Empty
+        Return [|s = String.Empty|]
     End Function
 End Class
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Public Function Compare(s As String) As Boolean
         Return s.Length = 0
     End Function
 End Class
-", c_StringLengthCodeActionIndex);
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1820_FixTestEmptyStringsUsingIsNullOrEmptyComparisonOnRight()
+        public async Task CA1820_FixTestEmptyStringsUsingIsNullOrEmptyComparisonOnRight()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(string s)
     {
-        return string.Empty == s;
+        return [|string.Empty == s|];
     }
 }
 ", @"
@@ -104,10 +142,10 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(s As String) As Boolean
-        Return String.Empty = s
+        Return [|String.Empty = s|]
     End Function
 End Class
 ", @"
@@ -120,17 +158,30 @@ End Class
         }
 
         [Fact]
-        public void CA1820_FixTestEmptyStringsUsingStringLengthComparisonOnRight()
+        public async Task CA1820_FixTestEmptyStringsUsingStringLengthComparisonOnRight()
         {
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     public bool Compare(string s)
     {
-        return string.Empty == s;
+        return [|string.Empty == s|];
     }
 }
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     public bool Compare(string s)
@@ -138,32 +189,55 @@ public class A
         return 0 == s.Length;
     }
 }
-", c_StringLengthCodeActionIndex);
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
 
-            VerifyBasicFix(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Public Function Compare(s As String) As Boolean
-        Return String.Empty = s
+        Return [|String.Empty = s|]
     End Function
 End Class
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Public Function Compare(s As String) As Boolean
         Return 0 = s.Length
     End Function
 End Class
-", c_StringLengthCodeActionIndex);
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1820_FixInequalityTestEmptyStringsUsingIsNullOrEmpty()
+        public async Task CA1820_FixInequalityTestEmptyStringsUsingIsNullOrEmpty()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(string s)
     {
-        return s != string.Empty;
+        return [|s != string.Empty|];
     }
 }
 ", @"
@@ -175,10 +249,10 @@ public class A
     }
 }
 ");
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(s As String) As Boolean
-        Return s <> String.Empty
+        Return [|s <> String.Empty|]
     End Function
 End Class
 ", @"
@@ -191,17 +265,30 @@ End Class
         }
 
         [Fact]
-        public void CA1820_FixInequalityTestEmptyStringsUsingStringLength()
+        public async Task CA1820_FixInequalityTestEmptyStringsUsingStringLength()
         {
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     public bool Compare(string s)
     {
-        return s != string.Empty;
+        return [|s != string.Empty|];
     }
 }
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     public bool Compare(string s)
@@ -209,32 +296,55 @@ public class A
         return s.Length != 0;
     }
 }
-", c_StringLengthCodeActionIndex);
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
 
-            VerifyBasicFix(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Public Function Compare(s As String) As Boolean
-        Return s <> String.Empty
+        Return [|s <> String.Empty|]
     End Function
 End Class
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Public Function Compare(s As String) As Boolean
         Return s.Length <> 0
     End Function
 End Class
-", c_StringLengthCodeActionIndex);
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
         }
 
         [Fact]
-        public void CA1820_FixInequalityTestEmptyStringsUsingIsNullOrEmptyComparisonOnRight()
+        public async Task CA1820_FixInequalityTestEmptyStringsUsingIsNullOrEmptyComparisonOnRight()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     public bool Compare(string s)
     {
-        return string.Empty != s;
+        return [|string.Empty != s|];
     }
 }
 ", @"
@@ -246,10 +356,10 @@ public class A
     }
 }
 ");
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Public Function Compare(s As String) As Boolean
-        Return String.Empty <> s
+        Return [|String.Empty <> s|]
     End Function
 End Class
 ", @"
@@ -262,17 +372,30 @@ End Class
         }
 
         [Fact]
-        public void CA1820_FixInequalityTestEmptyStringsUsingStringLengthComparisonOnRight()
+        public async Task CA1820_FixInequalityTestEmptyStringsUsingStringLengthComparisonOnRight()
         {
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     public bool Compare(string s)
     {
-        return string.Empty != s;
+        return [|string.Empty != s|];
     }
 }
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     public bool Compare(string s)
@@ -280,34 +403,57 @@ public class A
         return 0 != s.Length;
     }
 }
-", c_StringLengthCodeActionIndex);
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
 
-            VerifyBasicFix(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Public Function Compare(s As String) As Boolean
-        Return String.Empty <> s
+        Return [|String.Empty <> s|]
     End Function
 End Class
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Public Function Compare(s As String) As Boolean
         Return 0 <> s.Length
     End Function
 End Class
-", c_StringLengthCodeActionIndex);
-
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
         }
+
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInFunctionArgument()
+        public async Task CA1820_FixForComparisonWithEmptyStringInFunctionArgument()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
 
     public void F()
     {
-        G(_s == string.Empty);
+        G([|_s == string.Empty|]);
     }
 
     public void G(bool comparison) {}
@@ -326,12 +472,12 @@ public class A
 }
 ");
 
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Private _s As String = String.Empty
 
     Public Sub F()
-        G(_s = String.Empty)
+        G([|_s = String.Empty|])
     End Sub
 
     Public Sub G(comparison As Boolean)
@@ -352,16 +498,16 @@ End Class
         }
 
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInTernaryOperator()
+        public async Task CA1820_FixForComparisonWithEmptyStringInTernaryOperator()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
 
     public int F()
     {
-        return _s == string.Empty ? 1 : 0;
+        return [|_s == string.Empty|] ? 1 : 0;
     }
 }
 ", @"
@@ -377,12 +523,12 @@ public class A
 ");
 
             // VB doesn't have the ternary operator, but we add this test for symmetry.
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Private _s As String = String.Empty
 
     Public Function F() As Integer
-        Return If(_s = String.Empty, 1, 0)
+        Return If([|_s = String.Empty|], 1, 0)
     End Function
 End Class
 ", @"
@@ -397,16 +543,16 @@ End Class
         }
 
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInThrowStatement()
+        public async Task CA1820_FixForComparisonWithEmptyStringInThrowStatement()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
 
     public void F()
     {
-        throw _s != string.Empty ? new System.Exception() : new System.ArgumentException();
+        throw [|_s != string.Empty|] ? new System.Exception() : new System.ArgumentException();
     }
 }
 ", @"
@@ -423,9 +569,9 @@ public class A
         }
 
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInCatchFilterClause()
+        public async Task CA1820_FixForComparisonWithEmptyStringInCatchFilterClause()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
@@ -433,7 +579,7 @@ public class A
     public void F()
     {
         try { }
-        catch (System.Exception ex) when (_s != string.Empty) { }
+        catch (System.Exception ex) when ([|_s != string.Empty|]) { }
     }
 }
 ", @"
@@ -451,9 +597,9 @@ public class A
         }
 
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInYieldReturnStatement()
+        public async Task CA1820_FixForComparisonWithEmptyStringInYieldReturnStatement()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System.Collections.Generic;
 
 public class A
@@ -462,7 +608,7 @@ public class A
 
     public IEnumerable<bool> F()
     {
-        yield return _s != string.Empty;
+        yield return [|_s != string.Empty|];
     }
 }
 ", @"
@@ -481,16 +627,16 @@ public class A
         }
 
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInSwitchStatement()
+        public async Task CA1820_FixForComparisonWithEmptyStringInSwitchStatement()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
 
     public void F()
     {
-        switch (_s != string.Empty)
+        switch ([|_s != string.Empty|])
         {
             default:
                 throw new System.NotImplementedException();
@@ -515,16 +661,16 @@ public class A
         }
 
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInForLoop()
+        public async Task CA1820_FixForComparisonWithEmptyStringInForLoop()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
 
     public void F()
     {
-        for (; _s != string.Empty; )
+        for (; [|_s != string.Empty|]; )
         {
             throw new System.Exception();
         }
@@ -547,16 +693,16 @@ public class A
         }
 
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInWhileLoop()
+        public async Task CA1820_FixForComparisonWithEmptyStringInWhileLoop()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
 
     public void F()
     {
-        while (_s != string.Empty)
+        while ([|_s != string.Empty|])
         {
         }
     }
@@ -577,9 +723,9 @@ public class A
         }
 
         [Fact]
-        public void CA1820_FixForComparisonWithEmptyStringInDoWhileLoop()
+        public async Task CA1820_FixForComparisonWithEmptyStringInDoWhileLoop()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
@@ -589,7 +735,7 @@ public class A
         do
         {
         }
-        while (_s != string.Empty);
+        while ([|_s != string.Empty|]);
     }
 }
 ", @"
@@ -609,15 +755,15 @@ public class A
         }
 
         [Fact]
-        public void CA1820_MultilineFixTestEmptyStringsUsingIsNullOrEmpty()
+        public async Task CA1820_MultilineFixTestEmptyStringsUsingIsNullOrEmpty()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 public class A
 {
     string _s = string.Empty;
     public bool Compare(string s)
     {
-        return s == string.Empty ||
+        return [|s == string.Empty|] ||
                s == _s;
     }
 }
@@ -632,11 +778,11 @@ public class A
     }
 }
 ");
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Public Class A
     Private _s As String = String.Empty
     Public Function Compare(s As String) As Boolean
-        Return s = String.Empty Or
+        Return [|s = String.Empty|] Or
                s = _s
     End Function
 End Class
@@ -652,19 +798,32 @@ End Class
         }
 
         [Fact]
-        public void CA1820_MultilineFixTestEmptyStringsUsingStringLength()
+        public async Task CA1820_MultilineFixTestEmptyStringsUsingStringLength()
         {
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     string _s = string.Empty;
     public bool Compare(string s)
     {
-        return s == string.Empty ||
+        return [|s == string.Empty|] ||
                s == _s;
     }
 }
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 public class A
 {
     string _s = string.Empty;
@@ -674,16 +833,35 @@ public class A
                s == _s;
     }
 }
-", c_StringLengthCodeActionIndex);
-            VerifyBasicFix(@"
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
+
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Private _s As String = String.Empty
     Public Function Compare(s As String) As Boolean
-        Return s = String.Empty Or
+        Return [|s = String.Empty|] Or
                s = _s
     End Function
 End Class
-", @"
+",
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class A
     Private _s As String = String.Empty
     Public Function Compare(s As String) As Boolean
@@ -691,26 +869,12 @@ Public Class A
                s = _s
     End Function
 End Class
-", c_StringLengthCodeActionIndex);
-        }
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new TestForEmptyStringsUsingStringLengthAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new TestForEmptyStringsUsingStringLengthAnalyzer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicTestForEmptyStringsUsingStringLengthFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpTestForEmptyStringsUsingStringLengthFixer();
+",
+                    },
+                },
+                CodeFixIndex = c_StringLengthCodeActionIndex,
+                CodeFixEquivalenceKey = "TestForEmptyStringCorrectlyUsingStringLength",
+            }.RunAsync();
         }
     }
 }

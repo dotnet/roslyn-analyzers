@@ -1,0 +1,30 @@
+﻿{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "Microsoft.CodeAnalysis.VersionCheckAnalyzer",
+        "version": "2.9.6",
+        "language": "en-US"
+      },
+      "rules": {
+        "CA9999": {
+          "id": "CA9999",
+          "shortDescription": "Analyzer version mismatch",
+          "fullDescription": "Analyzers in this package require a certain minimum version of Microsoft.CodeAnalysis to execute correctly. Refer to https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers#fxcopanalyzers-package-versions to install the correct analyzer version.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Reliability",
+            "isEnabledByDefault": true,
+            "typeName": "AnalyzerVersionCheckAnalyzer",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

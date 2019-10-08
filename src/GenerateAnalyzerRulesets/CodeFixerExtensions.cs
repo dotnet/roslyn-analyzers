@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -40,7 +39,7 @@ namespace GenerateAnalyzerRulesets
                             ExportCodeFixProviderAttribute attribute = typeInfo.GetCustomAttribute<ExportCodeFixProviderAttribute>();
                             if (attribute != null)
                             {
-                                builder = builder ?? ImmutableArray.CreateBuilder<CodeFixProvider>();
+                                builder ??= ImmutableArray.CreateBuilder<CodeFixProvider>();
                                 var fixer = (CodeFixProvider)Activator.CreateInstance(typeInfo.AsType());
                                 if (HasImplementation(fixer))
                                 {
@@ -73,7 +72,7 @@ namespace GenerateAnalyzerRulesets
             if (moveNextMethod != null)
             {
                 MethodBody body = moveNextMethod.GetMethodBody();
-                int? ilInstructionCount = body?.GetILAsByteArray()?.Count();
+                int? ilInstructionCount = body?.GetILAsByteArray()?.Length;
                 return ilInstructionCount != 177;
             }
 

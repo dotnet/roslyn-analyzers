@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.DisposeAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis;
+using System.Threading;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -20,16 +21,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA2213";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableFieldsShouldBeDisposedTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableFieldsShouldBeDisposedMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.DisposableFieldsShouldBeDisposedDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableFieldsShouldBeDisposedTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableFieldsShouldBeDisposedMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.DisposableFieldsShouldBeDisposedDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
                                                                              s_localizableMessage,
                                                                              DiagnosticCategory.Usage,
                                                                              DiagnosticHelpers.DefaultDiagnosticSeverity,
-                                                                             isEnabledByDefault: false, // https://github.com/dotnet/roslyn-analyzers/issues/2191 tracks enabling this rule by default.
+                                                                             isEnabledByDefault: DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
                                                                              description: s_localizableDescription,
                                                                              helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca2213-disposable-fields-should-be-disposed",
                                                                              customTags: FxCopWellKnownDiagnosticTags.PortedFxCopDataflowRule);
@@ -59,9 +60,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         updateValueFactory: (f, currentValue) => currentValue || disposed);
                 };
 
+                var hasErrors = false;
+                compilationContext.RegisterOperationAction(_ => hasErrors = true, OperationKind.Invalid);
+
                 // Disposable fields with initializer at declaration must be disposed.
                 compilationContext.RegisterOperationAction(operationContext =>
                 {
+                    if (!ShouldAnalyze(operationContext.ContainingSymbol.ContainingType))
+                    {
+                        return;
+                    }
+
                     var initializedFields = ((IFieldInitializerOperation)operationContext.Operation).InitializedFields;
                     foreach (var field in initializedFields)
                     {
@@ -77,61 +86,74 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 // Instance fields initialized in constructor/method body with a locally created disposable object must be disposed.
                 compilationContext.RegisterOperationBlockStartAction(operationBlockStartContext =>
                 {
-                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod))
+                    if (!(operationBlockStartContext.OwningSymbol is IMethodSymbol containingMethod) ||
+                        !ShouldAnalyze(containingMethod.ContainingType))
                     {
                         return;
                     }
 
                     if (disposeAnalysisHelper.HasAnyDisposableCreationDescendant(operationBlockStartContext.OperationBlocks, containingMethod))
                     {
-                        if (disposeAnalysisHelper.TryGetOrComputeResult(operationBlockStartContext.OperationBlocks,
-                            containingMethod, operationBlockStartContext.Options, Rule, trackInstanceFields: false,
-                            trackExceptionPaths: false, operationBlockStartContext.CancellationToken,
-                            out var disposeAnalysisResult, out var pointsToAnalysisResult))
+                        PointsToAnalysisResult lazyPointsToAnalysisResult = null;
+
+                        operationBlockStartContext.RegisterOperationAction(operationContext =>
                         {
-                            Debug.Assert(disposeAnalysisResult != null);
-                            Debug.Assert(pointsToAnalysisResult != null);
+                            var fieldReference = (IFieldReferenceOperation)operationContext.Operation;
+                            var field = fieldReference.Field;
 
-                            operationBlockStartContext.RegisterOperationAction(operationContext =>
+                            // Only track instance fields on the current instance.
+                            if (field.IsStatic || fieldReference.Instance?.Kind != OperationKind.InstanceReference)
                             {
-                                var fieldReference = (IFieldReferenceOperation)operationContext.Operation;
-                                var field = fieldReference.Field;
+                                return;
+                            }
 
-                                // Only track instance fields on the current instance.
-                                if (field.IsStatic || fieldReference.Instance?.Kind != OperationKind.InstanceReference)
-                                {
-                                    return;
-                                }
+                            // Check if this is a Disposable field that is not currently being tracked.
+                            if (fieldDisposeValueMap.ContainsKey(field) ||
+                                !disposeAnalysisHelper.GetDisposableFields(field.ContainingType).Contains(field))
+                            {
+                                return;
+                            }
 
-                                // Check if this is a Disposable field that is not currently being tracked.
-                                if (fieldDisposeValueMap.ContainsKey(field) ||
-                                    !disposeAnalysisHelper.GetDisposableFields(field.ContainingType).Contains(field))
+                            // We have a field reference for a disposable field.
+                            // Check if it is being assigned a locally created disposable object.
+                            if (fieldReference.Parent is ISimpleAssignmentOperation simpleAssignmentOperation &&
+                                simpleAssignmentOperation.Target == fieldReference)
+                            {
+                                if (lazyPointsToAnalysisResult == null)
                                 {
-                                    return;
-                                }
-
-                                // We have a field reference for a disposable field.
-                                // Check if it is being assigned a locally created disposable object.
-                                if (fieldReference.Parent is ISimpleAssignmentOperation simpleAssignmentOperation &&
-                                    simpleAssignmentOperation.Target == fieldReference)
-                                {
-                                    PointsToAbstractValue assignedPointsToValue = pointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
-                                    foreach (var location in assignedPointsToValue.Locations)
+                                    var cfg = operationBlockStartContext.OperationBlocks.GetControlFlowGraph();
+                                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(operationContext.Compilation);
+                                    var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(
+                                        operationBlockStartContext.Options, Rule, InterproceduralAnalysisKind.None, operationBlockStartContext.CancellationToken);
+                                    var pointsToAnalysisResult = PointsToAnalysis.TryGetOrComputeResult(cfg,
+                                        containingMethod, operationBlockStartContext.Options, wellKnownTypeProvider, interproceduralAnalysisConfig,
+                                        interproceduralAnalysisPredicateOpt: null,
+                                        pessimisticAnalysis: false, performCopyAnalysis: false);
+                                    if (pointsToAnalysisResult == null)
                                     {
-                                        if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
-                                        {
-                                            addOrUpdateFieldDisposedValue(field, disposed: false);
-                                            break;
-                                        }
+                                        hasErrors = true;
+                                        return;
+                                    }
+
+                                    Interlocked.CompareExchange(ref lazyPointsToAnalysisResult, pointsToAnalysisResult, null);
+                                }
+
+                                PointsToAbstractValue assignedPointsToValue = lazyPointsToAnalysisResult[simpleAssignmentOperation.Value.Kind, simpleAssignmentOperation.Value.Syntax];
+                                foreach (var location in assignedPointsToValue.Locations)
+                                {
+                                    if (disposeAnalysisHelper.IsDisposableCreationOrDisposeOwnershipTransfer(location, containingMethod))
+                                    {
+                                        addOrUpdateFieldDisposedValue(field, disposed: false);
+                                        break;
                                     }
                                 }
-                            },
-                            OperationKind.FieldReference);
-                        }
+                            }
+                        },
+                        OperationKind.FieldReference);
                     }
 
                     // Mark fields disposed in Dispose method(s).
-                    if (containingMethod.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task) != DisposeMethodKind.None)
+                    if (IsDisposeMethod(containingMethod))
                     {
                         var disposableFields = disposeAnalysisHelper.GetDisposableFields(containingMethod.ContainingType);
                         if (!disposableFields.IsEmpty)
@@ -179,11 +201,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                 compilationContext.RegisterCompilationEndAction(compilationEndContext =>
                 {
+                    if (hasErrors)
+                    {
+                        return;
+                    }
+
                     foreach (var kvp in fieldDisposeValueMap)
                     {
                         IFieldSymbol field = kvp.Key;
                         bool disposed = kvp.Value;
-                        if (!disposed)
+
+                        // Flag non-disposed fields only if the containing type has a Dispose method implementation.
+                        if (!disposed &&
+                            HasDisposeMethod(field.ContainingType))
                         {
                             // '{0}' contains field '{1}' that is of IDisposable type '{2}', but it is never disposed. Change the Dispose method on '{0}' to call Close or Dispose on this field.
                             var arg1 = field.ContainingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
@@ -194,6 +224,35 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                         }
                     }
                 });
+
+                return;
+
+                // Local functions
+                bool ShouldAnalyze(INamedTypeSymbol namedType)
+                {
+                    // We only want to analyze types which are disposable (implement System.IDisposable directly or indirectly)
+                    // and have at least one disposable field.
+                    return !hasErrors &&
+                        namedType.IsDisposable(disposeAnalysisHelper.IDisposable) &&
+                        !disposeAnalysisHelper.GetDisposableFields(namedType).IsEmpty &&
+                        !namedType.IsConfiguredToSkipAnalysis(compilationContext.Options, Rule, compilationContext.Compilation, compilationContext.CancellationToken);
+                }
+
+                bool IsDisposeMethod(IMethodSymbol method)
+                    => method.GetDisposeMethodKind(disposeAnalysisHelper.IDisposable, disposeAnalysisHelper.Task) != DisposeMethodKind.None;
+
+                bool HasDisposeMethod(INamedTypeSymbol namedType)
+                {
+                    foreach (var method in namedType.GetMembers().OfType<IMethodSymbol>())
+                    {
+                        if (IsDisposeMethod(method))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
             });
         }
     }

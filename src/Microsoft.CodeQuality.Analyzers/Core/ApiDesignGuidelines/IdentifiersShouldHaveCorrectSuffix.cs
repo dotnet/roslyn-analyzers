@@ -21,10 +21,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         internal const string RuleId = "CA1710";
         internal const string Uri = "https://docs.microsoft.com/visualstudio/code-quality/ca1710-identifiers-should-have-correct-suffix";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixTitle), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessageSpecialCollection = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixDescription), MicrosoftApiDesignGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftApiDesignGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageDefault = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageSpecialCollection = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor DefaultRule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -49,26 +49,25 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         // Tuple says <TypeInheritedOrImplemented, AppropriateSuffix, Bool value saying if the suffix can `Collection` or the `AppropriateSuffix`>s
         // The bool values are as mentioned in the Uri
-        private static readonly List<Tuple<string, string, bool>> s_baseTypesAndTheirSuffix = new List<Tuple<string, string, bool>>()
+        private static readonly List<(string typeName, string suffix, bool canSuffixBeCollection)> s_baseTypesAndTheirSuffix = new List<(string, string, bool)>()
                                                     {
-                                                        //Tuple.Create("TypeName", "Suffix", CanSuffixBeCollection)
-                                                        Tuple.Create("System.Attribute", "Attribute", false),
-                                                        Tuple.Create("System.EventArgs", "EventArgs", false),
-                                                        Tuple.Create("System.Exception", "Exception", false),
-                                                        Tuple.Create("System.Collections.ICollection", "Collection", false),
-                                                        Tuple.Create("System.Collections.IDictionary", "Dictionary", false),
-                                                        Tuple.Create("System.Collections.IEnumerable", "Collection", false),
-                                                        Tuple.Create("System.Collections.Queue", "Queue", true),
-                                                        Tuple.Create("System.Collections.Stack", "Stack", true),
-                                                        Tuple.Create("System.Collections.Generic.Queue`1", "Queue", true),
-                                                        Tuple.Create("System.Collections.Generic.Stack`1", "Stack", true),
-                                                        Tuple.Create("System.Collections.Generic.ICollection`1", "Collection", false),
-                                                        Tuple.Create("System.Collections.Generic.IDictionary`2", "Dictionary", false),
-                                                        Tuple.Create("System.Data.DataSet", "DataSet", false),
-                                                        Tuple.Create("System.Data.DataTable", "DataTable", true),
-                                                        Tuple.Create("System.IO.Stream", "Stream", false),
-                                                        Tuple.Create("System.Security.IPermission","Permission", false),
-                                                        Tuple.Create("System.Security.Policy.IMembershipCondition", "Condition", false)
+                                                        ("System.Attribute", "Attribute", false),
+                                                        ("System.EventArgs", "EventArgs", false),
+                                                        ("System.Exception", "Exception", false),
+                                                        ("System.Collections.ICollection", "Collection", false),
+                                                        ("System.Collections.IDictionary", "Dictionary", false),
+                                                        ("System.Collections.IEnumerable", "Collection", false),
+                                                        ("System.Collections.Queue", "Queue", true),
+                                                        ("System.Collections.Stack", "Stack", true),
+                                                        ("System.Collections.Generic.Queue`1", "Queue", true),
+                                                        ("System.Collections.Generic.Stack`1", "Stack", true),
+                                                        ("System.Collections.Generic.ICollection`1", "Collection", false),
+                                                        ("System.Collections.Generic.IDictionary`2", "Dictionary", false),
+                                                        ("System.Data.DataSet", "DataSet", false),
+                                                        ("System.Data.DataTable", "DataTable", true),
+                                                        ("System.IO.Stream", "Stream", false),
+                                                        ("System.Security.IPermission","Permission", false),
+                                                        ("System.Security.Policy.IMembershipCondition", "Condition", false)
                                                     };
 
         public override void Initialize(AnalysisContext analysisContext)
@@ -84,20 +83,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             var baseTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
             var interfaceTypeSuffixMapBuilder = ImmutableDictionary.CreateBuilder<INamedTypeSymbol, SuffixInfo>();
 
-            foreach (var tuple in s_baseTypesAndTheirSuffix)
+            foreach (var (typeName, suffix, canSuffixBeCollection) in s_baseTypesAndTheirSuffix)
             {
-                var wellKnownNamedType = context.Compilation.GetTypeByMetadataName(tuple.Item1);
+                var wellKnownNamedType = context.Compilation.GetTypeByMetadataName(typeName);
 
                 if (wellKnownNamedType != null && wellKnownNamedType.OriginalDefinition != null)
                 {
                     // If the type is interface
                     if (wellKnownNamedType.OriginalDefinition.TypeKind == TypeKind.Interface)
                     {
-                        interfaceTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
+                        interfaceTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(suffix, canSuffixBeCollection));
                     }
                     else
                     {
-                        baseTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(tuple.Item2, tuple.Item3));
+                        baseTypeSuffixMapBuilder.Add(wellKnownNamedType.OriginalDefinition, SuffixInfo.Create(suffix, canSuffixBeCollection));
                     }
                 }
             }
@@ -147,7 +146,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
                 , SymbolKind.NamedType);
 
-                var eventArgsType = WellKnownTypes.EventArgs(context.Compilation);
+                var eventArgsType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
                 if (eventArgsType != null)
                 {
                     context.RegisterSymbolAction((saContext) =>

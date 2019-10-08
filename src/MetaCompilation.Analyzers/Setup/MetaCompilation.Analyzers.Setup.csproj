@@ -12,7 +12,7 @@
   
   <ItemGroup>
     <Content Include="ProjectTemplates\AnalyzerTutorialTemplate.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>

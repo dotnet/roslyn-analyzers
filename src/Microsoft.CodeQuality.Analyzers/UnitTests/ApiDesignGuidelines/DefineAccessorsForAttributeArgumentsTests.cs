@@ -1,32 +1,29 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
 using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpDefineAccessorsForAttributeArgumentsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DefineAccessorsForAttributeArgumentsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicDefineAccessorsForAttributeArgumentsAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.DefineAccessorsForAttributeArgumentsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public partial class DefineAccessorsForAttributeArgumentsTests : CodeFixTestBase
+    public partial class DefineAccessorsForAttributeArgumentsTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicDefineAccessorsForAttributeArgumentsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpDefineAccessorsForAttributeArgumentsAnalyzer();
-        }
-
         #region No Diagnostic Tests
 
         [Fact]
-        public void CSharp_CA1019_NoDiagnostic_GeneralTest()
+        public async Task CSharp_CA1019_NoDiagnostic_GeneralTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -72,9 +69,9 @@ public sealed class PositionalArgWithSetterTestAttribute : Attribute
         }
 
         [Fact]
-        public void VisualBasic_CA1019_NoDiagnostic_GeneralTest()
+        public async Task VisualBasic_CA1019_NoDiagnostic_GeneralTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -123,9 +120,9 @@ End Class
         }
 
         [Fact]
-        public void CSharp_CA1019_NoDiagnostic_GetterVisibilityTest()
+        public async Task CSharp_CA1019_NoDiagnostic_GetterVisibilityTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -325,9 +322,9 @@ internal sealed class PublicGetterInternalAttribute : Attribute   //Good
         }
 
         [Fact]
-        public void VisualBasic_CA1019_NoDiagnostic_GetterVisibilityTest()
+        public async Task VisualBasic_CA1019_NoDiagnostic_GetterVisibilityTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -536,9 +533,9 @@ End Class
         }
 
         [Fact]
-        public void CSharp_CA1019_NoDiagnostic_SetterVisibilityTest()
+        public async Task CSharp_CA1019_NoDiagnostic_SetterVisibilityTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -612,9 +609,9 @@ public sealed class InternalSetterAttribute : Attribute
         }
 
         [Fact]
-        public void VisualBasic_CA1019_NoDiagnostic_SetterVisibilityTest()
+        public async Task VisualBasic_CA1019_NoDiagnostic_SetterVisibilityTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -698,9 +695,9 @@ End Class
         }
 
         [Fact]
-        public void CSharp_CA1019_NoDiagnostic_ConstructorVisibilityTest()
+        public async Task CSharp_CA1019_NoDiagnostic_ConstructorVisibilityTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -969,9 +966,9 @@ public class ProtectedInternalConstructorPublicGetterAttribute : Attribute
         }
 
         [Fact]
-        public void VisualBasic_CA1019_NoDiagnostic_ConstructorVisibilityTest()
+        public async Task VisualBasic_CA1019_NoDiagnostic_ConstructorVisibilityTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -1249,9 +1246,9 @@ End Class
         }
 
         [Fact]
-        public void CSharp_CA1019_NoDiagnostic_NestedVisibilityTest()
+        public async Task CSharp_CA1019_NoDiagnostic_NestedVisibilityTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class PublicContainerClass
@@ -1339,9 +1336,9 @@ internal class InternalContainerClass
         }
 
         [Fact]
-        public void VisualBasic_CA1019_NoDiagnostic_NestedVisibilityTest()
+        public async Task VisualBasic_CA1019_NoDiagnostic_NestedVisibilityTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class PublicContainerClass
@@ -1429,9 +1426,9 @@ End Class
         }
 
         [Fact]
-        public void CSharp_CA1019_NoDiagnostic_InheritanceTest()
+        public async Task CSharp_CA1019_NoDiagnostic_InheritanceTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -1545,9 +1542,9 @@ public sealed class GenericNestedCovariantParameterAttribute : Attribute
         }
 
         [Fact]
-        public void VisualBasic_CA1019_NoDiagnostic_InheritanceTest()
+        public async Task VisualBasic_CA1019_NoDiagnostic_InheritanceTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections.Generic
 
@@ -1667,9 +1664,9 @@ End Class
         #region Diagnostic Tests
 
         [Fact]
-        public void CSharp_CA1019_GeneralTest()
+        public async Task CSharp_CA1019_GeneralTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -1731,9 +1728,9 @@ public sealed class ArgWithSetterTestAttribute : Attribute
         }
 
         [Fact]
-        public void CSharp_CA1019_GeneralTestWithScope()
+        public async Task CSharp_CA1019_GeneralTestWithScope()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -1747,7 +1744,7 @@ public sealed class NoAccessorTestAttribute : Attribute
     }
 }
 
-[|[AttributeUsage(AttributeTargets.All)]
+[AttributeUsage(AttributeTargets.All)]
 public sealed class SetterOnlyTestAttribute : Attribute
 {
     private string m_name;
@@ -1761,7 +1758,7 @@ public sealed class SetterOnlyTestAttribute : Attribute
     {
         set { m_name = value; }
     }
-}|]
+}
 
 [AttributeUsage(AttributeTargets.All)]
 public sealed class ArgWithSetterTestAttribute : Attribute
@@ -1788,14 +1785,16 @@ public sealed class ArgWithSetterTestAttribute : Attribute
     }
 }
 ",
+            GetCA1019CSharpDefaultResultAt(9, 43, "name", "NoAccessorTestAttribute"),
             GetCA1019CSharpDefaultResultAt(20, 43, "name", "SetterOnlyTestAttribute"),
-            GetCA1019CSharpRemoveSetterResultAt(27, 9, "Name", "name"));
+            GetCA1019CSharpRemoveSetterResultAt(27, 9, "Name", "name"),
+            GetCA1019CSharpRemoveSetterResultAt(46, 9, "Name", "name"));
         }
 
         [Fact]
-        public void VisualBasic_CA1019_GeneralTest()
+        public async Task VisualBasic_CA1019_GeneralTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -1861,9 +1860,9 @@ End Class
         }
 
         [Fact]
-        public void VisualBasic_CA1019_GeneralTestWithScope()
+        public async Task VisualBasic_CA1019_GeneralTestWithScope()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -1876,7 +1875,7 @@ Public NotInheritable Class NoAccessorTestAttribute
 	End Sub
 End Class
 
-[|<AttributeUsage(AttributeTargets.All)> _
+<AttributeUsage(AttributeTargets.All)> _
 Public NotInheritable Class SetterOnlyTestAttribute
 	Inherits Attribute
 	Private m_name As String
@@ -1890,7 +1889,7 @@ Public NotInheritable Class SetterOnlyTestAttribute
 			m_name = value
 		End Set
 	End Property
-End Class|]
+End Class
 
 <AttributeUsage(AttributeTargets.All)> _
 Public NotInheritable Class ArgWithSetterTestAttribute
@@ -1922,14 +1921,16 @@ Public NotInheritable Class ArgWithSetterTestAttribute
 	End Property
 End Class
 ",
+            GetCA1019BasicDefaultResultAt(9, 17, "name", "NoAccessorTestAttribute"),
             GetCA1019BasicDefaultResultAt(19, 17, "name", "SetterOnlyTestAttribute"),
-            GetCA1019BasicRemoveSetterResultAt(24, 3, "Name", "name"));
+            GetCA1019BasicRemoveSetterResultAt(24, 3, "Name", "name"),
+            GetCA1019BasicRemoveSetterResultAt(45, 3, "Name", "name"));
         }
 
         [Fact]
-        public void CSharp_CA1019_IncreaseVisibility_GetterVisibilityTest()
+        public async Task CSharp_CA1019_IncreaseVisibility_GetterVisibilityTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 [AttributeUsage(AttributeTargets.All)]
@@ -2052,9 +2053,9 @@ public sealed class PrivateGetterAttribute : Attribute   //Bad
         }
 
         [Fact]
-        public void VisualBasic_CA1019_IncreaseVisibility_GetterVisibilityTest()
+        public async Task VisualBasic_CA1019_IncreaseVisibility_GetterVisibilityTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _
@@ -2184,20 +2185,21 @@ Public NotInheritable Class PublicPropertyPrivateAccessorTestAttribute
 		End Get
 	End Property
 End Class
-", TestValidationMode.AllowCompileErrors,
+",
             GetCA1019BasicIncreaseVisibilityResultAt(14, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(30, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(54, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(76, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(93, 3, "Name", "name"),
             GetCA1019BasicIncreaseVisibilityResultAt(110, 3, "Name", "name"),
+            DiagnosticResult.CompilerError("BC31105").WithLocation(126, 3).WithMessage("'ReadOnly' properties cannot have an access modifier on 'Get'."),
             GetCA1019BasicIncreaseVisibilityResultAt(126, 11, "Name", "name"));
         }
 
         [Fact]
-        public void CSharp_CA1019_IncreaseVisibility_NestedVisibilityTest()
+        public async Task CSharp_CA1019_IncreaseVisibility_NestedVisibilityTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public partial class PublicContainerClass
@@ -2300,9 +2302,9 @@ public partial class PublicContainerClass
         }
 
         [Fact]
-        public void VisualBasic_CA1019_IncreaseVisibility_NestedVisibilityTest()
+        public async Task VisualBasic_CA1019_IncreaseVisibility_NestedVisibilityTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Partial Class PublicContainerClass
@@ -2408,9 +2410,9 @@ End Class
         }
 
         [Fact]
-        public void CSharp_CA1019_RemoveSetter_InheritanceTest()
+        public async Task CSharp_CA1019_RemoveSetter_InheritanceTest()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections.Generic;
 
@@ -2581,9 +2583,9 @@ public sealed class GenericContravariantParameterAttribute : Attribute
         }
 
         [Fact]
-        public void VisualBasic_CA1019_RemoveSetter_InheritanceTest()
+        public async Task VisualBasic_CA1019_RemoveSetter_InheritanceTest()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections.Generic
 
@@ -2758,43 +2760,37 @@ End Class
         private static DiagnosticResult GetCA1019CSharpDefaultResultAt(int line, int column, string paramName, string attributeTypeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageDefault, paramName, attributeTypeName);
-            return GetCSharpResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
+            return VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.DefaultRule).WithLocation(line, column).WithArguments(paramName, attributeTypeName);
         }
 
         private static DiagnosticResult GetCA1019BasicDefaultResultAt(int line, int column, string paramName, string attributeTypeName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageDefault, paramName, attributeTypeName);
-            return GetBasicResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
+            return VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.DefaultRule).WithLocation(line, column).WithArguments(paramName, attributeTypeName);
         }
 
         private static DiagnosticResult GetCA1019CSharpIncreaseVisibilityResultAt(int line, int column, string propertyName, string paramName)
         {
             // If '{0}' is the property accessor for positional argument '{1}', make it public.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility, propertyName, paramName);
-            return GetCSharpResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
+            return VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.IncreaseVisibilityRule).WithLocation(line, column).WithArguments(propertyName, paramName);
         }
 
         private static DiagnosticResult GetCA1019BasicIncreaseVisibilityResultAt(int line, int column, string propertyName, string paramName)
         {
             // If '{0}' is the property accessor for positional argument '{1}', make it public.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageIncreaseVisibility, propertyName, paramName);
-            return GetBasicResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
+            return VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.IncreaseVisibilityRule).WithLocation(line, column).WithArguments(propertyName, paramName);
         }
 
         private static DiagnosticResult GetCA1019CSharpRemoveSetterResultAt(int line, int column, string propertyName, string paramName)
         {
             // Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageRemoveSetter, propertyName, paramName);
-            return GetCSharpResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
+            return VerifyCS.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterRule).WithLocation(line, column).WithArguments(propertyName, paramName);
         }
 
         private static DiagnosticResult GetCA1019BasicRemoveSetterResultAt(int line, int column, string propertyName, string paramName)
         {
             // Remove the property setter from '{0}' or reduce its accessibility because it corresponds to positional argument '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.DefineAccessorsForAttributeArgumentsMessageRemoveSetter, propertyName, paramName);
-            return GetBasicResultAt(line, column, DefineAccessorsForAttributeArgumentsAnalyzer.RuleId, message);
+            return VerifyVB.Diagnostic(DefineAccessorsForAttributeArgumentsAnalyzer.RemoveSetterRule).WithLocation(line, column).WithArguments(propertyName, paramName);
         }
     }
 }

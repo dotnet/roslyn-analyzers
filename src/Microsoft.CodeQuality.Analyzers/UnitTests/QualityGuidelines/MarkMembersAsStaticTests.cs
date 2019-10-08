@@ -1,29 +1,25 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Test.Utilities.MinimalImplementations;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.QualityGuidelines.CSharpMarkMembersAsStaticFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.MarkMembersAsStaticAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.QualityGuidelines.BasicMarkMembersAsStaticFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
-    public class MarkMembersAsStaticTests : DiagnosticAnalyzerTestBase
+    public class MarkMembersAsStaticTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new MarkMembersAsStaticAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new MarkMembersAsStaticAnalyzer();
-        }
-
         [Fact]
-        public void CSharpSimpleMembers()
+        public async Task CSharpSimpleMembers()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class MembersTests
 {
     internal static int s_field;
@@ -75,9 +71,9 @@ public class MembersTests
         }
 
         [Fact]
-        public void BasicSimpleMembers()
+        public async Task BasicSimpleMembers()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class MembersTests
@@ -141,9 +137,9 @@ End Class
         }
 
         [Fact]
-        public void CSharpSimpleMembers_Internal_DiagnosticsOnlyForInvokedMethods()
+        public async Task CSharpSimpleMembers_Internal_DiagnosticsOnlyForInvokedMethods()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 internal class MembersTests
 {
     internal static int s_field;
@@ -214,9 +210,9 @@ internal class MembersTests
         }
 
         [Fact]
-        public void BasicSimpleMembers_Internal_DiagnosticsOnlyForInvokedMethods()
+        public async Task BasicSimpleMembers_Internal_DiagnosticsOnlyForInvokedMethods()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Friend Class MembersTests
@@ -299,9 +295,9 @@ End Class
         }
 
         [Fact]
-        public void CSharpSimpleMembers_NoDiagnostic()
+        public async Task CSharpSimpleMembers_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class MembersTests
 {
     public MembersTests() { }
@@ -351,9 +347,9 @@ public class Generic<T>
         }
 
         [Fact]
-        public void BasicSimpleMembers_NoDiagnostic()
+        public async Task BasicSimpleMembers_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class MembersTests
     Public Sub New()
     End Sub
@@ -411,9 +407,9 @@ End Class
         }
 
         [Fact]
-        public void CSharpOverrides_NoDiagnostic()
+        public async Task CSharpOverrides_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public abstract class SpecialCasesTest1
 {
     public abstract void AbstractMethod();
@@ -435,9 +431,9 @@ public class SpecialCasesTest2 : SpecialCasesTest1, ISpecialCasesTest
         }
 
         [Fact]
-        public void BasicOverrides_NoDiagnostic()
+        public async Task BasicOverrides_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public MustInherit Class SpecialCasesTest1
     Public MustOverride Sub AbstractMethod()
 End Class
@@ -463,9 +459,9 @@ End Class
         }
 
         [Fact]
-        public void CSharpNoDiagnostic_NonTestAttributes()
+        public async Task CSharpNoDiagnostic_NonTestAttributes()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Runtime.InteropServices;
 
@@ -492,9 +488,9 @@ public class ComVisibleClass
         }
 
         [Fact]
-        public void BasicNoDiagnostic_NonTestAttributes()
+        public async Task BasicNoDiagnostic_NonTestAttributes()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Runtime.InteropServices
 
@@ -529,6 +525,7 @@ End Class
         [InlineData("Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanup", MSTestAttributes.CSharp, MSTestAttributes.VisualBasic)]
         [InlineData("Xunit.Fact", XunitApis.CSharp, XunitApis.VisualBasic)]
         [InlineData("Xunit.Theory", XunitApis.CSharp, XunitApis.VisualBasic)]
+        [InlineData("CustomxUnit.WpfFact", XunitApis.CSharp, XunitApis.VisualBasic)]
         [InlineData("NUnit.Framework.OneTimeSetUp", NUnitApis.CSharp, NUnitApis.VisualBasic)]
         [InlineData("NUnit.Framework.OneTimeTearDown", NUnitApis.CSharp, NUnitApis.VisualBasic)]
         [InlineData("NUnit.Framework.SetUp", NUnitApis.CSharp, NUnitApis.VisualBasic)]
@@ -537,11 +534,15 @@ End Class
         [InlineData("NUnit.Framework.TestCase(\"asdf\")", NUnitApis.CSharp, NUnitApis.VisualBasic)]
         [InlineData("NUnit.Framework.TestCaseSource(\"asdf\")", NUnitApis.CSharp, NUnitApis.VisualBasic)]
         [InlineData("NUnit.Framework.Theory", NUnitApis.CSharp, NUnitApis.VisualBasic)]
-        public void NoDiagnostic_TestAttributes(string testAttributeData, string csharpTestApiDefinitions, string vbTestApiDefinitions)
+        public async Task NoDiagnostic_TestAttributes(string testAttributeData, string csharpTestApiDefinitions, string vbTestApiDefinitions)
         {
-            VerifyCSharp(new string[]
+            await new VerifyCS.Test
             {
-                $@"
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 using System;
 
 public class Test
@@ -549,9 +550,19 @@ public class Test
     [{testAttributeData}]
     public void Method1() {{}}
 }}
-", csharpTestApiDefinitions });
+",
+                        csharpTestApiDefinitions
+                    },
+                },
+            }.RunAsync();
 
-            VerifyBasic(new[] { $@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Imports System
 
 Public Class Test
@@ -559,13 +570,17 @@ Public Class Test
     Public Sub Method1()
     End Sub
 End Class
-", vbTestApiDefinitions });
+",
+                        vbTestApiDefinitions
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact, WorkItem(1865, "https://github.com/dotnet/roslyn-analyzers/issues/1865")]
-        public void CSharp_InstanceReferenceInObjectInitializer_Diagnostic()
+        public async Task CSharp_InstanceReferenceInObjectInitializer_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
     public void M()
@@ -583,9 +598,9 @@ public class B
         }
 
         [Fact, WorkItem(1865, "https://github.com/dotnet/roslyn-analyzers/issues/1865")]
-        public void Basic_InstanceReferenceInObjectInitializer_Diagnostic()
+        public async Task Basic_InstanceReferenceInObjectInitializer_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class A
     Public Sub M()
         Dim x = New B With {.P = True}
@@ -601,9 +616,9 @@ End Class
         }
 
         [Fact, WorkItem(1933, "https://github.com/dotnet/roslyn-analyzers/issues/1933")]
-        public void CSharpPropertySingleAccessorAccessingInstance_NoDiagnostic()
+        public async Task CSharpPropertySingleAccessorAccessingInstance_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class MyClass
 {
     private static bool StaticThing;
@@ -631,9 +646,9 @@ public class MyClass
         }
 
         [Fact, WorkItem(1933, "https://github.com/dotnet/roslyn-analyzers/issues/1933")]
-        public void CSharpEventWithSingleAccessorAccessingInstance_NoDiagnostic()
+        public async Task CSharpEventWithSingleAccessorAccessingInstance_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class MyClass
@@ -669,14 +684,30 @@ public class MyClass
 }");
         }
 
+        [Fact, WorkItem(2414, "https://github.com/dotnet/roslyn-analyzers/issues/2414")]
+        public async Task CSharp_ErrorCase_MethodWithThrowNotInCatch()
+        {
+            await VerifyCS.VerifyAnalyzerAsync(@"
+using System.IO;
+
+class C
+{
+    private void Validate()
+    {
+        throw;
+    }
+}",
+            DiagnosticResult.CompilerError("CS0156").WithLocation(8, 9).WithMessage("A throw statement with no arguments is not allowed outside of a catch clause"));
+        }
+
         private DiagnosticResult GetCSharpResultAt(int line, int column, string symbolName)
         {
-            return GetCSharpResultAt(line, column, MarkMembersAsStaticAnalyzer.Rule, symbolName);
+            return VerifyCS.Diagnostic().WithLocation(line, column).WithArguments(symbolName);
         }
 
         private DiagnosticResult GetBasicResultAt(int line, int column, string symbolName)
         {
-            return GetBasicResultAt(line, column, MarkMembersAsStaticAnalyzer.Rule, symbolName);
+            return VerifyVB.Diagnostic().WithLocation(line, column).WithArguments(symbolName);
         }
     }
 }

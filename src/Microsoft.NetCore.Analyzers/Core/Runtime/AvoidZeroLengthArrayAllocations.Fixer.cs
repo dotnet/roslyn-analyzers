@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 return;
             }
 
-            string title = SystemRuntimeAnalyzersResources.UseArrayEmpty;
+            string title = MicrosoftNetCoreAnalyzersResources.UseArrayEmpty;
             context.RegisterCodeFix(new MyCodeAction(title,
                                                      async ct => await ConvertToArrayEmpty(context.Document, nodeToFix, ct).ConfigureAwait(false),
                                                      equivalenceKey: title),
@@ -74,8 +74,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static SyntaxNode GenerateArrayEmptyInvocation(SyntaxGenerator generator, ITypeSymbol elementType, SemanticModel semanticModel)
         {
             INamedTypeSymbol arrayTypeSymbol = semanticModel.Compilation.GetTypeByMetadataName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayTypeName);
-            SyntaxNode arrayEmptyName = generator.QualifiedName(
-                generator.TypeExpression(arrayTypeSymbol),
+            SyntaxNode arrayEmptyName = generator.MemberAccessExpression(
+                generator.TypeExpressionForStaticMemberAccess(arrayTypeSymbol),
                 generator.GenericName(AvoidZeroLengthArrayAllocationsAnalyzer.ArrayEmptyMethodName, elementType));
             return generator.InvocationExpression(arrayEmptyName);
         }

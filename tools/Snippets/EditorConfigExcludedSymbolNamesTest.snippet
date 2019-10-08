@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>EditorConfig ExcludedSymbolNames unit test</Title>
+            <Description>A unit test template for a Microsoft.CodeAnalysis.FxCopAnalyzers analyzer for excluding symbol names with EditorConfig.</Description>
+            <Shortcut>edcfgtest</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+        [Theory]
+        [InlineData("")]
+        [InlineData("dotnet_code_quality.excluded_symbol_names = $SymbolName$")]
+        [InlineData(@"dotnet_code_quality.$RuleId$.excluded_symbol_names = $SymbolName$")]
+        [InlineData("dotnet_code_quality.dataflow.excluded_symbol_names = $SymbolName$")]
+        public void EditorConfigConfiguration_ExcludedSymbolNamesOption(string editorConfigText)
+        {
+            var expected = Array.Empty<DiagnosticResult>();
+            if (editorConfigText.Length == 0)
+            {
+                expected = new DiagnosticResult[]
+                {
+                    // *** Insert your expected results for one of your simple unit tests here.
+                };
+            }
+
+            // *** Replace this VerifyCSharp()'s first parameter with one of your simple unit tests.
+            VerifyCSharp(
+                @"",
+                GetEditorConfigAdditionalFile(editorConfigText), 
+                expected);
+        }]]>
+            </Code>
+            <Imports>
+                <Import>
+                    <Namespace>System</Namespace>
+                </Import>
+            </Imports>
+            <Declarations>
+                <Literal>
+                    <ID>RuleId</ID>
+                    <ToolTip>RuleId being tested</ToolTip>
+                    <Default>CA</Default>
+                </Literal>
+                <Literal>
+                    <ID>SymbolName</ID>
+                    <ToolTip>Symbol to be excluded within the unit test's test code.</ToolTip>
+                    <Default>TestMethod</Default>
+                </Literal>
+            </Declarations>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>

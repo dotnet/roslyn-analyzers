@@ -1,27 +1,22 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverrideMethodsOnComparableTypesAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverrideMethodsOnComparableTypesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverrideMethodsOnComparableTypesAnalyzer,
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverrideMethodsOnComparableTypesFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
     public partial class OverrideMethodsOnComparableTypesTests
     {
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new OverrideMethodsOnComparableTypesFixer();
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new OverrideMethodsOnComparableTypesFixer();
-        }
-
         [Fact]
-        public void CA1036ClassGenerateAllCSharp()
+        public async Task CA1036ClassGenerateAllCSharp()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public class A : IComparable
@@ -31,7 +26,9 @@ public class A : IComparable
         return 1;
     }
 }
-", @"
+",
+                VerifyCS.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth).WithSpan(4, 14, 4, 15).WithArguments("A", "==, !=, <, <=, >, >="),
+@"
 using System;
 
 public class A : IComparable
@@ -100,9 +97,9 @@ public class A : IComparable
         }
 
         [Fact]
-        public void CA1036StructGenerateAllCSharp()
+        public async Task CA1036StructGenerateAllCSharp()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public struct A : IComparable
@@ -112,7 +109,9 @@ public struct A : IComparable
         return 1;
     }
 }
-", @"
+",
+                VerifyCS.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth).WithSpan(4, 15, 4, 16).WithArguments("A", "==, !=, <, <=, >, >="),
+@"
 using System;
 
 public struct A : IComparable
@@ -166,9 +165,9 @@ public struct A : IComparable
         }
 
         [Fact]
-        public void CA1036ClassGenerateSomeCSharp()
+        public async Task CA1036ClassGenerateSomeCSharp()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public class A : IComparable
@@ -183,12 +182,14 @@ public class A : IComparable
         return 1;
     }
 
-    public static bool operator !=(A objLeft, A objRight)   // error CS0216: The operator requires a matching operator '==' to also be defined
+    public static bool operator {|CS0216:!=|}(A objLeft, A objRight)   // error CS0216: The operator requires a matching operator '==' to also be defined
     {
         return true;
     }
 }
-", @"
+",
+                VerifyCS.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth).WithSpan(4, 14, 4, 15).WithArguments("A", "==, <, <=, >, >="),
+@"
 using System;
 
 public class A : IComparable
@@ -253,14 +254,13 @@ public class A : IComparable
         return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
     }
 }
-",
-            validationMode: TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact]
-        public void CA1036StructGenerateSomeCSharp()
+        public async Task CA1036StructGenerateSomeCSharp()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 
 public struct A : IComparable
@@ -275,12 +275,14 @@ public struct A : IComparable
         return 1;
     }
 
-    public static bool operator !=(A objLeft, A objRight)   // error CS0216: The operator requires a matching operator '==' to also be defined
+    public static bool operator {|CS0216:!=|}(A objLeft, A objRight)   // error CS0216: The operator requires a matching operator '==' to also be defined
     {
         return true;
     }
 }
-", @"
+",
+                VerifyCS.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth).WithSpan(4, 15, 4, 16).WithArguments("A", "==, <, <=, >, >="),
+@"
 using System;
 
 public struct A : IComparable
@@ -330,14 +332,13 @@ public struct A : IComparable
         return left.CompareTo(right) >= 0;
     }
 }
-",
-            validationMode: TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact]
-        public void CA1036ClassGenerateAllVisualBasic()
+        public async Task CA1036ClassGenerateAllVisualBasic()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 Public Class A : Implements IComparable
@@ -347,7 +348,9 @@ Public Class A : Implements IComparable
     End Function
 
 End Class
-", @"
+",
+                VerifyVB.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth).WithSpan(4, 14, 4, 15).WithArguments("A", "=, <>, <, <=, >, >="),
+@"
 Imports System
 
 Public Class A : Implements IComparable
@@ -404,9 +407,9 @@ End Class
         }
 
         [Fact]
-        public void CA1036StructGenerateAllVisualBasic()
+        public async Task CA1036StructGenerateAllVisualBasic()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 Public Structure A : Implements IComparable
@@ -416,7 +419,9 @@ Public Structure A : Implements IComparable
     End Function
 
 End Structure
-", @"
+",
+                VerifyVB.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth).WithSpan(4, 18, 4, 19).WithArguments("A", "=, <>, <, <=, >, >="),
+@"
 Imports System
 
 Public Structure A : Implements IComparable
@@ -461,9 +466,9 @@ End Structure
         }
 
         [Fact]
-        public void CA1036ClassGenerateSomeVisualBasic()
+        public async Task CA1036ClassGenerateSomeVisualBasic()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 Public Class A : Implements IComparable
@@ -472,7 +477,7 @@ Public Class A : Implements IComparable
         Return 1234
     End Function
 
-    Public Shared Operator <(objLeft As A, objRight As A) As Boolean   ' error BC33033: Matching '>' operator is required
+    Public Shared Operator {|BC33033:<|}(objLeft As A, objRight As A) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
 
@@ -481,7 +486,9 @@ Public Class A : Implements IComparable
     End Function
 
 End Class
-", @"
+",
+                VerifyVB.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth).WithSpan(4, 14, 4, 15).WithArguments("A", "=, <>, <=, >, >="),
+@"
 Imports System
 
 Public Class A : Implements IComparable
@@ -534,14 +541,13 @@ Public Class A : Implements IComparable
         Return If(ReferenceEquals(left, Nothing), ReferenceEquals(right, Nothing), left.CompareTo(right) >= 0)
     End Operator
 End Class
-",
-            validationMode: TestValidationMode.AllowCompileErrors);
+");
         }
 
         [Fact]
-        public void CA1036StructGenerateSomeVisualBasic()
+        public async Task CA1036StructGenerateSomeVisualBasic()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 Public Structure A : Implements IComparable
@@ -550,7 +556,7 @@ Public Structure A : Implements IComparable
         Return 1234
     End Function
 
-    Public Shared Operator <(objLeft As A, objRight As A) As Boolean   ' error BC33033: Matching '>' operator is required
+    Public Shared Operator {|BC33033:<|}(objLeft As A, objRight As A) As Boolean   ' error BC33033: Matching '>' operator is required
         Return True
     End Operator
 
@@ -559,7 +565,9 @@ Public Structure A : Implements IComparable
     End Function
 
 End Structure
-", @"
+",
+                VerifyVB.Diagnostic(OverrideMethodsOnComparableTypesAnalyzer.RuleBoth).WithSpan(4, 18, 4, 19).WithArguments("A", "=, <>, <=, >, >="),
+@"
 Imports System
 
 Public Structure A : Implements IComparable
@@ -600,8 +608,7 @@ Public Structure A : Implements IComparable
         Return left.CompareTo(right) >= 0
     End Operator
 End Structure
-",
-            validationMode: TestValidationMode.AllowCompileErrors);
+");
         }
     }
 }

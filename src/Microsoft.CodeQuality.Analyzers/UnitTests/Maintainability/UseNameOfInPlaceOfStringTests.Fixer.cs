@@ -1,47 +1,28 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeQuality.CSharp.Analyzers.Maintainability;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability;
-using Test.Utilities;
+using System.Threading.Tasks;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.CSharp.Analyzers.Maintainability.CSharpUseNameofInPlaceOfStringAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.Maintainability.CSharpUseNameofInPlaceOfStringFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability.BasicUseNameofInPlaceOfStringAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.Maintainability.BasicUseNameofInPlaceOfStringFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.Maintainability.UnitTests
 {
-    public class UseNameOfInPlaceOfStringFixerTests : CodeFixTestBase
+    public class UseNameOfInPlaceOfStringFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicUseNameofInPlaceOfStringAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpUseNameofInPlaceOfStringAnalyzer();
-
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicUseNameofInPlaceOfStringFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpUseNameofInPlaceOfStringFixer();
-        }
-
         [Fact]
-        public void Fixer_CSharp_ArgumentMatchesAParameterInScope()
+        public async Task Fixer_CSharp_ArgumentMatchesAParameterInScope()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(""x"");
+        throw new ArgumentNullException([|""x""|]);
     }
 }",
 @"
@@ -56,15 +37,15 @@ class C
         }
 
         [Fact]
-        public void Fixer_CSharp_ArgumentWithComments()
+        public async Task Fixer_CSharp_ArgumentWithComments()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 class C
 {
     void M(int x)
     {
-        throw new ArgumentNullException(/*Leading*/""x""/*Trailing*/);
+        throw new ArgumentNullException(/*Leading*/[|""x""|]/*Trailing*/);
     }
 }",
 @"
@@ -79,15 +60,15 @@ class C
         }
 
         [Fact]
-        public void Fixer_CSharp_ArgumentWithComments2()
+        public async Task Fixer_CSharp_ArgumentWithComments2()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System;
 class C
 {
     void M(int x)
     {
-        throw new ArgumentException(""Somemessage"", /*Leading*/""x""/*Trailing*/);
+        throw new ArgumentException(""Somemessage"", /*Leading*/[|""x""|]/*Trailing*/);
     }
 }",
 @"
@@ -102,14 +83,14 @@ class C
         }
 
         [Fact]
-        public void Fixer_VB_ArgumentMatchesAParameterInScope()
+        public async Task Fixer_VB_ArgumentMatchesAParameterInScope()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
 Module Mod1
     Sub f(s As String)
-        Throw New ArgumentNullException(""s"")
+        Throw New ArgumentNullException([|""s""|])
     End Sub
 End Module",
 @"
@@ -123,9 +104,9 @@ End Module");
         }
 
         [Fact]
-        public void Fixer_CSharp_ArgumentMatchesPropertyInScope()
+        public async Task Fixer_CSharp_ArgumentMatchesPropertyInScope()
         {
-            VerifyCSharpFix(@"
+            await VerifyCS.VerifyCodeFixAsync(@"
 using System.ComponentModel;
 
 public class Person : INotifyPropertyChanged
@@ -138,7 +119,7 @@ public class Person : INotifyPropertyChanged
         set
         {
             name = value;
-            OnPropertyChanged(""PersonName"");
+            OnPropertyChanged([|""PersonName""|]);
         }
     }
 

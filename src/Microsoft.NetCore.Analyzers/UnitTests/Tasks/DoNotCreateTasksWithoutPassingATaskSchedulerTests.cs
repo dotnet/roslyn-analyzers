@@ -4,6 +4,12 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Tasks.DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Tasks.CSharpDoNotCreateTasksWithoutPassingATaskSchedulerFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Tasks.DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Tasks.BasicDoNotCreateTasksWithoutPassingATaskSchedulerFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
 {
@@ -243,12 +249,12 @@ End Class
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer.RuleId, SystemThreadingTasksAnalyzersResources.DoNotCreateTasksWithoutPassingATaskSchedulerMessage);
+            return GetCSharpResultAt(line, column, DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.DoNotCreateTasksWithoutPassingATaskSchedulerMessage);
         }
 
         private static DiagnosticResult GetBasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer.RuleId, SystemThreadingTasksAnalyzersResources.DoNotCreateTasksWithoutPassingATaskSchedulerMessage);
+            return GetBasicResultAt(line, column, DoNotCreateTasksWithoutPassingATaskSchedulerAnalyzer.RuleId, MicrosoftNetCoreAnalyzersResources.DoNotCreateTasksWithoutPassingATaskSchedulerMessage);
         }
     }
 }

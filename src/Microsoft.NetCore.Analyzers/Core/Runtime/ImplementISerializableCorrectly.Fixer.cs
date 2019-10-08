@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
 using Microsoft.CodeAnalysis.CodeFixes;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     /// </summary>
     public abstract class ImplementISerializableCorrectlyFixer : CodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(ImplementISerializableCorrectlyAnalyzer.RuleId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray<string>.Empty;
 
         public sealed override FixAllProvider GetFixAllProvider()
         {

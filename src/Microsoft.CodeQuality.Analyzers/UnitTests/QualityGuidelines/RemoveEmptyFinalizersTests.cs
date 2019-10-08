@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -173,10 +173,7 @@ public class Class1
             GetCA1821CSharpResultAt(11, 3));
         }
 
-        // Unskip the test once we move to Microsoft.CodeAnalysis version >= 2.7
-        // as we need the fix for https://github.com/dotnet/roslyn/issues/26520
-        // for the analyzer to report a diagnostic here.
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1788"), WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFail_ExpressionBody()
         {
             VerifyCSharp(@"
@@ -415,7 +412,7 @@ public class Class1
                 GetCA1821CSharpResultAt(4, 6));
         }
 
-        [Fact(Skip = "https://github.com/dotnet/roslyn-analyzers/issues/1788"), WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
+        [Fact, WorkItem(1788, "https://github.com/dotnet/roslyn-analyzers/issues/1788")]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithThrowExpression()
         {
             VerifyCSharp(@"
@@ -512,12 +509,12 @@ public class SomeTestClass : IDisposable
 
         private static DiagnosticResult GetCA1821CSharpResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
+            return GetCSharpResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
         }
 
         private static DiagnosticResult GetCA1821BasicResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftQualityGuidelinesAnalyzersResources.RemoveEmptyFinalizers);
+            return GetBasicResultAt(line, column, AbstractRemoveEmptyFinalizersAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.RemoveEmptyFinalizers);
         }
     }
 }

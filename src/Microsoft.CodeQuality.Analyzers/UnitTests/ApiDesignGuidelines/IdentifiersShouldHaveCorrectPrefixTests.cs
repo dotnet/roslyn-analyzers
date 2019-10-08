@@ -1,9 +1,15 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldHaveCorrectPrefixAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpIdentifiersShouldHaveCorrectPrefixFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldHaveCorrectPrefixAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicIdentifiersShouldHaveCorrectPrefixFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -594,8 +600,8 @@ End Class
 ", GetEditorConfigAdditionalFile(editorConfigText));
         }
 
-        internal static readonly string CA1715InterfaceMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageInterface;
-        internal static readonly string CA1715TypeParameterMessage = MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageTypeParameter;
+        internal static readonly string CA1715InterfaceMessage = MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageInterface;
+        internal static readonly string CA1715TypeParameterMessage = MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectPrefixMessageTypeParameter;
 
         private static DiagnosticResult GetCA1715CSharpResultAt(int line, int column, string message, string name)
         {

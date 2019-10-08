@@ -6,6 +6,12 @@ using Microsoft.NetCore.CSharp.Analyzers.Runtime;
 using Microsoft.NetCore.VisualBasic.Analyzers.Runtime;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpInitializeStaticFieldsInlineAnalyzer,
+    Microsoft.NetCore.CSharp.Analyzers.Runtime.CSharpInitializeStaticFieldsInlineFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicInitializeStaticFieldsInlineAnalyzer,
+    Microsoft.NetCore.VisualBasic.Analyzers.Runtime.BasicInitializeStaticFieldsInlineFixer>;
 
 namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 {
@@ -281,25 +287,25 @@ End Structure",
 
         private static DiagnosticResult GetCA1810CSharpDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetCSharpResultAt(line, column, CSharpInitializeStaticFieldsInlineAnalyzer.CA1810RuleId, message);
         }
 
         private static DiagnosticResult GetCA1810BasicDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetBasicResultAt(line, column, BasicInitializeStaticFieldsInlineAnalyzer.CA1810RuleId, message);
         }
 
         private static DiagnosticResult GetCA2207CSharpDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetCSharpResultAt(line, column, CSharpInitializeStaticFieldsInlineAnalyzer.CA2207RuleId, message);
         }
 
         private static DiagnosticResult GetCA2207BasicDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(SystemRuntimeAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetBasicResultAt(line, column, BasicInitializeStaticFieldsInlineAnalyzer.CA2207RuleId, message);
         }
 

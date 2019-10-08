@@ -1,47 +1,41 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Test.Utilities;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeAnalysis.Testing.EmptyDiagnosticAnalyzer, // Diagnostic is from the compiler
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpOverrideGetHashCodeOnOverridingEqualsFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicOverrideGetHashCodeOnOverridingEqualsAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicOverrideGetHashCodeOnOverridingEqualsFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class OverrideGetHashCodeOnOverridingEqualsFixerTests : CodeFixTestBase
+    public class OverrideGetHashCodeOnOverridingEqualsFixerTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new BasicOverrideGetHashCodeOnOverridingEqualsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            // Diagnostic is from the compiler.
-            return null;
-        }
-
-        protected override CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return new BasicOverrideGetHashCodeOnOverridingEqualsFixer();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpOverrideGetHashCodeOnOverridingEqualsFixer();
-        }
-
         [Fact]
-        public void CS0659()
+        public async Task CS0659()
         {
-            VerifyCSharpFix(@"
-class C
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
+class {|CS0659:C|}
 {
     public override bool Equals(object obj) => true;
 }
 ",
-                @"
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 class C
 {
     public override bool Equals(object obj) => true;
@@ -52,22 +46,44 @@ class C
     }
 }
 ",
-                codeFixIndex: null,
-                allowNewCompilerDiagnostics: true);
+                    },
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                        compilationOptions = compilationOptions.WithGeneralDiagnosticOption(ReportDiagnostic.Error);
+                        return solution.WithProjectCompilationOptions(projectId, compilationOptions);
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void CS0659_Simplified()
+        public async Task CS0659_Simplified()
         {
-            VerifyCSharpFix(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
-class C
+class {|CS0659:C|}
 {
     public override bool Equals(object obj) => true;
 }
 ",
-                @"
+                    },
+                },
+                FixedState =
+                {
+                    Sources =
+                    {
+                        @"
 using System;
 
 class C
@@ -80,15 +96,25 @@ class C
     }
 }
 ",
-                codeFixIndex: null,
-                allowNewCompilerDiagnostics: true);
+                    },
+                },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+                        compilationOptions = compilationOptions.WithGeneralDiagnosticOption(ReportDiagnostic.Error);
+                        return solution.WithProjectCompilationOptions(projectId, compilationOptions);
+                    },
+                },
+            }.RunAsync();
         }
 
         [Fact]
-        public void Basic_CA2218()
+        public async Task Basic_CA2218()
         {
-            VerifyBasicFix(@"
-Class C
+            await VerifyVB.VerifyCodeFixAsync(@"
+Class [|C|]
     Public Overrides Function Equals(o As Object) As Boolean
         Return True
     End Function
@@ -108,12 +134,12 @@ End Class
         }
 
         [Fact]
-        public void Basic_CA2218_Simplified()
+        public async Task Basic_CA2218_Simplified()
         {
-            VerifyBasicFix(@"
+            await VerifyVB.VerifyCodeFixAsync(@"
 Imports System
 
-Class C
+Class [|C|]
     Public Overrides Function Equals(o As Object) As Boolean
         Return True
     End Function

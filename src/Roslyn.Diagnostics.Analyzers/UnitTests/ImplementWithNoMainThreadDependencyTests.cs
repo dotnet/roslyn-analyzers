@@ -26,11 +26,13 @@ using Roslyn.Utilities;
 
 interface Interface {
     [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
     Task MethodAsync();
 }
 
 class Class : Interface {
     [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
     public Task MethodAsync() => throw null;
 }
 ";
@@ -137,7 +139,67 @@ class Class : Interface {
         }
 
         [Fact]
+        public async Task TestInterfaceMethod_WithoutReturnVerification()
+        {
+            var source = @"
+using System;
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface Interface {
+    [return: ThreadDependency(ContextDependency.None, Verified = false)]
+    Task MethodAsync();
+}
+
+class Class : Interface {
+    [return: ThreadDependency(ContextDependency.None, Verified = false)]
+    public Task MethodAsync() => throw null;
+}
+";
+
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source, TestResources.ThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
+                },
+            };
+
+            await test.RunAsync();
+        }
+
+        [Fact]
         public async Task TestInterfaceMethod_MustVerifyIfBaseVerified()
+        {
+            var source = @"
+using System;
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface Interface {
+    [ThreadDependency(ContextDependency.None)]
+    Task MethodAsync();
+}
+
+class Class : Interface {
+    [|[ThreadDependency(ContextDependency.None, Verified = false)]
+    public Task MethodAsync() => throw null;|]
+}
+";
+
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source, TestResources.ThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
+                },
+            };
+
+            await test.RunAsync();
+        }
+
+        [Fact]
+        public async Task TestInterfaceMethod_MustVerifyReturnIfBaseVerified()
         {
             var source = @"
 using System;

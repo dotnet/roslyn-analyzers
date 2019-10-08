@@ -266,6 +266,17 @@ namespace Roslyn.Diagnostics.Analyzers
                 return fieldDependencyInfo;
             }
 
+            if (operation is IPropertyReferenceOperation propertyReference)
+            {
+                var propertyDependencyInfo = GetThreadDependencyInfo(propertyReference.Property);
+                if (captureContextUnlessConfigured)
+                {
+                    propertyDependencyInfo = propertyDependencyInfo.WithCapturesContext(true);
+                }
+
+                return propertyDependencyInfo;
+            }
+
             if (operation is IAwaitOperation awaitOperation)
             {
                 var awaitDependencyInfo = GetThreadDependencyInfo(wellKnownTypeProvider, awaitOperation.Operation, captureContextUnlessConfigured: true);

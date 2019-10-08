@@ -769,6 +769,60 @@ End Class
         }
 
         [Fact]
+        public async Task CorrectUseOfPerInstancePropertyAsynchronousMethod_CSharp()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface IInterface {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None, PerInstance = true)]
+    Task MethodAsync();
+}
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    IInterface obj { get; }
+
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    async Task OperationAsync() {
+        await obj.MethodAsync().ConfigureAwait(false);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task CorrectUseOfPerInstancePropertyAsynchronousMethod_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Interface IInterface
+    <ThreadDependency(ContextDependency.None)>
+    Function MethodAsync() As <ThreadDependency(ContextDependency.None, PerInstance:=True)> Task
+End Interface
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    ReadOnly Property obj As IInterface
+
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task
+        Await obj.MethodAsync().ConfigureAwait(False)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
         public async Task IncorrectUseOfPerInstanceAsynchronousMethod_CSharp()
         {
             var code = @"

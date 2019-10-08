@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines;
@@ -96,7 +98,7 @@ using System.IO;
     {
         public void Create()
         {
-            var obj = new NoDisposeClass() { newFile = new FileStream(""data.txt"", FileMode.Append) }; 
+            var obj = new NoDisposeClass() { newFile = new FileStream(""data.txt"", FileMode.Append) };
         }
     }
 ");
@@ -153,7 +155,7 @@ public class NoDisposeClass
         newFile = new FileStream(""data.txt"", FileMode.Append);
     }
 }
-   
+
 [|public class Foo
 {
 }
@@ -213,6 +215,26 @@ namespace ClassLibrary1
 }
 ",
             GetCA1001CSharpResultAt(7, 18, "Class1", "_disp1"));
+        }
+
+        [Fact, WorkItem(1562, "https://github.com/dotnet/roslyn-analyzers/issues/1562")]
+        public void CA1001CSharpTestWithIAsyncDisposable()
+        {
+            VerifyCSharp(@"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace ClassLibrary1
+{
+    public class Class1 : IAsyncDisposable
+    {
+        private Stream _disposableMember;
+
+        public ValueTask DisposeAsync() => _disposableMember.DisposeAsync();
+    }
+}
+", parseOptions: new CSharpParseOptions(LanguageVersion.Preview));
         }
 
         [Fact]

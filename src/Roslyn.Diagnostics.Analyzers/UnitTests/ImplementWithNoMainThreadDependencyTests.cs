@@ -79,6 +79,36 @@ class Class : Interface {
         }
 
         [Fact]
+        public async Task TestOverriddenVirtualMethod_MissingImpl()
+        {
+            var source = @"
+using System;
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class BaseClass {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    protected virtual Task MethodAsync() => throw null;
+}
+
+class DerivedClass : BaseClass {
+    [|[|protected override Task MethodAsync() => throw null;|]|]
+}
+";
+
+            var test = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { source, TestResources.ThreadDependencyAttribute, TestResources.AsyncEntryAttribute },
+                },
+            };
+
+            await test.RunAsync();
+        }
+
+        [Fact]
         public async Task TestInterfaceMethod_CannotCaptureContext()
         {
             var source = @"

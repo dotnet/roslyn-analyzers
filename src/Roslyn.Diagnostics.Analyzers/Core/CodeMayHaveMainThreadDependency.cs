@@ -64,6 +64,12 @@ namespace Roslyn.Diagnostics.Analyzers
                 return;
             }
 
+            if (context.ContainingSymbol is IMethodSymbol method && method.IsAsync)
+            {
+                // TODO: Validate the returned value against the constraints of the type parameter of the return
+                return;
+            }
+
             var valueThreadDependencyInfo = GetThreadDependencyInfo(wellKnownTypeProvider, returnOperation.ReturnedValue, captureContextUnlessConfigured: false);
             if (valueThreadDependencyInfo.AlwaysCompleted)
             {

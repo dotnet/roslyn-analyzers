@@ -10,9 +10,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1032 - redefined: Implement standard exception constructors
-    /// Cause: A type extends System.Exception and does not declare all the required constructors. 
+    /// Cause: A type extends System.Exception and does not declare all the required constructors.
     /// Description: Exception types must implement the following constructors. Failure to provide the full set of constructors can make it difficult to correctly handle exceptions
-    /// For CSharp, example when type name is GoodException 
+    /// For CSharp, example when type name is GoodException
     ///     public GoodException()
     ///     public GoodException(string)
     ///     public GoodException(string, Exception)
@@ -62,13 +62,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeCompilationSymbol(CompilationStartAnalysisContext context)
         {
-            var exceptionType = context.Compilation.GetTypeByMetadataName("System.Exception");
+            var exceptionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemException);
             if (exceptionType == null)
             {
                 return;
             }
 
-            // Analyze named types 
+            // Analyze named types
             context.RegisterSymbolAction(symbolContext =>
             {
                 var namedTypeSymbol = (INamedTypeSymbol)symbolContext.Symbol;
@@ -104,7 +104,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                         if (defaultConstructorFound && secondConstructorFound && thirdConstructorFound)
                         {
-                            //reaches here only when all 3 constructors are found - no diagnostic needed 
+                            //reaches here only when all 3 constructors are found - no diagnostic needed
                             return;
                         }
                     } //end of for loop

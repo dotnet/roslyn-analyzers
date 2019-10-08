@@ -127,9 +127,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializerSettings, out INamedTypeSymbol jsonSerializerSettingsSymbol)
-                        || !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializer, out INamedTypeSymbol jsonSerializerSymbol)
-                        || !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonConvert, out INamedTypeSymbol jsonConvertSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializerSettings, out INamedTypeSymbol jsonSerializerSettingsSymbol)
+                        || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonSerializer, out INamedTypeSymbol jsonSerializerSymbol)
+                        || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.NewtonsoftJsonJsonConvert, out INamedTypeSymbol jsonConvertSymbol))
                     {
                         return;
                     }

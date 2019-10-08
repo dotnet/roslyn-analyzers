@@ -235,7 +235,7 @@ namespace ReleaseNotesUtil
                     analyzerFileReference
                         .GetFixers()
                         .SelectMany(fixer => fixer.FixableDiagnosticIds).ToHashSet();
-                Console.WriteLine($"{dllPath} has {analyzers.Count()} analyzers, {descriptors.Count()} diagnostics, and {fixableDiagnosticIds.Count} fixers");
+                Console.WriteLine($"{dllPath} has {analyzers.Length} analyzers, {descriptors.Count()} diagnostics, and {fixableDiagnosticIds.Count} fixers");
                 foreach (DiagnosticDescriptor descriptor in descriptors)
                 {
                     if (ruleInfos.Any(r => r.Id == descriptor.Id))

@@ -42,9 +42,9 @@ namespace Microsoft.NetCore.Analyzers.Tasks
             context.RegisterCompilationStartAction(compilationContext =>
             {
                 // Check if TPL is available before actually doing the searches
-                var taskType = compilationContext.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task");
-                var taskFactoryType = compilationContext.Compilation.GetTypeByMetadataName("System.Threading.Tasks.TaskFactory");
-                var taskSchedulerType = compilationContext.Compilation.GetTypeByMetadataName("System.Threading.Tasks.TaskScheduler");
+                var taskType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+                var taskFactoryType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskFactory);
+                var taskSchedulerType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTaskScheduler);
                 if (taskType == null || taskFactoryType == null || taskSchedulerType == null)
                 {
                     return;

@@ -19,7 +19,7 @@ namespace GenerateAnalyzerRulesets
     {
         public static int Main(string[] args)
         {
-            const int expectedArguments = 13;
+            const int expectedArguments = 15;
 
             if (args.Length != expectedArguments)
             {
@@ -28,23 +28,24 @@ namespace GenerateAnalyzerRulesets
             }
 
             string analyzerRulesetsDir = args[0];
-            string binDirectory = args[1];
-            string configuration = args[2];
-            string tfm = args[3];
-            var assemblyList = args[4].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-            string propsFileDir = args[5];
-            string propsFileName = args[6];
-            string analyzerDocumentationFileDir = args[7];
-            string analyzerDocumentationFileName = args[8];
-            string analyzerSarifFileDir = args[9];
-            string analyzerSarifFileName = args[10];
-            var analyzerVersion = args[11];
-            if (!bool.TryParse(args[12], out var containsPortedFxCopRules))
+            string analyzerEditorconfigsDir = args[1];
+            string binDirectory = args[2];
+            string configuration = args[3];
+            string tfm = args[4];
+            var assemblyList = args[5].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            string propsFileDir = args[6];
+            string propsFileName = args[7];
+            string analyzerDocumentationFileDir = args[8];
+            string analyzerDocumentationFileName = args[9];
+            string analyzerSarifFileDir = args[10];
+            string analyzerSarifFileName = args[11];
+            var analyzerVersion = args[12];
+            var analyzerPackageName = args[13];
+            if (!bool.TryParse(args[14], out var containsPortedFxCopRules))
             {
                 containsPortedFxCopRules = false;
             }
 
-            var allRulesByAssembly = new SortedList<string, SortedList<string, DiagnosticDescriptor>>();
             var allRulesById = new SortedList<string, DiagnosticDescriptor>();
             var fixableDiagnosticIds = new HashSet<string>();
             var categories = new HashSet<string>();
@@ -61,7 +62,6 @@ namespace GenerateAnalyzerRulesets
 
                 var analyzerFileReference = new AnalyzerFileReference(path, AnalyzerAssemblyLoader.Instance);
                 var analyzers = analyzerFileReference.GetAnalyzersForAllLanguages();
-                var rulesById = new SortedList<string, DiagnosticDescriptor>();
 
                 var assemblyRulesMetadata = (path, rules: new SortedList<string, (DiagnosticDescriptor rule, string typeName, string[] languages)>());
 
@@ -71,14 +71,12 @@ namespace GenerateAnalyzerRulesets
 
                     foreach (var rule in analyzer.SupportedDiagnostics)
                     {
-                        rulesById[rule.Id] = rule;
                         allRulesById[rule.Id] = rule;
                         categories.Add(rule.Category);
                         assemblyRulesMetadata.rules[rule.Id] = (rule, analyzerType.Name, analyzerType.GetCustomAttribute<DiagnosticAnalyzerAttribute>(true)?.Languages);
                     }
                 }
 
-                allRulesByAssembly.Add(assemblyName, rulesById);
                 rulesMetadata.Add(assemblyName, assemblyRulesMetadata);
 
                 foreach (var id in analyzerFileReference.GetFixers().SelectMany(fixer => fixer.FixableDiagnosticIds))
@@ -87,37 +85,37 @@ namespace GenerateAnalyzerRulesets
                 }
             }
 
-            createRuleset(
-                "AllRulesDefault.ruleset",
-                "All Rules with default action",
-                @"All Rules with default action. Rules with IsEnabledByDefault = false are disabled.",
+            createRulesetAndEditorconfig(
+                "AllRulesDefault",
+                "All Rules with default severity",
+                @"All Rules with default severity. Rules with IsEnabledByDefault = false are disabled.",
                 RulesetKind.AllDefault);
 
-            createRuleset(
-                "AllRulesEnabled.ruleset",
-                "All Rules Enabled with default action",
-                "All Rules are enabled with default action. Rules with IsEnabledByDefault = false are force enabled with default action.",
+            createRulesetAndEditorconfig(
+                "AllRulesEnabled",
+                "All Rules Enabled with default severity",
+                "All Rules are enabled with default severity. Rules with IsEnabledByDefault = false are force enabled with default severity.",
                 RulesetKind.AllEnabled);
 
-            createRuleset(
-                "AllRulesDisabled.ruleset",
+            createRulesetAndEditorconfig(
+                "AllRulesDisabled",
                 "All Rules Disabled",
                 @"All Rules are disabled.",
                 RulesetKind.AllDisabled);
 
             foreach (var category in categories)
             {
-                createRuleset(
-                    $"{category}RulesDefault.ruleset",
-                    $"{category} Rules with default action",
-                    $@"All {category} Rules with default action. Rules with IsEnabledByDefault = false or from a different category are disabled.",
+                createRulesetAndEditorconfig(
+                    $"{category}RulesDefault",
+                    $"{category} Rules with default severity",
+                    $@"All {category} Rules with default severity. Rules with IsEnabledByDefault = false or from a different category are disabled.",
                     RulesetKind.CategoryDefault,
                     categoryOpt: category);
 
-                createRuleset(
-                    $"{category}RulesEnabled.ruleset",
-                    $"{category} Rules Enabled with default action",
-                    $@"All {category} Rules are enabled with default action. {category} Rules with IsEnabledByDefault = false are force enabled with default action. Rules from a different category are disabled.",
+                createRulesetAndEditorconfig(
+                    $"{category}RulesEnabled",
+                    $"{category} Rules Enabled with default severity",
+                    $@"All {category} Rules are enabled with default severity. {category} Rules with IsEnabledByDefault = false are force enabled with default severity. Rules from a different category are disabled.",
                     RulesetKind.CategoryEnabled,
                     categoryOpt: category);
             }
@@ -129,17 +127,17 @@ namespace GenerateAnalyzerRulesets
 
             foreach (var customTag in customTagsToGenerateRulesets)
             {
-                createRuleset(
-                    $"{customTag}RulesDefault.ruleset",
-                    $"{customTag} Rules with default action",
-                    $@"All {customTag} Rules with default action. Rules with IsEnabledByDefault = false and non-{customTag} rules are disabled.",
+                createRulesetAndEditorconfig(
+                    $"{customTag}RulesDefault",
+                    $"{customTag} Rules with default severity",
+                    $@"All {customTag} Rules with default severity. Rules with IsEnabledByDefault = false and non-{customTag} rules are disabled.",
                     RulesetKind.CustomTagDefault,
                     customTagOpt: customTag);
 
-                createRuleset(
-                    $"{customTag}RulesEnabled.ruleset",
-                    $"{customTag} Rules Enabled with default action",
-                    $@"All {customTag} Rules are enabled with default action. {customTag} Rules with IsEnabledByDefault = false are force enabled with default action. Non-{customTag} Rules are disabled.",
+                createRulesetAndEditorconfig(
+                    $"{customTag}RulesEnabled",
+                    $"{customTag} Rules Enabled with default severity",
+                    $@"All {customTag} Rules are enabled with default severity. {customTag} Rules with IsEnabledByDefault = false are force enabled with default severity. Non-{customTag} Rules are disabled.",
                     RulesetKind.CustomTagEnabled,
                     customTagOpt: customTag);
             }
@@ -153,162 +151,17 @@ namespace GenerateAnalyzerRulesets
             return 0;
 
             // Local functions.
-            void createRuleset(
-                string rulesetFileName,
-                string rulesetName,
-                string rulesetDescription,
+            void createRulesetAndEditorconfig(
+                string fileName,
+                string title,
+                string description,
                 RulesetKind rulesetKind,
                 string categoryOpt = null,
                 string customTagOpt = null)
             {
-                Debug.Assert(categoryOpt == null || customTagOpt == null);
-                Debug.Assert((categoryOpt != null) == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
-                Debug.Assert((customTagOpt != null) == (rulesetKind == RulesetKind.CustomTagDefault || rulesetKind == RulesetKind.CustomTagEnabled));
-
-                var result = new StringBuilder();
-                startRuleset();
-                if (categoryOpt == null && customTagOpt == null)
-                {
-                    addRules(categoryPass: false, customTagPass: false);
-                }
-                else
-                {
-                    result.AppendLine($@"   <!-- {categoryOpt ?? customTagOpt} Rules -->");
-                    addRules(categoryPass: categoryOpt != null, customTagPass: customTagOpt != null);
-                    result.AppendLine();
-                    result.AppendLine($@"   <!-- Other Rules -->");
-                    addRules(categoryPass: false, customTagPass: false);
-                }
-
-                endRuleset();
-                var directory = Directory.CreateDirectory(analyzerRulesetsDir);
-                var rulesetFilePath = Path.Combine(directory.FullName, rulesetFileName);
-                File.WriteAllText(rulesetFilePath, result.ToString());
+                CreateRuleset(analyzerRulesetsDir, fileName + ".ruleset", title, description, rulesetKind, categoryOpt, customTagOpt, allRulesById, analyzerPackageName);
+                CreateEditorconfig(analyzerEditorconfigsDir, fileName, title, description, rulesetKind, categoryOpt, customTagOpt, allRulesById);
                 return;
-
-                void startRuleset()
-                {
-                    result.AppendLine(@"<?xml version=""1.0""?>");
-                    result.AppendLine($@"<RuleSet Name=""{rulesetName}"" Description=""{rulesetDescription}"" ToolsVersion=""15.0"">");
-                }
-
-                void endRuleset()
-                {
-                    result.AppendLine("</RuleSet>");
-                }
-
-                void addRules(bool categoryPass, bool customTagPass)
-                {
-                    foreach (var rulesByAssembly in allRulesByAssembly)
-                    {
-                        string assemblyName = rulesByAssembly.Key;
-                        SortedList<string, DiagnosticDescriptor> sortedRulesById = rulesByAssembly.Value;
-
-                        if (!sortedRulesById.Any(r => !shouldSkipRule(r.Value)))
-                        {
-                            // Bail out if we don't have any rule to be added for this assembly.
-                            continue;
-                        }
-
-                        startRules(assemblyName);
-
-                        foreach (var rule in sortedRulesById)
-                        {
-                            addRule(rule.Value);
-                        }
-
-                        endRules();
-                    }
-
-                    return;
-
-                    void startRules(string assemblyName)
-                    {
-                        result.AppendLine($@"   <Rules AnalyzerId=""{assemblyName}"" RuleNamespace=""{assemblyName}"">");
-                    }
-
-                    void endRules()
-                    {
-                        result.AppendLine("   </Rules>");
-                    }
-
-                    void addRule(DiagnosticDescriptor rule)
-                    {
-                        if (shouldSkipRule(rule))
-                        {
-                            return;
-                        }
-
-                        string ruleAction = getRuleAction(rule);
-                        var spacing = new string(' ', count: 15 - ruleAction.Length);
-                        result.AppendLine($@"      <Rule Id=""{rule.Id}"" Action=""{ruleAction}"" /> {spacing} <!-- {rule.Title} -->");
-                    }
-
-                    bool shouldSkipRule(DiagnosticDescriptor rule)
-                    {
-                        switch (rulesetKind)
-                        {
-                            case RulesetKind.CategoryDefault:
-                            case RulesetKind.CategoryEnabled:
-                                if (categoryPass)
-                                {
-                                    return rule.Category != categoryOpt;
-                                }
-                                else
-                                {
-                                    return rule.Category == categoryOpt;
-                                }
-
-                            case RulesetKind.CustomTagDefault:
-                            case RulesetKind.CustomTagEnabled:
-                                if (customTagPass)
-                                {
-                                    return !rule.CustomTags.Contains(customTagOpt);
-                                }
-                                else
-                                {
-                                    return rule.CustomTags.Contains(customTagOpt);
-                                }
-
-                            default:
-                                return false;
-                        }
-                    }
-
-                    string getRuleAction(DiagnosticDescriptor rule)
-                    {
-                        return rulesetKind switch
-                        {
-                            RulesetKind.CategoryDefault => getRuleActionCore(enable: categoryPass && rule.IsEnabledByDefault),
-
-                            RulesetKind.CategoryEnabled => getRuleActionCore(enable: categoryPass),
-
-                            RulesetKind.CustomTagDefault => getRuleActionCore(enable: customTagPass && rule.IsEnabledByDefault),
-
-                            RulesetKind.CustomTagEnabled => getRuleActionCore(enable: customTagPass),
-
-                            RulesetKind.AllDefault => getRuleActionCore(enable: rule.IsEnabledByDefault),
-
-                            RulesetKind.AllEnabled => getRuleActionCore(enable: true),
-
-                            RulesetKind.AllDisabled => getRuleActionCore(enable: false),
-
-                            _ => throw new InvalidProgramException(),
-                        };
-
-                        string getRuleActionCore(bool enable)
-                        {
-                            if (enable)
-                            {
-                                return rule.DefaultSeverity.ToString();
-                            }
-                            else
-                            {
-                                return "None";
-                            }
-                        }
-                    }
-                }
             }
 
             void createPropsFile()
@@ -339,7 +192,7 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
 
             string getCodeAnalysisTreatWarningsNotAsErrors()
             {
-                var allRuleIds = string.Join(';', allRulesByAssembly.Values.SelectMany(l => l.Keys).Distinct());
+                var allRuleIds = string.Join(';', allRulesById.Keys);
                 return $@"
   <!-- 
     This property group prevents the rule ids implemented in this package to be bumped to errors when
@@ -360,11 +213,9 @@ $@"<Project DefaultTargets=""Build"" xmlns=""http://schemas.microsoft.com/develo
                         // Each rule entry format is: -[Category]#[ID];
                         // For example, -Microsoft.Design#CA1001;
                         var categoryPrefix = $"      -Microsoft.{category}#";
-                        var entries = allRulesByAssembly.Values
-                                          .SelectMany(l => l)
+                        var entries = allRulesById
                                           .Where(ruleIdAndDescriptor => ruleIdAndDescriptor.Value.Category == category &&
                                                                         FxCopWellKnownDiagnosticTags.IsPortedFxCopRule(ruleIdAndDescriptor.Value))
-                                          .OrderBy(ruleIdAndDescriptor => ruleIdAndDescriptor.Key)
                                           .Select(ruleIdAndDescriptor => $"{categoryPrefix}{ruleIdAndDescriptor.Key};")
                                           .Distinct();
 
@@ -573,6 +424,284 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                             // the error logger. We could represent it with a custom property in the SARIF log if that changes.
                             Debug.Assert(false);
                             goto case DiagnosticSeverity.Warning;
+                    }
+                }
+            }
+        }
+
+        private static void CreateRuleset(
+            string analyzerRulesetsDir,
+            string rulesetFileName,
+            string rulesetTitle,
+            string rulesetDescription,
+            RulesetKind rulesetKind,
+            string categoryOpt,
+            string customTagOpt,
+            SortedList<string, DiagnosticDescriptor> sortedRulesById,
+            string analyzerPackageName)
+        {
+            var text = GetRulesetOrEditorconfigText(
+                rulesetKind,
+                startRuleset,
+                endRuleset,
+                startRulesSection,
+                endRulesSection,
+                addRuleEntry,
+                getSeverityString,
+                commentStart: "   <!-- ",
+                commentEnd: " -->",
+                categoryOpt,
+                customTagOpt,
+                sortedRulesById);
+
+            var directory = Directory.CreateDirectory(analyzerRulesetsDir);
+            var rulesetFilePath = Path.Combine(directory.FullName, rulesetFileName);
+            File.WriteAllText(rulesetFilePath, text);
+            return;
+
+            // Local functions
+            void startRuleset(StringBuilder result)
+            {
+                result.AppendLine(@"<?xml version=""1.0""?>");
+                result.AppendLine($@"<RuleSet Name=""{rulesetTitle}"" Description=""{rulesetDescription}"" ToolsVersion=""15.0"">");
+            }
+
+            static void endRuleset(StringBuilder result)
+            {
+                result.AppendLine("</RuleSet>");
+            }
+
+            void startRulesSection(StringBuilder result)
+            {
+                result.AppendLine($@"   <Rules AnalyzerId=""{analyzerPackageName}"" RuleNamespace=""{analyzerPackageName}"">");
+            }
+
+            static void endRulesSection(StringBuilder result)
+            {
+                result.AppendLine("   </Rules>");
+            }
+
+            static void addRuleEntry(StringBuilder result, DiagnosticDescriptor rule, string severity)
+            {
+                var spacing = new string(' ', count: 15 - severity.Length);
+                result.AppendLine($@"      <Rule Id=""{rule.Id}"" Action=""{severity}"" /> {spacing} <!-- {rule.Title} -->");
+            }
+
+            static string getSeverityString(DiagnosticSeverity? severityOpt)
+            {
+                return severityOpt.HasValue ? severityOpt.ToString() : "None";
+            }
+        }
+
+        private static void CreateEditorconfig(
+            string analyzerEditorconfigsDir,
+            string editorconfigFolder,
+            string editorconfigTitle,
+            string editorconfigDescription,
+            RulesetKind rulesetKind,
+            string categoryOpt,
+            string customTagOpt,
+            SortedList<string, DiagnosticDescriptor> sortedRulesById)
+        {
+            var text = GetRulesetOrEditorconfigText(
+                rulesetKind,
+                startEditorconfig,
+                endEditorconfig,
+                startRulesSection,
+                endRulesSection,
+                addRuleEntry,
+                getSeverityString,
+                commentStart: "# ",
+                commentEnd: string.Empty,
+                categoryOpt,
+                customTagOpt,
+                sortedRulesById);
+
+            var directory = Directory.CreateDirectory(Path.Combine(analyzerEditorconfigsDir, editorconfigFolder));
+            var editorconfigFilePath = Path.Combine(directory.FullName, ".editorconfig");
+            File.WriteAllText(editorconfigFilePath, text);
+            return;
+
+            // Local functions
+            void startEditorconfig(StringBuilder result)
+            {
+                result.AppendLine(@"# NOTE: Requires **VS2019 16.3** or later");
+                result.AppendLine();
+                result.AppendLine($@"# {editorconfigTitle}");
+                result.AppendLine($@"# Description: {editorconfigDescription}");
+                result.AppendLine();
+                result.AppendLine(@"# Code files");
+                result.AppendLine(@"[*.{cs,vb}]");
+                result.AppendLine();
+            }
+
+            static void endEditorconfig(StringBuilder _)
+            {
+            }
+
+            static void startRulesSection(StringBuilder _)
+            {
+            }
+
+            static void endRulesSection(StringBuilder _)
+            {
+            }
+
+            static void addRuleEntry(StringBuilder result, DiagnosticDescriptor rule, string severity)
+            {
+                result.AppendLine();
+                result.AppendLine($"# {rule.Id}: {rule.Title}");
+                result.AppendLine($@"dotnet_diagnostic.{rule.Id}.severity = {severity}");
+            }
+
+            static string getSeverityString(DiagnosticSeverity? severityOpt)
+            {
+                if (!severityOpt.HasValue)
+                {
+                    return "none";
+                }
+
+                return severityOpt.Value switch
+                {
+                    DiagnosticSeverity.Error => "error",
+                    DiagnosticSeverity.Warning => "warning",
+                    DiagnosticSeverity.Info => "suggestion",
+                    DiagnosticSeverity.Hidden => "silent",
+                    _ => throw new NotImplementedException(severityOpt.Value.ToString()),
+                };
+            }
+        }
+
+        private static string GetRulesetOrEditorconfigText(
+            RulesetKind rulesetKind,
+            Action<StringBuilder> startRulesetOrEditorconfig,
+            Action<StringBuilder> endRulesetOrEditorconfig,
+            Action<StringBuilder> startRulesSection,
+            Action<StringBuilder> endRulesSection,
+            Action<StringBuilder, DiagnosticDescriptor, string> addRuleEntry,
+            Func<DiagnosticSeverity?, string> getSeverityString,
+            string commentStart,
+            string commentEnd,
+            string categoryOpt,
+            string customTagOpt,
+            SortedList<string, DiagnosticDescriptor> sortedRulesById)
+        {
+            Debug.Assert(categoryOpt == null || customTagOpt == null);
+            Debug.Assert((categoryOpt != null) == (rulesetKind == RulesetKind.CategoryDefault || rulesetKind == RulesetKind.CategoryEnabled));
+            Debug.Assert((customTagOpt != null) == (rulesetKind == RulesetKind.CustomTagDefault || rulesetKind == RulesetKind.CustomTagEnabled));
+
+            var result = new StringBuilder();
+            startRulesetOrEditorconfig(result);
+            if (categoryOpt == null && customTagOpt == null)
+            {
+                addRules(categoryPass: false, customTagPass: false);
+            }
+            else
+            {
+                result.AppendLine($@"{commentStart}{categoryOpt ?? customTagOpt} Rules{commentEnd}");
+                addRules(categoryPass: categoryOpt != null, customTagPass: customTagOpt != null);
+                result.AppendLine();
+                result.AppendLine();
+                result.AppendLine();
+                result.AppendLine($@"{commentStart}Other Rules{commentEnd}");
+                addRules(categoryPass: false, customTagPass: false);
+            }
+
+            endRulesetOrEditorconfig(result);
+            return result.ToString();
+
+            void addRules(bool categoryPass, bool customTagPass)
+            {
+                if (!sortedRulesById.Any(r => !shouldSkipRule(r.Value)))
+                {
+                    // Bail out if we don't have any rule to be added for this assembly.
+                    return;
+                }
+
+                startRulesSection(result);
+
+                foreach (var rule in sortedRulesById)
+                {
+                    addRule(rule.Value);
+                }
+
+                endRulesSection(result);
+
+                return;
+
+                void addRule(DiagnosticDescriptor rule)
+                {
+                    if (shouldSkipRule(rule))
+                    {
+                        return;
+                    }
+
+                    string severity = getRuleAction(rule);
+                    addRuleEntry(result, rule, severity);
+                }
+
+                bool shouldSkipRule(DiagnosticDescriptor rule)
+                {
+                    switch (rulesetKind)
+                    {
+                        case RulesetKind.CategoryDefault:
+                        case RulesetKind.CategoryEnabled:
+                            if (categoryPass)
+                            {
+                                return rule.Category != categoryOpt;
+                            }
+                            else
+                            {
+                                return rule.Category == categoryOpt;
+                            }
+
+                        case RulesetKind.CustomTagDefault:
+                        case RulesetKind.CustomTagEnabled:
+                            if (customTagPass)
+                            {
+                                return !rule.CustomTags.Contains(customTagOpt);
+                            }
+                            else
+                            {
+                                return rule.CustomTags.Contains(customTagOpt);
+                            }
+
+                        default:
+                            return false;
+                    }
+                }
+
+                string getRuleAction(DiagnosticDescriptor rule)
+                {
+                    return rulesetKind switch
+                    {
+                        RulesetKind.CategoryDefault => getRuleActionCore(enable: categoryPass && rule.IsEnabledByDefault),
+
+                        RulesetKind.CategoryEnabled => getRuleActionCore(enable: categoryPass),
+
+                        RulesetKind.CustomTagDefault => getRuleActionCore(enable: customTagPass && rule.IsEnabledByDefault),
+
+                        RulesetKind.CustomTagEnabled => getRuleActionCore(enable: customTagPass),
+
+                        RulesetKind.AllDefault => getRuleActionCore(enable: rule.IsEnabledByDefault),
+
+                        RulesetKind.AllEnabled => getRuleActionCore(enable: true),
+
+                        RulesetKind.AllDisabled => getRuleActionCore(enable: false),
+
+                        _ => throw new InvalidProgramException(),
+                    };
+
+                    string getRuleActionCore(bool enable)
+                    {
+                        if (enable)
+                        {
+                            return getSeverityString(rule.DefaultSeverity);
+                        }
+                        else
+                        {
+                            return getSeverityString(null);
+                        }
                     }
                 }
             }

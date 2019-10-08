@@ -56,10 +56,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.SystemNetSecurityProtocolType,
                             out var securityProtocolTypeTypeSymbol)
-                        || !wellKnownTypeProvider.TryGetTypeByMetadataName(
+                        || !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                                 WellKnownTypeNames.SystemNetServicePointManager,
                                 out var servicePointManagerTypeSymbol))
                     {

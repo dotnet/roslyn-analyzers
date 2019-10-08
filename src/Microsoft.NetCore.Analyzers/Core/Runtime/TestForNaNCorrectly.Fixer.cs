@@ -37,8 +37,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol systemSingleType = model.Compilation.GetTypeByMetadataName("System.Single");
-            INamedTypeSymbol systemDoubleType = model.Compilation.GetTypeByMetadataName("System.Double");
+            INamedTypeSymbol systemSingleType = model.Compilation.GetSpecialType(SpecialType.System_Single);
+            INamedTypeSymbol systemDoubleType = model.Compilation.GetSpecialType(SpecialType.System_Double);
 
             if (systemSingleType == null || systemDoubleType == null)
             {

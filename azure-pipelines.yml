@@ -1,10 +1,12 @@
 # Branches that trigger a build on commit
 trigger:
 - master
+- 2.9.x
 
 # Branch(es) that trigger(s) build(s) on PR
 pr:
 - master
+- 2.9.x
 
 jobs:
 - job: Windows

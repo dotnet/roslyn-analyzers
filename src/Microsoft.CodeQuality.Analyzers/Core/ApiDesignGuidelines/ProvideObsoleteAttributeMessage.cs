@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol obsoleteAttributeType = compilationContext.Compilation.GetTypeByMetadataName("System.ObsoleteAttribute");
+                INamedTypeSymbol obsoleteAttributeType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
                 if (obsoleteAttributeType == null)
                 {
                     return;
@@ -69,7 +69,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 if (attribute.AttributeClass.Equals(obsoleteAttributeType))
                 {
-                    // ObsoleteAttribute has a constructor that takes no params and two 
+                    // ObsoleteAttribute has a constructor that takes no params and two
                     // other constructors that take a message as the first param.
                     // If there are no arguments specificed or if the message argument is empty
                     // then report a diagnostic.

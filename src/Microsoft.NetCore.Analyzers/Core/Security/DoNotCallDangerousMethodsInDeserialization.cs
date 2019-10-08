@@ -65,9 +65,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
+                    var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                         WellKnownTypeNames.SystemSerializableAttribute,
                         out INamedTypeSymbol serializableAttributeTypeSymbol))
                     {
@@ -78,7 +78,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     foreach (var (typeName, methodNames) in DangerousCallable)
                     {
-                        if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                        if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             typeName,
                             out INamedTypeSymbol typeSymbol))
                         {
@@ -103,14 +103,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var dangerousMethodSymbols = dangerousMethodSymbolsBuilder.ToImmutableHashSet();
                     var attributeTypeSymbolsBuilder = ImmutableArray.CreateBuilder<INamedTypeSymbol>();
 
-                    if (wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                         WellKnownTypeNames.SystemRuntimeSerializationOnDeserializingAttribute,
                         out INamedTypeSymbol onDeserializingAttributeTypeSymbol))
                     {
                         attributeTypeSymbolsBuilder.Add(onDeserializingAttributeTypeSymbol);
                     }
 
-                    if (wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                         WellKnownTypeNames.SystemRuntimeSerializationOnDeserializedAttribute,
                         out INamedTypeSymbol onDeserializedAttributeTypeSymbol))
                     {
@@ -119,8 +119,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                     var attributeTypeSymbols = attributeTypeSymbolsBuilder.ToImmutable();
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext, out INamedTypeSymbol streamingContextTypeSymbol) ||
-                        !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationIDeserializationCallback, out INamedTypeSymbol IDeserializationCallbackTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationStreamingContext, out INamedTypeSymbol streamingContextTypeSymbol) ||
+                        !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationIDeserializationCallback, out INamedTypeSymbol IDeserializationCallbackTypeSymbol))
                     {
                         return;
                     }

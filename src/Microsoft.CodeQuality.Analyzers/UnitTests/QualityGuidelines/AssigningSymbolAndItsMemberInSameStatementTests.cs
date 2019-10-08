@@ -316,5 +316,36 @@ public class Test
 }
 ", TestValidationMode.AllowCompileErrors);
         }
+
+        [Fact]
+        public void CSharpAssignmentInCodeWithOperationNone()
+        {
+            VerifyCSharpUnsafeCode(@"
+public struct Test
+{
+    public System.IntPtr PtrField;
+    public unsafe void Method(Test a, Test *b)
+    {
+        b->PtrField = a.PtrField;
+    }
+}
+");
+        }
+
+        [Fact]
+        [WorkItem(2889, "https://github.com/dotnet/roslyn-analyzers/issues/2889")]
+        public void CSharpAssignmentLocalReferenceOperation()
+        {
+            VerifyCSharp(@"
+public static class Class1
+{
+    public static void Foo()
+    {
+        var u = new System.UriBuilder();
+        u.Host = u.Path = string.Empty;
+    }
+}
+");
+        }
     }
 }

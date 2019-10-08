@@ -2,6 +2,7 @@
 
 using System;
 using System.Threading;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
@@ -214,10 +215,10 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
 
         /// <summary>
         /// Determine whether a type (given by name) is actually declared in the expected assembly (also given by name)
-        /// </summary>               
+        /// </summary>
         /// <remarks>
-        /// This can be used to decide whether we are referencing the expected framework for a given type. 
-        /// For example, System.String exists in mscorlib for .NET Framework and System.Runtime for other framework (e.g. .NET Core). 
+        /// This can be used to decide whether we are referencing the expected framework for a given type.
+        /// For example, System.String exists in mscorlib for .NET Framework and System.Runtime for other framework (e.g. .NET Core).
         /// </remarks>
         public static bool? IsTypeDeclaredInExpectedAssembly(Compilation compilation, string typeName, string assemblyName)
         {
@@ -259,12 +260,12 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
 
         /// <summary>
         /// Gets the version of the target .NET framework of the compilation.
-        /// </summary>                          
+        /// </summary>
         /// <returns>
         /// Null if the target framenwork is not .NET Framework.
         /// </returns>
         /// <remarks>
-        /// This method returns the assembly version of mscorlib for .NET Framework prior version 4.0. 
+        /// This method returns the assembly version of mscorlib for .NET Framework prior version 4.0.
         /// It is using API diff tool to compare new classes in different versions and decide which version it is referencing
         /// i.e. for .NET framework 3.5, the returned version would be 2.0.0.0.
         /// For .NET Framework 4.X, this method returns the actual framework version instead of assembly verison of mscorlib,
@@ -277,22 +278,22 @@ namespace Microsoft.NetFramework.Analyzers.Helpers
                 return null;
             }
 
-            IAssemblySymbol mscorlibAssembly = compilation.GetTypeByMetadataName("System.String").ContainingAssembly;
+            IAssemblySymbol mscorlibAssembly = compilation.GetSpecialType(SpecialType.System_String).ContainingAssembly;
             if (mscorlibAssembly.Identity.Version.Major < 4)
             {
                 return mscorlibAssembly.Identity.Version;
             }
 
-            if (mscorlibAssembly.GetTypeByMetadataName("System.AppContext") != null)
+            if (mscorlibAssembly.GetTypeByMetadataName(WellKnownTypeNames.SystemAppContext) != null)
             {
                 return new Version(4, 6);
             }
-            INamedTypeSymbol typeSymbol = mscorlibAssembly.GetTypeByMetadataName("System.IO.UnmanagedMemoryStream");
+            INamedTypeSymbol typeSymbol = mscorlibAssembly.GetTypeByMetadataName(WellKnownTypeNames.SystemIOUnmanagedMemoryStream);
             if (!typeSymbol.GetMembers("FlushAsync").IsEmpty)
             {
                 return new Version(4, 5, 2);
             }
-            typeSymbol = mscorlibAssembly.GetTypeByMetadataName("System.Diagnostics.Tracing.EventSource");
+            typeSymbol = mscorlibAssembly.GetTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsTracingEventSource);
             if (typeSymbol != null)
             {
                 return typeSymbol.GetMembers("CurrentThreadActivityId").IsEmpty ? new Version(4, 5) : new Version(4, 5, 1);

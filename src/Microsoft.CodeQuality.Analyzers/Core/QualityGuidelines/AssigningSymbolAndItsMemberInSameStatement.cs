@@ -50,29 +50,21 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             }
 
             // This analyzer makes sense only for reference type objects
-            if (operationTarget.Instance?.Type.IsValueType == true)
+            if (operationTarget.Instance?.Type?.IsReferenceType != true)
             {
                 return;
             }
 
-            // Search for object equal to operationTarget.Instance further in assignment chain
-            bool isViolationFound = false;
-            if (operationTarget.Instance is ILocalReferenceOperation localInstance)
+            bool isViolationFound = operationTarget.Instance switch
             {
-                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, localInstance, (a, b) => a.Local.Equals(b.Local));
-            }
-            else if (operationTarget.Instance is IMemberReferenceOperation memberInstance)
-            {
-                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, memberInstance, (a, b) => a.Member.Equals(b.Member) && a.Instance?.Syntax.ToString() == b.Instance?.Syntax.ToString());
-            }
-            else if (operationTarget.Instance is IParameterReferenceOperation parameterInstance)
-            {
-                isViolationFound = AnalyzeAssignmentToMember(assignmentOperation, parameterInstance, (a, b) => a.Parameter.Equals(b.Parameter));
-            }
-            else
-            {
-                return;
-            }
+                ILocalReferenceOperation localInstance =>
+                    AnalyzeAssignmentToMember(assignmentOperation, localInstance, (a, b) => a.Local.Equals(b.Local)),
+                IMemberReferenceOperation memberInstance =>
+                    AnalyzeAssignmentToMember(assignmentOperation, memberInstance, (a, b) => a.Member.Equals(b.Member) && a.Instance?.Syntax.ToString() == b.Instance?.Syntax.ToString()),
+                IParameterReferenceOperation parameterInstance =>
+                    AnalyzeAssignmentToMember(assignmentOperation, parameterInstance, (a, b) => a.Parameter.Equals(b.Parameter)),
+                _ => false,
+            };
 
             if (isViolationFound)
             {
@@ -88,8 +80,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
             {
                 assignmentOperation = (ISimpleAssignmentOperation)assignmentOperation.Value;
 
-                var operationValue = assignmentOperation.Target as T;
-                if (equalityComparer(instance, operationValue))
+                if (assignmentOperation.Target is T operationValue &&
+                    equalityComparer(instance, operationValue))
                 {
                     return true;
                 }

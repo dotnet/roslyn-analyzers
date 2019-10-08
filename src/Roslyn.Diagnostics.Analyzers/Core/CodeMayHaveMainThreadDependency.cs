@@ -343,7 +343,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return GetThreadDependencyInfo(operation, captureContextUnlessConfigured: false).IsExplicit;
         }
 
-        private IEnumerable<Location> GetAdditionalLocations(ISymbol containingSymbol, IOperation operation, CancellationToken cancellationToken)
+        private static IEnumerable<Location> GetAdditionalLocations(ISymbol containingSymbol, IOperation operation, CancellationToken cancellationToken)
         {
             if (operation is IAwaitOperation || operation is IReturnOperation)
             {

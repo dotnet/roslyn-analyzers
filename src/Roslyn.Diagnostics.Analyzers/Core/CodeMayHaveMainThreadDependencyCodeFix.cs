@@ -183,7 +183,7 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        private async Task<Solution> MarkFieldWithMainThreadDependencyAsync(Solution solution, IFieldSymbol field, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkFieldWithMainThreadDependencyAsync(Solution solution, IFieldSymbol field, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
         {
             var declarationReference = field.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -202,7 +202,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private async Task<Solution> MarkEventWithMainThreadDependencyAsync(Solution solution, IEventSymbol @event, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkEventWithMainThreadDependencyAsync(Solution solution, IEventSymbol @event, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
         {
             var declarationReference = @event.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -221,7 +221,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private async Task<Solution> MarkMethodWithMainThreadDependencyAsync(Solution solution, IMethodSymbol method, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkMethodWithMainThreadDependencyAsync(Solution solution, IMethodSymbol method, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
         {
             var declarationReference = method.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -240,7 +240,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private async Task<Solution> MarkTypeWithMainThreadDependencyAsync(Solution solution, ITypeSymbol type, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkTypeWithMainThreadDependencyAsync(Solution solution, ITypeSymbol type, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
         {
             var declarationReference = type.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -259,7 +259,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private async Task<Solution> MarkParameterWithMainThreadDependencyAsync(Solution solution, IParameterSymbol parameter, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkParameterWithMainThreadDependencyAsync(Solution solution, IParameterSymbol parameter, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
         {
             var declarationReference = parameter.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)

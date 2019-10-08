@@ -177,7 +177,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 return;
             }
 
-            if (valueThreadDependencyInfo.PerInstance && !threadDependencyInfo.PerInstance)
+            if (valueThreadDependencyInfo.PerInstance)
             {
                 var properties = propertiesOverride;
                 var locationSyntax = context.Operation.Syntax;
@@ -188,10 +188,18 @@ namespace Roslyn.Diagnostics.Analyzers
                     {
                         locationSyntax = receiverOperation.Syntax;
                         properties = ScenarioProperties.TargetMissingAttribute;
+                        if (threadDependencyInfo.PerInstance)
+                        {
+                            properties = ScenarioProperties.WithPerInstance(properties);
+                        }
                     }
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Rule, locationSyntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, awaitOperation, context.CancellationToken), properties: properties));
+                if (properties is object || !threadDependencyInfo.PerInstance)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, locationSyntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, awaitOperation, context.CancellationToken), properties: properties));
+                }
+
                 return;
             }
         }

@@ -288,6 +288,98 @@ End Class
         }
 
         [Fact]
+        public async Task PerInstanceFieldMustBeExplicit_CSharp()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface IInterface {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None, PerInstance = true)]
+    Task MethodAsync();
+}
+
+class Class {
+    IInterface field;
+
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None, PerInstance = true)]
+    async Task OperationAsync() {
+        await [|field|].MethodAsync().ConfigureAwait(false);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+            var fixedCode = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface IInterface {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None, PerInstance = true)]
+    Task MethodAsync();
+}
+
+class Class {
+    [ThreadDependency(ContextDependency.None, PerInstance = true, Verified = false)]
+    IInterface field;
+
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None, PerInstance = true)]
+    async Task OperationAsync() {
+        await field.MethodAsync().ConfigureAwait(false);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+        }
+
+        [Fact]
+        public async Task PerInstanceFieldMustBeExplicit_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Interface IInterface
+    <ThreadDependency(ContextDependency.None)>
+    Function MethodAsync() As <ThreadDependency(ContextDependency.None, PerInstance:=True)> Task
+End Interface
+
+Class [Class]
+    Dim field As IInterface
+
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync() As <ThreadDependency(ContextDependency.None, PerInstance:=True)> Task
+        Await [|field|].MethodAsync().ConfigureAwait(false)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+            var fixedCode = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Interface IInterface
+    <ThreadDependency(ContextDependency.None)>
+    Function MethodAsync() As <ThreadDependency(ContextDependency.None, PerInstance:=True)> Task
+End Interface
+
+Class [Class]
+    <ThreadDependency(None, PerInstance:=True, Verified:=False)>
+    Dim field As IInterface
+
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync() As <ThreadDependency(ContextDependency.None, PerInstance:=True)> Task
+        Await field.MethodAsync().ConfigureAwait(false)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+        }
+
+        [Fact]
         public async Task IncorrectUseOfPerInstanceField_CSharp()
         {
             var code = @"

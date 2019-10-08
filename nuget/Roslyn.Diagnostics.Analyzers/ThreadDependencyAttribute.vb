@@ -28,7 +28,7 @@ Namespace Global.Roslyn.Utilities
         Public Const Any As Integer = 3
     End Module
 
-    <AttributeUsage(AttributeTargets.Field Or AttributeTargets.Method Or AttributeTargets.Parameter Or AttributeTargets.Property Or AttributeTargets.ReturnValue Or AttributeTargets.GenericParameter, AllowMultiple:=False, Inherited:=True)>
+    <AttributeUsage(AttributeTargets.Field Or AttributeTargets.Method Or AttributeTargets.Parameter Or AttributeTargets.Property Or AttributeTargets.ReturnValue Or AttributeTargets.GenericParameter, AllowMultiple:=False, Inherited:=False)>
     Friend NotInheritable Class ThreadDependencyAttribute
         Inherits Attribute
 

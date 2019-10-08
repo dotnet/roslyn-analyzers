@@ -161,7 +161,7 @@ namespace Microsoft.NetFramework.Analyzers
                             rule,
                             SecurityDiagnosticHelpers.GetLocalizableResourceString(
                                 nameof(MicrosoftNetFrameworkAnalyzersResources.XmlDocumentDerivedClassConstructorNoSecureXmlResolverMessage),
-                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
+                                SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model, context.CancellationToken)
                             )
                         )
                     );
@@ -280,7 +280,7 @@ namespace Microsoft.NetFramework.Analyzers
                         rule,
                         SecurityDiagnosticHelpers.GetLocalizableResourceString(
                             nameof(MicrosoftNetFrameworkAnalyzersResources.XmlTextReaderDerivedClassConstructorNoSecureSettingsMessage),
-                            SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model)
+                            SecurityDiagnosticHelpers.GetNonEmptyParentName(node, model, context.CancellationToken)
                         )
                     )
                 );

@@ -314,6 +314,44 @@ class TestClass : Page
         }
 
         [Fact]
+        public void TestNewPageDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    public new System.Web.UI.Page Page { get; set; }
+
+    private void Page_Init (object sender, EventArgs e)
+    {
+        Page.ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
+        public void TestOverridePageDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    public override System.Web.UI.Page Page { get; set; }
+
+    private void Page_Init (object sender, EventArgs e)
+    {
+        Page.ViewStateUserKey = ""ViewStateUserKey"";
+    }
+}",
+            GetCSharpResultAt(5, 7, SetViewStateUserKey.Rule, "TestClass"));
+        }
+
+        [Fact]
         public void TestSubclassWithSettingViewStateUserKeyNoDiagnostic()
         {
             VerifyCSharp(@"
@@ -450,6 +488,22 @@ interface ITestInterface
     void OnInit(EventArgs e);
 
     void Page_Init(object sender, EventArgs e);
+}");
+        }
+
+        [Fact]
+        public void TestSettingViewStateUserKeyOfPageNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Web.UI;
+
+class TestClass : Page
+{
+    private void Page_Init (object sender, EventArgs e)
+    {
+        Page.ViewStateUserKey = ""ViewStateUserKey"";
+    }
 }");
         }
 

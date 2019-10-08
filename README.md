@@ -97,6 +97,10 @@ For instructions on using this tutorial, see [Instructions](https://github.com/d
 
 Prior to submitting a pull request, ensure the build and all tests pass using using steps 4 and 5 above.
 
+# Guidelines for contributing a new Code Analysis (CA) rule to the repo
+
+See [GuidelinesForNewRules.md](.//GuidelinesForNewRules.md) for contributing a new Code Analysis rule to the repo.
+
 # Versioning Scheme for Analyzer Packages
 
 See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer packages built out of this repo.

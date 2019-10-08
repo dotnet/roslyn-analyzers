@@ -357,6 +357,36 @@
         <target state="translated">In {0} viene fornita una combinazione non sicura di istanze di XsltSettings e XmlResolver come argomenti di XslCompiledTransfor.Load.</target>
         <note>CA3076</note>
       </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndOtherAndTokenMessage">
+        <source>The ValidateAntiForgeryAttribute is defined with HttpVerbs.Get and at least one of HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete, or HttpVerbs.Patch on controller action {0}. The attribute will not be used when GET verb is used.</source>
+        <target state="translated">ValidateAntiForgeryAttribute è definito con HttpVerbs.Get e almeno uno tra HttpVerbs.Post, HttpVerbs.Put, HttpVerbs.Delete o HttpVerbs.Patch nell'azione {0} del controller. L'attributo non verrà usato se si usa il verbo GET.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenGetAndTokenMessage">
+        <source>Using HttpVerbs.GET and ValidateAntiForgeryTokenAttribute is not supported by MVC on controller action {0}.</source>
+        <target state="translated">MVC non supporta l'uso di HttpVerbs.GET e ValidateAntiForgeryTokenAttribute sull'azione {0} del controller.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsMessage">
+        <source>HTTP verb attributes attributes are missing on controller action {0}. The ValidateAntiForgeryTokenAttribute will not be used when GET verb is used.</source>
+        <target state="translated">Nell'azione {0} del controller mancano gli attributi del verbo HTTP. Se si usa il verbo GET, ValidateAntiForgeryTokenAttribute non verrà usato.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenNoVerbsNoTokenMessage">
+        <source>Missing ValidateAntiForgeryTokenAttribute on MVC controller action {0} which by default accepts POST requests.</source>
+        <target state="translated">Nell'azione {0} del controller MVC, che per impostazione predefinita accetta richieste POST, manca l'elemento ValidateAntiForgeryTokenAttribute.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenTitle">
+        <source>Mark Verb Handlers With Validate Antiforgery Token</source>
+        <target state="translated">Contrassegna gestori di verbi con token antifalsificazione di convalida</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MarkVerbHandlersWithValidateAntiforgeryTokenVerbsAndNoTokenMessage">
+        <source>Missing ValidateAntiForgeryTokenAttribute on controller action {0}.</source>
+        <target state="translated">ValidateAntiForgeryTokenAttribute mancante nell'azione del controller {0}.</target>
+        <note />
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.PooledObjects;
 using Analyzer.Utilities.PooledObjects.Extensions;
@@ -60,7 +61,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
                 copyAnalysisData.AssertValidCopyAnalysisData(GetDefaultCopyValue);
             }
 
-            protected override void AddTrackedEntities(CopyAnalysisData analysisData, PooledHashSet<AnalysisEntity> builder, bool forInterproceduralAnalysis)
+            protected override void AddTrackedEntities(CopyAnalysisData analysisData, HashSet<AnalysisEntity> builder, bool forInterproceduralAnalysis)
                 => analysisData.AddTrackedEntities(builder);
 
             protected override bool HasAbstractValue(AnalysisEntity analysisEntity) => CurrentAnalysisData.HasAbstractValue(analysisEntity);
@@ -443,7 +444,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
                 if (throwBranchWithExceptionType.IsDefaultExceptionForExceptionsPathAnalysis)
                 {
                     // Only tracking non-child analysis entities for exceptions path analysis for now.
-                    Debug.Assert(throwBranchWithExceptionType.ExceptionType.Equals(WellKnownTypeProvider.Exception));
+                    Debug.Assert(throwBranchWithExceptionType.ExceptionType.Equals(ExceptionNamedType));
                     predicateOpt = e => !e.IsChildOrInstanceMember;
                 }
 
@@ -513,12 +514,10 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis
 
             protected override void ApplyInterproceduralAnalysisResultCore(CopyAnalysisData resultData)
             {
-                using (var mergedData = GetClonedAnalysisData(resultData))
-                {
-                    ApplyMissingCurrentAnalysisDataCore(mergedData, predicateOpt: null);
-                    CurrentAnalysisData.CoreAnalysisData.Clear();
-                    CurrentAnalysisData.CoreAnalysisData.AddRange(mergedData.CoreAnalysisData);
-                }
+                using var mergedData = GetClonedAnalysisData(resultData);
+                ApplyMissingCurrentAnalysisDataCore(mergedData, predicateOpt: null);
+                CurrentAnalysisData.CoreAnalysisData.Clear();
+                CurrentAnalysisData.CoreAnalysisData.AddRange(mergedData.CoreAnalysisData);
             }
 
             private void ApplyMissingCurrentAnalysisDataCore(CopyAnalysisData mergedData, Func<AnalysisEntity, bool> predicateOpt)

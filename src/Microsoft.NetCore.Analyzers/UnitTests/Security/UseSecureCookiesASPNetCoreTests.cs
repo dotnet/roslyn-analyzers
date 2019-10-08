@@ -3,6 +3,7 @@
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
+using Test.Utilities.MinimalImplementations;
 using Xunit;
 
 namespace Microsoft.NetCore.Analyzers.Security.UnitTests
@@ -11,45 +12,8 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
     {
         protected void VerifyCSharpWithDependencies(string source, params DiagnosticResult[] expected)
         {
-            string microsoftAspNetCoreHttpNamespaceCSharpSourceCode = @"
-namespace Microsoft.AspNetCore.Http
-{
-    public interface IResponseCookies
-    {
-        void Append(string key, string value);
-
-        void Append(string key, string value, CookieOptions options);
-    }
-
-    public class CookieOptions
-    {
-        public CookieOptions()
-        {
-        }
-
-        public bool Secure { get; set; }
-    }
-
-    namespace Internal
-    {
-        public class ResponseCookies : IResponseCookies
-        {
-            public ResponseCookies()
-            {
-            }
-
-            public void Append(string key, string value)
-            {
-            }
-
-            public void Append(string key, string value, CookieOptions options)
-            {
-            }
-        }
-    }
-}";
             this.VerifyCSharp(
-                new[] { source, microsoftAspNetCoreHttpNamespaceCSharpSourceCode }.ToFileAndSource(),
+                new[] { source, ASPNetCoreApis.CSharp }.ToFileAndSource(),
                 expected);
         }
 

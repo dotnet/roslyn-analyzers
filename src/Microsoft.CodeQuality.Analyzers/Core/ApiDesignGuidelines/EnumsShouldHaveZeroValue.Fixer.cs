@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -26,47 +26,48 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         {
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol flagsAttributeType = WellKnownTypes.FlagsAttribute(model.Compilation);
+            INamedTypeSymbol flagsAttributeType = model.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
             if (flagsAttributeType == null)
             {
                 return;
             }
 
-            // We cannot have multiple overlapping diagnostics of this id.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            SyntaxNode node = root.FindNode(context.Span);
-
-            ISymbol declaredSymbol = model.GetDeclaredSymbol(node, context.CancellationToken);
-            Debug.Assert(declaredSymbol != null);
-            string title;
-
-            foreach (string customTag in diagnostic.Descriptor.CustomTags)
+            foreach (var diagnostic in context.Diagnostics)
             {
-                switch (customTag)
-                {
-                    case EnumsShouldHaveZeroValueAnalyzer.RuleRenameCustomTag:
-                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueFlagsRenameCodeFix;
-                        context.RegisterCodeFix(new MyCodeAction(title,
-                                                    async ct => await GetUpdatedDocumentForRuleNameRenameAsync(context.Document, (IFieldSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
-                                                    equivalenceKey: title),
-                                                diagnostic);
-                        return;
-                    case EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZeroCustomTag:
-                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueFlagsMultipleZeroCodeFix;
-                        context.RegisterCodeFix(new MyCodeAction(title,
-                                                    async ct => await ApplyRuleNameMultipleZeroAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
-                                                    equivalenceKey: title),
-                                                diagnostic);
-                        return;
+                SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+                SyntaxNode node = root.FindNode(context.Span);
 
-                    case EnumsShouldHaveZeroValueAnalyzer.RuleNoZeroCustomTag:
-                        title = MicrosoftApiDesignGuidelinesAnalyzersResources.EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix;
-                        context.RegisterCodeFix(new MyCodeAction(title,
-                                                    async ct => await ApplyRuleNameNoZeroValueAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
-                                                    equivalenceKey: title),
-                                                diagnostic);
-                        return;
+                ISymbol declaredSymbol = model.GetDeclaredSymbol(node, context.CancellationToken);
+                Debug.Assert(declaredSymbol != null);
+                string title;
+
+                foreach (string customTag in diagnostic.Descriptor.CustomTags)
+                {
+                    switch (customTag)
+                    {
+                        case EnumsShouldHaveZeroValueAnalyzer.RuleRenameCustomTag:
+                            title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueFlagsRenameCodeFix;
+                            context.RegisterCodeFix(new MyCodeAction(title,
+                                                        async ct => await GetUpdatedDocumentForRuleNameRenameAsync(context.Document, (IFieldSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
+                                                        equivalenceKey: title),
+                                                    diagnostic);
+                            return;
+                        case EnumsShouldHaveZeroValueAnalyzer.RuleMultipleZeroCustomTag:
+                            title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueFlagsMultipleZeroCodeFix;
+                            context.RegisterCodeFix(new MyCodeAction(title,
+                                                        async ct => await ApplyRuleNameMultipleZeroAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
+                                                        equivalenceKey: title),
+                                                    diagnostic);
+                            return;
+
+                        case EnumsShouldHaveZeroValueAnalyzer.RuleNoZeroCustomTag:
+                            title = MicrosoftCodeQualityAnalyzersResources.EnumsShouldZeroValueNotFlagsNoZeroValueCodeFix;
+                            context.RegisterCodeFix(new MyCodeAction(title,
+                                                        async ct => await ApplyRuleNameNoZeroValueAsync(context.Document, (INamedTypeSymbol)declaredSymbol, context.CancellationToken).ConfigureAwait(false),
+                                                        equivalenceKey: title),
+                                                    diagnostic);
+                            return;
+                    }
                 }
             }
         }

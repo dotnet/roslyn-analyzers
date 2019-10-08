@@ -1,15 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
-using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Operations;
-
-#pragma warning disable CA1067 // Override Object.Equals(object) when implementing IEquatable<T>
 
 namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
 {
@@ -56,36 +53,57 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         }
 
         public static AbstractLocation CreateAllocationLocation(IOperation creation, ITypeSymbol locationType, PointsToAnalysisContext analysisContext)
-            => Create(creation, analysisContext.InterproceduralAnalysisDataOpt?.CallStack, analysisEntityOpt: null, symbolOpt: null, captureIdOpt: null, locationType: locationType);
+            => CreateAllocationLocation(creation, locationType, analysisContext.InterproceduralAnalysisDataOpt?.CallStack);
+        internal static AbstractLocation CreateAllocationLocation(IOperation creation, ITypeSymbol locationType, ImmutableStack<IOperation> callStackOpt)
+            => Create(creation, callStackOpt, analysisEntityOpt: null, symbolOpt: null, captureIdOpt: null, locationType: locationType);
         public static AbstractLocation CreateAnalysisEntityDefaultLocation(AnalysisEntity analysisEntity)
             => Create(creationOpt: null, creationCallStackOpt: null, analysisEntityOpt: analysisEntity, symbolOpt: null, captureIdOpt: null, locationType: analysisEntity.Type);
         public static AbstractLocation CreateThisOrMeLocation(INamedTypeSymbol namedTypeSymbol, ImmutableStack<IOperation> creationCallStackOpt)
             => Create(creationOpt: null, creationCallStackOpt: creationCallStackOpt, analysisEntityOpt: null, symbolOpt: namedTypeSymbol, captureIdOpt: null, locationType: namedTypeSymbol);
         public static AbstractLocation CreateSymbolLocation(ISymbol symbol, ImmutableStack<IOperation> creationCallStackOpt)
-            => Create(creationOpt: null, creationCallStackOpt: creationCallStackOpt, analysisEntityOpt: null, symbolOpt: symbol, captureIdOpt: null, locationType: symbol.GetMemerOrLocalOrParameterType());
+            => Create(creationOpt: null, creationCallStackOpt: creationCallStackOpt, analysisEntityOpt: null, symbolOpt: symbol, captureIdOpt: null, locationType: symbol.GetMemberOrLocalOrParameterType());
         public static AbstractLocation CreateFlowCaptureLocation(InterproceduralCaptureId captureId, ITypeSymbol locationType, ImmutableStack<IOperation> creationCallStackOpt)
             => Create(creationOpt: null, creationCallStackOpt: creationCallStackOpt, analysisEntityOpt: null, symbolOpt: null, captureIdOpt: captureId, locationType: locationType);
 
         public IOperation CreationOpt { get; }
         public ImmutableStack<IOperation> CreationCallStack { get; }
+
+        /// <summary>
+        /// Returns the top of <see cref="CreationCallStack"/> if this location was created through an interprocedural method invocation, i.e. <see cref="CreationCallStack"/> is non-empty.
+        /// Otherwise, returns <see cref="CreationOpt"/>.
+        /// </summary>
+        public IOperation GetTopOfCreationCallStackOrCreation()
+        {
+            if (CreationCallStack.IsEmpty)
+            {
+                return CreationOpt;
+            }
+
+            return CreationCallStack.Peek();
+        }
+
         public AnalysisEntity AnalysisEntityOpt { get; }
         public ISymbol SymbolOpt { get; }
         public InterproceduralCaptureId? CaptureIdOpt { get; }
         public ITypeSymbol LocationTypeOpt { get; }
         public bool IsNull => ReferenceEquals(this, Null);
         public bool IsNoLocation => ReferenceEquals(this, NoLocation);
+
+        /// <summary>
+        /// Indicates this represents the initial unknown but distinct location for an analysis entity.
+        /// </summary>
         public bool IsAnalysisEntityDefaultLocation => AnalysisEntityOpt != null;
 
-        protected override void ComputeHashCodeParts(ArrayBuilder<int> builder)
+        protected override void ComputeHashCodeParts(Action<int> addPart)
         {
-            builder.Add(CreationOpt.GetHashCodeOrDefault());
-            builder.Add(HashUtilities.Combine(CreationCallStack));
-            builder.Add(SymbolOpt.GetHashCodeOrDefault());
-            builder.Add(CaptureIdOpt.GetHashCodeOrDefault());
-            builder.Add(AnalysisEntityOpt.GetHashCodeOrDefault());
-            builder.Add(LocationTypeOpt.GetHashCodeOrDefault());
-            builder.Add(_isSpecialSingleton.GetHashCode());
-            builder.Add(IsNull.GetHashCode());
+            addPart(CreationOpt.GetHashCodeOrDefault());
+            addPart(HashUtilities.Combine(CreationCallStack));
+            addPart(SymbolOpt.GetHashCodeOrDefault());
+            addPart(CaptureIdOpt.GetHashCodeOrDefault());
+            addPart(AnalysisEntityOpt.GetHashCodeOrDefault());
+            addPart(LocationTypeOpt.GetHashCodeOrDefault());
+            addPart(_isSpecialSingleton.GetHashCode());
+            addPart(IsNull.GetHashCode());
         }
 
         /// <summary>
@@ -122,21 +140,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             SyntaxNode TryGetSyntaxNodeToReportDiagnostic(IOperation creation)
             {
                 // If any of the argument to creation points to this location, then use the argument.
-                ImmutableArray<IArgumentOperation> arguments;
-                switch (creation)
+                var arguments = creation switch
                 {
-                    case IInvocationOperation invocation:
-                        arguments = invocation.Arguments;
-                        break;
+                    IInvocationOperation invocation => invocation.Arguments,
 
-                    case IObjectCreationOperation objectCreation:
-                        arguments = objectCreation.Arguments;
-                        break;
+                    IObjectCreationOperation objectCreation => objectCreation.Arguments,
 
-                    default:
-                        arguments = ImmutableArray<IArgumentOperation>.Empty;
-                        break;
-                }
+                    _ => ImmutableArray<IArgumentOperation>.Empty,
+                };
 
                 foreach (var argument in arguments)
                 {
@@ -152,15 +163,26 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
                 SyntaxNode TryGetSyntaxNodeToReportDiagnosticCore(IOperation operation)
                 {
                     var pointsToValue = pointsToAnalysisResultOpt[operation];
-                    foreach (var location in pointsToValue.Locations)
-                    {
-                        if (location == this)
-                        {
-                            return operation.Syntax;
-                        }
-                    }
+                    return TryGetSyntaxNodeToReportDiagnosticForPointsValue(pointsToValue, operation);
 
-                    return null;
+                    SyntaxNode TryGetSyntaxNodeToReportDiagnosticForPointsValue(PointsToAbstractValue pointsToValue, IOperation operation)
+                    {
+                        foreach (var location in pointsToValue.Locations)
+                        {
+                            if (location == this)
+                            {
+                                return operation.Syntax;
+                            }
+                        }
+
+                        if (pointsToAnalysisResultOpt.TaskWrappedValuesMapOpt != null &&
+                            pointsToAnalysisResultOpt.TaskWrappedValuesMapOpt.TryGetValue(pointsToValue, out var wrappedValue))
+                        {
+                            return TryGetSyntaxNodeToReportDiagnosticForPointsValue(wrappedValue, operation);
+                        }
+
+                        return null;
+                    }
                 }
             }
         }

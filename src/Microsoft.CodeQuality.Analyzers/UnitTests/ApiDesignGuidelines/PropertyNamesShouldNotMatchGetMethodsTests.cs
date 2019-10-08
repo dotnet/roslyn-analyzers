@@ -341,19 +341,54 @@ Class C
 End Class");
         }
 
+        [Fact, WorkItem(2085, "https://github.com/dotnet/roslyn-analyzers/issues/2085")]
+        public void CA1721_StaticAndInstanceMismatchNoDiagnostic()
+        {
+            VerifyCSharp(@"
+public class C1
+{
+    public int Value { get; }
+    public static int GetValue(int i) => i;
+}
+
+public class C2
+{
+    public static int Value { get; }
+    public int GetValue(int i) => i;
+}
+");
+
+            VerifyBasic(@"
+Public Class C1
+    Public ReadOnly Property Value As Integer
+
+    Public Shared Function GetValue(i As Integer) As Integer
+        Return i
+    End Function
+End Class
+
+Public Class C2
+    Public Shared ReadOnly Property Value As Integer
+
+    Public Function GetValue(i As Integer) As Integer
+        Return i
+    End Function
+End Class");
+        }
+
         #region Helpers
 
         private static DiagnosticResult GetCA1721CSharpResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1721BasicResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftApiDesignGuidelinesAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
+            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 

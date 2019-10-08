@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -14,13 +14,13 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
     internal static class SecurityHelpers
     {
         /// <summary>
-        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from <see cref="MicrosoftNetCoreSecurityResources"/>.
+        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from <see cref="MicrosoftNetCoreAnalyzersResources"/>.
         /// </summary>
         /// <param name="id">Diagnostic identifier.</param>
-        /// <param name="titleResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's title.</param>
-        /// <param name="messageResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's message.</param>
+        /// <param name="titleResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's title.</param>
+        /// <param name="messageResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's message.</param>
         /// <param name="isEnabledByDefault">Flag indicating the diagnostic is enabled by default</param>
-        /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreSecurityResources"/> for the diagnostic's descrption.</param>
+        /// <param name="descriptionResourceStringName">Name of the resource string inside <see cref="MicrosoftNetCoreAnalyzersResources"/> for the diagnostic's descrption.</param>
         /// <param name="helpLinkUri">Help link URI.</param>
         /// <param name="customTags">Optional custom tags for the diagnostic. See Microsoft.CodeAnalysis.WellKnownDiagnosticTags for some well known tags.</param>
         /// <returns>New DiagnosticDescriptor.</returns>
@@ -35,7 +35,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         {
             return CreateDiagnosticDescriptor(
                 id,
-                typeof(MicrosoftNetCoreSecurityResources),
+                typeof(MicrosoftNetCoreAnalyzersResources),
                 titleResourceStringName,
                 messageResourceStringName,
                 isEnabledByDefault,
@@ -45,7 +45,7 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
         }
 
         /// <summary>
-        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from <see cref="MicrosoftNetCoreSecurityResources"/>.
+        /// Creates a DiagnosticDescriptor with <see cref="LocalizableResourceString"/>s from the specified resource source type.
         /// </summary>
         /// <param name="id">Diagnostic identifier.</param>
         /// <param name="resourceSource">Type containing the resource strings.</param>
@@ -114,12 +114,43 @@ namespace Microsoft.NetCore.Analyzers.Security.Helpers
             ImmutableDictionary.CreateRange<Type, ResourceManager>(
                 new[]
                 {
-                    (typeof(MicrosoftNetCoreSecurityResources), MicrosoftNetCoreSecurityResources.ResourceManager),
-                    (typeof(SystemSecurityCryptographyResources), SystemSecurityCryptographyResources.ResourceManager),
-                }.Select(o => new KeyValuePair<Type, ResourceManager>(o.Item1, o.Item2)));
+                    (typeof(MicrosoftNetCoreAnalyzersResources), MicrosoftNetCoreAnalyzersResources.ResourceManager),
+                    (typeof(MicrosoftNetCoreAnalyzersResources), MicrosoftNetCoreAnalyzersResources.ResourceManager),
+                }.Select(o => new KeyValuePair<Type, ResourceManager>(o.Item1, o.ResourceManager)));
 
         /// <summary>
-        /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreSecurityResources"/>.
+        /// Methods using a <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/> parameter for <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
+        /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
+        public static readonly ImmutableHashSet<string> JsonSerializerInstantiateWithSettingsMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "Create",
+                "CreateDefault");
+
+        /// <summary>
+        /// Methods using a <see cref="T:Newtonsoft.Json.JsonSerializerSettings"/> parameter for <see cref="T:Newtonsoft.Json.JsonConvert"/>.
+        /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
+        public static readonly ImmutableHashSet<string> JsonConvertWithSettingsMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "DeserializeObject",
+                "DeserializeAnonymousType",
+                "PopulateObject");
+
+        /// <summary>
+        /// Deserialization methods for <see cref="T:Newtonsoft.Json.JsonSerializer"/>.
+        /// </summary>
+        [SuppressMessage("Documentation", "CA1200:Avoid using cref tags with a prefix", Justification = "The comment references a type that is not referenced by this compilation.")]
+        public static readonly ImmutableHashSet<string> JsonSerializerDeserializationMethods =
+            ImmutableHashSet.Create(
+                StringComparer.Ordinal,
+                "Deserialize",
+                "Populate");
+
+        /// <summary>
+        /// Gets a <see cref="LocalizableResourceString"/> from <see cref="MicrosoftNetCoreAnalyzersResources"/>.
         /// </summary>
         /// <param name="resourceSource">Type containing the resource strings.</param>
         /// <param name="name">Name of the resource string to retrieve.</param>

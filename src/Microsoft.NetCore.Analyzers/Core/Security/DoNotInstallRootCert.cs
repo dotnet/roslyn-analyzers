@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
 using System.Collections.Generic;
@@ -24,21 +24,21 @@ namespace Microsoft.NetCore.Analyzers.Security
     {
         internal static DiagnosticDescriptor DefinitelyInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5380",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.DefinitelyInstallRootCert),
-            nameof(SystemSecurityCryptographyResources.DefinitelyInstallRootCertMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyInstallRootCert),
+            nameof(MicrosoftNetCoreAnalyzersResources.DefinitelyInstallRootCertMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotInstallRootCertDescription),
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5380",
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotInstallRootCertDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
         internal static DiagnosticDescriptor MaybeInstallRootCertRule = SecurityHelpers.CreateDiagnosticDescriptor(
             "CA5381",
-            typeof(SystemSecurityCryptographyResources),
-            nameof(SystemSecurityCryptographyResources.MaybeInstallRootCert),
-            nameof(SystemSecurityCryptographyResources.MaybeInstallRootCertMessage),
+            typeof(MicrosoftNetCoreAnalyzersResources),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeInstallRootCert),
+            nameof(MicrosoftNetCoreAnalyzersResources.MaybeInstallRootCertMessage),
             DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
-            helpLinkUri: null,
-            descriptionResourceStringName: nameof(SystemSecurityCryptographyResources.DoNotInstallRootCertDescription),
+            helpLinkUri: "https://docs.microsoft.com/visualstudio/code-quality/ca5381",
+            descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.DoNotInstallRootCertDescription),
             customTags: WellKnownDiagnosticTagsExtensions.DataflowAndTelemetry);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
@@ -52,17 +52,14 @@ namespace Microsoft.NetCore.Analyzers.Security
 
         private static HazardousUsageEvaluationResult HazardousUsageCallback(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
         {
-            switch (propertySetAbstractValue[0])
+            return (propertySetAbstractValue[0]) switch
             {
-                case PropertySetAbstractValueKind.Flagged:
-                    return HazardousUsageEvaluationResult.Flagged;
+                PropertySetAbstractValueKind.Flagged => HazardousUsageEvaluationResult.Flagged,
 
-                case PropertySetAbstractValueKind.MaybeFlagged:
-                    return HazardousUsageEvaluationResult.MaybeFlagged;
+                PropertySetAbstractValueKind.MaybeFlagged => HazardousUsageEvaluationResult.MaybeFlagged,
 
-                default:
-                    return HazardousUsageEvaluationResult.Unflagged;
-            }
+                _ => HazardousUsageEvaluationResult.Unflagged,
+            };
         }
 
         public override void Initialize(AnalysisContext context)
@@ -80,12 +77,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Store, out var x509TypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Store, out var x509TypeSymbol))
                     {
                         return;
                     }
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesStoreName, out var storeNameTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesStoreName, out var storeNameTypeSymbol))
                     {
                         return;
                     }
@@ -101,13 +98,13 @@ namespace Microsoft.NetCore.Analyzers.Security
                             {
                                 if (constructorMethod.Parameters[0].Type.Equals(storeNameTypeSymbol))
                                 {
-                                    kind = PropertySetAnalysis.EvaluateLiteralValues(argumentValueContentAbstractValues[0], o => o.Equals(6));
+                                    kind = PropertySetCallbacks.EvaluateLiteralValues(argumentValueContentAbstractValues[0], o => o != null && o.Equals(6));
                                 }
                                 else if (constructorMethod.Parameters[0].Type.SpecialType == SpecialType.System_String)
                                 {
-                                    kind = PropertySetAnalysis.EvaluateLiteralValues(
+                                    kind = PropertySetCallbacks.EvaluateLiteralValues(
                                         argumentValueContentAbstractValues[0],
-                                        s => string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase));
+                                        s => s != null && string.Equals(s.ToString(), "root", StringComparison.OrdinalIgnoreCase));
                                 }
                             }
 
@@ -119,6 +116,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
+                            var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+
+                            // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    DefinitelyInstallRootCertRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    MaybeInstallRootCertRule, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -168,6 +176,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
+                                        compilationAnalysisContext.Options,
                                         WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Store,
                                         constructorMapper,
                                         PropertyMappers,
@@ -217,7 +226,6 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 allResults?.Free();
                             }
                         });
-
                 });
         }
     }

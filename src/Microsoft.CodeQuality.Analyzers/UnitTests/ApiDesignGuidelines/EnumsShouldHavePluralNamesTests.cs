@@ -1,5 +1,6 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -524,24 +525,63 @@ End Class
                         End Class");
         }
 
+        [Theory, WorkItem(2229, "https://github.com/dotnet/roslyn-analyzers/issues/2229")]
+        [InlineData("en-US")]
+        [InlineData("es-ES")]
+        [InlineData("pl-PL")]
+        [InlineData("fi-FI")]
+        [InlineData("de-DE")]
+        public void CA1714_CA1717__Test_EnumWithNoFlags_PluralName_MultipleCultures(string culture)
+        {
+            var currentCulture = CultureInfo.DefaultThreadCurrentCulture;
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo(culture);
+
+            VerifyCSharp(@" 
+                            public class A 
+                            { 
+                               public enum Days 
+                                {
+                                    sunday = 0,
+                                    Monday = 1,
+                                    Tuesday = 2
+                                       
+                                };
+                            }",
+                            GetCSharpNoPluralResultAt(4, 44));
+
+            VerifyBasic(@"
+                        Public Class A
+	                        Public Enum Days
+		                           Sunday = 0
+		                           Monday = 1
+		                           Tuesday = 2
+
+	                        End Enum
+                        End Class
+                        ",
+                        GetBasicNoPluralResultAt(3, 38));
+
+            CultureInfo.DefaultThreadCurrentCulture = currentCulture;
+        }
+
         private static DiagnosticResult GetCSharpPluralResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
+            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
         }
 
         private static DiagnosticResult GetBasicPluralResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftApiDesignGuidelinesAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
+            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_Plural, MicrosoftCodeQualityAnalyzersResources.FlagsEnumsShouldHavePluralNamesMessage);
         }
 
         private static DiagnosticResult GetCSharpNoPluralResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
+            return GetCSharpResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
         }
 
         private static DiagnosticResult GetBasicNoPluralResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftApiDesignGuidelinesAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
+            return GetBasicResultAt(line, column, EnumsShouldHavePluralNamesAnalyzer.RuleId_NoPlural, MicrosoftCodeQualityAnalyzersResources.OnlyFlagsEnumsShouldHavePluralNamesMessage);
         }
     }
 }

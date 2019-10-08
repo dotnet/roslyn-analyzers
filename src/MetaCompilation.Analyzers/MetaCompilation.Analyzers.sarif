@@ -1,0 +1,883 @@
+﻿{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "MetaCompilation.Analyzers",
+        "version": "2.9.6",
+        "language": "en-US"
+      },
+      "rules": {
+        "MetaAnalyzer001": {
+          "id": "MetaAnalyzer001",
+          "shortDescription": "Missing diagnostic id",
+          "fullDescription": "The diagnostic id identifies a particular diagnostic so that the diagnotic can be fixed in CodeFixProvider.cs",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer002": {
+          "id": "MetaAnalyzer002",
+          "shortDescription": "Missing Initialize method",
+          "fullDescription": "An analyzer requires the Initialize method to register code analysis actions. Actions are registered to call an analysis method when something specific changes in the syntax tree or semantic model. For example, context.RegisterSyntaxNodeAction(AnalyzeMethod, SyntaxKind.IfStatement) will call AnalyzeMethod every time an if-statement changes in the syntax tree.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer003": {
+          "id": "MetaAnalyzer003",
+          "shortDescription": "Missing register statement",
+          "fullDescription": "The Initialize method must register for at least one action so that some analysis can be performed. Otherwise, analysis will not be performed and no diagnostics will be reported. Registering a syntax node action is useful for analyzing the syntax of a piece of code.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer004": {
+          "id": "MetaAnalyzer004",
+          "shortDescription": "Multiple registered actions",
+          "fullDescription": "For this tutorial only, the Initialize method should only register one action. More complicated analyzers may need to register multiple actions.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer005": {
+          "id": "MetaAnalyzer005",
+          "shortDescription": "Incorrect method signature",
+          "fullDescription": "The Initialize method should override the abstract Initialize class member from the DiagnosticAnalyzer class. It therefore needs to be public, overriden, and return void. It needs to have a single input parameter of type 'AnalysisContext.'",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer006": {
+          "id": "MetaAnalyzer006",
+          "shortDescription": "Incorrect statement",
+          "fullDescription": "By definition, the purpose of the Initialize method is to register actions for analysis. Therefore, all other statements placed in Initialize are incorrect.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer007": {
+          "id": "MetaAnalyzer007",
+          "shortDescription": "Missing SupportedDiagnostics property",
+          "fullDescription": "The SupportedDiagnostics property tells the analyzer which diagnostic ids the analyzer supports, in other words, which DiagnosticDescriptors might be reported by the analyzer. Generally, any DiagnosticDescriptor should be returned by SupportedDiagnostics.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer008": {
+          "id": "MetaAnalyzer008",
+          "shortDescription": "Incorrect SupportedDiagnostics property",
+          "fullDescription": "T: The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer009": {
+          "id": "MetaAnalyzer009",
+          "shortDescription": "Missing get-accessor",
+          "fullDescription": "The SupportedDiagnostics property needs to have a get-accessor to make the ImmutableArray of DiagnosticDescriptors accessible",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer010": {
+          "id": "MetaAnalyzer010",
+          "shortDescription": "Too many accessors",
+          "fullDescription": "The purpose of the SupportedDiagnostics property is to return a list of all diagnostics that can be reported by a particular analyzer, so it doesn't have a need for any other accessors",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer011": {
+          "id": "MetaAnalyzer011",
+          "shortDescription": "Get accessor missing return value",
+          "fullDescription": "The purpose of the SupportedDiagnostics property's get-accessor is to return a list of all diagnostics that can be reported by a particular analyzer",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer012": {
+          "id": "MetaAnalyzer012",
+          "shortDescription": "SupportedDiagnostics return value incorrect",
+          "fullDescription": "The purpose of the SupportedDiagnostics property's get-accessor is to return a list of all diagnostics that can be reported by a particular analyzer",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer013": {
+          "id": "MetaAnalyzer013",
+          "shortDescription": "ImmutableArray incorrect",
+          "fullDescription": "The purpose of the SupportedDiagnostics property is to return a list of all diagnostics that can be reported by a particular analyzer, so it should include every DiagnosticDescriptor rule that is created",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer014": {
+          "id": "MetaAnalyzer014",
+          "shortDescription": "Incorrect DiagnosticDescriptor id",
+          "fullDescription": "The id parameter of a DiagnosticDescriptor should be a string constant previously declared. This ensures that the diagnostic id is accessible from the CodeFixProvider.cs file.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer015": {
+          "id": "MetaAnalyzer015",
+          "shortDescription": "Missing Diagnostic id declaration",
+          "fullDescription": "The id parameter of a DiagnosticDescriptor should be a string constant previously declared. This ensures that the diagnostic id is accessible from the CodeFixProvider.cs file.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer016": {
+          "id": "MetaAnalyzer016",
+          "shortDescription": "Incorrect defaultSeverity",
+          "fullDescription": "There are four option for the severity of the diagnostic: error, warning, hidden, and info. An error is completely not allowed and causes build errors. A warning is something that might be a problem, but is not a build error. An info diagnostic is simply information and is not actually a problem. A hidden diagnostic is raised as an issue, but it is not accessible through normal means. In simple analyzers, the most common severities are error and warning.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer017": {
+          "id": "MetaAnalyzer017",
+          "shortDescription": "Incorrect isEnabledByDefault",
+          "fullDescription": "The 'isEnabledByDefault' field determines whether the diagnostic is enabled by default or the user of the analyzer has to manually enable the diagnostic. Generally, it will be set to true.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer018": {
+          "id": "MetaAnalyzer018",
+          "shortDescription": "Incorrect DiagnosticDescriptor modifiers",
+          "fullDescription": "The DiagnosticDescriptor rules should all be internal because they only need to be accessed by pieces of this project and nothing outside. They should be static because their lifetime will extend throughout the entire running of this program",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer019": {
+          "id": "MetaAnalyzer019",
+          "shortDescription": "Missing DiagnosticDescriptor",
+          "fullDescription": "The DiagnosticDescriptor rule is what is reported by the analyzer when it finds a problem, so there must be at least one. It should have an id to differentiate the diagnostic, a default severity level, a boolean describing if it's enabled by default, a title, a message, and a category.",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer020": {
+          "id": "MetaAnalyzer020",
+          "shortDescription": "Missing if-statement extraction",
+          "fullDescription": "The context parameter has a Node member. This Node is what the register statement from Initialize triggered on, and so should be cast to the expected syntax or symbol type",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer021": {
+          "id": "MetaAnalyzer021",
+          "shortDescription": "If-statement extraction incorrect",
+          "fullDescription": "The context parameter has a Node member. This Node is what the register statement from Initialize triggered on, so it should be cast to the expected syntax or symbol type",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer022": {
+          "id": "MetaAnalyzer022",
+          "shortDescription": "Missing if-keyword extraction",
+          "fullDescription": "In the syntax tree, a node of type IfStatementSyntax has an IfKeyword attached to it. On the syntax tree diagram, this is represented by the green 'if' SyntaxToken",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer023": {
+          "id": "MetaAnalyzer023",
+          "shortDescription": "Incorrect if-keyword extraction",
+          "fullDescription": "In the syntax tree, a node of type IfStatementSyntax has an IfKeyword attached to it. On the syntax tree diagram, this is represented by the green 'if' SyntaxToken",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer024": {
+          "id": "MetaAnalyzer024",
+          "shortDescription": "Missing trailing trivia check",
+          "fullDescription": "Syntax trivia are all the things that aren't actually code (i.e. comments, whitespace, end of line tokens, etc). The first step in checking for a single space between the if-keyword and '(' is to check if the if-keyword SyntaxToken has any trailing trivia",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer025": {
+          "id": "MetaAnalyzer025",
+          "shortDescription": "Incorrect trailing trivia check",
+          "fullDescription": "Syntax trivia are all the things that aren't actually code (i.e. comments, whitespace, end of line tokens, etc). The first step in checking for a single space between the if-keyword and '(' is to check if the if-keyword SyntaxToken has any trailing trivia",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer026": {
+          "id": "MetaAnalyzer026",
+          "shortDescription": "Missing trailing trivia extraction",
+          "fullDescription": "The first trailing trivia of the if-keyword should be a single whitespace",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer027": {
+          "id": "MetaAnalyzer027",
+          "shortDescription": "Incorrect trailing trivia extraction",
+          "fullDescription": "The first trailing trivia of the if-keyword should be a single whitespace",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer028": {
+          "id": "MetaAnalyzer028",
+          "shortDescription": "Missing SyntaxKind check",
+          "fullDescription": "T: Next, check if the kind of '{0}' is whitespace trivia",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer029": {
+          "id": "MetaAnalyzer029",
+          "shortDescription": "Incorrect SyntaxKind check",
+          "fullDescription": "T: This statement should check to see if the kind of '{0}' is whitespace trivia",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer030": {
+          "id": "MetaAnalyzer030",
+          "shortDescription": "Missing whitespace check",
+          "fullDescription": "T: Next, check if '{0}' is a single whitespace, which is the desired formatting",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer031": {
+          "id": "MetaAnalyzer031",
+          "shortDescription": "Incorrect whitespace check",
+          "fullDescription": "T: This statement should check to see if '{0}' is a single whitespace, which is the desired formatting",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer032": {
+          "id": "MetaAnalyzer032",
+          "shortDescription": "Missing return",
+          "fullDescription": "If the analyzer determines that there are no issues with the code it is analyzing, it can simply return from the analysis method without reporting any diagnostics",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer033": {
+          "id": "MetaAnalyzer033",
+          "shortDescription": "Incorrect return",
+          "fullDescription": "If the analyzer determines that there are no issues with the code it is analyzing, it can simply return from the analysis method without reporting any diagnostics",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer034": {
+          "id": "MetaAnalyzer034",
+          "shortDescription": "Missing open parenthesis variable",
+          "fullDescription": "The open parenthesis of the condition is going to be the end point of the diagnostic squiggle that is created",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer035": {
+          "id": "MetaAnalyzer035",
+          "shortDescription": "Open parenthesis variable incorrect",
+          "fullDescription": "The open parenthesis of the condition is going to be the end point of the diagnostic squiggle that is created",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer036": {
+          "id": "MetaAnalyzer036",
+          "shortDescription": "Start span variable missing",
+          "fullDescription": "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer037": {
+          "id": "MetaAnalyzer037",
+          "shortDescription": "Start span variable incorrect",
+          "fullDescription": "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer038": {
+          "id": "MetaAnalyzer038",
+          "shortDescription": "End span variable missing",
+          "fullDescription": "The open parenthesis of the condition is going to be the end point of the diagnostic squiggle that is created",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer039": {
+          "id": "MetaAnalyzer039",
+          "shortDescription": "End span variable incorrect",
+          "fullDescription": "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer040": {
+          "id": "MetaAnalyzer040",
+          "shortDescription": "Diagnostic span variable missing",
+          "fullDescription": "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer041": {
+          "id": "MetaAnalyzer041",
+          "shortDescription": "Diagnostic span variable incorrect",
+          "fullDescription": "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer042": {
+          "id": "MetaAnalyzer042",
+          "shortDescription": "Diagnostic location variable missing",
+          "fullDescription": "A location can be created by combining a span with a syntax tree. The span is applied to the given syntax tree so that the location within the syntax tree is determined",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer043": {
+          "id": "MetaAnalyzer043",
+          "shortDescription": "Diagnostic location variable incorrect",
+          "fullDescription": "A location can be created by combining a span with a syntax tree. The span is applied to the given syntax tree so that the location within the syntax tree is determined",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer044": {
+          "id": "MetaAnalyzer044",
+          "shortDescription": "Missing analysis method",
+          "fullDescription": "In Initialize, the register statement denotes an analysis method to be called when an action is triggered. This method needs to be created",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer045": {
+          "id": "MetaAnalyzer045",
+          "shortDescription": "Too many statements",
+          "fullDescription": "For the purpose of this tutorial there are too many statements here, use the code fixes to guide you through the creation of this section",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer046": {
+          "id": "MetaAnalyzer046",
+          "shortDescription": "Diagnostic variable missing",
+          "fullDescription": "This is the diagnostic that will be reported to the user as an error squiggle",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer047": {
+          "id": "MetaAnalyzer047",
+          "shortDescription": "Diagnostic variable incorrect",
+          "fullDescription": "The diagnostic is created with a DiagnosticDescriptor, a Location, and message arguments. The message arguments are the inputs to the DiagnosticDescriptor MessageFormat format string",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer048": {
+          "id": "MetaAnalyzer048",
+          "shortDescription": "Diagnostic report missing",
+          "fullDescription": "A diagnostic is reported to a context so that the diagnostic will appear as a squiggle and in the eroor list",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer049": {
+          "id": "MetaAnalyzer049",
+          "shortDescription": "Diagnostic report incorrect",
+          "fullDescription": "A diagnostic is reported to a context so that the diagnostic will appear as a squiggle and in the eroor list",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer050": {
+          "id": "MetaAnalyzer050",
+          "shortDescription": "Analyzer tutorial complete",
+          "fullDescription": "T: Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.",
+          "defaultLevel": "note",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer051": {
+          "id": "MetaAnalyzer051",
+          "shortDescription": "Incorrect kind",
+          "fullDescription": "For the purposes of this tutorial, the only analysis will occur on an if-statement, so it is only necessary to register for syntax of kind IfStatement",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer052": {
+          "id": "MetaAnalyzer052",
+          "shortDescription": "Incorrect register",
+          "fullDescription": "For the purposes of this tutorial, analysis will occur on SyntaxNodes, so only actions on SyntaxNodes should be registered",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer053": {
+          "id": "MetaAnalyzer053",
+          "shortDescription": "Incorrect arguments",
+          "fullDescription": "The RegisterSyntaxNodeAction method takes two arguments. The first argument is a method that will be called to perform the analysis. The second argument is a SyntaxKind, which is the kind of syntax that the method will be triggered on",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer054": {
+          "id": "MetaAnalyzer054",
+          "shortDescription": "Incorrect analysis method accessibility",
+          "fullDescription": "T: The '{0}' method should be private",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer055": {
+          "id": "MetaAnalyzer055",
+          "shortDescription": "Incorrect analysis method return type",
+          "fullDescription": "T: The '{0}' method should have a void return type",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer056": {
+          "id": "MetaAnalyzer056",
+          "shortDescription": "Incorrect parameter to analysis method",
+          "fullDescription": "T: The '{0}' method should take one parameter of type SyntaxNodeAnalysisContext",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer057": {
+          "id": "MetaAnalyzer057",
+          "shortDescription": "Trailing trivia count missing",
+          "fullDescription": "T: Next, check that '{0}' only has one trailing trivia element",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer058": {
+          "id": "MetaAnalyzer058",
+          "shortDescription": "Trailing trivia count incorrect",
+          "fullDescription": "T: This statement should check that '{0}' only has one trailing trivia element",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer059": {
+          "id": "MetaAnalyzer059",
+          "shortDescription": "ID string literal",
+          "fullDescription": "T: The ID should not be a string literal, because the ID must be accessible from the code fix provider",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer060": {
+          "id": "MetaAnalyzer060",
+          "shortDescription": "Change default title",
+          "fullDescription": "T: Please change the title to a string of your choosing",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer061": {
+          "id": "MetaAnalyzer061",
+          "shortDescription": "Change default message",
+          "fullDescription": "T: Please change the default message to a string of your choosing",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        },
+        "MetaAnalyzer062": {
+          "id": "MetaAnalyzer062",
+          "shortDescription": "Change default category",
+          "fullDescription": "T: Please change the category to a string of your choosing",
+          "defaultLevel": "error",
+          "properties": {
+            "category": "Tutorial",
+            "isEnabledByDefault": true,
+            "typeName": "MetaCompilationAnalyzer",
+            "languages": [
+              "C#"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

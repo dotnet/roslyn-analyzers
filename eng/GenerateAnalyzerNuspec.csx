@@ -1,3 +1,5 @@
+using System.IO;
+
 string nuspecFile = Args[0];
 string assetsDir = Args[1];
 string projectDir = Args[2];
@@ -10,10 +12,15 @@ var assemblyList = Args[8].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEn
 var dependencyList = Args[9].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var libraryList = Args[10].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 var rulesetsDir = Args[11];
-var legacyRulesets = Args[12].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-var artifactsBinDir = Args[13];
-var analyzerDocumentationFileDir = Args[14];
-var analyzerDocumentationFileName = Args[15];
+var editorconfigsDir = Args[12];
+var legacyRulesets = Args[13].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+var artifactsBinDir = Args[14];
+var analyzerDocumentationFileDir = Args[15];
+var analyzerDocumentationFileName = Args[16];
+var analyzerSarifFileDir = Args[17];
+var analyzerSarifFileName = Args[18];
+var analyzerConfigurationFileDir = Args[19];
+var analyzerConfigurationFileName = Args[20];
 
 var result = new StringBuilder();
 
@@ -36,6 +43,7 @@ foreach (string entry in metadataList)
         case "repositoryType": repositoryType = value; continue;
         case "repositoryUrl": repositoryUrl = value; continue;
         case "repositoryCommit": repositoryCommit = value; continue;
+		case "license": result.AppendLine($"    <license type=\"expression\">{value}</license>"); continue;
     }
     
     if (value != "")
@@ -113,11 +121,29 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0)
             targets = allTargets;
         }
 
-        string path = Path.Combine(Path.GetFileNameWithoutExtension(assembly), configuration, tfm, assembly);
+        string assemblyNameWithoutExtension = Path.GetFileNameWithoutExtension(assembly);
+        string assemblyFolder = Path.Combine(artifactsBinDir, assemblyNameWithoutExtension, configuration, tfm);
+        string assemblyPathForNuspec = Path.Combine(assemblyNameWithoutExtension, configuration, tfm, assembly);
 
         foreach (string target in targets)
         {
-            result.AppendLine(FileElement(path, target));
+            result.AppendLine(FileElement(assemblyPathForNuspec, target));
+
+            if (Directory.Exists(assemblyFolder))
+            {
+                string resourceAssemblyName = assemblyNameWithoutExtension + ".resources.dll";
+                foreach (var directory in Directory.EnumerateDirectories(assemblyFolder))
+                {
+                    var resourceAssemblyFullPath = Path.Combine(directory, resourceAssemblyName);
+                    if (File.Exists(resourceAssemblyFullPath))
+                    {
+                        var directoryName = Path.GetFileName(directory);
+                        string resourceAssemblyPathForNuspec = Path.Combine(assemblyNameWithoutExtension, configuration, tfm, directoryName, resourceAssemblyName);
+                        string targetForNuspec = Path.Combine(target, directoryName);
+                        result.AppendLine(FileElement(resourceAssemblyPathForNuspec, targetForNuspec));
+                    }
+                }
+            }
         }
     }
 
@@ -164,9 +190,39 @@ if (rulesetsDir.Length > 0 && Directory.Exists(rulesetsDir))
     }
 }
 
+if (editorconfigsDir.Length > 0 && Directory.Exists(editorconfigsDir))
+{
+    foreach (string directory in Directory.EnumerateDirectories(editorconfigsDir))
+    {
+        var directoryName = new DirectoryInfo(directory).Name;
+        foreach (string editorconfig in Directory.EnumerateFiles(directory))
+        {
+            result.AppendLine(FileElement(Path.Combine(directory, editorconfig), $"editorconfig\\{directoryName}"));
+        }
+    }
+}
+
 if (analyzerDocumentationFileDir.Length > 0 && Directory.Exists(analyzerDocumentationFileDir) && analyzerDocumentationFileName.Length > 0)
 {
     var fileWithPath = Path.Combine(analyzerDocumentationFileDir, analyzerDocumentationFileName);
+    if (File.Exists(fileWithPath))
+    {
+        result.AppendLine(FileElement(fileWithPath, "documentation"));
+    }
+}
+
+if (analyzerSarifFileDir.Length > 0 && Directory.Exists(analyzerSarifFileDir) && analyzerSarifFileName.Length > 0)
+{
+    var fileWithPath = Path.Combine(analyzerSarifFileDir, analyzerSarifFileName);
+    if (File.Exists(fileWithPath))
+    {
+        result.AppendLine(FileElement(fileWithPath, "documentation"));
+    }
+}
+
+if (analyzerConfigurationFileDir.Length > 0 && Directory.Exists(analyzerConfigurationFileDir) && analyzerConfigurationFileName.Length > 0)
+{
+    var fileWithPath = Path.Combine(analyzerConfigurationFileDir, analyzerConfigurationFileName);
     if (File.Exists(fileWithPath))
     {
         result.AppendLine(FileElement(fileWithPath, "documentation"));
@@ -184,6 +240,7 @@ if (legacyRulesets.Length > 0)
     }
 }
 
+result.AppendLine(FileElement(Path.Combine(assetsDir, "EULA.rtf"), ""));
 result.AppendLine(FileElement(Path.Combine(assetsDir, "ThirdPartyNotices.rtf"), ""));
 result.AppendLine(@"  </files>");
 

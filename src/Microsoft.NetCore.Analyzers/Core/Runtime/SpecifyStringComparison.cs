@@ -19,9 +19,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
     {
         internal const string RuleId = "CA1307";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyStringComparisonTitle), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyStringComparisonMessage), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemRuntimeAnalyzersResources.SpecifyStringComparisonDescription), SystemRuntimeAnalyzersResources.ResourceManager, typeof(SystemRuntimeAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyStringComparisonTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyStringComparisonMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.SpecifyStringComparisonDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
-                var stringComparisonType = csaContext.Compilation.GetTypeByMetadataName("System.StringComparison");
+                var stringComparisonType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemStringComparison);
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
 
                 // Without these symbols the rule cannot run
@@ -55,28 +55,28 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var booleanType = csaContext.Compilation.GetSpecialType(SpecialType.System_Boolean);
                 var integerType = csaContext.Compilation.GetSpecialType(SpecialType.System_Int32);
                 var stringCompareToNamedMethods = stringType.GetMembers("CompareTo").OfType<IMethodSymbol>();
-                var stringCompareToParameterString = stringCompareToNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareToParameterString = stringCompareToNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                          GetParameterInfo(stringType));
-                var stringCompareToParameterObject = stringCompareToNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareToParameterObject = stringCompareToNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                          GetParameterInfo(objectType));
 
                 var stringCompareNamedMethods = stringType.GetMembers("Compare").OfType<IMethodSymbol>();
-                var stringCompareParameterStringStringBool = stringCompareNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareParameterStringStringBool = stringCompareNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                                  GetParameterInfo(stringType),
                                                                  GetParameterInfo(stringType),
                                                                  GetParameterInfo(booleanType));
-                var stringCompareParameterStringStringStringComparison = stringCompareNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareParameterStringStringStringComparison = stringCompareNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                                              GetParameterInfo(stringType),
                                                                              GetParameterInfo(stringType),
                                                                              GetParameterInfo(stringComparisonType));
-                var stringCompareParameterStringIntStringIntIntBool = stringCompareNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareParameterStringIntStringIntIntBool = stringCompareNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                                           GetParameterInfo(stringType),
                                                                           GetParameterInfo(integerType),
                                                                           GetParameterInfo(stringType),
                                                                           GetParameterInfo(integerType),
                                                                           GetParameterInfo(integerType),
                                                                           GetParameterInfo(booleanType));
-                var stringCompareParameterStringIntStringIntIntComparison = stringCompareNamedMethods.GetSingleOrDefaultMemberWithParameterInfos(
+                var stringCompareParameterStringIntStringIntIntComparison = stringCompareNamedMethods.GetFirstOrDefaultMemberWithParameterInfos(
                                                                                 GetParameterInfo(stringType),
                                                                                 GetParameterInfo(integerType),
                                                                                 GetParameterInfo(stringType),
@@ -115,7 +115,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     }
 
                     IEnumerable<IMethodSymbol> methodsWithSameNameAsTargetMethod = targetMethod.ContainingType.GetMembers(targetMethod.Name).OfType<IMethodSymbol>();
-                    if (methodsWithSameNameAsTargetMethod.Count() > 1)
+                    if (methodsWithSameNameAsTargetMethod.HasMoreThan(1))
                     {
                         var correctOverload = methodsWithSameNameAsTargetMethod
                                                 .GetMethodOverloadsWithDesiredParameterAtTrailing(targetMethod, stringComparisonType)

@@ -1122,8 +1122,8 @@ public class C
                 IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId,
                 string.Format(
                     isSpecial ?
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
+                        MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
+                        MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
                     symbolName,
                     replacementName));
         }
@@ -1136,8 +1136,8 @@ public class C
                 IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId,
                 string.Format(
                     isSpecial ?
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
-                        MicrosoftApiDesignGuidelinesAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
+                        MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
+                        MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
                     symbolName,
                     replacementName));
         }

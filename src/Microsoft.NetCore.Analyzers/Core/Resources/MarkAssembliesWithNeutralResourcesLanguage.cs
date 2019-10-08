@@ -23,10 +23,10 @@ namespace Microsoft.NetCore.Analyzers.Resources
         protected const string StronglyTypedResourceBuilder = "StronglyTypedResourceBuilder";
         private const string Designer = ".Designer.";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(SystemResourcesAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageTitle), SystemResourcesAnalyzersResources.ResourceManager, typeof(SystemResourcesAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageTitle), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(SystemResourcesAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageMessage), SystemResourcesAnalyzersResources.ResourceManager, typeof(SystemResourcesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(SystemResourcesAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageDescription), SystemResourcesAnalyzersResources.ResourceManager, typeof(SystemResourcesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageMessage), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftNetCoreAnalyzersResources.MarkAssembliesWithNeutralResourcesLanguageDescription), MicrosoftNetCoreAnalyzersResources.ResourceManager, typeof(MicrosoftNetCoreAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -79,7 +79,7 @@ namespace Microsoft.NetCore.Analyzers.Resources
                     }
 
                     // attribute just don't exist
-                    ce.ReportDiagnostic(Diagnostic.Create(Rule, Location.None));
+                    ce.ReportNoLocationDiagnostic(Rule);
                 });
             });
         }
@@ -96,7 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Resources
                 return false;
             }
 
-            INamedTypeSymbol generatedCode = WellKnownTypes.GeneratedCodeAttribute(model.Compilation);
+            INamedTypeSymbol generatedCode = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCodeDomCompilerGeneratedCodeAttribute);
             if (model.GetSymbolInfo(attribute, cancellationToken).Symbol?.ContainingType?.Equals(generatedCode) != true)
             {
                 return false;
@@ -123,8 +123,8 @@ namespace Microsoft.NetCore.Analyzers.Resources
 
         private static bool TryCheckNeutralResourcesLanguageAttribute(CompilationAnalysisContext context, out AttributeData attributeData)
         {
-            INamedTypeSymbol attribute = WellKnownTypes.NeutralResourcesLanguageAttribute(context.Compilation);
-            INamedTypeSymbol @string = WellKnownTypes.String(context.Compilation);
+            INamedTypeSymbol attribute = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemResourcesNeutralResourcesLanguageAttribute);
+            INamedTypeSymbol @string = context.Compilation.GetSpecialType(SpecialType.System_String);
 
             IEnumerable<AttributeData> attributes = context.Compilation.Assembly.GetAttributes().Where(d => d.AttributeClass?.Equals(attribute) == true);
             foreach (AttributeData data in attributes)

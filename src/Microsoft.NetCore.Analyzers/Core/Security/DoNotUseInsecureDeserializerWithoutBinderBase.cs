@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -13,9 +12,7 @@ using Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis;
 using Analyzer.Utilities.PooledObjects;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -67,30 +64,6 @@ namespace Microsoft.NetCore.Analyzers.Security
         /// </summary>
         private static readonly ConstructorMapper ConstructorMapper = new ConstructorMapper(ImmutableArray.Create(PropertySetAbstractValueKind.Flagged));
 
-        /// <summary>
-        /// For PropertySetAnalysis dataflow analysis; only tracking one property, the <see cref="SerializationBinderPropertyMetadataName"/>.
-        /// </summary>
-        private const int SerializationBinderIndex = 0;
-
-        /// <summary>
-        /// For PropertySetAnalysis dataflow analysis; hazardous usage evaluation callback.
-        /// </summary>
-        /// <param name="methodSymbol"></param>
-        /// <param name="propertySetAbstractValue"></param>
-        /// <returns></returns>
-        private static HazardousUsageEvaluationResult HazardousIfNull(IMethodSymbol methodSymbol, PropertySetAbstractValue propertySetAbstractValue)
-        {
-            switch (propertySetAbstractValue[SerializationBinderIndex])
-            {
-                case PropertySetAbstractValueKind.Flagged:
-                    return HazardousUsageEvaluationResult.Flagged;
-                case PropertySetAbstractValueKind.Unflagged:
-                    return HazardousUsageEvaluationResult.Unflagged;
-                default:
-                    return HazardousUsageEvaluationResult.MaybeFlagged;
-            }
-        }
-
         public sealed override void Initialize(AnalysisContext context)
         {
             ImmutableHashSet<string> cachedDeserializationMethodNames = this.DeserializationMethodNames;
@@ -111,34 +84,19 @@ namespace Microsoft.NetCore.Analyzers.Security
             PropertyMapperCollection propertyMappers = new PropertyMapperCollection(
                 new PropertyMapper(
                     this.SerializationBinderPropertyMetadataName,
-                    (PointsToAbstractValue pointsToAbstractValue) =>
-                    {
-                        // A null SerializationBinder is what we want to flag as hazardous.
-                        switch (pointsToAbstractValue.NullState)
-                        {
-                            case NullAbstractValue.Null:
-                                return PropertySetAbstractValueKind.Flagged;
-
-                            case NullAbstractValue.NotNull:
-                                return PropertySetAbstractValueKind.Unflagged;
-
-                            default:
-                                return PropertySetAbstractValueKind.MaybeFlagged;
-                        }
-                    }));
+                    PropertySetCallbacks.FlagIfNull));
 
             HazardousUsageEvaluatorCollection hazardousUsageEvaluators =
                 new HazardousUsageEvaluatorCollection(
                     cachedDeserializationMethodNames.Select(
-                        methodName => new HazardousUsageEvaluator(methodName, DoNotUseInsecureDeserializerWithoutBinderBase.HazardousIfNull)));
+                        methodName => new HazardousUsageEvaluator(
+                            methodName,
+                            PropertySetCallbacks.HazardousIfAllFlaggedOrAllUnknown)));
 
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    WellKnownTypeProvider wellKnownTypeProvider =
-                        WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
-
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                             this.DeserializerTypeMetadataName,
                             out INamedTypeSymbol deserializerTypeSymbol))
                     {
@@ -150,6 +108,17 @@ namespace Microsoft.NetCore.Analyzers.Security
                     compilationStartAnalysisContext.RegisterOperationBlockStartAction(
                         (OperationBlockStartAnalysisContext operationBlockStartAnalysisContext) =>
                         {
+                            var owningSymbol = operationBlockStartAnalysisContext.OwningSymbol;
+
+                            // TODO: Handle case when exactly one of the below rules is configured to skip analysis.
+                            if (owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    BinderDefinitelyNotSetDescriptor, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken) &&
+                                owningSymbol.IsConfiguredToSkipAnalysis(operationBlockStartAnalysisContext.Options,
+                                    BinderMaybeNotSetDescriptor, operationBlockStartAnalysisContext.Compilation, operationBlockStartAnalysisContext.CancellationToken))
+                            {
+                                return;
+                            }
+
                             operationBlockStartAnalysisContext.RegisterOperationAction(
                                 (OperationAnalysisContext operationAnalysisContext) =>
                                 {
@@ -215,6 +184,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     allResults = PropertySetAnalysis.BatchGetOrComputeHazardousUsages(
                                         compilationAnalysisContext.Compilation,
                                         rootOperationsNeedingAnalysis,
+                                        compilationAnalysisContext.Options,
                                         this.DeserializerTypeMetadataName,
                                         DoNotUseInsecureDeserializerWithoutBinderBase.ConstructorMapper,
                                         propertyMappers,

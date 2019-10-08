@@ -30,15 +30,15 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            // Fixer not yet implemented.
-            Diagnostic diagnostic = context.Diagnostics.Single();
-
-            context.RegisterCodeFix(
-                new MyCodeAction(
-                    MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage,
-                    async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false),
-                    equivalenceKey: MicrosoftMaintainabilityAnalyzersResources.RemoveUnusedParameterMessage),
-                diagnostic);
+            foreach (var diagnostic in context.Diagnostics)
+            {
+                context.RegisterCodeFix(
+                    new MyCodeAction(
+                        MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage,
+                        async ct => await RemoveNodes(context.Document, diagnostic, ct).ConfigureAwait(false),
+                        equivalenceKey: MicrosoftCodeQualityAnalyzersResources.RemoveUnusedParameterMessage),
+                    diagnostic);
+            }
 
             return Task.CompletedTask;
         }

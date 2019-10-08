@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -11,19 +11,19 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2214: Do not call overridable methods in constructors
-    /// 
+    ///
     /// Cause: The constructor of an unsealed type calls a virtual method defined in its class.
-    /// 
-    /// Description: When a virtual method is called, the actual type that executes the method is not selected 
-    /// until run time. When a constructor calls a virtual method, it is possible that the constructor for the 
-    /// instance that invokes the method has not executed. 
+    ///
+    /// Description: When a virtual method is called, the actual type that executes the method is not selected
+    /// until run time. When a constructor calls a virtual method, it is possible that the constructor for the
+    /// instance that invokes the method has not executed.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCallOverridableMethodsInConstructorsAnalyzer : DiagnosticAnalyzer
     {
         public const string RuleId = "CA2214";
-        private static readonly LocalizableString s_localizableMessageAndTitle = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructors), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftQualityGuidelinesAnalyzersResources.DoNotCallOverridableMethodsInConstructorsDescription), MicrosoftQualityGuidelinesAnalyzersResources.ResourceManager, typeof(MicrosoftQualityGuidelinesAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessageAndTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotCallOverridableMethodsInConstructors), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.DoNotCallOverridableMethodsInConstructorsDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                          s_localizableMessageAndTitle,
@@ -44,8 +44,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
-                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName("System.ComponentModel.Component");
+                INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebUIControl);
+                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelComponent);
 
                 compilationContext.RegisterOperationBlockStartAction(context =>
                 {

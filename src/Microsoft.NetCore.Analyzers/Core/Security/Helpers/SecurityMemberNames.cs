@@ -2,8 +2,6 @@
 
 namespace Microsoft.NetCore.Analyzers.Security.Helpers
 {
-    using System.Security.Cryptography;
-
     internal static class SecurityMemberNames
     {
         // This is nameof(System.Security.Cryptography.DSA.CreateSignature), but DSA doesn't exist in .NET Standard 1.3.

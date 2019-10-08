@@ -41,6 +41,181 @@ namespace Microsoft.NetCore.Analyzers.Security.UnitTests
         }
 
         [Fact]
+        public void DocSample1_CSharp_Violation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5364 violation for using Tls11
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+    }
+}",
+            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"),
+            GetCSharpResultAt(10, 77, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+        }
+
+        [Fact]
+        public void DocSample1_VB_Violation()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Net
+
+Public Class TestClass
+    Public Sub ExampleMethod()
+        ' CA5364 violation for using Tls11
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
+    End Sub
+End Class
+",
+            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"),
+            GetBasicResultAt(8, 78, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+        }
+
+        [Fact]
+        public void DocSample2_CSharp_Violation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5364 violation
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType) 768;    // TLS 1.1
+    }
+}",
+            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "768"));
+        }
+
+        [Fact]
+        public void DocSample2_VB_Violation()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Net
+
+Public Class TestClass
+    Public Sub ExampleMethod()
+        ' CA5364 violation
+        ServicePointManager.SecurityProtocol = CType(768, SecurityProtocolType)   ' TLS 1.1
+    End Sub
+End Class
+",
+            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "768"));
+        }
+
+        [Fact]
+        public void DocSample1_CSharp_Solution()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        // Let the operating system decide what TLS protocol version to use.
+        // See https://docs.microsoft.com/dotnet/framework/network-programming/tls
+    }
+}");
+        }
+
+        [Fact]
+        public void DocSample1_VB_Solution()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Net
+
+Public Class TestClass
+    Public Sub ExampleMethod()
+        ' Let the operating system decide what TLS protocol version to use.
+        ' See https://docs.microsoft.com/dotnet/framework/network-programming/tls
+    End Sub
+End Class
+");
+        }
+
+        [Fact]
+        public void DocSample3_CSharp_Violation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5386 violation
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+    }
+}",
+            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+        }
+
+        [Fact]
+        public void DocSample3_VB_Violation()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Net
+
+Public Class TestClass
+    Public Sub ExampleMethod()
+        ' CA5386 violation
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+    End Sub
+End Class
+",
+            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "Tls12"));
+        }
+
+        [Fact]
+        public void DocSample4_CSharp_Violation()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+public class ExampleClass
+{
+    public void ExampleMethod()
+    {
+        // CA5386 violation
+        ServicePointManager.SecurityProtocol = (SecurityProtocolType) 3072;    // TLS 1.2
+    }
+}",
+            GetCSharpResultAt(10, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "3072"));
+        }
+
+        [Fact]
+        public void DocSample4_VB_Violation()
+        {
+            VerifyBasic(@"
+Imports System
+Imports System.Net
+
+Public Class TestClass
+    Public Sub ExampleMethod()
+        ' CA5386 violation
+        ServicePointManager.SecurityProtocol = CType(3072, SecurityProtocolType)   ' TLS 1.2
+    End Sub
+End Class
+",
+            GetBasicResultAt(8, 48, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "3072"));
+        }
+
+        [Fact]
         public void TestUseSsl3Diagnostic()
         {
             VerifyCSharp(@"
@@ -313,6 +488,43 @@ class TestClass
         int i = 384 | 768;
     }
 }");
+        }
+
+        [Fact]
+        public void TestMaskOutUnsafeOnServicePointManagerNoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        ServicePointManager.SecurityProtocol &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11);
+    }
+}");
+        }
+
+        [Fact]
+        public void TestMaskOutUnsafeOnVariableDiagnostic()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Net;
+
+class TestClass
+{
+    public void TestMethod()
+    {
+        SecurityProtocolType t = default(SecurityProtocolType);
+        t &= ~(SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11);
+    }
+}",
+                GetCSharpResultAt(10, 14, DoNotUseDeprecatedSecurityProtocols.HardCodedRule, "-1009"),
+                GetCSharpResultAt(10, 16, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Ssl3"),
+                GetCSharpResultAt(10, 44, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls"),
+                GetCSharpResultAt(10, 71, DoNotUseDeprecatedSecurityProtocols.DeprecatedRule, "Tls11"));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

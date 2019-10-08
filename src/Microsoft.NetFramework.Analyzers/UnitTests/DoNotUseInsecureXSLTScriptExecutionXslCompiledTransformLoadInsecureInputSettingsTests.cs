@@ -1070,7 +1070,7 @@ namespace TestNamespace
         }
     }
 }",
-                GetCA3076LoadCSharpResultAt(16, 17, "Run")
+                GetCA3076LoadCSharpResultAt(16, 17, "TestMethod")
             );
 
             await VerifyVB.VerifyAnalyzerAsync(@"
@@ -1093,7 +1093,7 @@ End Function)
         End Sub
     End Class
 End Namespace",
-                GetCA3076LoadBasicResultAt(12, 13, "Run")
+                GetCA3076LoadBasicResultAt(12, 13, "TestMethod")
             );
         }
 

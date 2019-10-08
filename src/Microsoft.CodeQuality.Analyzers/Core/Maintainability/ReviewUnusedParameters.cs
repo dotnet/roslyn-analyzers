@@ -3,7 +3,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
@@ -23,10 +22,10 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
     {
         internal const string RuleId = "CA1801";
 
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersTitle), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersTitle), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersMessage), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftMaintainabilityAnalyzersResources.ReviewUnusedParametersDescription), MicrosoftMaintainabilityAnalyzersResources.ResourceManager, typeof(MicrosoftMaintainabilityAnalyzersResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersDescription), MicrosoftCodeQualityAnalyzersResources.ResourceManager, typeof(MicrosoftCodeQualityAnalyzersResources));
 
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(RuleId,
                                                                              s_localizableTitle,
@@ -51,17 +50,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
-                INamedTypeSymbol eventsArgSymbol = compilationStartContext.Compilation.GetTypeByMetadataName("System.EventArgs");
+                INamedTypeSymbol eventsArgSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
 
                 // Ignore conditional methods (FxCop compat - One conditional will often call another conditional method as its only use of a parameter)
-                INamedTypeSymbol conditionalAttributeSymbol = WellKnownTypes.ConditionalAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol conditionalAttributeSymbol = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsConditionalAttribute);
 
                 // Ignore methods with special serialization attributes (FxCop compat - All serialization methods need to take 'StreamingContext')
-                INamedTypeSymbol onDeserializingAttribute = WellKnownTypes.OnDeserializingAttribute(compilationStartContext.Compilation);
-                INamedTypeSymbol onDeserializedAttribute = WellKnownTypes.OnDeserializedAttribute(compilationStartContext.Compilation);
-                INamedTypeSymbol onSerializingAttribute = WellKnownTypes.OnSerializingAttribute(compilationStartContext.Compilation);
-                INamedTypeSymbol onSerializedAttribute = WellKnownTypes.OnSerializedAttribute(compilationStartContext.Compilation);
-                INamedTypeSymbol obsoleteAttribute = WellKnownTypes.ObsoleteAttribute(compilationStartContext.Compilation);
+                INamedTypeSymbol onDeserializingAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnDeserializingAttribute);
+                INamedTypeSymbol onDeserializedAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnDeserializedAttribute);
+                INamedTypeSymbol onSerializingAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnSerializingAttribute);
+                INamedTypeSymbol onSerializedAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationOnSerializedAttribute);
+                INamedTypeSymbol obsoleteAttribute = compilationStartContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
 
                 ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore = ImmutableHashSet.Create(
                     conditionalAttributeSymbol,
@@ -85,65 +84,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 compilationStartContext.RegisterOperationBlockStartAction(startOperationBlockContext =>
                 {
                     // We only care about methods.
-                    if (startOperationBlockContext.OwningSymbol.Kind != SymbolKind.Method)
+                    if (!(startOperationBlockContext.OwningSymbol is IMethodSymbol method))
                     {
                         return;
                     }
 
-                    // We only care about methods with parameters.
-                    var method = (IMethodSymbol)startOperationBlockContext.OwningSymbol;
-                    if (method.Parameters.IsEmpty)
+                    AnalyzeMethod(method, startOperationBlockContext, unusedMethodParameters,
+                        eventsArgSymbol, methodsUsedAsDelegates, attributeSetForMethodsToIgnore);
+
+                    foreach (var localFunctionOperation in startOperationBlockContext.OperationBlocks.SelectMany(o => o.Descendants()).OfType<ILocalFunctionOperation>())
                     {
-                        return;
+                        AnalyzeMethod(localFunctionOperation.Symbol, startOperationBlockContext, unusedMethodParameters,
+                           eventsArgSymbol, methodsUsedAsDelegates, attributeSetForMethodsToIgnore);
                     }
-
-                    // Ignore implicitly declared methods, extern methods, abstract methods, virtual methods, interface implementations and finalizers (FxCop compat).
-                    if (method.IsImplicitlyDeclared ||
-                        method.IsExtern ||
-                        method.IsAbstract ||
-                        method.IsVirtual ||
-                        method.IsOverride ||
-                        method.IsImplementationOfAnyInterfaceMember() ||
-                        method.IsFinalizer())
-                    {
-                        return;
-                    }
-
-                    // Ignore property accessors.
-                    if (method.IsPropertyAccessor())
-                    {
-                        return;
-                    }
-
-                    // Ignore event handler methods "Handler(object, MyEventArgs)"
-                    if (eventsArgSymbol != null &&
-                        method.Parameters.Length == 2 &&
-                        method.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
-                        method.Parameters[1].Type.Inherits(eventsArgSymbol))
-                    {
-                        return;
-                    }
-
-                    // Ignore methods with any attributes in 'attributeSetForMethodsToIgnore'.
-                    if (method.GetAttributes().Any(a => a.AttributeClass != null && attributeSetForMethodsToIgnore.Contains(a.AttributeClass)))
-                    {
-                        return;
-                    }
-
-                    // Ignore methods that were used as delegates
-                    if (methodsUsedAsDelegates.Contains(method))
-                    {
-                        return;
-                    }
-
-                    // Initialize local mutable state in the start action.
-                    var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
-
-                    // Register an intermediate non-end action that accesses and modifies the state.
-                    startOperationBlockContext.RegisterOperationAction(analyzer.AnalyzeOperation, OperationKind.ParameterReference);
-
-                    // Register an end action to add unused parameters to the unusedMethodParameters dictionary
-                    startOperationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
                 });
 
                 // Register a compilation end action to filter all methods used as delegates and report any diagnostics
@@ -161,6 +114,79 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             });
         }
 
+        private static void AnalyzeMethod(
+            IMethodSymbol method,
+            OperationBlockStartAnalysisContext startOperationBlockContext,
+            UnusedParameterDictionary unusedMethodParameters,
+            INamedTypeSymbol eventsArgSymbol,
+            ISet<IMethodSymbol> methodsUsedAsDelegates,
+            ImmutableHashSet<INamedTypeSymbol> attributeSetForMethodsToIgnore)
+        {
+            // We only care about methods with parameters.
+            if (method.Parameters.IsEmpty)
+            {
+                return;
+            }
+
+            // Ignore implicitly declared methods, extern methods, abstract methods, virtual methods, interface implementations and finalizers (FxCop compat).
+            if (method.IsImplicitlyDeclared ||
+                method.IsExtern ||
+                method.IsAbstract ||
+                method.IsVirtual ||
+                method.IsOverride ||
+                method.IsImplementationOfAnyInterfaceMember() ||
+                method.IsFinalizer())
+            {
+                return;
+            }
+
+            // Ignore property accessors.
+            if (method.IsPropertyAccessor())
+            {
+                return;
+            }
+
+            // Ignore event handler methods "Handler(object, MyEventArgs)"
+            if (eventsArgSymbol != null &&
+                method.Parameters.Length == 2 &&
+                method.Parameters[0].Type.SpecialType == SpecialType.System_Object &&
+                method.Parameters[1].Type.Inherits(eventsArgSymbol))
+            {
+                return;
+            }
+
+            // Ignore methods with any attributes in 'attributeSetForMethodsToIgnore'.
+            if (method.GetAttributes().Any(a => a.AttributeClass != null && attributeSetForMethodsToIgnore.Contains(a.AttributeClass)))
+            {
+                return;
+            }
+
+            // Ignore methods that were used as delegates
+            if (methodsUsedAsDelegates.Contains(method))
+            {
+                return;
+            }
+
+            // Bail out if user has configured to skip analysis for the method.
+            if (!method.MatchesConfiguredVisibility(
+                    startOperationBlockContext.Options,
+                    Rule,
+                    startOperationBlockContext.CancellationToken,
+                    defaultRequiredVisibility: SymbolVisibilityGroup.All))
+            {
+                return;
+            }
+
+            // Initialize local mutable state in the start action.
+            var analyzer = new UnusedParametersAnalyzer(method, unusedMethodParameters);
+
+            // Register an intermediate non-end action that accesses and modifies the state.
+            startOperationBlockContext.RegisterOperationAction(analyzer.AnalyzeParameterReference, OperationKind.ParameterReference);
+
+            // Register an end action to add unused parameters to the unusedMethodParameters dictionary
+            startOperationBlockContext.RegisterOperationBlockEndAction(analyzer.OperationBlockEndAction);
+        }
+
         private class UnusedParametersAnalyzer
         {
             #region Per-CodeBlock mutable state
@@ -175,8 +201,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             public UnusedParametersAnalyzer(IMethodSymbol method, UnusedParameterDictionary finalUnusedParameters)
             {
-                // Initialization: Assume all parameters are unused.
-                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters);
+                // Initialization: Assume all parameters are unused, except the ones with special discard name.
+                _unusedParameters = new HashSet<IParameterSymbol>(method.Parameters.Where(p => !p.IsSymbolWithSpecialDiscardName()));
                 _finalUnusedParameters = finalUnusedParameters;
                 _method = method;
             }
@@ -185,7 +211,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             #region Intermediate actions
 
-            public void AnalyzeOperation(OperationAnalysisContext context)
+            public void AnalyzeParameterReference(OperationAnalysisContext context)
             {
                 // Check if we have any pending unreferenced parameters.
                 if (_unusedParameters.Count == 0)

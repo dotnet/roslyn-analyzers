@@ -3,6 +3,8 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -36,7 +38,8 @@ namespace Roslyn.Diagnostics.Analyzers
             context.RegisterCompilationStartAction(compilationStartContext =>
             {
                 var compilation = compilationStartContext.Compilation;
-                var threadDependencyAttribute = compilation.GetTypeByMetadataName(ThreadDependencyAttributeFullName);
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
+                var threadDependencyAttribute = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(ThreadDependencyAttributeFullName);
 
                 // Bail if ThreadDependencyAttribute is not defined
                 if (threadDependencyAttribute is null)
@@ -44,11 +47,11 @@ namespace Roslyn.Diagnostics.Analyzers
                     return;
                 }
 
-                HandleCompilationStart(compilationStartContext, threadDependencyAttribute);
+                HandleCompilationStart(compilationStartContext, wellKnownTypeProvider, threadDependencyAttribute);
             });
         }
 
-        protected abstract void HandleCompilationStart(CompilationStartAnalysisContext context, INamedTypeSymbol threadDependencyAttribute);
+        protected abstract void HandleCompilationStart(CompilationStartAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, INamedTypeSymbol threadDependencyAttribute);
 
         protected ThreadDependencyInfo GetThreadDependencyInfo(ISymbol symbol)
             => GetThreadDependencyInfo(symbol.GetAttributes(), in GetDefaultThreadDependencyInfo(symbol));
@@ -59,8 +62,16 @@ namespace Roslyn.Diagnostics.Analyzers
         protected static Location TryGetThreadDependencyInfoLocationForReturn(IMethodSymbol symbol, CancellationToken cancellationToken)
             => TryGetThreadDependencyInfoLocation(symbol.GetReturnTypeAttributes(), cancellationToken);
 
-        protected ThreadDependencyInfo GetThreadDependencyInfoForReturn(IMethodSymbol symbol)
+        protected ThreadDependencyInfo GetThreadDependencyInfoForReturn(WellKnownTypeProvider wellKnownTypeProvider, IMethodSymbol symbol)
         {
+            if (symbol.Name == nameof(Task.FromResult))
+            {
+                if (symbol.ContainingType.Equals(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask)))
+                {
+                    return new ThreadDependencyInfo(isExplicit: false, mayDirectlyRequireMainThread: false, alwaysCompleted: true, perInstance: false, capturesContext: false, verified: true);
+                }
+            }
+
             return GetThreadDependencyInfo(symbol.GetReturnTypeAttributes(), in GetDefaultThreadDependencyInfo(symbol.ReturnType));
         }
 

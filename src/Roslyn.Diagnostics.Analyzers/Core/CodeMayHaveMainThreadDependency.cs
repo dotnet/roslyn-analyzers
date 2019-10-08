@@ -35,12 +35,12 @@ namespace Roslyn.Diagnostics.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        protected override void HandleCompilationStart(CompilationStartAnalysisContext context, INamedTypeSymbol threadDependencyAttribute)
+        protected override void HandleCompilationStart(CompilationStartAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, INamedTypeSymbol threadDependencyAttribute)
         {
-            context.RegisterOperationBlockStartAction(HandleOperationBlockStart);
+            context.RegisterOperationBlockStartAction(context => HandleOperationBlockStart(context, wellKnownTypeProvider));
         }
 
-        private void HandleOperationBlockStart(OperationBlockStartAnalysisContext context)
+        private void HandleOperationBlockStart(OperationBlockStartAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider)
         {
             var threadDependencyInfo = GetThreadDependencyInfo(context.OwningSymbol);
             if (!threadDependencyInfo.IsExplicit || !threadDependencyInfo.Verified)
@@ -49,14 +49,14 @@ namespace Roslyn.Diagnostics.Analyzers
             }
 
             var threadDependencyInfoForReturn = context.OwningSymbol is IMethodSymbol methodSymbol
-                ? GetThreadDependencyInfoForReturn(methodSymbol)
+                ? GetThreadDependencyInfoForReturn(wellKnownTypeProvider, methodSymbol)
                 : threadDependencyInfo;
 
-            context.RegisterOperationAction(context => HandleReturnOperation(context, threadDependencyInfoForReturn), OperationKind.Return);
-            context.RegisterOperationAction(ctx => HandleAwaitOperation(ctx, threadDependencyInfoForReturn), OperationKind.Await);
+            context.RegisterOperationAction(context => HandleReturnOperation(context, wellKnownTypeProvider, threadDependencyInfoForReturn), OperationKind.Return);
+            context.RegisterOperationAction(ctx => HandleAwaitOperation(ctx, wellKnownTypeProvider, threadDependencyInfoForReturn), OperationKind.Await);
         }
 
-        private void HandleReturnOperation(OperationAnalysisContext context, ThreadDependencyInfo threadDependencyInfo)
+        private void HandleReturnOperation(OperationAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, ThreadDependencyInfo threadDependencyInfo)
         {
             var returnOperation = (IReturnOperation)context.Operation;
             if (returnOperation.ReturnedValue is null || returnOperation.IsImplicit)
@@ -64,7 +64,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 return;
             }
 
-            var valueThreadDependencyInfo = GetThreadDependencyInfo(returnOperation.ReturnedValue, captureContextUnlessConfigured: false);
+            var valueThreadDependencyInfo = GetThreadDependencyInfo(wellKnownTypeProvider, returnOperation.ReturnedValue, captureContextUnlessConfigured: false);
             if (valueThreadDependencyInfo.AlwaysCompleted)
             {
                 return;
@@ -79,7 +79,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     propertiesOverride = ScenarioProperties.WithCapturesContext(propertiesOverride);
                 }
 
-                if (IsReceiverMarkedPerInstance(returnOperation.ReturnedValue))
+                if (IsReceiverMarkedPerInstance(wellKnownTypeProvider, returnOperation.ReturnedValue))
                 {
                     propertiesOverride = ScenarioProperties.WithPerInstance(propertiesOverride);
                 }
@@ -110,10 +110,10 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 var properties = propertiesOverride;
                 var locationSyntax = context.Operation.Syntax;
-                if (properties is null && !IsReceiverMarkedPerInstance(returnOperation.ReturnedValue))
+                if (properties is null && !IsReceiverMarkedPerInstance(wellKnownTypeProvider, returnOperation.ReturnedValue))
                 {
                     var receiverOperation = GetReceiver(returnOperation.ReturnedValue);
-                    if (receiverOperation is object && !HasExplicitThreadDependencyInfo(receiverOperation))
+                    if (receiverOperation is object && !HasExplicitThreadDependencyInfo(wellKnownTypeProvider, receiverOperation))
                     {
                         locationSyntax = receiverOperation.Syntax;
                         properties = ScenarioProperties.TargetMissingAttribute;
@@ -125,10 +125,10 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        private void HandleAwaitOperation(OperationAnalysisContext context, ThreadDependencyInfo threadDependencyInfo)
+        private void HandleAwaitOperation(OperationAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, ThreadDependencyInfo threadDependencyInfo)
         {
             var awaitOperation = (IAwaitOperation)context.Operation;
-            var valueThreadDependencyInfo = GetThreadDependencyInfo(awaitOperation.Operation, captureContextUnlessConfigured: true);
+            var valueThreadDependencyInfo = GetThreadDependencyInfo(wellKnownTypeProvider, awaitOperation.Operation, captureContextUnlessConfigured: true);
 
             if (valueThreadDependencyInfo.AlwaysCompleted)
             {
@@ -144,7 +144,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     propertiesOverride = ScenarioProperties.WithCapturesContext(propertiesOverride);
                 }
 
-                if (IsReceiverMarkedPerInstance(awaitOperation.Operation))
+                if (IsReceiverMarkedPerInstance(wellKnownTypeProvider, awaitOperation.Operation))
                 {
                     propertiesOverride = ScenarioProperties.WithPerInstance(propertiesOverride);
                 }
@@ -175,10 +175,10 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 var properties = propertiesOverride;
                 var locationSyntax = context.Operation.Syntax;
-                if (properties is null && !IsReceiverMarkedPerInstance(awaitOperation.Operation))
+                if (properties is null && !IsReceiverMarkedPerInstance(wellKnownTypeProvider, awaitOperation.Operation))
                 {
                     var receiverOperation = GetReceiver(awaitOperation.Operation);
-                    if (receiverOperation is object && !HasExplicitThreadDependencyInfo(receiverOperation))
+                    if (receiverOperation is object && !HasExplicitThreadDependencyInfo(wellKnownTypeProvider, receiverOperation))
                     {
                         locationSyntax = receiverOperation.Syntax;
                         properties = ScenarioProperties.TargetMissingAttribute;
@@ -190,13 +190,13 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        private ThreadDependencyInfo GetThreadDependencyInfo(IOperation operation, bool captureContextUnlessConfigured)
+        private ThreadDependencyInfo GetThreadDependencyInfo(WellKnownTypeProvider wellKnownTypeProvider, IOperation operation, bool captureContextUnlessConfigured)
         {
             while (operation is IConversionOperation conversion)
             {
                 if (conversion.OperatorMethod is object)
                 {
-                    return GetThreadDependencyInfoForReturn(conversion.OperatorMethod);
+                    return GetThreadDependencyInfoForReturn(wellKnownTypeProvider, conversion.OperatorMethod);
                 }
 
                 operation = conversion.Operand;
@@ -206,7 +206,7 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 if (invocation.TargetMethod?.Name == nameof(Task.ConfigureAwait))
                 {
-                    var instanceDependencyInfo = GetThreadDependencyInfo(invocation.Instance, captureContextUnlessConfigured: false);
+                    var instanceDependencyInfo = GetThreadDependencyInfo(wellKnownTypeProvider, invocation.Instance, captureContextUnlessConfigured: false);
                     if (!instanceDependencyInfo.CapturesContext
                         && invocation.Arguments.Length == 1
                         && invocation.Arguments[0].Value.TryGetBoolConstantValue(out var continueOnCapturedContext)
@@ -219,10 +219,10 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
                 else
                 {
-                    var targetDependencyInfo = GetThreadDependencyInfoForReturn(invocation.TargetMethod);
+                    var targetDependencyInfo = GetThreadDependencyInfoForReturn(wellKnownTypeProvider, invocation.TargetMethod);
                     if (targetDependencyInfo.PerInstance)
                     {
-                        var instanceDependencyInfo = GetThreadDependencyInfo(invocation.Instance, captureContextUnlessConfigured: false);
+                        var instanceDependencyInfo = GetThreadDependencyInfo(wellKnownTypeProvider, invocation.Instance, captureContextUnlessConfigured: false);
                         if (instanceDependencyInfo.IsExplicit && !instanceDependencyInfo.MayHaveMainThreadDependency)
                         {
                             targetDependencyInfo = targetDependencyInfo.WithPerInstance(false);
@@ -247,6 +247,15 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
 
                 return parameterDependencyInfo;
+            }
+
+            if (operation is IAwaitOperation awaitOperation)
+            {
+                var awaitDependencyInfo = GetThreadDependencyInfo(wellKnownTypeProvider, awaitOperation.Operation, captureContextUnlessConfigured: true);
+                if (awaitDependencyInfo.AlwaysCompleted)
+                {
+                    return awaitDependencyInfo;
+                }
             }
 
             return ThreadDependencyInfo.DefaultAsynchronous;
@@ -284,13 +293,13 @@ namespace Roslyn.Diagnostics.Analyzers
             return null;
         }
 
-        private bool IsReceiverMarkedPerInstance(IOperation operation)
+        private bool IsReceiverMarkedPerInstance(WellKnownTypeProvider wellKnownTypeProvider, IOperation operation)
         {
             while (operation is IConversionOperation conversion)
             {
                 if (conversion.OperatorMethod is object)
                 {
-                    return GetThreadDependencyInfo(operation, captureContextUnlessConfigured: false).PerInstance;
+                    return GetThreadDependencyInfo(wellKnownTypeProvider, operation, captureContextUnlessConfigured: false).PerInstance;
                 }
 
                 operation = conversion.Operand;
@@ -300,11 +309,11 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 if (invocation.TargetMethod?.Name == nameof(Task.ConfigureAwait))
                 {
-                    return IsReceiverMarkedPerInstance(invocation.Instance);
+                    return IsReceiverMarkedPerInstance(wellKnownTypeProvider, invocation.Instance);
                 }
                 else
                 {
-                    return HasExplicitThreadDependencyInfo(invocation.Instance);
+                    return HasExplicitThreadDependencyInfo(wellKnownTypeProvider, invocation.Instance);
                 }
             }
 
@@ -316,13 +325,13 @@ namespace Roslyn.Diagnostics.Analyzers
             return false;
         }
 
-        private bool HasExplicitThreadDependencyInfo(IOperation operation)
+        private bool HasExplicitThreadDependencyInfo(WellKnownTypeProvider wellKnownTypeProvider, IOperation operation)
         {
             while (operation is IConversionOperation conversion)
             {
                 if (conversion.OperatorMethod is object)
                 {
-                    return GetThreadDependencyInfo(operation, captureContextUnlessConfigured: false).IsExplicit;
+                    return GetThreadDependencyInfo(wellKnownTypeProvider, operation, captureContextUnlessConfigured: false).IsExplicit;
                 }
 
                 operation = conversion.Operand;
@@ -332,15 +341,15 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 if (invocation.TargetMethod?.Name == nameof(Task.ConfigureAwait))
                 {
-                    return HasExplicitThreadDependencyInfo(invocation.Instance);
+                    return HasExplicitThreadDependencyInfo(wellKnownTypeProvider, invocation.Instance);
                 }
                 else
                 {
-                    return GetThreadDependencyInfo(invocation.Instance, captureContextUnlessConfigured: false).IsExplicit;
+                    return GetThreadDependencyInfo(wellKnownTypeProvider, invocation.Instance, captureContextUnlessConfigured: false).IsExplicit;
                 }
             }
 
-            return GetThreadDependencyInfo(operation, captureContextUnlessConfigured: false).IsExplicit;
+            return GetThreadDependencyInfo(wellKnownTypeProvider, operation, captureContextUnlessConfigured: false).IsExplicit;
         }
 
         private static IEnumerable<Location> GetAdditionalLocations(ISymbol containingSymbol, IOperation operation, CancellationToken cancellationToken)

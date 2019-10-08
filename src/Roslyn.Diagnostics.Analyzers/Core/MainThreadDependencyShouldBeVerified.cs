@@ -28,16 +28,16 @@ namespace Roslyn.Diagnostics.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        protected override void HandleCompilationStart(CompilationStartAnalysisContext context, INamedTypeSymbol threadDependencyAttribute)
+        protected override void HandleCompilationStart(CompilationStartAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, INamedTypeSymbol threadDependencyAttribute)
         {
-            context.RegisterSymbolAction(HandleMethod, SymbolKind.Method);
+            context.RegisterSymbolAction(context => HandleMethod(context, wellKnownTypeProvider), SymbolKind.Method);
             context.RegisterSymbolAction(HandleProperty, SymbolKind.Property);
             context.RegisterSymbolAction(HandleEvent, SymbolKind.Event);
             context.RegisterSymbolAction(HandleField, SymbolKind.Field);
             context.RegisterSymbolAction(HandleParameter, SymbolKind.Parameter);
         }
 
-        private void HandleMethod(SymbolAnalysisContext context)
+        private void HandleMethod(SymbolAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider)
         {
             var method = (IMethodSymbol)context.Symbol;
             var threadDependencyInfo = GetThreadDependencyInfo(method);
@@ -46,7 +46,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 context.ReportDiagnostic(Diagnostic.Create(Rule, TryGetThreadDependencyInfoLocation(method, context.CancellationToken) ?? GetLocation(method)));
             }
 
-            threadDependencyInfo = GetThreadDependencyInfoForReturn(method);
+            threadDependencyInfo = GetThreadDependencyInfoForReturn(wellKnownTypeProvider, method);
             if (threadDependencyInfo.IsExplicit && !threadDependencyInfo.Verified)
             {
                 // GetThreadDependencyInfoForReturn checks both [NoMainThreadDependency] and

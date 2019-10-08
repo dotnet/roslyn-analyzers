@@ -389,6 +389,43 @@ End Class
         }
 
         [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromResult_CSharp()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    Task<int> OperationAsync() {
+        return Task.FromResult(0);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromResult_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task(Of Integer)
+        Return Task.FromResult(0)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
         public async Task CorrectUseOfPerInstanceAsynchronousMethod_CSharp()
         {
             var code = @"

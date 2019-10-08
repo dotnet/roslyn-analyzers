@@ -37,19 +37,19 @@ namespace Roslyn.Diagnostics.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        protected override void HandleCompilationStart(CompilationStartAnalysisContext context, INamedTypeSymbol threadDependencyAttribute)
+        protected override void HandleCompilationStart(CompilationStartAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, INamedTypeSymbol threadDependencyAttribute)
         {
-            context.RegisterSymbolAction(HandleMethod, SymbolKind.Method);
-            context.RegisterSymbolAction(HandleProperty, SymbolKind.Property);
+            context.RegisterSymbolAction(context => HandleMethod(context, wellKnownTypeProvider), SymbolKind.Method);
+            context.RegisterSymbolAction(context => HandleProperty(context, wellKnownTypeProvider), SymbolKind.Property);
             context.RegisterSymbolAction(HandleEvent, SymbolKind.Event);
         }
 
-        private void HandleMethod(SymbolAnalysisContext context)
+        private void HandleMethod(SymbolAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider)
         {
             var methodSymbol = (IMethodSymbol)context.Symbol;
             if (methodSymbol.OverriddenMethod != null)
             {
-                CheckMethod(ref context, methodSymbol, methodSymbol.OverriddenMethod);
+                CheckMethod(ref context, wellKnownTypeProvider, methodSymbol, methodSymbol.OverriddenMethod);
             }
 
             if (methodSymbol.ContainingType != null)
@@ -60,7 +60,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     {
                         if (methodSymbol.IsImplementationOfInterfaceMember(interfaceMember))
                         {
-                            CheckMethod(ref context, methodSymbol, interfaceMember);
+                            CheckMethod(ref context, wellKnownTypeProvider, methodSymbol, interfaceMember);
                             break;
                         }
                     }
@@ -68,12 +68,12 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        private void HandleProperty(SymbolAnalysisContext context)
+        private void HandleProperty(SymbolAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider)
         {
             var propertySymbol = (IPropertySymbol)context.Symbol;
             if (propertySymbol.OverriddenProperty != null)
             {
-                CheckProperty(ref context, propertySymbol, propertySymbol.OverriddenProperty);
+                CheckProperty(ref context, wellKnownTypeProvider, propertySymbol, propertySymbol.OverriddenProperty);
             }
 
             if (propertySymbol.ContainingType != null)
@@ -84,7 +84,7 @@ namespace Roslyn.Diagnostics.Analyzers
                     {
                         if (propertySymbol.IsImplementationOfInterfaceMember(interfaceMember))
                         {
-                            CheckProperty(ref context, propertySymbol, interfaceMember);
+                            CheckProperty(ref context, wellKnownTypeProvider, propertySymbol, interfaceMember);
                             break;
                         }
                     }
@@ -116,10 +116,10 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        private void CheckMethod(ref SymbolAnalysisContext context, IMethodSymbol implementation, IMethodSymbol definition)
+        private void CheckMethod(ref SymbolAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, IMethodSymbol implementation, IMethodSymbol definition)
         {
             CheckSymbol(ref context, implementation, RefKind.None, RefKind.In, GetThreadDependencyInfo(implementation), GetThreadDependencyInfo(definition));
-            CheckSymbol(ref context, implementation, implementation.RefKind, RefKind.Out, GetThreadDependencyInfoForReturn(implementation), GetThreadDependencyInfoForReturn(definition));
+            CheckSymbol(ref context, implementation, implementation.RefKind, RefKind.Out, GetThreadDependencyInfoForReturn(wellKnownTypeProvider, implementation), GetThreadDependencyInfoForReturn(wellKnownTypeProvider, definition));
             for (int i = 0; i < implementation.Parameters.Length; i++)
             {
                 var dataDirection = implementation.Parameters[i].RefKind;
@@ -130,7 +130,7 @@ namespace Roslyn.Diagnostics.Analyzers
             }
         }
 
-        private void CheckProperty(ref SymbolAnalysisContext context, IPropertySymbol implementation, IPropertySymbol definition)
+        private void CheckProperty(ref SymbolAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, IPropertySymbol implementation, IPropertySymbol definition)
         {
             RefKind dataDirection;
             if (definition.GetMethod != null)
@@ -145,12 +145,12 @@ namespace Roslyn.Diagnostics.Analyzers
             CheckSymbol(ref context, implementation, implementation.RefKind, dataDirection, GetThreadDependencyInfo(implementation), GetThreadDependencyInfo(definition));
             if (definition.GetMethod != null)
             {
-                CheckMethod(ref context, implementation.GetMethod, definition.GetMethod);
+                CheckMethod(ref context, wellKnownTypeProvider, implementation.GetMethod, definition.GetMethod);
             }
 
             if (definition.SetMethod != null)
             {
-                CheckMethod(ref context, implementation.SetMethod, definition.SetMethod);
+                CheckMethod(ref context, wellKnownTypeProvider, implementation.SetMethod, definition.SetMethod);
             }
         }
 

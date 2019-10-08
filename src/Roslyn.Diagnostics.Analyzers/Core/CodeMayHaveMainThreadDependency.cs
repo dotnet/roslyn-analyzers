@@ -239,7 +239,14 @@ namespace Roslyn.Diagnostics.Analyzers
                         var instanceDependencyInfo = GetThreadDependencyInfo(wellKnownTypeProvider, invocation.Instance, captureContextUnlessConfigured: false);
                         if (instanceDependencyInfo.IsExplicit && !instanceDependencyInfo.MayHaveMainThreadDependency)
                         {
-                            targetDependencyInfo = targetDependencyInfo.WithPerInstance(false);
+                            if (!instanceDependencyInfo.MayHaveMainThreadDependency)
+                            {
+                                targetDependencyInfo = targetDependencyInfo.WithPerInstance(instanceDependencyInfo.PerInstance);
+                            }
+                            else
+                            {
+                                targetDependencyInfo = ThreadDependencyInfo.DefaultAsynchronous;
+                            }
                         }
                     }
 

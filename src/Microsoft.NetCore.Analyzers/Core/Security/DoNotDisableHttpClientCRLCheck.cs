@@ -120,12 +120,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClient, out INamedTypeSymbol httpClientTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNetHttpHttpClient, out INamedTypeSymbol httpClientTypeSymbol))
                     {
                         return;
                     }
 
-                    if (typeToTrackMetadataNames.All(s => !wellKnownTypeProvider.TryGetTypeByMetadataName(s, out _)))
+                    if (typeToTrackMetadataNames.All(s => !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(s, out _)))
                     {
                         return;
                     }

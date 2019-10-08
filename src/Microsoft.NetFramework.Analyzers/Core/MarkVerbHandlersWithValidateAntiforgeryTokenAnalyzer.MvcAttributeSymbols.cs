@@ -27,16 +27,16 @@ namespace Microsoft.NetFramework.Analyzers
 
             public MvcAttributeSymbols(Compilation compilation)
             {
-                this.ValidateAntiforgeryTokenAttributeSymbol = WellKnownTypes.ValidateAntiforgeryTokenAttribute(compilation);
-                this.HttpGetAttributeSymbol = WellKnownTypes.HttpGetAttribute(compilation);
-                this.HttpPostAttributeSymbol = WellKnownTypes.HttpPostAttribute(compilation);
-                this.HttpPutAttributeSymbol = WellKnownTypes.HttpPutAttribute(compilation);
-                this.HttpDeleteAttributeSymbol = WellKnownTypes.HttpDeleteAttribute(compilation);
-                this.HttpPatchAttributeSymbol = WellKnownTypes.HttpPatchAttribute(compilation);
-                this.AcceptVerbsAttributeSymbol = WellKnownTypes.AcceptVerbsAttribute(compilation);
-                this.NonActionAttributeSymbol = WellKnownTypes.NonActionAttribute(compilation);
-                this.ChildActionOnlyAttributeSymbol = WellKnownTypes.ChildActionOnlyAttribute(compilation);
-                this.HttpVerbsSymbol = WellKnownTypes.HttpVerbs(compilation);
+                this.ValidateAntiforgeryTokenAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcValidateAntiForgeryTokenAttribute);
+                this.HttpGetAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpGetAttribute);
+                this.HttpPostAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPostAttribute);
+                this.HttpPutAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPutAttribute);
+                this.HttpDeleteAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpDeleteAttribute);
+                this.HttpPatchAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpPatchAttribute);
+                this.AcceptVerbsAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcAcceptVerbsAttribute);
+                this.NonActionAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcNonActionAttribute);
+                this.ChildActionOnlyAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcChildActionOnlyAttribute);
+                this.HttpVerbsSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebMvcHttpVerbs);
             }
 
             /// <summary>

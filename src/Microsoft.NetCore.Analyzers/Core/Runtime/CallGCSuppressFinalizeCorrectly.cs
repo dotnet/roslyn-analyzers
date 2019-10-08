@@ -74,7 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 var gcSuppressFinalizeMethodSymbol = compilationContext.Compilation
-                                                        .GetTypeByMetadataName("System.GC")
+                                                        .GetTypeByMetadataName(WellKnownTypeNames.SystemGC)
                                                         ?.GetMembers("SuppressFinalize")
                                                         .OfType<IMethodSymbol>()
                                                         .FirstOrDefault();
@@ -186,7 +186,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 // We allow constructors in sealed types to call GC.SuppressFinalize.
                 // This allows types that derive from Component (such SqlConnection)
-                // to prevent the finalizer they inherit from Component from ever 
+                // to prevent the finalizer they inherit from Component from ever
                 // being called.
                 if (method.ContainingType.IsSealed && method.IsConstructor() && !method.IsStatic)
                 {
@@ -206,8 +206,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return SuppressFinalizeUsage.CanCall;
                 }
 
-                // We don't require that non-public types call GC.SuppressFinalize 
-                // if they don't have a finalizer as the owner of the assembly can 
+                // We don't require that non-public types call GC.SuppressFinalize
+                // if they don't have a finalizer as the owner of the assembly can
                 // control whether any finalizable types derive from them.
                 if (method.ContainingType.DeclaredAccessibility != Accessibility.Public && !hasFinalizer)
                 {

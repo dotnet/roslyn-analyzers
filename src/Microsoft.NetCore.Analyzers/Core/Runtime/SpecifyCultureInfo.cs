@@ -43,9 +43,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
-                var obsoleteAttributeType = WellKnownTypes.ObsoleteAttribute(csaContext.Compilation);
+                var obsoleteAttributeType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
 
-                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName("System.Globalization.CultureInfo");
+                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
                 if (cultureInfoType != null)
                 {
                     csaContext.RegisterOperationAction(oaContext =>

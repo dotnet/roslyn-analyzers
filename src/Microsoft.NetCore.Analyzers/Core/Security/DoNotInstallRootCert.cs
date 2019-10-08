@@ -77,12 +77,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Store, out var x509TypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesX509Store, out var x509TypeSymbol))
                     {
                         return;
                     }
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesStoreName, out var storeNameTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyX509CertificatesStoreName, out var storeNameTypeSymbol))
                     {
                         return;
                     }

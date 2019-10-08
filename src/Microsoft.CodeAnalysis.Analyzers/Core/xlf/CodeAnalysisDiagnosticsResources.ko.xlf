@@ -202,6 +202,21 @@
 </target>
         <note />
       </trans-unit>
+      <trans-unit id="UseComparerInSymbolCollectionsDescription">
+        <source>Default comparison of ISymbol can result in incorrect behavior. It is advised that an IEqualityComparer is used.</source>
+        <target state="new">Default comparison of ISymbol can result in incorrect behavior. It is advised that an IEqualityComparer is used.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseComparerInSymbolCollectionsMessage">
+        <source>When creating collections or using methods that accept IEquailityComparer one should be provided</source>
+        <target state="new">When creating collections or using methods that accept IEquailityComparer one should be provided</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="UseComparerInSymbolCollectionsTitle">
+        <source>Use a comparer in symbol collections</source>
+        <target state="new">Use a comparer in symbol collections</target>
+        <note />
+      </trans-unit>
       <trans-unit id="UseLocalizableStringsInDescriptorMessage">
         <source>Consider providing localizable arguments of type '{0}' to diagnostic descriptor constructor to ensure the descriptor is localizable.</source>
         <target state="translated">'{0}' 형식의 현지화할 수 있는 인수를 진단 설명자 생성자에 제공하여 설명자를 현지화할 수 있는지 확인하세요.</target>

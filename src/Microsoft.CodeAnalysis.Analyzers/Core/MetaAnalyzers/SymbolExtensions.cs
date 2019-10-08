@@ -40,7 +40,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
             if (operation is IArgumentOperation argumentOperation)
             {
-                return namedTypeSymbol.IsTypeSymbol(argumentOperation.Parameter.Type);
+                return namedTypeSymbol.IsTypeSymbol(argumentOperation.Value);
             }
 
             return false;

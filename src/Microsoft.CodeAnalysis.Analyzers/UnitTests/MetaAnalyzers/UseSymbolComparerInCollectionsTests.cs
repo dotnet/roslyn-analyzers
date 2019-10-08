@@ -44,46 +44,14 @@ namespace Microsoft.CodeAnalysis
         [Theory]
         [InlineData(nameof(ISymbol))]
         [InlineData(nameof(INamedTypeSymbol))]
-        public async Task ImmutableArray_BinarySearch_UseComparer(string symbolType)
+        public async Task ImmutableDictionary_Create_UseComparer(string symbolType)
         {
             var source = $@"
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
 
 class TestClass {{
-    int Method(ImmutableArray<{symbolType}> arr, {symbolType} value) {{
-        return [|arr.BinarySearch(value)|];
-    }}
-}}
-";
-            var fixedSource = $@"
-using Microsoft.CodeAnalysis;
-using System.Collections.Immutable;
-
-class TestClass {{
-    int Method(ImmutableArray<{symbolType}> arr, {symbolType} value) {{
-        return arr.BinarySearch(value, SymbolEqualityComparer.Default);
-    }}
-}}
-";
-            await new VerifyCS.Test
-            {
-                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
-                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } },
-            }.RunAsync();
-        }
-
-        [Theory]
-        [InlineData(nameof(ISymbol))]
-        [InlineData(nameof(INamedTypeSymbol))]
-        public async Task ImmutableDictionary_BinarySearch_UseComparer(string symbolType)
-        {
-            var source = $@"
-using Microsoft.CodeAnalysis;
-using System.Collections.Immutable;
-
-class TestClass {{
-    ImmutableDictionary<{symbolType}, string> Method() {{
+    object Method() {{
         return [|ImmutableDictionary.Create<{symbolType}, string>()|];
     }}
 }}
@@ -93,7 +61,7 @@ using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
 
 class TestClass {{
-    ImmutableDictionary<{symbolType}, string> Method() {{
+    object Method() {{
         return ImmutableDictionary.Create<{symbolType}, string>(SymbolEqualityComparer.Default);
     }}
 }}
@@ -101,7 +69,71 @@ class TestClass {{
             await new VerifyCS.Test
             {
                 TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
-                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task ImmutableDictionary_CreateBuilder_UseComparer(string symbolType)
+        {
+            var source = $@"
+using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
+
+class TestClass {{
+    object Method() {{
+        return [|ImmutableDictionary.CreateBuilder<{symbolType}, string>()|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
+
+class TestClass {{
+    object Method() {{
+        return ImmutableDictionary.CreateBuilder<{symbolType}, string>(SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task ImmutableDictionary_ToImmutableDictionary_UseComparer(string symbolType)
+        {
+            var source = $@"
+using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
+
+class TestClass {{
+    object Method(ImmutableDictionary<{symbolType}, string> dict) {{
+        return [|dict.ToImmutableDictionary()|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
+
+class TestClass {{
+    object Method(ImmutableDictionary<{symbolType}, string> dict) {{
+        return [|dict.ToImmutableDictionary(SymbolEqualityComparer.Default)|];
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
             }.RunAsync();
         }
     }

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
@@ -29,7 +30,7 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        CodeAnalysisDiagnosticsResources.AddLanguageSupportToAnalyzerDescription,
+                        CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyCodeFix,
                         cancellationToken => AddDefaultComparerAsync(context.Document, diagnostic.Location.SourceSpan, cancellationToken),
                         equivalenceKey: nameof(UseSymbolComparerInCollectionsFix)),
                     diagnostic);
@@ -53,11 +54,12 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
-            var newInvocation = generator.InvocationExpression(
-                invocationOperation.Syntax,
-                invocationOperation.Arguments.Select(a => a.Syntax).Concat(new[] { GetEqualityComparerDefault(generator) }));
+            var invocationSyntax = (InvocationExpressionSyntax)invocationOperation.Syntax;
 
-            editor.ReplaceNode(invocationOperation.Syntax, newInvocation.WithTriviaFrom(invocationOperation.Syntax));
+            var newInvocation = invocationSyntax.WithArgumentList(
+                invocationSyntax.ArgumentList.AddArguments((ArgumentSyntax)generator.Argument(GetEqualityComparerDefault(generator))));
+
+            editor.ReplaceNode(invocationSyntax, newInvocation);
 
             return editor.GetChangedDocument();
         }

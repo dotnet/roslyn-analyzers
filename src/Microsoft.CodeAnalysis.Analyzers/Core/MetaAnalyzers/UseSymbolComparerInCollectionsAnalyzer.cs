@@ -13,9 +13,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public class UseSymbolComparerInCollectionsAnalyzer : DiagnosticAnalyzer
     {
-        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
-        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.CompareSymbolsCorrectlyDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableTitle = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.UseComparerInSymbolCollectionsTitle), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableMessage = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.UseComparerInSymbolCollectionsMessage), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
+        private static readonly LocalizableString s_localizableDescription = new LocalizableResourceString(nameof(CodeAnalysisDiagnosticsResources.UseComparerInSymbolCollectionsDescription), CodeAnalysisDiagnosticsResources.ResourceManager, typeof(CodeAnalysisDiagnosticsResources));
 
         public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             DiagnosticIds.UseComparerInSymbolCollectionsRuleId,
@@ -54,10 +54,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                 {
                     switch (context.Operation)
                     {
-                        case IObjectCreationOperation _: OnObjectCreationOperation(context, symbolType, comparerType); break;
-                        case IInvocationOperation _: OnInvocationOperation(context, symbolType, comparerType); break;
+                        case IInvocationOperation _: OnInvocationOperation(in context, symbolType, comparerType); break;
                     }
-                }, OperationKind.ObjectCreation, OperationKind.Invocation, OperationKind.ObjectCreation);
+                }, OperationKind.Invocation);
             });
         }
 
@@ -68,43 +67,21 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
             switch (targetMethod.ContainingSymbol.Name)
             {
-                case nameof(ImmutableArray):
-                    {
-                        if (targetMethod.Name == nameof(ImmutableArray.BinarySearch))
-                        {
-                            var thisParameterForExtension = targetMethod.Parameters.First();
-                            var typeForThisParam = thisParameterForExtension.Type;
-                            if (typeForThisParam.Name == nameof(ImmutableArray) &&
-                                FirstTypeArgumentIsSymbolType(typeForThisParam, symbolType))
-                            {
-                                RequireInvocationHasAnyComparerArgument(context, invocationOperation, comparerType);
-                            }
-                        }
-                    }
-                    break;
-
                 case nameof(ImmutableDictionary):
                     {
                         switch (targetMethod.Name)
                         {
                             case nameof(ImmutableDictionary.Create):
                             case nameof(ImmutableDictionary.CreateBuilder):
+                            case nameof(ImmutableDictionary.ToImmutableDictionary):
                                 {
-                                    // Create and CreateBuilder are static methods on ImmutableDictionary
+                                    // Create, CreateBuilder, and ToImmutableDictionary are static methods on ImmutableDictionary
                                     // with the type argument on the method signature instead 
                                     // of the containing type
                                     if (FirstTypeArgumentIsSymbolType(targetMethod, symbolType))
                                     {
-                                        RequireInvocationHasAnyComparerArgument(context, invocationOperation, comparerType);
+                                        RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
                                     }
-                                }
-                                break;
-                            case nameof(ImmutableDictionary.ToImmutableDictionary):
-                                // ToImmutableDictionary is an extension method, so the first parameter has
-                                // the type arguments we need to check
-                                if (FirstTypeArgumentIsSymbolType(targetMethod.Parameters.First().ContainingType, symbolType))
-                                {
-                                    RequireInvocationHasAnyComparerArgument(context, invocationOperation, comparerType);
                                 }
                                 break;
                         }
@@ -123,11 +100,6 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             context.ReportDiagnostic(invocationOperation.Syntax.GetLocation().CreateDiagnostic(Rule));
         }
 
-        private static bool FirstTypeArgumentIsSymbolType(ITypeSymbol typeToCheck, INamedTypeSymbol symbolType)
-            => typeToCheck is INamedTypeSymbol namedTypeSymbol &&
-               namedTypeSymbol.TypeArguments.Any() &&
-               symbolType.IsTypeSymbol(namedTypeSymbol.TypeArguments.First());
-
         private static bool FirstTypeArgumentIsSymbolType(IMethodSymbol methodToCheck, INamedTypeSymbol symbolType)
             => methodToCheck.TypeArguments.Any() &&
                symbolType.IsTypeSymbol(methodToCheck.TypeArguments.First());
@@ -135,10 +107,5 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         private static bool InvocationContainsEqualityComparerArgument(IInvocationOperation invocationOperation, INamedTypeSymbol comparerType)
             => invocationOperation.Arguments.Any(comparerType.IsTypeSymbol);
-
-        private void OnObjectCreationOperation(in OperationAnalysisContext context, INamedTypeSymbol symbolType, INamedTypeSymbol comparerType)
-        {
-           
-        }
     }
 }

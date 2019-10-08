@@ -234,7 +234,7 @@ namespace Roslyn.Diagnostics.Analyzers
             var generator = SyntaxGenerator.GetGenerator(solution.GetDocument(declarationReference.SyntaxTree));
 
             var attribute = CreateAttribute(generator, contextDependency, perInstance);
-            var newNode = generator.AddAttributes(syntaxNode, attribute);
+            var newNode = generator.AddReturnAttributes(syntaxNode, attribute);
             var newRoot = root.ReplaceNode(syntaxNode, newNode);
 
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);

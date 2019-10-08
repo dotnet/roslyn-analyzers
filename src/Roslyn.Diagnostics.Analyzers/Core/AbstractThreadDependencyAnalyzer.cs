@@ -61,17 +61,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
         protected ThreadDependencyInfo GetThreadDependencyInfoForReturn(IMethodSymbol symbol)
         {
-            var result = GetThreadDependencyInfo(symbol.GetReturnTypeAttributes(), in GetDefaultThreadDependencyInfo(symbol.ReturnType));
-            if (!result.IsExplicit)
-            {
-                var alternateResult = GetThreadDependencyInfo(symbol);
-                if (alternateResult.IsExplicit)
-                {
-                    return alternateResult;
-                }
-            }
-
-            return result;
+            return GetThreadDependencyInfo(symbol.GetReturnTypeAttributes(), in GetDefaultThreadDependencyInfo(symbol.ReturnType));
         }
 
         private ref readonly ThreadDependencyInfo GetDefaultThreadDependencyInfo(ISymbol symbol)

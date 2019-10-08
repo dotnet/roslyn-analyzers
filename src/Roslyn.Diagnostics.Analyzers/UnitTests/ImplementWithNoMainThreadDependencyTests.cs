@@ -56,6 +56,7 @@ using Roslyn.Utilities;
 
 interface Interface {
     [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
     Task MethodAsync();
 }
 

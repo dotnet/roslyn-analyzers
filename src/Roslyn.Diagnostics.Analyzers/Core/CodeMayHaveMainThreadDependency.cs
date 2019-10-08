@@ -48,8 +48,12 @@ namespace Roslyn.Diagnostics.Analyzers
                 return;
             }
 
-            context.RegisterOperationAction(context => HandleReturnOperation(context, threadDependencyInfo), OperationKind.Return);
-            context.RegisterOperationAction(ctx => HandleAwaitOperation(ctx, threadDependencyInfo), OperationKind.Await);
+            var threadDependencyInfoForReturn = context.OwningSymbol is IMethodSymbol methodSymbol
+                ? GetThreadDependencyInfoForReturn(methodSymbol)
+                : threadDependencyInfo;
+
+            context.RegisterOperationAction(context => HandleReturnOperation(context, threadDependencyInfoForReturn), OperationKind.Return);
+            context.RegisterOperationAction(ctx => HandleAwaitOperation(ctx, threadDependencyInfoForReturn), OperationKind.Await);
         }
 
         private void HandleReturnOperation(OperationAnalysisContext context, ThreadDependencyInfo threadDependencyInfo)

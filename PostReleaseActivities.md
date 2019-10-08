@@ -25,4 +25,4 @@ Steps to generate Release Notes
 1. Checkout the sources for the release branch locally. This would normally be the master branch.
 2. Build.
 3. Ensure that nuget.exe is on path.
-4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\netcoreapp2.0` and execute `GenDiffNotes.cmd` to generate release notes.  Example command line for v2.9.4 to v2.9.5: `GenDiffNotes.cmd C:\scratch nuget.org 2.9.3 2.9.4`.
+4. Generate notes: Switch to the output directory, say `artifacts\bin\ReleaseNotesUtil\Debug\netcoreapp2.0` and execute `GenDiffNotes.cmd` to generate release notes.  Example command line for v2.9.4 to v2.9.5: `GenDiffNotes.cmd C:\scratch nuget.org 2.9.4 2.9.5`.

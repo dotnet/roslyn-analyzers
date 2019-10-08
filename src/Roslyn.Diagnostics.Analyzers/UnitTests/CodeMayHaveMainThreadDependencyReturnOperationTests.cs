@@ -426,6 +426,158 @@ End Class
         }
 
         [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromCanceled_CSharp()
+        {
+            var code = @"
+using System.Threading;
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    Task OperationAsync() {
+        return Task.FromCanceled(CancellationToken.None);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromCanceled_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task
+        Return Task.FromCanceled(CancellationToken.None)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromCanceledT_CSharp()
+        {
+            var code = @"
+using System.Threading;
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    Task<int> OperationAsync() {
+        return Task.FromCanceled<int>(CancellationToken.None);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromCanceledT_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task(Of Integer)
+        Return Task.FromCanceled(Of Integer)(CancellationToken.None)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromException_CSharp()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    Task OperationAsync() {
+        return Task.FromException(null);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromException_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task
+        Return Task.FromException(Nothing)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromExceptionT_CSharp()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    Task<int> OperationAsync() {
+        return Task.FromException<int>(null);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task PassThroughDoesNotCaptureContextIfAlreadyCompletedTaskFromExceptionT_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task(Of Integer)
+        Return Task.FromException(Of Integer)(Nothing)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
         public async Task CorrectUseOfPerInstanceAsynchronousMethod_CSharp()
         {
             var code = @"

@@ -64,7 +64,9 @@ namespace Roslyn.Diagnostics.Analyzers
 
         protected ThreadDependencyInfo GetThreadDependencyInfoForReturn(WellKnownTypeProvider wellKnownTypeProvider, IMethodSymbol symbol)
         {
-            if (symbol.Name == nameof(Task.FromResult))
+            if (symbol.Name == nameof(Task.FromResult)
+                || symbol.Name == nameof(Task.FromCanceled)
+                || symbol.Name == nameof(Task.FromException))
             {
                 if (symbol.ContainingType.Equals(wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask)))
                 {

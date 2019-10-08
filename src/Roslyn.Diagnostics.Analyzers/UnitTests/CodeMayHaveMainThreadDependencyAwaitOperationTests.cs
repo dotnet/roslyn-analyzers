@@ -851,6 +851,158 @@ End Class
         }
 
         [Fact]
+        public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompletedTaskFromCanceled_CSharp()
+        {
+            var code = @"
+using System.Threading;
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    async Task OperationAsync() {
+        await Task.FromCanceled(CancellationToken.None);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompletedTaskFromCanceled_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task
+        Await Task.FromCanceled(CancellationToken.None)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompletedTaskFromCanceledT_CSharp()
+        {
+            var code = @"
+using System.Threading;
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    async Task<int> OperationAsync() {
+        return await Task.FromCanceled<int>(CancellationToken.None);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompletedTaskFromCanceledT_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task(Of Integer)
+        Return Await Task.FromCanceled(Of Integer)(CancellationToken.None)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompletedTaskFromException_CSharp()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    async Task OperationAsync() {
+        await Task.FromException(null);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompletedTaskFromException_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task
+        Await Task.FromException(Nothing)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompletedTaskFromExceptionT_CSharp()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None)]
+    async Task<int> OperationAsync() {
+        return await Task.FromException<int>(null);
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
+        public async Task MissingConfigureAwaitDoesNotCaptureContextIfAlreadyCompletedTaskFromExceptionT_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Async Function OperationAsync() As <ThreadDependency(ContextDependency.None)> Task(Of Integer)
+        Return Await Task.FromException(Of Integer)(Nothing)
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, code);
+        }
+
+        [Fact]
         public async Task CorrectUseOfPerInstanceAsynchronousMethod_CSharp()
         {
             var code = @"

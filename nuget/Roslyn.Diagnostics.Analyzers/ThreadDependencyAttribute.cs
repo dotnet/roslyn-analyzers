@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
+using System.ComponentModel;
 
 namespace Roslyn.Utilities
 {
@@ -41,6 +42,17 @@ namespace Roslyn.Utilities
         public ThreadDependencyAttribute(ContextDependency contextDependency)
         {
             ContextDependency = contextDependency;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThreadDependencyAttribute"/> class with the specified
+        /// dependency type.
+        /// </summary>
+        /// <param name="contextDependency">The dependency type for the operation or value.</param>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public ThreadDependencyAttribute(int contextDependency)
+            : this((ContextDependency)contextDependency)
+        {
         }
 
         /// <summary>

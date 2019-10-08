@@ -41,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.EnableConcurrentExecution();
             analysisContext.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-            // Analyze properties, methods 
+            // Analyze properties, methods
             analysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Property, SymbolKind.Method);
         }
 
@@ -90,6 +90,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     // Ignore members whose IsStatic does not match with the symbol's IsStatic
                     if (symbol.IsStatic != member.IsStatic)
+                    {
+                        continue;
+                    }
+
+                    // Ignore declared type that overrides a base member
+                    if (symbol.IsOverride)
                     {
                         continue;
                     }

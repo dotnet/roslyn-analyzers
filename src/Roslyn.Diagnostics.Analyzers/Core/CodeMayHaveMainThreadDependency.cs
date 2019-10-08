@@ -313,7 +313,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
             }
 
-            if (operation is IParameterReferenceOperation)
+            if (operation is IParameterReferenceOperation || operation is IFieldReferenceOperation || operation is IPropertyReferenceOperation)
             {
                 return operation;
             }
@@ -345,7 +345,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 }
             }
 
-            if (operation is IParameterReferenceOperation)
+            if (operation is IParameterReferenceOperation || operation is IFieldReferenceOperation || operation is IPropertyReferenceOperation)
             {
                 return false;
             }

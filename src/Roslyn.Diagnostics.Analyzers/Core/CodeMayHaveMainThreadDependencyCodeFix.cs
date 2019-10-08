@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -166,6 +167,9 @@ namespace Roslyn.Diagnostics.Analyzers
                 case IFieldSymbol field:
                     return await MarkFieldWithMainThreadDependencyAsync(document.Project.Solution, field, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
 
+                case IPropertySymbol property:
+                    return await MarkPropertyWithMainThreadDependencyAsync(document.Project.Solution, property, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
+
                 case IEventSymbol @event:
                     return await MarkEventWithMainThreadDependencyAsync(document.Project.Solution, @event, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
 
@@ -186,6 +190,31 @@ namespace Roslyn.Diagnostics.Analyzers
         private static async Task<Solution> MarkFieldWithMainThreadDependencyAsync(Solution solution, IFieldSymbol field, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
         {
             var declarationReference = field.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
+            if (declarationReference is null)
+            {
+                return solution;
+            }
+
+            var root = await declarationReference.SyntaxTree.GetRootAsync(cancellationToken).ConfigureAwait(false);
+            var syntaxNode = await declarationReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
+            var generator = SyntaxGenerator.GetGenerator(solution.GetDocument(declarationReference.SyntaxTree));
+
+            syntaxNode = generator.GetContainingDeclaration(syntaxNode, DeclarationKind.Field);
+            if (syntaxNode is null)
+            {
+                return solution;
+            }
+
+            var attribute = CreateAttribute(generator, contextDependency, perInstance);
+            var newNode = generator.AddAttributes(syntaxNode, attribute);
+            var newRoot = root.ReplaceNode(syntaxNode, newNode);
+
+            return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
+        }
+
+        private static async Task<Solution> MarkPropertyWithMainThreadDependencyAsync(Solution solution, IPropertySymbol property, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        {
+            var declarationReference = property.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
             {
                 return solution;
@@ -309,6 +338,9 @@ namespace Roslyn.Diagnostics.Analyzers
 
                 case IFieldReferenceOperation fieldReference:
                     return fieldReference.Field;
+
+                case IPropertyReferenceOperation propertyReference:
+                    return propertyReference.Property;
 
                 case IParameterReferenceOperation parameterReference:
                     return parameterReference.Parameter;

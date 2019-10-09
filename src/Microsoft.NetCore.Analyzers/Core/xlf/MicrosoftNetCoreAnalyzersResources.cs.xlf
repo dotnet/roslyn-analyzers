@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessDescription">
         <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</source>
-        <target state="translated">Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</target>
+        <target state="translated">Použití generátoru kryptograficky slabých pseudonáhodných čísel může útočníkovi umožnit předpovědět, jaká hodnota citlivá z hlediska bezpečnosti bude vygenerována. Použijte generátor kryptograficky silných náhodných čísel, pokud se vyžaduje nepředvídatelná hodnota, nebo zajistěte, aby se slabá pseudonáhodná čísla nepoužívala způsobem citlivým z hlediska bezpečnosti.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessMessage">

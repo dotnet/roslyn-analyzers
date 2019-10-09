@@ -86,7 +86,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographySymmetricAlgorithm, out var symmetricAlgorithmTypeSymbol))
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographySymmetricAlgorithm, out var symmetricAlgorithmTypeSymbol))
                     {
                         return;
                     }

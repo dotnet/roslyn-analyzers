@@ -136,5 +136,416 @@ class TestClass {{
                 FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
             }.RunAsync();
         }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_Contains_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    bool Method(IEnumerable<{symbolType}> e, {symbolType} s) {{
+        return [|e.Contains(s)|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    bool Method(IEnumerable<{symbolType}> e, {symbolType} s) {{
+        return e.Contains(s, SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_Distinct_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return [|e.Distinct()|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return e.Distinct(SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_GroupBy_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return [|e.GroupBy(
+            s => s,
+            s => s,
+            (s1, s2) => s1
+            )|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return e.GroupBy(
+            s => s,
+            s => s,
+            (s1, s2) => s1
+, SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_GroupJoin_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return [|e1.GroupJoin(
+            e2,
+            s => s,
+            s => s,
+            (s1, s2) => s1
+            )|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return e1.GroupJoin(
+            e2,
+            s => s,
+            s => s,
+            (s1, s2) => s1
+, SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_Intersect_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return [|e1.Intersect(e2)|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return e1.Intersect(e2, SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_Join_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return [|e1.Join(
+            e2,
+            s => s,
+            s => s,
+            (s1, s2) => s1)|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return [|e1.Join(
+            e2,
+            s => s,
+            s => s,
+            (s1, s2) => s1, SymbolEqualityComparer.Default)|];
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_Union_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return [|e1.Union(e2)|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return e1.Union(e2, SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_SequenceEqual_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return [|e1.SequenceEqual(e2)|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e1, IEnumerable<{symbolType}> e2) {{
+        return e1.SequenceEqual(e2, SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_ToDictionary_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return [|e.ToDictionary(
+                s => s,
+                s => s)|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return e.ToDictionary(
+                s => s,
+                s => s
+, SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_ToLookup_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return [|e.ToLookup(
+                s => s,
+                s => s)|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return e.ToLookup(
+                s => s,
+                s => s, SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Enumerable_ToHashSet_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return [|e.ToHashSet()|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method(IEnumerable<{symbolType}> e) {{
+        return e.ToHashSet(SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
     }
 }

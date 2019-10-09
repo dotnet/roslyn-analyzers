@@ -85,8 +85,59 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                                 }
                                 break;
                         }
-                        break;
                     }
+                    break;
+
+                case nameof(Enumerable):
+                    {
+                        switch (targetMethod.Name)
+                        {
+                            case nameof(Enumerable.Contains):
+                            case nameof(Enumerable.Distinct):
+                            case nameof(Enumerable.Intersect):
+                            case nameof(Enumerable.SequenceEqual):
+                            case "ToHashSet":
+                            case nameof(Enumerable.Union):
+                                {
+                                    // All of these methods only have a single type argument and accept an equality comparer
+                                    if (FirstTypeArgumentIsSymbolType(targetMethod, symbolType))
+                                    {
+                                        RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
+                                    }
+                                }
+                                break;
+
+                            case nameof(Enumerable.GroupBy):
+                            case nameof(Enumerable.ToDictionary):
+                            case nameof(Enumerable.ToLookup):
+                                {
+                                    // GroupBy<TSource, TKey, TElement, TResult> 
+                                    // ToDictionary<TSource, TKey,  TElement>
+                                    // 
+                                    // Only need to use comparer if TKey is ISymbol
+                                    if (IndexedTypeArgumentIsSymbolType(1, targetMethod, symbolType))
+                                    {
+                                        RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
+                                    }
+                                }
+                                break;
+
+                            case nameof(Enumerable.GroupJoin):
+                            case nameof(Enumerable.Join):
+                                {
+                                    // GroupJoin<TOuter, TInner, TKey, TResult>
+                                    // Join<TOuter, TInner, TKey, TResult>
+                                    //
+                                    // Only need to use comparer if TKey is ISymbol
+                                    if (IndexedTypeArgumentIsSymbolType(2, targetMethod, symbolType))
+                                    {
+                                        RequireInvocationHasAnyComparerArgument(in context, invocationOperation, comparerType);
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    break;
             }
         }
 
@@ -103,6 +154,11 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
         private static bool FirstTypeArgumentIsSymbolType(IMethodSymbol methodToCheck, INamedTypeSymbol symbolType)
             => methodToCheck.TypeArguments.Any() &&
                symbolType.IsTypeSymbol(methodToCheck.TypeArguments.First());
+
+        private static bool IndexedTypeArgumentIsSymbolType(int index, IMethodSymbol methodToCheck, INamedTypeSymbol symbolType)
+            => methodToCheck.TypeArguments.Any() &&
+               methodToCheck.TypeArguments.Count() > index &&
+               symbolType.IsTypeSymbol(methodToCheck.TypeArguments.ElementAt(index));
 
 
         private static bool InvocationContainsEqualityComparerArgument(IInvocationOperation invocationOperation, INamedTypeSymbol comparerType)

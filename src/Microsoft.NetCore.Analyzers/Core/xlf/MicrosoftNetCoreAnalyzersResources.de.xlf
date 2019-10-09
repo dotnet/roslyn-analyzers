@@ -1443,18 +1443,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKey">
-        <source>Do Not Hard Code Encryption Key</source>
-        <target state="translated">Verschlüsselungsschlüssel nicht hartcodieren</target>
+        <source>Do not hard-code encryption key</source>
+        <target state="needs-review-translation">Verschlüsselungsschlüssel nicht hartcodieren</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
-        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</source>
-        <target state="translated">Die .Key-Eigenschaft von SymmetricAlgorithm oder der rgbKey-Parameter einer Methode darf niemals ein hartcodierter Wert sein.</target>
+        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hard-coded value.</source>
+        <target state="needs-review-translation">Die .Key-Eigenschaft von SymmetricAlgorithm oder der rgbKey-Parameter einer Methode darf niemals ein hartcodierter Wert sein.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
-        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</source>
-        <target state="translated">Es wurde ein potenzielles Sicherheitsrisiko gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch einen hartcodierten Schlüssel aus "{2}" in Methode "{3}" erweitert.</target>
+        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded key from '{2}' in method '{3}'</source>
+        <target state="needs-review-translation">Es wurde ein potenzielles Sicherheitsrisiko gefunden. "{0}" in der Methode "{1}" wurde möglicherweise durch einen hartcodierten Schlüssel aus "{2}" in Methode "{3}" erweitert.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">

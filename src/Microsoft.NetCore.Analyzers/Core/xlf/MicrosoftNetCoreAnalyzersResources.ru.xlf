@@ -1443,18 +1443,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKey">
-        <source>Do Not Hard Code Encryption Key</source>
-        <target state="translated">Не используйте жестко заданный ключ шифрования.</target>
+        <source>Do not hard-code encryption key</source>
+        <target state="needs-review-translation">Не используйте жестко заданный ключ шифрования.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
-        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</source>
-        <target state="translated">Свойство .Key симметричного алгоритма и параметр rgbKey метода не могут быть жестко заданными значениями.</target>
+        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hard-coded value.</source>
+        <target state="needs-review-translation">Свойство .Key симметричного алгоритма и параметр rgbKey метода не могут быть жестко заданными значениями.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
-        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</source>
-        <target state="translated">Обнаружена потенциальная уязвимость безопасности, заключающаяся в том, что "{0}" в методе "{1}" может быть изменен с использованием жестко заданного ключа из "{2}" в методе "{3}".</target>
+        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded key from '{2}' in method '{3}'</source>
+        <target state="needs-review-translation">Обнаружена потенциальная уязвимость безопасности, заключающаяся в том, что "{0}" в методе "{1}" может быть изменен с использованием жестко заданного ключа из "{2}" в методе "{3}".</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">

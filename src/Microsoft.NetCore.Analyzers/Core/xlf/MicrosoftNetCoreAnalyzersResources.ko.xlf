@@ -1443,18 +1443,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKey">
-        <source>Do Not Hard Code Encryption Key</source>
-        <target state="translated">암호화 키 하드 코딩 안 함</target>
+        <source>Do not hard-code encryption key</source>
+        <target state="needs-review-translation">암호화 키 하드 코딩 안 함</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
-        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</source>
-        <target state="translated">SymmetricAlgorithm의 .Key 속성 또는 메서드의 rgbKey 매개 변수는 하드 코딩된 값이어서는 안 됩니다.</target>
+        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hard-coded value.</source>
+        <target state="needs-review-translation">SymmetricAlgorithm의 .Key 속성 또는 메서드의 rgbKey 매개 변수는 하드 코딩된 값이어서는 안 됩니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
-        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</source>
-        <target state="translated">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 하드 코딩된 키에 의해 감염될 수 있는 잠재적인 보안 취약성이 발견되었습니다.</target>
+        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded key from '{2}' in method '{3}'</source>
+        <target state="needs-review-translation">'{1}' 메서드의 '{0}'이(가) '{3}' 메서드의 '{2}'에서 하드 코딩된 키에 의해 감염될 수 있는 잠재적인 보안 취약성이 발견되었습니다.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">

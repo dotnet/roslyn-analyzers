@@ -58,12 +58,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                (context) =>
                {
-                   INamedTypeSymbol iCollectionType = WellKnownTypes.ICollection(context.Compilation);
-                   INamedTypeSymbol genericICollectionType = WellKnownTypes.GenericICollection(context.Compilation);
-                   INamedTypeSymbol iEnumerableType = WellKnownTypes.IEnumerable(context.Compilation);
-                   INamedTypeSymbol genericIEnumerableType = WellKnownTypes.GenericIEnumerable(context.Compilation);
-                   INamedTypeSymbol iListType = WellKnownTypes.IList(context.Compilation);
-                   INamedTypeSymbol genericIListType = WellKnownTypes.GenericIList(context.Compilation);
+                   INamedTypeSymbol iCollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
+                   INamedTypeSymbol genericICollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+                   INamedTypeSymbol iEnumerableType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIEnumerable);
+                   INamedTypeSymbol genericIEnumerableType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIEnumerable1);
+                   INamedTypeSymbol iListType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIList);
+                   INamedTypeSymbol genericIListType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericIList1);
 
                    if (iCollectionType == null && genericICollectionType == null &&
                        iEnumerableType == null && genericIEnumerableType == null &&

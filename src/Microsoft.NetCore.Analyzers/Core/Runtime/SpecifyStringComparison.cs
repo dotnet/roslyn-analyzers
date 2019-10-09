@@ -42,7 +42,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
-                var stringComparisonType = csaContext.Compilation.GetTypeByMetadataName("System.StringComparison");
+                var stringComparisonType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemStringComparison);
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
 
                 // Without these symbols the rule cannot run

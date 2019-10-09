@@ -43,8 +43,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(c =>
             {
-                var @string = WellKnownTypes.String(c.Compilation);
-                var attribute = WellKnownTypes.Attribute(c.Compilation);
+                var @string = c.Compilation.GetSpecialType(SpecialType.System_String);
+                var attribute = c.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
                 if (@string == null || attribute == null)
                 {
                     // we don't have required types
@@ -71,11 +71,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 var property = (IPropertySymbol)context.Symbol;
 
-                // check basic stuff that FxCop checks. 
+                // check basic stuff that FxCop checks.
                 if (property.IsOverride || property.IsFromMscorlib(context.Compilation))
                 {
                     // Methods defined within mscorlib are excluded from this rule,
-                    // since mscorlib cannot depend on System.Uri, which is defined 
+                    // since mscorlib cannot depend on System.Uri, which is defined
                     // in System.dll
                     return;
                 }

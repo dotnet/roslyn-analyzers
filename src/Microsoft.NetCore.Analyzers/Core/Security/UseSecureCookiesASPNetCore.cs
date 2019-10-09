@@ -87,14 +87,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 {
                     var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.MicrosoftAspNetCoreHttpIResponseCookies,
                             out var iResponseCookiesTypeSymbol))
                     {
                         return;
                     }
 
-                    wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                         WellKnownTypeNames.MicrosoftAspNetCoreHttpCookieOptions,
                         out var cookieOptionsTypeSymbol);
                     var rootOperationsNeedingAnalysis = PooledHashSet<(IOperation, ISymbol)>.GetInstance();

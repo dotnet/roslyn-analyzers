@@ -25,7 +25,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             typeof(MicrosoftNetCoreAnalyzersResources),
             nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryToken),
             nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenMessage),
-            DiagnosticHelpers.EnabledByDefaultIfNotBuildingVSIX,
+            false,
             helpLinkUri: null,
             descriptionResourceStringName: nameof(MicrosoftNetCoreAnalyzersResources.UseAutoValidateAntiforgeryTokenDescription),
             customTags: WellKnownDiagnosticTags.Telemetry);
@@ -49,11 +49,12 @@ namespace Microsoft.NetCore.Analyzers.Security
                 WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpDeleteAttribute,
                 WellKnownTypeNames.MicrosoftAspNetCoreMvcHttpPatchAttribute);
 
+        // It is used to translate ConcurrentDictionary into ConcurrentHashset, which is not provided.
+        private const bool placeholder = true;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(
             UseAutoValidateAntiforgeryTokenRule,
             MissHttpVerbAttributeRule);
-
-        public delegate bool RequirementsOfValidateMethod(IMethodSymbol methodSymbol);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -67,31 +68,37 @@ namespace Microsoft.NetCore.Analyzers.Security
                 var compilation = compilationStartAnalysisContext.Compilation;
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersFilterCollection, out var filterCollectionTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcController, out var controllerTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcControllerBase, out var controllerBaseTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcNonActionAttribute, out var nonActionAttributeTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcRoutingHttpMethodAttribute, out var httpMethodAttributeTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIFilterMetadata, out var iFilterMetadataTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreAntiforgeryIAntiforgery, out var iAntiforgeryTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAsyncAuthorizationFilter, out var iAsyncAuthorizationFilterTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAuthorizationFilter, out var iAuthorizationFilterTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask, out var taskTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersAuthorizationFilterContext, out var authorizationFilterContextTypeSymbol))
+                if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersFilterCollection, out var filterCollectionTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcController, out var controllerTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcControllerBase, out var controllerBaseTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcNonActionAttribute, out var nonActionAttributeTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcRoutingHttpMethodAttribute, out var httpMethodAttributeTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIFilterMetadata, out var iFilterMetadataTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreAntiforgeryIAntiforgery, out var iAntiforgeryTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAsyncAuthorizationFilter, out var iAsyncAuthorizationFilterTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersIAuthorizationFilter, out var iAuthorizationFilterTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask, out var taskTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftAspNetCoreMvcFiltersAuthorizationFilterContext, out var authorizationFilterContextTypeSymbol))
                 {
                     return;
                 }
 
                 var httpVerbAttributeTypeSymbolsAbleToModify = HttpVerbAttributesMarkingOnActionModifyingMethods.Select(
-                    s => wellKnownTypeProvider.TryGetTypeByMetadataName(s, out var attributeTypeSymbol) ? attributeTypeSymbol : null);
+                    s => wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(s, out var attributeTypeSymbol) ? attributeTypeSymbol : null);
 
                 if (httpVerbAttributeTypeSymbolsAbleToModify.Any(s => s == null))
                 {
                     return;
                 }
 
+                var cancellationToken = compilationStartAnalysisContext.CancellationToken;
+                var onlyLookAtDerivedClassesOfController = compilationStartAnalysisContext.Options.GetBoolOptionValue(
+                    optionName: EditorConfigOptionNames.ExcludeAspnetCoreMvcControllerBase,
+                    rule: UseAutoValidateAntiforgeryTokenRule,
+                    defaultValue: true,
+                    cancellationToken: cancellationToken);
+
                 // A dictionary from method symbol to set of methods calling it directly.
-                // The bool value in the sub ConcurrentDictionary is not used, use ConcurrentDictionary rather than HashSet just for the concurrency security.
                 var inverseGraph = new ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, bool>>();
 
                 // Ignore cases where a global anti forgery filter is in use.
@@ -100,9 +107,9 @@ namespace Microsoft.NetCore.Analyzers.Security
                 // Verify that validate anti forgery token attributes are used somewhere within this project,
                 // to avoid reporting false positives on projects that use an alternative approach to mitigate CSRF issues.
                 var usingValidateAntiForgeryAttribute = false;
-                var onAuthorizationAsyncMethodSymbols = new HashSet<IMethodSymbol>();
-                var actionMethodSymbols = new HashSet<(IMethodSymbol, string)>();
-                var actionMethodNeedAddingHttpVerbAttributeSymbols = new HashSet<IMethodSymbol>();
+                var onAuthorizationAsyncMethodSymbols = new ConcurrentDictionary<IMethodSymbol, bool>();
+                var actionMethodSymbols = new ConcurrentDictionary<(IMethodSymbol, string), bool>();
+                var actionMethodNeedAddingHttpVerbAttributeSymbols = new ConcurrentDictionary<IMethodSymbol, bool>();
 
                 // Constructing inverse callGraph.
                 // When it comes to delegate function assignment Del handler = DelegateMethod;, inverse call Graph will add:
@@ -152,7 +159,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
 
                             callers = inverseGraph.GetOrAdd(calledSymbol, (_) => new ConcurrentDictionary<ISymbol, bool>());
-                            callers.TryAdd(owningSymbol, true);
+                            callers.TryAdd(owningSymbol, placeholder);
                         }, OperationKind.Invocation, OperationKind.FieldReference);
                     });
 
@@ -190,16 +197,18 @@ namespace Microsoft.NetCore.Analyzers.Security
                             else if (potentialAntiForgeryFilter.AllInterfaces.Contains(iAsyncAuthorizationFilterTypeSymbol) ||
                                 potentialAntiForgeryFilter.AllInterfaces.Contains(iAuthorizationFilterTypeSymbol))
                             {
-                                onAuthorizationAsyncMethodSymbols.Add(
+                                onAuthorizationAsyncMethodSymbols.TryAdd(
                                     potentialAntiForgeryFilter
                                     .GetMembers()
                                     .OfType<IMethodSymbol>()
                                     .FirstOrDefault(
-                                        s => (s.Name == "OnAuthorizationAsync" ||
-                                            s.Name == "OnAuthorization") &&
-                                            s.ReturnType.Equals(taskTypeSymbol) &&
+                                        s => (s.Name == "OnAuthorizationAsync" &&
+                                            s.ReturnType.Equals(taskTypeSymbol) ||
+                                            s.Name == "OnAuthorization" &&
+                                            s.ReturnsVoid) &&
                                             s.Parameters.Length == 1 &&
-                                            s.Parameters[0].Type.Equals(authorizationFilterContextTypeSymbol)));
+                                            s.Parameters[0].Type.Equals(authorizationFilterContextTypeSymbol)),
+                                    placeholder);
                             }
                         }
                     }
@@ -215,9 +224,10 @@ namespace Microsoft.NetCore.Analyzers.Security
                     var derivedControllerTypeSymbol = (INamedTypeSymbol)symbolAnalysisContext.Symbol;
                     var baseTypes = derivedControllerTypeSymbol.GetBaseTypes();
 
-                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller` or `Microsoft.AspNetCore.Mvc.ControllerBase`).
+                    // An subtype of `Microsoft.AspNetCore.Mvc.Controller`, which probably indicates views are used and maybe cookie-based authentication is used and thus CSRF is a concern.
                     if (baseTypes.Contains(controllerTypeSymbol) ||
-                        baseTypes.Contains(controllerBaseTypeSymbol))
+                            (!onlyLookAtDerivedClassesOfController &&
+                            baseTypes.Contains(controllerBaseTypeSymbol)))
                     {
                         // The controller class is not protected by a validate anti forgery token attribute.
                         if (!IsUsingAntiFogeryAttribute(derivedControllerTypeSymbol))
@@ -259,13 +269,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         if (httpVerbAttributeTypeSymbolAbleToModify != null)
                                         {
                                             var attributeName = httpVerbAttributeTypeSymbolAbleToModify.AttributeClass.Name;
-                                            actionMethodSymbols.Add(
+                                            actionMethodSymbols.TryAdd(
                                                 (actionMethodSymbol,
-                                                attributeName.EndsWith("Attribute", StringComparison.Ordinal) ? attributeName.Remove(attributeName.Length - "Attribute".Length) : attributeName));
+                                                    attributeName.EndsWith("Attribute", StringComparison.Ordinal) ? attributeName.Remove(attributeName.Length - "Attribute".Length) : attributeName),
+                                                placeholder);
                                         }
                                         else if (!actionMethodSymbol.GetAttributes().Any(s => s.AttributeClass.GetBaseTypes().Contains(httpMethodAttributeTypeSymbol)))
                                         {
-                                            actionMethodNeedAddingHttpVerbAttributeSymbols.Add((actionMethodSymbol));
+                                            actionMethodNeedAddingHttpVerbAttributeSymbols.TryAdd(actionMethodSymbol, placeholder);
                                         }
                                     }
                                 }
@@ -300,7 +311,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                             }
                         }
 
-                        foreach (var (methodSymbol, attributeName) in actionMethodSymbols)
+                        foreach (var (methodSymbol, attributeName) in actionMethodSymbols.Keys)
                         {
                             compilationAnalysisContext.ReportDiagnostic(
                                 methodSymbol.CreateDiagnostic(
@@ -309,7 +320,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     attributeName));
                         }
 
-                        foreach (var methodSymbol in actionMethodNeedAddingHttpVerbAttributeSymbols)
+                        foreach (var methodSymbol in actionMethodNeedAddingHttpVerbAttributeSymbols.Keys)
                         {
                             compilationAnalysisContext.ReportDiagnostic(
                                 methodSymbol.CreateDiagnostic(
@@ -340,7 +351,8 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                         foreach (var child in callingMethods.Keys)
                         {
-                            if (onAuthorizationAsyncMethodSymbols.Contains(child))
+                            if (child is IMethodSymbol childMethodSymbol &&
+                                onAuthorizationAsyncMethodSymbols.ContainsKey(childMethodSymbol))
                             {
                                 results[methodSymbol].Add(child);
                             }

@@ -11,12 +11,12 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 {
     /// <summary>
     /// CA2214: Do not call overridable methods in constructors
-    /// 
+    ///
     /// Cause: The constructor of an unsealed type calls a virtual method defined in its class.
-    /// 
-    /// Description: When a virtual method is called, the actual type that executes the method is not selected 
-    /// until run time. When a constructor calls a virtual method, it is possible that the constructor for the 
-    /// instance that invokes the method has not executed. 
+    ///
+    /// Description: When a virtual method is called, the actual type that executes the method is not selected
+    /// until run time. When a constructor calls a virtual method, it is possible that the constructor for the
+    /// instance that invokes the method has not executed.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class DoNotCallOverridableMethodsInConstructorsAnalyzer : DiagnosticAnalyzer
@@ -44,8 +44,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName("System.Web.UI.Control");
-                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName("System.ComponentModel.Component");
+                INamedTypeSymbol webUiControlType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebUIControl);
+                INamedTypeSymbol componentModelComponentType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelComponent);
 
                 compilationContext.RegisterOperationBlockStartAction(context =>
                 {

@@ -130,9 +130,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol expectedExceptionType = WellKnownTypes.ExpectedException(compilationContext.Compilation);
-                INamedTypeSymbol nunitAssertType = WellKnownTypes.NunitAssert(compilationContext.Compilation);
-                INamedTypeSymbol xunitAssertType = WellKnownTypes.XunitAssert(compilationContext.Compilation);
+                INamedTypeSymbol expectedExceptionType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingExpectedExceptionAttribute);
+                INamedTypeSymbol nunitAssertType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkAssert);
+                INamedTypeSymbol xunitAssertType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.XunitAssert);
 
                 compilationContext.RegisterOperationBlockStartAction(osContext =>
                 {
@@ -319,7 +319,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
 
         private static bool IsPureMethod(IMethodSymbol method, Compilation compilation)
         {
-            return method.GetAttributes().Any(attr => attr.AttributeClass.Equals(WellKnownTypes.PureAttribute(compilation)));
+            return method.GetAttributes().Any(attr => attr.AttributeClass.Equals(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsContractsPureAttribute)));
         }
     }
 }

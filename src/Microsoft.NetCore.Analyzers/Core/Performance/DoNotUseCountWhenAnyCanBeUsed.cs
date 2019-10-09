@@ -21,7 +21,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
     /// while <c>Any</c>/<c>AnyAsync</c> stops at the first item or the first item that satisfies a condition.
     /// </para>
     /// <para>
-    /// <b>CA1827</b> applies to <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> and 
+    /// <b>CA1827</b> applies to <see cref="System.Linq.Enumerable.Count{TSource}(System.Collections.Generic.IEnumerable{TSource})"/> and
     /// <see cref="System.Linq.Enumerable.Any{TSource}(System.Collections.Generic.IEnumerable{TSource})"/>
     /// and covers the following use cases:
     /// </para>
@@ -164,7 +164,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <param name="context">The context.</param>
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (WellKnownTypes.Enumerable(context.Compilation) is INamedTypeSymbol enumerableType)
+            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable) is INamedTypeSymbol enumerableType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: enumerableType,
@@ -181,7 +181,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (WellKnownTypes.Queryable(context.Compilation) is INamedTypeSymbol queryableType)
+            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemLinqQueryable) is INamedTypeSymbol queryableType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: queryableType,
@@ -198,7 +198,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (context.Compilation.GetTypeByMetadataName("Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions") is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
+            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreEntityFrameworkQueryableExtensions) is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: entityFrameworkQueryableExtensionsType,
@@ -215,7 +215,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (context.Compilation.GetTypeByMetadataName("System.Data.Entity.QueryableExtensions") is INamedTypeSymbol queryableExtensionsType)
+            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataEntityQueryableExtensions) is INamedTypeSymbol queryableExtensionsType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: queryableExtensionsType,
@@ -350,8 +350,8 @@ namespace Microsoft.NetCore.Analyzers.Performance
             /// is being compared with 0 using <see cref="int.Equals(int)"/>.
             /// </summary>
             /// <param name="invocationOperation">The invocation operation.</param>
-            /// 
-            /// 
+            ///
+            ///
             /// <returns><see langword="true" /> if the value of the invocation of one of the <see cref="_targetMethodNames" /> in the <see cref="_targetType" />
             /// is being compared with 0 using <see cref="int.Equals(int)"/>; otherwise, <see langword="false" />.</returns>
             private bool IsCountEqualsZero(IInvocationOperation invocationOperation, out string methodName)

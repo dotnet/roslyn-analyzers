@@ -5,7 +5,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Microsoft.NetFramework.Analyzers
 {
@@ -101,9 +100,9 @@ namespace Microsoft.NetFramework.Analyzers
                 (CompilationStartAnalysisContext compilationStartContext) =>
                 {
                     WellKnownTypeProvider wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartContext.Compilation);
-                    INamedTypeSymbol mvcControllerSymbol = WellKnownTypes.MvcController(compilationStartContext.Compilation);
-                    INamedTypeSymbol mvcControllerBaseSymbol = WellKnownTypes.MvcControllerBase(compilationStartContext.Compilation);
-                    INamedTypeSymbol actionResultSymbol = WellKnownTypes.ActionResult(compilationStartContext.Compilation);
+                    INamedTypeSymbol mvcControllerSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcController);
+                    INamedTypeSymbol mvcControllerBaseSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcControllerBase);
+                    INamedTypeSymbol actionResultSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebMvcActionResult);
 
                     if ((mvcControllerSymbol == null && mvcControllerBaseSymbol == null) || actionResultSymbol == null)
                     {
@@ -155,7 +154,7 @@ namespace Microsoft.NetFramework.Analyzers
                             }
                             else
                             {
-                                // verbs are defined 
+                                // verbs are defined
                                 if (isAntiforgeryTokenDefined)
                                 {
                                     if (verbs.HasFlag(MvcHttpVerbs.Get))

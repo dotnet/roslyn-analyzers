@@ -36,7 +36,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var preserveSigType = compilationContext.Compilation.GetTypeByMetadataName("System.Runtime.InteropServices.PreserveSigAttribute");
+                var preserveSigType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesPreserveSigAttribute);
                 if (preserveSigType != null)
                 {
                     compilationContext.RegisterSyntaxNodeAction(

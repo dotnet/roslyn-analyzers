@@ -40,7 +40,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol attributeType = WellKnownTypes.Attribute(compilationContext.Compilation);
+                INamedTypeSymbol attributeType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
                 if (attributeType == null)
                 {
                     return;

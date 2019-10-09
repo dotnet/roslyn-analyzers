@@ -14,7 +14,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1008: Enums should have zero value
-    /// 
+    ///
     /// Cause:
     /// An enumeration without an applied System.FlagsAttribute does not define a member that has a value of zero;
     /// or an enumeration that has an applied FlagsAttribute defines a member that has a value of zero but its name is not 'None',
@@ -33,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             If an enumeration that has the FlagsAttribute applied defines a zero-valued member, its name should be 'None' to indicate that no values have been set in the enumeration.
             Using a zero-valued member for any other purpose is contrary to the use of the FlagsAttribute in that the AND and OR bitwise operators are useless with the member.
             This implies that only one member should be assigned the value zero. Note that if multiple members that have the value zero occur in a flags-attributed enumeration,
-            Enum.ToString() returns incorrect results for members that are not zero. 
+            Enum.ToString() returns incorrect results for members that are not zero.
         */
 
         public const string RuleId = "CA1008";
@@ -86,7 +86,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol flagsAttribute = WellKnownTypes.FlagsAttribute(compilationContext.Compilation);
+                INamedTypeSymbol flagsAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
                 if (flagsAttribute == null)
                 {
                     return;

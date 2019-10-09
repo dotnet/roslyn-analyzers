@@ -49,9 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
-
-                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                                                 WellKnownTypeNames.MicrosoftWindowsAzureStorageCloudStorageAccount,
                                                 out INamedTypeSymbol cloudStorageAccountTypeSymbol))
                 {

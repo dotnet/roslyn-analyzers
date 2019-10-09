@@ -5,7 +5,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.Analyzers",
-        "version": "2.9.5",
+        "version": "2.9.6",
         "language": "en-US"
       },
       "rules": {
@@ -1693,7 +1693,7 @@
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
-            "isEnabledByDefault": true,
+            "isEnabledByDefault": false,
             "typeName": "UseAutoValidateAntiforgeryToken",
             "languages": [
               "C#",
@@ -1876,7 +1876,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.CSharp.Analyzers",
-        "version": "2.9.5",
+        "version": "2.9.6",
         "language": "en-US"
       },
       "rules": {
@@ -2026,7 +2026,7 @@
     {
       "tool": {
         "name": "Microsoft.NetCore.VisualBasic.Analyzers",
-        "version": "2.9.5",
+        "version": "2.9.6",
         "language": "en-US"
       },
       "rules": {

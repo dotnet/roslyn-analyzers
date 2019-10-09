@@ -55,19 +55,16 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                var compilation = compilationStartAnalysisContext.Compilation;
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             TypeMetadataName,
                             out INamedTypeSymbol xmlSchemaTypeSymbol))
                 {
                     return;
                 }
 
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
-                            WellKnownTypeNames.SystemXmlXmlReader,
-                            out INamedTypeSymbol xmlReaderTypeSymbol);
+                INamedTypeSymbol xmlReaderTypeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlXmlReader);
 
                 compilationStartAnalysisContext.RegisterOperationAction(operationAnalysisContext =>
                 {

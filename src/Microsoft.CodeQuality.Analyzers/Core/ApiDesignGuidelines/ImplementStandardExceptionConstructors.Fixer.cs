@@ -12,14 +12,15 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Analyzer.Utilities;
 using System.Composition;
 using System.Collections.Generic;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 {
     /// <summary>
     /// CA1032: Implement standard exception constructors
-    /// Cause: A type extends System.Exception and does not declare all the required constructors. 
+    /// Cause: A type extends System.Exception and does not declare all the required constructors.
     /// Description: Exception types must implement the following constructors. Failure to provide the full set of constructors can make it difficult to correctly handle exceptions
-    /// For CSharp, all possible  missing Constructors would be 
+    /// For CSharp, all possible  missing Constructors would be
     ///     public GoodException()
     ///     public GoodException(string)
     ///     public GoodException(string, Exception)
@@ -73,12 +74,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         editor.AddMember(targetNode, newConstructorNode1);
                         break;
                     case ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithStringParameter:
-                        // Add missing CtorWithStringParameter 
+                        // Add missing CtorWithStringParameter
                         SyntaxNode newConstructorNode2 = generator.ConstructorDeclaration(
                                                     containingTypeName: typeSymbol.Name,
                                                     parameters: new[]
                                                     {
-                                                    generator.ParameterDeclaration("message", generator.TypeExpression(WellKnownTypes.String(editor.SemanticModel.Compilation)))
+                                                    generator.ParameterDeclaration("message", generator.TypeExpression(editor.SemanticModel.Compilation.GetSpecialType(SpecialType.System_String)))
                                                     },
                                                     accessibility: Accessibility.Public,
                                                     baseConstructorArguments: new[]
@@ -88,13 +89,13 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         editor.AddMember(targetNode, newConstructorNode2);
                         break;
                     case ImplementStandardExceptionConstructorsAnalyzer.MissingCtorSignature.CtorWithStringAndExceptionParameters:
-                        // Add missing CtorWithStringAndExceptionParameters 
+                        // Add missing CtorWithStringAndExceptionParameters
                         SyntaxNode newConstructorNode3 = generator.ConstructorDeclaration(
                                                     containingTypeName: typeSymbol.Name,
                                                     parameters: new[]
                                                     {
-                                                    generator.ParameterDeclaration("message", generator.TypeExpression(WellKnownTypes.String(editor.SemanticModel.Compilation))),
-                                                    generator.ParameterDeclaration("innerException", generator.TypeExpression(WellKnownTypes.Exception(editor.SemanticModel.Compilation)))
+                                                    generator.ParameterDeclaration("message", generator.TypeExpression(editor.SemanticModel.Compilation.GetSpecialType(SpecialType.System_String))),
+                                                    generator.ParameterDeclaration("innerException", generator.TypeExpression(editor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException)))
                                                     },
                                                     accessibility: Accessibility.Public,
                                                     baseConstructorArguments: new[]

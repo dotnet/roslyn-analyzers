@@ -41,7 +41,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         private static async Task<Document> AddSerializableAttribute(Document document, SyntaxNode node, CancellationToken cancellationToken)
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-            SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(WellKnownTypes.SerializableAttribute(editor.SemanticModel.Compilation)));
+            SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(
+                editor.SemanticModel.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute)));
             editor.AddAttribute(node, attr);
             return editor.GetChangedDocument();
         }

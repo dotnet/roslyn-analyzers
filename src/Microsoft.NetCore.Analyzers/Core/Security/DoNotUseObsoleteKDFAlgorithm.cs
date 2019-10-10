@@ -5,7 +5,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Microsoft.NetCore.Analyzers.Security
@@ -51,10 +50,10 @@ namespace Microsoft.NetCore.Analyzers.Security
             {
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.SystemSecurityCryptographyPasswordDeriveBytes,
                             out INamedTypeSymbol passwordDeriveBytesTypeSymbol);
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                             WellKnownTypeNames.SystemSecurityCryptographyRfc2898DeriveBytes,
                             out INamedTypeSymbol rfc2898DeriveBytesTypeSymbol);
 

@@ -7,7 +7,6 @@ using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using System.Linq;
 
@@ -42,8 +41,8 @@ namespace Microsoft.NetCore.Analyzers.Data
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol iDbCommandType = WellKnownTypes.IDbCommand(compilationContext.Compilation);
-                INamedTypeSymbol iDataAdapterType = WellKnownTypes.IDataAdapter(compilationContext.Compilation);
+                INamedTypeSymbol iDbCommandType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataIDbCommand);
+                INamedTypeSymbol iDataAdapterType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataIDataAdapter);
                 IPropertySymbol commandTextProperty = iDbCommandType?.GetMembers("CommandText").OfType<IPropertySymbol>().FirstOrDefault();
 
                 if (iDbCommandType == null ||

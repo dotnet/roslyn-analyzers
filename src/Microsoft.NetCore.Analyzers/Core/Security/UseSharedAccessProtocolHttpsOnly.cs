@@ -75,12 +75,12 @@ namespace Microsoft.NetCore.Analyzers.Security
 
                 var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
 
-                wellKnownTypeProvider.TryGetTypeByMetadataName(
+                wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(
                     WellKnownTypeNames.MicrosoftWindowsAzureStorageCloudStorageAccount,
                     out INamedTypeSymbol cloudStorageAccountTypeSymbol);
 
-                if (!wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.SystemNullable1, out INamedTypeSymbol nullableTypeSymbol) ||
-                    !wellKnownTypeProvider.TryGetTypeByMetadataName(WellKnownTypeNames.MicrosoftWindowsAzureStorageSharedAccessProtocol, out INamedTypeSymbol sharedAccessProtocolTypeSymbol))
+                if (!wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNullable1, out INamedTypeSymbol nullableTypeSymbol) ||
+                    !wellKnownTypeProvider.TryGetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftWindowsAzureStorageSharedAccessProtocol, out INamedTypeSymbol sharedAccessProtocolTypeSymbol))
                 {
                     return;
                 }

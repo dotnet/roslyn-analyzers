@@ -323,17 +323,17 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 ImmutableDictionary<IMethodSymbol, Info>.Builder builder = ImmutableDictionary.CreateBuilder<IMethodSymbol, Info>();
 
-                INamedTypeSymbol console = WellKnownTypes.Console(compilation);
+                INamedTypeSymbol console = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConsole);
                 AddStringFormatMap(builder, console, "Write");
                 AddStringFormatMap(builder, console, "WriteLine");
 
-                INamedTypeSymbol @string = WellKnownTypes.String(compilation);
+                INamedTypeSymbol @string = compilation.GetSpecialType(SpecialType.System_String);
                 AddStringFormatMap(builder, @string, "Format");
 
                 _map = builder.ToImmutable();
 
                 String = @string;
-                Object = WellKnownTypes.Object(compilation);
+                Object = compilation.GetSpecialType(SpecialType.System_Object);
             }
 
             public INamedTypeSymbol String { get; }

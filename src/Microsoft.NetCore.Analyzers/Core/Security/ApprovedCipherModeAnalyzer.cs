@@ -56,7 +56,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     INamedTypeSymbol cipherModeTypeSymbol =
-                        WellKnownTypes.SystemSecurityCryptographyCipherMode(compilationStartAnalysisContext.Compilation);
+                        compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSecurityCryptographyCipherMode);
 
                     if (cipherModeTypeSymbol == null)
                     {

@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Analyzer.Utilities.FlowAnalysis.Analysis.PropertySetAnalysis;
 using Analyzer.Utilities.PooledObjects;
@@ -95,10 +96,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
-                    WellKnownTypeProvider wellKnownTypeProvider =
-                        WellKnownTypeProvider.GetOrCreate(compilationStartAnalysisContext.Compilation);
-
-                    if (!wellKnownTypeProvider.TryGetTypeByMetadataName(
+                    if (!compilationStartAnalysisContext.Compilation.TryGetOrCreateTypeByMetadataName(
                             this.DeserializerTypeMetadataName,
                             out INamedTypeSymbol deserializerTypeSymbol))
                     {

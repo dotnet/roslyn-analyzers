@@ -32,6 +32,21 @@
         <target state="new">Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotHardCodeCertificate">
+        <source>Do not hard-code certificate</source>
+        <target state="new">Do not hard-code certificate</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotHardCodeCertificateDescription">
+        <source>Hard-coded certificates in source code are vulnerable to being exploited.</source>
+        <target state="new">Hard-coded certificates in source code are vulnerable to being exploited.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotHardCodeCertificateMessage">
+        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded certificate from '{2}' in method '{3}'</source>
+        <target state="new">Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded certificate from '{2}' in method '{3}'</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription">
         <source>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</source>
         <target state="new">For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</target>
@@ -1428,18 +1443,18 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKey">
-        <source>Do Not Hard Code Encryption Key</source>
-        <target state="translated">Nie koduj na stałe klucza szyfrowania</target>
+        <source>Do not hard-code encryption key</source>
+        <target state="needs-review-translation">Nie koduj na stałe klucza szyfrowania</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyDescription">
-        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.</source>
-        <target state="translated">Właściwość .Key elementu SymmetricAlgorithm lub parametr rgbKey metody nigdy nie powinny być wartością zakodowaną na stałe.</target>
+        <source>SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hard-coded value.</source>
+        <target state="needs-review-translation">Właściwość .Key elementu SymmetricAlgorithm lub parametr rgbKey metody nigdy nie powinny być wartością zakodowaną na stałe.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotHardCodeEncryptionKeyMessage">
-        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hardcoded key from '{2}' in method '{3}'</source>
-        <target state="translated">Znaleziono potencjalną lukę w zabezpieczeniach, gdzie element „{0}” w metodzie „{1}” może zostać zanieczyszczony zakodowanym na stałe kluczem z elementu „{2}” w metodzie „{3}”.</target>
+        <source>Potential security vulnerability was found where '{0}' in method '{1}' may be tainted by hard-coded key from '{2}' in method '{3}'</source>
+        <target state="needs-review-translation">Znaleziono potencjalną lukę w zabezpieczeniach, gdzie element „{0}” w metodzie „{1}” może zostać zanieczyszczony zakodowanym na stałe kluczem z elementu „{2}” w metodzie „{3}”.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotInstallRootCertDescription">

@@ -51,14 +51,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var serializableAttributeTypeSymbol = WellKnownTypes.SerializableAttribute(compilation);
+                    var serializableAttributeTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute);
 
                     if (serializableAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var nonSerializedAttribute = WellKnownTypes.NonSerializedAttribute(compilation);
+                    var nonSerializedAttribute = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
                     var visitedType = new ConcurrentDictionary<ITypeSymbol, bool>();
                     var pointerFields = new ConcurrentDictionary<IFieldSymbol, bool>();
 

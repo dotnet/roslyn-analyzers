@@ -69,7 +69,7 @@
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessDescription">
         <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</source>
-        <target state="new">Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</target>
+        <target state="translated">암호화가 약한 의사 난수 생성기를 사용하면 공격자가 생성되는 보안에 중요한 값을 예측할 수 있습니다. 예측 불가능한 값이 필요한 경우 암호화가 강한 난수 생성기를 사용하거나, 약한 의사 난수가 보안에 중요한 방식으로 사용되지 않도록 하세요.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessMessage">

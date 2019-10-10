@@ -222,11 +222,21 @@ namespace ClassLibrary1
         {
             VerifyCSharp(@"
 using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace ClassLibrary1
 {
+    public class ValueTask {}
+
+    public interface IAsyncDisposable
+    {
+        ValueTask DisposeAsync();
+    }
+
+    public class Stream : IAsyncDisposable
+    {
+        public ValueTask DisposeAsync() => new ValueTask();
+    }
+
     public class Class1 : IAsyncDisposable
     {
         private Stream _disposableMember;
@@ -234,7 +244,7 @@ namespace ClassLibrary1
         public ValueTask DisposeAsync() => _disposableMember.DisposeAsync();
     }
 }
-", parseOptions: new CSharpParseOptions(LanguageVersion.Preview));
+");
         }
 
         [Fact]

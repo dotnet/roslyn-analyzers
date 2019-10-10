@@ -68,10 +68,15 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             public void AnalyzeSymbol(SymbolAnalysisContext symbolContext)
             {
                 INamedTypeSymbol namedType = (INamedTypeSymbol)symbolContext.Symbol;
-                if (namedType.AllInterfaces.Contains(_disposableTypeSymbol) ||
-                    (_asyncDisposableTypeSymbol != null && namedType.AllInterfaces.Contains(_asyncDisposableTypeSymbol)))
+
+                for (int i = 0; i < namedType.AllInterfaces.Length; i++)
                 {
-                    return;
+                    var currentInterface = namedType.AllInterfaces[i];
+                    if (currentInterface != null &&
+                        (currentInterface.Equals(_disposableTypeSymbol) || currentInterface.Equals(_asyncDisposableTypeSymbol)))
+                    {
+                        return;
+                    }
                 }
 
                 IEnumerable<IFieldSymbol> disposableFields = from member in namedType.GetMembers()

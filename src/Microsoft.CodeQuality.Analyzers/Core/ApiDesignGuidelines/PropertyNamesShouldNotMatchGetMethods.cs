@@ -50,6 +50,16 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             string identifier;
             var symbol = context.Symbol;
 
+            // We only want to report an issue when the user is free to update the member.
+            // This method will be called for both the property and the method so we can bail out
+            // when the member (symbol) is an override.
+            // Note that in the case of an override + a local declaration, the issue will be raised from
+            // the local declaration.
+            if (symbol.IsOverride)
+            {
+                return;
+            }
+
             // Bail out if the method/property is not exposed (public, protected, or protected internal) by default
             var configuredVisibilities = context.Options.GetSymbolVisibilityGroupOption(Rule, SymbolVisibilityGroup.Public, context.CancellationToken);
             if (!configuredVisibilities.Contains(symbol.GetResultantVisibility()))
@@ -81,14 +91,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var exposedMembers = type.GetMembers(identifier).Where(member => configuredVisibilities.Contains(member.GetResultantVisibility()));
                 foreach (var member in exposedMembers)
                 {
-                    // We only want to report an issue when the user is free to update the member.
-                    // So we can bail out when the property or method (symbol) is override and the other member (member)
-                    // is not local (i.e. symbol and member are declared
-                    if (symbol.IsOverride && member.ContainingType.Equals(type))
-                    {
-                        continue;
-                    }
-
                     // Ignore Object.GetType, as it's commonly seen and Type is a commonly-used property name.
                     if (member.ContainingType.SpecialType == SpecialType.System_Object &&
                         member.Name == nameof(GetType))

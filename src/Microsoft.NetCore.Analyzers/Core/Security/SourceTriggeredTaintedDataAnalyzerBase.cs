@@ -73,6 +73,11 @@ namespace Microsoft.NetCore.Analyzers.Security
                                 return;
                             }
 
+                            PointsToAnalysisResult pointsToResult = null;
+                            bool pointsToComputed = false;
+                            ValueContentAnalysisResult valueContentResult = null;
+                            bool valueContentComputed = false;
+
                             PooledHashSet<IOperation> rootOperationsNeedingAnalysis = PooledHashSet<IOperation>.GetInstance();
 
                             operationBlockStartContext.RegisterOperationAction(
@@ -100,31 +105,55 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         if (sourceInfoSymbolMap.IsSourceMethod(
                                                 invocationOperation.TargetMethod,
                                                 invocationOperation.Arguments,
-                                                new Lazy<PointsToAnalysisResult>(() =>
-                                                    PointsToAnalysis.TryGetOrComputeResult(
-                                                        cfg,
-                                                        owningSymbol,
-                                                        operationAnalysisContext.Options,
-                                                        WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
-                                                        InterproceduralAnalysisConfiguration.Create(
-                                                            operationAnalysisContext.Options,
-                                                            SupportedDiagnostics,
-                                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                                            cancellationToken: operationAnalysisContext.CancellationToken),
-                                                        interproceduralAnalysisPredicateOpt: null)),
-                                                new Lazy<ValueContentAnalysisResult>(() =>
-                                                    ValueContentAnalysis.TryGetOrComputeResult(
-                                                        cfg,
-                                                        owningSymbol,
-                                                        operationAnalysisContext.Options,
-                                                        WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
-                                                        InterproceduralAnalysisConfiguration.Create(
-                                                            operationAnalysisContext.Options,
-                                                            SupportedDiagnostics,
-                                                            defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
-                                                            cancellationToken: operationAnalysisContext.CancellationToken),
-                                                        out _,
-                                                        out _)),
+                                                new Lazy<PointsToAnalysisResult>(
+                                                    () =>
+                                                    {
+                                                        if (!pointsToComputed)
+                                                        {
+                                                            pointsToResult = PointsToAnalysis.TryGetOrComputeResult(
+                                                                cfg,
+                                                                owningSymbol,
+                                                                operationAnalysisContext.Options,
+                                                                WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
+                                                                InterproceduralAnalysisConfiguration.Create(
+                                                                    operationAnalysisContext.Options,
+                                                                    SupportedDiagnostics,
+                                                                    defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                                    cancellationToken: operationAnalysisContext.CancellationToken),
+                                                                interproceduralAnalysisPredicateOpt: null);
+                                                            pointsToComputed = true;
+                                                        }
+
+                                                        return pointsToResult;
+                                                    }),
+                                                new Lazy<ValueContentAnalysisResult>(
+                                                        () =>
+                                                        {
+                                                            if (!valueContentComputed)
+                                                            {
+                                                                valueContentResult = ValueContentAnalysis.TryGetOrComputeResult(
+                                                                    cfg,
+                                                                    owningSymbol,
+                                                                    operationAnalysisContext.Options,
+                                                                    WellKnownTypeProvider.GetOrCreate(operationAnalysisContext.Compilation),
+                                                                    InterproceduralAnalysisConfiguration.Create(
+                                                                        operationAnalysisContext.Options,
+                                                                        SupportedDiagnostics,
+                                                                        defaultInterproceduralAnalysisKind: InterproceduralAnalysisKind.ContextSensitive,
+                                                                        cancellationToken: operationAnalysisContext.CancellationToken),
+                                                                    out _,
+                                                                    out PointsToAnalysisResult p);
+                                                                if (p != null && pointsToResult == null)
+                                                                {
+                                                                    pointsToResult = p;
+                                                                    pointsToComputed = true;
+                                                                }
+
+                                                                valueContentComputed = true;
+                                                            }
+
+                                                            return valueContentResult;
+                                                        }),
                                                 out _))
                                         {
                                             lock (rootOperationsNeedingAnalysis)

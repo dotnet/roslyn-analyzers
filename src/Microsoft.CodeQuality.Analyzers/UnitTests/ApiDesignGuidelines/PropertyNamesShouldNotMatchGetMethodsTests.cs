@@ -517,8 +517,82 @@ Public Class C2
 End Class
 
 ",
-        GetCA1721BasicResultAt(line: 15, column: 21, identifierName: "Value", otherIdentifierName: "GetValue"),
-        GetCA1721BasicResultAt(line: 29, column: 30, identifierName: "Value", otherIdentifierName: "GetValue"));
+            GetCA1721BasicResultAt(line: 15, column: 21, identifierName: "Value", otherIdentifierName: "GetValue"),
+            GetCA1721BasicResultAt(line: 29, column: 30, identifierName: "Value", otherIdentifierName: "GetValue"));
+        }
+
+        [Fact, WorkItem(2914, "https://github.com/dotnet/roslyn-analyzers/issues/2914")]
+        public void CA1721_OverrideMultiLevelDiagnostic()
+        {
+            VerifyCSharp(@"
+public class MyBaseClass
+{
+    public virtual int GetValue(int i) => i;
+    public virtual int Foo { get; }
+}
+
+public class MyClass : MyBaseClass
+{
+    public virtual int Value { get; }
+    public virtual int GetFoo(int i) => i;
+}
+
+public class MySubClass : MyClass
+{
+    public override int GetValue(int i) => 2;
+    public override int Value => 2;
+    public override int GetFoo(int i) => 2;
+    public override int Foo => 2;
+}
+",
+            GetCA1721CSharpResultAt(line: 10, column: 24, identifierName: "Value", otherIdentifierName: "GetValue"),
+            GetCA1721CSharpResultAt(line: 11, column: 24, identifierName: "Foo", otherIdentifierName: "GetFoo"));
+
+            VerifyBasic(@"
+Public Class MyBaseClass
+    Public Overridable Function GetValue(ByVal i As Integer) As Integer
+        Return i
+    End Function
+
+    Public Overridable ReadOnly Property Foo As Integer
+End Class
+
+Public Class [MyClass]
+    Inherits MyBaseClass
+
+    Public Overridable ReadOnly Property Value As Integer
+
+    Public Overridable Function GetFoo(ByVal i As Integer) As Integer
+        Return i
+    End Function
+End Class
+
+Public Class MySubClass
+    Inherits [MyClass]
+
+    Public Overrides Function GetValue(ByVal i As Integer) As Integer
+        Return 2
+    End Function
+
+    Public Overrides ReadOnly Property Value As Integer
+        Get
+            Return 2
+        End Get
+    End Property
+
+    Public Overrides Function GetFoo(ByVal i As Integer) As Integer
+        Return 2
+    End Function
+
+    Public Overrides ReadOnly Property Foo As Integer
+        Get
+            Return 2
+        End Get
+    End Property
+End Class
+",
+            GetCA1721BasicResultAt(line: 13, column: 42, identifierName: "Value", otherIdentifierName: "GetValue"),
+            GetCA1721BasicResultAt(line: 15, column: 33, identifierName: "Foo", otherIdentifierName: "GetFoo"));
         }
 
         #region Helpers

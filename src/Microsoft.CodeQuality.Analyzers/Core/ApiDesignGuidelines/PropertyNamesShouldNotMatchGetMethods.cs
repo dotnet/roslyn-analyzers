@@ -81,6 +81,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 var exposedMembers = type.GetMembers(identifier).Where(member => configuredVisibilities.Contains(member.GetResultantVisibility()));
                 foreach (var member in exposedMembers)
                 {
+                    // We only want to report an issue when the user is free to update the member.
+                    // So we can bail out when the property or method (symbol) is override and the other member (member)
+                    // is not local (i.e. symbol and member are declared
+                    if (symbol.IsOverride && member.ContainingType.Equals(type))
+                    {
+                        continue;
+                    }
+
                     // Ignore Object.GetType, as it's commonly seen and Type is a commonly-used property name.
                     if (member.ContainingType.SpecialType == SpecialType.System_Object &&
                         member.Name == nameof(GetType))
@@ -90,14 +98,6 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
                     // Ignore members whose IsStatic does not match with the symbol's IsStatic
                     if (symbol.IsStatic != member.IsStatic)
-                    {
-                        continue;
-                    }
-
-                    // We only want to report an issue when the user is free to update the member.
-                    // So if the method or/and the property is an override and base clase defines both members we bail out
-                    // but if base defines only one of the member and derived defines the other we still want to raise an issue
-                    if (symbol.IsOverride)
                     {
                         continue;
                     }

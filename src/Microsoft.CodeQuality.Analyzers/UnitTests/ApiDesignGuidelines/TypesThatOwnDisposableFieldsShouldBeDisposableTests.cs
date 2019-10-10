@@ -221,9 +221,7 @@ namespace ClassLibrary1
         public void CA1001CSharpTestWithIAsyncDisposable()
         {
             VerifyCSharp(@"
-using System;
-
-namespace ClassLibrary1
+namespace System
 {
     public class ValueTask {}
 
@@ -232,14 +230,20 @@ namespace ClassLibrary1
         ValueTask DisposeAsync();
     }
 
-    public class Stream : IAsyncDisposable
+    public sealed class Stream : System.IDisposable, IAsyncDisposable
     {
         public ValueTask DisposeAsync() => new ValueTask();
+        public void Dispose() {}
     }
+}
+
+namespace ClassLibrary1
+{
+    using System;
 
     public class Class1 : IAsyncDisposable
     {
-        private Stream _disposableMember;
+        private readonly Stream _disposableMember = new Stream();
 
         public ValueTask DisposeAsync() => _disposableMember.DisposeAsync();
     }

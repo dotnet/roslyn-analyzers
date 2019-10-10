@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -55,8 +57,9 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
                     switch (context.Operation)
                     {
                         case IInvocationOperation _: OnInvocationOperation(in context, symbolType, comparerType); break;
+                        case IObjectCreationOperation _: OnObjectCreationOperation(in context, symbolType, comparerType); break;
                     }
-                }, OperationKind.Invocation);
+                }, OperationKind.Invocation, OperationKind.ObjectCreation);
             });
         }
 
@@ -141,6 +144,25 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             }
         }
 
+        private static void OnObjectCreationOperation(in OperationAnalysisContext context, INamedTypeSymbol symbolType, INamedTypeSymbol comparerType)
+        {
+            var objectCreationOperation = (IObjectCreationOperation)context.Operation;
+            var constructedType = objectCreationOperation.Constructor.ContainingType;
+
+            switch (constructedType.Name)
+            {
+                case nameof(Dictionary<ISymbol, object>):
+                case nameof(HashSet<ISymbol>):
+                    {
+                        if (FirstTypeArgumentIsSymbolType(constructedType, symbolType))
+                        {
+                            RequireInvocationHasAnyComparerArgument(in context, objectCreationOperation, comparerType);
+                        }
+                    }
+                    break;
+            }
+        }
+
         private static void RequireInvocationHasAnyComparerArgument(in OperationAnalysisContext context, IInvocationOperation invocationOperation, INamedTypeSymbol comparerType)
         {
             if (invocationOperation.Arguments.Any(comparerType.IsTypeSymbol))
@@ -149,6 +171,16 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
             }
 
             context.ReportDiagnostic(invocationOperation.Syntax.GetLocation().CreateDiagnostic(Rule));
+        }
+
+        private static void RequireInvocationHasAnyComparerArgument(in OperationAnalysisContext context, IObjectCreationOperation objectCreationOperation, INamedTypeSymbol comparerType)
+        {
+            if (objectCreationOperation.Arguments.Any(comparerType.IsTypeSymbol))
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(objectCreationOperation.Syntax.GetLocation().CreateDiagnostic(Rule));
         }
 
         private static bool FirstTypeArgumentIsSymbolType(IMethodSymbol methodToCheck, INamedTypeSymbol symbolType)
@@ -163,5 +195,10 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers
 
         private static bool InvocationContainsEqualityComparerArgument(IInvocationOperation invocationOperation, INamedTypeSymbol comparerType)
             => invocationOperation.Arguments.Any(comparerType.IsTypeSymbol);
+
+        private static bool FirstTypeArgumentIsSymbolType(INamedTypeSymbol typeToCheck, INamedTypeSymbol symbolType)
+            => typeToCheck.TypeArguments.Any() &&
+               symbolType.IsTypeSymbol(typeToCheck.TypeArguments.First());
+
     }
 }

@@ -547,5 +547,73 @@ class TestClass {{
                 FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
             }.RunAsync();
         }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task Dictionary_Construct_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method() {{
+        return [|new Dictionary<{symbolType}, {symbolType}>()|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method() {{
+        return new Dictionary<{symbolType}, {symbolType}>(SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
+
+        [Theory]
+        [InlineData(nameof(ISymbol))]
+        [InlineData(nameof(INamedTypeSymbol))]
+        public async Task HashSet_Construct_UseComparer(string symbolType)
+        {
+            var source = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method() {{
+        return [|new HashSet<{symbolType}>()|];
+    }}
+}}
+";
+            var fixedSource = $@"
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+
+class TestClass {{
+    object Method() {{
+        return new HashSet<{symbolType}>(SymbolEqualityComparer.Default);
+    }}
+}}
+";
+            await new VerifyCS.Test
+            {
+                TestState = { Sources = { source, SymbolEqualityComparerStubCSharp } },
+                FixedState = { Sources = { fixedSource, SymbolEqualityComparerStubCSharp } }
+            }.RunAsync();
+        }
     }
 }

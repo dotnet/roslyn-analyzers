@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
@@ -44,11 +45,21 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
             var expression = root.FindNode(sourceSpan, getInnermostNodeForTie: true);
             var rawOperation = semanticModel.GetOperation(expression, cancellationToken);
 
-            if (!(rawOperation is IInvocationOperation invocationOperation))
+            return rawOperation switch
             {
-                return document;
-            }
+                IInvocationOperation invocationOperation => await OnInvocationOperation(document, invocationOperation, cancellationToken).ConfigureAwait(false),
+                IObjectCreationOperation objectCreationOperation => await OnObjectCreationOperation(document, objectCreationOperation, cancellationToken).ConfigureAwait(false),
+                _ => document
+            };
 
+
+        }
+
+        private static async Task<Document> OnInvocationOperation(
+            Document document,
+            IInvocationOperation invocationOperation,
+            CancellationToken cancellationToken)
+        {
             var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             var generator = editor.Generator;
 
@@ -58,6 +69,24 @@ namespace Microsoft.CodeAnalysis.Analyzers.MetaAnalyzers.Fixers
                 invocationSyntax.ArgumentList.AddArguments((ArgumentSyntax)generator.Argument(GetEqualityComparerDefault(generator))));
 
             editor.ReplaceNode(invocationSyntax, newInvocation);
+
+            return editor.GetChangedDocument();
+        }
+
+        private static async Task<Document> OnObjectCreationOperation(
+            Document document,
+            IObjectCreationOperation objectCreationOperation,
+            CancellationToken cancellationToken)
+        {
+            var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+            var generator = editor.Generator;
+
+            var creationSyntax = (ObjectCreationExpressionSyntax)objectCreationOperation.Syntax;
+
+            var newCreation = creationSyntax.WithArgumentList(
+                creationSyntax.ArgumentList.AddArguments((ArgumentSyntax)generator.Argument(GetEqualityComparerDefault(generator))));
+
+            editor.ReplaceNode(creationSyntax, newCreation);
 
             return editor.GetChangedDocument();
         }

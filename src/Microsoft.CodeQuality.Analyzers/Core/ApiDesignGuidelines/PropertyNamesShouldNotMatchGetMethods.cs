@@ -94,7 +94,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         continue;
                     }
 
-                    // Ignore declared type that overrides a base member
+                    // We only want to report an issue when the user is free to update the member.
+                    // So if the method or/and the property is an override and base clase defines both members we bail out
+                    // but if base defines only one of the member and derived defines the other we still want to raise an issue
                     if (symbol.IsOverride)
                     {
                         continue;

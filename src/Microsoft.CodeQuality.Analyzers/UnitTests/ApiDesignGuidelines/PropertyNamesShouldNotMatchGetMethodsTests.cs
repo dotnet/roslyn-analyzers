@@ -376,6 +376,225 @@ Public Class C2
 End Class");
         }
 
+        [Fact, WorkItem(2914, "https://github.com/dotnet/roslyn-analyzers/issues/2914")]
+        public void CA1721_OverrideNoDiagnosticButVirtualDiagnostic()
+        {
+            VerifyCSharp(@"
+public class BaseClass
+{
+    public virtual int Value { get; }
+    public virtual int GetValue(int i) => i;
+}
+
+public class C1 : BaseClass
+{
+    public override int Value => 42;
+}
+
+public class C2 : BaseClass
+{
+    public override int GetValue(int i) => i * 2;
+}
+
+public class C3 : BaseClass
+{
+    public override int Value => 42;
+    public override int GetValue(int i) => i * 2;
+}
+",
+            GetCA1721CSharpResultAt(line: 4, column: 24, identifierName: "Value", otherIdentifierName: "GetValue"));
+
+            VerifyBasic(@"
+Public Class BaseClass
+    Public Overridable ReadOnly Property Value As Integer
+
+    Public Overridable Function GetValue(ByVal i As Integer) As Integer
+        Return i
+    End Function
+End Class
+
+Public Class C1
+    Inherits BaseClass
+
+    Public Overrides ReadOnly Property Value As Integer
+        Get
+            Return 42
+        End Get
+    End Property
+End Class
+
+Public Class C2
+    Inherits BaseClass
+
+    Public Overrides Function GetValue(ByVal i As Integer) As Integer
+        Return i * 2
+    End Function
+End Class
+
+Public Class C3
+    Inherits BaseClass
+
+    Public Overrides ReadOnly Property Value As Integer
+        Get
+            Return 42
+        End Get
+    End Property
+
+    Public Overrides Function GetValue(ByVal i As Integer) As Integer
+        Return i * 2
+    End Function
+End Class
+",
+        GetCA1721BasicResultAt(line: 3, column: 42, identifierName: "Value", otherIdentifierName: "GetValue"));
+        }
+
+        [Fact, WorkItem(2914, "https://github.com/dotnet/roslyn-analyzers/issues/2914")]
+        public void CA1721_OverrideWithLocalMemberDiagnostic()
+        {
+            VerifyCSharp(@"
+public class BaseClass1
+{
+    public virtual int Value { get; }
+}
+
+public class C1 : BaseClass1
+{
+    public override int Value => 42;
+    public int GetValue(int i) => i;
+}
+
+public class BaseClass2
+{
+    public virtual int GetValue(int i) => i;
+}
+
+public class C2 : BaseClass2
+{
+    public int Value => 42;
+    public override int GetValue(int i) => i * 2;
+}
+",
+            GetCA1721CSharpResultAt(line: 10, column: 16, identifierName: "Value", otherIdentifierName: "GetValue"),
+            GetCA1721CSharpResultAt(line: 20, column: 16, identifierName: "Value", otherIdentifierName: "GetValue"));
+
+            VerifyBasic(@"
+Public Class BaseClass1
+    Public Overridable ReadOnly Property Value As Integer
+End Class
+
+Public Class C1
+    Inherits BaseClass1
+
+    Public Overrides ReadOnly Property Value As Integer
+        Get
+            Return 42
+        End Get
+    End Property
+
+    Public Function GetValue(ByVal i As Integer) As Integer
+        Return i
+    End Function
+End Class
+
+Public Class BaseClass2
+    Public Overridable Function GetValue(ByVal i As Integer) As Integer
+        Return i
+    End Function
+End Class
+
+Public Class C2
+    Inherits BaseClass2
+
+    Public ReadOnly Property Value As Integer
+        Get
+            Return 42
+        End Get
+    End Property
+
+    Public Overrides Function GetValue(ByVal i As Integer) As Integer
+        Return i * 2
+    End Function
+End Class
+
+",
+            GetCA1721BasicResultAt(line: 15, column: 21, identifierName: "Value", otherIdentifierName: "GetValue"),
+            GetCA1721BasicResultAt(line: 29, column: 30, identifierName: "Value", otherIdentifierName: "GetValue"));
+        }
+
+        [Fact, WorkItem(2914, "https://github.com/dotnet/roslyn-analyzers/issues/2914")]
+        public void CA1721_OverrideMultiLevelDiagnostic()
+        {
+            VerifyCSharp(@"
+public class MyBaseClass
+{
+    public virtual int GetValue(int i) => i;
+    public virtual int Foo { get; }
+}
+
+public class MyClass : MyBaseClass
+{
+    public virtual int Value { get; }
+    public virtual int GetFoo(int i) => i;
+}
+
+public class MySubClass : MyClass
+{
+    public override int GetValue(int i) => 2;
+    public override int Value => 2;
+    public override int GetFoo(int i) => 2;
+    public override int Foo => 2;
+}
+",
+            GetCA1721CSharpResultAt(line: 10, column: 24, identifierName: "Value", otherIdentifierName: "GetValue"),
+            GetCA1721CSharpResultAt(line: 11, column: 24, identifierName: "Foo", otherIdentifierName: "GetFoo"));
+
+            VerifyBasic(@"
+Public Class MyBaseClass
+    Public Overridable Function GetValue(ByVal i As Integer) As Integer
+        Return i
+    End Function
+
+    Public Overridable ReadOnly Property Foo As Integer
+End Class
+
+Public Class [MyClass]
+    Inherits MyBaseClass
+
+    Public Overridable ReadOnly Property Value As Integer
+
+    Public Overridable Function GetFoo(ByVal i As Integer) As Integer
+        Return i
+    End Function
+End Class
+
+Public Class MySubClass
+    Inherits [MyClass]
+
+    Public Overrides Function GetValue(ByVal i As Integer) As Integer
+        Return 2
+    End Function
+
+    Public Overrides ReadOnly Property Value As Integer
+        Get
+            Return 2
+        End Get
+    End Property
+
+    Public Overrides Function GetFoo(ByVal i As Integer) As Integer
+        Return 2
+    End Function
+
+    Public Overrides ReadOnly Property Foo As Integer
+        Get
+            Return 2
+        End Get
+    End Property
+End Class
+",
+            GetCA1721BasicResultAt(line: 13, column: 42, identifierName: "Value", otherIdentifierName: "GetValue"),
+            GetCA1721BasicResultAt(line: 15, column: 33, identifierName: "Foo", otherIdentifierName: "GetFoo"));
+        }
+
         #region Helpers
 
         private static DiagnosticResult GetCA1721CSharpResultAt(int line, int column, string identifierName, string otherIdentifierName)

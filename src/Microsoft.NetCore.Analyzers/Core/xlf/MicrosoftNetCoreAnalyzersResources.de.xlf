@@ -83,13 +83,28 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessDescription">
+        <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</source>
+        <target state="translated">Bei Verwendung eines kryptografisch schwachen Pseudozufallszahlen-Generators kann ein Angreifer möglicherweise vorhersagen, welcher sicherheitsrelevante Wert generiert wird. Verwenden Sie einen kryptografisch starken Zufallszahlen-Generator, wenn ein nicht vorhersehbarer Wert erforderlich ist, oder stellen Sie sicher, dass schwache Pseudozufallszahlen nicht auf sicherheitsrelevante Weise verwendet werden.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseInsecureRandomnessMessage">
         <source>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security</source>
         <target state="translated">{0} ist ein unsicherer Zufallszahlen-Generator. Verwenden Sie kryptografisch sichere Zufallszahlen-Generatoren, wenn Zufälligkeit für die Sicherheit erforderlich ist.</target>
         <note />
       </trans-unit>
-      <trans-unit id="DoNotUseInsecureRandomnessMessage">
-        <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</source>
-        <target state="translated">Bei Verwendung eines kryptografisch schwachen Pseudozufallszahlen-Generators kann ein Angreifer möglicherweise vorhersagen, welcher sicherheitsrelevante Wert generiert wird. Verwenden Sie einen kryptografisch starken Zufallszahlen-Generator, wenn ein nicht vorhersehbarer Wert erforderlich ist, oder stellen Sie sicher, dass schwache Pseudozufallszahlen nicht auf sicherheitsrelevante Weise verwendet werden.</target>
+      <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIV">
+        <source>Do not use CreateEncryptor with non-default IV</source>
+        <target state="new">Do not use CreateEncryptor with non-default IV</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DefinitelyUseCreateEncryptorWithNonDefaultIVMessage">
+        <source>Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</source>
+        <target state="new">Symmetric encryption uses non-default initialization vector, which could be potentially repeatable</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
+        <source>Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</source>
+        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPath">
@@ -165,6 +180,16 @@
       <trans-unit id="MissHttpVerbAttributeMessage">
         <source>Action method {0} needs to specify the Http request kind explictly</source>
         <target state="translated">Die Aktionsmethode "{0}" muss die Art der HTTP-Anforderung explizit angeben.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIV">
+        <source>Use CreateEncryptor with the default IV </source>
+        <target state="new">Use CreateEncryptor with the default IV </target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MaybeUseCreateEncryptorWithNonDefaultIVMessage">
+        <source>The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</source>
+        <target state="new">The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</target>
         <note />
       </trans-unit>
       <trans-unit id="ReviewSQLQueriesForSecurityVulnerabilitiesDescription">

@@ -53,7 +53,7 @@ namespace Roslyn.Diagnostics.Analyzers
 
         protected abstract void HandleCompilationStart(CompilationStartAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, INamedTypeSymbol threadDependencyAttribute);
 
-        protected ThreadDependencyInfo GetThreadDependencyInfo(ISymbol symbol)
+        protected internal static ThreadDependencyInfo GetThreadDependencyInfo(ISymbol symbol)
             => GetThreadDependencyInfo(symbol.GetAttributes(), in GetDefaultThreadDependencyInfo(symbol));
 
         protected static Location TryGetThreadDependencyInfoLocation(ISymbol symbol, CancellationToken cancellationToken)
@@ -62,7 +62,7 @@ namespace Roslyn.Diagnostics.Analyzers
         protected static Location TryGetThreadDependencyInfoLocationForReturn(IMethodSymbol symbol, CancellationToken cancellationToken)
             => TryGetThreadDependencyInfoLocation(symbol.GetReturnTypeAttributes(), cancellationToken);
 
-        protected ThreadDependencyInfo GetThreadDependencyInfoForReturn(WellKnownTypeProvider wellKnownTypeProvider, IMethodSymbol symbol)
+        protected internal static ThreadDependencyInfo GetThreadDependencyInfoForReturn(WellKnownTypeProvider wellKnownTypeProvider, IMethodSymbol symbol)
         {
             if (symbol.Name == nameof(Task.FromResult)
                 || symbol.Name == nameof(Task.FromCanceled)
@@ -77,7 +77,7 @@ namespace Roslyn.Diagnostics.Analyzers
             return GetThreadDependencyInfo(symbol.GetReturnTypeAttributes(), in GetDefaultThreadDependencyInfo(symbol.ReturnType));
         }
 
-        private ref readonly ThreadDependencyInfo GetDefaultThreadDependencyInfo(ISymbol symbol)
+        private static ref readonly ThreadDependencyInfo GetDefaultThreadDependencyInfo(ISymbol symbol)
         {
             switch (symbol)
             {
@@ -196,7 +196,7 @@ namespace Roslyn.Diagnostics.Analyzers
         }
 
         [SuppressMessage("Performance", "CA1815:Override equals and operator equals on value types", Justification = "This type is never used for comparison.")]
-        protected readonly struct ThreadDependencyInfo
+        protected internal readonly struct ThreadDependencyInfo
         {
             public static readonly ThreadDependencyInfo DefaultAsynchronous = new ThreadDependencyInfo(
                 isExplicit: false,

@@ -1,12 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
-namespace Roslyn.Diagnostics.Analyzers.UnitTests
+namespace Roslyn.Diagnostics.Analyzers
 {
     internal partial class ThreadDependencyAnalysis
         : ForwardDataFlowAnalysis<ThreadDependencyAnalysis.Data, ThreadDependencyAnalysis.Context, ThreadDependencyAnalysis.Result, ThreadDependencyAnalysis.BlockResult, ThreadDependencyAnalysis.Value>
@@ -14,6 +15,19 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
         private ThreadDependencyAnalysis(Domain analysisDomain, OperationVisitor operationVisitor)
             : base(analysisDomain, operationVisitor)
         {
+        }
+
+        public static Result TryGetOrComputeResult(
+            ControlFlowGraph controlFlowGraph,
+            ISymbol owningSymbol,
+            AnalyzerOptions analyzerOptions,
+            WellKnownTypeProvider wellKnownTypeProvider,
+            DiagnosticDescriptor rule,
+            CancellationToken cancellationToken,
+            InterproceduralAnalysisKind interproceduralAnalysisKind = InterproceduralAnalysisKind.None)
+        {
+            var interproceduralAnalysisConfig = InterproceduralAnalysisConfiguration.Create(analyzerOptions, rule, interproceduralAnalysisKind, cancellationToken);
+            return TryGetOrComputeResult(controlFlowGraph, owningSymbol, analyzerOptions, wellKnownTypeProvider, interproceduralAnalysisConfig);
         }
 
         public static Result TryGetOrComputeResult(

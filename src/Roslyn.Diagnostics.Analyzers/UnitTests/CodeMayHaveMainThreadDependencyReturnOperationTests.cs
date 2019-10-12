@@ -860,5 +860,82 @@ End Class
 
             await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
         }
+
+        [Fact]
+        public async Task IncorrectReturnPossibleYieldInAlwaysCompletedAsyncMethod_CSharp()
+        {
+            var code = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface IInterface {
+    Task MethodAsync();
+}
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None, AlwaysCompleted = true)]
+    Task OperationAsync(IInterface obj) {
+        [|return obj.MethodAsync()|];
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+            var fixedCode = @"
+using System.Threading.Tasks;
+using Roslyn.Utilities;
+
+interface IInterface {
+    [return: ThreadDependency(ContextDependency.None, AlwaysCompleted = true, Verified = false)]
+    Task MethodAsync();
+}
+
+class Class {
+    [ThreadDependency(ContextDependency.None)]
+    [return: ThreadDependency(ContextDependency.None, AlwaysCompleted = true)]
+    Task OperationAsync(IInterface obj) {
+        return obj.MethodAsync();
+    }
+}
+" + NoMainThreadDependencyAttribute.CSharp;
+
+            await VerifyCS.VerifyCodeFixAsync(code, fixedCode);
+        }
+
+        [Fact]
+        public async Task IncorrectReturnPossibleYieldInAlwaysCompletedAsyncMethod_VisualBasic()
+        {
+            var code = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Interface IInterface
+    Function MethodAsync() As Task
+End Interface
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Function OperationAsync(obj As IInterface) As <ThreadDependency(ContextDependency.None, AlwaysCompleted:=True)> Task
+        [|Return obj.MethodAsync()|]
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+            var fixedCode = @"
+Imports System.Threading.Tasks
+Imports Roslyn.Utilities
+
+Interface IInterface
+    Function MethodAsync() As <ThreadDependency(None, AlwaysCompleted:=True, Verified:=False)> Task
+End Interface
+
+Class [Class]
+    <ThreadDependency(ContextDependency.None)>
+    Function OperationAsync(obj As IInterface) As <ThreadDependency(ContextDependency.None, AlwaysCompleted:=True)> Task
+        Return obj.MethodAsync()
+    End Function
+End Class
+" + NoMainThreadDependencyAttribute.VisualBasic;
+
+            await VerifyVB.VerifyCodeFixAsync(code, fixedCode);
+        }
     }
 }

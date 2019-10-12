@@ -10,7 +10,7 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
         /// <summary>
         /// Analysis data predicated by true/false value of an <see cref="AnalysisEntity"/>.
         /// Used to improve the preciseness of analysis when we can apply the <see cref="TruePredicatedData"/> or <see cref="FalsePredicatedData"/>
-        /// on the control flow paths where the corresonding <see cref="AnalysisEntity"/> is known to have <code>true</code> or <code>false</code> value respectively.
+        /// on the control flow paths where the corresonding <see cref="AnalysisEntity"/> is known to have <c>true</c> or <c>false</c> value respectively.
         /// </summary>
         protected sealed class PerEntityPredicatedAnalysisData : IDisposable
         {
@@ -35,14 +35,14 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis.DataFlow
             }
 
             /// <summary>
-            /// Analysis data for <code>true</code> value of the corresponding <see cref="AnalysisEntity"/> on which this data is predicated.
-            /// <code>null</code> value indicates the corresponding <see cref="AnalysisEntity"/> can never be <code>true</code>.
+            /// Analysis data for <c>true</c> value of the corresponding <see cref="AnalysisEntity"/> on which this data is predicated.
+            /// <c>null</c> value indicates the corresponding <see cref="AnalysisEntity"/> can never be <c>true</c>.
             /// </summary>
             public DictionaryAnalysisData<TKey, TValue> TruePredicatedData { get; private set; }
 
             /// <summary>
-            /// Analysis data for <code>false</code> value of the corresponding <see cref="AnalysisEntity"/> on which this data is predicated.
-            /// <code>null</code> value indicates the corresponding <see cref="AnalysisEntity"/> can never be <code>false</code>.
+            /// Analysis data for <c>false</c> value of the corresponding <see cref="AnalysisEntity"/> on which this data is predicated.
+            /// <c>null</c> value indicates the corresponding <see cref="AnalysisEntity"/> can never be <c>false</c>.
             /// </summary>
             public DictionaryAnalysisData<TKey, TValue> FalsePredicatedData { get; private set; }
 

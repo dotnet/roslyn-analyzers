@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.CopyAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.PointsToAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 
-namespace Roslyn.Diagnostics.Analyzers.UnitTests
+namespace Roslyn.Diagnostics.Analyzers
 {
     internal partial class ThreadDependencyAnalysis
     {

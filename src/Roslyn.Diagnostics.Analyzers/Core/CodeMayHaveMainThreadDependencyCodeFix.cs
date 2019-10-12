@@ -57,8 +57,10 @@ namespace Roslyn.Diagnostics.Analyzers
 
                         var perInstance = diagnostic.Properties.TryGetValue("PerInstance", out var perInstanceString)
                             && perInstanceString == bool.TrueString;
+                        var alwaysCompleted = diagnostic.Properties.TryGetValue("AlwaysCompleted", out var alwaysCompleteString)
+                            && alwaysCompleteString == bool.TrueString;
 
-                        createChangedSolution = cancellationToken => MarkTargetWithMainThreadDependencyAsync(context.Document, diagnostic.Location.SourceSpan, contextDependency, perInstance, cancellationToken);
+                        createChangedSolution = cancellationToken => MarkTargetWithMainThreadDependencyAsync(context.Document, diagnostic.Location.SourceSpan, contextDependency, perInstance, alwaysCompleted, cancellationToken);
                         break;
 
                     default:
@@ -145,7 +147,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 => generator.AttributeArgument("PerInstance", generator.TrueLiteralExpression());
         }
 
-        private async Task<Solution> MarkTargetWithMainThreadDependencyAsync(Document document, TextSpan sourceSpan, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private async Task<Solution> MarkTargetWithMainThreadDependencyAsync(Document document, TextSpan sourceSpan, ContextDependency contextDependency, bool perInstance, bool alwaysCompleted, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var syntaxNode = root.FindNode(sourceSpan, getInnermostNodeForTie: true);
@@ -165,29 +167,29 @@ namespace Roslyn.Diagnostics.Analyzers
             switch (target)
             {
                 case IFieldSymbol field:
-                    return await MarkFieldWithMainThreadDependencyAsync(document.Project.Solution, field, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
+                    return await MarkFieldWithMainThreadDependencyAsync(document.Project.Solution, field, contextDependency, perInstance, alwaysCompleted, cancellationToken).ConfigureAwait(false);
 
                 case IPropertySymbol property:
-                    return await MarkPropertyWithMainThreadDependencyAsync(document.Project.Solution, property, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
+                    return await MarkPropertyWithMainThreadDependencyAsync(document.Project.Solution, property, contextDependency, perInstance, alwaysCompleted, cancellationToken).ConfigureAwait(false);
 
                 case IEventSymbol @event:
-                    return await MarkEventWithMainThreadDependencyAsync(document.Project.Solution, @event, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
+                    return await MarkEventWithMainThreadDependencyAsync(document.Project.Solution, @event, contextDependency, perInstance, alwaysCompleted, cancellationToken).ConfigureAwait(false);
 
                 case IMethodSymbol method:
-                    return await MarkMethodWithMainThreadDependencyAsync(document.Project.Solution, method, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
+                    return await MarkMethodWithMainThreadDependencyAsync(document.Project.Solution, method, contextDependency, perInstance, alwaysCompleted, cancellationToken).ConfigureAwait(false);
 
                 case ITypeSymbol type:
-                    return await MarkTypeWithMainThreadDependencyAsync(document.Project.Solution, type, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
+                    return await MarkTypeWithMainThreadDependencyAsync(document.Project.Solution, type, contextDependency, perInstance, alwaysCompleted, cancellationToken).ConfigureAwait(false);
 
                 case IParameterSymbol parameter:
-                    return await MarkParameterWithMainThreadDependencyAsync(document.Project.Solution, parameter, contextDependency, perInstance, cancellationToken).ConfigureAwait(false);
+                    return await MarkParameterWithMainThreadDependencyAsync(document.Project.Solution, parameter, contextDependency, perInstance, alwaysCompleted, cancellationToken).ConfigureAwait(false);
 
                 default:
                     return document.Project.Solution;
             }
         }
 
-        private static async Task<Solution> MarkFieldWithMainThreadDependencyAsync(Solution solution, IFieldSymbol field, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkFieldWithMainThreadDependencyAsync(Solution solution, IFieldSymbol field, ContextDependency contextDependency, bool perInstance, bool alwaysCompleted, CancellationToken cancellationToken)
         {
             var declarationReference = field.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -205,14 +207,14 @@ namespace Roslyn.Diagnostics.Analyzers
                 return solution;
             }
 
-            var attribute = CreateAttribute(generator, contextDependency, perInstance);
+            var attribute = CreateAttribute(generator, contextDependency, perInstance, alwaysCompleted);
             var newNode = generator.AddAttributes(syntaxNode, attribute);
             var newRoot = root.ReplaceNode(syntaxNode, newNode);
 
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private static async Task<Solution> MarkPropertyWithMainThreadDependencyAsync(Solution solution, IPropertySymbol property, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkPropertyWithMainThreadDependencyAsync(Solution solution, IPropertySymbol property, ContextDependency contextDependency, bool perInstance, bool alwaysCompleted, CancellationToken cancellationToken)
         {
             var declarationReference = property.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -224,14 +226,14 @@ namespace Roslyn.Diagnostics.Analyzers
             var syntaxNode = await declarationReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
             var generator = SyntaxGenerator.GetGenerator(solution.GetDocument(declarationReference.SyntaxTree));
 
-            var attribute = CreateAttribute(generator, contextDependency, perInstance);
+            var attribute = CreateAttribute(generator, contextDependency, perInstance, alwaysCompleted);
             var newNode = generator.AddAttributes(syntaxNode, attribute);
             var newRoot = root.ReplaceNode(syntaxNode, newNode);
 
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private static async Task<Solution> MarkEventWithMainThreadDependencyAsync(Solution solution, IEventSymbol @event, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkEventWithMainThreadDependencyAsync(Solution solution, IEventSymbol @event, ContextDependency contextDependency, bool perInstance, bool alwaysCompleted, CancellationToken cancellationToken)
         {
             var declarationReference = @event.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -243,14 +245,14 @@ namespace Roslyn.Diagnostics.Analyzers
             var syntaxNode = await declarationReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
             var generator = SyntaxGenerator.GetGenerator(solution.GetDocument(declarationReference.SyntaxTree));
 
-            var attribute = CreateAttribute(generator, contextDependency, perInstance);
+            var attribute = CreateAttribute(generator, contextDependency, perInstance, alwaysCompleted);
             var newNode = generator.AddAttributes(syntaxNode, attribute);
             var newRoot = root.ReplaceNode(syntaxNode, newNode);
 
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private static async Task<Solution> MarkMethodWithMainThreadDependencyAsync(Solution solution, IMethodSymbol method, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkMethodWithMainThreadDependencyAsync(Solution solution, IMethodSymbol method, ContextDependency contextDependency, bool perInstance, bool alwaysCompleted, CancellationToken cancellationToken)
         {
             var declarationReference = method.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -262,14 +264,14 @@ namespace Roslyn.Diagnostics.Analyzers
             var syntaxNode = await declarationReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
             var generator = SyntaxGenerator.GetGenerator(solution.GetDocument(declarationReference.SyntaxTree));
 
-            var attribute = CreateAttribute(generator, contextDependency, perInstance);
+            var attribute = CreateAttribute(generator, contextDependency, perInstance, alwaysCompleted);
             var newNode = generator.AddReturnAttributes(syntaxNode, attribute);
             var newRoot = root.ReplaceNode(syntaxNode, newNode);
 
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private static async Task<Solution> MarkTypeWithMainThreadDependencyAsync(Solution solution, ITypeSymbol type, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkTypeWithMainThreadDependencyAsync(Solution solution, ITypeSymbol type, ContextDependency contextDependency, bool perInstance, bool alwaysCompleted, CancellationToken cancellationToken)
         {
             var declarationReference = type.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -281,14 +283,14 @@ namespace Roslyn.Diagnostics.Analyzers
             var syntaxNode = await declarationReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
             var generator = SyntaxGenerator.GetGenerator(solution.GetDocument(declarationReference.SyntaxTree));
 
-            var attribute = CreateAttribute(generator, contextDependency, perInstance);
+            var attribute = CreateAttribute(generator, contextDependency, perInstance, alwaysCompleted);
             var newNode = generator.AddAttributes(syntaxNode, attribute);
             var newRoot = root.ReplaceNode(syntaxNode, newNode);
 
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private static async Task<Solution> MarkParameterWithMainThreadDependencyAsync(Solution solution, IParameterSymbol parameter, ContextDependency contextDependency, bool perInstance, CancellationToken cancellationToken)
+        private static async Task<Solution> MarkParameterWithMainThreadDependencyAsync(Solution solution, IParameterSymbol parameter, ContextDependency contextDependency, bool perInstance, bool alwaysCompleted, CancellationToken cancellationToken)
         {
             var declarationReference = parameter.DeclaringSyntaxReferences.FirstOrDefault(reference => reference.SyntaxTree is object);
             if (declarationReference is null)
@@ -300,19 +302,24 @@ namespace Roslyn.Diagnostics.Analyzers
             var syntaxNode = await declarationReference.GetSyntaxAsync(cancellationToken).ConfigureAwait(false);
             var generator = SyntaxGenerator.GetGenerator(solution.GetDocument(declarationReference.SyntaxTree));
 
-            var attribute = CreateAttribute(generator, contextDependency, perInstance);
+            var attribute = CreateAttribute(generator, contextDependency, perInstance, alwaysCompleted);
             var newNode = generator.AddAttributes(syntaxNode, attribute);
             var newRoot = root.ReplaceNode(syntaxNode, newNode);
 
             return solution.WithDocumentSyntaxRoot(solution.GetDocumentId(declarationReference.SyntaxTree), newRoot);
         }
 
-        private static SyntaxNode CreateAttribute(SyntaxGenerator generator, ContextDependency contextDependency, bool perInstance)
+        private static SyntaxNode CreateAttribute(SyntaxGenerator generator, ContextDependency contextDependency, bool perInstance, bool alwaysCompleted)
         {
             var attribute = generator.Attribute(
                 "Roslyn.Utilities.ThreadDependencyAttribute",
                 generator.AttributeArgument(generator.MemberAccessExpression(generator.IdentifierName("ContextDependency"), contextDependency.ToString())),
                 generator.AttributeArgument("Verified", generator.FalseLiteralExpression()));
+
+            if (alwaysCompleted)
+            {
+                attribute = generator.InsertAttributeArguments(attribute, 1, new[] { generator.AttributeArgument("AlwaysCompleted", generator.TrueLiteralExpression()) });
+            }
 
             if (perInstance)
             {

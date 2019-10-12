@@ -3,7 +3,7 @@
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
-namespace Roslyn.Diagnostics.Analyzers.UnitTests
+namespace Roslyn.Diagnostics.Analyzers
 {
     internal partial class ThreadDependencyAnalysis
     {

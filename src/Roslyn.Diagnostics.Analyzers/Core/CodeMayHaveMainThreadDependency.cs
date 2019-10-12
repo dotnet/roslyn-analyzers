@@ -11,6 +11,7 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace Roslyn.Diagnostics.Analyzers
@@ -54,6 +55,72 @@ namespace Roslyn.Diagnostics.Analyzers
 
             context.RegisterOperationAction(context => HandleReturnOperation(context, wellKnownTypeProvider, threadDependencyInfoForReturn), OperationKind.Return);
             context.RegisterOperationAction(ctx => HandleAwaitOperation(ctx, wellKnownTypeProvider, threadDependencyInfoForReturn), OperationKind.Await);
+
+            context.RegisterOperationBlockEndAction(context => HandleOperationBlockEnd(context, threadDependencyInfo, threadDependencyInfoForReturn));
+        }
+
+        private void HandleOperationBlockEnd(OperationBlockAnalysisContext context, ThreadDependencyInfo threadDependencyInfo, ThreadDependencyInfo threadDependencyInfoForReturn)
+        {
+            foreach (var operationBlock in context.OperationBlocks)
+            {
+                var controlFlowGraph = context.GetControlFlowGraph(operationBlock);
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(context.Compilation);
+                var threadDependencyAnalysisResult = ThreadDependencyAnalysis.TryGetOrComputeResult(
+                    controlFlowGraph,
+                    context.OwningSymbol,
+                    context.Options,
+                    wellKnownTypeProvider,
+                    Rule,
+                    context.CancellationToken);
+                if (threadDependencyAnalysisResult is null)
+                {
+                    continue;
+                }
+
+                bool isAsync = context.OwningSymbol is IMethodSymbol { IsAsync: true };
+                foreach (var operation in controlFlowGraph.DescendantOperations())
+                {
+                    var operationValue = threadDependencyAnalysisResult[operation];
+                    if (operationValue is null || operationValue.YieldKind == ThreadDependencyAnalysis.YieldKind.Unknown)
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    if (operation is IReturnOperation returnOperation)
+                    {
+                        if (isAsync)
+                        {
+                            // TODO: Validate the returned value against the constraints of the type parameter of the return
+                        }
+                        else
+                        {
+                            if (threadDependencyInfoForReturn.AlwaysCompleted && threadDependencyAnalysisResult[returnOperation.ReturnedValue].AlwaysComplete != true)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(
+                                    Rule,
+                                    operation.Syntax.GetLocation(),
+                                    GetAdditionalLocations(context.OwningSymbol, returnOperation, context.CancellationToken),
+                                    properties: ScenarioProperties.WithAlwaysCompleted(ScenarioProperties.TargetMissingAttribute)));
+                            }
+                        }
+                    }
+                    else if (operationValue.YieldKind != ThreadDependencyAnalysis.YieldKind.NotYielded && operation is IAwaitOperation awaitOperation)
+                    {
+                        if (threadDependencyAnalysisResult[awaitOperation.Operation].YieldKind == ThreadDependencyAnalysis.YieldKind.NotYielded)
+                        {
+                            // This await operation is the first potential yield in the control flow
+                            if (threadDependencyInfoForReturn.AlwaysCompleted)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(
+                                    Rule,
+                                    operation.Syntax.GetLocation(),
+                                    GetAdditionalLocations(context.OwningSymbol, awaitOperation, context.CancellationToken),
+                                    properties: ScenarioProperties.WithAlwaysCompleted(ScenarioProperties.TargetMissingAttribute)));
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void HandleReturnOperation(OperationAnalysisContext context, WellKnownTypeProvider wellKnownTypeProvider, ThreadDependencyInfo threadDependencyInfo)
@@ -95,7 +162,7 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 if (threadDependencyInfo.AlwaysCompleted)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, returnOperation, context.CancellationToken), properties: propertiesOverride));
+                    //context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, returnOperation, context.CancellationToken), properties: propertiesOverride));
                     return;
                 }
 
@@ -160,7 +227,7 @@ namespace Roslyn.Diagnostics.Analyzers
             {
                 if (threadDependencyInfo.AlwaysCompleted)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, awaitOperation, context.CancellationToken), properties: propertiesOverride));
+                    //context.ReportDiagnostic(Diagnostic.Create(Rule, context.Operation.Syntax.GetLocation(), GetAdditionalLocations(context.ContainingSymbol, awaitOperation, context.CancellationToken), properties: propertiesOverride));
                     return;
                 }
 
@@ -435,7 +502,7 @@ namespace Roslyn.Diagnostics.Analyzers
                 => properties.SetItem(nameof(ContextDependency), nameof(ContextDependency.Context));
 
             public static ImmutableDictionary<string, string> WithAlwaysCompleted(ImmutableDictionary<string, string> properties)
-                => properties.SetItem("AlwaysCompleted", "true");
+                => properties.SetItem("AlwaysCompleted", bool.TrueString);
 
             public static ImmutableDictionary<string, string> WithPerInstance(ImmutableDictionary<string, string> properties)
                 => properties.SetItem("PerInstance", bool.TrueString);

@@ -3,7 +3,7 @@
 using System;
 using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
-namespace Roslyn.Diagnostics.Analyzers.UnitTests
+namespace Roslyn.Diagnostics.Analyzers
 {
     internal partial class ThreadDependencyAnalysis
     {
@@ -11,22 +11,22 @@ namespace Roslyn.Diagnostics.Analyzers.UnitTests
         {
             public override Data Clone(Data value)
             {
-                throw new NotImplementedException();
+                return new Data(value);
             }
 
             public override int Compare(Data oldValue, Data newValue)
             {
-                throw new NotImplementedException();
+                return oldValue.CompareTo(newValue);
             }
 
             public override bool Equals(Data value1, Data value2)
             {
-                throw new NotImplementedException();
+                return value1.Equals(value2);
             }
 
             public override Data Merge(Data value1, Data value2)
             {
-                throw new NotImplementedException();
+                return Data.Merge(value1, value2);
             }
         }
     }

@@ -57,10 +57,10 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol iCollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
-                    INamedTypeSymbol genericICollectionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
+                    INamedTypeSymbol iCollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsICollection);
+                    INamedTypeSymbol genericICollectionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsGenericICollection1);
                     INamedTypeSymbol arrayType = context.Compilation.GetSpecialType(SpecialType.System_Array);
-                    INamedTypeSymbol dataMemberAttribute = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationDataMemberAttribute);
+                    INamedTypeSymbol dataMemberAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeSerializationDataMemberAttribute);
                     ImmutableHashSet<INamedTypeSymbol> immutableInterfaces = GetIImmutableInterfaces(context.Compilation);
 
                     if (iCollectionType == null ||
@@ -139,11 +139,11 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
         private static ImmutableHashSet<INamedTypeSymbol> GetIImmutableInterfaces(Compilation compilation)
         {
             var builder = ImmutableHashSet.CreateBuilder<INamedTypeSymbol>();
-            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableDictionary));
-            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableList));
-            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableQueue));
-            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet));
-            AddIfNotNull(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableStack));
+            AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableDictionary));
+            AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableList));
+            AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableQueue));
+            AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableSet));
+            AddIfNotNull(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsImmutableIImmutableStack));
             return builder.ToImmutable();
 
             // Local functions.

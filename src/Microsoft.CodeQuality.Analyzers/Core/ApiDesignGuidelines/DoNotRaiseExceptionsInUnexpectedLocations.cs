@@ -293,7 +293,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                 }
 
 
-                INamedTypeSymbol iHashCodeProvider = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
+                INamedTypeSymbol iHashCodeProvider = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCollectionsIHashCodeProvider);
                 if (method.IsImplementationOfInterfaceMethod(null, iHashCodeProvider, WellKnownMemberNames.ObjectGetHashCode))
                 {
                     return true;

@@ -49,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var compilation = compilationStartAnalysisContext.Compilation;
-                var httpRuntimeSectionTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebConfigurationHttpRuntimeSection);
+                var httpRuntimeSectionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebConfigurationHttpRuntimeSection);
 
                 if (httpRuntimeSectionTypeSymbol == null)
                 {

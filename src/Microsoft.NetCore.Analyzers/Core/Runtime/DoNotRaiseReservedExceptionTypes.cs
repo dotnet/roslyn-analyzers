@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -110,7 +111,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             HashSet<INamedTypeSymbol> set = null;
             foreach (string exp in exceptionNames)
             {
-                INamedTypeSymbol symbol = compilation.GetTypeByMetadataName(exp);
+                INamedTypeSymbol symbol = compilation.GetOrCreateTypeByMetadataName(exp);
                 if (symbol == null)
                 {
                     continue;

@@ -192,7 +192,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
         private static bool IsEventArgs(ITypeSymbol type, Compilation compilation)
         {
-            if (type.DerivesFrom(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs)))
+            if (type.DerivesFrom(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs)))
             {
                 return true;
             }
@@ -212,7 +212,7 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 return false;
             }
 
-            var comVisibleAttribute = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComVisibleAttribute);
+            var comVisibleAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComVisibleAttribute);
             if (comVisibleAttribute == null)
             {
                 return false;
@@ -240,26 +240,26 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
                 }
             }
 
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemWebServicesWebMethodAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemWebServicesWebMethodAttribute));
 
             // MSTest attributes
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestInitializeAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestMethodAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingDataTestMethodAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestCleanupAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestInitializeAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestMethodAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingDataTestMethodAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualStudioTestToolsUnitTestingTestCleanupAttribute));
 
             // XUnit attributes
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.XunitFactAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.XunitFactAttribute));
 
             // NUnit Attributes
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkSetUpAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkOneTimeSetUpAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkOneTimeTearDownAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestCaseAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestCaseSourceAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTheoryAttribute));
-            Add(compilation.GetTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTearDownAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkSetUpAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkOneTimeSetUpAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkOneTimeTearDownAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestCaseAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTestCaseSourceAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTheoryAttribute));
+            Add(compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.NUnitFrameworkTearDownAttribute));
 
             return builder?.ToImmutable() ?? ImmutableArray<INamedTypeSymbol>.Empty;
         }

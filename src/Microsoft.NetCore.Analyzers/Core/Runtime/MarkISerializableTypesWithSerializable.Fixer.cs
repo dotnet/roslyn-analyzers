@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -42,7 +43,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(
-                editor.SemanticModel.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute)));
+                editor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute)));
             editor.AddAttribute(node, attr);
             return editor.GetChangedDocument();
         }

@@ -48,7 +48,7 @@ namespace Microsoft.NetCore.Analyzers.Security
 
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
-                var xmlSchemaCollectionTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemXmlSchemaXmlSchemaCollection);
+                var xmlSchemaCollectionTypeSymbol = compilationStartAnalysisContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemXmlSchemaXmlSchemaCollection);
 
                 if (xmlSchemaCollectionTypeSymbol == null)
                 {

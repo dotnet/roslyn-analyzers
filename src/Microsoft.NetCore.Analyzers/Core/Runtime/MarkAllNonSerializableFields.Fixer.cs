@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
+using Analyzer.Utilities.Extensions;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -55,7 +56,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
         {
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
             SyntaxNode attr = editor.Generator.Attribute(editor.Generator.TypeExpression(
-                editor.SemanticModel.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute)));
+                editor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute)));
             editor.AddAttribute(fieldNode, attr);
             return editor.GetChangedDocument();
         }
@@ -66,7 +67,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             await editor.EditOneDeclarationAsync(type, (docEditor, declaration) =>
             {
                 SyntaxNode serializableAttr = docEditor.Generator.Attribute(docEditor.Generator.TypeExpression(
-                    docEditor.SemanticModel.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute)));
+                    docEditor.SemanticModel.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute)));
                 docEditor.AddAttribute(declaration, serializableAttr);
             }, cancellationToken).ConfigureAwait(false);
 

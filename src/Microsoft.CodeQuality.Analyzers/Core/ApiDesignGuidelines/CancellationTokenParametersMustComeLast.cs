@@ -37,7 +37,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol cancellationTokenType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken);
+                INamedTypeSymbol cancellationTokenType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingCancellationToken);
                 if (cancellationTokenType != null)
                 {
                     compilationContext.RegisterSymbolAction(symbolContext =>

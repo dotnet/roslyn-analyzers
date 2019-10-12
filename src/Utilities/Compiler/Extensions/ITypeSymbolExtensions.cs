@@ -282,6 +282,24 @@ namespace Analyzer.Utilities.Extensions
             => (typeSymbol as INamedTypeSymbol)?.TupleUnderlyingType ?? typeSymbol;
 #endif
 
+        public static bool IsAwaitable(this ITypeSymbol typeSymbol)
+        {
+            switch (typeSymbol.MetadataName)
+            {
+                case "Task":
+                case "Task`1":
+                case "ValueTask":
+                case "ValueTask`1":
+                    return typeSymbol.ContainingNamespace?.Name == nameof(System.Threading.Tasks)
+                        && typeSymbol.ContainingNamespace.ContainingNamespace?.Name == nameof(System.Threading)
+                        && typeSymbol.ContainingNamespace.ContainingNamespace.ContainingNamespace?.Name == nameof(System)
+                        && (typeSymbol.ContainingNamespace.ContainingNamespace.ContainingNamespace.ContainingNamespace?.IsGlobalNamespace ?? false);
+
+                default:
+                    return false;
+            }
+        }
+
         public static Accessibility DetermineMinimalAccessibility(this ITypeSymbol typeSymbol)
         {
             return typeSymbol.Accept(MinimalAccessibilityVisitor.Instance);

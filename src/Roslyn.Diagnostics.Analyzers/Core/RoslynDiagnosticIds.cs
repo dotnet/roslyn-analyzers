@@ -39,5 +39,9 @@ namespace Roslyn.Diagnostics.Analyzers
         public const string ImportingConstructorShouldBeObsoleteRuleId = "RS0033";
         public const string ExportedPartsShouldHaveImportingConstructorRuleId = "RS0034";
         public const string RestrictedInternalsVisibleToRuleId = "RS0035";
+
+        public const string ImplementWithNoMainThreadDependencyRuleId = "RS0036";
+        public const string CodeMayHaveMainThreadDependencyRuleId = "RS0037";
+        public const string MainThreadDependencyShouldBeVerifiedRuleId = "RS0038";
     }
 }

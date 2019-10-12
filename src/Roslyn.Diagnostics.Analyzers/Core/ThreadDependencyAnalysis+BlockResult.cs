@@ -1,0 +1,18 @@
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+using Microsoft.CodeAnalysis.FlowAnalysis;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
+
+namespace Roslyn.Diagnostics.Analyzers
+{
+    internal partial class ThreadDependencyAnalysis
+    {
+        internal class BlockResult : AbstractBlockAnalysisResult
+        {
+            public BlockResult(BasicBlock basicBlock)
+                : base(basicBlock)
+            {
+            }
+        }
+    }
+}

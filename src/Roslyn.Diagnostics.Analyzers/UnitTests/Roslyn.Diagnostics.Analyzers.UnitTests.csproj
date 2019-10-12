@@ -9,4 +9,9 @@
     <ProjectReference Include="..\CSharp\Roslyn.Diagnostics.CSharp.Analyzers.csproj" />
     <ProjectReference Include="..\VisualBasic\Roslyn.Diagnostics.VisualBasic.Analyzers.vbproj" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="TestResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

@@ -2,6 +2,36 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en" target-language="de" original="../RoslynDiagnosticsAnalyzersResources.resx">
     <body>
+      <trans-unit id="CodeMayHaveMainThreadDependencyCodeFix_ContainingMethodShouldBePerInstance">
+        <source>Mark containing method as PerInstance</source>
+        <target state="new">Mark containing method as PerInstance</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CodeMayHaveMainThreadDependencyCodeFix_ContainingMethodShouldCaptureContext">
+        <source>Mark containing method as ContextDependency.Context</source>
+        <target state="new">Mark containing method as ContextDependency.Context</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CodeMayHaveMainThreadDependencyCodeFix_TargetMissingAttribute">
+        <source>Mark target with [ThreadDependency]</source>
+        <target state="new">Mark target with [ThreadDependency]</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CodeMayHaveMainThreadDependencyDescription">
+        <source>Code may have main thread dependency</source>
+        <target state="new">Code may have main thread dependency</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CodeMayHaveMainThreadDependencyMessage">
+        <source>Code may have main thread dependency</source>
+        <target state="new">Code may have main thread dependency</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="CodeMayHaveMainThreadDependencyTitle">
+        <source>Code may have main thread dependency</source>
+        <target state="new">Code may have main thread dependency</target>
+        <note />
+      </trans-unit>
       <trans-unit id="ExportedPartsShouldHaveImportingConstructorCodeFix_ImplicitConstructor">
         <source>Explicitly define the importing constructor</source>
         <target state="translated">Importierenden Konstruktor explizit definieren</target>
@@ -30,6 +60,21 @@
       <trans-unit id="ExportedPartsShouldHaveImportingConstructorTitle">
         <source>Exported parts should have [ImportingConstructor]</source>
         <target state="translated">Exportierte Teile müssen "[ImportingConstructor]" umfassen</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementWithNoMainThreadDependencyDescription">
+        <source>Implement with no main thread dependency</source>
+        <target state="new">Implement with no main thread dependency</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementWithNoMainThreadDependencyMessage">
+        <source>Implement with no main thread dependency</source>
+        <target state="new">Implement with no main thread dependency</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="ImplementWithNoMainThreadDependencyTitle">
+        <source>Implement with no main thread dependency</source>
+        <target state="new">Implement with no main thread dependency</target>
         <note />
       </trans-unit>
       <trans-unit id="ImportingConstructorShouldBeObsoleteCodeFix_ErrorSetToFalse">
@@ -90,6 +135,26 @@
       <trans-unit id="TestExportsShouldNotBeDiscoverableTitle">
         <source>Test exports should not be discoverable</source>
         <target state="translated">Testexporte dürfen nicht ermittelbar sein</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MainThreadDependencyShouldBeVerifiedDescription">
+        <source>Main thread dependency should be verified</source>
+        <target state="new">Main thread dependency should be verified</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MainThreadDependencyShouldBeVerifiedFix">
+        <source>Verify main thread dependency</source>
+        <target state="new">Verify main thread dependency</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MainThreadDependencyShouldBeVerifiedMessage">
+        <source>Main thread dependency should be verified</source>
+        <target state="new">Main thread dependency should be verified</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="MainThreadDependencyShouldBeVerifiedTitle">
+        <source>Main thread dependency should be verified</source>
+        <target state="new">Main thread dependency should be verified</target>
         <note />
       </trans-unit>
       <trans-unit id="UseSpecializedCollectionsEmptyEnumerableTitle">

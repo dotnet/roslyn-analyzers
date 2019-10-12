@@ -252,4 +252,43 @@
   <data name="TestExportsShouldNotBeDiscoverableCodeFix" xml:space="preserve">
     <value>Apply PartNotDiscoverableAttribute</value>
   </data>
+  <data name="ImplementWithNoMainThreadDependencyDescription" xml:space="preserve">
+    <value>Implement with no main thread dependency</value>
+  </data>
+  <data name="ImplementWithNoMainThreadDependencyMessage" xml:space="preserve">
+    <value>Implement with no main thread dependency</value>
+  </data>
+  <data name="ImplementWithNoMainThreadDependencyTitle" xml:space="preserve">
+    <value>Implement with no main thread dependency</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyDescription" xml:space="preserve">
+    <value>Code may have main thread dependency</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyMessage" xml:space="preserve">
+    <value>Code may have main thread dependency</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyTitle" xml:space="preserve">
+    <value>Code may have main thread dependency</value>
+  </data>
+  <data name="MainThreadDependencyShouldBeVerifiedDescription" xml:space="preserve">
+    <value>Main thread dependency should be verified</value>
+  </data>
+  <data name="MainThreadDependencyShouldBeVerifiedFix" xml:space="preserve">
+    <value>Verify main thread dependency</value>
+  </data>
+  <data name="MainThreadDependencyShouldBeVerifiedMessage" xml:space="preserve">
+    <value>Main thread dependency should be verified</value>
+  </data>
+  <data name="MainThreadDependencyShouldBeVerifiedTitle" xml:space="preserve">
+    <value>Main thread dependency should be verified</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyCodeFix_ContainingMethodShouldCaptureContext" xml:space="preserve">
+    <value>Mark containing method as ContextDependency.Context</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyCodeFix_TargetMissingAttribute" xml:space="preserve">
+    <value>Mark target with [ThreadDependency]</value>
+  </data>
+  <data name="CodeMayHaveMainThreadDependencyCodeFix_ContainingMethodShouldBePerInstance" xml:space="preserve">
+    <value>Mark containing method as PerInstance</value>
+  </data>
 </root>

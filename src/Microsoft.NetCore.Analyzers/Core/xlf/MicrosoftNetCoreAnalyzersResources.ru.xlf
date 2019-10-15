@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessDescription">
-        <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</source>
-        <target state="translated">Использование криптографически слабого генератора псевдослучайных чисел может позволить злоумышленнику предсказать, какое значение, чувствительное к безопасности, будет создаваться. Используйте криптографически надежный генератор случайных чисел, если требуется непрогнозируемое значение, или убедитесь, что слабые псевдослучайные числа не используются для обеспечения безопасности.</target>
+        <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security-sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security-sensitive manner.</source>
+        <target state="needs-review-translation">Использование криптографически слабого генератора псевдослучайных чисел может позволить злоумышленнику предсказать, какое значение, чувствительное к безопасности, будет создаваться. Используйте криптографически надежный генератор случайных чисел, если требуется непрогнозируемое значение, или убедитесь, что слабые псевдослучайные числа не используются для обеспечения безопасности.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessMessage">
@@ -103,8 +103,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
-        <source>Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</source>
-        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</target>
+        <source>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</source>
+        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPath">

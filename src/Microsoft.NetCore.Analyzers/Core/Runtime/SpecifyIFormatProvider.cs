@@ -131,12 +131,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var targetMethod = invocationExpression.TargetMethod;
 
                     #region "Exceptions"
+                    const string ToStringMethodName = "ToString";
                     if (targetMethod.IsGenericMethod || targetMethod.ContainingType == null || targetMethod.ContainingType.IsErrorType() ||
                         (targetMethod.ContainingType != null &&
                          (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
                          (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType)) ||
-                         (charType != null && charType.Equals(targetMethod.ContainingType)) ||
-                         (boolType != null && boolType.Equals(targetMethod.ContainingType))))
+                         (targetMethod.Name == ToStringMethodName &&
+                            (stringType != null && stringType.Equals(targetMethod.ContainingType)) ||
+                            (charType != null && charType.Equals(targetMethod.ContainingType)) ||
+                            (boolType != null && boolType.Equals(targetMethod.ContainingType)))))
                     {
                         return;
                     }

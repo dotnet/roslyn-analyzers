@@ -903,6 +903,27 @@ End Class
 ");
         }
 
+        [Fact]
+        public void CA1305_StringToString_NoDiagnostics()
+        {
+            VerifyCSharp(@"
+public class Foo
+{
+    public string Bar(string s1, System.String s2)
+    {
+        return s1.ToString() + s2.ToString();
+    }
+}");
+
+            VerifyBasic(@"
+Public Class Foo
+    Public Function Bar(ByVal s As String) As String
+        Return s.ToString()
+    End Function
+End Class
+");
+        }
+
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
             return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3);

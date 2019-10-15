@@ -1174,7 +1174,7 @@
     <value>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</value>
   </data>
   <data name="DefinitelyDisableHttpClientCRLCheck" xml:space="preserve">
-    <value>Definitely disable HttpClient certificate revocation list check</value>
+    <value>HttpClients should enable certificate revocation list checks</value>
   </data>
   <data name="DefinitelyDisableHttpClientCRLCheckMessage" xml:space="preserve">
     <value>HttpClient is created without enabling CheckCertificateRevocationList</value>

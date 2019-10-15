@@ -57,19 +57,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // better to have false negatives (which would happen if the type were *not*
                 // instantiated by any friend assembly, but we didn't report the issue) than
                 // to have false positives.
-                var internalsVisibleToAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesInternalsVisibleToAttribute);
+                var internalsVisibleToAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesInternalsVisibleToAttribute);
                 if (AssemblyExposesInternals(compilation, internalsVisibleToAttributeSymbol))
                 {
                     return;
                 }
 
-                var systemAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
-                var iConfigurationSectionHandlerSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemConfigurationIConfigurationSectionHandler);
-                var configurationSectionSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemConfigurationConfigurationSection);
-                var safeHandleSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesSafeHandle);
-                var traceListenerSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsTraceListener);
-                var mef1ExportAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
-                var mef2ExportAttributeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var systemAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
+                var iConfigurationSectionHandlerSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConfigurationIConfigurationSectionHandler);
+                var configurationSectionSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConfigurationConfigurationSection);
+                var safeHandleSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesSafeHandle);
+                var traceListenerSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsTraceListener);
+                var mef1ExportAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
+                var mef2ExportAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
 
                 startContext.RegisterOperationAction(context =>
                 {
@@ -318,7 +318,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
             }
 
             var taskSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
-            var genericTaskSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
+            var genericTaskSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
 
             // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.
             // TODO: Test: can't have type parameters.

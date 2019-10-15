@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
@@ -30,10 +31,10 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
             }
 
             SemanticModel model = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-            INamedTypeSymbol charSetType = model.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesCharSet);
-            INamedTypeSymbol dllImportType = model.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute);
-            INamedTypeSymbol marshalAsType = model.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesMarshalAsAttribute);
-            INamedTypeSymbol unmanagedType = model.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesUnmanagedType);
+            INamedTypeSymbol charSetType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesCharSet);
+            INamedTypeSymbol dllImportType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesDllImportAttribute);
+            INamedTypeSymbol marshalAsType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesMarshalAsAttribute);
+            INamedTypeSymbol unmanagedType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesUnmanagedType);
             if (charSetType == null || dllImportType == null || marshalAsType == null || unmanagedType == null)
             {
                 return;

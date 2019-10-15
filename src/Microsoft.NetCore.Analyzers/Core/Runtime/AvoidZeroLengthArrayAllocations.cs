@@ -51,7 +51,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             // Only if it is, register the syntax node action provided by the derived implementations.
             context.RegisterCompilationStartAction(ctx =>
             {
-                INamedTypeSymbol typeSymbol = ctx.Compilation.GetTypeByMetadataName(ArrayTypeName);
+                INamedTypeSymbol typeSymbol = ctx.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
                 if (typeSymbol != null && typeSymbol.DeclaredAccessibility == Accessibility.Public)
                 {
                     if (typeSymbol.GetMembers(ArrayEmptyMethodName).FirstOrDefault() is IMethodSymbol methodSymbol && methodSymbol.DeclaredAccessibility == Accessibility.Public &&
@@ -101,7 +101,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
                     if (elementType.TypeKind != TypeKind.Pointer)
                     {
-                        var arrayType = context.Compilation.GetTypeByMetadataName(ArrayTypeName);
+                        var arrayType = context.Compilation.GetOrCreateTypeByMetadataName(ArrayTypeName);
                         IMethodSymbol emptyMethod = (IMethodSymbol)arrayType.GetMembers(ArrayEmptyMethodName).First();
                         var constructed = emptyMethod.Construct(elementType);
 

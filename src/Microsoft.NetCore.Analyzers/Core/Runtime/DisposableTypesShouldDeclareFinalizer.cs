@@ -49,7 +49,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     ImmutableHashSet<INamedTypeSymbol> nativeResourceTypes = ImmutableHashSet.Create(
                         compilation.GetSpecialType(SpecialType.System_IntPtr),
                         compilation.GetSpecialType(SpecialType.System_UIntPtr),
-                        compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesHandleRef)
+                        compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesHandleRef)
                     );
                     var disposableType = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIDisposable);
 

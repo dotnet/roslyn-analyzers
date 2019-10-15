@@ -904,6 +904,7 @@ End Class
         }
 
         [Fact]
+        [WorkItem(2394, "https://github.com/dotnet/roslyn-analyzers/issues/2394")]
         public void CA1305_StringToString_NoDiagnostics()
         {
             VerifyCSharp(@"

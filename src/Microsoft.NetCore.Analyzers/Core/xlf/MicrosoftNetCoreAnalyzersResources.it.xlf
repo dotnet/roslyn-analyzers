@@ -18,8 +18,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheck">
-        <source>Definitely disable HttpClient certificate revocation list check</source>
-        <target state="new">Definitely disable HttpClient certificate revocation list check</target>
+        <source>HttpClients should enable certificate revocation list checks</source>
+        <target state="new">HttpClients should enable certificate revocation list checks</target>
         <note />
       </trans-unit>
       <trans-unit id="DefinitelyDisableHttpClientCRLCheckMessage">
@@ -83,8 +83,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessDescription">
-        <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</source>
-        <target state="translated">L'uso di un generatore di numeri pseudo-casuali vulnerabile dal punto di vista della crittografia può consentire a un utente malintenzionato di prevedere il valore sensibile alla sicurezza che verrà generato. Se è richiesto un valore non prevedibile, usare un generatore di numeri casuali sicuro dal punto di vista della crittografia oppure verificare che i numeri pseudo-casuali vulnerabili non vengano usati in modo sensibile per la sicurezza.</target>
+        <source>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security-sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security-sensitive manner.</source>
+        <target state="needs-review-translation">L'uso di un generatore di numeri pseudo-casuali vulnerabile dal punto di vista della crittografia può consentire a un utente malintenzionato di prevedere il valore sensibile alla sicurezza che verrà generato. Se è richiesto un valore non prevedibile, usare un generatore di numeri casuali sicuro dal punto di vista della crittografia oppure verificare che i numeri pseudo-casuali vulnerabili non vengano usati in modo sensibile per la sicurezza.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseInsecureRandomnessMessage">
@@ -103,8 +103,8 @@
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseCreateEncryptorWithNonDefaultIVDescription">
-        <source>Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</source>
-        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</target>
+        <source>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</source>
+        <target state="new">Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</target>
         <note />
       </trans-unit>
       <trans-unit id="DoNotUseUnsafeDllImportSearchPath">

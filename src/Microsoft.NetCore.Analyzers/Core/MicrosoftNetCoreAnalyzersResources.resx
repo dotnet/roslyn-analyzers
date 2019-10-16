@@ -1123,7 +1123,7 @@
     <value>{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security</value>
   </data>
   <data name="DoNotUseInsecureRandomnessDescription" xml:space="preserve">
-    <value>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security sensitive manner.</value>
+    <value>Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security-sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security-sensitive manner.</value>
   </data>
   <data name="DoNotUseCountAsyncWhenAnyAsyncCanBeUsedDescription" xml:space="preserve">
     <value>For non-empty collections, CountAsync() and LongCountAsync() enumerate the entire sequence, while AnyAsync() stops at the first item or the first item that satisfies a condition.</value>
@@ -1174,7 +1174,7 @@
     <value>All the methods that create, edit, delete, or otherwise modify data do so in the [HttpPost] overload of the method, which needs to be protected with the anti forgery attribute from request forgery. Performing a GET operation should be a safe operation that has no side effects and doesn't modify your persisted data.</value>
   </data>
   <data name="DefinitelyDisableHttpClientCRLCheck" xml:space="preserve">
-    <value>Definitely disable HttpClient certificate revocation list check</value>
+    <value>HttpClients should enable certificate revocation list checks</value>
   </data>
   <data name="DefinitelyDisableHttpClientCRLCheckMessage" xml:space="preserve">
     <value>HttpClient is created without enabling CheckCertificateRevocationList</value>
@@ -1210,6 +1210,6 @@
     <value>The non-default initialization vector, which can be potentially repeatable, is used in the encrypion. Ensure use the default one.</value>
   </data>
   <data name="DoNotUseCreateEncryptorWithNonDefaultIVDescription" xml:space="preserve">
-    <value>Symmetric encryption should always use a non-repeatable initialization vector, to prevent dictionary attacks.</value>
+    <value>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</value>
   </data>
 </root>

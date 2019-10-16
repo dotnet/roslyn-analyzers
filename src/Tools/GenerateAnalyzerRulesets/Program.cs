@@ -296,6 +296,10 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                         description = descriptor.MessageFormat.ToString();
                     }
 
+                    // Replace line breaks with HTML breaks so that new
+                    // lines don't break the markdown table formatting.
+                    description = System.Text.RegularExpressions.Regex.Replace(description, "\r?\n", "<br>");
+
                     builder.AppendLine($"{index} | {ruleIdWithHyperLink} | {descriptor.Title} | {descriptor.Category} | {descriptor.IsEnabledByDefault} | {hasCodeFix} | {description} |");
                     index++;
                 }

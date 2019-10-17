@@ -9,6 +9,11 @@
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
 
   <PropertyGroup>
+    <LangVersion Condition="'$(Language)' == 'C#'">8</LangVersion>
+    <LangVersion Condition="'$(Language)' == 'VB'">16</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <!--

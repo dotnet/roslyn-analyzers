@@ -3603,8 +3603,8 @@
         },
         "CA5390": {
           "id": "CA5390",
-          "shortDescription": "Do Not Hard Code Encryption Key",
-          "fullDescription": "SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hardcoded value.",
+          "shortDescription": "Do not hard-code encryption key",
+          "fullDescription": "SymmetricAlgorithm's .Key property, or a method's rgbKey parameter, should never be a hard-coded value.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
@@ -3677,7 +3677,7 @@
         "CA5394": {
           "id": "CA5394",
           "shortDescription": "Do not use insecure randomness",
-          "fullDescription": "{0} is an insecure random number generator. Use cryptographically secure random number generators when randomness is required for security",
+          "fullDescription": "Using a cryptographically weak pseudo-random number generator may allow an attacker to predict what security-sensitive value will be generated. Use a cryptographically strong random number generator if an unpredictable value is required, or ensure that weak pseudo-random numbers aren't used in a security-sensitive manner.",
           "defaultLevel": "warning",
           "properties": {
             "category": "Security",
@@ -3769,7 +3769,7 @@
         },
         "CA5399": {
           "id": "CA5399",
-          "shortDescription": "Definitely disable HttpClient certificate revocation list check",
+          "shortDescription": "HttpClients should enable certificate revocation list checks",
           "fullDescription": "Using HttpClient without providing a platform specific handler (WinHttpHandler or CurlHandler or HttpClientHandler) where the CheckCertificateRevocationList property is set to true, will allow revoked certificates to be accepted by the HttpClient as valid.",
           "defaultLevel": "warning",
           "properties": {
@@ -3795,6 +3795,63 @@
             "category": "Security",
             "isEnabledByDefault": false,
             "typeName": "DoNotDisableHttpClientCRLCheck",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5401": {
+          "id": "CA5401",
+          "shortDescription": "Do not use CreateEncryptor with non-default IV",
+          "fullDescription": "Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseCreateEncryptorWithNonDefaultIV",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5402": {
+          "id": "CA5402",
+          "shortDescription": "Use CreateEncryptor with the default IV ",
+          "fullDescription": "Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotUseCreateEncryptorWithNonDefaultIV",
+            "languages": [
+              "C#",
+              "Visual Basic"
+            ],
+            "tags": [
+              "Dataflow",
+              "Telemetry"
+            ]
+          }
+        },
+        "CA5403": {
+          "id": "CA5403",
+          "shortDescription": "Do not hard-code certificate",
+          "fullDescription": "Hard-coded certificates in source code are vulnerable to being exploited.",
+          "defaultLevel": "warning",
+          "properties": {
+            "category": "Security",
+            "isEnabledByDefault": false,
+            "typeName": "DoNotHardCodeCertificate",
             "languages": [
               "C#",
               "Visual Basic"

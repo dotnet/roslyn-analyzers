@@ -292,6 +292,25 @@ class TestClass
             GetCSharpResultAt(11, 9, 9, 24, "X509Certificate.X509Certificate(byte[] rawData, string password)", "void TestClass.TestMethod(string path, string password)", "byte[]", "void TestClass.TestMethod(string path, string password)"));
         }
 
+        [Fact]
+        public void Test_X509Certificates2_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod(string path)
+    {
+        byte[] bytes = new byte[] {1, 2, 3};
+        File.WriteAllBytes(path, bytes);
+        new X509Certificate2(path);
+    }
+}",
+            GetCSharpResultAt(11, 9, 9, 24, "X509Certificate2.X509Certificate2(string fileName)", "void TestClass.TestMethod(string path)", "byte[]", "void TestClass.TestMethod(string path)"));
+        }
+
         // For now, we didn't take serialization into consideration.
         [Fact]
         public void Test_Sink_X509Certificate_WithSerializationInfoAndStreamingContextParameters_NoDiagnostic()
@@ -343,6 +362,23 @@ class TestClass
         byte[] bytes = Convert.FromBase64String(s);
         File.WriteAllBytes(path, bytes);
         new X509Certificate(path);
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_X509Certificate2_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod(byte[] bytes, string path)
+    {
+        File.WriteAllBytes(path, bytes);
+        new X509Certificate2(path);
     }
 }");
         }

@@ -71,6 +71,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 var traceListenerSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsTraceListener);
                 var mef1ExportAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
                 var mef2ExportAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var coClassAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesCoClassAttribute);
 
                 startContext.RegisterOperationAction(context =>
                 {
@@ -101,6 +102,17 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     if (type.BaseType != null)
                     {
                         instantiatedTypes.TryAdd(type.BaseType, null);
+                    }
+
+                    // Consider class type declared in the CoClass attribute as instantiated
+                    if (type.TypeKind == TypeKind.Interface &&
+                        type.GetAttributes().FirstOrDefault(x => x.AttributeClass.Equals(coClassAttributeSymbol)) is AttributeData coClassAttribute &&
+                        coClassAttribute.ConstructorArguments.Length == 1 &&
+                        coClassAttribute.ConstructorArguments[0].Kind == TypedConstantKind.Type &&
+                        coClassAttribute.ConstructorArguments[0].Value is INamedTypeSymbol typeSymbol &&
+                        typeSymbol.TypeKind == TypeKind.Class)
+                    {
+                        instantiatedTypes.TryAdd(typeSymbol, null);
                     }
                 }, SymbolKind.NamedType);
 

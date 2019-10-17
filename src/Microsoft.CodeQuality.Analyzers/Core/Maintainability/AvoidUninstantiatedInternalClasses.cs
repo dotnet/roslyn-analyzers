@@ -48,6 +48,7 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 var internalTypes = new ConcurrentDictionary<INamedTypeSymbol, object>();
 
                 var compilation = startContext.Compilation;
+                var wellKnownTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
 
                 // If the assembly being built by this compilation exposes its internals to
                 // any other assembly, don't report any "uninstantiated internal class" errors.
@@ -57,19 +58,19 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // better to have false negatives (which would happen if the type were *not*
                 // instantiated by any friend assembly, but we didn't report the issue) than
                 // to have false positives.
-                var internalsVisibleToAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesInternalsVisibleToAttribute);
+                var internalsVisibleToAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesInternalsVisibleToAttribute);
                 if (AssemblyExposesInternals(compilation, internalsVisibleToAttributeSymbol))
                 {
                     return;
                 }
 
-                var systemAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
-                var iConfigurationSectionHandlerSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConfigurationIConfigurationSectionHandler);
-                var configurationSectionSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConfigurationConfigurationSection);
-                var safeHandleSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesSafeHandle);
-                var traceListenerSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsTraceListener);
-                var mef1ExportAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
-                var mef2ExportAttributeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
+                var systemAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAttribute);
+                var iConfigurationSectionHandlerSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConfigurationIConfigurationSectionHandler);
+                var configurationSectionSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemConfigurationConfigurationSection);
+                var safeHandleSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesSafeHandle);
+                var traceListenerSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDiagnosticsTraceListener);
+                var mef1ExportAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemComponentModelCompositionExportAttribute);
+                var mef2ExportAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemCompositionExportAttribute);
 
                 startContext.RegisterOperationAction(context =>
                 {
@@ -317,8 +318,9 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 return false;
             }
 
-            var taskSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
-            var genericTaskSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
+            var wellKnowTypeProvider = WellKnownTypeProvider.GetOrCreate(compilation);
+            var taskSymbol = wellKnowTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksTask);
+            var genericTaskSymbol = wellKnowTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingTasksGenericTask);
 
             // TODO: Handle the case where Compilation.Options.MainTypeName matches this type.
             // TODO: Test: can't have type parameters.

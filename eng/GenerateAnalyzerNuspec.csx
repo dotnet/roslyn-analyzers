@@ -176,6 +176,7 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0 || 
                 var fileExtension = Path.GetExtension(file);
                 if (fileExtension == ".exe" ||
                     fileExtension == ".dll" ||
+                    fileExtension == ".json" ||
                     fileExtension == ".config" ||
                     fileExtension == ".xml")
                 {

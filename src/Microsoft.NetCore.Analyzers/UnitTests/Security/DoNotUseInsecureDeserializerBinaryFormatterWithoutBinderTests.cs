@@ -1196,5 +1196,61 @@ public class ExampleClass
     }
 }", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
+
+        [Fact]
+        public void Deserialize_SharedBinderInstance_MaybeDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public static SerializationBinder B { get; set; }
+
+        private object DoDeserialization(Stream stream)
+        {
+            BinaryFormatter f = new BinaryFormatter();
+            f.Binder = B ?? throw new Exception(""Expected a non-null SerializationBinder"");
+            return f.Deserialize(stream);
+        }
+    }
+}",
+                GetCSharpResultAt(18, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
+
+            // Ideally, we'd be able to tell f.Binder is non-null.
+        }
+
+        [Fact]
+        public void Deserialize_SharedBinderInstanceIntermediate_MaybeDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public static SerializationBinder B { get; set; }
+
+        private object DoDeserialization(Stream stream)
+        {
+            BinaryFormatter f = new BinaryFormatter();
+            SerializationBinder b = B ?? throw new Exception(""Expected a non-null SerializationBinder"");
+            f.Binder = b;
+            return f.Deserialize(stream);
+        }
+    }
+}");
+        }
     }
 }

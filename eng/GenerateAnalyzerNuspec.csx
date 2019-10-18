@@ -162,7 +162,12 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0 || 
         foreach (var tfm in tfms)
         {
             var fileWithPath = Path.Combine(artifactsBinDir, Path.GetFileNameWithoutExtension(file), configuration, tfm, file);
-            result.AppendLine(FileElement(fileWithPath, Path.Combine("lib", tfm)));
+            
+            // For multi-tfm case, file may not exist for all tfms.
+            if (File.Exists(fileWithPath))
+            {
+                result.AppendLine(FileElement(fileWithPath, Path.Combine("lib", tfm)));
+            }
         }
     }
 
@@ -176,7 +181,6 @@ if (fileList.Length > 0 || assemblyList.Length > 0 || libraryList.Length > 0 || 
                 var fileExtension = Path.GetExtension(file);
                 if (fileExtension == ".exe" ||
                     fileExtension == ".dll" ||
-                    fileExtension == ".json" ||
                     fileExtension == ".config" ||
                     fileExtension == ".xml")
                 {

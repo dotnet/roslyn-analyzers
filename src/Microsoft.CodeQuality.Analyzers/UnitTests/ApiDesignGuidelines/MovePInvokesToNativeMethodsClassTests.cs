@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -29,12 +30,12 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 
         private static DiagnosticResult CSharpResult(int line, int column)
         {
-            return GetCSharpResultAt(line, column, MovePInvokesToNativeMethodsClassAnalyzer.Rule.Id, MovePInvokesToNativeMethodsClassAnalyzer.Rule.MessageFormat.ToString());
+            return GetCSharpResultAt(line, column, MovePInvokesToNativeMethodsClassAnalyzer.Rule.Id, MovePInvokesToNativeMethodsClassAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture));
         }
 
         private static DiagnosticResult BasicResult(int line, int column)
         {
-            return GetBasicResultAt(line, column, MovePInvokesToNativeMethodsClassAnalyzer.Rule.Id, MovePInvokesToNativeMethodsClassAnalyzer.Rule.MessageFormat.ToString());
+            return GetBasicResultAt(line, column, MovePInvokesToNativeMethodsClassAnalyzer.Rule.Id, MovePInvokesToNativeMethodsClassAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture));
         }
 
         #endregion

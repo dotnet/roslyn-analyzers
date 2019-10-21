@@ -10,15 +10,6 @@
     <!-- ValidateArgumentsOfPublicMethods - only useful for libraries with supported public API surface, we don't have any -->
     <Rule Id="CA1062" Action="None" />
   </Rules>
-
-  <!-- TODO: Remove the below suppression once https://github.com/dotnet/roslyn-analyzers/issues/965 has been fixed. -->
-  <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">
-    <!-- DoNotPassLiteralsAsLocalizedParameters - primarily useful for libraries where public APIs throw exceptions, and the messages need to be localized -->
-    <Rule Id="CA1303" Action="None" />
-
-    <!-- SpecifyIFormatProvider -->
-    <Rule Id="CA1305" Action="None" />
-  </Rules>
   
   <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
     <!-- Do not use types from Workspaces assembly in an analyzer -->

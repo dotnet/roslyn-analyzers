@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -622,13 +623,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private static DiagnosticResult GetCSharpExpectedResult(int line, int column, string format, params string[] args)
         {
-            string message = string.Format(format, args);
+            string message = string.Format(CultureInfo.CurrentCulture, format, args);
             return GetCSharpResultAt(line, column, InstantiateArgumentExceptionsCorrectlyAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicExpectedResult(int line, int column, string format, params string[] args)
         {
-            string message = string.Format(format, args);
+            string message = string.Format(CultureInfo.CurrentCulture, format, args);
             return GetBasicResultAt(line, column, InstantiateArgumentExceptionsCorrectlyAnalyzer.RuleId, message);
         }
     }

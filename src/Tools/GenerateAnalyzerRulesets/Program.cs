@@ -290,10 +290,10 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
 
                     var hasCodeFix = fixableDiagnosticIds.Contains(descriptor.Id);
 
-                    var description = descriptor.Description.ToString();
+                    var description = descriptor.Description.ToString(CultureInfo.InvariantCulture);
                     if (string.IsNullOrWhiteSpace(description))
                     {
-                        description = descriptor.MessageFormat.ToString();
+                        description = descriptor.MessageFormat.ToString(CultureInfo.InvariantCulture);
                     }
 
                     // Replace line breaks with HTML breaks so that new
@@ -356,7 +356,7 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
                         writer.Write("shortDescription", descriptor.Title.ToString(culture));
 
                         string fullDescription = descriptor.Description.ToString(culture);
-                        writer.Write("fullDescription", !string.IsNullOrEmpty(fullDescription) ? fullDescription : descriptor.MessageFormat.ToString());
+                        writer.Write("fullDescription", !string.IsNullOrEmpty(fullDescription) ? fullDescription : descriptor.MessageFormat.ToString(CultureInfo.InvariantCulture));
 
                         writer.Write("defaultLevel", getLevel(descriptor.DefaultSeverity));
 
@@ -424,7 +424,7 @@ Sr. No. | Rule ID | Title | Category | Enabled | CodeFix | Description |
 
                         case DiagnosticSeverity.Hidden:
                         default:
-                            // hidden diagnostics are not reported on the command line and therefore not currently given to 
+                            // hidden diagnostics are not reported on the command line and therefore not currently given to
                             // the error logger. We could represent it with a custom property in the SARIF log if that changes.
                             Debug.Assert(false);
                             goto case DiagnosticSeverity.Warning;

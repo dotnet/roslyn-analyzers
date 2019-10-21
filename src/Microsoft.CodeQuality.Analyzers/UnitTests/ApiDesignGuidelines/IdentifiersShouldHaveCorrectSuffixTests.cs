@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -1120,7 +1121,7 @@ public class C
                 line,
                 column,
                 IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId,
-                string.Format(
+                string.Format(CultureInfo.CurrentCulture,
                     isSpecial ?
                         MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
                         MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,
@@ -1134,7 +1135,7 @@ public class C
                 line,
                 column,
                 IdentifiersShouldHaveCorrectSuffixAnalyzer.RuleId,
-                string.Format(
+                string.Format(CultureInfo.CurrentCulture,
                     isSpecial ?
                         MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageSpecialCollection :
                         MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldHaveCorrectSuffixMessageDefault,

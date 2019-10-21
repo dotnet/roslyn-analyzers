@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
@@ -591,13 +592,13 @@ namespace ConsoleApp14
 
         private DiagnosticResult GetBasicNameofResultAt(int line, int column, string name)
         {
-            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.UseNameOfInPlaceOfStringMessage, name);
+            var message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UseNameOfInPlaceOfStringMessage, name);
             return GetBasicResultAt(line, column, UseNameofInPlaceOfStringAnalyzer.RuleId, message);
         }
 
         private DiagnosticResult GetCSharpNameofResultAt(int line, int column, string name)
         {
-            var message = string.Format(MicrosoftCodeQualityAnalyzersResources.UseNameOfInPlaceOfStringMessage, name);
+            var message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UseNameOfInPlaceOfStringMessage, name);
             return GetCSharpResultAt(line, column, UseNameofInPlaceOfStringAnalyzer.RuleId, message);
         }
 

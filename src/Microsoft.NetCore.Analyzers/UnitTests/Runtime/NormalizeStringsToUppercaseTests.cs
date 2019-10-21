@@ -259,14 +259,14 @@ End Class
         private static DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string containingMethod, string invokedMethod, string suggestedMethod)
         {
             // In method '{0}', replace the call to '{1}' with '{2}'.
-            string message = string.Format(NormalizeStringsToUppercaseAnalyzer.ToUpperRule.MessageFormat.ToString(CultureInfo.CurrentUICulture), containingMethod, invokedMethod, suggestedMethod);
+            string message = string.Format(CultureInfo.CurrentCulture, NormalizeStringsToUppercaseAnalyzer.ToUpperRule.MessageFormat.ToString(CultureInfo.CurrentCulture), containingMethod, invokedMethod, suggestedMethod);
             return GetCSharpResultAt(line, column, NormalizeStringsToUppercaseAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicDefaultResultAt(int line, int column, string containingMethod, string invokedMethod, string suggestedMethod)
         {
             // In method '{0}', replace the call to '{1}' with '{2}'.
-            string message = string.Format(NormalizeStringsToUppercaseAnalyzer.ToUpperRule.MessageFormat.ToString(CultureInfo.CurrentUICulture), containingMethod, invokedMethod, suggestedMethod);
+            string message = string.Format(CultureInfo.CurrentCulture, NormalizeStringsToUppercaseAnalyzer.ToUpperRule.MessageFormat.ToString(CultureInfo.CurrentCulture), containingMethod, invokedMethod, suggestedMethod);
             return GetBasicResultAt(line, column, NormalizeStringsToUppercaseAnalyzer.RuleId, message);
         }
 

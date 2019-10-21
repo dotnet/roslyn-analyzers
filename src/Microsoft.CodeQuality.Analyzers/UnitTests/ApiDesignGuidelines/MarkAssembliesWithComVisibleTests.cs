@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -123,12 +124,12 @@ internal class C
 
         private static DiagnosticResult GetExposeIndividualTypesResult()
         {
-            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(MicrosoftCodeQualityAnalyzersResources.ChangeAssemblyLevelComVisibleToFalse, "TestProject"));
+            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ChangeAssemblyLevelComVisibleToFalse, "TestProject"));
         }
 
         private static DiagnosticResult GetAddComVisibleFalseResult()
         {
-            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(MicrosoftCodeQualityAnalyzersResources.AddAssemblyLevelComVisibleFalse, "TestProject"));
+            return GetGlobalResult(MarkAssembliesWithComVisibleAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.AddAssemblyLevelComVisibleFalse, "TestProject"));
         }
     }
 }

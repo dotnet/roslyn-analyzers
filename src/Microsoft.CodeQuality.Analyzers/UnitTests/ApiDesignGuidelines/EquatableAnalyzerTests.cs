@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
@@ -43,7 +44,7 @@ struct S
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "S");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "S");
             VerifyCSharp(code,
                 GetCSharpResultAt(2, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage));
         }
@@ -77,7 +78,7 @@ struct S : IEquatable<S>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "S");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "S");
             VerifyCSharp(code,
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
@@ -96,7 +97,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
@@ -214,7 +215,7 @@ class C : IEquatable<C>
     public bool Equals(C other)
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
@@ -267,7 +268,7 @@ class C : IEquatable<C>
     }
 }
 ";
-            string expectedMessage = string.Format(MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
+            string expectedMessage = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.OverrideObjectEqualsMessage, "C");
             VerifyCSharp(code,
                 GetCSharpResultAt(4, 7, EquatableAnalyzer.OverrideObjectEqualsRuleId, expectedMessage));
         }
@@ -294,8 +295,8 @@ struct C : B
     }
 }
 ";
-            string expectedMessage1 = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
-            string expectedMessage2 = string.Format(MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
+            string expectedMessage1 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "B");
+            string expectedMessage2 = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ImplementIEquatableWhenOverridingObjectEqualsMessage, "C");
             VerifyCSharp(code, TestValidationMode.AllowCompileErrors,
                 GetCSharpResultAt(4, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage1),
                 GetCSharpResultAt(12, 8, EquatableAnalyzer.ImplementIEquatableRuleId, expectedMessage2));

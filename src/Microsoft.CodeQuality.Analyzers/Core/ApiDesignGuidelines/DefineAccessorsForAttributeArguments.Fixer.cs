@@ -129,7 +129,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             {
                 editor.SetAccessibility(property, Accessibility.Public);
 
-                // Having just made the property public, if it has a setter with no Accessibility set, then we've just made the setter public. 
+                // Having just made the property public, if it has a setter with no Accessibility set, then we've just made the setter public.
                 // Instead restore the setter's original accessibility so that we don't fire a violation with the generated code.
                 SyntaxNode setter = editor.Generator.GetAccessor(property, DeclarationKind.SetAccessor);
                 if (setter != null)

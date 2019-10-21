@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.NetCore.CSharp.Analyzers.Runtime;
@@ -287,25 +288,25 @@ End Structure",
 
         private static DiagnosticResult GetCA1810CSharpDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetCSharpResultAt(line, column, CSharpInitializeStaticFieldsInlineAnalyzer.CA1810RuleId, message);
         }
 
         private static DiagnosticResult GetCA1810BasicDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetBasicResultAt(line, column, BasicInitializeStaticFieldsInlineAnalyzer.CA1810RuleId, message);
         }
 
         private static DiagnosticResult GetCA2207CSharpDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetCSharpResultAt(line, column, CSharpInitializeStaticFieldsInlineAnalyzer.CA2207RuleId, message);
         }
 
         private static DiagnosticResult GetCA2207BasicDefaultResultAt(int line, int column, string typeName)
         {
-            string message = string.Format(MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.InitializeStaticFieldsInlineMessage, typeName);
             return GetBasicResultAt(line, column, BasicInitializeStaticFieldsInlineAnalyzer.CA2207RuleId, message);
         }
 

@@ -221,7 +221,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     sanitizingMethodsSpecifyTargets
                         ?.Select(o =>
                             new KeyValuePair<string, (bool, bool, ImmutableHashSet<string>)>(
-                                o.Method, 
+                                o.Method,
                                 (o.SanitizedTargets.SanitizeReturn, o.SanitizedTargets.SanitizeInstance, o.SanitizedTargets.SanitizedArguments?.ToImmutableHashSet() ?? ImmutableHashSet<string>.Empty)))
                         ?.ToImmutableDictionary(StringComparer.Ordinal)
                     ?? ImmutableDictionary<string, (bool, bool, ImmutableHashSet<string>)>.Empty));

@@ -105,7 +105,8 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                     }
 
                     // Consider class type declared in the CoClass attribute as instantiated
-                    if (type.TypeKind == TypeKind.Interface &&
+                    if (coClassAttributeSymbol != null &&
+                        type.TypeKind == TypeKind.Interface &&
                         type.GetAttributes().FirstOrDefault(x => x.AttributeClass.Equals(coClassAttributeSymbol)) is AttributeData coClassAttribute &&
                         coClassAttribute.ConstructorArguments.Length == 1 &&
                         coClassAttribute.ConstructorArguments[0].Kind == TypedConstantKind.Type &&

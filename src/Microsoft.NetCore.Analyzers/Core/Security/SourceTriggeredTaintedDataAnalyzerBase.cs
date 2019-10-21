@@ -98,13 +98,30 @@ namespace Microsoft.NetCore.Analyzers.Security
                             operationBlockStartContext.RegisterOperationAction(
                                 operationAnalysisContext =>
                                 {
-                                    IInvocationOperation invocationOperation = (IInvocationOperation)operationAnalysisContext.Operation;
+                                    IMethodSymbol methodSymbol;
+                                    ImmutableArray<IArgumentOperation> argumentOperations;
+                                    switch (operationAnalysisContext.Operation)
+                                    {
+                                        case IInvocationOperation invocationOperation:
+                                            methodSymbol = invocationOperation.TargetMethod;
+                                            argumentOperations = invocationOperation.Arguments;
+                                            break;
+
+                                        case IObjectCreationOperation objectCreationOperation:
+                                            methodSymbol = objectCreationOperation.Constructor;
+                                            argumentOperations = objectCreationOperation.Arguments;
+                                            break;
+
+                                        default:
+                                            return;
+                                    }
+
                                     IOperation rootOperation = operationAnalysisContext.Operation.GetRoot();
                                     if (rootOperation.TryGetEnclosingControlFlowGraph(out ControlFlowGraph cfg))
                                     {
                                         if (sourceInfoSymbolMap.IsSourceMethod(
-                                                invocationOperation.TargetMethod,
-                                                invocationOperation.Arguments,
+                                                methodSymbol,
+                                                argumentOperations,
                                                 new Lazy<PointsToAnalysisResult>(
                                                     () =>
                                                     {
@@ -163,7 +180,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                         }
                                     }
                                 },
-                                OperationKind.Invocation);
+                                OperationKind.Invocation, OperationKind.ObjectCreation);
 
                             if (taintedDataConfig.HasTaintArraySource(SinkKind))
                             {
@@ -172,7 +189,7 @@ namespace Microsoft.NetCore.Analyzers.Security
                                     {
                                         IArrayInitializerOperation arrayInitializerOperation = (IArrayInitializerOperation)operationAnalysisContext.Operation;
                                         if (arrayInitializerOperation.GetAncestor<IArrayCreationOperation>(OperationKind.ArrayCreation)?.Type is IArrayTypeSymbol arrayTypeSymbol
-                                            && sourceInfoSymbolMap.IsSourceConstantArrayOfType(arrayTypeSymbol))
+                                            && sourceInfoSymbolMap.IsSourceArray(arrayTypeSymbol, out _))
                                         {
                                             lock (rootOperationsNeedingAnalysis)
                                             {

@@ -19,5 +19,6 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         ZipSlip,
         HardcodedEncryptionKey,
         HardcodedCertificate,
+        DecryptWithoutHash,
     }
 }

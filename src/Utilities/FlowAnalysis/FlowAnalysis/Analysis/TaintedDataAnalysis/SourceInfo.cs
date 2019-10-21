@@ -25,7 +25,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <param name="taintedMethods">Methods that generate tainted data and whose arguments don't need extra analysis.</param>
         /// <param name="taintedMethodsNeedsPointsToAnalysis">Methods that generate tainted data and whose arguments don't need extra value content analysis.</param>
         /// <param name="taintedMethodsNeedsValueContentAnalysis">Methods that generate tainted data and whose arguments need extra value content analysis and points to analysis.</param>
-        /// <param name="taintConstantArray"></param>
+        /// <param name="taintArray">Specify whether to taint array.</param>
         public SourceInfo(
             string fullTypeName,
             bool isInterface,
@@ -34,7 +34,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(PointsToCheck, string)>)> taintedMethodsNeedsPointsToAnalysis,
             ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(ValueContentCheck, string)>)> taintedMethodsNeedsValueContentAnalysis,
             ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(string, string)>)> transferMethods,
-            bool taintConstantArray)
+            TaintArrayKind taintArray)
         {
             FullTypeName = fullTypeName ?? throw new ArgumentNullException(nameof(fullTypeName));
             IsInterface = isInterface;
@@ -43,7 +43,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             TaintedMethodsNeedsPointsToAnalysis = taintedMethodsNeedsPointsToAnalysis ?? throw new ArgumentNullException(nameof(taintedMethodsNeedsPointsToAnalysis));
             TaintedMethodsNeedsValueContentAnalysis = taintedMethodsNeedsValueContentAnalysis ?? throw new ArgumentNullException(nameof(taintedMethodsNeedsValueContentAnalysis));
             TransferMethods = transferMethods ?? throw new ArgumentNullException(nameof(transferMethods));
-            TaintConstantArray = taintConstantArray;
+            TaintArray = taintArray;
         }
 
         /// <summary>
@@ -133,9 +133,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         public ImmutableHashSet<(MethodMatcher MethodMatcher, ImmutableHashSet<(string IfTaintedParameter, string ThenTaintedTarget)>)> TransferMethods { get; }
 
         /// <summary>
-        /// Indicates arrays initialized with constant values of this type generates tainted data.
+        /// Indicates arrays of this type generates tainted data.
         /// </summary>
-        public bool TaintConstantArray { get; }
+        public TaintArrayKind TaintArray { get; }
 
         /// <summary>
         /// Indicates that this <see cref="SourceInfo"/> uses <see cref="ValueContentAbstractValue"/>s.
@@ -144,7 +144,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
         public override int GetHashCode()
         {
-            return HashUtilities.Combine(this.TaintConstantArray.GetHashCode(),
+            return HashUtilities.Combine(this.TaintArray.GetHashCode(),
                 HashUtilities.Combine(this.TaintedProperties,
                 HashUtilities.Combine(this.TaintedMethods,
                 HashUtilities.Combine(this.TaintedMethodsNeedsPointsToAnalysis,
@@ -169,7 +169,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 && this.TaintedMethodsNeedsPointsToAnalysis == other.TaintedMethodsNeedsPointsToAnalysis
                 && this.TaintedMethodsNeedsValueContentAnalysis == other.TaintedMethodsNeedsValueContentAnalysis
                 && this.TransferMethods == other.TransferMethods
-                && this.TaintConstantArray == other.TaintConstantArray;
+                && this.TaintArray == other.TaintArray;
         }
     }
 }

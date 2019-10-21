@@ -5,33 +5,27 @@ using Analyzer.Utilities.PooledObjects;
 
 namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 {
-    internal static class ZipSlipSanitizers
+    internal static class DecryptWithoutHashSanitizers
     {
         /// <summary>
-        /// <see cref="SanitizerInfo"/>s for zip slip tainted data sanitizers.
+        /// <see cref="Sanitizer"/>s for decrypt without hash sanitizers.
         /// </summary>
         public static ImmutableHashSet<SanitizerInfo> SanitizerInfos { get; }
 
-        static ZipSlipSanitizers()
+        /// <summary>
+        /// Statically constructs.
+        /// </summary>
+        static DecryptWithoutHashSanitizers()
         {
             var builder = PooledHashSet<SanitizerInfo>.GetInstance();
 
             builder.AddSanitizerInfo(
-                WellKnownTypeNames.SystemIOPath,
+                WellKnownTypeNames.SystemSecurityCryptographyHashAlgorithm,
                 isInterface: false,
                 isConstructorSanitizing: false,
-                sanitizingMethods: new[] {
-                    "GetFileName",
-                });
-            builder.AddSanitizerInfo(
-                WellKnownTypeNames.SystemString,
-                isInterface: false,
-                isConstructorSanitizing: false,
-                sanitizingMethods: new[] {
-                    "Substring",
-                },
+                sanitizingMethods: null,
                 sanitizingMethodsSpecifyTargets: new[] {
-                    ("StartsWith", (false, true, (string[])null)),
+                    ("ComputeHash", (false, false, new[] { "buffer" })),
                 });
 
             SanitizerInfos = builder.ToImmutableAndFree();

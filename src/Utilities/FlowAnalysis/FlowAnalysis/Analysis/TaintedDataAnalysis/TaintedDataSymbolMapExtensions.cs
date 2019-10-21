@@ -116,24 +116,26 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         }
 
         /// <summary>
-        /// Determines if the given array can be a tainted data source when its elements are all constant.
+        /// Determines if the given array can be a tainted data source.
         /// </summary>
         /// <param name="sourceSymbolMap"></param>
         /// <param name="arrayTypeSymbol"></param>
         /// <returns></returns>
-        public static bool IsSourceConstantArrayOfType(this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap, IArrayTypeSymbol arrayTypeSymbol)
+        public static bool IsSourceArray(this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap, IArrayTypeSymbol arrayTypeSymbol, out TaintArrayKind taintArray)
         {
             if (arrayTypeSymbol.ElementType is INamedTypeSymbol elementType)
             {
                 foreach (SourceInfo sourceInfo in sourceSymbolMap.GetInfosForType(elementType))
                 {
-                    if (sourceInfo.TaintConstantArray)
+                    if (sourceInfo.TaintArray != TaintArrayKind.None)
                     {
-                        return true;
+                        taintArray = sourceInfo.TaintArray;
+                        return taintArray != TaintArrayKind.None;
                     }
                 }
             }
 
+            taintArray = TaintArrayKind.None;
             return false;
         }
 

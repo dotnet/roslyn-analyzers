@@ -11,13 +11,12 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
     /// </summary>
     internal sealed class SanitizerInfo : ITaintedDataInfo, IEquatable<SanitizerInfo>
     {
-        public SanitizerInfo(string fullTypeName, bool isInterface, bool isConstructorSanitizing, ImmutableHashSet<string> sanitizingMethods, ImmutableHashSet<string> sanitizingInstanceMethods)
+        public SanitizerInfo(string fullTypeName, bool isInterface, bool isConstructorSanitizing, ImmutableDictionary<string, (bool, bool, ImmutableHashSet<string>)> sanitizingMethods)
         {
             FullTypeName = fullTypeName ?? throw new ArgumentNullException(nameof(fullTypeName));
             IsInterface = isInterface;
             IsConstructorSanitizing = isConstructorSanitizing;
             SanitizingMethods = sanitizingMethods ?? throw new ArgumentNullException(nameof(sanitizingMethods));
-            SanitizingInstanceMethods = sanitizingInstanceMethods ?? throw new ArgumentNullException(nameof(sanitizingInstanceMethods));
         }
 
         /// <summary>
@@ -36,14 +35,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         public bool IsConstructorSanitizing { get; }
 
         /// <summary>
-        /// Methods that untaint tainted data.
+        /// Methods that untaint one of the (return value, instance, arguments).
         /// </summary>
-        public ImmutableHashSet<string> SanitizingMethods { get; }
-
-        /// <summary>
-        /// Methods that untaint tainted instance.
-        /// </summary>
-        public ImmutableHashSet<string> SanitizingInstanceMethods { get; }
+        public ImmutableDictionary<string, (bool SanitizeReturn, bool SanitizeInstance, ImmutableHashSet<string> SanitizedArguments)> SanitizingMethods { get; }
 
         /// <summary>
         /// Indicates that this <see cref="SanitizerInfo"/> uses <see cref="ValueContentAbstractValue"/>s.
@@ -53,9 +47,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         public override int GetHashCode()
         {
             return HashUtilities.Combine(this.SanitizingMethods,
-                HashUtilities.Combine(this.SanitizingInstanceMethods,
                 HashUtilities.Combine(StringComparer.Ordinal.GetHashCode(this.FullTypeName),
-                this.IsConstructorSanitizing.GetHashCode())));
+                this.IsConstructorSanitizing.GetHashCode()));
         }
 
         public override bool Equals(object obj)
@@ -68,8 +61,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             return other != null
                 && this.FullTypeName == other.FullTypeName
                 && this.IsConstructorSanitizing == other.IsConstructorSanitizing
-                && this.SanitizingMethods == other.SanitizingMethods
-                && this.SanitizingInstanceMethods == other.SanitizingInstanceMethods;
+                && this.SanitizingMethods == other.SanitizingMethods;
         }
     }
 }

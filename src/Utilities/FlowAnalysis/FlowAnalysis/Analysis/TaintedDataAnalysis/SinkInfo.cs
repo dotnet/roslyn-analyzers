@@ -12,7 +12,14 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
     /// <remarks>It's bad if tainted data reaches a sink.</remarks>
     internal sealed class SinkInfo : ITaintedDataInfo, IEquatable<SinkInfo>
     {
-        public SinkInfo(string fullTypeName, ImmutableHashSet<SinkKind> sinkKinds, bool isInterface, bool isAnyStringParameterInConstructorASink, ImmutableHashSet<string> sinkProperties, ImmutableDictionary<string, ImmutableHashSet<string>> sinkMethodParameters)
+        public SinkInfo(
+            string fullTypeName,
+            ImmutableHashSet<SinkKind> sinkKinds,
+            bool isInterface,
+            bool isAnyStringParameterInConstructorASink,
+            ImmutableHashSet<string> sinkProperties,
+            ImmutableDictionary<string, ImmutableHashSet<string>> sinkMethodParameters,
+            ImmutableDictionary<string, ImmutableHashSet<string>> sinkMethodParametersWithTaintedInstance)
         {
             FullTypeName = fullTypeName ?? throw new ArgumentNullException(nameof(fullTypeName));
             SinkKinds = sinkKinds ?? throw new ArgumentNullException(nameof(sinkKinds));
@@ -20,6 +27,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             IsAnyStringParameterInConstructorASink = isAnyStringParameterInConstructorASink;
             SinkProperties = sinkProperties ?? throw new ArgumentNullException(nameof(sinkProperties));
             SinkMethodParameters = sinkMethodParameters ?? throw new ArgumentNullException(nameof(sinkMethodParameters));
+            SinkMethodParametersWithTaintedInstance = sinkMethodParametersWithTaintedInstance ?? throw new ArgumentNullException(nameof(sinkMethodParametersWithTaintedInstance));
         }
 
         /// <summary>
@@ -53,6 +61,11 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         public ImmutableDictionary<string, ImmutableHashSet<string>> SinkMethodParameters { get; }
 
         /// <summary>
+        /// Mapping of method name to parameter names that are sinks only when the instance is tainted.
+        /// </summary>
+        public ImmutableDictionary<string, ImmutableHashSet<string>> SinkMethodParametersWithTaintedInstance { get; }
+
+        /// <summary>
         /// Indicates that this <see cref="SinkInfo"/> uses <see cref="ValueContentAbstractValue"/>s.
         /// </summary>
         public bool RequiresValueContentAnalysis => false;
@@ -61,10 +74,11 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         {
             return HashUtilities.Combine(this.SinkProperties,
                 HashUtilities.Combine(this.SinkMethodParameters,
+                HashUtilities.Combine(this.SinkMethodParametersWithTaintedInstance,
                 HashUtilities.Combine(StringComparer.Ordinal.GetHashCode(this.FullTypeName),
                 HashUtilities.Combine(this.SinkKinds,
                 HashUtilities.Combine(this.IsInterface.GetHashCode(),
-                this.IsAnyStringParameterInConstructorASink.GetHashCode())))));
+                this.IsAnyStringParameterInConstructorASink.GetHashCode()))))));
         }
 
         public override bool Equals(object obj)
@@ -80,7 +94,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 && this.IsInterface == other.IsInterface
                 && this.IsAnyStringParameterInConstructorASink == other.IsAnyStringParameterInConstructorASink
                 && this.SinkProperties == other.SinkProperties
-                && this.SinkMethodParameters == other.SinkMethodParameters;
+                && this.SinkMethodParameters == other.SinkMethodParameters
+                && this.SinkMethodParametersWithTaintedInstance == other.SinkMethodParametersWithTaintedInstance;
         }
     }
 }

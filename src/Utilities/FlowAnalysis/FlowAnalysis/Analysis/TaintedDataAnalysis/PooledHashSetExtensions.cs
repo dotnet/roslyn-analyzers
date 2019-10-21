@@ -18,7 +18,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             bool isInterface,
             bool isAnyStringParameterInConstructorASink,
             IEnumerable<string> sinkProperties,
-            IEnumerable<(string Method, string[] Parameters)> sinkMethodParameters)
+            IEnumerable<(string Method, string[] Parameters)> sinkMethodParameters,
+            IEnumerable<(string Method, string[] Parameters)> sinkMethodParametersWithTaintedInstance = null)
         {
             builder.AddSinkInfo(
                 fullTypeName,
@@ -26,7 +27,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 isInterface,
                 isAnyStringParameterInConstructorASink,
                 sinkProperties,
-                sinkMethodParameters);
+                sinkMethodParameters,
+                sinkMethodParametersWithTaintedInstance);
         }
 
         // Just to make hardcoding SinkInfos more convenient.
@@ -37,7 +39,8 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             bool isInterface,
             bool isAnyStringParameterInConstructorASink,
             IEnumerable<string> sinkProperties,
-            IEnumerable<(string Method, string[] Parameters)> sinkMethodParameters)
+            IEnumerable<(string Method, string[] Parameters)> sinkMethodParameters,
+            IEnumerable<(string Method, string[] Parameters)> sinkMethodParametersWithTaintedInstance = null)
         {
             SinkInfo sinkInfo = new SinkInfo(
                 fullTypeName,
@@ -48,6 +51,11 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                         ?? ImmutableHashSet<string>.Empty,
                 sinkMethodParameters:
                     sinkMethodParameters
+                            ?.Select(o => new KeyValuePair<string, ImmutableHashSet<string>>(o.Method, o.Parameters.ToImmutableHashSet()))
+                            ?.ToImmutableDictionary(StringComparer.Ordinal)
+                        ?? ImmutableDictionary<string, ImmutableHashSet<string>>.Empty,
+                sinkMethodParametersWithTaintedInstance:
+                    sinkMethodParametersWithTaintedInstance
                             ?.Select(o => new KeyValuePair<string, ImmutableHashSet<string>>(o.Method, o.Parameters.ToImmutableHashSet()))
                             ?.ToImmutableDictionary(StringComparer.Ordinal)
                         ?? ImmutableDictionary<string, ImmutableHashSet<string>>.Empty);
@@ -82,7 +90,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(ValueContentCheck, string)>)>.Empty,
                 transferMethods:
                     ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(string, string)>)>.Empty,
-                taintConstantArray: false);
+                taintArray: TaintArrayKind.None);
             builder.Add(metadata);
         }
 
@@ -104,7 +112,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         IEnumerable<(MethodMatcher methodMatcher, (PointsToCheck pointsToCheck, string taintedTarget)[] pointsToChecksAndTargets)> taintedMethodsNeedsPointsToAnalysis,
         IEnumerable<(MethodMatcher methodMatcher, (ValueContentCheck valueContentCheck, string taintedTarget)[] valueContentChecksAndTargets)> taintedMethodsNeedsValueContentAnalysis,
         IEnumerable<(MethodMatcher methodMatcher, (string str, string taintedTargets)[] valueContentChecksAndTargets)> transferMethods,
-        bool taintConstantArray = false)
+        TaintArrayKind taintArray = TaintArrayKind.None)
         {
             SourceInfo metadata = new SourceInfo(
                 fullTypeName,
@@ -141,7 +149,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                                 ?? ImmutableHashSet<(string, string)>.Empty))
                         ?.ToImmutableHashSet()
                     ?? ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(string, string)>)>.Empty,
-                taintConstantArray: taintConstantArray);
+                taintArray: taintArray);
             builder.Add(metadata);
         }
 
@@ -155,7 +163,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             string[] taintedProperties,
             IEnumerable<(MethodMatcher methodMatcher, PointsToCheck[] pointsToChecks)> taintedMethodsNeedsPointsToAnalysis,
             IEnumerable<(MethodMatcher methodMatcher, ValueContentCheck[] valueContentChecks)> taintedMethodsNeedsValueContentAnalysis,
-            bool taintConstantArray = false)
+            TaintArrayKind taintArray = TaintArrayKind.None)
         {
             SourceInfo metadata = new SourceInfo(
                 fullTypeName,
@@ -188,7 +196,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     ?? ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(ValueContentCheck, string)>)>.Empty,
                 transferMethods:
                     ImmutableHashSet<(MethodMatcher, ImmutableHashSet<(string, string)>)>.Empty,
-                taintConstantArray: taintConstantArray);
+                taintArray: taintArray);
             builder.Add(metadata);
         }
 
@@ -199,16 +207,46 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             bool isInterface,
             bool isConstructorSanitizing,
             string[] sanitizingMethods,
-            string[] sanitizingInstanceMethods = null)
+            IEnumerable<(string Method, (bool SanitizeReturn, bool SanitizeInstance, string[] SanitizedArguments) SanitizedTargets)> sanitizingMethodsSpecifyTargets = null)
         {
             SanitizerInfo info = new SanitizerInfo(
                 fullTypeName,
                 isInterface: isInterface,
                 isConstructorSanitizing: isConstructorSanitizing,
-                sanitizingMethods: sanitizingMethods?.ToImmutableHashSet(StringComparer.Ordinal)
-                    ?? ImmutableHashSet<string>.Empty,
-                sanitizingInstanceMethods: sanitizingInstanceMethods?.ToImmutableHashSet(StringComparer.Ordinal)
-                    ?? ImmutableHashSet<string>.Empty);
+                sanitizingMethods: 
+                    (sanitizingMethods
+                        ?.Select(o => new KeyValuePair<string, (bool, bool, ImmutableHashSet<string>)>(o, (true, false, ImmutableHashSet<string>.Empty)))
+                        ?.ToImmutableDictionary(StringComparer.Ordinal)
+                    ?? ImmutableDictionary<string, (bool, bool, ImmutableHashSet<string>)>.Empty).AddRange(
+                    sanitizingMethodsSpecifyTargets
+                        ?.Select(o => 
+                            new KeyValuePair<string, (bool, bool, ImmutableHashSet<string>)>(
+                                o.Method, 
+                                (o.SanitizedTargets.SanitizeReturn, o.SanitizedTargets.SanitizeInstance, o.SanitizedTargets.SanitizedArguments?.ToImmutableHashSet() ?? ImmutableHashSet<string>.Empty)))
+                        ?.ToImmutableDictionary(StringComparer.Ordinal)
+                    ?? ImmutableDictionary<string, (bool, bool, ImmutableHashSet<string>)>.Empty));
+            builder.Add(info);
+        }
+
+        // Just to make hardcoding SanitizerInfos more convenient.
+        public static void AddSanitizerInfo(
+            this PooledHashSet<SanitizerInfo> builder,
+            string fullTypeName,
+            bool isInterface,
+            bool isConstructorSanitizing,
+            IEnumerable<(string Method, (bool SanitizeReturn, bool SanitizeInstance, string[] SanitizedArguments) SanitizedTargets)> sanitizingMethodsSpecifyTargets)
+        {
+            SanitizerInfo info = new SanitizerInfo(
+                fullTypeName,
+                isInterface: isInterface,
+                isConstructorSanitizing: isConstructorSanitizing,
+                sanitizingMethods: sanitizingMethodsSpecifyTargets
+                            ?.Select(o =>
+                                new KeyValuePair<string, (bool, bool, ImmutableHashSet<string>)>(
+                                    o.Method,
+                                    (o.SanitizedTargets.SanitizeReturn, o.SanitizedTargets.SanitizeInstance, o.SanitizedTargets.SanitizedArguments?.ToImmutableHashSet() ?? ImmutableHashSet<string>.Empty)))
+                            ?.ToImmutableDictionary(StringComparer.Ordinal)
+                        ?? ImmutableDictionary<string, (bool, bool, ImmutableHashSet<string>)>.Empty);
             builder.Add(info);
         }
     }

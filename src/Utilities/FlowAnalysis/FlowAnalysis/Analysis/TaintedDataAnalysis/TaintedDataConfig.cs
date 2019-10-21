@@ -163,7 +163,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
         public bool HasTaintArraySource(SinkKind sinkKind)
         {
-            return GetSourceInfos(sinkKind).Any(o => o.TaintConstantArray);
+            return GetSourceInfos(sinkKind).Any(o => o.TaintArray == TaintArrayKind.Constant);
         }
 
         private TaintedDataSymbolMap<T> GetFromMap<T>(SinkKind sinkKind, ImmutableDictionary<SinkKind, Lazy<TaintedDataSymbolMap<T>>> map)
@@ -209,6 +209,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 case SinkKind.HardcodedCertificate:
                     return HardcodedCertificateSources.SourceInfos.AddRange(HardcodedBytesSources.SourceInfos);
 
+                case SinkKind.DecryptWithoutHash:
+                    return DecryptWithoutHashSources.SourceInfos;
+
                 default:
                     Debug.Fail($"Unhandled SinkKind {sinkKind}");
                     return ImmutableHashSet<SourceInfo>.Empty;
@@ -245,6 +248,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
                 case SinkKind.ZipSlip:
                     return ZipSlipSanitizers.SanitizerInfos;
+
+                case SinkKind.DecryptWithoutHash:
+                    return DecryptWithoutHashSanitizers.SanitizerInfos;
 
                 default:
                     Debug.Fail($"Unhandled SinkKind {sinkKind}");
@@ -298,6 +304,9 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 
                 case SinkKind.HardcodedCertificate:
                     return HardcodedCertificateSinks.SinkInfos;
+
+                case SinkKind.DecryptWithoutHash:
+                    return DecryptWithoutHashSinks.SinkInfos;
 
                 default:
                     Debug.Fail($"Unhandled SinkKind {sinkKind}");

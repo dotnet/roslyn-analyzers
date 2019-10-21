@@ -103,7 +103,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <param name="taintedProperties"></param>
         /// <param name="taintedMethodsNeedsPointsToAnalysis">Specify the check functions and tainted targets for methods which only need PointsToAnalysis check.</param>
         /// <param name="taintedMethodsNeedsValueContentAnalysis">Specify the check functions and tainted targets for methods which need ValueContentAnalysis check.</param>
-        /// <param name="taintConstantArray"></param>
+        /// <param name="taintArray">Specify whether to taint array.</param>
         public static void AddSourceInfoSpecifyingTaintedTargets(
         this PooledHashSet<SourceInfo> builder,
         string fullTypeName,
@@ -213,13 +213,13 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                 fullTypeName,
                 isInterface: isInterface,
                 isConstructorSanitizing: isConstructorSanitizing,
-                sanitizingMethods: 
+                sanitizingMethods:
                     (sanitizingMethods
                         ?.Select(o => new KeyValuePair<string, (bool, bool, ImmutableHashSet<string>)>(o, (true, false, ImmutableHashSet<string>.Empty)))
                         ?.ToImmutableDictionary(StringComparer.Ordinal)
                     ?? ImmutableDictionary<string, (bool, bool, ImmutableHashSet<string>)>.Empty).AddRange(
                     sanitizingMethodsSpecifyTargets
-                        ?.Select(o => 
+                        ?.Select(o =>
                             new KeyValuePair<string, (bool, bool, ImmutableHashSet<string>)>(
                                 o.Method, 
                                 (o.SanitizedTargets.SanitizeReturn, o.SanitizedTargets.SanitizeInstance, o.SanitizedTargets.SanitizedArguments?.ToImmutableHashSet() ?? ImmutableHashSet<string>.Empty)))

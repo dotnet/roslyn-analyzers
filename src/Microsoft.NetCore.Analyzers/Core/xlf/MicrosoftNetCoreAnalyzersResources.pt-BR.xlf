@@ -397,6 +397,21 @@
         <target state="translated">Não crie tarefas sem passar um TaskScheduler</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotDecryptWithoutHash">
+        <source>Do not decrypt without hash</source>
+        <target state="new">Do not decrypt without hash</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDecryptWithoutHashDescription">
+        <source>To validate the integrity of cipher text, it's requested to comput hash before decyption.</source>
+        <target state="new">To validate the integrity of cipher text, it's requested to comput hash before decyption.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotDecryptWithoutHashMessage">
+        <source>Byte array '{2}' in '{3}' passed to CryptoStream '{0}' in '{1}', never has the hash computed.</source>
+        <target state="new">Byte array '{2}' in '{3}' passed to CryptoStream '{0}' in '{1}', never has the hash computed.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotDisableCertificateValidation">
         <source>Do Not Disable Certificate Validation</source>
         <target state="translated">Não Desabilitar Validação do Certificado</target>

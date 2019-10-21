@@ -8,7 +8,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
     internal static class DecryptWithoutHashSanitizers
     {
         /// <summary>
-        /// <see cref="Sanitizer"/>s for decrypt without hash sanitizers.
+        /// <see cref="SanitizerInfo"/>s for decrypt without hash sanitizers.
         /// </summary>
         public static ImmutableHashSet<SanitizerInfo> SanitizerInfos { get; }
 

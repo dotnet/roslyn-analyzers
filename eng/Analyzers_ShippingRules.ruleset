@@ -11,6 +11,11 @@
     <Rule Id="CA1062" Action="None" />
   </Rules>
   
+  <Rules AnalyzerId="System.Runtime.Analyzers" RuleNamespace="System.Runtime.Analyzers">
+    <!-- DoNotPassLiteralsAsLocalizedParameters - primarily useful for libraries where public APIs throw exceptions, and the messages need to be localized -->
+    <Rule Id="CA1303" Action="None" />
+  </Rules>
+  
   <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
     <!-- Do not use types from Workspaces assembly in an analyzer -->
     <!-- Skipped due to https://github.com/dotnet/roslyn-analyzers/issues/1711 -->

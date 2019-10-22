@@ -1198,7 +1198,7 @@ public class ExampleClass
         }
 
         [Fact]
-        public void Deserialize_SharedBinderInstance_MaybeDiagnostic()
+        public void Deserialize_SharedBinderInstance_Diagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
 using System;
@@ -1227,7 +1227,7 @@ namespace Blah
         }
 
         [Fact]
-        public void Deserialize_SharedBinderInstanceIntermediate_MaybeDiagnostic()
+        public void Deserialize_SharedBinderInstanceIntermediate_NoDiagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
 using System;

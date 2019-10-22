@@ -1198,7 +1198,7 @@ public class ExampleClass
         }
 
         [Fact]
-        public void Deserialize_SharedBinderInstance_Diagnostic()
+        public void Deserialize_SharedBinderInstance_NoDiagnostic()
         {
             VerifyCSharpWithMyBinderDefined(@"
 using System;
@@ -1220,10 +1220,7 @@ namespace Blah
             return f.Deserialize(stream);
         }
     }
-}",
-                GetCSharpResultAt(18, 20, BinderNotSetRule, "object BinaryFormatter.Deserialize(Stream serializationStream)"));
-
-            // Ideally, we'd be able to tell f.Binder is non-null.
+}");
         }
 
         [Fact]

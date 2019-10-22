@@ -59,7 +59,8 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines
 
             // Update definition to add static modifier.
             var syntaxGenerator = SyntaxGenerator.GetGenerator(document);
-            var madeStatic = syntaxGenerator.WithModifiers(node, DeclarationModifiers.Static).WithAdditionalAnnotations(s_annotationForFixedDeclaration);
+            var oldModifiersAndStatic = syntaxGenerator.GetModifiers(node).WithIsStatic(true);
+            var madeStatic = syntaxGenerator.WithModifiers(node, oldModifiersAndStatic).WithAdditionalAnnotations(s_annotationForFixedDeclaration);
             document = document.WithSyntaxRoot(root.ReplaceNode(node, madeStatic));
             var solution = document.Project.Solution;
 

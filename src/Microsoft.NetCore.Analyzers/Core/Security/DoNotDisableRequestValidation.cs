@@ -6,7 +6,6 @@ using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
 
 namespace Microsoft.NetCore.Analyzers.Security
 {

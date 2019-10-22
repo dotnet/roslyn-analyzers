@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -2607,7 +2608,7 @@ namespace MetaCompilation.Analyzers
                         ReportDiagnostic(context, IncorrectAnalysisReturnTypeRule, analysisMethodSyntax.Identifier.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
                     }
-                    else if (analysisMethod.Parameters.Length != 1 || !Equals(analysisMethod.Parameters.First().Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext")))
+                    else if (analysisMethod.Parameters.Length != 1 || !Equals(analysisMethod.Parameters.First().Type, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext")))
                     {
                         ReportDiagnostic(context, IncorrectAnalysisParameterRule, analysisMethodSyntax.ParameterList.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
@@ -2766,7 +2767,7 @@ namespace MetaCompilation.Analyzers
             private BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                if (parameters.Length != 1 || !Equals(parameters[0].Type, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext"))
+                if (parameters.Length != 1 || !Equals(parameters[0].Type, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext"))
                     || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name);
@@ -2866,9 +2867,9 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
-                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
+                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
                     {
                         return;
                     }
@@ -2918,9 +2919,9 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
-                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
+                    if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider")))
                     {
                         return;
                     }
@@ -2967,7 +2968,7 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (!Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     return;
                 }
@@ -2995,7 +2996,7 @@ namespace MetaCompilation.Analyzers
                     return;
                 }
 
-                if (!Equals(sym.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (!Equals(sym.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     if (sym.ContainingType == null)
                     {
@@ -3007,7 +3008,7 @@ namespace MetaCompilation.Analyzers
                         return;
                     }
 
-                    if (Equals(sym.ContainingType.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                    if (Equals(sym.ContainingType.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                     {
                         if (_otherAnalyzerClassSymbols.Contains(sym))
                         {
@@ -3021,7 +3022,7 @@ namespace MetaCompilation.Analyzers
                     }
                 }
 
-                if (Equals(sym.BaseType, context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
+                if (Equals(sym.BaseType, context.Compilation.GetOrCreateTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")))
                 {
                     _analyzerClassSymbol = sym;
                 }

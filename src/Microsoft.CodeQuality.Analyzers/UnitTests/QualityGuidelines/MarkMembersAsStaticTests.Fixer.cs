@@ -1371,28 +1371,5 @@ Public Class C
     End Function
 End Class");
         }
-
-        [Fact, WorkItem(2888, "https://github.com/dotnet/roslyn-analyzers/issues/2888")]
-        public async Task CA1822_CSharp_UnsafeModifier()
-        {
-            await VerifyCS.VerifyCodeFixAsync(@"
-public class C
-{
-    public unsafe void [|M1|]()
-    {
-        int var = 20;
-        int* p = &var;
-    }
-}",
-@"
-public class C
-{
-    public static unsafe void M1()
-    {
-        int var = 20;
-        int* p = &var;
-    }
-}");
-        }
     }
 }

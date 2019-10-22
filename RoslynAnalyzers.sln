@@ -194,6 +194,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReleaseNotesUtil", "Release
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReleaseNotesUtil", "src\Tools\ReleaseNotesUtil\ReleaseNotesUtil.csproj", "{01518AF6-AE8F-4ADA-ABE4-C78F8234899F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RulesetToEditorconfigConverter", "RulesetToEditorconfigConverter", "{02F88961-A08F-451A-93AB-328792A32EBC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RulesetToEditorconfigConverter", "src\Tools\RulesetToEditorconfigConverter\Source\RulesetToEditorconfigConverter.csproj", "{C3A4699A-4701-4EC9-9EE9-4CAB4C9B1A4E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RulesetToEditorconfigConverter.UnitTests", "src\Tools\RulesetToEditorconfigConverter\Tests\RulesetToEditorconfigConverter.UnitTests.csproj", "{813C80EB-D614-4258-BD07-42660BEB738A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RulesetToEditorconfigConverter.Package", "nuget\RulesetToEditorconfigConverter\RulesetToEditorconfigConverter.Package.csproj", "{B383BB7D-C6CE-4E69-BBA2-508D577D3E77}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		src\Utilities\Workspaces\Workspaces.Utilities.projitems*{99f594b1-3916-471d-a761-a6731fc50e9a}*SharedItemsImports = 13
@@ -485,6 +493,18 @@ Global
 		{01518AF6-AE8F-4ADA-ABE4-C78F8234899F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01518AF6-AE8F-4ADA-ABE4-C78F8234899F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01518AF6-AE8F-4ADA-ABE4-C78F8234899F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3A4699A-4701-4EC9-9EE9-4CAB4C9B1A4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3A4699A-4701-4EC9-9EE9-4CAB4C9B1A4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3A4699A-4701-4EC9-9EE9-4CAB4C9B1A4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3A4699A-4701-4EC9-9EE9-4CAB4C9B1A4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{813C80EB-D614-4258-BD07-42660BEB738A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{813C80EB-D614-4258-BD07-42660BEB738A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{813C80EB-D614-4258-BD07-42660BEB738A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{813C80EB-D614-4258-BD07-42660BEB738A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B383BB7D-C6CE-4E69-BBA2-508D577D3E77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B383BB7D-C6CE-4E69-BBA2-508D577D3E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B383BB7D-C6CE-4E69-BBA2-508D577D3E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B383BB7D-C6CE-4E69-BBA2-508D577D3E77}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -566,6 +586,10 @@ Global
 		{3727E79D-8250-492E-8082-9A5D0C0AD0D9} = {1B75E62D-E35D-4FF0-B5A4-78D60D3A3388}
 		{6AAE1FC7-D96E-40CB-8B52-EA87EF9BF00A} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
 		{01518AF6-AE8F-4ADA-ABE4-C78F8234899F} = {6AAE1FC7-D96E-40CB-8B52-EA87EF9BF00A}
+		{02F88961-A08F-451A-93AB-328792A32EBC} = {C0B86774-8307-444F-9EE4-98D62C3424F9}
+		{C3A4699A-4701-4EC9-9EE9-4CAB4C9B1A4E} = {02F88961-A08F-451A-93AB-328792A32EBC}
+		{813C80EB-D614-4258-BD07-42660BEB738A} = {02F88961-A08F-451A-93AB-328792A32EBC}
+		{B383BB7D-C6CE-4E69-BBA2-508D577D3E77} = {02F88961-A08F-451A-93AB-328792A32EBC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC44ACA9-AEA3-4EE6-881C-2E08ED281B5F}

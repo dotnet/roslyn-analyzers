@@ -63,7 +63,7 @@ namespace Microsoft.NetCore.Analyzers.Security
             context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
             {
                 var compilation = compilationStartAnalysisContext.Compilation;
-                var appContextTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemAppContext);
+                var appContextTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemAppContext);
 
                 if (appContextTypeSymbol == null)
                 {

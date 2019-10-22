@@ -53,9 +53,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            var listType = context.Compilation.GetTypeByMetadataName(IListMetadataName);
-            var readonlyListType = context.Compilation.GetTypeByMetadataName(IReadOnlyListMetadataName);
-            var enumerableType = context.Compilation.GetTypeByMetadataName(EnumerableMetadataName);
+            var listType = context.Compilation.GetOrCreateTypeByMetadataName(IListMetadataName);
+            var readonlyListType = context.Compilation.GetOrCreateTypeByMetadataName(IReadOnlyListMetadataName);
+            var enumerableType = context.Compilation.GetOrCreateTypeByMetadataName(EnumerableMetadataName);
             if (readonlyListType == null || enumerableType == null || listType == null)
             {
                 return;

@@ -75,14 +75,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(csaContext =>
             {
                 #region "Get All the WellKnown Types and Members"
-                var iformatProviderType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemIFormatProvider);
-                var cultureInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
+                var iformatProviderType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIFormatProvider);
+                var cultureInfoType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGlobalizationCultureInfo);
                 if (iformatProviderType == null || cultureInfoType == null)
                 {
                     return;
                 }
 
                 var objectType = csaContext.Compilation.GetSpecialType(SpecialType.System_Object);
+                var charType = csaContext.Compilation.GetSpecialType(SpecialType.System_Char);
+                var boolType = csaContext.Compilation.GetSpecialType(SpecialType.System_Boolean);
                 var stringType = csaContext.Compilation.GetSpecialType(SpecialType.System_String);
                 var stringFormatMembers = stringType?.GetMembers("Format").OfType<IMethodSymbol>();
 
@@ -111,16 +113,16 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 var currentUICultureProperty = cultureInfoType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
                 var installedUICultureProperty = cultureInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var threadType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
+                var threadType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
                 var currentThreadCurrentUICultureProperty = threadType?.GetMembers("CurrentUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var activatorType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemActivator);
-                var resourceManagerType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemResourcesResourceManager);
+                var activatorType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemActivator);
+                var resourceManagerType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemResourcesResourceManager);
 
-                var computerInfoType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualBasicDevicesComputerInfo);
+                var computerInfoType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftVisualBasicDevicesComputerInfo);
                 var installedUICulturePropertyOfComputerInfoType = computerInfoType?.GetMembers("InstalledUICulture").OfType<IPropertySymbol>().FirstOrDefault();
 
-                var obsoleteAttributeType = csaContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
+                var obsoleteAttributeType = csaContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemObsoleteAttribute);
                 #endregion
 
                 csaContext.RegisterOperationAction(oaContext =>
@@ -129,10 +131,15 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     var targetMethod = invocationExpression.TargetMethod;
 
                     #region "Exceptions"
+                    const string ToStringMethodName = "ToString";
                     if (targetMethod.IsGenericMethod || targetMethod.ContainingType == null || targetMethod.ContainingType.IsErrorType() ||
                         (targetMethod.ContainingType != null &&
                          (activatorType != null && activatorType.Equals(targetMethod.ContainingType)) ||
-                         (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType))))
+                         (resourceManagerType != null && resourceManagerType.Equals(targetMethod.ContainingType)) ||
+                         (targetMethod.Name == ToStringMethodName &&
+                            (stringType != null && stringType.Equals(targetMethod.ContainingType)) ||
+                            (charType != null && charType.Equals(targetMethod.ContainingType)) ||
+                            (boolType != null && boolType.Equals(targetMethod.ContainingType)))))
                     {
                         return;
                     }

@@ -51,10 +51,19 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                 compilationStartContext.RegisterOperationAction(context =>
                 {
                     var lockStatement = (ILockOperation)context.Operation;
-                    ITypeSymbol type = lockStatement.LockedValue?.Type;
-                    if (type != null && TypeHasWeakIdentity(type, compilation))
+
+                    if (lockStatement.LockedValue is IInstanceReferenceOperation instanceReference &&
+                        instanceReference.ReferenceKind == InstanceReferenceKind.ContainingTypeInstance)
                     {
-                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                        context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, lockStatement.LockedValue.Syntax.ToString()));
+                    }
+                    else
+                    {
+                        ITypeSymbol type = lockStatement.LockedValue?.Type;
+                        if (type != null && TypeHasWeakIdentity(type, compilation))
+                        {
+                            context.ReportDiagnostic(lockStatement.LockedValue.Syntax.CreateDiagnostic(Rule, type.ToDisplayString()));
+                        }
                     }
                 },
                 OperationKind.Lock);
@@ -69,13 +78,13 @@ namespace Microsoft.NetCore.Analyzers.Runtime
                     return type is IArrayTypeSymbol arrayType && IsPrimitiveType(arrayType.ElementType);
                 case TypeKind.Class:
                 case TypeKind.TypeParameter:
-                    INamedTypeSymbol marshalByRefObjectTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemMarshalByRefObject);
-                    INamedTypeSymbol executionEngineExceptionTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemExecutionEngineException);
-                    INamedTypeSymbol outOfMemoryExceptionTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemOutOfMemoryException);
-                    INamedTypeSymbol stackOverflowExceptionTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemStackOverflowException);
-                    INamedTypeSymbol memberInfoTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemReflectionMemberInfo);
-                    INamedTypeSymbol parameterInfoTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemReflectionParameterInfo);
-                    INamedTypeSymbol threadTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
+                    INamedTypeSymbol marshalByRefObjectTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemMarshalByRefObject);
+                    INamedTypeSymbol executionEngineExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemExecutionEngineException);
+                    INamedTypeSymbol outOfMemoryExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemOutOfMemoryException);
+                    INamedTypeSymbol stackOverflowExceptionTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemStackOverflowException);
+                    INamedTypeSymbol memberInfoTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionMemberInfo);
+                    INamedTypeSymbol parameterInfoTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemReflectionParameterInfo);
+                    INamedTypeSymbol threadTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemThreadingThread);
                     return
                         type.SpecialType == SpecialType.System_String ||
                         type.Equals(executionEngineExceptionTypeSymbol) ||

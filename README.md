@@ -109,7 +109,7 @@ See [VERSIONING.md](.//VERSIONING.md) for the versioning scheme for all analyzer
 
 Recommended Visual Studio Version: **Visual Studio 2017 15.9 RTW or later**
 
-Recommended Analyzer Package Version: **Version 2.9.3**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.9.3
+Recommended Analyzer Package Version: **Version 2.9.6**, for example https://www.nuget.org/packages/Microsoft.CodeAnalysis.FxCopAnalyzers/2.9.6
 
 The documentation for FxCopAnalyzers package versions can be found at [docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers](https://docs.microsoft.com/visualstudio/code-quality/install-fxcop-analyzers)
 

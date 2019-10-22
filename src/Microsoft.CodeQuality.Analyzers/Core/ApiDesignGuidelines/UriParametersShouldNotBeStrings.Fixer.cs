@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -38,7 +39,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             SemanticModel model = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            INamedTypeSymbol uriType = model.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemUri);
+            INamedTypeSymbol uriType = model.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemUri);
             if (uriType == null)
             {
                 return;

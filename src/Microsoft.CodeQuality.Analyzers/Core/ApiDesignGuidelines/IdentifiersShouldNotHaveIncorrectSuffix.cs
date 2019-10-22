@@ -130,7 +130,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         ImmutableArray<string> typeNames = s_suffixToBaseTypeNamesDictionary[suffix];
 
                         ImmutableArray<INamedTypeSymbol> namedTypeSymbolArray = ImmutableArray.CreateRange(
-                            typeNames.Select(typeName => compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(typeName)?.OriginalDefinition).WhereNotNull());
+                            typeNames.Select(typeName => compilationStartAnalysisContext.Compilation.GetOrCreateTypeByMetadataName(typeName)?.OriginalDefinition).WhereNotNull());
 
                         suffixToBaseTypeDictionaryBuilder.Add(suffix, namedTypeSymbolArray);
                     }

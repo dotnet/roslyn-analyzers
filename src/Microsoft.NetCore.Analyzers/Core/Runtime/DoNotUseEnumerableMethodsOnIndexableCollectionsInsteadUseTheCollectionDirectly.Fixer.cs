@@ -1,5 +1,12 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
+using System.Collections.Immutable;
+using System.Composition;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Analyzer.Utilities;
 using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
@@ -7,12 +14,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Immutable;
-using System.Composition;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Microsoft.NetCore.Analyzers.Runtime
 {
@@ -39,8 +40,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             var methodPropertyKey = DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.MethodPropertyKey;
-            // The fixer is only implemented for "Enumerable.First"
-            if (!diagnostic.Properties.TryGetValue(methodPropertyKey, out var method) || method != "First")
+            // The fixer is only implemented for "Enumerable.First", "Enumerable.Last" and "Enumerable.Count"
+            if (!diagnostic.Properties.TryGetValue(methodPropertyKey, out var method)
+                || (method != "First" && method != "Last" && method != "Count"))
             {
                 return Task.CompletedTask;
             }
@@ -48,14 +50,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             var title = MicrosoftNetCoreAnalyzersResources.UseIndexer;
 
             context.RegisterCodeFix(new MyCodeAction(title,
-                                        async ct => await UseCollectionDirectly(context.Document, context.Span, ct).ConfigureAwait(false),
+                                        async ct => await UseCollectionDirectly(context.Document, context.Span, method, ct).ConfigureAwait(false),
                                         equivalenceKey: title),
                                     diagnostic);
 
             return Task.CompletedTask;
         }
 
-        private async Task<Document> UseCollectionDirectly(Document document, TextSpan span, CancellationToken cancellationToken)
+        private async Task<Document> UseCollectionDirectly(Document document, TextSpan span, string methodName, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var invocationNode = root.FindNode(span, getInnermostNodeForTie: true);
@@ -77,12 +79,46 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             }
 
             var generator = SyntaxGenerator.GetGenerator(document);
-            var indexNode = generator.LiteralExpression(0);
-            var elementAccessNode = generator.ElementAccessExpression(collectionSyntax.WithoutTrailingTrivia(), indexNode)
-                .WithTrailingTrivia(invocationNode.GetTrailingTrivia());
 
-            var newRoot = root.ReplaceNode(invocationNode, elementAccessNode);
+            var elementAccessNode = GetReplacementNode(generator, collectionSyntax, methodName);
+            if (elementAccessNode == null)
+            {
+                return document;
+            }
+
+            var newRoot = root.ReplaceNode(invocationNode, elementAccessNode.WithTrailingTrivia(invocationNode.GetTrailingTrivia()));
             return document.WithSyntaxRoot(newRoot);
+        }
+
+        private static SyntaxNode GetReplacementNode(SyntaxGenerator generator, SyntaxNode collectionSyntax, string methodName)
+        {
+            var collectionSyntaxNoTrailingTrivia = collectionSyntax.WithoutTrailingTrivia();
+
+            if (methodName == "First")
+            {
+                var zeroLiteral = generator.LiteralExpression(0);
+                return generator.ElementAccessExpression(collectionSyntaxNoTrailingTrivia, zeroLiteral);
+            }
+
+            if (methodName == "Last")
+            {
+                // TODO: Handle C# 8 index expression (and vb.net equivalent if any)
+                // TODO: Handle cases were `collectionSyntax` is an invocation. We would need to create some intermediate variable.
+                var countMemberAccess = generator.MemberAccessExpression(collectionSyntaxNoTrailingTrivia, "Count");
+                var oneLiteral = generator.LiteralExpression(1);
+
+                // The SubstractExpression method will wrap left and right in parenthesis but those will be automatically removed later on
+                var substraction = generator.SubtractExpression(countMemberAccess, oneLiteral);
+                return generator.ElementAccessExpression(collectionSyntaxNoTrailingTrivia, substraction);
+            }
+
+            if (methodName == "Count")
+            {
+                return generator.MemberAccessExpression(collectionSyntaxNoTrailingTrivia, "Count");
+            }
+
+            Debug.Fail($"Unexpected method name '{methodName}' for {DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.RuleId} code fix.");
+            return null;
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)

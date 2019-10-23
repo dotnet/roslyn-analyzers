@@ -35,7 +35,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         public bool IsConstructorSanitizing { get; }
 
         /// <summary>
-        /// Methods that untaint one of the (return value, instance, arguments).
+        /// Key specifies the name of the sanitizing method, value specifies whether the method untaints return value, instance and all the arguments it untaints.
         /// </summary>
         public ImmutableDictionary<string, (bool SanitizeReturn, bool SanitizeInstance, ImmutableHashSet<string> SanitizedArguments)> SanitizingMethods { get; }
 

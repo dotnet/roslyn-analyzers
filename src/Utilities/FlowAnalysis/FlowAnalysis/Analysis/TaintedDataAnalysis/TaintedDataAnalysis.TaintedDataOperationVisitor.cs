@@ -647,7 +647,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
             }
 
             /// <summary>
-            /// Set byte array argument as tainted when there's <see cref="SourceInfo"/> taint all array.
+            /// Set arguments of array type as tainted when there's <see cref="SourceInfo"/> taint all kinds of array.
             /// </summary>
             /// <param name="arguments">All argument operations</param>
             private void ProcessByteArrayArgument(ImmutableArray<IArgumentOperation> arguments)

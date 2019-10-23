@@ -1213,12 +1213,12 @@
     <value>Symmetric encryption should always use a non-repeatable initialization vector to prevent dictionary attacks.</value>
   </data>
   <data name="DoNotDecryptWithoutHash" xml:space="preserve">
-    <value>Do not decrypt without hash</value>
+    <value>Do not decrypt without validating hash</value>
   </data>
   <data name="DoNotDecryptWithoutHashDescription" xml:space="preserve">
-    <value>To validate the integrity of cipher text, it's requested to comput hash before decyption.</value>
+    <value>Validate the integrity of the cipher text before decrypting. This helps protect against chosen cipher text attacks.</value>
   </data>
   <data name="DoNotDecryptWithoutHashMessage" xml:space="preserve">
-    <value>Byte array '{2}' in '{3}' passed to CryptoStream '{0}' in '{1}', never has the hash computed.</value>
+    <value>The byte array '{2}' in '{3}' might be passed to CryptoStream '{0}' in '{1}' before computing a hash.</value>
   </data>
 </root>

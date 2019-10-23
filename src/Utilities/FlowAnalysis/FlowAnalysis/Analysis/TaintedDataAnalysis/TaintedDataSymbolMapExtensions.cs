@@ -130,7 +130,7 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                     if (sourceInfo.TaintArray != TaintArrayKind.None)
                     {
                         taintArray = sourceInfo.TaintArray;
-                        return taintArray != TaintArrayKind.None;
+                        return true;
                     }
                 }
             }

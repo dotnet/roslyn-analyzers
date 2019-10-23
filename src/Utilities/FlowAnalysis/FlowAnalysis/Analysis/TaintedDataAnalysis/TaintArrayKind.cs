@@ -5,6 +5,11 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
     public enum TaintArrayKind
     {
         /// <summary>
+        /// Not taint array.
+        /// </summary>
+        None,
+
+        /// <summary>
         /// Taint all arrary.
         /// </summary>
         All,
@@ -13,10 +18,5 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// Only taint constant array.
         /// </summary>
         Constant,
-
-        /// <summary>
-        /// Not taint array.
-        /// </summary>
-        None,
     }
 }

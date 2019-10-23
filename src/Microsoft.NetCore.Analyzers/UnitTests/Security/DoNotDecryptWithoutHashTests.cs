@@ -55,6 +55,30 @@ class TestClass
         }
 
         [Fact]
+        public void Test_OutByteArray_Diagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography;
+class TestClass
+{
+    public void GetArray(int count, out byte[] byteArray)
+    {
+        byteArray = new byte[count];
+    }
+    
+    public void TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)
+    {
+        GetArray(count, out byte[] byteArray);
+        var decryptor = new AesCng().CreateDecryptor(); 
+        var cryptoStream = new CryptoStream(stream, decryptor, mode);
+        cryptoStream.Write(byteArray, offset, count);
+    }
+}",
+            GetCSharpResultAt(16, 9, 13, 36, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] byteArray", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)"));
+        }
+
+        [Fact]
         public void Test_ByteArrayFromCallingAMethod_Diagnostic()
         {
             VerifyCSharp(@"
@@ -76,6 +100,28 @@ class TestClass
     }
 }",
             GetCSharpResultAt(16, 9, 13, 13, "void CryptoStream.Write(byte[] buffer, int offset, int count)", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)", "byte[] byteArray", "void TestClass.TestMethod(int offset, int count, Stream stream, CryptoStreamMode mode)"));
+        }
+
+        [Fact]
+        public void Test_PopulateAPassedInByteArray_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Security.Cryptography;
+class TestClass
+{
+    public byte[] GetArray(byte[] byteArray)
+    {
+        return byteArray;
+    }
+    
+    public void TestMethod(byte[] byteArray, int offset, int count, Stream stream, CryptoStreamMode mode)
+    {
+        var decryptor = new AesCng().CreateDecryptor(); 
+        var cryptoStream = new CryptoStream(stream, decryptor, mode);
+        cryptoStream.Write(GetArray(byteArray), offset, count);
+    }
+}");
         }
 
         [Fact]

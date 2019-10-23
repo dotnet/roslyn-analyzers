@@ -13,7 +13,7 @@ Please follow the below steps after publishing analyzer NuGet packages from this
    3. Update `.github\ISSUE_TEMPLATE.md`: Update the package version in the example section to the latest released package version.
    4. Update the latest recommended analyzer package at `https://github.com/dotnet/roslyn-analyzers#recommended-version-of-analyzer-packages`
    5. Update `eng\Versions.props`:
-      1. Bump up the `VersionPrefix`. If the new version prefix is greater then or equals the current `FlowAnalysisUtilitiesVersionPrefix`, then update `FlowAnalysisUtilitiesVersionPrefix` to `$(VersionPrefix)`.
+      1. Bump up the `VersionPrefix`. If the new version prefix is greater then or equals the current `AnalyzerUtilitiesVersionPrefix`, then update `AnalyzerUtilitiesVersionPrefix` to `$(VersionPrefix)`.
       2. Reset `PreReleaseVersionLabel` to `beta1`.
       3. Update `MicrosoftCodeAnalysisFXCopAnalyersVersion` to the latest released package version.
    6. Build the repo by invoking `eng\common\CIBuild.cmd` and fix/suppress any new CA diagnostics, as appropriate. This should also update the analyzer documentation files in the repo to use the new version prefix.

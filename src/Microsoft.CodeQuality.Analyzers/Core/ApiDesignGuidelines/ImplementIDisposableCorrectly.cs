@@ -140,7 +140,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         return;
                     }
 
-                    INamedTypeSymbol garbageCollectorType = context.Compilation.GetTypeByMetadataName(GarbageCollectorTypeName);
+                    INamedTypeSymbol garbageCollectorType = context.Compilation.GetOrCreateTypeByMetadataName(GarbageCollectorTypeName);
                     if (garbageCollectorType == null)
                     {
                         return;

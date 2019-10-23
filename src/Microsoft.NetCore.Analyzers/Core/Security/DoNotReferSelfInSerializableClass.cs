@@ -52,14 +52,14 @@ namespace Microsoft.NetCore.Analyzers.Security
                 (CompilationStartAnalysisContext compilationStartAnalysisContext) =>
                 {
                     var compilation = compilationStartAnalysisContext.Compilation;
-                    var serializableAttributeTypeSymbol = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute);
+                    var serializableAttributeTypeSymbol = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemSerializableAttribute);
 
                     if (serializableAttributeTypeSymbol == null)
                     {
                         return;
                     }
 
-                    var nonSerializedAttribute = compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
+                    var nonSerializedAttribute = compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemNonSerializedAttribute);
 
                     if (nonSerializedAttribute == null)
                     {

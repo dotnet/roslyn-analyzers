@@ -1,10 +1,5 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -24,7 +19,7 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
             return new DoNotCallBeginInvokeOnDelegate();
         }
 
-        #region CSharp Tests
+        #region CSharp diagnostic tests
 
         [Fact]
         public void BeginInvokeOnAction()
@@ -118,13 +113,8 @@ class C
 
     public void M()
     {
-        var func = new Func<string, int, string>(D);
+        var func = new Func<string, int, string>((f, v) => string.Format(f, v));
         asyncResult = func.BeginInvoke(""Value: {0}"", 10, Callback, null);
-    }
-
-    private string D(string format, int value)
-    {
-        return string.Format(format, value);
     }
 
     private void Callback(IAsyncResult ar)
@@ -197,12 +187,183 @@ class C
 ";
             VerifyCSharp(code, GetCSharpResultAt(10, 9));
         }
+
         #endregion
 
-        private object D(string format, int value)
+        #region CSharp no diagnostic tests
+
+        [Fact]
+        public void InvokeOnAction()
         {
-            return string.Format(format, value);
+            var code = @"
+using System;
+
+class C
+{
+    public void M()
+    {
+        var action = new Action(D);
+        action.Invoke();
+    }
+
+    private void D()
+    {
+        Console.WriteLine(""Test"");
+    }
+}
+";
+            VerifyCSharp(code);
         }
+
+        [Fact]
+        public void InvokeOnFunc()
+        {
+            var code = @"
+using System;
+
+class C
+{
+    public void M()
+    {
+        var func = new Func<string, int, string>((f, v) => string.Format(f, v));
+        func.Invoke(""Value: {0}"", 10);
+    }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact]
+        public void InvokeOnCustomDelegate()
+        {
+            var code = @"
+using System;
+
+public delegate IAsyncResult D(AsyncCallback callback, object @object);
+
+class C
+{
+    public void M()
+    {
+        var d = new D(I);
+        d.Invoke(Callback, 10);
+    }
+
+    private IAsyncResult I(AsyncCallback callback, object value)
+    {
+        Console.WriteLine(value);
+        return null;
+    }
+
+    private void Callback(IAsyncResult ar)
+    {
+        Console.WriteLine(ar.ToString());
+    }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact]
+        public void CallCustomDelegate()
+        {
+            var code = @"
+using System;
+
+public delegate IAsyncResult D(AsyncCallback callback, object @object);
+
+class C
+{
+    private IAsyncResult asyncResult;
+
+    public void M()
+    {
+        var d = new D(I);
+        asyncResult = d(Callback, null);
+    }
+
+    private IAsyncResult I(AsyncCallback callback, object value)
+    {
+        Console.WriteLine(value);
+        return null;
+    }
+
+    private void Callback(IAsyncResult ar)
+    {
+        Console.WriteLine(ar.ToString());
+    }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact]
+        public void BeginInvokeOnCustomClass()
+        {
+            var code = @"
+using System;
+using System.Threading.Tasks;
+
+class C
+{
+    public void M()
+    {
+        var t = new T();
+        t.BeginInvoke(Callback, 10);
+    }
+
+    private void Callback(IAsyncResult ar)
+    {
+        Console.WriteLine(ar.ToString());
+    }
+}
+
+class T
+{
+    public IAsyncResult BeginInvoke(AsyncCallback callback, object value)
+    {
+        return Task.Run(() => Console.WriteLine(value))
+            .ContinueWith(t => callback.Invoke(t));
+    }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        [Fact]
+        public void BeginInvokeOnCustomStruct()
+        {
+            var code = @"
+using System;
+using System.Threading.Tasks;
+
+class C
+{
+    public void M()
+    {
+        var t = default(T);
+        t.BeginInvoke(""Value: {0}"", Callback, null);
+    }
+
+    private void Callback(IAsyncResult ar)
+    {
+        Console.WriteLine(ar.ToString());
+    }
+}
+
+struct T
+{
+    public IAsyncResult BeginInvoke(string format, AsyncCallback callback, object value)
+    {
+        return Task.Run(() => Console.WriteLine(format, value))
+            .ContinueWith(t => callback(t));
+    }
+}
+";
+            VerifyCSharp(code);
+        }
+
+        #endregion
 
         private static DiagnosticResult GetCSharpResultAt(int line, int column)
         {

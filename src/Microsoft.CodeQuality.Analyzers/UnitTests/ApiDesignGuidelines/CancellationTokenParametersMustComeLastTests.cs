@@ -238,6 +238,66 @@ static class C1
             VerifyCSharp(test, expected);
         }
 
+        [Fact, WorkItem(2281, "https://github.com/dotnet/roslyn-analyzers/issues/2281")]
+        public void CA1068_DoNotReportOnIProgressLastAndCancellationTokenBeforeLast()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class C
+{
+    public Task SomeAsync(object o, CancellationToken cancellationToken, IProgress<int> progress)
+    {
+        throw new NotImplementedException();
+    }
+}");
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Function SomeAsync(ByVal o As Object, ByVal cancellationToken As CancellationToken, ByVal progress As IProgress(Of Integer)) As Task
+        Throw New NotImplementedException()
+    End Function
+End Class");
+        }
+
+        [Fact, WorkItem(2281, "https://github.com/dotnet/roslyn-analyzers/issues/2281")]
+        public void CA1068_ReportOnIProgressLastAndCancellationTokenNotBeforeLast()
+        {
+            VerifyCSharp(@"
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class C
+{
+    public Task SomeAsync(CancellationToken cancellationToken, object o, IProgress<int> progress)
+    {
+        throw new NotImplementedException();
+    }
+}",
+            new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(8, 17)
+                .WithArguments("C.SomeAsync(System.Threading.CancellationToken, object, System.IProgress<int>)"));
+
+            VerifyBasic(@"
+Imports System
+Imports System.Threading
+Imports System.Threading.Tasks
+
+Public Class C
+    Public Function SomeAsync(ByVal cancellationToken As CancellationToken, ByVal o As Object, ByVal progress As IProgress(Of Integer)) As Task
+        Throw New NotImplementedException()
+    End Function
+End Class",
+            new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(7, 21)
+                .WithArguments("Public Function SomeAsync(cancellationToken As System.Threading.CancellationToken, o As Object, progress As System.IProgress(Of Integer)) As System.Threading.Tasks.Task"));
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new CancellationTokenParametersMustComeLastAnalyzer();

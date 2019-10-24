@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
+using System.Linq;
 using Analyzer.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -40,18 +42,24 @@ namespace Microsoft.NetCore.Analyzers.Tasks
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                compilationContext.RegisterOperationAction(operationContext =>
-                {
-                    var invocation = (IInvocationOperation)operationContext.Operation;
-                    var containingType = invocation.TargetMethod?.ContainingType;
+                var isNetStandardAssembly = compilationContext.Compilation.ReferencedAssemblyNames.Any(identity => string.Equals(identity.Name, "netstandard", StringComparison.OrdinalIgnoreCase));
 
-                    if (containingType != null &&
-                        containingType.TypeKind == TypeKind.Delegate &&
-                        invocation.TargetMethod.Name == "BeginInvoke")
+                // Run diagnostic only on .NET Standard and .NET Core assemblies, because BeginInvoke is not implemented in .NET Core
+                if (isNetStandardAssembly)
+                {
+                    compilationContext.RegisterOperationAction(operationContext =>
                     {
-                        operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation()));
-                    }
-                }, OperationKind.Invocation);
+                        var invocation = (IInvocationOperation)operationContext.Operation;
+                        var containingType = invocation.TargetMethod?.ContainingType;
+
+                        if (containingType != null &&
+                            containingType.TypeKind == TypeKind.Delegate &&
+                            invocation.TargetMethod.Name == "BeginInvoke")
+                        {
+                            operationContext.ReportDiagnostic(Diagnostic.Create(Rule, invocation.Syntax.GetLocation()));
+                        }
+                    }, OperationKind.Invocation);
+                }
             });
         }
     }

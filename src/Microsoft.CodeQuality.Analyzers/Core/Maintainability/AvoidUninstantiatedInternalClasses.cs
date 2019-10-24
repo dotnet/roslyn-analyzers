@@ -58,7 +58,6 @@ namespace Microsoft.CodeQuality.Analyzers.Maintainability
                 // better to have false negatives (which would happen if the type were *not*
                 // instantiated by any friend assembly, but we didn't report the issue) than
                 // to have false positives.
-                
                 var internalsVisibleToAttributeSymbol = wellKnownTypeProvider.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeCompilerServicesInternalsVisibleToAttribute);
                 if (AssemblyExposesInternals(compilation, internalsVisibleToAttributeSymbol))
                 {

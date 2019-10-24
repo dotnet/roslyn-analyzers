@@ -327,6 +327,21 @@
         <target state="translated">Add 메서드의 이 오버로드는 위험한 외부 참조를 확인할 수 있으므로 잠재적으로 안전하지 않습니다.</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallBeginInvokeOnDelegateDescription">
+        <source>BeginInvoke method is not supported in .NET Core and throws NotSupportedException. BeginInvoke uses deprecated IAsyncResult pattern. Consider using Task.Run method.</source>
+        <target state="new">BeginInvoke method is not supported in .NET Core and throws NotSupportedException. BeginInvoke uses deprecated IAsyncResult pattern. Consider using Task.Run method.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallBeginInvokeOnDelegateMessage">
+        <source>Do not call BeginInvoke on a delegate in .NET Core.</source>
+        <target state="new">Do not call BeginInvoke on a delegate in .NET Core.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallBeginInvokeOnDelegateTitle">
+        <source>Do not call BeginInvoke on a delegate in .NET Core.</source>
+        <target state="new">Do not call BeginInvoke on a delegate in .NET Core.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
         <source>Do Not Call Dangerous Methods In Deserialization</source>
         <target state="translated">역직렬화에서 위험한 메서드를 호출하면 안 됨</target>

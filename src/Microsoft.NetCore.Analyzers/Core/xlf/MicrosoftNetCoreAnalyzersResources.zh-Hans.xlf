@@ -327,6 +327,21 @@
         <target state="translated">Add 方法的此项重载可能不安全，因为它可能会解析危险的外部引用</target>
         <note />
       </trans-unit>
+      <trans-unit id="DoNotCallBeginInvokeOnDelegateDescription">
+        <source>BeginInvoke method is not supported in .NET Core and throws NotSupportedException. BeginInvoke uses deprecated IAsyncResult pattern. Consider using Task.Run method.</source>
+        <target state="new">BeginInvoke method is not supported in .NET Core and throws NotSupportedException. BeginInvoke uses deprecated IAsyncResult pattern. Consider using Task.Run method.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallBeginInvokeOnDelegateMessage">
+        <source>Do not call BeginInvoke on a delegate in .NET Core.</source>
+        <target state="new">Do not call BeginInvoke on a delegate in .NET Core.</target>
+        <note />
+      </trans-unit>
+      <trans-unit id="DoNotCallBeginInvokeOnDelegateTitle">
+        <source>Do not call BeginInvoke on a delegate in .NET Core.</source>
+        <target state="new">Do not call BeginInvoke on a delegate in .NET Core.</target>
+        <note />
+      </trans-unit>
       <trans-unit id="DoNotCallDangerousMethodsInDeserialization">
         <source>Do Not Call Dangerous Methods In Deserialization</source>
         <target state="translated">在反序列化中不要调用危险方法</target>

@@ -123,20 +123,19 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         /// <returns></returns>
         public static bool IsSourceArray(this TaintedDataSymbolMap<SourceInfo> sourceSymbolMap, IArrayTypeSymbol arrayTypeSymbol, out TaintArrayKind taintArray)
         {
+            taintArray = TaintArrayKind.None;
             if (arrayTypeSymbol.ElementType is INamedTypeSymbol elementType)
             {
                 foreach (SourceInfo sourceInfo in sourceSymbolMap.GetInfosForType(elementType))
                 {
-                    if (sourceInfo.TaintArray != TaintArrayKind.None)
+                    if (sourceInfo.TaintArray > taintArray)
                     {
                         taintArray = sourceInfo.TaintArray;
-                        return true;
                     }
                 }
             }
 
-            taintArray = TaintArrayKind.None;
-            return false;
+            return taintArray != TaintArrayKind.None;
         }
 
         /// <summary>

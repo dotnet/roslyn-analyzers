@@ -2,6 +2,10 @@
 
 namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
 {
+    /// <summary>
+    /// The kind of array to be tainted.
+    /// </summary>
+    /// <remarks>If there are multiple unconsistent TaintArrayKinds for one array, the precedence is like All > Constant > None.</remarks>
     public enum TaintArrayKind
     {
         /// <summary>
@@ -10,13 +14,13 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
         None,
 
         /// <summary>
-        /// Taint all arrary.
-        /// </summary>
-        All,
-
-        /// <summary>
         /// Only taint constant array.
         /// </summary>
         Constant,
+
+        /// <summary>
+        /// Taint all arrary.
+        /// </summary>
+        All,
     }
 }

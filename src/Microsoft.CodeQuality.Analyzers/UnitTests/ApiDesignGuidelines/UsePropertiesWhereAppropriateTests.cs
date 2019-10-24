@@ -422,6 +422,25 @@ public class Foo : IFoo
 ");
         }
 
+        [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
+        public void CA1024_ImplicitInterfaceImplementation_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public interface IFoo
+{
+    object GetContent();
+}
+
+public class Foo : IFoo
+{
+    public object GetContent()
+    {
+        return null;
+    }
+}
+");
+        }
+
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
         {
             return GetCSharpResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,

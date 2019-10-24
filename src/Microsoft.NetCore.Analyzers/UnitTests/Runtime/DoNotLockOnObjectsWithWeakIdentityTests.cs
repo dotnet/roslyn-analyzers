@@ -84,6 +84,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
                     System.Reflection.MemberInfo[] values1 = null;
                     lock (values1) { }
+
+                    lock (this) { }
                 }
             }
             ",
@@ -97,7 +99,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             GetCA2002CSharpResultAt(23, 27, "System.Reflection.MemberInfo"),
             GetCA2002CSharpResultAt(26, 27, "System.Reflection.ConstructorInfo"),
             GetCA2002CSharpResultAt(29, 27, "System.Reflection.ParameterInfo"),
-            GetCA2002CSharpResultAt(32, 27, "int[]"));
+            GetCA2002CSharpResultAt(32, 27, "int[]"),
+            GetCA2002CSharpResultAt(37, 27, "this"));
 
             VerifyBasic(@"
             Imports System
@@ -144,6 +147,9 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
                     Dim values1 As System.Reflection.MemberInfo() = Nothing
                     SyncLock values1
                     End SyncLock
+
+                    SyncLock Me
+                    End SyncLock
                 End Sub
             End Class",
             GetCA2002BasicResultAt(6, 30, "String"),
@@ -156,7 +162,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
             GetCA2002BasicResultAt(28, 30, "System.Reflection.MemberInfo"),
             GetCA2002BasicResultAt(32, 30, "System.Reflection.ConstructorInfo"),
             GetCA2002BasicResultAt(36, 30, "System.Reflection.ParameterInfo"),
-            GetCA2002BasicResultAt(40, 30, "Integer()"));
+            GetCA2002BasicResultAt(40, 30, "Integer()"),
+            GetCA2002BasicResultAt(47, 30, "Me"));
         }
 
         [Fact]

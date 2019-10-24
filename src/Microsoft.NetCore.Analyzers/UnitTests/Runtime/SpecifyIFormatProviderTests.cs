@@ -859,6 +859,72 @@ Public NotInheritable Class IFormatProviderStringTest
 End Class");
         }
 
+        [Fact]
+        [WorkItem(2394, "https://github.com/dotnet/roslyn-analyzers/issues/2394")]
+        public void CA1305_BoolToString_NoDiagnostics()
+        {
+            VerifyCSharp(@"
+public class Foo
+{
+    public string Bar(bool b1, System.Boolean b2)
+    {
+        return b1.ToString() + b2.ToString();
+    }
+}");
+
+            VerifyBasic(@"
+Public Class Foo
+    Public Function Bar(ByVal b As Boolean) As String
+        Return b.ToString()
+    End Function
+End Class
+");
+        }
+
+        [Fact]
+        [WorkItem(2394, "https://github.com/dotnet/roslyn-analyzers/issues/2394")]
+        public void CA1305_CharToString_NoDiagnostics()
+        {
+            VerifyCSharp(@"
+public class Foo
+{
+    public string Bar(char c1, System.Char c2)
+    {
+        return c1.ToString() + c2.ToString();
+    }
+}");
+
+            VerifyBasic(@"
+Public Class Foo
+    Public Function Bar(ByVal c As Char) As String
+        Return c.ToString()
+    End Function
+End Class
+");
+        }
+
+        [Fact]
+        [WorkItem(2394, "https://github.com/dotnet/roslyn-analyzers/issues/2394")]
+        public void CA1305_StringToString_NoDiagnostics()
+        {
+            VerifyCSharp(@"
+public class Foo
+{
+    public string Bar(string s1, System.String s2)
+    {
+        return s1.ToString() + s2.ToString();
+    }
+}");
+
+            VerifyBasic(@"
+Public Class Foo
+    Public Function Bar(ByVal s As String) As String
+        Return s.ToString()
+    End Function
+End Class
+");
+        }
+
         private DiagnosticResult GetIFormatProviderAlternateStringRuleCSharpResultAt(int line, int column, string arg1, string arg2, string arg3)
         {
             return GetCSharpResultAt(line, column, SpecifyIFormatProviderAnalyzer.IFormatProviderAlternateStringRule, arg1, arg2, arg3);

@@ -19,10 +19,288 @@ namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
             return new DoNotCallBeginInvokeOnDelegate();
         }
 
+        #region Basic diagnostic tests
+
+        [Fact]
+        public void BasicBeginInvokeOnAction()
+        {
+            var code = @"
+Imports System
+
+Class C
+    Public Sub M()
+        Dim action = New Action(AddressOf D)
+        action.BeginInvoke(AddressOf Callback, Nothing)
+    End Sub
+
+    Private Sub D()
+        Console.WriteLine(""Test"")
+    End Sub
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+";
+            VerifyBasic(code, GetBasicResultAt(7, 9));
+        }
+
+        [Fact]
+        public void BasicBeginInvokeOnFunc()
+        {
+            var code = @"
+Imports System
+
+Class C
+    Private F As Func(Of Object)
+
+    Public Sub M()
+        Me.F.BeginInvoke(AddressOf Callback, ""test"")
+    End Sub
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+";
+            VerifyBasic(code, GetBasicResultAt(8, 9));
+        }
+
+        [Fact]
+        public void BasicBeginInvokeOnActionWith2Parameters()
+        {
+            var code = @"
+Imports System
+
+Class C
+    Public Sub M()
+        Dim action = New Action(Of String, Integer)(AddressOf D)
+        action.BeginInvoke(""Value: {0}"", 10, AddressOf Callback, Me)
+    End Sub
+
+    Private Sub D(ByVal format As String, ByVal value As Integer)
+        Console.WriteLine(format, value)
+    End Sub
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+";
+            VerifyBasic(code, GetBasicResultAt(7, 9));
+        }
+
+        [Fact]
+        public void BasicBeginInvokeOnFuncWith2Parameters()
+        {
+            var code = @"
+Imports System
+
+Class C
+    Private AR As IAsyncResult
+
+    Public Sub M()
+        Dim func = New Func(Of String, Integer, String)(Function(f, v) String.Format(f, v))
+        AR = func.BeginInvoke(""Value: {0}"", 10, AddressOf Callback, Nothing)
+    End Sub
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+";
+            VerifyBasic(code, GetBasicResultAt(9, 14));
+        }
+
+        [Fact]
+        public void BasicBeginInvokeOnCustomDelegate()
+        {
+            var code = @"
+Imports System
+
+Public Delegate Sub D(ByVal sender As Object, ByVal e As EventArgs)
+
+Class C
+    Private AR As IAsyncResult
+
+    Public Sub M()
+        Dim d = new D(AddressOf H1)
+        d = System.Delegate.Combine(d, new D(AddressOf H2))
+        AR = d.BeginInvoke(Me, EventArgs.Empty, AddressOf Callback, 10)
+    End Sub
+
+    Private Sub H1(ByVal sender As Object, ByVal e As EventArgs)
+        Console.WriteLine(e)
+    End Sub
+
+    Private Shared Sub H2(ByVal sender As Object, ByVal e As EventArgs)
+        Console.WriteLine(e)
+    End Sub
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+";
+            VerifyBasic(code, GetBasicResultAt(12, 14));
+        }
+
+        #endregion
+
+        #region Basic no diagnostic tests
+
+        [Fact]
+        public void BasicInvokeOnAction()
+        {
+            var code = @"
+Imports System
+
+Class C
+    Public Sub M()
+        Dim action = New Action(AddressOf D)
+        action.Invoke()
+    End Sub
+
+    Private Sub D()
+        Console.WriteLine(""Test"")
+    End Sub
+End Class
+";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void BasicInvokeOnFunc()
+        {
+            var code = @"
+Imports System
+
+Class C
+    Public Sub M()
+        Dim func = New Func(Of String, Integer, String)(Function(f, v) String.Format(f, v))
+        func.Invoke(""Value: {0}"", 10)
+    End Sub
+End Class
+";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void BasicInvokeOnCustomDelegate()
+        {
+            var code = @"
+Imports System
+
+Public Delegate Function D(ByVal callback As AsyncCallback, ByVal value As Object) As IAsyncResult
+
+Class C
+    Public Sub M()
+        Dim d = New D(AddressOf I)
+        d.Invoke(AddressOf Callback, 10)
+    End Sub
+
+    Private Function I(ByVal callback As AsyncCallback, ByVal value As Object) As IAsyncResult
+        Console.WriteLine(value)
+        Return Nothing
+    End Function
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void BasicCallCustomDelegate()
+        {
+            var code = @"
+Imports System
+
+Public Delegate Function D(ByVal callback As AsyncCallback, ByVal value As Object) As IAsyncResult
+
+Class C
+    Private AR As IAsyncResult
+
+    Public Sub M()
+        Dim d = New D(AddressOf I)
+        AR = d(AddressOf Callback, Nothing)
+    End Sub
+
+    Private Function I(ByVal callback As AsyncCallback, ByVal value As Object) As IAsyncResult
+        Console.WriteLine(value)
+        Return Nothing
+    End Function
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void BasicBeginInvokeOnCustomClass()
+        {
+            var code = @"
+Imports System
+Imports System.Threading.Tasks
+
+Class C
+    Public Sub M()
+        Dim t = New T
+        t.BeginInvoke(AddressOf Callback, 10)
+    End Sub
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+
+Class T
+    Public Function BeginInvoke(ByVal callback As AsyncCallback, ByVal value As Object) As IAsyncResult
+        Return Task.Run(Sub() Console.WriteLine(value)).ContinueWith(Sub(t) callback.Invoke(t))
+    End Function
+End Class
+";
+            VerifyBasic(code);
+        }
+
+        [Fact]
+        public void BasicBeginInvokeOnCustomStruct()
+        {
+            var code = @"
+Imports System
+Imports System.Threading.Tasks
+
+Class C
+    Public Sub M()
+        Dim t = New T
+        t.BeginInvoke(AddressOf Callback, 10)
+    End Sub
+
+    Private Sub Callback(ByVal ar As IAsyncResult)
+        Console.WriteLine(ar.ToString())
+    End Sub
+End Class
+
+Structure T
+    Public Function BeginInvoke(ByVal callback As AsyncCallback, ByVal value As Object) As IAsyncResult
+        Return Task.Run(Sub() Console.WriteLine(value)).ContinueWith(Sub(t) callback.Invoke(t))
+    End Function
+End Structure
+";
+            VerifyBasic(code);
+        }
+
+        #endregion
+
         #region CSharp diagnostic tests
 
         [Fact]
-        public void BeginInvokeOnAction()
+        public void CSharpBeginInvokeOnAction()
         {
             var code = @"
 using System;
@@ -50,7 +328,7 @@ class C
         }
 
         [Fact]
-        public void BeginInvokeOnFunc()
+        public void CSharpBeginInvokeOnFunc()
         {
             var code = @"
 using System;
@@ -74,7 +352,7 @@ class C
         }
 
         [Fact]
-        public void BeginInvokeOnActionWith2Parameters()
+        public void CSharpBeginInvokeOnActionWith2Parameters()
         {
             var code = @"
 using System;
@@ -102,7 +380,7 @@ class C
         }
 
         [Fact]
-        public void BeginInvokeOnFuncWith2Parameters()
+        public void CSharpBeginInvokeOnFuncWith2Parameters()
         {
             var code = @"
 using System;
@@ -127,7 +405,7 @@ class C
         }
 
         [Fact]
-        public void BeginInvokeOnCustomDelegate()
+        public void CSharpBeginInvokeOnCustomDelegate()
         {
             var code = @"
 using System;
@@ -165,7 +443,7 @@ class C
         }
 
         [Fact]
-        public void BeginInvokeOnEvent()
+        public void CSharpBeginInvokeOnEvent()
         {
             var code = @"
 using System;
@@ -193,7 +471,7 @@ class C
         #region CSharp no diagnostic tests
 
         [Fact]
-        public void InvokeOnAction()
+        public void CSharpInvokeOnAction()
         {
             var code = @"
 using System;
@@ -216,7 +494,7 @@ class C
         }
 
         [Fact]
-        public void InvokeOnFunc()
+        public void CSharpInvokeOnFunc()
         {
             var code = @"
 using System;
@@ -234,7 +512,7 @@ class C
         }
 
         [Fact]
-        public void InvokeOnCustomDelegate()
+        public void CSharpInvokeOnCustomDelegate()
         {
             var code = @"
 using System;
@@ -265,7 +543,7 @@ class C
         }
 
         [Fact]
-        public void CallCustomDelegate()
+        public void CSharpCallCustomDelegate()
         {
             var code = @"
 using System;
@@ -298,7 +576,7 @@ class C
         }
 
         [Fact]
-        public void BeginInvokeOnCustomClass()
+        public void CSharpBeginInvokeOnCustomClass()
         {
             var code = @"
 using System;
@@ -331,7 +609,7 @@ class T
         }
 
         [Fact]
-        public void BeginInvokeOnCustomStruct()
+        public void CSharpBeginInvokeOnCustomStruct()
         {
             var code = @"
 using System;

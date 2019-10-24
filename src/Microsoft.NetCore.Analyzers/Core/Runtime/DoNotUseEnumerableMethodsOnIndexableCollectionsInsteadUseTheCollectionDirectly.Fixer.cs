@@ -80,7 +80,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var elementAccessNode = GetReplacementNode(generator, collectionSyntax, methodName);
+            var elementAccessNode = GetReplacementNode(methodName, generator, collectionSyntax, semanticModel);
             if (elementAccessNode == null)
             {
                 return document;
@@ -90,7 +90,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             return document.WithSyntaxRoot(newRoot);
         }
 
-        private static SyntaxNode GetReplacementNode(SyntaxGenerator generator, SyntaxNode collectionSyntax, string methodName)
+        private static SyntaxNode GetReplacementNode(string methodName, SyntaxGenerator generator, SyntaxNode collectionSyntax, SemanticModel semanticModel)
         {
             var collectionSyntaxNoTrailingTrivia = collectionSyntax.WithoutTrailingTrivia();
 
@@ -103,6 +103,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             if (methodName == "Last")
             {
                 // TODO: Handle C# 8 index expression (and vb.net equivalent if any)
+
+                if (!HasCountProperty(collectionSyntax, semanticModel))
+                {
+                    return null;
+                }
+
                 // TODO: Handle cases were `collectionSyntax` is an invocation. We would need to create some intermediate variable.
                 var countMemberAccess = generator.MemberAccessExpression(collectionSyntaxNoTrailingTrivia, "Count");
                 var oneLiteral = generator.LiteralExpression(1);
@@ -114,11 +120,56 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (methodName == "Count")
             {
-                return generator.MemberAccessExpression(collectionSyntaxNoTrailingTrivia, "Count");
+                return HasCountProperty(collectionSyntax, semanticModel)
+                    ? generator.MemberAccessExpression(collectionSyntaxNoTrailingTrivia, "Count")
+                    : null;
             }
 
             Debug.Fail($"Unexpected method name '{methodName}' for {DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.RuleId} code fix.");
             return null;
+        }
+
+        private static bool HasCountProperty(SyntaxNode node, SemanticModel model)
+        {
+            var typeSymbol = model.GetTypeInfo(node).Type;
+
+            if (typeSymbol == null)
+            {
+                return false;
+            }
+
+            if (typeSymbol.TypeKind == TypeKind.Class)
+            {
+                if (HasCountPropertyMember(typeSymbol))
+                {
+                    return true;
+                }
+
+                var currentType = typeSymbol.BaseType;
+                while (currentType != null)
+                {
+                    if (HasCountPropertyMember(currentType))
+                    {
+                        return true;
+                    }
+
+                    currentType = currentType.BaseType;
+                }
+
+                return false;
+            }
+
+            if (typeSymbol.TypeKind == TypeKind.Interface)
+            {
+                return HasCountPropertyMember(typeSymbol)
+                    ? true
+                    : typeSymbol.AllInterfaces.Any(interfaceType => HasCountPropertyMember(interfaceType));
+            }
+
+            return false;
+
+            static bool HasCountPropertyMember(ITypeSymbol type) =>
+                type.GetMembers("Count").Any(member => member.Kind == SymbolKind.Property);
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)

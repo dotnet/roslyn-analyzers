@@ -156,7 +156,7 @@ public class Test
         [InlineData("", "protected internal")]
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyCSharp(string.Format(CultureInfo.CurrentCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
+            VerifyCSharp(string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Fact]

@@ -113,7 +113,7 @@ public class Test
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
         {
             VerifyCSharp(
-                string.Format(CultureInfo.CurrentCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility),
+                string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721CSharpResultAt(
                     line: 6,
                     column: $"    {propertyAccessibility} DateTime ".Length + 1,

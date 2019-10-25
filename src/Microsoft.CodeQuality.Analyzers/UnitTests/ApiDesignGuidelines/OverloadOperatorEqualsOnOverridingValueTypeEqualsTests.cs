@@ -167,6 +167,20 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         }
 
         [Fact]
+        public void CA2231_CSharp_RefStruct_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public ref struct S
+{
+    public override bool Equals(object other)
+    {
+        return false;
+    }
+}
+");
+        }
+
+        [Fact]
         public void CA2231NoWarningBasic()
         {
             VerifyBasic(@"

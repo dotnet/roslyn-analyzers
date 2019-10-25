@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
@@ -368,6 +369,21 @@ public class D : C<D>
 {
 }";
             VerifyCSharp(code);
+        }
+
+        [Fact, WorkItem(2324, "https://github.com/dotnet/roslyn-analyzers/issues/2324")]
+        public void CA1066_CSharp_RefStruct_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public ref struct S
+{
+    public override bool Equals(object other)
+    {
+        return false;
+    }
+}
+",
+            parseOptions: new CSharpParseOptions(LanguageVersion.CSharp8));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

@@ -132,7 +132,7 @@ public class Test
         [InlineData("", "")]
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyCSharp(string.Format(CultureInfo.CurrentCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
+            VerifyCSharp(string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]

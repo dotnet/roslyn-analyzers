@@ -658,19 +658,17 @@ namespace Analyzer.Utilities.FlowAnalysis.Analysis.TaintedDataAnalysis
                         && this.DataFlowAnalysisContext.SourceInfos.IsSourceArray(arrayTypeSymbol, out TaintArrayKind taintArrayKind)
                         && taintArrayKind == TaintArrayKind.All)
                     {
+                        TaintedDataAbstractValue value = TaintedDataAbstractValue.CreateTainted(argument.Parameter.OriginalDefinition, argument.Syntax, this.OwningSymbol);
                         if (AnalysisEntityFactory.TryCreate(argument, out AnalysisEntity analysisEntity))
                         {
-                            if (this.CurrentAnalysisData.TryGetValue(analysisEntity, out TaintedDataAbstractValue value))
+                            if (!this.CurrentAnalysisData.TryGetValue(analysisEntity, out value))
                             {
-                                CacheAbstractValue(argument, value);
-                            }
-                            else
-                            {
-                                TaintedDataAbstractValue taintedDataAbstractValue = TaintedDataAbstractValue.CreateTainted(analysisEntity.SymbolOpt, analysisEntity.SymbolOpt.DeclaringSyntaxReferences.FirstOrDefault().GetSyntax(), this.OwningSymbol);
-                                CacheAbstractValue(argument, taintedDataAbstractValue);
-                                SetAbstractValue(analysisEntity, taintedDataAbstractValue);
+                                value = TaintedDataAbstractValue.CreateTainted(analysisEntity.SymbolOpt, analysisEntity.SymbolOpt.DeclaringSyntaxReferences.FirstOrDefault().GetSyntax(), this.OwningSymbol);
+                                SetAbstractValue(analysisEntity, value);
                             }
                         }
+
+                        CacheAbstractValue(argument, value);
                     }
                 }
             }

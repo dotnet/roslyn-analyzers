@@ -257,7 +257,7 @@ End Class");
         [InlineData("Friend", "Friend")]
         public void Basic_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyBasic(string.Format(CultureInfo.CurrentCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
+            VerifyBasic(string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]

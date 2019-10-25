@@ -121,7 +121,7 @@ public class Test
                     otherIdentifierName: "GetDate"));
 
             VerifyCSharp(
-                string.Format(CultureInfo.CurrentCulture, CSharpNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
+                string.Format(CultureInfo.InvariantCulture, CSharpNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]

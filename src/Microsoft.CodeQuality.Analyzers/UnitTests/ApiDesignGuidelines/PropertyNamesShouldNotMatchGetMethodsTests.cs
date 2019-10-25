@@ -247,7 +247,7 @@ End Class");
                     otherIdentifierName: "GetDate"));
 
             VerifyBasic(
-                string.Format(CultureInfo.CurrentCulture, BasicNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
+                string.Format(CultureInfo.InvariantCulture, BasicNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]

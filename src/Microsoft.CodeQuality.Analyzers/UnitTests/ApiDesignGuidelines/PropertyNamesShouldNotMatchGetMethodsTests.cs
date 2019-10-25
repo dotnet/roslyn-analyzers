@@ -239,7 +239,7 @@ End Class");
         public void Basic_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
         {
             VerifyBasic(
-                string.Format(CultureInfo.CurrentCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility),
+                string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721BasicResultAt(
                     line: 5,
                     column: $"    {propertyAccessibility} ReadOnly Property ".Length + 1,

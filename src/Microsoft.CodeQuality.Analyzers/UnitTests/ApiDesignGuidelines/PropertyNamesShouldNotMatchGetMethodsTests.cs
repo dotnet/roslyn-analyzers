@@ -275,7 +275,7 @@ End Class");
         [InlineData("Friend", "Protected Friend")]
         public void Basic_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyBasic(string.Format(CultureInfo.CurrentCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
+            VerifyBasic(string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Fact]

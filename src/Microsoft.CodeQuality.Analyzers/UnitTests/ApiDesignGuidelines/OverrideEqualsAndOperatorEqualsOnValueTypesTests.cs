@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -385,6 +385,16 @@ Public Structure A
 End Structure
 ",
                 GetBasicOverrideEqualsDiagnostic(2, 18, "A"));
+        }
+
+        [Fact, WorkItem(2324, "https://github.com/dotnet/roslyn-analyzers/issues/2324")]
+        public void CSharp_RefStruct_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+public ref struct A
+{
+    public int X;
+}", parseOptions: new CSharpParseOptions(LanguageVersion.CSharp8));
         }
 
         protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()

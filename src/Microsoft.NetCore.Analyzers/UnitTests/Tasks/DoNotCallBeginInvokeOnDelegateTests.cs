@@ -1,28 +1,24 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
-using Test.Utilities;
 using Xunit;
+
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Tasks.DoNotCallBeginInvokeOnDelegate,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.NetCore.Analyzers.Tasks.DoNotCallBeginInvokeOnDelegate,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.NetCore.Analyzers.Tasks.UnitTests
 {
-    public class DoNotCallBeginInvokeOnDelegateTests : DiagnosticAnalyzerTestBase
+    public class DoNotCallBeginInvokeOnDelegateTests
     {
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new DoNotCallBeginInvokeOnDelegate();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new DoNotCallBeginInvokeOnDelegate();
-        }
-
         #region Basic diagnostic tests
 
         [Fact]
-        public void BasicBeginInvokeOnAction()
+        public async void BasicBeginInvokeOnAction()
         {
             var code = @"
 Imports System
@@ -42,11 +38,11 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code, GetBasicResultAt(7, 9));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetVBResultAt(7, 9));
         }
 
         [Fact]
-        public void BasicBeginInvokeOnFunc()
+        public async void BasicBeginInvokeOnFunc()
         {
             var code = @"
 Imports System
@@ -63,11 +59,11 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code, GetBasicResultAt(8, 9));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetVBResultAt(8, 9));
         }
 
         [Fact]
-        public void BasicBeginInvokeOnActionWith2Parameters()
+        public async void BasicBeginInvokeOnActionWith2Parameters()
         {
             var code = @"
 Imports System
@@ -87,11 +83,11 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code, GetBasicResultAt(7, 9));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetVBResultAt(7, 9));
         }
 
         [Fact]
-        public void BasicBeginInvokeOnFuncWith2Parameters()
+        public async void BasicBeginInvokeOnFuncWith2Parameters()
         {
             var code = @"
 Imports System
@@ -109,11 +105,11 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code, GetBasicResultAt(9, 14));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetVBResultAt(9, 14));
         }
 
         [Fact]
-        public void BasicBeginInvokeOnCustomDelegate()
+        public async void BasicBeginInvokeOnCustomDelegate()
         {
             var code = @"
 Imports System
@@ -142,7 +138,7 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code, GetBasicResultAt(12, 14));
+            await VerifyVB.VerifyAnalyzerAsync(code, GetVBResultAt(12, 14));
         }
 
         #endregion
@@ -150,7 +146,7 @@ End Class
         #region Basic no diagnostic tests
 
         [Fact]
-        public void BasicInvokeOnAction()
+        public async void BasicInvokeOnAction()
         {
             var code = @"
 Imports System
@@ -166,11 +162,11 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicInvokeOnFunc()
+        public async void BasicInvokeOnFunc()
         {
             var code = @"
 Imports System
@@ -182,11 +178,11 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicInvokeOnCustomDelegate()
+        public async void BasicInvokeOnCustomDelegate()
         {
             var code = @"
 Imports System
@@ -209,11 +205,11 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicCallCustomDelegate()
+        public async void BasicCallCustomDelegate()
         {
             var code = @"
 Imports System
@@ -238,11 +234,11 @@ Class C
     End Sub
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicBeginInvokeOnCustomClass()
+        public async void BasicBeginInvokeOnCustomClass()
         {
             var code = @"
 Imports System
@@ -265,11 +261,11 @@ Class T
     End Function
 End Class
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void BasicBeginInvokeOnCustomStruct()
+        public async void BasicBeginInvokeOnCustomStruct()
         {
             var code = @"
 Imports System
@@ -292,7 +288,7 @@ Structure T
     End Function
 End Structure
 ";
-            VerifyBasic(code);
+            await VerifyVB.VerifyAnalyzerAsync(code);
         }
 
         #endregion
@@ -300,7 +296,7 @@ End Structure
         #region CSharp diagnostic tests
 
         [Fact]
-        public void CSharpBeginInvokeOnAction()
+        public async void CSharpBeginInvokeOnAction()
         {
             var code = @"
 using System;
@@ -324,11 +320,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(9, 9));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSResultAt(9, 9));
         }
 
         [Fact]
-        public void CSharpBeginInvokeOnFunc()
+        public async void CSharpBeginInvokeOnFunc()
         {
             var code = @"
 using System;
@@ -348,11 +344,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(10, 9));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSResultAt(10, 9));
         }
 
         [Fact]
-        public void CSharpBeginInvokeOnActionWith2Parameters()
+        public async void CSharpBeginInvokeOnActionWith2Parameters()
         {
             var code = @"
 using System;
@@ -376,11 +372,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(9, 9));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSResultAt(9, 9));
         }
 
         [Fact]
-        public void CSharpBeginInvokeOnFuncWith2Parameters()
+        public async void CSharpBeginInvokeOnFuncWith2Parameters()
         {
             var code = @"
 using System;
@@ -401,11 +397,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(11, 23));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSResultAt(11, 23));
         }
 
         [Fact]
-        public void CSharpBeginInvokeOnCustomDelegate()
+        public async void CSharpBeginInvokeOnCustomDelegate()
         {
             var code = @"
 using System;
@@ -439,11 +435,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(14, 23));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSResultAt(14, 23));
         }
 
         [Fact]
-        public void CSharpBeginInvokeOnEvent()
+        public async void CSharpBeginInvokeOnEvent()
         {
             var code = @"
 using System;
@@ -463,7 +459,7 @@ class C
     }
 }
 ";
-            VerifyCSharp(code, GetCSharpResultAt(10, 9));
+            await VerifyCS.VerifyAnalyzerAsync(code, GetCSResultAt(10, 9));
         }
 
         #endregion
@@ -471,7 +467,7 @@ class C
         #region CSharp no diagnostic tests
 
         [Fact]
-        public void CSharpInvokeOnAction()
+        public async void CSharpInvokeOnAction()
         {
             var code = @"
 using System;
@@ -490,11 +486,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpInvokeOnFunc()
+        public async void CSharpInvokeOnFunc()
         {
             var code = @"
 using System;
@@ -508,11 +504,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpInvokeOnCustomDelegate()
+        public async void CSharpInvokeOnCustomDelegate()
         {
             var code = @"
 using System;
@@ -539,11 +535,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpCallCustomDelegate()
+        public async void CSharpCallCustomDelegate()
         {
             var code = @"
 using System;
@@ -572,11 +568,11 @@ class C
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpBeginInvokeOnCustomClass()
+        public async void CSharpBeginInvokeOnCustomClass()
         {
             var code = @"
 using System;
@@ -605,11 +601,11 @@ class T
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         [Fact]
-        public void CSharpBeginInvokeOnCustomStruct()
+        public async void CSharpBeginInvokeOnCustomStruct()
         {
             var code = @"
 using System;
@@ -638,19 +634,23 @@ struct T
     }
 }
 ";
-            VerifyCSharp(code);
+            await VerifyCS.VerifyAnalyzerAsync(code);
         }
 
         #endregion
 
-        private static DiagnosticResult GetCSharpResultAt(int line, int column)
+        private static DiagnosticResult GetCSResultAt(int line, int column)
         {
-            return GetCSharpResultAt(line, column, DoNotCallBeginInvokeOnDelegate.RuleId, MicrosoftNetCoreAnalyzersResources.DoNotCallBeginInvokeOnDelegateMessage);
+            return VerifyCS.Diagnostic(DoNotCallBeginInvokeOnDelegate.RuleId)
+                .WithMessage(MicrosoftNetCoreAnalyzersResources.DoNotCallBeginInvokeOnDelegateMessage)
+                .WithLocation(line, column);
         }
 
-        private static DiagnosticResult GetBasicResultAt(int line, int column)
+        private static DiagnosticResult GetVBResultAt(int line, int column)
         {
-            return GetBasicResultAt(line, column, DoNotCallBeginInvokeOnDelegate.RuleId, MicrosoftNetCoreAnalyzersResources.DoNotCallBeginInvokeOnDelegateMessage);
+            return VerifyVB.Diagnostic(DoNotCallBeginInvokeOnDelegate.RuleId)
+                .WithMessage(MicrosoftNetCoreAnalyzersResources.DoNotCallBeginInvokeOnDelegateMessage)
+                .WithLocation(line, column);
         }
     }
 }

@@ -22,7 +22,7 @@
     <MicrosoftCodeAnalysisVersion>3.0.0</MicrosoftCodeAnalysisVersion>
     <MicrosoftNetCompilersVersion>3.4.0-beta2-final</MicrosoftNetCompilersVersion>
     <MicrosoftCodeAnalysisBannedApiAnalyzersVersion>2.9.6</MicrosoftCodeAnalysisBannedApiAnalyzersVersion>
-    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.5</MicrosoftCodeAnalysisFXCopAnalyersVersion>
+    <MicrosoftCodeAnalysisFXCopAnalyersVersion>2.9.6</MicrosoftCodeAnalysisFXCopAnalyersVersion>
     <MicrosoftCodeAnalysisAnalyersVersion>3.0.0-beta2.19218.3+e96bad97</MicrosoftCodeAnalysisAnalyersVersion>
     <CodeStyleAnalyersVersion>3.3.0-beta2-19376-02</CodeStyleAnalyersVersion>
     <MicrosoftCodeAnalysisTestResourcesProprietaryVersion>2.0.0-pre-20160714</MicrosoftCodeAnalysisTestResourcesProprietaryVersion>

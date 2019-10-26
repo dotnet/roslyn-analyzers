@@ -40,13 +40,6 @@ namespace Analyzer.Utilities.Extensions
         /// <returns><c>True</c> if the compilation targets .NET Framework; otherwise <c>false</c>.</returns>
         internal static bool DoesTargetDotNetFramework(this Compilation compilation)
         {
-            // This condition should be removed in future.
-            // It only ensures that tests are successful, because tests compilate to .NET Framework.
-            if (compilation.ReferencedAssemblyNames.Any(identity => string.Equals(identity.Name, "netstandard", StringComparison.OrdinalIgnoreCase)))
-            {
-                return false;
-            }
-
             var objectType = compilation.GetSpecialType(SpecialType.System_Object);
             var assemblyIdentity = objectType.ContainingAssembly.Identity;
             if (assemblyIdentity.Name == "mscorlib" &&

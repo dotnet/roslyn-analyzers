@@ -3,11 +3,11 @@
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 
-using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+using VerifyCS = Test.Utilities.CSharpSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Tasks.DoNotCallBeginInvokeOnDelegate,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
-using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+using VerifyVB = Test.Utilities.VisualBasicSecurityCodeFixVerifier<
     Microsoft.NetCore.Analyzers.Tasks.DoNotCallBeginInvokeOnDelegate,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 

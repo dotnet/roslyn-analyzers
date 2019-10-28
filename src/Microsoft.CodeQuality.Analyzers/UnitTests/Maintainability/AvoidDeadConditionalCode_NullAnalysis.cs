@@ -5445,6 +5445,111 @@ public class C : IDisposable
 }");
         }
 
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void TestCompilerGeneratedNullCheckNotFlaggedDefinedInline()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose() { }
+
+    public void M()
+    {
+        using (var c = new C())
+        {
+            Console.WriteLine(bool.Parse(c.ToString()));
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void TestCompilerGeneratedNullCheckNotFlaggedDefinedSeperately()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose() { }
+
+    public void M()
+    {
+        var c = new C();
+        using (c)
+        {
+            Console.WriteLine(bool.Parse(c.ToString()));
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void TestCompilerGeneratedNullCheckNotFlaggedConditionallyDefined()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose() { }
+
+    public void M(bool create)
+    {
+        C c = null;
+        if(create)
+        {
+            c = new C();
+        }
+
+        using (c)
+        {
+            Console.WriteLine(bool.Parse(c.ToString()));
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void TestCompilerGeneratedNullCheckNotFlaggedAlwaysConditionallyDefined()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose() { }
+
+    public void M(bool create)
+    {
+        C c;
+        if(create)
+        {
+            c = new C();
+        }
+        else
+        {
+            c = new C();
+        }
+
+        using (c)
+        {
+            Console.WriteLine(bool.Parse(c.ToString()));
+        }
+    }
+}");
+        }
+
         [Fact]
         public void StaticObjectReferenceEquals_Diagnostic()
         {

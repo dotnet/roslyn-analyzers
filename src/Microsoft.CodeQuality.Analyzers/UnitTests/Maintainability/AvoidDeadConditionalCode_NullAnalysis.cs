@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -5545,6 +5544,90 @@ public class C : IDisposable
         using (c)
         {
             Console.WriteLine(bool.Parse(c.ToString()));
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void TestCompilerGeneratedNullCheckNotFlaggedFromMethod()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose() { }
+
+    public static C GetC()
+    {
+        return new C();
+    }
+
+    public void M(bool create)
+    {
+        using (GetC())
+        {
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void TestCompilerGeneratedNullCheckNotFlaggedFromMethodIfAssigned()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose() { }
+
+    public static C GetC()
+    {
+        return new C();
+    }
+
+    public void M(bool create)
+    {
+        using (C c = GetC())
+        {
+            Console.WriteLine(bool.Parse(c.ToString()));
+        }
+    }
+}");
+        }
+
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.NullAnalysis)]
+        [Trait(Traits.DataflowAnalysis, Traits.Dataflow.CopyAnalysis)]
+        [Fact]
+        public void TestCompilerGeneratedNullCheckFlaggedUnrolledUsing()
+        {
+            VerifyCSharp(@"
+using System;
+
+public class C : IDisposable
+{
+    public void Dispose() { }
+
+    public void M(bool shouldThrow)
+    {
+        C c = null;
+        try
+        {
+            if(shouldThrow)
+                throw new ArgumentException();
+
+            c = new C();
+            Console.WriteLine(bool.Parse(c.ToString()));
+        }
+        finally
+        {
+            c?.Dispose();
         }
     }
 }");

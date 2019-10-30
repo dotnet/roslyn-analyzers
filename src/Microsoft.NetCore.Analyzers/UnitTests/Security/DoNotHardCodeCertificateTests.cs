@@ -344,7 +344,8 @@ class TestClass
     }
 }");
         }
-        
+
+        [Fact]
         public void Test_X509Certificate2_NoDiagnostic()
         {
             VerifyCSharp(@"

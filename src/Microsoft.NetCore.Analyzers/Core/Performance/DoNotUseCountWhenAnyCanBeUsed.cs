@@ -164,7 +164,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
         /// <param name="context">The context.</param>
         private static void OnCompilationStart(CompilationStartAnalysisContext context)
         {
-            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable) is INamedTypeSymbol enumerableType)
+            if (context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqEnumerable) is INamedTypeSymbol enumerableType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: enumerableType,
@@ -181,7 +181,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemLinqQueryable) is INamedTypeSymbol queryableType)
+            if (context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemLinqQueryable) is INamedTypeSymbol queryableType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: queryableType,
@@ -198,7 +198,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreEntityFrameworkQueryableExtensions) is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
+            if (context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.MicrosoftEntityFrameworkCoreEntityFrameworkQueryableExtensions) is INamedTypeSymbol entityFrameworkQueryableExtensionsType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: entityFrameworkQueryableExtensionsType,
@@ -215,7 +215,7 @@ namespace Microsoft.NetCore.Analyzers.Performance
                     OperationKind.BinaryOperator);
             }
 
-            if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemDataEntityQueryableExtensions) is INamedTypeSymbol queryableExtensionsType)
+            if (context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemDataEntityQueryableExtensions) is INamedTypeSymbol queryableExtensionsType)
             {
                 var operationActionsHandler = new OperationActionsHandler(
                     targetType: queryableExtensionsType,

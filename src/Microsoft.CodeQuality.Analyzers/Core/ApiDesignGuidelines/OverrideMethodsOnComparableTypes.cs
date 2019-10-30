@@ -66,8 +66,8 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol comparableType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemIComparable);
-                INamedTypeSymbol genericComparableType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemIComparable1);
+                INamedTypeSymbol comparableType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIComparable);
+                INamedTypeSymbol genericComparableType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemIComparable1);
 
                 // Even if one of them is available, we should continue analysis.
                 if (comparableType == null && genericComparableType == null)

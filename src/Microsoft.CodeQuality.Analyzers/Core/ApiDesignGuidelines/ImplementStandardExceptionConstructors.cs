@@ -62,7 +62,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
         private void AnalyzeCompilationSymbol(CompilationStartAnalysisContext context)
         {
-            var exceptionType = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemException);
+            var exceptionType = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemException);
             if (exceptionType == null)
             {
                 return;

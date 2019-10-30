@@ -97,7 +97,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
 
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
-                INamedTypeSymbol flagsAttribute = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
+                INamedTypeSymbol flagsAttribute = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemFlagsAttribute);
                 if (flagsAttribute == null)
                 {
                     return;

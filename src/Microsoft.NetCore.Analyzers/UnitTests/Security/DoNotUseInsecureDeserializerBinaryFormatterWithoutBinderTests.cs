@@ -1196,5 +1196,58 @@ public class ExampleClass
     }
 }", GetEditorConfigAdditionalFile(editorConfigText), expected);
         }
+
+        [Fact]
+        public void Deserialize_SharedBinderInstance_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public static SerializationBinder B { get; set; }
+
+        private object DoDeserialization(Stream stream)
+        {
+            BinaryFormatter f = new BinaryFormatter();
+            f.Binder = B ?? throw new Exception(""Expected a non-null SerializationBinder"");
+            return f.Deserialize(stream);
+        }
+    }
+}");
+        }
+
+        [Fact]
+        public void Deserialize_SharedBinderInstanceIntermediate_NoDiagnostic()
+        {
+            VerifyCSharpWithMyBinderDefined(@"
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Remoting.Messaging;
+
+namespace Blah
+{
+    public class Program
+    {
+        public static SerializationBinder B { get; set; }
+
+        private object DoDeserialization(Stream stream)
+        {
+            BinaryFormatter f = new BinaryFormatter();
+            SerializationBinder b = B ?? throw new Exception(""Expected a non-null SerializationBinder"");
+            f.Binder = b;
+            return f.Deserialize(stream);
+        }
+    }
+}");
+        }
     }
 }

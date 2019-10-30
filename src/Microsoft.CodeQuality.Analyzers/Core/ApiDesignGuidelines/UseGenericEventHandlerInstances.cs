@@ -77,14 +77,14 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
             analysisContext.RegisterCompilationStartAction(
                 (context) =>
                 {
-                    INamedTypeSymbol eventArgs = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
+                    INamedTypeSymbol eventArgs = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventArgs);
                     if (eventArgs == null)
                     {
                         return;
                     }
 
                     // Only analyze compilations that have a generic event handler defined.
-                    if (context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemEventHandler1) == null)
+                    if (context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemEventHandler1) == null)
                     {
                         return;
                     }
@@ -133,9 +133,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines
                         }
                     }, SymbolKind.NamedType);
 
-#pragma warning disable CS0618 // Type or member is obsolete
-                    INamedTypeSymbol comSourceInterfacesAttribute = context.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
-#pragma warning restore CS0618 // Type or member is obsolete
+                    INamedTypeSymbol comSourceInterfacesAttribute = context.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesComSourceInterfacesAttribute);
                     bool ContainingTypeHasComSourceInterfacesAttribute(IEventSymbol eventSymbol) =>
                         comSourceInterfacesAttribute != null &&
                         eventSymbol.ContainingType.GetAttributes().Any(a => Equals(a.AttributeClass, comSourceInterfacesAttribute));

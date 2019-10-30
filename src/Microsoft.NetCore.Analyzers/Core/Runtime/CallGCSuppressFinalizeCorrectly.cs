@@ -74,7 +74,7 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             analysisContext.RegisterCompilationStartAction(compilationContext =>
             {
                 var gcSuppressFinalizeMethodSymbol = compilationContext.Compilation
-                                                        .GetTypeByMetadataName(WellKnownTypeNames.SystemGC)
+                                                        .GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemGC)
                                                         ?.GetMembers("SuppressFinalize")
                                                         .OfType<IMethodSymbol>()
                                                         .FirstOrDefault();

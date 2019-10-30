@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using Analyzer.Utilities;
+using Analyzer.Utilities.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -36,7 +37,7 @@ namespace Microsoft.NetCore.Analyzers.InteropServices
 
             context.RegisterCompilationStartAction(compilationContext =>
             {
-                var preserveSigType = compilationContext.Compilation.GetTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesPreserveSigAttribute);
+                var preserveSigType = compilationContext.Compilation.GetOrCreateTypeByMetadataName(WellKnownTypeNames.SystemRuntimeInteropServicesPreserveSigAttribute);
                 if (preserveSigType != null)
                 {
                     compilationContext.RegisterSyntaxNodeAction(

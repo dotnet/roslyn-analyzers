@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -461,7 +462,7 @@ public sealed class SomeEqualityComparer : IEqualityComparer<string>, IEqualityC
         private static DiagnosticResult GetCA1720CSharpResultAt(int line, int column, string identifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainTypeNamesMessage, identifierName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.IdentifiersShouldNotContainTypeNamesMessage, identifierName);
             return GetCSharpResultAt(line, column, IdentifiersShouldNotContainTypeNames.RuleId, message);
         }
 

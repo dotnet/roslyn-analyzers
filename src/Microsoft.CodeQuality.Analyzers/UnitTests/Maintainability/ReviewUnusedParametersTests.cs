@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -1025,13 +1026,13 @@ public class C
 
         private static DiagnosticResult GetCSharpUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetCSharpResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetBasicUnusedParameterResultAt(int line, int column, string parameterName, string methodName)
         {
-            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
+            string message = string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.ReviewUnusedParametersMessage, parameterName, methodName);
             return GetBasicResultAt(line, column, ReviewUnusedParametersAnalyzer.RuleId, message);
         }
 

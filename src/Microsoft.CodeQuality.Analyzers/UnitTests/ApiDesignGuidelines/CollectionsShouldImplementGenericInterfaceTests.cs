@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -32,7 +33,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return GetCSharpResultAt(line,
                                      column,
                                      CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId,
-                                     string.Format(CA1010Message, typeName, interfaceName, $"{interfaceName}<T>"));
+                                     string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}<T>"));
         }
 
         private DiagnosticResult GetCA1010BasicResultAt(int line, int column, string typeName, string interfaceName)
@@ -40,7 +41,7 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
             return GetBasicResultAt(line,
                                      column,
                                      CollectionsShouldImplementGenericInterfaceAnalyzer.RuleId,
-                                     string.Format(CA1010Message, typeName, interfaceName, $"{interfaceName}(Of T)"));
+                                     string.Format(CultureInfo.CurrentCulture, CA1010Message, typeName, interfaceName, $"{interfaceName}(Of T)"));
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -112,7 +113,7 @@ public class Test
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
         {
             VerifyCSharp(
-                string.Format(CSharpTestTemplate, propertyAccessibility, methodAccessibility),
+                string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721CSharpResultAt(
                     line: 6,
                     column: $"    {propertyAccessibility} DateTime ".Length + 1,
@@ -120,7 +121,7 @@ public class Test
                     otherIdentifierName: "GetDate"));
 
             VerifyCSharp(
-                string.Format(CSharpNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
+                string.Format(CultureInfo.InvariantCulture, CSharpNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]
@@ -131,7 +132,7 @@ public class Test
         [InlineData("", "")]
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyCSharp(string.Format(CSharpTestTemplate, propertyAccessibility, methodAccessibility));
+            VerifyCSharp(string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -155,7 +156,7 @@ public class Test
         [InlineData("", "protected internal")]
         public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyCSharp(string.Format(CSharpTestTemplate, propertyAccessibility, methodAccessibility));
+            VerifyCSharp(string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Fact]
@@ -238,7 +239,7 @@ End Class");
         public void Basic_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
         {
             VerifyBasic(
-                string.Format(BasicTestTemplate, propertyAccessibility, methodAccessibility),
+                string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721BasicResultAt(
                     line: 5,
                     column: $"    {propertyAccessibility} ReadOnly Property ".Length + 1,
@@ -246,7 +247,7 @@ End Class");
                     otherIdentifierName: "GetDate"));
 
             VerifyBasic(
-                string.Format(BasicNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
+                string.Format(CultureInfo.InvariantCulture, BasicNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]
@@ -256,7 +257,7 @@ End Class");
         [InlineData("Friend", "Friend")]
         public void Basic_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyBasic(string.Format(BasicTestTemplate, propertyAccessibility, methodAccessibility));
+            VerifyBasic(string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]
@@ -274,7 +275,7 @@ End Class");
         [InlineData("Friend", "Protected Friend")]
         public void Basic_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyBasic(string.Format(BasicTestTemplate, propertyAccessibility, methodAccessibility));
+            VerifyBasic(string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Fact]
@@ -600,14 +601,14 @@ End Class
         private static DiagnosticResult GetCA1721CSharpResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
+            string message = string.Format(CultureInfo.InvariantCulture, MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 
         private static DiagnosticResult GetCA1721BasicResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
-            string message = string.Format(MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
+            string message = string.Format(CultureInfo.InvariantCulture, MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
             return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
         }
 

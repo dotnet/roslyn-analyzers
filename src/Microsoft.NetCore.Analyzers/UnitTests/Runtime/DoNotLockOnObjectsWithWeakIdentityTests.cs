@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -267,12 +268,12 @@ namespace Microsoft.NetCore.Analyzers.Runtime.UnitTests
 
         private DiagnosticResult GetCA2002CSharpResultAt(int line, int column, string typeName)
         {
-            return GetCSharpResultAt(line, column, CA2002RuleName, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage, typeName));
+            return GetCSharpResultAt(line, column, CA2002RuleName, string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage, typeName));
         }
 
         private DiagnosticResult GetCA2002BasicResultAt(int line, int column, string typeName)
         {
-            return GetBasicResultAt(line, column, CA2002RuleName, string.Format(MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage, typeName));
+            return GetBasicResultAt(line, column, CA2002RuleName, string.Format(CultureInfo.CurrentCulture, MicrosoftNetCoreAnalyzersResources.DoNotLockOnObjectsWithWeakIdentityMessage, typeName));
         }
     }
 }

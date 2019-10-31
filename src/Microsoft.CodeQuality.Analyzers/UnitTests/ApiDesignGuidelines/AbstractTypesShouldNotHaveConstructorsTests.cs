@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -188,12 +189,12 @@ End Class
 
         private static DiagnosticResult GetCA1012CSharpResultAt(int line, int column, string objectName)
         {
-            return GetCSharpResultAt(line, column, AbstractTypesShouldNotHaveConstructorsAnalyzer.RuleId, string.Format(CA1012Message, objectName));
+            return GetCSharpResultAt(line, column, AbstractTypesShouldNotHaveConstructorsAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, CA1012Message, objectName));
         }
 
         private static DiagnosticResult GetCA1012BasicResultAt(int line, int column, string objectName)
         {
-            return GetBasicResultAt(line, column, AbstractTypesShouldNotHaveConstructorsAnalyzer.RuleId, string.Format(CA1012Message, objectName));
+            return GetBasicResultAt(line, column, AbstractTypesShouldNotHaveConstructorsAnalyzer.RuleId, string.Format(CultureInfo.CurrentCulture, CA1012Message, objectName));
         }
     }
 }

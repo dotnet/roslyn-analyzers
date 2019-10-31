@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
@@ -450,13 +451,13 @@ public class Foo : IFoo
         private static DiagnosticResult GetCA1024CSharpResultAt(int line, int column, string methodName)
         {
             return GetCSharpResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
-                string.Format(MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+                string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
         }
 
         private static DiagnosticResult GetCA1024BasicResultAt(int line, int column, string methodName)
         {
             return GetBasicResultAt(line, column, UsePropertiesWhereAppropriateAnalyzer.RuleId,
-                string.Format(MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
+                string.Format(CultureInfo.CurrentCulture, MicrosoftCodeQualityAnalyzersResources.UsePropertiesWhereAppropriateMessage, methodName));
         }
     }
 }

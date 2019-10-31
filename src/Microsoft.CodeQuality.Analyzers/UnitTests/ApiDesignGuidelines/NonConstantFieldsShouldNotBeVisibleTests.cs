@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Globalization;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Test.Utilities;
 using Xunit;
@@ -63,7 +64,7 @@ End Class");
 public class A
 {
     public static string field; 
-}", GetCSharpResultAt(4, 26, NonConstantFieldsShouldNotBeVisibleAnalyzer.RuleId, NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule.MessageFormat.ToString()));
+}", GetCSharpResultAt(4, 26, NonConstantFieldsShouldNotBeVisibleAnalyzer.RuleId, NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture)));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -91,7 +92,7 @@ public class B
             VerifyBasic(@"
 Public Class A
     Public Shared field as System.String
-End Class", GetBasicResultAt(3, 19, NonConstantFieldsShouldNotBeVisibleAnalyzer.RuleId, NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule.MessageFormat.ToString()));
+End Class", GetBasicResultAt(3, 19, NonConstantFieldsShouldNotBeVisibleAnalyzer.RuleId, NonConstantFieldsShouldNotBeVisibleAnalyzer.Rule.MessageFormat.ToString(CultureInfo.CurrentCulture)));
         }
 
         [Fact, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]

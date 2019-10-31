@@ -117,27 +117,6 @@ class TestClass
         }
 
         [Fact]
-        public void Test_Source_ASCIIEncodingGetBytes_WithCharArrayAndInt32AndInt32AndByteArrayAndInt32Parameters_WithConstantCharArray_Diagnostic()
-        {
-            VerifyCSharp(@"
-using System.IO;
-using System.Text;
-using System.Security.Cryptography.X509Certificates;
-
-class TestClass
-{
-    public void TestMethod(byte[] bytes, string path)
-    {
-        char[] chars = new char[] {'1', '2', '3'};
-        new ASCIIEncoding().GetBytes(chars, 0, 3, bytes, 0);
-        File.WriteAllBytes(path, bytes);
-        new X509Certificate(path);
-    }
-}",
-            GetCSharpResultAt(13, 9, 10, 24, "X509Certificate.X509Certificate(string fileName)", "void TestClass.TestMethod(byte[] bytes, string path)", "char[]", "void TestClass.TestMethod(byte[] bytes, string path)"));
-        }
-
-        [Fact]
         public void Test_Sink_X509Certificate_WithStringAndSecureStringAndX509KeyStorageFlagsParameters_Diagnostic()
         {
             VerifyCSharp(@"
@@ -379,6 +358,27 @@ class TestClass
     {
         File.WriteAllBytes(path, bytes);
         new X509Certificate2(path);
+    }
+}");
+        }
+
+        [Fact]
+        public void Test_Source_ASCIIEncodingGetBytes_WithCharArrayAndInt32AndInt32AndByteArrayAndInt32Parameters_WithConstantCharArray_NoDiagnostic()
+        {
+            VerifyCSharp(@"
+using System.IO;
+using System.Text;
+
+using System.Security.Cryptography.X509Certificates;
+
+class TestClass
+{
+    public void TestMethod(byte[] bytes, string path)
+    {
+        char[] chars = new char[] {'1', '2', '3'};
+        new ASCIIEncoding().GetBytes(chars, 0, 3, bytes, 0);
+        File.WriteAllBytes(path, bytes);
+        new X509Certificate(path);
     }
 }");
         }

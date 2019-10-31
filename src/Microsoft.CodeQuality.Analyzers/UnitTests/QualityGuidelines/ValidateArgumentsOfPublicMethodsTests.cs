@@ -26,14 +26,14 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() => new ValidateArgumentsOfPublicMethods();
 
         private static new DiagnosticResult GetCSharpResultAt(int line, int column, string methodSignature, string parameterName)
-            =>  new DiagnosticResult(ValidateArgumentsOfPublicMethods.Rule)
-            .WithLocation(line, column)
-            .WithArguments(methodSignature, parameterName);
+            => new DiagnosticResult(ValidateArgumentsOfPublicMethods.Rule)
+                .WithLocation(line, column)
+                .WithArguments(methodSignature, parameterName);
 
         private static new DiagnosticResult GetBasicResultAt(int line, int column, string methodSignature, string parameterName)
             => new DiagnosticResult(ValidateArgumentsOfPublicMethods.Rule)
-            .WithLocation(line, column)
-            .WithArguments(methodSignature, parameterName);
+                .WithLocation(line, column)
+                .WithArguments(methodSignature, parameterName);
 
         [Fact]
         public async Task ValueTypeParameter_NoDiagnostic()

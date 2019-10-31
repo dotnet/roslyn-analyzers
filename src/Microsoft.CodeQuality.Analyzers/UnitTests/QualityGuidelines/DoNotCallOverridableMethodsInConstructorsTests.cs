@@ -237,7 +237,7 @@ End Class
         }
 
         [Fact]
-        public async Task CA2214SpecialInheritanceCSharp()
+        public void CA2214SpecialInheritanceCSharp()
         {
             var source = @"
 abstract class C : System.Web.UI.Control
@@ -295,7 +295,7 @@ abstract class F : System.ComponentModel.Component
         }
 
         [Fact]
-        public async Task CA2214SpecialInheritanceBasic()
+        public void CA2214SpecialInheritanceBasic()
         {
             var source = @"
 MustInherit Class C

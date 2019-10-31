@@ -258,7 +258,7 @@ End Class",
                     (solution, projectId) => solution.WithProjectCompilationOptions(projectId, new VisualBasicCompilationOptions(OutputKind.ConsoleApplication))
                     }
             }.RunAsync();
-    }
+        }
 
         [Fact]
         public async Task CA1812_CSharp_NoDiagnostic_TypeContainingAssemblyEntryPointReturningInt()

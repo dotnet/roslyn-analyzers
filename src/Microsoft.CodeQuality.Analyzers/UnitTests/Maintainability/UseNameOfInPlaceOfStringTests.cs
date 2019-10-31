@@ -1,11 +1,8 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Globalization;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
-using Microsoft.CodeAnalysis.VisualBasic;
 using Test.Utilities;
 using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
@@ -288,7 +285,7 @@ Module Mod1
         Throw New ArgumentNullException(""s"")
     End Sub
 End Module",
-                LanguageVersion = LanguageVersion.VisualBasic12
+                LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic12
             }.RunAsync();
         }
 
@@ -306,7 +303,7 @@ Module Mod1
         Throw New ArgumentNullException(""s"")
     End Sub
 End Module",
-                LanguageVersion = LanguageVersion.VisualBasic14,
+                LanguageVersion = CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic14,
                 ExpectedDiagnostics =
                 {
                     GetBasicNameofResultAt(6, 41, "s")
@@ -406,7 +403,7 @@ public class Person : INotifyPropertyChanged
         get { return name; }
         set
         {
-            name = value; 
+            name = value;
             OnPropertyChanged(nameof(PersonName2));
         }
     }

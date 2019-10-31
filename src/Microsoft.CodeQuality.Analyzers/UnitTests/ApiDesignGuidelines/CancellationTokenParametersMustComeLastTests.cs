@@ -7,7 +7,7 @@ using Xunit;
 using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.CancellationTokenParametersMustComeLastAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
-using VerifyVB = Test.Utilities.CSharpCodeFixVerifier<
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
     Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.CancellationTokenParametersMustComeLastAnalyzer,
     Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
@@ -241,13 +241,13 @@ static class C1
 }";
 
             var expected = new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(5, 24).WithArguments("C1.M1(object, System.Threading.CancellationToken, object)");
-            VerifyCS.VerifyAnalyzerAsync(test, expected);
+            await VerifyCS.VerifyAnalyzerAsync(test, expected);
         }
 
         [Fact, WorkItem(2281, "https://github.com/dotnet/roslyn-analyzers/issues/2281")]
         public async Task CA1068_DoNotReportOnIProgressLastAndCancellationTokenBeforeLast()
         {
-            VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -260,7 +260,7 @@ public class C
     }
 }");
 
-            VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading
 Imports System.Threading.Tasks
@@ -275,7 +275,7 @@ End Class");
         [Fact, WorkItem(2281, "https://github.com/dotnet/roslyn-analyzers/issues/2281")]
         public async Task CA1068_ReportOnIProgressLastAndCancellationTokenNotBeforeLast()
         {
-            VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -290,7 +290,7 @@ public class C
             new DiagnosticResult(CancellationTokenParametersMustComeLastAnalyzer.Rule).WithLocation(8, 17)
                 .WithArguments("C.SomeAsync(System.Threading.CancellationToken, object, System.IProgress<int>)"));
 
-            VerifyVB.VerifyAnalyzerAsync(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Threading
 Imports System.Threading.Tasks
@@ -307,7 +307,7 @@ End Class",
         [Fact, WorkItem(2281, "https://github.com/dotnet/roslyn-analyzers/issues/2281")]
         public async Task CA1068_OnlyExcludeOneIProgressAtTheEnd()
         {
-            VerifyCS.VerifyAnalyzerAsync(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Threading;
 using System.Threading.Tasks;

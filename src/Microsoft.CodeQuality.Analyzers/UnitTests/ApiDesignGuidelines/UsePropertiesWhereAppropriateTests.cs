@@ -403,7 +403,7 @@ End Class
         [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
         public void CA1024_ExplicitInterfaceImplementation_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            VerifyCS.VerifyAnalyzerAsync(@"
 public interface IFoo
 {
     object GetContent();
@@ -422,7 +422,7 @@ public class Foo : IFoo
         [Fact, WorkItem(1551, "https://github.com/dotnet/roslyn-analyzers/issues/1551")]
         public void CA1024_ImplicitInterfaceImplementation_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            VerifyCS.VerifyAnalyzerAsync(@"
 public interface IFoo
 {
     object GetContent();

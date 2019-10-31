@@ -344,7 +344,7 @@ Public Class ClassWithExtern
     Public Shared Sub DllImportMethod(param As Integer)
     End Sub
 
-    Public Declare Function DeclareFunction Lib ""Dependency.dll"" (param As Integer) As Integer    
+    Public Declare Function DeclareFunction Lib ""Dependency.dll"" (param As Integer) As Integer
 End Class
 ");
         }
@@ -825,21 +825,39 @@ public class C
                                 dotnet_code_quality.CA1801.api_surface = private")]
         public async Task EditorConfigConfiguration_ApiSurfaceOption(string accessibility, string editorConfigText)
         {
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync($@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 public class C
 {{
     {accessibility} void M(int unused)
     {{
     }}
-}}",
-                editorConfigText);
+}}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            }.RunAsync();
 
-            await VerifyVB.VerifyAnalyzerWithEditorConfigAsync($@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Public Class C
     {accessibility} Sub M(unused As Integer)
     End Sub
-End Class",
-                editorConfigText);
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            }.RunAsync();
         }
 
         #endregion

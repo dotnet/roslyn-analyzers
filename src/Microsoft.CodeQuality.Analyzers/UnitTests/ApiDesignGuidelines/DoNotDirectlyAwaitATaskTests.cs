@@ -324,7 +324,14 @@ public class C
         await t.ConfigureAwait(false);
     }
 }";
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(code, editorConfigText);
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { code },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            }.RunAsync();
         }
 
         [Theory, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]
@@ -348,7 +355,15 @@ public class C
         await t.ConfigureAwait(false);
     }
 }";
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(code, editorConfigText, GetCSharpResultAt(9, 15));
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources = { code },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                ExpectedDiagnostics = { GetCSharpResultAt(9, 15) }
+            }.RunAsync();
         }
 
         [Fact, WorkItem(1953, "https://github.com/dotnet/roslyn-analyzers/issues/1953")]

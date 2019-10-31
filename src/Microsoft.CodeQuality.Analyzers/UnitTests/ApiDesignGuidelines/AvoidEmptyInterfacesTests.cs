@@ -145,13 +145,25 @@ End Interface");
                                   dotnet_code_quality.CA1040.api_surface_2 = private")]
         public async Task TestCSharpEmptyInterface_AnalyzerOptions_Diagnostic(string accessibility, string editorConfigText)
         {
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync($@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 public class C
 {{
     {accessibility} interface I {{ }}
-}}",
-                editorConfigText,
-                CreateCSharpResult(4, 16 + accessibility.Length));
+}}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                ExpectedDiagnostics =
+                {
+                    CreateCSharpResult(4, 16 + accessibility.Length)
+                }
+            }.RunAsync();
         }
 
         [Theory]
@@ -181,13 +193,25 @@ public class C
                                 dotnet_code_quality.CA1040.api_surface_2 = Private")]
         public async Task TestBasicEmptyInterface_AnalyzerOptions_Diagnostic(string accessibility, string editorConfigText)
         {
-            await VerifyVB.VerifyAnalyzerWithEditorConfigAsync($@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Public Class C
     {accessibility} Interface I
     End Interface
-End Class",
-                editorConfigText,
-                CreateBasicResult(3, 16 + accessibility.Length));
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                ExpectedDiagnostics =
+                {
+                    CreateBasicResult(3, 16 + accessibility.Length)
+                }
+            }.RunAsync();
         }
 
         [Theory]
@@ -198,12 +222,21 @@ End Class",
                                   dotnet_code_quality.CA1040.api_surface = private")]
         public async Task TestCSharpEmptyInterface_AnalyzerOptions_NoDiagnostic(string accessibility, string editorConfigText)
         {
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync($@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 public class C
 {{
     {accessibility} interface I {{ }}
-}}",
-                editorConfigText);
+}}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            }.RunAsync();
         }
 
         [Theory]
@@ -214,12 +247,21 @@ public class C
                                 dotnet_code_quality.CA1040.api_surface = Private")]
         public async Task TestBasicEmptyInterface_AnalyzerOptions_NoDiagnostic(string accessibility, string editorConfigText)
         {
-            await VerifyVB.VerifyAnalyzerWithEditorConfigAsync($@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        $@"
 Public Class C
     {accessibility} Interface I
     End Interface
-End Class",
-                editorConfigText);
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            }.RunAsync();
         }
 
         private static DiagnosticResult CreateCSharpResult(int line, int col)

@@ -122,12 +122,24 @@ End Class");
                 };
             }
 
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(@"
+            var csTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class Test
 {
     private readonly int field = 0;
 }
-", editorConfigText, expected);
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
+            csTest.ExpectedDiagnostics.AddRange(expected);
+            await csTest.RunAsync();
 
             expected = Array.Empty<DiagnosticResult>();
             if (reportDiagnostic)
@@ -138,11 +150,23 @@ public class Test
                 };
             }
 
-            await VerifyVB.VerifyAnalyzerWithEditorConfigAsync(@"
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class Test
     Private ReadOnly field As Integer = 0
 End Class
-", editorConfigText, expected);
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+            vbTest.ExpectedDiagnostics.AddRange(expected);
+            await vbTest.RunAsync();
         }
 
         private DiagnosticResult GetCSharpDefaultResultAt(int line, int column, string symbolName)

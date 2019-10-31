@@ -689,7 +689,13 @@ namespace Microsoft.ApiDesignGuidelines.Analyzers.UnitTests
                 };
             }
 
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(@"
+            var csTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 class Test
 {
     void M1(string param)
@@ -697,7 +703,13 @@ class Test
         try { }
         catch (System.NullReferenceException ex) { }
     }
-}", editorConfigText, expected);
+}"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
+            csTest.ExpectedDiagnostics.AddRange(expected);
+            await csTest.RunAsync();
 
             expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length > 0)
@@ -709,14 +721,26 @@ class Test
                 };
             }
 
-            await VerifyVB.VerifyAnalyzerWithEditorConfigAsync(@"
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Class Test
     Private Sub M1(param As String)
         Try
         Catch ex As System.NullReferenceException
         End Try
     End Sub
-End Class", editorConfigText, expected);
+End Class"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+            vbTest.ExpectedDiagnostics.AddRange(expected);
+            await vbTest.RunAsync();
         }
 
         private static DiagnosticResult GetCA1031CSharpResultAt(int line, int column, string signature)

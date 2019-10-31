@@ -1862,7 +1862,13 @@ End Class
                       dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
         public async Task HazardousUsageInInvokedMethod_PrivateMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
         {
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class C
 {
     public int X;
@@ -1885,9 +1891,19 @@ public class Test
         var x = c.X;
     }
 }
-", editorConfigText);
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            }.RunAsync();
 
-            await VerifyVB.VerifyAnalyzerWithEditorConfigAsync(@"
+            await new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class C
     Public X As Integer
 End Class
@@ -1905,7 +1921,11 @@ Public Class Test
         Dim x = c.X
     End Sub
 End Class
-", editorConfigText);
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            }.RunAsync();
         }
 
         [Theory, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
@@ -1915,7 +1935,13 @@ End Class
                       dotnet_code_quality.max_interprocedural_method_call_chain = 0")]
         public async Task ValidatedNotNullAttributeInInvokedMethod_EditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
         {
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class ValidatedNotNullAttribute : System.Attribute
 {
 }
@@ -1939,9 +1965,16 @@ public class C
     {
     }
 }
-", editorConfigText,
-            // Test0.cs(14,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetCSharpResultAt(14, 13, "void C.M1(C c1, C c2)", "c2"));
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                ExpectedDiagnostics =
+                {
+                    // Test0.cs(14,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2)', validate parameter 'c2' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                    GetCSharpResultAt(14, 13, "void C.M1(C c1, C c2)", "c2")
+                }
+            }.RunAsync();
         }
 
         [Fact, WorkItem(2525, "https://github.com/dotnet/roslyn-analyzers/issues/2525")]
@@ -2047,7 +2080,13 @@ public static class Issue2578Test
                       dotnet_code_quality.null_check_validation_methods = M:C.Validate(C)|M:Helper`1.Validate(C)|M:Helper`1.Validate``1(C,``0)")]
         public async Task NullCheckValidationMethod_ConfiguredInEditorConfig_NoInterproceduralAnalysis_NoDiagnostic(string editorConfigText)
         {
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(@"
+            await new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class C
 {
     public void M1(C c1, C c2, C c3, C c4, C c5, C c6)
@@ -2098,13 +2137,20 @@ internal static class Helper<T>
     {
     }
 }
-", editorConfigText,
-            // Test0.cs(16,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c4' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetCSharpResultAt(16, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c4"),
-            // Test0.cs(19,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c5' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetCSharpResultAt(19, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c5"),
-            // Test0.cs(22,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c6' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
-            GetCSharpResultAt(22, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c6"));
+"
+},
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+                ExpectedDiagnostics =
+                {
+                    // Test0.cs(16,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c4' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                    GetCSharpResultAt(16, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c4"),
+                    // Test0.cs(19,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c5' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                    GetCSharpResultAt(19, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c5"),
+                    // Test0.cs(22,13): warning CA1062: In externally visible method 'void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)', validate parameter 'c6' is non-null before using it. If appropriate, throw an ArgumentNullException when the argument is null or add a Code Contract precondition asserting non-null argument.
+                    GetCSharpResultAt(22, 13, "void C.M1(C c1, C c2, C c3, C c4, C c5, C c6)", "c6")
+                }
+            }.RunAsync();
         }
 
         [Fact, WorkItem(1707, "https://github.com/dotnet/roslyn-analyzers/issues/1707")]
@@ -6018,7 +6064,13 @@ public class Class1
                 };
             }
 
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(@"
+            var csTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public class Test
 {
     public void M1(string str)
@@ -6026,7 +6078,14 @@ public class Test
         var x = str.ToString();
     }
 }
-", editorConfigText, expected);
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
+            csTest.ExpectedDiagnostics.AddRange(expected);
+            await csTest.RunAsync();
+
 
             expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length == 0)
@@ -6038,13 +6097,25 @@ public class Test
                 };
             }
 
-            await VerifyVB.VerifyAnalyzerWithEditorConfigAsync(@"
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Public Class Test
     Public Sub M1(str As String)
         Dim x = str.ToString()
     End Sub
 End Class
-", editorConfigText, expected);
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+            vbTest.ExpectedDiagnostics.AddRange(expected);
+            await vbTest.RunAsync();
         }
 
         [Theory]
@@ -6065,7 +6136,13 @@ End Class
                 };
             }
 
-            await VerifyCS.VerifyAnalyzerWithEditorConfigAsync(@"
+            var csTest = new VerifyCS.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 public static class Test
 {
     public static void M1(this string str)
@@ -6073,7 +6150,13 @@ public static class Test
         var x = str.ToString();
     }
 }
-", editorConfigText, expected);
+"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                },
+            };
+            csTest.ExpectedDiagnostics.AddRange(expected);
+            await csTest.RunAsync();
 
             expected = Array.Empty<DiagnosticResult>();
             if (editorConfigText.Length == 0)
@@ -6085,7 +6168,13 @@ public static class Test
                 };
             }
 
-            await VerifyVB.VerifyAnalyzerWithEditorConfigAsync(@"
+            var vbTest = new VerifyVB.Test
+            {
+                TestState =
+                {
+                    Sources =
+                    {
+                        @"
 Imports System.Runtime.CompilerServices
 
 Public Module Test
@@ -6093,7 +6182,13 @@ Public Module Test
     Public Sub M1(str As String)
         Dim x = str.ToString()
     End Sub
-End Module", editorConfigText, expected);
+End Module"
+                    },
+                    AdditionalFiles = { (".editorconfig", editorConfigText) }
+                }
+            };
+            vbTest.ExpectedDiagnostics.AddRange(expected);
+            await vbTest.RunAsync();
         }
     }
 }

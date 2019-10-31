@@ -104,7 +104,8 @@ namespace Microsoft.NetCore.Analyzers.Runtime
             {
                 // TODO: Handle C# 8 index expression (and vb.net equivalent if any)
 
-                if (!HasCountProperty(collectionSyntax, semanticModel))
+                var typeSymbol = semanticModel.GetTypeInfo(collectionSyntax).Type;
+                if (!typeSymbol.HasAnyCollectionCountProperty(WellKnownTypeProvider.GetOrCreate(semanticModel.Compilation)))
                 {
                     return null;
                 }
@@ -120,56 +121,14 @@ namespace Microsoft.NetCore.Analyzers.Runtime
 
             if (methodName == "Count")
             {
-                return HasCountProperty(collectionSyntax, semanticModel)
+                var typeSymbol = semanticModel.GetTypeInfo(collectionSyntax).Type;
+                return typeSymbol.HasAnyCollectionCountProperty(WellKnownTypeProvider.GetOrCreate(semanticModel.Compilation))
                     ? generator.MemberAccessExpression(collectionSyntaxNoTrailingTrivia, "Count")
                     : null;
             }
 
             Debug.Fail($"Unexpected method name '{methodName}' for {DoNotUseEnumerableMethodsOnIndexableCollectionsInsteadUseTheCollectionDirectlyAnalyzer.RuleId} code fix.");
             return null;
-        }
-
-        private static bool HasCountProperty(SyntaxNode node, SemanticModel model)
-        {
-            var typeSymbol = model.GetTypeInfo(node).Type;
-
-            if (typeSymbol == null)
-            {
-                return false;
-            }
-
-            if (typeSymbol.TypeKind == TypeKind.Class)
-            {
-                if (HasCountPropertyMember(typeSymbol))
-                {
-                    return true;
-                }
-
-                var currentType = typeSymbol.BaseType;
-                while (currentType != null)
-                {
-                    if (HasCountPropertyMember(currentType))
-                    {
-                        return true;
-                    }
-
-                    currentType = currentType.BaseType;
-                }
-
-                return false;
-            }
-
-            if (typeSymbol.TypeKind == TypeKind.Interface)
-            {
-                return HasCountPropertyMember(typeSymbol)
-                    ? true
-                    : typeSymbol.AllInterfaces.Any(interfaceType => HasCountPropertyMember(interfaceType));
-            }
-
-            return false;
-
-            static bool HasCountPropertyMember(ITypeSymbol type) =>
-                type.GetMembers("Count").Any(member => member.Kind == SymbolKind.Property);
         }
 
         // Needed for Telemetry (https://github.com/dotnet/roslyn-analyzers/issues/192)

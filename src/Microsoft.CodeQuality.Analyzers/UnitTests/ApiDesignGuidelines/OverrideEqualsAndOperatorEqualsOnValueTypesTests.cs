@@ -1,19 +1,25 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer,
+    Microsoft.CodeQuality.CSharp.Analyzers.ApiDesignGuidelines.CSharpOverrideEqualsAndOperatorEqualsOnValueTypesFixer>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer,
+    Microsoft.CodeQuality.VisualBasic.Analyzers.ApiDesignGuidelines.BasicOverrideEqualsAndOperatorEqualsOnValueTypesFixer>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class OverrideEqualsAndOperatorEqualsOnValueTypesTests : DiagnosticAnalyzerTestBase
+    public class OverrideEqualsAndOperatorEqualsOnValueTypesTests
     {
         [Fact]
-        public void CSharpDiagnosticForBothEqualsAndOperatorEqualsOnStruct()
+        public async Task CSharpDiagnosticForBothEqualsAndOperatorEqualsOnStruct()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct A
 {
     public int X;
@@ -24,9 +30,9 @@ public struct A
 
         [WorkItem(895, "https://github.com/dotnet/roslyn-analyzers/issues/895")]
         [Fact]
-        public void CSharpNoDiagnosticForInternalAndPrivateStruct()
+        public async Task CSharpNoDiagnosticForInternalAndPrivateStruct()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 internal struct A
 {
     public int X;
@@ -44,9 +50,9 @@ public class B
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
         [Fact]
-        public void CSharpNoDiagnosticForEnum()
+        public async Task CSharpNoDiagnosticForEnum()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public enum E
 {
     F = 0
@@ -56,9 +62,9 @@ public enum E
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
         [Fact]
-        public void CSharpNoDiagnosticForStructsWithoutMembers()
+        public async Task CSharpNoDiagnosticForStructsWithoutMembers()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct EmptyStruct
 {
 }
@@ -67,9 +73,9 @@ public struct EmptyStruct
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
         [Fact]
-        public void CSharpNoDiagnosticForEnumerators()
+        public async Task CSharpNoDiagnosticForEnumerators()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 using System.Collections;
 
@@ -131,9 +137,9 @@ public struct MyGenericEnumerator<T> : System.Collections.Generic.IEnumerator<T>
         }
 
         [Fact]
-        public void CSharpNoDiagnosticForEqualsOrOperatorEqualsOnClass()
+        public async Task CSharpNoDiagnosticForEqualsOrOperatorEqualsOnClass()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class A
 {
     public int X;
@@ -141,9 +147,9 @@ public class A
         }
 
         [Fact]
-        public void CSharpNoDiagnosticWhenStructImplementsEqualsAndOperatorEquals()
+        public async Task CSharpNoDiagnosticWhenStructImplementsEqualsAndOperatorEquals()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct A
 {
     public override bool Equals(object other)
@@ -164,9 +170,9 @@ public struct A
         }
 
         [Fact]
-        public void CSharpDiagnosticWhenEqualsHasWrongSignature()
+        public async Task CSharpDiagnosticWhenEqualsHasWrongSignature()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct A
 {
     public bool Equals(A other)
@@ -188,9 +194,9 @@ public struct A
         }
 
         [Fact]
-        public void CSharpDiagnosticWhenEqualsIsNotAnOverride()
+        public async Task CSharpDiagnosticWhenEqualsIsNotAnOverride()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public struct A
 {
     public new bool Equals(object other)
@@ -212,9 +218,9 @@ public struct A
         }
 
         [Fact]
-        public void BasicDiagnosticsForEqualsOnStructure()
+        public async Task BasicDiagnosticsForEqualsOnStructure()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure A
     Public X As Integer
 End Structure
@@ -225,9 +231,9 @@ End Structure
 
         [WorkItem(895, "https://github.com/dotnet/roslyn-analyzers/issues/895")]
         [Fact]
-        public void BasicNoDiagnosticsForInternalAndPrivateStructure()
+        public async Task BasicNoDiagnosticsForInternalAndPrivateStructure()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Friend Structure A
     Public X As Integer
 End Structure
@@ -242,9 +248,9 @@ End Class
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
         [Fact]
-        public void BasicNoDiagnosticForEnum()
+        public async Task BasicNoDiagnosticForEnum()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Enum E
     F = 0
 End Enum
@@ -253,9 +259,9 @@ End Enum
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
         [Fact]
-        public void BasicNoDiagnosticForStructsWithoutMembers()
+        public async Task BasicNoDiagnosticForStructsWithoutMembers()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure EmptyStruct
 End Structure
 ");
@@ -263,9 +269,9 @@ End Structure
 
         [WorkItem(899, "https://github.com/dotnet/roslyn-analyzers/issues/899")]
         [Fact]
-        public void BasicNoDiagnosticForEnumerators()
+        public async Task BasicNoDiagnosticForEnumerators()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -317,18 +323,18 @@ End Structure
         }
 
         [Fact]
-        public void BasicNoDiagnosticForEqualsOnClass()
+        public async Task BasicNoDiagnosticForEqualsOnClass()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class A
 End Class
 ");
         }
 
         [Fact]
-        public void BasicNoDiagnosticWhenStructureImplementsEqualsAndOperatorEquals()
+        public async Task BasicNoDiagnosticWhenStructureImplementsEqualsAndOperatorEquals()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure A
     Public Overrides Overloads Function Equals(obj As Object) As Boolean
         Return True
@@ -346,9 +352,9 @@ End Structure
         }
 
         [Fact]
-        public void BasicDiagnosticWhenEqualsHasWrongSignature()
+        public async Task BasicDiagnosticWhenEqualsHasWrongSignature()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure A
     Public Overrides Overloads Function Equals(obj As A) As Boolean
         Return True
@@ -362,14 +368,15 @@ Public Structure A
         Return False
     End Operator
 End Structure
-", TestValidationMode.AllowCompileErrors,
+",
+            CompilerDiagnostics.None,
             GetBasicOverrideEqualsDiagnostic(2, 18, "A"));
         }
 
         [Fact]
-        public void BasicDiagnosticWhenEqualsIsNotAnOverride()
+        public async Task BasicDiagnosticWhenEqualsIsNotAnOverride()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Structure A
    Public Shadows Function Equals(obj As Object) As Boolean
       Return True
@@ -388,23 +395,17 @@ End Structure
         }
 
         [Fact, WorkItem(2324, "https://github.com/dotnet/roslyn-analyzers/issues/2324")]
-        public void CSharp_RefStruct_NoDiagnostic()
+        public async Task CSharp_RefStruct_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await new VerifyCS.Test
+            {
+                TestCode = @"
 public ref struct A
 {
     public int X;
-}", parseOptions: new CSharpParseOptions(LanguageVersion.CSharp8));
-        }
-
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new OverrideEqualsAndOperatorEqualsOnValueTypesAnalyzer();
+}",
+                LanguageVersion = LanguageVersion.CSharp8
+            }.RunAsync();
         }
 
         private static DiagnosticResult GetCSharpOverrideEqualsDiagnostic(int line, int column, string typeName)

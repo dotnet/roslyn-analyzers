@@ -1,11 +1,18 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.DoNotCallOverridableMethodsInConstructorsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
+using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.QualityGuidelines.DoNotCallOverridableMethodsInConstructorsAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
 {
@@ -22,9 +29,9 @@ namespace Microsoft.CodeQuality.Analyzers.QualityGuidelines.UnitTests
         }
 
         [Fact]
-        public void CA2214VirtualMethodCSharp()
+        public async Task CA2214VirtualMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class C
 {
     C()
@@ -55,9 +62,9 @@ class C
         }
 
         [Fact]
-        public void CA2214VirtualMethodBasic()
+        public async Task CA2214VirtualMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class C
     Public Sub New()
         Foo()
@@ -84,9 +91,9 @@ End Class
         }
 
         [Fact]
-        public void CA2214AbstractMethodCSharp()
+        public async Task CA2214AbstractMethodCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 abstract class C
 {
     C()
@@ -101,9 +108,9 @@ abstract class C
         }
 
         [Fact]
-        public void CA2214AbstractMethodBasic()
+        public async Task CA2214AbstractMethodBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 MustInherit Class C
     Public Sub New()
         Foo()
@@ -115,9 +122,9 @@ End Class
         }
 
         [Fact]
-        public void CA2214MultipleInstancesCSharp()
+        public async Task CA2214MultipleInstancesCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 abstract class C
 {
     C()
@@ -135,9 +142,9 @@ abstract class C
         }
 
         [Fact]
-        public void CA2214MultipleInstancesBasic()
+        public async Task CA2214MultipleInstancesBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 MustInherit Class C
     Public Sub New()
         Foo()
@@ -153,9 +160,9 @@ End Class
         }
 
         [Fact]
-        public void CA2214NotTopLevelCSharp()
+        public async Task CA2214NotTopLevelCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 abstract class C
 {
     C()
@@ -179,9 +186,9 @@ abstract class C
         }
 
         [Fact]
-        public void CA2214NotTopLevelBasic()
+        public async Task CA2214NotTopLevelBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 MustInherit Class C
     Public Sub New()
         If True Then
@@ -200,9 +207,9 @@ End Class
         }
 
         [Fact]
-        public void CA2214NoDiagnosticsOutsideConstructorCSharp()
+        public async Task CA2214NoDiagnosticsOutsideConstructorCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 abstract class C
 {
     protected abstract void Foo();
@@ -216,9 +223,9 @@ abstract class C
         }
 
         [Fact]
-        public void CA2214NoDiagnosticsOutsideConstructorBasic()
+        public async Task CA2214NoDiagnosticsOutsideConstructorBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 MustInherit Class C
     MustOverride Sub Foo()
 
@@ -230,7 +237,7 @@ End Class
         }
 
         [Fact]
-        public void CA2214SpecialInheritanceCSharp()
+        public async Task CA2214SpecialInheritanceCSharp()
         {
             var source = @"
 abstract class C : System.Web.UI.Control
@@ -288,7 +295,7 @@ abstract class F : System.ComponentModel.Component
         }
 
         [Fact]
-        public void CA2214SpecialInheritanceBasic()
+        public async Task CA2214SpecialInheritanceBasic()
         {
             var source = @"
 MustInherit Class C
@@ -339,9 +346,9 @@ End Class
         }
 
         [Fact]
-        public void CA2214VirtualOnOtherClassesCSharp()
+        public async Task CA2214VirtualOnOtherClassesCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class D
 {
     public virtual void Foo() {}
@@ -361,9 +368,9 @@ class C
         }
 
         [Fact]
-        public void CA2214VirtualOnOtherClassesBasic()
+        public async Task CA2214VirtualOnOtherClassesBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class D
     Public Overridable Sub Foo()
     End Sub
@@ -380,9 +387,9 @@ End Class
         }
 
         [Fact, WorkItem(1652, "https://github.com/dotnet/roslyn-analyzers/issues/1652")]
-        public void CA2214VirtualInvocationsInLambdaCSharp()
+        public async Task CA2214VirtualInvocationsInLambdaCSharp()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 internal abstract class A
@@ -399,9 +406,9 @@ internal abstract class A
         }
 
         [Fact, WorkItem(1652, "https://github.com/dotnet/roslyn-analyzers/issues/1652")]
-        public void CA2214VirtualInvocationsInLambdaBasic()
+        public async Task CA2214VirtualInvocationsInLambdaBasic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Friend MustInherit Class A
@@ -417,13 +424,13 @@ End Class
         }
 
         private static DiagnosticResult GetCA2214CSharpResultAt(int line, int column)
-        {
-            return GetCSharpResultAt(line, column, DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DoNotCallOverridableMethodsInConstructors);
-        }
+            => new DiagnosticResult(DoNotCallOverridableMethodsInConstructorsAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.DoNotCallOverridableMethodsInConstructors);
 
         private static DiagnosticResult GetCA2214BasicResultAt(int line, int column)
-        {
-            return GetBasicResultAt(line, column, DoNotCallOverridableMethodsInConstructorsAnalyzer.RuleId, MicrosoftCodeQualityAnalyzersResources.DoNotCallOverridableMethodsInConstructors);
-        }
+            => new DiagnosticResult(DoNotCallOverridableMethodsInConstructorsAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(MicrosoftCodeQualityAnalyzersResources.DoNotCallOverridableMethodsInConstructors);
     }
 }

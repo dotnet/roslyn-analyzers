@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
 using System.Globalization;
-using Microsoft.CodeAnalysis.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
@@ -14,7 +14,7 @@ using VerifyVB = Test.Utilities.VisualBasicCodeFixVerifier<
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
-    public class PropertyNamesShouldNotMatchGetMethodsTests : DiagnosticAnalyzerTestBase
+    public class PropertyNamesShouldNotMatchGetMethodsTests
     {
         private const string CSharpTestTemplate = @"
 using System;
@@ -74,20 +74,10 @@ Friend Class OuterClass
 End Class
 ";
 
-        protected override DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return new PropertyNamesShouldNotMatchGetMethodsAnalyzer();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new PropertyNamesShouldNotMatchGetMethodsAnalyzer();
-        }
-
         [Fact]
-        public void CSharp_CA1721_PropertyNameDoesNotMatchGetMethodName_Exposed_NoDiagnostic()
+        public async Task CSharp_CA1721_PropertyNameDoesNotMatchGetMethodName_Exposed_NoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class Test
@@ -110,9 +100,9 @@ public class Test
         [InlineData("protected internal", "public")]
         [InlineData("protected internal", "protected")]
         [InlineData("protected internal", "protected internal")]
-        public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
+        public async Task CSharp_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
                 string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721CSharpResultAt(
                     line: 6,
@@ -120,7 +110,7 @@ public class Test
                     identifierName: "Date",
                     otherIdentifierName: "GetDate"));
 
-            VerifyCSharp(
+            await VerifyCS.VerifyAnalyzerAsync(
                 string.Format(CultureInfo.InvariantCulture, CSharpNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
@@ -130,9 +120,9 @@ public class Test
         [InlineData("internal", "private")]
         [InlineData("internal", "internal")]
         [InlineData("", "")]
-        public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
+        public async Task CSharp_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyCSharp(string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
+            await VerifyCS.VerifyAnalyzerAsync(string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory, WorkItem(1432, "https://github.com/dotnet/roslyn-analyzers/issues/1432")]
@@ -154,15 +144,15 @@ public class Test
         [InlineData("", "public")]
         [InlineData("", "protected")]
         [InlineData("", "protected internal")]
-        public void CSharp_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
+        public async Task CSharp_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyCSharp(string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
+            await VerifyCS.VerifyAnalyzerAsync(string.Format(CultureInfo.InvariantCulture, CSharpTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Fact]
-        public void CSharp_CA1721_PropertyNameMatchesBaseClassGetMethodName_Exposed_Diagnostic()
+        public async Task CSharp_CA1721_PropertyNameMatchesBaseClassGetMethodName_Exposed_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class Foo
@@ -185,9 +175,9 @@ public class Bar : Foo
 
 
         [Fact]
-        public void CSharp_CA1721_GetMethodNameMatchesBaseClassPropertyName_Exposed_Diagnostic()
+        public async Task CSharp_CA1721_GetMethodNameMatchesBaseClassPropertyName_Exposed_Diagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 using System;
 
 public class Foo
@@ -209,9 +199,9 @@ public class Bar : Foo
         }
 
         [Fact]
-        public void Basic_CA1721_PropertyNameDoesNotMatchGetMethodName_Exposed_NoDiagnostic()
+        public async Task Basic_CA1721_PropertyNameDoesNotMatchGetMethodName_Exposed_NoDiagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class Test
@@ -236,9 +226,9 @@ End Class");
         [InlineData("Protected Friend", "Public")]
         [InlineData("Protected Friend", "Protected")]
         [InlineData("Protected Friend", "Protected Friend")]
-        public void Basic_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
+        public async Task Basic_CA1721_PropertyNamesMatchGetMethodNames_Exposed_Diagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
                 string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility),
                 GetCA1721BasicResultAt(
                     line: 5,
@@ -246,7 +236,7 @@ End Class");
                     identifierName: "Date",
                     otherIdentifierName: "GetDate"));
 
-            VerifyBasic(
+            await VerifyVB.VerifyAnalyzerAsync(
                 string.Format(CultureInfo.InvariantCulture, BasicNotExternallyVisibleTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
@@ -255,9 +245,9 @@ End Class");
         [InlineData("Private", "Friend")]
         [InlineData("Friend", "Private")]
         [InlineData("Friend", "Friend")]
-        public void Basic_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
+        public async Task Basic_CA1721_PropertyNamesMatchGetMethodNames_Unexposed_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyBasic(string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
+            await VerifyVB.VerifyAnalyzerAsync(string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Theory]
@@ -273,15 +263,15 @@ End Class");
         [InlineData("Friend", "Public")]
         [InlineData("Friend", "Protected")]
         [InlineData("Friend", "Protected Friend")]
-        public void Basic_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
+        public async Task Basic_CA1721_PropertyNamesMatchGetMethodNames_MixedExposure_NoDiagnostics(string propertyAccessibility, string methodAccessibility)
         {
-            VerifyBasic(string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
+            await VerifyVB.VerifyAnalyzerAsync(string.Format(CultureInfo.InvariantCulture, BasicTestTemplate, propertyAccessibility, methodAccessibility));
         }
 
         [Fact]
-        public void Basic_CA1721_PropertyNameMatchesBaseClassGetMethodName_Exposed_Diagnostic()
+        public async Task Basic_CA1721_PropertyNameMatchesBaseClassGetMethodName_Exposed_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class Foo
@@ -303,9 +293,9 @@ End Class",
 
 
         [Fact]
-        public void Basic_CA1721_GetMethodNameMatchesBaseClassPropertyName_Exposed_Diagnostic()
+        public async Task Basic_CA1721_GetMethodNameMatchesBaseClassPropertyName_Exposed_Diagnostic()
         {
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Imports System
 
 Public Class Foo
@@ -325,16 +315,16 @@ End Class",
         }
 
         [Fact, WorkItem(1374, "https://github.com/dotnet/roslyn-analyzers/issues/1374")]
-        public void CA1721_TypePropertyNoDiagnostic()
+        public async Task CA1721_TypePropertyNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 class T { }
 class C
 {
     public T Type { get; }
 }");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Class T
 End Class
 Class C
@@ -343,9 +333,9 @@ End Class");
         }
 
         [Fact, WorkItem(2085, "https://github.com/dotnet/roslyn-analyzers/issues/2085")]
-        public void CA1721_StaticAndInstanceMismatchNoDiagnostic()
+        public async Task CA1721_StaticAndInstanceMismatchNoDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C1
 {
     public int Value { get; }
@@ -359,7 +349,7 @@ public class C2
 }
 ");
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class C1
     Public ReadOnly Property Value As Integer
 
@@ -378,9 +368,9 @@ End Class");
         }
 
         [Fact, WorkItem(2914, "https://github.com/dotnet/roslyn-analyzers/issues/2914")]
-        public void CA1721_OverrideNoDiagnosticButVirtualDiagnostic()
+        public async Task CA1721_OverrideNoDiagnosticButVirtualDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class BaseClass
 {
     public virtual int Value { get; }
@@ -405,7 +395,7 @@ public class C3 : BaseClass
 ",
             GetCA1721CSharpResultAt(line: 4, column: 24, identifierName: "Value", otherIdentifierName: "GetValue"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class BaseClass
     Public Overridable ReadOnly Property Value As Integer
 
@@ -450,9 +440,9 @@ End Class
         }
 
         [Fact, WorkItem(2914, "https://github.com/dotnet/roslyn-analyzers/issues/2914")]
-        public void CA1721_OverrideWithLocalMemberDiagnostic()
+        public async Task CA1721_OverrideWithLocalMemberDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class BaseClass1
 {
     public virtual int Value { get; }
@@ -478,7 +468,7 @@ public class C2 : BaseClass2
             GetCA1721CSharpResultAt(line: 10, column: 16, identifierName: "Value", otherIdentifierName: "GetValue"),
             GetCA1721CSharpResultAt(line: 20, column: 16, identifierName: "Value", otherIdentifierName: "GetValue"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class BaseClass1
     Public Overridable ReadOnly Property Value As Integer
 End Class
@@ -523,9 +513,9 @@ End Class
         }
 
         [Fact, WorkItem(2914, "https://github.com/dotnet/roslyn-analyzers/issues/2914")]
-        public void CA1721_OverrideMultiLevelDiagnostic()
+        public async Task CA1721_OverrideMultiLevelDiagnostic()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class MyBaseClass
 {
     public virtual int GetValue(int i) => i;
@@ -549,7 +539,7 @@ public class MySubClass : MyClass
             GetCA1721CSharpResultAt(line: 10, column: 24, identifierName: "Value", otherIdentifierName: "GetValue"),
             GetCA1721CSharpResultAt(line: 11, column: 24, identifierName: "Foo", otherIdentifierName: "GetFoo"));
 
-            VerifyBasic(@"
+            await VerifyVB.VerifyAnalyzerAsync(@"
 Public Class MyBaseClass
     Public Overridable Function GetValue(ByVal i As Integer) As Integer
         Return i
@@ -602,14 +592,18 @@ End Class
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
             string message = string.Format(CultureInfo.InvariantCulture, MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
-            return GetCSharpResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
+            return new DiagnosticResult(PropertyNamesShouldNotMatchGetMethodsAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(message);
         }
 
         private static DiagnosticResult GetCA1721BasicResultAt(int line, int column, string identifierName, string otherIdentifierName)
         {
             // Add a public read-only property accessor for positional argument '{0}' of attribute '{1}'.
             string message = string.Format(CultureInfo.InvariantCulture, MicrosoftCodeQualityAnalyzersResources.PropertyNamesShouldNotMatchGetMethodsMessage, identifierName, otherIdentifierName);
-            return GetBasicResultAt(line, column, PropertyNamesShouldNotMatchGetMethodsAnalyzer.RuleId, message);
+            return new DiagnosticResult(PropertyNamesShouldNotMatchGetMethodsAnalyzer.Rule)
+                .WithLocation(line, column)
+                .WithMessage(message);
         }
 
         #endregion

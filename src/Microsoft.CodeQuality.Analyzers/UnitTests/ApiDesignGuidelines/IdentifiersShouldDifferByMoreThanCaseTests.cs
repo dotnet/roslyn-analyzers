@@ -3,10 +3,14 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Test.Utilities;
 using Xunit;
+using VerifyCS = Test.Utilities.CSharpCodeFixVerifier<
+    Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.IdentifiersShouldDifferByMoreThanCaseAnalyzer,
+    Microsoft.CodeAnalysis.Testing.EmptyCodeFixProvider>;
 
 namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
 {
@@ -25,9 +29,9 @@ namespace Microsoft.CodeQuality.Analyzers.ApiDesignGuidelines.UnitTests
         #region Namespace Level
 
         [Fact]
-        public void TestGlobalNamespaceNames()
+        public async Task TestGlobalNamespaceNames()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 namespace N
 {
     public class C { }
@@ -41,9 +45,9 @@ namespace n
         }
 
         [Fact]
-        public void TestNestedNamespaceNames()
+        public async Task TestNestedNamespaceNames()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 namespace N
 {
     class C { }
@@ -67,9 +71,9 @@ namespace n
         }
 
         [Fact]
-        public void TestGlobalTypeNames()
+        public async Task TestGlobalTypeNames()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class Ni
 {
 }
@@ -84,9 +88,9 @@ public interface nI
         }
 
         [Fact]
-        public void TestGenericClasses()
+        public async Task TestGenericClasses()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C<T>
 {
 }
@@ -121,7 +125,7 @@ namespace N
     }
     public partial class F
     {
-        public int x;    
+        public int x;
     }
 }
 ",
@@ -137,7 +141,7 @@ namespace N
     }
 }"
                 },
-                GetCA1708CSharpResult(Type, GetSymbolDisplayString("N.C", "N.c")),
+                GetGlobalCA1708CSharpResult(Type, GetSymbolDisplayString("N.C", "N.c")),
                 GetCA1708CSharpResultAt(Member, GetSymbolDisplayString("N.C.x", "N.C.X"), "Test0.cs(4,26)", "Test0.cs(8,26)"),
                 GetCA1708CSharpResultAt(Member, GetSymbolDisplayString("N.F.x", "N.F.X"), "Test0.cs(12,26)", "Test1.cs(7,26)"));
         }
@@ -237,9 +241,9 @@ namespace NI
         }
 
         [Fact]
-        public void TestMethodOverloads()
+        public async Task TestMethodOverloads()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 namespace NI
 {
     public class C
@@ -253,9 +257,9 @@ namespace NI
         }
 
         [Fact]
-        public void TestGenericMethods()
+        public async Task TestGenericMethods()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 namespace NI
 {
     public class C
@@ -272,9 +276,9 @@ namespace NI
         }
 
         [Fact]
-        public void TestMembers()
+        public async Task TestMembers()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 namespace NI
 {
     public class CASE1
@@ -307,9 +311,9 @@ namespace NI
         }
 
         [Fact]
-        public void TestCultureSpecificNames()
+        public async Task TestCultureSpecificNames()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 public class C
 {
     public int γ;
@@ -320,9 +324,9 @@ public class C
         }
 
         [Fact]
-        public void TestParameters()
+        public async Task TestParameters()
         {
-            VerifyCSharp(@"
+            await VerifyCS.VerifyAnalyzerAsync(@"
 namespace N
 {
     public class C
@@ -386,19 +390,19 @@ namespace N
         }
 
         private static DiagnosticResult GetCA1708CSharpResult(string typeName, string objectName)
-        {
-            return GetGlobalResult(RuleName, string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
-        }
+            => VerifyCS.Diagnostic(RuleName)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
+
+        private static DiagnosticResult GetGlobalCA1708CSharpResult(string typeName, string objectName)
+            => GetGlobalResult(RuleName, string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
 
         private static DiagnosticResult GetCA1708CSharpResultAt(string typeName, string objectName, int line, int column)
-        {
-            return GetCSharpResultAt(line, column, RuleName, string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
-        }
+            => VerifyCS.Diagnostic(RuleName)
+                .WithLocation(line, column)
+                .WithMessage(string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName));
 
         private static DiagnosticResult GetCA1708CSharpResultAt(string typeName, string objectName, params string[] locations)
-        {
-            return GetCSharpResultAt(RuleName, string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName), locations);
-        }
+            => GetCSharpResultAt(RuleName, string.Format(CultureInfo.CurrentCulture, s_message, typeName, objectName), locations);
 
         #endregion
     }
